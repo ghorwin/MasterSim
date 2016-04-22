@@ -1,7 +1,6 @@
-# Project file for MasterSim
-# remember to set DYLD_FALLBACK_LIBRARY_PATH on MacOSX
-# set LD_LIBRARY_PATH on Linux
-
+# -------------------------------------------------
+# Project for MasterSim library
+# -------------------------------------------------
 TARGET = MasterSim
 
 # this is the central configuration file for all IBK dependent libraries
@@ -13,30 +12,25 @@ TARGET = MasterSim
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
-TEMPLATE = app
-QT -= core gui
-CONFIG += console
-CONFIG -= app_bundle
+# This MUST be done after pri is included
+TEMPLATE = lib
 
-CONFIG(debug, debug|release) {
-	OBJECTS_DIR = debug
-	DESTDIR = ../../../bin/debug
-}
-else {
-	OBJECTS_DIR = release
-	DESTDIR = ../../../bin/release
+unix|mac {
+	VER_MAJ = 0
+	VER_MIN = 1
+	VER_PAT = 0
+	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
 LIBS += -L../../../externals/lib \
 	-lIBK
 
 INCLUDEPATH = \
-	../../../externals/IBK/src
+	../../../externals/IBK/src \
+	../../../externals/DataIO/src
 
 SOURCES += \
-	../../src/main.cpp \
-    ../../src/master_sim.cpp
+	../../src/MasterSim.cpp
 
 HEADERS += \
-    ../../src/master_sim.h
-
+	../../src/MasterSim.h

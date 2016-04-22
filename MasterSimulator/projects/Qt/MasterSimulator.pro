@@ -28,13 +28,14 @@ else {
 }
 
 LIBS += -L../../../externals/lib \
+	-L../../../lib \
 	-lMasterSim \
 	-lDataIO \
 	-lIBK
 
 INCLUDEPATH = \
-	../../../MasterSim/src
-	../../../externals/DataIO/src
+	../../../MasterSim/src \
+	../../../externals/DataIO/src \
 	../../../externals/IBK/src
 
 SOURCES += \
