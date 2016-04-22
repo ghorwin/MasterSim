@@ -1,5 +1,5 @@
-#ifndef PROJECT_H
-#define PROJECT_H
+#ifndef MSIM_PROJECT_H
+#define MSIM_PROJECT_H
 
 #include <vector>
 
@@ -10,16 +10,6 @@ namespace MASTER_SIM {
 /*! Stores content of configuration/project file. */
 class Project {
 public:
-	Project();
-
-	/*! Reads project file.
-		Throws an exception if reading fails.
-	*/
-	void read(const IBK::Path & prjFile);
-
-
-	// Content of project file
-
 	/*! Operation modi of the master algorithm. */
 	enum MasterMode {
 		/*! Gauss-Seidel iteration with single iteration per step. */
@@ -30,11 +20,40 @@ public:
 		MM_NEWTON					= 9
 	};
 
-	/*! Number of interface values between FMUs. */
-	unsigned int	m_nValues;
+	/*! Holds all information that define a simulator. */
+	struct SimulatorDef {
+		SimulatorDef() : m_id() {}
+		/*! Parses content of simulator definition line. */
+		void parse(const std::string & simulatorDef);
 
-	/*! Number of simulation model instances. */
-	unsigned int	m_nModelInstances;
+		/*! Descriptive name. */
+		std::string		m_name;
+		/*! Unique ID. */
+		unsigned int	m_id;
+		/*! Priority. */
+		unsigned int	m_priority;
+		/*! Path to FMU file. */
+		IBK::Path		m_pathToFMU;
+	};
+
+	/*! Defines an edge of the coupling graph. */
+	struct GraphEdge {
+		/*! Variable reference in simulator and value ref that exports this variable. */
+		std::string m_outputVariableRef;
+		/*! Variable reference in simulator and value ref that imports this variable. */
+		std::string m_inputVariableRef;
+	};
+
+	/*! Constructor. */
+	Project();
+
+	/*! Reads project file.
+		Throws an exception if reading fails.
+	*/
+	void read(const IBK::Path & prjFile);
+
+	// Content of project file
+
 
 	/*! Starting time point of simulation, if not 0 serialization of existing state of FMUs is done at startup. */
 	double			m_tStart;
@@ -63,7 +82,10 @@ public:
 	double			m_relTol;
 
 	/*! All simulators coupled in this master scenario. */
-	std::vector<Simulator>	m_simulators;
+	std::vector<SimulatorDef>	m_simulators;
+
+	/*! Defines the connection graph. */
+	std::vector<GraphEdge>		m_graph;
 
 //	simulator   0   fmus/simx/Part1.fmu
 //	simulator   1   fmus/simx/Part2.fmu
@@ -92,4 +114,4 @@ public:
 } // namespace MASTER_SIM
 
 
-#endif // PROJECT_H
+#endif // MSIM_PROJECT_H

@@ -5,57 +5,40 @@
 #include <IBK_SolverArgsParser.h>
 #include <IBK_Exception.h>
 
-#include <MasterSim.h>
-#include <Project.h>
+#include <MSIM_MasterSim.h>
+#include <MSIM_Project.h>
+#include <MSIM_ArgParser.h>
 
 int main(int argc, char * argv[]) {
-	IBK::WaitOnExit wait(true);
-
 
 	// parse command line
-
-	IBK::SolverArgsParser parser;
-	parser.addOption(0, "working-dir", "Working directory for master.", "working-directory", "Parent path of project file.");
+	MASTER_SIM::ArgParser parser;
 	parser.parse(argc, argv);
 
 	// help and man-page
 	if (parser.handleDefaultFlags(std::cout))
 		return EXIT_SUCCESS;
 
-	if (parser.args().size() < 2) {
+	if (!parser.m_projectFile.isValid()) {
 		std::cerr << "Missing project file argument. Use --help for syntax." << std::endl;
 		return EXIT_FAILURE;
 	}
 
-	// get project file
-	IBK::Path projectFile( parser.args()[1] );
+	IBK::WaitOnExit wait(parser.flagEnabled('x'));
 
-	// get working directory (defaults to project file path)
-	IBK::Path workingDir = projectFile.parentPath();
-
-	// if invalid working dir (project file path is relative) use current directory
-	if (!workingDir.isValid())
-		workingDir = IBK::Path::current();
-	// override with command line option
-	if (((IBK::ArgParser)parser).hasOption("working-dir"))
-		workingDir = IBK::Path(((IBK::ArgParser)parser).option("working-dir"));
-
-	// get states subdirectory
-	IBK::Path stateDir = workingDir / "states";
 
 	try {
 
 		// instantiate project
-
 		MASTER_SIM::Project project;
 
 		// read project file
-		project.read(IBK::Path(parser.args()[1]));
+		project.read(IBK::Path(parser.m_projectFile ));
 
-
+		// create simulator
 		MASTER_SIM::MasterSimulator masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
-		masterSim.instantiateFMUs( workingDir );
+		masterSim.instantiateFMUs(project, parser.m_workingDir);
 
 #if HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point

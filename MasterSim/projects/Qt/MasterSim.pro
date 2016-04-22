@@ -30,11 +30,13 @@ INCLUDEPATH = \
 	../../../externals/DataIO/src
 
 SOURCES += \
-	../../src/MasterSim.cpp \
-    ../../src/Project.cpp \
-    ../../src/MSIM_Simulator.cpp
+	../../src/MSIM_MasterSim.cpp \
+	../../src/MSIM_Project.cpp \
+	../../src/MSIM_Simulator.cpp \
+    ../../src/MSIM_ArgParser.cpp
 
 HEADERS += \
-	../../src/MasterSim.h \
-    ../../src/Project.h \
-    ../../src/MSIM_Simulator.h
+	../../src/MSIM_MasterSim.h \
+	../../src/MSIM_Project.h \
+	../../src/MSIM_Simulator.h \
+    ../../src/MSIM_ArgParser.h

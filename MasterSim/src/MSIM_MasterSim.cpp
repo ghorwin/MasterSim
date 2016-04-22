@@ -1,4 +1,4 @@
-#include "MasterSim.h"
+#include "MSIM_MasterSim.h"
 
 namespace MASTER_SIM {
 
@@ -8,8 +8,9 @@ MasterSimulator::MasterSimulator() {
 
 
 
-void MasterSimulator::instantiateFMUs(const IBK::Path & workingDir) {
+void MasterSimulator::instantiateFMUs(const Project & prj, const IBK::Path & workingDir) {
 
+	m_tStepSize = prj.m_tStepStart;
 }
 
 
