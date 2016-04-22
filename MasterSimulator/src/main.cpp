@@ -5,7 +5,7 @@
 #include <IBK_ArgParser.h>
 #include <IBK_Exception.h>
 
-#include "master_sim.h"
+#include <MasterSim.h>
 
 int main(int argc, char * argv[]) {
 	IBK::WaitOnExit wait(true);
@@ -33,13 +33,13 @@ int main(int argc, char * argv[]) {
 	try {
 
 		// instantiate sim project
-		eas::MasterSimulator masterSim;
+		MASTER_SIM::MasterSimulator masterSim;
 
 		// read project file
 		masterSim.readProjectFile(IBK::Path(parser.args()[1]));
 
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
-		masterSim.instantiateFMUs(  );
+		masterSim.instantiateFMUs( workingDirRoot );
 
 #if HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point
@@ -53,7 +53,7 @@ int main(int argc, char * argv[]) {
 		masterSim.writeOutputs();
 #endif
 
-		double tEnd = masterSim.teEnd(); // override with command line argument
+		double tEnd = masterSim.tEnd(); // override with command line argument
 		while (t < tEnd) {
 			// ask master to do an internal step
 			masterSim.doStep();
