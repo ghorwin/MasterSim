@@ -26,6 +26,7 @@ else {
 }
 
 LIBS += -L../../../externals/lib \
+	-L../../../lib \
 	-lMasterSim \
 	-lDataIO \
 	-lIBK
@@ -38,7 +39,7 @@ INCLUDEPATH = \
 
 
 SOURCES += ../../src/main.cpp \
-        ../../src/MainWindow.cpp
+		../../src/MainWindow.cpp
 
 HEADERS  += ../../src/MainWindow.h
 
