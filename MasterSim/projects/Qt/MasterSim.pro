@@ -31,8 +31,10 @@ INCLUDEPATH = \
 
 SOURCES += \
 	../../src/MasterSim.cpp \
-    ../../src/Project.cpp
+    ../../src/Project.cpp \
+    ../../src/MSIM_Simulator.cpp
 
 HEADERS += \
 	../../src/MasterSim.h \
-    ../../src/Project.h
+    ../../src/Project.h \
+    ../../src/MSIM_Simulator.h

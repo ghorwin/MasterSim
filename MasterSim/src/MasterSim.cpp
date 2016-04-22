@@ -6,11 +6,6 @@ MasterSimulator::MasterSimulator() {
 }
 
 
-void MasterSimulator::readProjectFile(const IBK::Path & prjFile) {
-	//
-
-	m_tOutputStepMin = 3600; // should
-}
 
 
 void MasterSimulator::instantiateFMUs(const IBK::Path & workingDir) {

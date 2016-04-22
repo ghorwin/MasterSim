@@ -7,10 +7,10 @@ Project::Project()
 }
 
 
-void Project::readProjectFile(const IBK::Path & prjFile) {
+void Project::read(const IBK::Path & prjFile) {
 	//
 
-	m_tOutputStepMin = 3600; // should
+//	m_tOutputStepMin = 3600; // should
 }
 
 } // namespace MASTER_SIM
