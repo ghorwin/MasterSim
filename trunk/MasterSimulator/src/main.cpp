@@ -4,10 +4,12 @@
 #include <IBK_WaitOnExit.h>
 #include <IBK_SolverArgsParser.h>
 #include <IBK_Exception.h>
+#include <IBK_messages.h>
 
 #include <MSIM_MasterSim.h>
 #include <MSIM_Project.h>
 #include <MSIM_ArgParser.h>
+#include <MSIM_Constants.h>
 
 int main(int argc, char * argv[]) {
 
@@ -19,13 +21,27 @@ int main(int argc, char * argv[]) {
 	if (parser.handleDefaultFlags(std::cout))
 		return EXIT_SUCCESS;
 
+	IBK::WaitOnExit wait(parser.flagEnabled('x'));
+
+	if (parser.flagEnabled('v')) {
+		std::cout << "MasterSimulator, version " << MASTER_SIM::LONG_VERSION << std::endl;
+		return EXIT_SUCCESS;
+	}
+
 	if (!parser.m_projectFile.isValid()) {
 		std::cerr << "Missing project file argument. Use --help for syntax." << std::endl;
 		return EXIT_FAILURE;
 	}
 
-	IBK::WaitOnExit wait(parser.flagEnabled('x'));
-
+	// setup directory structure and initialize log file
+	IBK::MessageHandler::setupUtf8Console();
+	IBK::MessageHandler * msgHandler = IBK::MessageHandlerRegistry::instance().messageHandler();
+	msgHandler->setConsoleVerbosityLevel(parser.m_verbosityLevel);
+	IBK::Path logFile = parser.m_projectFile.withoutExtension();
+	logFile.addExtension("log");
+	std::string errmsg;
+	if (!msgHandler->openLogFile(logFile.str(), false, errmsg))
+		std::cerr << "Cannot write log file '" << logFile.str() << "'." << std::endl;
 
 	try {
 
@@ -33,6 +49,7 @@ int main(int argc, char * argv[]) {
 		MASTER_SIM::Project project;
 
 		// read project file
+		IBK::IBK_Message(IBK::FormatString("Reading project '%1'\n").arg(parser.m_projectFile), IBK::MSG_PROGRESS);
 		project.read(IBK::Path(parser.m_projectFile ));
 
 		// create simulator
@@ -52,13 +69,18 @@ int main(int argc, char * argv[]) {
 		masterSim.writeOutputs();
 #endif
 
+		if (parser.flagEnabled("test-init")) {
+			IBK::IBK_Message("Stopping after successful initialization.\n", IBK::MSG_PROGRESS);
+			return EXIT_SUCCESS;
+		}
+
 		double tEnd = project.m_tEnd; // override with command line argument
 		while (t < tEnd) {
 			// ask master to do an internal step
 			masterSim.doStep();
 			t = masterSim.tCurrent();
 
-			// handle outputs (filtering implemented inside writeOutputs()).
+			// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
 			masterSim.writeOutputs();
 		}
 

@@ -22,6 +22,9 @@ public:
 
 	/*! Full path to working directory. */
 	IBK::Path		m_workingDir;
+
+	/*! Verbosity level for console output. */
+	unsigned int	m_verbosityLevel;
 };
 
 } // namespace MASTER_SIM

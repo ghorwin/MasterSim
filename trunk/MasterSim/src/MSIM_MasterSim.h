@@ -2,7 +2,9 @@
 #define MSIM_MASTERSIM_H
 
 #include <IBK_Path.h>
+
 #include "MSIM_Project.h"
+#include "MSIM_ArgParser.h"
 
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
@@ -51,10 +53,12 @@ public:
 	/*! Updates outputs when scheduled. */
 	void writeOutputs();
 
-	const std::string & projectFile() const { return m_projectFile; }
-
 private:
-	std::string		m_projectFile;
+	/*! Copy of arg parser. */
+	MASTER_SIM::ArgParser	m_argParser;
+	/*! Copy of project data. */
+	MASTER_SIM::Project		m_project;
+
 	double			m_tStart;
 	double			m_tEnd;
 	double			m_tCurrent;
