@@ -28,7 +28,7 @@ int main(int argc, char * argv[]) {
 	}
 
 	// get project file
-	IBK::Path projectFile = parser.args()[1];
+	IBK::Path projectFile( parser.args()[1] );
 
 	// get working directory (defaults to project file path)
 	IBK::Path workingDir = projectFile.parentPath();
@@ -37,8 +37,8 @@ int main(int argc, char * argv[]) {
 	if (!workingDir.isValid())
 		workingDir = IBK::Path::current();
 	// override with command line option
-	if (parser.hasOption("working-dir"))
-		workingDir = IBK::Path(parser.option("working-dir"));
+	if (((IBK::ArgParser)parser).hasOption("working-dir"))
+		workingDir = IBK::Path(((IBK::ArgParser)parser).option("working-dir"));
 
 	// get states subdirectory
 	IBK::Path stateDir = workingDir / "states";
@@ -55,7 +55,7 @@ int main(int argc, char * argv[]) {
 
 		MASTER_SIM::MasterSimulator masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
-		masterSim.instantiateFMUs( workingDirRoot );
+		masterSim.instantiateFMUs( workingDir );
 
 #if HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point
@@ -69,7 +69,7 @@ int main(int argc, char * argv[]) {
 		masterSim.writeOutputs();
 #endif
 
-		double tEnd = masterSim.tEnd(); // override with command line argument
+		double tEnd = project.m_tEnd; // override with command line argument
 		while (t < tEnd) {
 			// ask master to do an internal step
 			masterSim.doStep();

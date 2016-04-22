@@ -10,8 +10,6 @@ class MasterSimulator {
 public:
 	MasterSimulator();
 
-	/*! Reads project file, utf8 encoded path name. */
-	void readProjectFile(const IBK::Path & prjFile);
 
 	/*! initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking. */
 	void instantiateFMUs(const IBK::Path & workingDir);
@@ -26,7 +24,6 @@ public:
 	void restoreState(double t, const IBK::Path & stateDirectory);
 
 	double tStart() const { return m_tStart; }
-	double tEnd() const { return m_tEnd; }
 	double tCurrent() const { return m_tCurrent; }
 
 	/*! Attempts to integrate forward a single step.
