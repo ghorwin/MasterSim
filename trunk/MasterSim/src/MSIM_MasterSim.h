@@ -1,7 +1,8 @@
-#ifndef MASTERSIM_H
-#define MASTERSIM_H
+#ifndef MSIM_MASTERSIM_H
+#define MSIM_MASTERSIM_H
 
 #include <IBK_Path.h>
+#include "MSIM_Project.h"
 
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
@@ -10,9 +11,10 @@ class MasterSimulator {
 public:
 	MasterSimulator();
 
-
-	/*! initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking. */
-	void instantiateFMUs(const IBK::Path & workingDir);
+	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
+		Throws an exception if an error occurs during instantiation.
+	*/
+	void instantiateFMUs(const Project & prj, const IBK::Path & workingDir);
 
 	/*! Initialize FMUs (enter initialization mode, iterate over start conditions, everything
 		up to ExitInitializationMode).
@@ -64,4 +66,4 @@ private:
 
 } // namespace MASTER_SIM
 
-#endif // MASTERSIM_H
+#endif // MSIM_MASTERSIM_H
