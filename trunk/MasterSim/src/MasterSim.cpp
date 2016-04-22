@@ -1,6 +1,6 @@
-#include "master_sim.h"
+#include "MasterSim.h"
 
-namespace eas {
+namespace MASTER_SIM {
 
 MasterSimulator::MasterSimulator() {
 }
@@ -47,4 +47,5 @@ void MasterSimulator::writeOutputs() {
 }
 
 
-} // namespace eas
+} // namespace MASTER_SIM
+

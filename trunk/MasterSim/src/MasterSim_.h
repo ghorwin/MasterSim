@@ -1,9 +1,9 @@
-#ifndef MASTER_SIM_H
-#define MASTER_SIM_H
+#ifndef MASTERSIM_H
+#define MASTERSIM_H
 
 #include <IBK_Path.h>
 
-namespace eas {
+namespace MASTER_SIM {
 
 class MasterSimulator {
 public:
@@ -64,6 +64,6 @@ private:
 	double			m_tOutputStepMin;
 };
 
-} // namespace eas
+} // namespace MASTER_SIM
 
-#endif // MASTER_SIM_H
+#endif // MASTERSIM_H
