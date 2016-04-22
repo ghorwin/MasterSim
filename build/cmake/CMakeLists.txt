@@ -43,14 +43,21 @@ endif (UNIX)
 # need Qt4 for user interface
 FIND_PACKAGE( Qt4 )
 
+if( QT4_FOUND )
+
+	set( QT_USE_QTXML TRUE )
+
+	include( ${QT_USE_FILE} )
+
+endif( QT4_FOUND )
 
 # -------------------------------------------------------------
 # Support for build flags
 # -------------------------------------------------------------
-include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt  )
+include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt )
 
 # -------------------------------------------------------------
-# subdirectories and subprojects
+# Subdirectories and subprojects
 # -------------------------------------------------------------
 
 # add subdirectories for all builds
@@ -59,12 +66,12 @@ add_subdirectory( ../../externals/DataIO/projects/cmake_local DataIO)
 add_subdirectory( ../../MasterSim/projects/cmake_local MasterSim)
 
 # -------------------------------------------------------------
-# executables/applications
+# Executables/applications
 # -------------------------------------------------------------
 
 add_subdirectory( ../../MasterSimulator/projects/cmake_local MasterSimulator)
 
-if ( QT4_FOUND )
-add_subdirectory( ../../MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
+if( QT4_FOUND )
+	add_subdirectory( ../../MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
 endif( QT4_FOUND )
 
