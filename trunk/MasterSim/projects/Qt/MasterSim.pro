@@ -30,7 +30,9 @@ INCLUDEPATH = \
 	../../../externals/DataIO/src
 
 SOURCES += \
-	../../src/MasterSim.cpp
+	../../src/MasterSim.cpp \
+    ../../src/Project.cpp
 
 HEADERS += \
-	../../src/MasterSim.h
+	../../src/MasterSim.h \
+    ../../src/Project.h

@@ -2,10 +2,11 @@
 #include <cstdlib>
 
 #include <IBK_WaitOnExit.h>
-#include <IBK_ArgParser.h>
+#include <IBK_SolverArgsParser.h>
 #include <IBK_Exception.h>
 
 #include <MasterSim.h>
+#include <Project.h>
 
 int main(int argc, char * argv[]) {
 	IBK::WaitOnExit wait(true);
@@ -13,31 +14,46 @@ int main(int argc, char * argv[]) {
 
 	// parse command line
 
-	IBK::ArgParser parser;
-	parser.addOption(0, "working-dir", "Working directory for master.", "working-directory", "/var/tmp");
+	IBK::SolverArgsParser parser;
+	parser.addOption(0, "working-dir", "Working directory for master.", "working-directory", "Parent path of project file.");
 	parser.parse(argc, argv);
-
-	IBK::Path workingDirRoot = IBK::Path(parser.option("working-dir"));
-
-	IBK::Path stateDir = workingDirRoot / "states";
 
 	// help and man-page
 	if (parser.handleDefaultFlags(std::cout))
 		return EXIT_SUCCESS;
 
 	if (parser.args().size() < 2) {
-		std::cerr << "Syntax: MasterSim <project file>" << std::endl;
+		std::cerr << "Missing project file argument. Use --help for syntax." << std::endl;
 		return EXIT_FAILURE;
 	}
 
+	// get project file
+	IBK::Path projectFile = parser.args()[1];
+
+	// get working directory (defaults to project file path)
+	IBK::Path workingDir = projectFile.parentPath();
+
+	// if invalid working dir (project file path is relative) use current directory
+	if (!workingDir.isValid())
+		workingDir = IBK::Path::current();
+	// override with command line option
+	if (parser.hasOption("working-dir"))
+		workingDir = IBK::Path(parser.option("working-dir"));
+
+	// get states subdirectory
+	IBK::Path stateDir = workingDir / "states";
+
 	try {
 
-		// instantiate sim project
-		MASTER_SIM::MasterSimulator masterSim;
+		// instantiate project
+
+		MASTER_SIM::Project project;
 
 		// read project file
-		masterSim.readProjectFile(IBK::Path(parser.args()[1]));
+		project.read(IBK::Path(parser.args()[1]));
 
+
+		MASTER_SIM::MasterSimulator masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
 		masterSim.instantiateFMUs( workingDirRoot );
 

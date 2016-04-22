@@ -3,6 +3,7 @@
 
 #include <IBK_Path.h>
 
+/*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
 
 class MasterSimulator {
