@@ -1,8 +1,11 @@
 #include "MSIM_ArgParser.h"
 
+#include <IBK_StringUtils.h>
+
 namespace MASTER_SIM {
 
-ArgParser::ArgParser() {
+ArgParser::ArgParser() : m_verbosityLevel(1)
+{
 	addOption('v', "version", "Show version info.", "<true|false>", "false");
 	addOption('x', "close-on-exit", "Close console window after finishing simulation.", "<true|false>", "false");
 	addOption('t', "test-init", "Run the initialization and stop right afterwards.", "<true|false>", "false");
@@ -59,6 +62,12 @@ void ArgParser::parse(int argc, const char * const argv[]) {
 #endif
 	}
 
+	try {
+		m_verbosityLevel = IBK::string2val<unsigned int>(option("verbosity-level"));
+	}
+	catch (...) {
+		m_verbosityLevel = 1;
+	}
 }
 
 } // namespace MASTER_SIM
