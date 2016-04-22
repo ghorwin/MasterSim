@@ -16,7 +16,7 @@ public:
 	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
 		Throws an exception if an error occurs during instantiation.
 	*/
-	void instantiateFMUs(const Project & prj, const IBK::Path & workingDir);
+	void instantiateFMUs(const ArgParser & args, const Project & prj);
 
 	/*! Initialize FMUs (enter initialization mode, iterate over start conditions, everything
 		up to ExitInitializationMode).
@@ -55,7 +55,7 @@ public:
 
 private:
 	/*! Copy of arg parser. */
-	MASTER_SIM::ArgParser	m_argParser;
+	MASTER_SIM::ArgParser	m_args;
 	/*! Copy of project data. */
 	MASTER_SIM::Project		m_project;
 
