@@ -27,7 +27,16 @@ public:
 	/*! Restores state of master and all FMUs using data stored below state directory. */
 	void restoreState(double t, const IBK::Path & stateDirectory);
 
-	double tStart() const { return m_tStart; }
+	/*! Serializes all FMUs and state of master to file within stateDirectory. */
+	void storeState(const IBK::Path & stateDirectory);
+
+	/*! Contains the core simulation loop.
+		This function calls doStep() until simulation time has reached/passed time point.
+
+	*/
+	void simulate();
+
+	/*! Returns current time point (of master state). */
 	double tCurrent() const { return m_tCurrent; }
 
 	/*! Attempts to integrate forward a single step.
@@ -59,13 +68,10 @@ private:
 	/*! Copy of project data. */
 	MASTER_SIM::Project		m_project;
 
-	double			m_tStart;
-	double			m_tEnd;
-	double			m_tCurrent;
-	double			m_tStepSize;
+	double					m_tCurrent;
+	double					m_tStepSize;
 
-	double			m_tLastOutput;
-	double			m_tOutputStepMin;
+	double					m_tLastOutput;
 };
 
 } // namespace MASTER_SIM

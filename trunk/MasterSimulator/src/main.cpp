@@ -55,16 +55,14 @@ int main(int argc, char * argv[]) {
 		// create simulator
 		MASTER_SIM::MasterSimulator masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
-		masterSim.instantiateFMUs(project, parser.m_workingDir);
+		masterSim.instantiateFMUs(parser, project);
 
 #if HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point
 		double tStart = masterSim.tStart(); // override with command line argument
 		masterSim.restoreState(tStart, stateDir);
-		double t = masterSim.currentTime();
 #else
 		// run master for entire simulation
-		double t = 0;
 		masterSim.initialize();
 		masterSim.writeOutputs();
 #endif
@@ -74,15 +72,9 @@ int main(int argc, char * argv[]) {
 			return EXIT_SUCCESS;
 		}
 
-		double tEnd = project.m_tEnd; // override with command line argument
-		while (t < tEnd) {
-			// ask master to do an internal step
-			masterSim.doStep();
-			t = masterSim.tCurrent();
-
-			// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
-			masterSim.writeOutputs();
-		}
+		// let master run the simulation until end
+		IBK::IBK_Message( IBK::FormatString("Starting simulation from t=%1.\n").arg(masterSim.tCurrent()), IBK::MSG_PROGRESS);
+		masterSim.simulate();
 
 	}
 	catch (IBK::Exception & ex) {
