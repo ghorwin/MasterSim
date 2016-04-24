@@ -16,10 +16,22 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	// collect list of FMU-Dlls to load dynamically
 	std::set<IBK::Path> fmuFiles;
 	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
+		// Using IBK::Path will ensure that the same files though addressed by different
+		// relative paths are converted to the same:
+		//   project/fmu/myFmu.fmu   and ../project/fmu/myFmu.fmu
+		// are the same files.
 		fmuFiles.insert(prj.m_simulators[i].m_pathToFMU);
 	}
 
-	//
+	m_fmuManager.m_unzipFMUs = !args.flagEnabled("skip-unzip");
+	IBK::Path fmuBaseDir = args.m_workingDir / IBK::Path("fmus");
+
+	// load FMU library for each fmu
+	for (std::set<IBK::Path>::const_iterator it = fmuFiles.begin(); it != fmuFiles.end(); ++it) {
+		/// \todo check if user has specified extraction path override in project file
+		m_fmuManager.importFMU(fmuBaseDir, *it);
+	}
+
 
 	m_tStepSize = prj.m_tStepStart;
 }

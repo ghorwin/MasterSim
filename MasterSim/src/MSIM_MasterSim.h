@@ -5,6 +5,7 @@
 
 #include "MSIM_Project.h"
 #include "MSIM_ArgParser.h"
+#include "MSIM_FMUManager.h"
 
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
@@ -64,9 +65,12 @@ public:
 
 private:
 	/*! Copy of arg parser. */
-	MASTER_SIM::ArgParser	m_args;
+	ArgParser				m_args;
 	/*! Copy of project data. */
-	MASTER_SIM::Project		m_project;
+	Project					m_project;
+
+	FMUManager				m_fmuManager;
+
 
 	double					m_tCurrent;
 	double					m_tStepSize;
