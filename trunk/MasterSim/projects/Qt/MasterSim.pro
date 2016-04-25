@@ -27,22 +27,23 @@ LIBS += -L../../../externals/lib \
 
 INCLUDEPATH = \
 	../../../externals/IBK/src \
-	../../../externals/DataIO/src
+	../../../externals/DataIO/src \
+	../../../externals/FMILibrary/include
 
 SOURCES += \
 	../../src/MSIM_MasterSim.cpp \
 	../../src/MSIM_Project.cpp \
 	../../src/MSIM_Simulator.cpp \
-    ../../src/MSIM_ArgParser.cpp \
-    ../../src/MSIM_Constants.cpp \
-    ../../src/MSIM_FMUManager.cpp \
-    ../../src/MSIM_FMUSlave.cpp
+	../../src/MSIM_ArgParser.cpp \
+	../../src/MSIM_Constants.cpp \
+	../../src/MSIM_FMUManager.cpp \
+	../../src/MSIM_FMUSlave.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
 	../../src/MSIM_Project.h \
 	../../src/MSIM_Simulator.h \
-    ../../src/MSIM_ArgParser.h \
-    ../../src/MSIM_Constants.h \
-    ../../src/MSIM_FMUManager.h \
-    ../../src/MSIM_FMUSlave.h
+	../../src/MSIM_ArgParser.h \
+	../../src/MSIM_Constants.h \
+	../../src/MSIM_FMUManager.h \
+	../../src/MSIM_FMUSlave.h
