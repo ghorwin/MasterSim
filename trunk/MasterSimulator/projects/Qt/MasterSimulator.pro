@@ -28,18 +28,19 @@ else {
 }
 
 unix {
-	LIBS += -L../../../externals/FMILibrary/lib_linux64
+#	LIBS += -L../../../externals/FMILibrary/lib_linux64
 }
 
 win32 {
-	LIBS += -L../../../externals/FMILibrary/lib_win32
+#	LIBS += -L../../../externals/FMILibrary/lib_win32
 }
 
 LIBS += -L../../../externals/lib \
 	-L../../../lib \
 	-lMasterSim \
-	-lfmilib \
+	-lFMILibrary \
 	-lminizip \
+	-lexpat \
 	-lz \
 	-ldl \
 	-lDataIO \

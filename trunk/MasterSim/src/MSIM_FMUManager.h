@@ -7,7 +7,7 @@
 
 namespace MASTER_SIM {
 
-class FMUObject;
+class FMU;
 
 /*! Handles unzipping of FMUs and reading of ModelDescription files.
 	The FMUManager only handles unzipping of FMU files and reading model description files. It does not
@@ -28,12 +28,12 @@ public:
 
 		\note Throws an exception if an error occurs. In this case, all resources are deallocated again.
 	*/
-	FMUObject * importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath);
+	FMU * importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath);
 
 	/*! Alternative version of FMU import where unzip directory is provided by user and not auto-generated.
 		If another FMU had been instantiated with same unzip directory, an IBK::Exception will be thrown.
 	*/
-	FMUObject * importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath, const IBK::Path & unzipPath);
+	FMU * importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath, const IBK::Path & unzipPath);
 
 	/*! If true, FMUs are unzipped to directories first, before ModelDescriptions are read. */
 	bool	m_unzipFMUs;
@@ -45,8 +45,11 @@ private:
 	/*! Generates a unique FMU file path based on fmu base directory and fmuFilePath. */
 	IBK::Path generateFilePath(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath);
 
+	/*! Utility function to unzip FMU. */
+	void unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath);
+
 	/*! All FMUs already imported. */
-	std::vector<FMUObject*>	m_fmus;
+	std::vector<FMU*>	m_fmus;
 };
 
 } // namespace MASTER_SIM

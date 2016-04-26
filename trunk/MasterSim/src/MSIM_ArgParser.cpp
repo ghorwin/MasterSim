@@ -42,7 +42,7 @@ void ArgParser::parse(int argc, const char * const argv[]) {
 #endif
 		try {
 			// get working directory (defaults to project file path)
-			m_workingDir = m_projectFile.parentPath();
+			m_workingDir = m_projectFile.withoutExtension();
 		}
 		catch (...) {
 			m_workingDir.clear();
