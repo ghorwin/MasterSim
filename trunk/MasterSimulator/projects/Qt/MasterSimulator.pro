@@ -27,16 +27,6 @@ else {
 	DESTDIR = ../../../bin/release
 }
 
-LIBS += -L../../../externals/lib \
-	-L../../../lib \
-	-lMasterSim \
-	-lfmilib \
-	-ljmutils \
-	-lfmizip \
-#	-lfmicapi \
-	-lDataIO \
-	-lIBK
-
 unix {
 	LIBS += -L../../../externals/FMILibrary/lib_linux64
 }
@@ -44,6 +34,16 @@ unix {
 win32 {
 	LIBS += -L../../../externals/FMILibrary/lib_win32
 }
+
+LIBS += -L../../../externals/lib \
+	-L../../../lib \
+	-lMasterSim \
+	-lfmilib \
+	-lminizip \
+	-lz \
+	-ldl \
+	-lDataIO \
+	-lIBK
 
 INCLUDEPATH = \
 	../../../MasterSim/src \
