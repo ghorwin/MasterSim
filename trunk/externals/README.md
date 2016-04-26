@@ -32,7 +32,18 @@ For example:
 DataIO-7.1.0/DataIO  -> should go to master-sim/trunk/externals/DataIO
 
 
-3. FMI-Library
---------------
+3. minizip
+----------
+
+Utility library for unzipping archives from FMILibrary/ThirdParty
+
+
+4. zlib
+-------
+
+Zip library (only for Windows, on Unix/Mac using system zlib).
+
+
+
 
 
