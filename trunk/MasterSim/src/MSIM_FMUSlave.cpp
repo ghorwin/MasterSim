@@ -2,7 +2,7 @@
 
 namespace MASTER_SIM {
 
-FMUSlave::FMUSlave()
+FMUObject::FMUObject()
 {
 }
 

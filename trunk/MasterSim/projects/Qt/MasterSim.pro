@@ -22,13 +22,26 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-LIBS += -L../../../externals/lib \
-	-lIBK
-
 INCLUDEPATH = \
+	../../../externals/FMILibrary/include \
 	../../../externals/IBK/src \
-	../../../externals/DataIO/src \
-	../../../externals/FMILibrary/include
+	../../../externals/DataIO/src
+
+LIBS += -L../../../externals/lib
+
+unix {
+	INCLUDEPATH += ../../../externals/FMILibrary/include_linux64
+	LIBS += -L../../../externals/FMILibrary/lib_linux64
+}
+
+win32 {
+	INCLUDEPATH += ../../../externals/FMILibrary/include_win32
+	LIBS += -L../../../externals/FMILibrary/lib_win32
+}
+
+LIBS += \
+	-lDataIO \
+	-lIBK
 
 SOURCES += \
 	../../src/MSIM_MasterSim.cpp \
