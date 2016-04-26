@@ -23,25 +23,17 @@ unix|mac {
 }
 
 INCLUDEPATH = \
-	../../../externals/FMILibrary/include \
+	../../../externals/minizip/src \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src
 
 LIBS += -L../../../externals/lib
 
-unix {
-	INCLUDEPATH += ../../../externals/FMILibrary/include_linux64
-	LIBS += -L../../../externals/FMILibrary/lib_linux64
-}
-
-win32 {
-	INCLUDEPATH += ../../../externals/FMILibrary/include_win32
-	LIBS += -L../../../externals/FMILibrary/lib_win32
-}
-
 LIBS += \
 	-lDataIO \
-	-lIBK
+	-lIBK \
+	-lminizip \
+	-lz
 
 SOURCES += \
 	../../src/MSIM_MasterSim.cpp \
@@ -50,7 +42,8 @@ SOURCES += \
 	../../src/MSIM_ArgParser.cpp \
 	../../src/MSIM_Constants.cpp \
 	../../src/MSIM_FMUManager.cpp \
-	../../src/MSIM_FMUSlave.cpp
+	../../src/MSIM_FMUSlave.cpp \
+    ../../src/MSIM_FMU.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -59,4 +52,5 @@ HEADERS += \
 	../../src/MSIM_ArgParser.h \
 	../../src/MSIM_Constants.h \
 	../../src/MSIM_FMUManager.h \
-	../../src/MSIM_FMUSlave.h
+	../../src/MSIM_FMUSlave.h \
+    ../../src/MSIM_FMU.h

@@ -69,6 +69,7 @@ private:
 	/*! Copy of project data. */
 	Project					m_project;
 
+	/*! Holds and owns all FMU objects. */
 	FMUManager				m_fmuManager;
 
 

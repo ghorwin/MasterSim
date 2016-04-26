@@ -1,14 +1,18 @@
 #include "MSIM_MasterSim.h"
 
+#include <IBK_Exception.h>
+
 namespace MASTER_SIM {
 
-MasterSimulator::MasterSimulator() {
+MasterSimulator::MasterSimulator() :
+	m_tCurrent(0)
+{
 }
 
 
-
-
 void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj) {
+	const char * const FUNC_ID = "[MasterSimulator::instantiateFMUs]";
+
 	// create copy of input data (needed for multi-threaded application)
 	m_args = args;
 	m_project = prj;
@@ -20,18 +24,22 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 		// relative paths are converted to the same:
 		//   project/fmu/myFmu.fmu   and ../project/fmu/myFmu.fmu
 		// are the same files.
-		fmuFiles.insert(prj.m_simulators[i].m_pathToFMU);
+		IBK::Path p = prj.m_simulators[i].m_pathToFMU; // may be a relative path
+		if (!p.isAbsolute())
+			p = args.m_projectFile.parentPath() / p;
+		fmuFiles.insert(p.absolutePath());
 	}
 
 	m_fmuManager.m_unzipFMUs = !args.flagEnabled("skip-unzip");
 	IBK::Path fmuBaseDir = args.m_workingDir / IBK::Path("fmus");
+	if (!fmuBaseDir.exists() && !IBK::Path::makePath(fmuBaseDir))
+		throw IBK::Exception(IBK::FormatString("Error creating fmu extraction base directory: '%1'").arg(fmuBaseDir), FUNC_ID);
 
 	// load FMU library for each fmu
 	for (std::set<IBK::Path>::const_iterator it = fmuFiles.begin(); it != fmuFiles.end(); ++it) {
 		/// \todo check if user has specified extraction path override in project file
 		m_fmuManager.importFMU(fmuBaseDir, *it);
 	}
-
 
 	m_tStepSize = prj.m_tStepStart;
 }

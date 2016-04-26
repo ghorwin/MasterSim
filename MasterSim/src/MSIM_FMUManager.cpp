@@ -3,26 +3,12 @@
 #include <memory> // for std::autoptr
 #include <cstdlib>
 
+#include <miniunz.h>
+
 #include <IBK_messages.h>
+#include <IBK_Exception.h>
 
-#include "MSIM_FMUSlave.h"
-
-#include <fmilib.h>
-#include <FMI/fmi_zip_unzip.h>
-
-// FMI Library Callbacks
-
-void logger_callback(jm_callbacks* c, jm_string module, jm_log_level_enu_t log_level, jm_string message) {
-	switch(log_level) {
-		case jm_log_level_fatal:
-		case jm_log_level_error:
-			IBK::IBK_Message(IBK::FormatString("FMI-Error in Module '%1' at Log Level %2: %3")
-							 .arg(module).arg(log_level).arg(message), IBK::MSG_ERROR);
-			break;
-		default:
-			IBK::IBK_Message(IBK::FormatString("%1\n").arg(message), IBK::MSG_PROGRESS, module);
-	}
-}
+#include "MSIM_FMU.h"
 
 
 namespace MASTER_SIM {
@@ -36,14 +22,14 @@ FMUManager::FMUManager() :
 
 
 FMUManager::~FMUManager() {
-	for (std::vector<FMUObject*>::iterator it = m_fmus.begin(); it != m_fmus.end(); ++it) {
+	for (std::vector<FMU*>::iterator it = m_fmus.begin(); it != m_fmus.end(); ++it) {
 		delete *it;
 	}
 	m_fmus.clear();
 }
 
 
-FMUObject * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath) {
+FMU * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath) {
 	const char * const FUNC_ID = "[FMUManager::importFMU]";
 	// generate unique file path
 	IBK::Path extractionPath = generateFilePath(fmuBaseDirectory, fmuFilePath);
@@ -54,7 +40,7 @@ FMUObject * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK:
 }
 
 
-FMUObject * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath,
+FMU * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath,
 								  const IBK::Path & unzipPath)
 {
 	const char * const FUNC_ID = "[FMUManager::importFMU]";
@@ -66,26 +52,7 @@ FMUObject * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK:
 		}
 
 		// extract FMU into target directory
-
-		// set call back functions for FMI library
-		jm_callbacks callbacks;
-		callbacks.malloc = malloc;
-		callbacks.calloc = calloc;
-		callbacks.realloc = realloc;
-		callbacks.free = free;
-		callbacks.logger = logger_callback;
-		if (m_debugLogging)
-			callbacks.log_level = jm_log_level_debug;
-		else
-			callbacks.log_level = jm_log_level_error;
-		callbacks.context = NULL;
-
-		// unzip FMU
-		jm_status_enu_t status = fmi_zip_unzip(fmuFilePath.str().c_str(), unzipPath.str().c_str(), &callbacks);
-		if (status == jm_status_error) {
-			IBK::IBK_Message("Error uncompressing FMU file.", IBK::MSG_ERROR);
-			return false;
-		}
+		unzipFMU(fmuFilePath, unzipPath);
 	}
 
 	/// \todo sanity checks:
@@ -117,6 +84,25 @@ IBK::Path FMUManager::generateFilePath(const IBK::Path & fmuBaseDirectory, const
 	}
 
 	return p;
+}
+
+
+void FMUManager::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath) {
+	const char * const FUNC_ID = "[FMUManager::unzipFMU]";
+	const char *argv[6];
+	argv[0]="miniunz";
+	argv[1]="-x";
+	argv[2]="-o";
+	argv[3]=pathToFMU.str().c_str();
+	argv[4]="-d";
+	argv[5]=extractionPath.str().c_str();
+
+	if (!IBK::Path::makePath(extractionPath))
+		throw IBK::Exception(IBK::FormatString("Cannot create extraction path '%1'").arg(extractionPath), FUNC_ID);
+
+	int res = miniunz(6, (char**)argv);
+	if (res != 0)
+		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
 }
 
 } // namespace MASTER_SIM

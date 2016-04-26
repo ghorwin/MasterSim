@@ -11,6 +11,8 @@
 #include <MSIM_ArgParser.h>
 #include <MSIM_Constants.h>
 
+void setupLogFile(const MASTER_SIM::ArgParser & parser);
+
 int main(int argc, char * argv[]) {
 	const char * const FUNC_ID = "[main]";
 
@@ -35,22 +37,8 @@ int main(int argc, char * argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		// setup directory structure
-		if (!parser.m_workingDir.exists() && !IBK::Path::makePath(parser.m_workingDir))
-			throw IBK::Exception(IBK::FormatString("Error creating working directory: '%1'").arg(parser.m_workingDir), FUNC_ID);
-
-		IBK::Path logPath = parser.m_workingDir / "log";
-		if (!logPath.exists() && !IBK::Path::makePath(parser.m_workingDir))
-			throw IBK::Exception(IBK::FormatString("Error creating log directory: '%1'").arg(logPath), FUNC_ID);
-
-		// and initialize log file
-		IBK::MessageHandler::setupUtf8Console();
-		IBK::MessageHandler * msgHandler = IBK::MessageHandlerRegistry::instance().messageHandler();
-		msgHandler->setConsoleVerbosityLevel(parser.m_verbosityLevel);
-		IBK::Path logFile = logPath / "screenlog.txt";
-		std::string errmsg;
-		if (!msgHandler->openLogFile(logFile.str(), false, errmsg))
-			std::cerr << "Cannot write log file '" << logFile.str() << "'." << std::endl;
+		// setup directory structure and initialize log file
+		setupLogFile(parser);
 
 		// instantiate project
 		MASTER_SIM::Project project;
@@ -92,3 +80,22 @@ int main(int argc, char * argv[]) {
 }
 
 
+void setupLogFile(const MASTER_SIM::ArgParser & parser) {
+	const char * const FUNC_ID = "[setupLogFile]";
+	// setup directory structure
+	if (!parser.m_workingDir.exists() && !IBK::Path::makePath(parser.m_workingDir))
+		throw IBK::Exception(IBK::FormatString("Error creating working directory: '%1'").arg(parser.m_workingDir), FUNC_ID);
+
+	IBK::Path logPath = parser.m_workingDir / "log";
+	if (!logPath.exists() && !IBK::Path::makePath(logPath))
+		throw IBK::Exception(IBK::FormatString("Error creating log directory: '%1'").arg(logPath), FUNC_ID);
+
+	// and initialize log file
+	IBK::MessageHandler::setupUtf8Console();
+	IBK::MessageHandler * msgHandler = IBK::MessageHandlerRegistry::instance().messageHandler();
+	msgHandler->setConsoleVerbosityLevel(parser.m_verbosityLevel);
+	IBK::Path logFile = logPath / "screenlog.txt";
+	std::string errmsg;
+	if (!msgHandler->openLogFile(logFile.str(), false, errmsg))
+		std::cerr << "Cannot write log file '" << logFile.str() << "'." << std::endl;
+}
