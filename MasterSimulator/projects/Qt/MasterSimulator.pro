@@ -30,8 +30,20 @@ else {
 LIBS += -L../../../externals/lib \
 	-L../../../lib \
 	-lMasterSim \
+	-lfmilib \
+	-ljmutils \
+	-lfmizip \
+#	-lfmicapi \
 	-lDataIO \
 	-lIBK
+
+unix {
+	LIBS += -L../../../externals/FMILibrary/lib_linux64
+}
+
+win32 {
+	LIBS += -L../../../externals/FMILibrary/lib_win32
+}
 
 INCLUDEPATH = \
 	../../../MasterSim/src \
