@@ -17,7 +17,7 @@ void Project::read(const IBK::Path & prjFile) {
 	const char * const FUNC_ID = "[Project::read]";
 
 	std::ifstream in;
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 	in.open(prjFile.wstr().c_str());
 #else
 	in.open(prjFile.str().c_str());
