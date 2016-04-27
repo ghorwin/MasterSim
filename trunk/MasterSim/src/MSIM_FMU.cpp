@@ -97,8 +97,11 @@ public:
 	/*! Destructor, cleans up memory. */
 	~FMUPrivate();
 
-	/*! This imports the function pointers from the DLL. */
-	void import(const IBK::Path & fmuPath);
+	/*! This imports the function pointers from the DLL.
+		\param modelIdentifier ID name of model (used to compose file name of shared library)
+		\param fmuDir Directory where FMU archive was extracted in.
+	*/
+	void import(const std::string & modelIdentifier, const IBK::Path & fmuDir);
 
 
 	/*! Function pointers to all functions provided by FMI v2. */
@@ -125,10 +128,10 @@ FMUPrivate::~FMUPrivate() {
 #endif
 }
 
-void FMUPrivate::import(const IBK::Path & fmuPath) {
+void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & fmuDir) {
 	const char * const FUNC_ID = "[FMUPrivate::import]";
-	if (!fmuPath.exists())
-		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(fmuPath), FUNC_ID);
+	if (!fmuDir.exists())
+		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(fmuDir), FUNC_ID);
 
 	// compose platform specific dll name
 
@@ -148,18 +151,25 @@ void FMUPrivate::import(const IBK::Path & fmuPath) {
 							 .arg(fmuPath).arg(GetLastErrorStdStr()), FUNC_ID);
 	}
 #else
-	m_soHandle = dlopen( fmuPath.str().c_str(), RTLD_LAZY );
+	IBK::Path soPath = fmuDir / FMU::binarySubDirectory() / modelIdentifier;
+	soPath.addExtension(".so");
+
+	m_soHandle = dlopen( soPath.str().c_str(), RTLD_LAZY );
 
 	if (m_soHandle == NULL) {
-		throw IBK::Exception(IBK::FormatString("Cannot load shared library '%1': %2")
-							 .arg(fmuPath).arg(dlerror()), FUNC_ID);
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
+							 .arg(dlerror()).arg(fmuDir), FUNC_ID);
 	}
 #endif
+	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 }
 
 // ------------------------------------------------------------------------
 
-FMU::FMU() : m_impl(new FMUPrivate)
+FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
+	m_fmuFilePath(fmuFilePath),
+	m_fmuDir(fmuDir),
+	m_impl(new FMUPrivate)
 {
 }
 
@@ -170,15 +180,13 @@ FMU::~FMU() {
 
 
 
-void FMU::import(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) {
-	m_fmuFilePath = fmuFilePath;
-	m_fmuDir = fmuDir;
-	m_impl->import(fmuDir);
+void FMU::import() {
+	m_impl->import(m_modelIdentifier, m_fmuDir);
 }
 
 
 void FMU::readModelDescription() {
-
+	m_modelIdentifier = "TheraklesFMI2";
 }
 
 
@@ -198,6 +206,29 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 	int res = miniunz(6, (char**)argv);
 	if (res != 0)
 		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
+}
+
+
+IBK::Path FMU::binarySubDirectory() {
+#ifdef _WIN32
+
+#ifdef _WIN64
+	return IBK::Path("binaries/win64");
+#else
+	return IBK::Path("binaries/win32");
+#endif
+
+#elif defined(__APPLE__)
+	if (sizeof(void*) == 8)
+		return IBK::Path("binaries/darwin64");
+	else
+		return IBK::Path("binaries/darwin32");
+#else
+	if (sizeof(void*) == 8)
+		return IBK::Path("binaries/linux64");
+	else
+		return IBK::Path("binaries/linux32");
+#endif
 }
 
 
