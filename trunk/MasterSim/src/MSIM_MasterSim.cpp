@@ -31,7 +31,7 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	}
 
 	m_fmuManager.m_unzipFMUs = !args.flagEnabled("skip-unzip");
-	IBK::Path fmuBaseDir = args.m_workingDir / IBK::Path("fmus");
+	IBK::Path fmuBaseDir = (args.m_workingDir / IBK::Path("fmus")).absolutePath();
 	if (!fmuBaseDir.exists() && !IBK::Path::makePath(fmuBaseDir))
 		throw IBK::Exception(IBK::FormatString("Error creating fmu extraction base directory: '%1'").arg(fmuBaseDir), FUNC_ID);
 

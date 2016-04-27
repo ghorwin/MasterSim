@@ -1,6 +1,7 @@
 #include "MSIM_FMU.h"
 
 #include <cstdlib>
+#include <iostream>
 
 // shared library loading on Unix systems
 #if defined(_WIN32)
@@ -159,16 +160,17 @@ void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & f
 #if defined(_WIN32)
 	sharedLibraryPath.addExtension(".dll");
 	// use wide-char version of LoadLibrary
-	m_dllHandle = LoadLibraryW( sharedLibraryPath.wstr().c_str() );
+	std::wstring dllPath = sharedLibraryPath.wstr();
+	m_dllHandle = LoadLibraryW( dllPath.c_str() );
 
-	if ( m_dllHandle != 0 ) {
+	if ( m_dllHandle == 0 ) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
 							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
 	}
 #else
 	sharedLibraryPath.addExtension(".so");
 
-	m_soHandle = dlopen( sharedLibraryPath.str().c_str(), RTLD_LAZY );
+	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
 
 	if (m_soHandle == NULL) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
@@ -214,14 +216,17 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 	argv[0]="miniunz";
 	argv[1]="-x";
 	argv[2]="-o";
-	argv[3]=pathToFMU.str().c_str();
+	argv[3]=pathToFMU.c_str();
 	argv[4]="-d";
-	argv[5]=extractionPath.str().c_str();
+	argv[5]=extractionPath.c_str();
 
 	if (!IBK::Path::makePath(extractionPath))
 		throw IBK::Exception(IBK::FormatString("Cannot create extraction path '%1'").arg(extractionPath), FUNC_ID);
 
+	// Mind: miniunz changes the current working directory
+	IBK::Path currentWd = IBK::Path::current();
 	int res = miniunz(6, (char**)argv);
+	IBK::Path::setCurrent(currentWd); // reset working directory
 	if (res != 0)
 		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
 }
