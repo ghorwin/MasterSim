@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -308,7 +308,7 @@ const double * DataIO::data(unsigned int time_idx) const {
 		else {
 #ifndef READ_FULL_FILE
 			// open output file
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 			std::ifstream in(m_filename.wstr().c_str(), std::ios_base::binary);
 #else // _WIN32
 			std::ifstream in(m_filename.str().c_str(), std::ios_base::binary);
@@ -542,7 +542,7 @@ void DataIO::writeHeader() const {
 	}
 
 	// create output file stream
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 	m_ofstream = new std::ofstream(m_filename.wstr().c_str(), std::ios_base::binary);
 #else // _WIN32
 	m_ofstream = new std::ofstream(m_filename.str().c_str(), std::ios_base::binary);
@@ -695,14 +695,14 @@ void DataIO::reopenForWriting(const IBK::Path &fname) {
 	// reopen file and attempt to read header
 
 	if (m_isBinary) {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 		m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::binary | std::ios_base::app);
 #else
 		m_ofstream = new std::ofstream(fname.str().c_str(), std::ios_base::binary | std::ios_base::app);
 #endif
 	}
 	else {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 		m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::app);
 #else
 		m_ofstream = new std::ofstream(fname.str().c_str(), std::ios_base::app);
@@ -946,7 +946,7 @@ void DataIO::openAndReadHeader(const IBK::Path & fname, std::ifstream & in, IBK:
 	IBK::Path fname_tmp = fname;
 
 	// open file in binary mode and determine file size
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(__MINGW32__)
 	in.open(fname_tmp.wstr().c_str(), std::ios_base::binary);
 #else
 	in.open(fname_tmp.str().c_str(), std::ios_base::binary);
