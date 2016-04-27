@@ -43,7 +43,9 @@ SOURCES += \
 	../../src/MSIM_Constants.cpp \
 	../../src/MSIM_FMUManager.cpp \
 	../../src/MSIM_FMUSlave.cpp \
-    ../../src/MSIM_FMU.cpp
+    ../../src/MSIM_FMU.cpp \
+    ../../src/MSIM_ModelDescription.cpp \
+    ../../src/ModelDescription.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -53,4 +55,6 @@ HEADERS += \
 	../../src/MSIM_Constants.h \
 	../../src/MSIM_FMUManager.h \
 	../../src/MSIM_FMUSlave.h \
-    ../../src/MSIM_FMU.h
+    ../../src/MSIM_FMU.h \
+    ../../src/MSIM_ModelDescription.h \
+    ../../src/ModelDescription.h

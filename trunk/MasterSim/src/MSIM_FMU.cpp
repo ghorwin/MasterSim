@@ -166,6 +166,9 @@ void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & f
 
 // ------------------------------------------------------------------------
 
+// **** Class FMU Implementation ****
+
+
 FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuFilePath(fmuFilePath),
 	m_fmuDir(fmuDir),
@@ -179,16 +182,17 @@ FMU::~FMU() {
 }
 
 
+void FMU::readModelDescription() {
+	m_modelDescription.parseModelDescription(m_fmuDir / "modelDescription.xml");
+}
+
 
 void FMU::import() {
-	m_impl->import(m_modelIdentifier, m_fmuDir);
+	m_impl->import(m_modelDescription.m_csModelIdentifier, m_fmuDir);
 }
 
 
-void FMU::readModelDescription() {
-	m_modelIdentifier = "TheraklesFMI2";
-}
-
+// **** STATIC FUNCTIONS ****
 
 void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath) {
 	const char * const FUNC_ID = "[FMU::unzipFMU]";

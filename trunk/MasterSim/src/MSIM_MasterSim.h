@@ -10,6 +10,8 @@
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
 
+/*! Main class of the library.
+*/
 class MasterSimulator {
 public:
 	MasterSimulator();
