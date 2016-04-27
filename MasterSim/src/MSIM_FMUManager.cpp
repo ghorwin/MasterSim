@@ -3,7 +3,6 @@
 #include <memory> // for std::autoptr
 #include <cstdlib>
 
-#include <miniunz.h>
 
 #include <IBK_messages.h>
 #include <IBK_Exception.h>
@@ -29,21 +28,19 @@ FMUManager::~FMUManager() {
 }
 
 
-FMU * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath) {
+void FMUManager::importFMU(const IBK::Path & fmuTargetDirectory, const IBK::Path & fmuFilePath) {
 	const char * const FUNC_ID = "[FMUManager::importFMU]";
 	// generate unique file path
-	IBK::Path extractionPath = generateFilePath(fmuBaseDirectory, fmuFilePath);
+	IBK::Path extractionPath = generateFilePath(fmuTargetDirectory, fmuFilePath);
 	IBK::IBK_Message(IBK::FormatString("Importing FMU: %1\n").arg(fmuFilePath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 
-	return importFMU(fmuBaseDirectory, fmuFilePath, extractionPath);
+	importFMUAt(fmuFilePath, extractionPath);
 }
 
 
-FMU * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath,
-								  const IBK::Path & unzipPath)
-{
-	const char * const FUNC_ID = "[FMUManager::importFMU]";
+void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & unzipPath) {
+	const char * const FUNC_ID = "[FMUManager::importFMUAt]";
 	if (m_unzipFMUs) {
 		IBK::IBK_Message(IBK::FormatString("Unzipping into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		// check if target directory exists
@@ -52,14 +49,28 @@ FMU * FMUManager::importFMU(const IBK::Path & fmuBaseDirectory, const IBK::Path 
 		}
 
 		// extract FMU into target directory
-		unzipFMU(fmuFilePath, unzipPath);
+		FMU::unzipFMU(fmuFilePath, unzipPath);
 	}
 
-	/// \todo sanity checks:
-	///   dll/shared lib for current platform available
-	///   ModelDescription.xml available
+	// create FMU instance
+	std::auto_ptr<FMU> fmu(new FMU());
 
-	return NULL;
+	// Import dll/shared lib for current platform
+	fmu->import(fmuFilePath, unzipPath);
+
+	// parse modelDescription.xml
+	fmu->readModelDescription();
+}
+
+
+FMU * FMUManager::fmuByPath(const IBK::Path & fmuFilePath) {
+	const char * const FUNC_ID = "[FMUManager::fmuByPath]";
+	for (unsigned int i=0; i<m_fmus.size(); ++i) {
+		if (m_fmus[i]->m_fmuFilePath == fmuFilePath) {
+			return m_fmus[i];
+		}
+	}
+	throw IBK::Exception(IBK::FormatString("FMU with file path '%1' has not been imported, yet.").arg(fmuFilePath), FUNC_ID);
 }
 
 
@@ -73,7 +84,7 @@ IBK::Path FMUManager::generateFilePath(const IBK::Path & fmuBaseDirectory, const
 	while (found) {
 		found = false;
 		for (unsigned int i=0; i<m_fmus.size(); ++i) {
-			if (m_fmus[i]->m_fmuUnzipDirectory == p) {
+			if (m_fmus[i]->m_fmuDir == p) {
 				found = true;
 				break;
 			}
@@ -87,23 +98,6 @@ IBK::Path FMUManager::generateFilePath(const IBK::Path & fmuBaseDirectory, const
 }
 
 
-void FMUManager::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath) {
-	const char * const FUNC_ID = "[FMUManager::unzipFMU]";
-	const char *argv[6];
-	argv[0]="miniunz";
-	argv[1]="-x";
-	argv[2]="-o";
-	argv[3]=pathToFMU.str().c_str();
-	argv[4]="-d";
-	argv[5]=extractionPath.str().c_str();
-
-	if (!IBK::Path::makePath(extractionPath))
-		throw IBK::Exception(IBK::FormatString("Cannot create extraction path '%1'").arg(extractionPath), FUNC_ID);
-
-	int res = miniunz(6, (char**)argv);
-	if (res != 0)
-		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
-}
 
 } // namespace MASTER_SIM
 
