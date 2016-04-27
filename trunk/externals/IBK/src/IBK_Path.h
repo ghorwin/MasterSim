@@ -112,11 +112,30 @@ public:
 		The returning string is UTF8 encoded.
 		\note Use this function to retrieve a path representation suitable for serialization.
 			  An IBK::Path can be reconstructed from this string.
+		\warning Using str().c_str() may cause undefined behavior with some compilers like VC.
+		\code
+		IBK::Path p;
+
+		const char * s = p.str().c_str(); // looks ok, but can be bad
+		// p.str() returns an unnamed copy of the internal string say x
+		// x.c_str() returns a pointer to the memory occupied by this unnamed pointer
+		// when you now copy this pointer and do NOT evaluate it directly (e.g. in a string constructor)
+		// the temporary string x goes out of scope and you access released memory
+
+		\endcode
 	*/
 	std::string str() const;
 
+	/*! Returns a pointer to the start of the internal string representation. 
+		This pointer is valid as long as the path is not modified.
+	*/
+	const char * const c_str() const { return &m_path[0]; }
+
 #if defined(_WIN32)
-	/*! Returns the current path as string.*/
+	/*! Returns the current path as string.
+		\note If you need a raw pointer to this string, make sure to keep the copy of this string
+		as long as you need the pointer.
+	*/
 	std::wstring wstr() const;
 
 	/*! Returns the current path as string.
