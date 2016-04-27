@@ -3,6 +3,9 @@
 
 #include <IBK_Path.h>
 
+
+#include "MSIM_ModelDescription.h"
+
 namespace MASTER_SIM {
 
 class FMUPrivate;
@@ -32,14 +35,13 @@ public:
 
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
-	IBK::Path	m_fmuFilePath;
+	IBK::Path			m_fmuFilePath;
 	/*! Directory where FMU was extracted to (also absolute file path). */
-	IBK::Path	m_fmuDir;
+	IBK::Path			m_fmuDir;
 
-	// modelDescription.xml content
+	/*! Content of model description. */
+	ModelDescription	m_modelDescription;
 
-	/*! Model identifier, currently always CoSimulation.modelIdentifier. */
-	std::string	m_modelIdentifier;
 
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
