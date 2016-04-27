@@ -107,7 +107,7 @@ public:
 	/*! Function pointers to all functions provided by FMI v2. */
 	FMI2FunctionSet		m_fmi2Functions;
 
-#if Q_OS_WIN
+#if defined(_WIN32)
 	HMODULE				m_dllHandle; // fmu.dll handle
 #else
 	void				*m_soHandle;
@@ -116,10 +116,7 @@ public:
 
 
 FMUPrivate::~FMUPrivate() {
-#if defined(MINGW)
-	if (m_dllHandle != 0)
-		FreeLibrary( m_dllHandle );
-#elif defined(_MSC_VER)
+#if defined(_WIN32)
 	if (m_dllHandle != 0)
 		FreeLibrary( m_dllHandle );
 #else

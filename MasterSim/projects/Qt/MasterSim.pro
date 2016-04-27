@@ -27,8 +27,8 @@ INCLUDEPATH = \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src
 
-WIN32 {
-	INCLUDEPATH += c:\boost\boost_1_60_0
+win32 {
+	INCLUDEPATH += c:\boost\boost_1_56_0
 }
 
 LIBS += -L../../../externals/lib
