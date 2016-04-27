@@ -38,6 +38,10 @@ SOURCES += \
   ../../src/unzip.c \
   ../../src/zip.c
 
+win32 {
+	SOURCES += ../../src/iowin32.c
+}
+
 HEADERS += \
 	../../src/crypt.h \
 	../../src/ioapi.h \
