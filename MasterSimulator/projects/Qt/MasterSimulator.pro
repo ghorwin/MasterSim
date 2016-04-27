@@ -28,11 +28,9 @@ else {
 }
 
 unix {
-#	LIBS += -L../../../externals/FMILibrary/lib_linux64
 }
 
 win32 {
-#	LIBS += -L../../../externals/FMILibrary/lib_win32
 }
 
 LIBS += -L../../../externals/lib \
@@ -42,9 +40,12 @@ LIBS += -L../../../externals/lib \
 	-lminizip \
 	-lexpat \
 	-lz \
-	-ldl \
 	-lDataIO \
 	-lIBK
+
+unix {
+	LIBS += -ldl
+}
 
 INCLUDEPATH = \
 	../../../MasterSim/src \
