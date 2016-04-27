@@ -53,13 +53,14 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	}
 
 	// create FMU instance
-	std::auto_ptr<FMU> fmu(new FMU());
+	std::auto_ptr<FMU> fmu(new FMU(fmuFilePath, unzipPath));
+
+	// parse modelDescription.xml so that we get the model identifyer
+	fmu->readModelDescription();
 
 	// Import dll/shared lib for current platform
-	fmu->import(fmuFilePath, unzipPath);
+	fmu->import();
 
-	// parse modelDescription.xml
-	fmu->readModelDescription();
 }
 
 

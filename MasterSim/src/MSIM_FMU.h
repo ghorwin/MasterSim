@@ -10,26 +10,36 @@ class FMUPrivate;
 /*! Holds all data about an imported FMU. */
 class FMU {
 public:
-	/*! Default constructor. */
-	FMU();
-	/*! Destructor, releases loaded shared library. */
-	~FMU();
-
-	/*! This function imports the FMU, loads dynamic library, imports function pointers, reads model description.
-		Throws an IBK::Exception in case of any error.
+	/*! Default constructor.
 		\param fmuFilePath Path to FMU archive file, not needed for importing since FMU is expected to be extracted already,
 			but the file path serves as unique identification of an FMU file (file path must be unique).
 		\param fmuDir Path where FMU had been extracted to, must hold the modelDescription.xml file.
 	*/
-	void import(const IBK::Path & fmuFilePath, const IBK::Path & fmuDir);
+	FMU(const IBK::Path & fmuFilePath, const IBK::Path & fmuDir);
+	/*! Destructor, releases loaded shared library. */
+	~FMU();
 
-	/*! Reads model description file. */
+	/*! Reads model description file.
+		This function should be called before import, so that the model identifier is known (same as file name of
+		shared library).
+	*/
 	void readModelDescription();
 
-	/*! File path to FMU as referenced in project file. */
+	/*! This function imports the FMU, loads dynamic library, imports function pointers, reads model description.
+		Throws an IBK::Exception in case of any error.
+	*/
+	void import();
+
+
+	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path	m_fmuFilePath;
-	/*! Directory where FMU was extracted to. */
+	/*! Directory where FMU was extracted to (also absolute file path). */
 	IBK::Path	m_fmuDir;
+
+	// modelDescription.xml content
+
+	/*! Model identifier, currently always CoSimulation.modelIdentifier. */
+	std::string	m_modelIdentifier;
 
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
@@ -37,6 +47,9 @@ public:
 		\param extractionPath Directory to extract contents of FMU in, must exist.
 	*/
 	static void unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath);
+
+	/*! Composes the shared library directory for the current platform. */
+	static IBK::Path binarySubDirectory();
 
 private:
 	/*! Disable copy. */
