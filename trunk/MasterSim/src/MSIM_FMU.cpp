@@ -2,6 +2,13 @@
 
 #include <cstdlib>
 
+// shared library loading on Unix systems
+#if defined(_WIN32)
+
+#else
+  #include <dlfcn.h>
+#endif // defined(_WIN32)
+
 #include <miniunz.h>
 
 #include <IBK_Exception.h>
@@ -11,6 +18,10 @@
 
 
 namespace MASTER_SIM {
+
+#if defined(_WIN32)
+	std::string GetLastErrorStdStr();
+#endif //
 
 /*! Implementation class for the FMU interface, hides all details about
 	loading and interfacing an FMU.
@@ -83,14 +94,11 @@ public:
 	{
 	}
 
-	~FMUPrivate() {
-		// release memory
-	}
+	/*! Destructor, cleans up memory. */
+	~FMUPrivate();
 
 	/*! This imports the function pointers from the DLL. */
-	void import(const IBK::Path & fmuPath) {
-
-	}
+	void import(const IBK::Path & fmuPath);
 
 
 	/*! Function pointers to all functions provided by FMI v2. */
@@ -101,9 +109,53 @@ public:
 #else
 	void				*m_soHandle;
 #endif
-
-
 };
+
+
+FMUPrivate::~FMUPrivate() {
+#if defined(MINGW)
+	if (m_dllHandle != 0)
+		FreeLibrary( m_dllHandle );
+#elif defined(_MSC_VER)
+	if (m_dllHandle != 0)
+		FreeLibrary( m_dllHandle );
+#else
+	if (m_soHandle != NULL)
+		dlclose( m_soHandle );
+#endif
+}
+
+void FMUPrivate::import(const IBK::Path & fmuPath) {
+	const char * const FUNC_ID = "[FMUPrivate::import]";
+	if (!fmuPath.exists())
+		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(fmuPath), FUNC_ID);
+
+	// compose platform specific dll name
+
+	// load DLL
+#if defined(MINGW) || defined(_MSC_VER)
+#if defined(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)
+	/// \todo check UTF8 path rules here or use wide-char version of LoadLibrary
+	// Used instead of LoadLibrary to include the DLL's directory in dependency
+	// lookups. The flags require KB2533623 to be installed.
+	m_dllHandle = LoadLibraryEx( fmuPath.str().c_str(), NULL,
+		LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR );
+#else
+	m_dllHandle = LoadLibrary( fmuPath.str().c_str() );
+#endif
+	if ( m_dllHandle != 0 ) {
+		throw IBK::Exception(IBK::FormatString("Cannot load DLL '%1': %2")
+							 .arg(fmuPath).arg(GetLastErrorStdStr()), FUNC_ID);
+	}
+#else
+	m_soHandle = dlopen( fmuPath.str().c_str(), RTLD_LAZY );
+
+	if (m_soHandle == NULL) {
+		throw IBK::Exception(IBK::FormatString("Cannot load shared library '%1': %2")
+							 .arg(fmuPath).arg(dlerror()), FUNC_ID);
+	}
+#endif
+}
 
 // ------------------------------------------------------------------------
 
@@ -115,6 +167,7 @@ FMU::FMU() : m_impl(new FMUPrivate)
 FMU::~FMU() {
 	delete m_impl;
 }
+
 
 
 void FMU::import(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) {
@@ -147,5 +200,37 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
 }
 
+
+#if defined(_WIN32)
+// Create a string with last error message
+// taken from http://www.codeproject.com/Tips/479880/GetLastError-as-std-string
+// BSD License, thanks to Orjan Westin
+std::string GetLastErrorStdStr() {
+  DWORD error = GetLastError();
+  if (error)
+  {
+	LPVOID lpMsgBuf;
+	DWORD bufLen = FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM |
+		FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL,
+		error,
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR) &lpMsgBuf,
+		0, NULL );
+	if (bufLen)
+	{
+	  LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+	  std::string result(lpMsgStr, lpMsgStr+bufLen);
+
+	  LocalFree(lpMsgBuf);
+
+	  return result;
+	}
+  }
+  return std::string();
+}
+#endif
 
 } // namespace MASTER_SIM
