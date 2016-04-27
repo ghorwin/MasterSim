@@ -28,7 +28,12 @@ if(CMAKE_COMPILER_IS_GNUCC)
   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 endif()
 
-include_directories(../../zlib/src)
+
+include_directories( 
+	${CMAKE_BINARY_DIR}/libz # add binary dir to include paths so that auto-generated zconf.h is found
+	${PROJECT_SOURCE_DIR}/../../../zlib/src
+) 
+
 set(SOURCE
   ${MINIZP_SRC}/ioapi.c
   ${MINIZP_SRC}/miniunz.c
