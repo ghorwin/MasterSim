@@ -30,8 +30,6 @@ ModelDescriptionAIT::ModelDescriptionAIT() {
 
 
 void ModelDescriptionAIT::read( const string& xmlDescriptionFilePath ) {
-	/// \FIXME Before parsing, it should be checked whether the file exists!
-
 	try {
 		using namespace boost::property_tree::xml_parser;
 		read_xml( xmlDescriptionFilePath, data_, trim_whitespace | no_comments );

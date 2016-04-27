@@ -158,15 +158,9 @@ void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & f
 	// load DLL
 #if defined(_WIN32)
 	sharedLibraryPath.addExtension(".dll");
-#if defined(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)
-	// Used instead of LoadLibrary to include the DLL's directory in dependency
-	// lookups. The flags require KB2533623 to be installed.
-	m_dllHandle = LoadLibraryEx( sharedLibraryPath.wstr().c_str(), NULL,
-		LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR );
-#else
 	// use wide-char version of LoadLibrary
-	m_dllHandle = LoadLibrary( sharedLibraryPath.wstr().c_str() );
-#endif
+	m_dllHandle = LoadLibraryW( sharedLibraryPath.wstr().c_str() );
+
 	if ( m_dllHandle != 0 ) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
 							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
