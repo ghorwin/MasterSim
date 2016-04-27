@@ -6,3 +6,5 @@ updating these binary files too often.
 The extracted source code of the libraries needs to be placed in
 the *externals* subdirectory. See readme file in this directory.
 
+Some of the libraries are only source for code portions, that were used
+in the MasterSim library.
