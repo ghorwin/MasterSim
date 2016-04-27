@@ -16,10 +16,12 @@ include( ../../../IBK/projects/Qt/IBK.pri )
 # This MUST be done after pri is included
 TEMPLATE = lib
 
+# finally we setup our custom library specific things
+# like version number etc., we also may reset all
 unix|mac {
 	VER_MAJ = 1
-	VER_MIN = 0
-	VER_PAT = 0
+	VER_MIN = 2
+	VER_PAT = 5
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
@@ -37,12 +39,12 @@ SOURCES += \
   ../../src/zip.c
 
 HEADERS += \
-    ../../src/crypt.h \
-    ../../src/ioapi.h \
-    ../../src/miniunz.h \
-    ../../src/minizip.h \
-    ../../src/mztools.h \
-    ../../src/unzip.h \
-    ../../src/zip.h
+	../../src/crypt.h \
+	../../src/ioapi.h \
+	../../src/miniunz.h \
+	../../src/minizip.h \
+	../../src/mztools.h \
+	../../src/unzip.h \
+	../../src/zip.h
 
 
