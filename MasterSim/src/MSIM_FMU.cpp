@@ -160,8 +160,8 @@ void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & f
 #if defined(_WIN32)
 	sharedLibraryPath.addExtension(".dll");
 	// use wide-char version of LoadLibrary
-	std::wstring dllPath = sharedLibraryPath.wstr();
-	m_dllHandle = LoadLibraryW( dllPath.c_str() );
+	std::wstring dllPath = sharedLibraryPath.wstrOS();
+	m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
 
 	if ( m_dllHandle == 0 ) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
