@@ -5,8 +5,30 @@
 // shared library loading on Unix systems
 #if defined(_WIN32)
 
+#if defined(__MINGW32__)
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#elif defined(_MSC_VER) // Definitions specific for MS Visual Studio (Visual C/C++).
+
+#pragma warning( disable : 4251 ) /// \FIXME Is this really a good idea? What about the solutions suggested in http://www.unknownroad.com/rtfm/VisualStudio/warningC4251.html ???
+#pragma warning( disable : 4482 ) // This is a warning about scoping of enums. It is valid C++11 syntax, though.
+#pragma message( "ATTENTION: Warnings 4251 and 4482 have been disabled." )
+
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#include <errno.h>
+
 #else
-  #include <dlfcn.h>
+	#error Windows compiler includes needs to be configured here
+#endif
+
+#else  // defined(_WIN32)
+
+	/* See http://www.yolinux.com/TUTORIALS/LibraryArchives-StaticAndDynamic.html */
+	#include <dlfcn.h>
 #endif // defined(_WIN32)
 
 #include <miniunz.h>
@@ -86,7 +108,7 @@ public:
 	};
 
 	FMUPrivate() :
-#if Q_OS_WIN
+#if defined(_WIN32)
 		m_dllHandle(0)
 #else
 		m_soHandle(NULL)
@@ -131,27 +153,28 @@ void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & f
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(fmuDir), FUNC_ID);
 
 	// compose platform specific dll name
+	IBK::Path sharedLibraryPath = fmuDir / FMU::binarySubDirectory() / modelIdentifier;
 
 	// load DLL
-#if defined(MINGW) || defined(_MSC_VER)
+#if defined(_WIN32)
+	sharedLibraryPath.addExtension(".dll");
 #if defined(LOAD_LIBRARY_SEARCH_DEFAULT_DIRS)
-	/// \todo check UTF8 path rules here or use wide-char version of LoadLibrary
 	// Used instead of LoadLibrary to include the DLL's directory in dependency
 	// lookups. The flags require KB2533623 to be installed.
-	m_dllHandle = LoadLibraryEx( fmuPath.str().c_str(), NULL,
+	m_dllHandle = LoadLibraryEx( sharedLibraryPath.wstr().c_str(), NULL,
 		LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR );
 #else
-	m_dllHandle = LoadLibrary( fmuPath.str().c_str() );
+	// use wide-char version of LoadLibrary
+	m_dllHandle = LoadLibrary( sharedLibraryPath.wstr().c_str() );
 #endif
 	if ( m_dllHandle != 0 ) {
-		throw IBK::Exception(IBK::FormatString("Cannot load DLL '%1': %2")
-							 .arg(fmuPath).arg(GetLastErrorStdStr()), FUNC_ID);
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
+							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
 	}
 #else
-	IBK::Path soPath = fmuDir / FMU::binarySubDirectory() / modelIdentifier;
-	soPath.addExtension(".so");
+	sharedLibraryPath.addExtension(".so");
 
-	m_soHandle = dlopen( soPath.str().c_str(), RTLD_LAZY );
+	m_soHandle = dlopen( sharedLibraryPath.str().c_str(), RTLD_LAZY );
 
 	if (m_soHandle == NULL) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
