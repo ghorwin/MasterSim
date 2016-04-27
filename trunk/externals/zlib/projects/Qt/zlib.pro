@@ -3,7 +3,7 @@
 # -------------------------------------------------
 
 # first we define what we are
-TARGET = zlib
+TARGET = z
 
 # this is the central configuration file for all IBK dependent libraries
 # we check if this file was created by our build tool helper python what ever
@@ -19,19 +19,18 @@ include( ../../../IBK/projects/Qt/IBK.pri )
 TEMPLATE = lib
 
 #zlib has special folder structure thus we override
-DESTDIR = ../../../lib
+#DESTDIR = ../../../lib
 
-# finally we setup our custom library specfic things
+# finally we setup our custom library specific things
 # like version number etc., we also may reset all
 unix|mac {
 	VER_MAJ = 1
-	VER_MIN = 0
-	VER_PAT = 0
+	VER_MIN = 2
+	VER_PAT = 8
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_AT}
 }
 
 INCLUDEPATH = \
-		../../src/contrib/minizip \
 		../../src/
 
 SOURCES += \
@@ -49,12 +48,7 @@ SOURCES += \
 	../../src/inffast.c \
 	../../src/trees.c \
 	../../src/uncompr.c \
-	../../src/zutil.c \
-	../../src/contrib/minizip/ioapi.c \
-	../../src/contrib/minizip/minizip.c \
-	../../src/contrib/minizip/mztools.c \
-	../../src/contrib/minizip/unzip.c \
-	../../src/contrib/minizip/zip.c
+	../../src/zutil.c
 
 HEADERS += \
 	../../src/crc32.h \
@@ -66,10 +60,4 @@ HEADERS += \
 	../../src/inftrees.h \
 	../../src/trees.h \
 	../../src/zlib.h \
-	../../src/zutil.h \
-	../../src/contrib/minizip/crypt.h \
-	../../src/contrib/minizip/ioapi.h \
-	../../src/contrib/minizip/iowin32.h \
-	../../src/contrib/minizip/mztools.h \
-	../../src/contrib/minizip/unzip.h \
-	../../src/contrib/minizip/zip.h
+	../../src/zutil.h

@@ -61,6 +61,8 @@ include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt )
 # -------------------------------------------------------------
 
 # add subdirectories for all builds
+add_subdirectory( ../../externals/zlib/src libz)
+add_subdirectory( ../../externals/minizip/projects/cmake_local minizip)
 add_subdirectory( ../../externals/IBK/projects/cmake_local IBK )
 add_subdirectory( ../../externals/DataIO/projects/cmake_local DataIO)
 add_subdirectory( ../../MasterSim/projects/cmake_local MasterSim)
