@@ -17,6 +17,8 @@ set( LINK_LIBS
 	MasterSim
 	DataIO
 	IBK
+	minizip
+	zlibstatic
 )
 
 add_executable( ${PROJECT_NAME}

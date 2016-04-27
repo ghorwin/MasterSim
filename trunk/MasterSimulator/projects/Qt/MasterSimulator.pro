@@ -36,9 +36,7 @@ win32 {
 LIBS += -L../../../externals/lib \
 	-L../../../lib \
 	-lMasterSim \
-	-lFMILibrary \
 	-lminizip \
-	-lexpat \
 	-lz \
 	-lDataIO \
 	-lIBK
