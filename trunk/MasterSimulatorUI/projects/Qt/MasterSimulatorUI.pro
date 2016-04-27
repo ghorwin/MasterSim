@@ -28,6 +28,8 @@ else {
 LIBS += -L../../../externals/lib \
 	-L../../../lib \
 	-lMasterSim \
+	-lminizip \
+	-lz \
 	-lDataIO \
 	-lIBK
 
