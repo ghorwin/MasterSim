@@ -46,10 +46,15 @@ FIND_PACKAGE( Qt4 )
 if( QT4_FOUND )
 
 	set( QT_USE_QTXML TRUE )
-
 	include( ${QT_USE_FILE} )
 
 endif( QT4_FOUND )
+
+find_package(Boost 1.54.0 COMPONENTS)
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS}) 
+endif(Boost_FOUND)
 
 # -------------------------------------------------------------
 # Support for build flags
