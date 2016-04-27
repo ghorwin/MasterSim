@@ -126,10 +126,10 @@ public:
 	*/
 	std::string str() const;
 
-	/*! Returns a pointer to the start of the internal string representation. 
+	/*! Returns a pointer to the start of the internal string representation.
 		This pointer is valid as long as the path is not modified.
 	*/
-	const char * const c_str() const { return &m_path[0]; }
+	const char * c_str() const { return &m_path[0]; }
 
 #if defined(_WIN32)
 	/*! Returns the current path as string.
