@@ -31,8 +31,7 @@ public:
 	/*! This function imports the FMU, loads dynamic library, imports function pointers, reads model description.
 		Throws an IBK::Exception in case of any error.
 	*/
-	void import();
-
+	void import(ModelDescription::FMUType fmu2import);
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
@@ -59,7 +58,7 @@ private:
 	/*! Disable assignment operator. */
 	FMU & operator=(const FMU &);
 
-	/*! Holds the actual implementation so that details of importing are hidden to user of class. */
+	/*! Holds the actual implementation and data so that details of importing are hidden to user of class. */
 	FMUPrivate	*m_impl;
 };
 

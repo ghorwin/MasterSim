@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <IBK_bitfield.h>
+
 // shared library loading on Unix systems
 #if defined(_WIN32)
 
@@ -124,8 +126,7 @@ public:
 		\param modelIdentifier ID name of model (used to compose file name of shared library)
 		\param fmuDir Directory where FMU archive was extracted in.
 	*/
-	void import(const std::string & modelIdentifier, const IBK::Path & fmuDir);
-
+	void import(ModelDescription::FMUType, const ModelDescription & modelIdentifier, const IBK::Path & fmuDir);
 
 	/*! Function pointers to all functions provided by FMI v2. */
 	FMI2FunctionSet		m_fmi2Functions;
@@ -146,38 +147,6 @@ FMUPrivate::~FMUPrivate() {
 	if (m_soHandle != NULL)
 		dlclose( m_soHandle );
 #endif
-}
-
-void FMUPrivate::import(const std::string & modelIdentifier, const IBK::Path & fmuDir) {
-	const char * const FUNC_ID = "[FMUPrivate::import]";
-	if (!fmuDir.exists())
-		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(fmuDir), FUNC_ID);
-
-	// compose platform specific dll name
-	IBK::Path sharedLibraryPath = fmuDir / FMU::binarySubDirectory() / modelIdentifier;
-
-	// load DLL
-#if defined(_WIN32)
-	sharedLibraryPath.addExtension(".dll");
-	// use wide-char version of LoadLibrary
-	std::wstring dllPath = sharedLibraryPath.wstrOS();
-	m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-
-	if ( m_dllHandle == 0 ) {
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
-							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
-	}
-#else
-	sharedLibraryPath.addExtension(".so");
-
-	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
-
-	if (m_soHandle == NULL) {
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
-							 .arg(dlerror()).arg(fmuDir), FUNC_ID);
-	}
-#endif
-	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 }
 
 // ------------------------------------------------------------------------
@@ -203,8 +172,50 @@ void FMU::readModelDescription() {
 }
 
 
-void FMU::import() {
-	m_impl->import(m_modelDescription.m_csModelIdentifier, m_fmuDir);
+void FMU::import(ModelDescription::FMUType fmu2import) {
+	const char * const FUNC_ID = "[FMU::import]";
+	if (!m_fmuDir.exists())
+		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(m_fmuDir), FUNC_ID);
+
+	// compose platform specific shared library name
+	IBK::Path sharedLibraryPath = m_fmuDir / FMU::binarySubDirectory();
+
+	// first check if selected FMU-type is provided by the FMU
+	if (!(m_modelDescription.m_availableTypes & fmu2import))
+		throw IBK::Exception("Requestion FMU type is not provided by the FMU.", FUNC_ID);
+
+	// append model identifier for selected model
+	switch (fmu2import) {
+		case ModelDescription::ME_v1 : sharedLibraryPath /= m_modelDescription.m_meV1ModelIdentifier;
+		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_csV1ModelIdentifier;
+		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier;
+		case ModelDescription::CS_v2 : sharedLibraryPath /= m_modelDescription.m_csV2ModelIdentifier;
+		default :
+			throw IBK::Exception("Invalid selection of model type (can only import a single FMU at a time).", FUNC_ID);
+	}
+
+	// load DLL
+#if defined(_WIN32)
+	sharedLibraryPath.addExtension(".dll");
+	// use wide-char version of LoadLibrary
+	std::wstring dllPath = sharedLibraryPath.wstrOS();
+	m_impl->m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+
+	if ( m_impl->m_dllHandle == 0 ) {
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
+							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
+	}
+#else
+	sharedLibraryPath.addExtension(".so");
+
+	m_impl->m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
+
+	if (m_impl->m_soHandle == NULL) {
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
+							 .arg(dlerror()).arg(m_fmuDir), FUNC_ID);
+	}
+#endif
+	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 }
 
 

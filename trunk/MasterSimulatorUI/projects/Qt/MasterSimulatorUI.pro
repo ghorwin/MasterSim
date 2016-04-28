@@ -31,7 +31,8 @@ LIBS += -L../../../externals/lib \
 	-lminizip \
 	-lz \
 	-lDataIO \
-	-lIBK
+	-lIBK \
+	-lTiCPP
 
 INCLUDEPATH = \
 	../../src \
