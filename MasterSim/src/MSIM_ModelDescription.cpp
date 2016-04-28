@@ -94,11 +94,15 @@ std::string ModelDescription::readRequiredAttribute(const TiXmlElement * xmlElem
 	return std::string(attrib);
 }
 
-bool ModelDescription::readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName) {
+bool ModelDescription::readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName, bool required) {
 	const char * const FUNC_ID = "[ModelDescription::readBoolAttribute]";
 	const char * attrib = xmlElem->Attribute(attribName);
-	if (attrib == NULL)
-		throw IBK::Exception( IBK::FormatString("Expected attribute '%1' in element '%2'.").arg(attribName).arg(xmlElem->ValueStr()), FUNC_ID);
+	if (attrib == NULL) {
+		if (required)
+			throw IBK::Exception( IBK::FormatString("Expected attribute '%1' in element '%2'.").arg(attribName).arg(xmlElem->ValueStr()), FUNC_ID);
+		else
+			return false;
+	}
 	std::string trueValue = attrib;
 	if (trueValue == "true")		return true;
 	else if (trueValue == "false")	return false;
