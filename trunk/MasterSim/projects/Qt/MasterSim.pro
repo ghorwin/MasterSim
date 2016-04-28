@@ -33,6 +33,7 @@ LIBS += -L../../../externals/lib
 LIBS += \
 	-lDataIO \
 	-lIBK \
+	-lTiCPP \
 	-lminizip \
 	-lz
 

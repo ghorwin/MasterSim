@@ -175,7 +175,7 @@ void FMU::readModelDescription() {
 void FMU::import(ModelDescription::FMUType fmu2import) {
 	const char * const FUNC_ID = "[FMU::import]";
 	if (!m_fmuDir.exists())
-		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(m_fmuDir), FUNC_ID);
+		throw IBK::Exception(IBK::FormatString("FMU directory '%1' does not exist.").arg(m_fmuDir), FUNC_ID);
 
 	// compose platform specific shared library name
 	IBK::Path sharedLibraryPath = m_fmuDir / FMU::binarySubDirectory();
@@ -197,6 +197,8 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 	// load DLL
 #if defined(_WIN32)
 	sharedLibraryPath.addExtension(".dll");
+	if (!sharedLibraryPath.exists())
+		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 	// use wide-char version of LoadLibrary
 	std::wstring dllPath = sharedLibraryPath.wstrOS();
 	m_impl->m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
@@ -207,6 +209,8 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 	}
 #else
 	sharedLibraryPath.addExtension(".so");
+	if (!sharedLibraryPath.exists())
+		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 
 	m_impl->m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
 
