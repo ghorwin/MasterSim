@@ -181,15 +181,15 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 	IBK::Path sharedLibraryPath = m_fmuDir / FMU::binarySubDirectory();
 
 	// first check if selected FMU-type is provided by the FMU
-	if (!(m_modelDescription.m_availableTypes & fmu2import))
-		throw IBK::Exception("Requestion FMU type is not provided by the FMU.", FUNC_ID);
+	if (!(m_modelDescription.m_fmuType & fmu2import))
+		throw IBK::Exception("Requested FMU type is not provided by the FMU.", FUNC_ID);
 
 	// append model identifier for selected model
 	switch (fmu2import) {
-		case ModelDescription::ME_v1 : sharedLibraryPath /= m_modelDescription.m_meV1ModelIdentifier;
-		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_csV1ModelIdentifier;
-		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier;
-		case ModelDescription::CS_v2 : sharedLibraryPath /= m_modelDescription.m_csV2ModelIdentifier;
+		case ModelDescription::ME_v1 : ; // same as for CS_v1
+		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_modelIdentifier; break;
+		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier; break;
+		case ModelDescription::CS_v2 : sharedLibraryPath /= m_modelDescription.m_csV2ModelIdentifier; break;
 		default :
 			throw IBK::Exception("Invalid selection of model type (can only import a single FMU at a time).", FUNC_ID);
 	}
@@ -215,7 +215,7 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 							 .arg(dlerror()).arg(m_fmuDir), FUNC_ID);
 	}
 #endif
-	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 }
 
 
