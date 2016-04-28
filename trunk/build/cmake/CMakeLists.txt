@@ -55,6 +55,12 @@ endif( QT4_FOUND )
 # -------------------------------------------------------------
 include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt )
 
+if (MINGW)
+	# link statically to MinGW libraries
+	set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} " -static-libgcc -static-libstdc++" )
+	message(${CMAKE_CXX_FLAGS_RELEASE})
+endif (MINGW)
+
 # -------------------------------------------------------------
 # Subdirectories and subprojects
 # -------------------------------------------------------------
