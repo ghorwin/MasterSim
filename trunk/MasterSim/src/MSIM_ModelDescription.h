@@ -52,7 +52,7 @@ private:
 	void readElementCoSimulation(const TiXmlElement * element);
 
 	static std::string readRequiredAttribute(const TiXmlElement *xmlElem, const char *attribName);
-	static bool readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName);
+	static bool readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName, bool required = false);
 };
 
 } // namespace MASTER_SIM
