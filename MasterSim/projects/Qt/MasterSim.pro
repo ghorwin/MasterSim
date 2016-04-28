@@ -25,11 +25,8 @@ unix|mac {
 INCLUDEPATH = \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
-	../../../externals/DataIO/src
-
-win32 {
-	INCLUDEPATH += c:\boost\boost_1_56_0
-}
+	../../../externals/DataIO/src \
+	../../../externals/TiCPP/src
 
 LIBS += -L../../../externals/lib
 
@@ -48,8 +45,7 @@ SOURCES += \
 	../../src/MSIM_FMUManager.cpp \
 	../../src/MSIM_FMUSlave.cpp \
 	../../src/MSIM_FMU.cpp \
-	../../src/MSIM_ModelDescription.cpp \
-	../../src/ModelDescription.cpp
+	../../src/MSIM_ModelDescription.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -60,5 +56,4 @@ HEADERS += \
 	../../src/MSIM_FMUManager.h \
 	../../src/MSIM_FMUSlave.h \
 	../../src/MSIM_FMU.h \
-	../../src/MSIM_ModelDescription.h \
-	../../src/ModelDescription.h
+	../../src/MSIM_ModelDescription.h

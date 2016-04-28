@@ -32,8 +32,9 @@ void FMUManager::importFMU(const IBK::Path & fmuTargetDirectory, const IBK::Path
 	const char * const FUNC_ID = "[FMUManager::importFMU]";
 	// generate unique file path
 	IBK::Path extractionPath = generateFilePath(fmuTargetDirectory, fmuFilePath);
-	IBK::IBK_Message(IBK::FormatString("Importing FMU: %1\n").arg(fmuFilePath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message(IBK::FormatString("%1\n").arg(fmuFilePath.filename()), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
+	IBK::IBK_Message(IBK::FormatString("%1\n").arg(fmuFilePath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
 	importFMUAt(fmuFilePath, extractionPath);
 }
@@ -42,10 +43,11 @@ void FMUManager::importFMU(const IBK::Path & fmuTargetDirectory, const IBK::Path
 void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & unzipPath) {
 	const char * const FUNC_ID = "[FMUManager::importFMUAt]";
 	if (m_unzipFMUs) {
-		IBK::IBK_Message(IBK::FormatString("Unzipping into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::IBK_Message(IBK::FormatString("Unzipping FMU\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		IBK::IBK_Message(IBK::FormatString("  into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// check if target directory exists
 		if (unzipPath.exists()) {
-			IBK::IBK_Message(IBK::FormatString("Directory exists, unzipping will overwrite files!"), IBK::MSG_WARNING, FUNC_ID, IBK::VL_STANDARD);
+			IBK::IBK_Message(IBK::FormatString("Directory exists, unzipping will overwrite files!"), IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
 		}
 
 		// extract FMU into target directory
@@ -56,11 +58,12 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	std::auto_ptr<FMU> fmu(new FMU(fmuFilePath, unzipPath));
 
 	// parse modelDescription.xml so that we get the model identifyer
+	IBK::IBK_Message(IBK::FormatString("Reading modelDescription.xml\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	fmu->readModelDescription();
 
-	// Import dll/shared lib for current platform
-	fmu->import();
-
+	// Import dll/shared lib for current platform, currently only CoSim V2 is supported
+	IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	fmu->import(ModelDescription::CS_v2);
 }
 
 

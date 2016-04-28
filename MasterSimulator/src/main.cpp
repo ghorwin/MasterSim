@@ -37,7 +37,10 @@ int main(int argc, char * argv[]) {
 			return EXIT_FAILURE;
 		}
 
-		// setup directory structure and initialize log file
+		// setup directory structure and initialize log file, in debug mode set console log level to detailed
+#if !defined(NDEBUG)
+//		parser.m_verbosityLevel = IBK::VL_DETAILED;
+#endif
 		setupLogFile(parser);
 
 		// instantiate project
@@ -67,6 +70,9 @@ int main(int argc, char * argv[]) {
 			return EXIT_SUCCESS;
 		}
 
+		// adjust log-file message handler to log only standard level outputs (unless user specified higher level)
+		IBK::MessageHandlerRegistry::instance().messageHandler()->setLogfileVerbosityLevel( std::max<unsigned int>(IBK::VL_STANDARD, parser.m_verbosityLevel));
+
 		// let master run the simulation until end
 		IBK::IBK_Message( IBK::FormatString("Starting simulation from t=%1.\n").arg(masterSim.tCurrent()), IBK::MSG_PROGRESS, FUNC_ID);
 		masterSim.simulate();
@@ -94,6 +100,7 @@ void setupLogFile(const MASTER_SIM::ArgParser & parser) {
 	IBK::MessageHandler::setupUtf8Console();
 	IBK::MessageHandler * msgHandler = IBK::MessageHandlerRegistry::instance().messageHandler();
 	msgHandler->setConsoleVerbosityLevel(parser.m_verbosityLevel);
+	msgHandler->setLogfileVerbosityLevel( std::max<unsigned int>(IBK::VL_DETAILED, parser.m_verbosityLevel));
 	IBK::Path logFile = logPath / "screenlog.txt";
 	std::string errmsg;
 	if (!msgHandler->openLogFile(logFile.str(), false, errmsg))

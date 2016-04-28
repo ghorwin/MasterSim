@@ -1,6 +1,7 @@
 #include "MSIM_MasterSim.h"
 
 #include <IBK_Exception.h>
+#include <IBK_messages.h>
 
 namespace MASTER_SIM {
 
@@ -16,6 +17,9 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	// create copy of input data (needed for multi-threaded application)
 	m_args = args;
 	m_project = prj;
+
+	IBK::IBK_Message("Importing FMUs.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent; (void)indent;
 
 	// collect list of FMU-Dlls to load dynamically
 	std::set<IBK::Path> fmuFiles;

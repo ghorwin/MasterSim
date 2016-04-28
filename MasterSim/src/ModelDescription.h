@@ -137,36 +137,7 @@ protected:
 /// Namespace containing helper functions for dealing with class ModelDescription.
 namespace ModelDescriptionUtilities
 {
-	typedef ModelDescriptionAIT::Properties Properties;
 
-	__FMI_DLL bool hasAttributes( const Properties& p ); ///< Check for attributes.
-	__FMI_DLL bool hasAttributes( const Properties::iterator& it ); ///< Check for attributes.
-	__FMI_DLL bool hasAttributes( const Properties::const_iterator& it ); ///< Check for attributes.
-
-	__FMI_DLL const Properties& getAttributes( const Properties& p ); ///< Get attributes of current node.
-	__FMI_DLL const Properties& getAttributes( const Properties::iterator& it ); ///< Get attributes of current node.
-	__FMI_DLL const Properties& getAttributes( const Properties::const_iterator& it ); ///< Get attributes of current node.
-
-	__FMI_DLL bool hasChildAttributes( const Properties& p,
-					   const std::string& childName ); ///< Check child node for attributes.
-	__FMI_DLL bool hasChildAttributes( const Properties::iterator& it,
-					   const std::string& childName ); ///< Check child node for attributes.
-	__FMI_DLL bool hasChildAttributes( const Properties::const_iterator& it,
-					   const std::string& childName ); ///< Check child node for attributes.
-
-	__FMI_DLL const Properties& getChildAttributes( const Properties& p,
-							const std::string& childName ); ///< Get attributes of child node.
-	__FMI_DLL const Properties& getChildAttributes( const Properties::iterator& it,
-							const std::string& childName ); ///< Get attributes of child node.
-	__FMI_DLL const Properties& getChildAttributes( const Properties::const_iterator& it,
-							const std::string& childName ); ///< Get attributes of child node.
-
-	__FMI_DLL bool hasChild( const Properties& p,
-				 const std::string& childName ); ///< Check for child node.
-	__FMI_DLL bool hasChild( const Properties::iterator& it,
-				 const std::string& childName ); ///< Check for child node.
-	__FMI_DLL bool hasChild( const Properties::const_iterator& it,
-				 const std::string& childName ); ///< Check for child node.
 }
 
 
