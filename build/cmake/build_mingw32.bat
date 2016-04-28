@@ -16,12 +16,13 @@ mkdir bb_mingw32
 pushd bb_mingw32
 
 :: configure makefiles and build
-cmake -G "MinGW Makefiles" .. -DCMAKE_BUILD_TYPE:String="Release" -DQT_QMAKE_EXECUTABLE=%QMAKE_PATH%
+cmake -G "MinGW Makefiles" .. -DCMAKE_BUILD_TYPE:String="RelWithDebInfo" -DQT_QMAKE_EXECUTABLE=%QMAKE_PATH%
 jom
 
 popd
 
 :: copy executable to bin/release dir
-xcopy /Y .\bb_mingw32\MasterSimulator\MasterSimulator.exe ..\..\bin\release
-xcopy /Y .\bb_mingw32\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release
+mkdir ..\..\bin\release_mingw32
+xcopy /Y .\bb_mingw32\MasterSimulator\MasterSimulator.exe ..\..\bin\release_mingw32
+xcopy /Y .\bb_mingw32\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release_mingw32
 
