@@ -3,6 +3,12 @@
 #include <cstdlib>
 #include <iostream>
 
+extern "C" {
+
+#include <dlfcn.h>
+
+}
+
 #include <IBK_bitfield.h>
 
 // shared library loading on Unix systems
@@ -128,6 +134,24 @@ public:
 	*/
 	void import(ModelDescription::FMUType, const ModelDescription & modelIdentifier, const IBK::Path & fmuDir);
 
+#if defined(_WIN32)
+	void * importFunctionAddress(const char* functionName ) {
+		void * ptr = reinterpret_cast<void*>( GetProcAddress( m_dllHandle, functionName ) );
+		if (ptr == NULL)
+			throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(functionName), "[FMUPrivate::importFunctionAddress]");
+		return ptr;
+	}
+#else
+	void * importFunctionAddress(const char* functionName ) {
+		void * ptr = dlsym( m_soHandle, functionName );
+		if (ptr == NULL) {
+			std::cout << dlerror() << std::endl;
+//			throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
+		}
+		return ptr;
+	}
+#endif
+
 	/*! Function pointers to all functions provided by FMI v2. */
 	FMI2FunctionSet		m_fmi2Functions;
 
@@ -218,10 +242,124 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
 							 .arg(dlerror()).arg(m_fmuDir), FUNC_ID);
 	}
+
+	if ((fmu2import & ModelDescription::ME_v1) || (fmu2import & ModelDescription::CS_v1)) {
+
+	}
+	else {
+		importFMIv2Functions();
+	}
+
 #endif
 	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 }
 
+
+void FMU::importFMIv2Functions() {
+	/***************************************************
+	Common Functions
+	****************************************************/
+	m_impl->m_fmi2Functions.getTypesPlatform = reinterpret_cast<fmi2GetTypesPlatformTYPE*>(m_impl->importFunctionAddress("fmi2GetTypesPlatform"));
+	m_impl->m_fmi2Functions.getVersion = reinterpret_cast<fmi2GetVersionTYPE*>(m_impl->importFunctionAddress("fmi2GetVersions"));
+//	fmi2SetDebugLoggingTYPE          *setDebugLogging;
+//	fmi2InstantiateTYPE              *instantiate;
+//	fmi2FreeInstanceTYPE             *freeInstance;
+//	fmi2SetupExperimentTYPE          *setupExperiment;
+//	fmi2EnterInitializationModeTYPE  *enterInitializationMode;
+//	fmi2ExitInitializationModeTYPE   *exitInitializationMode;
+//	fmi2TerminateTYPE                *terminate;
+//	fmi2ResetTYPE                    *reset;
+//	fmi2GetRealTYPE                  *getReal;
+//	fmi2GetIntegerTYPE               *getInteger;
+//	fmi2GetBooleanTYPE               *getBoolean;
+//	fmi2GetStringTYPE                *getString;
+//	fmi2SetRealTYPE                  *setReal;
+//	fmi2SetIntegerTYPE               *setInteger;
+//	fmi2SetBooleanTYPE               *setBoolean;
+//	fmi2SetStringTYPE                *setString;
+//	fmi2GetFMUstateTYPE              *getFMUstate;
+//	fmi2SetFMUstateTYPE              *setFMUstate;
+//	fmi2FreeFMUstateTYPE             *freeFMUstate;
+//	fmi2SerializedFMUstateSizeTYPE   *serializedFMUstateSize;
+//	fmi2SerializeFMUstateTYPE        *serializeFMUstate;
+//	fmi2DeSerializeFMUstateTYPE      *deSerializeFMUstate;
+//	fmi2GetDirectionalDerivativeTYPE *getDirectionalDerivative;
+//	/***************************************************
+//	Functions for FMI2 for Co-Simulation
+//	****************************************************/
+//	fmi2SetRealInputDerivativesTYPE  *setRealInputDerivatives;
+//	fmi2GetRealOutputDerivativesTYPE *getRealOutputDerivatives;
+//	fmi2DoStepTYPE                   *doStep;
+//	fmi2CancelStepTYPE               *cancelStep;
+//	fmi2GetStatusTYPE                *getStatus;
+//	fmi2GetRealStatusTYPE            *getRealStatus;
+//	fmi2GetIntegerStatusTYPE         *getIntegerStatus;
+//	fmi2GetBooleanStatusTYPE         *getBooleanStatus;
+//	fmi2GetStringStatusTYPE          *getStringStatus;
+//	/***************************************************
+//	Functions for FMI2 for Model Exchange
+//	****************************************************/
+//	fmi2EnterEventModeTYPE                *enterEventMode;
+//	fmi2NewDiscreteStatesTYPE             *newDiscreteStates;
+//	fmi2EnterContinuousTimeModeTYPE       *enterContinuousTimeMode;
+//	fmi2CompletedIntegratorStepTYPE       *completedIntegratorStep;
+//	fmi2SetTimeTYPE                       *setTime;
+//	fmi2SetContinuousStatesTYPE           *setContinuousStates;
+//	fmi2GetDerivativesTYPE                *getDerivatives;
+//	fmi2GetEventIndicatorsTYPE            *getEventIndicators;
+//	fmi2GetContinuousStatesTYPE           *getContinuousStates;
+//	fmi2GetNominalsOfContinuousStatesTYPE *getNominalsOfContinuousStates;
+
+
+//	m_impl->m_fmi2Functions.instantiateSlave =
+//		reinterpret_cast<fInstantiateSlave>( importFunctionAddress("fmiInstantiateSlave" ) );
+//	m_impl->m_fmi2Functions.initializeSlave=
+//		reinterpret_cast<fInitializeSlave>( importFunctionAddress("fmiInitializeSlave" ) );
+//	m_impl->m_fmi2Functions.terminateSlave =
+//		reinterpret_cast<fTerminateSlave>( importFunctionAddress("fmiTerminateSlave" ) );
+//	m_impl->m_fmi2Functions.resetSlave =
+//		reinterpret_cast<fResetSlave>( importFunctionAddress("fmiResetSlave" ) );
+//	m_impl->m_fmi2Functions.freeSlaveInstance=
+//		reinterpret_cast<fFreeSlaveInstance>( importFunctionAddress("fmiFreeSlaveInstance" ) );
+//	m_impl->m_fmi2Functions.cancelStep =
+//		reinterpret_cast<fCancelStep>( importFunctionAddress("fmiCancelStep" ) );
+//	m_impl->m_fmi2Functions.doStep =
+//		reinterpret_cast<fDoStep>( importFunctionAddress("fmiDoStep" ) );
+//	m_impl->m_fmi2Functions.getStatus=
+//		reinterpret_cast<fGetStatus>( importFunctionAddress("fmiGetStatus" ) );
+//	m_impl->m_fmi2Functions.getRealStatus=
+//		reinterpret_cast<fGetRealStatus>( importFunctionAddress("fmiGetRealStatus" ) );
+//	m_impl->m_fmi2Functions.getIntegerStatus =
+//		reinterpret_cast<fGetIntegerStatus>( importFunctionAddress("fmiGetIntegerStatus" ) );
+//	m_impl->m_fmi2Functions.getBooleanStatus =
+//		reinterpret_cast<fGetBooleanStatus>( importFunctionAddress("fmiGetBooleanStatus" ) );
+//	m_impl->m_fmi2Functions.getStringStatus=
+//		reinterpret_cast<fGetStringStatus>( importFunctionAddress("fmiGetStringStatus" ) );
+//	m_impl->m_fmi2Functions.getVersion =
+//		reinterpret_cast<fGetVersion>( importFunctionAddress("fmiGetVersion" ) );
+//	m_impl->m_fmi2Functions.setDebugLogging=
+//		reinterpret_cast<fSetDebugLogging>( importFunctionAddress("fmiSetDebugLogging" ) );
+//	m_impl->m_fmi2Functions.setReal=
+//		reinterpret_cast<fSetReal>( importFunctionAddress("fmiSetReal" ) );
+//	m_impl->m_fmi2Functions.setInteger =
+//		reinterpret_cast<fSetInteger>( importFunctionAddress("fmiSetInteger" ) );
+//	m_impl->m_fmi2Functions.setBoolean =
+//		reinterpret_cast<fSetBoolean>( importFunctionAddress("fmiSetBoolean" ) );
+//	m_impl->m_fmi2Functions.setString=
+//		reinterpret_cast<fSetString>( importFunctionAddress("fmiSetString" ) );
+//	m_impl->m_fmi2Functions.setRealInputDerivatives=
+//		reinterpret_cast<fSetRealInputDerivatives>( importFunctionAddress("fmiSetRealInputDerivatives" ) );
+//	m_impl->m_fmi2Functions.getReal=
+//		reinterpret_cast<fGetReal>( importFunctionAddress("fmiGetReal" ) );
+//	m_impl->m_fmi2Functions.getInteger =
+//		reinterpret_cast<fGetInteger>( importFunctionAddress("fmiGetInteger" ) );
+//	m_impl->m_fmi2Functions.getBoolean =
+//		reinterpret_cast<fGetBoolean>( importFunctionAddress("fmiGetBoolean" ) );
+//	m_impl->m_fmi2Functions.getString=
+//		reinterpret_cast<fGetString>( importFunctionAddress("fmiGetString" ) );
+//	m_impl->m_fmi2Functions.getRealOutputDerivatives=
+//		reinterpret_cast<fGetRealOutputDerivatives>( importFunctionAddress("fmiGetRealOutputDerivatives" ) );
+}
 
 // **** STATIC FUNCTIONS ****
 
@@ -243,7 +381,8 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 	int res = miniunz(6, (char**)argv);
 	IBK::Path::setCurrent(currentWd); // reset working directory
 	if (res != 0)
-		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'").arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
+		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'")
+							 .arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
 }
 
 

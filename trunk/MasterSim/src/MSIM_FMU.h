@@ -35,7 +35,7 @@ public:
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
-	/*! Directory where FMU was extracted to (also absolute file path). */
+	/*! Directory where FMU was extracted to (as absolute file path). */
 	IBK::Path			m_fmuDir;
 
 	/*! Content of model description. */
@@ -53,6 +53,9 @@ public:
 	static IBK::Path binarySubDirectory();
 
 private:
+	/*! Imports functions for Version 2.0 FMU. */
+	void importFMIv2Functions();
+
 	/*! Disable copy. */
 	FMU(const FMU &);
 	/*! Disable assignment operator. */
