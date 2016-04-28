@@ -17,9 +17,15 @@ set( LINK_LIBS
 	MasterSim
 	DataIO
 	IBK
+	TiCPP
 	minizip
-	zlibstatic
 )
+
+if( WIN32 )
+	set (LINK_LIBS ${LINK_LIBS} zlibstatic)
+else( WIN32 )
+	set (LINK_LIBS ${LINK_LIBS} z dl)
+endif( WIN32 )
 
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}

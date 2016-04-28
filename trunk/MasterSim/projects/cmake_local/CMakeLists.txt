@@ -5,11 +5,11 @@ project( MasterSim )
 
 # add include directories
 include_directories(
-	c:/boost/boost_1_56_0
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
 	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src
+	${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
 )
 
 # collect a list of all source files of the library
