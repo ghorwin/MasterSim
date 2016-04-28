@@ -26,7 +26,15 @@ set( LINK_LIBS
 	MasterSim
 	DataIO
 	IBK
+	TiCPP
+	minizip
 )
+
+if( WIN32 )
+	set (LINK_LIBS ${LINK_LIBS} zlibstatic)
+else( WIN32 )
+	set (LINK_LIBS ${LINK_LIBS} z dl)
+endif( WIN32 )
 
 # this command will generate rules that will run rcc on all qrc files
 qt4_add_resources( APP_RC_SRCS ${APP_QRCS} )

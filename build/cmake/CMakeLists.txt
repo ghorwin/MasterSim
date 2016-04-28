@@ -50,12 +50,6 @@ if( QT4_FOUND )
 
 endif( QT4_FOUND )
 
-find_package(Boost 1.54.0 COMPONENTS)
-
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS}) 
-endif(Boost_FOUND)
-
 # -------------------------------------------------------------
 # Support for build flags
 # -------------------------------------------------------------
@@ -70,6 +64,7 @@ add_subdirectory( ../../externals/zlib/src libz)
 add_subdirectory( ../../externals/minizip/projects/cmake_local minizip)
 add_subdirectory( ../../externals/IBK/projects/cmake_local IBK )
 add_subdirectory( ../../externals/DataIO/projects/cmake_local DataIO)
+add_subdirectory( ../../externals/TiCPP/projects/cmake_local TiCPP )
 add_subdirectory( ../../MasterSim/projects/cmake_local MasterSim)
 
 # -------------------------------------------------------------
