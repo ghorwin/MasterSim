@@ -63,9 +63,16 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	IBK::IBK_Message(IBK::FormatString("Reading modelDescription.xml\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	fmu->readModelDescription();
 
-	// Import dll/shared lib for current platform, currently only CoSim V2 is supported
 	IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-	fmu->import(ModelDescription::CS_v2);
+	if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
+		fmu->import(ModelDescription::CS_v2);
+	}
+	else if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		fmu->import(ModelDescription::CS_v1);
+	}
+	else {
+		throw IBK::Exception("FMU does provide CoSimulation interface (neither version 1 or 2).", FUNC_ID);
+	}
 }
 
 

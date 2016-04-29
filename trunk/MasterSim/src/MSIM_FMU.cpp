@@ -5,21 +5,9 @@
 
 #if defined(_WIN32)
 
-#if defined(__MINGW32__)
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-#elif defined(_MSC_VER) // Definitions specific for MS Visual Studio (Visual C/C++).
-
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <errno.h>
-
-#else
-	#error Windows compiler includes needs to be configured here
-#endif
+	#define WIN32_LEAN_AND_MEAN
+	#define NOMINMAX
+	#include <windows.h>
 
 #else  // defined(_WIN32)
 
@@ -29,26 +17,26 @@
 #endif // defined(_WIN32)
 
 
-
 #include <miniunz.h>
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 
+//#include "fmi/fmiFunctions.h"
 #include "fmi/fmi2Functions.h"
 
 
 namespace MASTER_SIM {
-
-#if defined(_WIN32)
-	std::string GetLastErrorStdStr();
-#endif //
 
 /*! Implementation class for the FMU interface, hides all details about
 	loading and interfacing an FMU.
 */
 class FMUPrivate {
 public:
+	/*! Function pointers to functions published by FMIv1 FMUs. */
+	struct FMI1FunctionSet {
+	};
+
 	/*! Function pointers to functions published by FMIv2 FMUs. */
 	struct FMI2FunctionSet {
 		/***************************************************
@@ -124,23 +112,13 @@ public:
 	*/
 	void import(ModelDescription::FMUType, const ModelDescription & modelIdentifier, const IBK::Path & fmuDir);
 
-#if defined(_WIN32)
-	void * importFunctionAddress(const char* functionName ) {
-		void * ptr = reinterpret_cast<void*>( GetProcAddress( m_dllHandle, functionName ) );
-		if (ptr == NULL)
-			throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(functionName), "[FMUPrivate::importFunctionAddress]");
-		return ptr;
-	}
-#else
-	void * importFunctionAddress(const char* functionName ) {
-		void * ptr = dlsym( m_soHandle, functionName );
-		if (ptr == NULL) {
-			std::cout << dlerror() << std::endl;
-//			throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
-		}
-		return ptr;
-	}
-#endif
+	/*! Imports a function address from shared library. */
+	void * importFunctionAddress(const char* functionName);
+
+	/*! Import library.
+		\param sharedLibraryPath Path to directory containing the shared libraries (not the path to an individual dll/so file).
+	*/
+	void loadLibrary(const IBK::Path & sharedLibraryDir);
 
 	/*! Function pointers to all functions provided by FMI v2. */
 	FMI2FunctionSet		m_fmi2Functions;
@@ -153,20 +131,8 @@ public:
 };
 
 
-FMUPrivate::~FMUPrivate() {
-#if defined(_WIN32)
-	if (m_dllHandle != 0)
-		FreeLibrary( m_dllHandle );
-#else
-	if (m_soHandle != NULL)
-		dlclose( m_soHandle );
-#endif
-}
-
-// ------------------------------------------------------------------------
 
 // **** Class FMU Implementation ****
-
 
 FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuFilePath(fmuFilePath),
@@ -208,32 +174,8 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 			throw IBK::Exception("Invalid selection of model type (can only import a single FMU at a time).", FUNC_ID);
 	}
 
-	// load DLL
-#if defined(_WIN32)
-	sharedLibraryPath.addExtension(".dll");
-	if (!sharedLibraryPath.exists())
-		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
-	// use wide-char version of LoadLibrary
-	std::wstring dllPath = sharedLibraryPath.wstrOS();
-	m_impl->m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-
-	if ( m_impl->m_dllHandle == 0 ) {
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2'")
-							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
-	}
-#else
-	sharedLibraryPath.addExtension(".so");
-	if (!sharedLibraryPath.exists())
-		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
-
-	m_impl->m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
-
-	if (m_impl->m_soHandle == NULL) {
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library from FMU '%2'")
-							 .arg(dlerror()).arg(m_fmuDir), FUNC_ID);
-	}
-
-#endif
+	// load library
+	m_impl->loadLibrary(sharedLibraryPath);
 	if ((fmu2import & ModelDescription::ME_v1) || (fmu2import & ModelDescription::CS_v1)) {
 
 	}
@@ -302,6 +244,8 @@ void FMU::importFMIv2Functions() {
 
 }
 
+
+
 // **** STATIC FUNCTIONS ****
 
 void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath) {
@@ -350,36 +294,103 @@ IBK::Path FMU::binarySubDirectory() {
 }
 
 
+
+// ------------------------------------------------------------------------
+// *** Class FMUPrivate Implementation ***
+// ------------------------------------------------------------------------
+
+
+// Windows-specific implementation
 #if defined(_WIN32)
 // Create a string with last error message
 // taken from http://www.codeproject.com/Tips/479880/GetLastError-as-std-string
 // BSD License, thanks to Orjan Westin
 std::string GetLastErrorStdStr() {
-  DWORD error = GetLastError();
-  if (error)
-  {
-	LPVOID lpMsgBuf;
-	DWORD bufLen = FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM |
-		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
-		error,
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR) &lpMsgBuf,
-		0, NULL );
-	if (bufLen)
+	DWORD error = GetLastError();
+	if (error)
 	{
-	  LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
-	  std::string result(lpMsgStr, lpMsgStr+bufLen);
+		LPVOID lpMsgBuf;
+		DWORD bufLen = FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			error,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR) &lpMsgBuf,
+			0, NULL );
+		if (bufLen)
+		{
+			LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+			std::string result(lpMsgStr, lpMsgStr+bufLen);
 
-	  LocalFree(lpMsgBuf);
+			LocalFree(lpMsgBuf);
 
-	  return result;
+			return result;
+		}
 	}
-  }
-  return std::string();
+	return std::string();
 }
-#endif
+
+
+FMUPrivate::~FMUPrivate() {
+	if (m_dllHandle != 0)
+		FreeLibrary( m_dllHandle );
+}
+
+void * FMUPrivate::importFunctionAddress(const char* functionName ) {
+	void * ptr = reinterpret_cast<void*>( GetProcAddress( m_dllHandle, functionName ) );
+	if (ptr == NULL)
+		throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(functionName), "[FMUPrivate::importFunctionAddress]");
+	return ptr;
+}
+
+void FMUPrivate::loadLibrary(IBK::Path & sharedLibraryPath) {
+	sharedLibraryPath.addExtension(".dll");
+	if (!sharedLibraryPath.exists())
+		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
+	// use wide-char version of LoadLibrary
+	std::wstring dllPath = sharedLibraryPath.wstrOS();
+	m_impl->m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+
+	if ( m_impl->m_dllHandle == 0 ) {
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL.").arg(GetLastErrorStdStr()), FUNC_ID);
+	}
+}
+
+#else // _WIN32
+
+// Linux/Mac implementation
+
+FMUPrivate::~FMUPrivate() {
+	if (m_soHandle != NULL)
+		dlclose( m_soHandle );
+}
+
+void * FMUPrivate::importFunctionAddress(const char* functionName) {
+	void * ptr = dlsym( m_soHandle, functionName );
+	if (ptr == NULL) {
+			throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
+	}
+	return ptr;
+}
+
+void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
+	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
+	IBK::Path sharedLibraryPath = sharedLibraryDir;
+	sharedLibraryPath.addExtension(".so");
+	if (!sharedLibraryPath.exists())
+		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
+
+	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY );
+
+	if (m_soHandle == NULL)
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library.").arg(dlerror()), FUNC_ID);
+}
+
+#endif // _WIN32
+
+// ------------------------------------------------------------------------
+
 
 } // namespace MASTER_SIM

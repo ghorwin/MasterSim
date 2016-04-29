@@ -1,4 +1,4 @@
-#include "MSIM_FMUSlave.h"
+#include "MSIM_Slave.h"
 
 namespace MASTER_SIM {
 
