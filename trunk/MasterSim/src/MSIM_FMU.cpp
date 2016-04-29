@@ -22,9 +22,6 @@
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 
-//#include "fmi/fmiFunctions.h"
-#include "fmi/fmi2Functions.h"
-
 
 namespace MASTER_SIM {
 
@@ -33,66 +30,6 @@ namespace MASTER_SIM {
 */
 class FMUPrivate {
 public:
-	/*! Function pointers to functions published by FMIv1 FMUs. */
-	struct FMI1FunctionSet {
-	};
-
-	/*! Function pointers to functions published by FMIv2 FMUs. */
-	struct FMI2FunctionSet {
-		/***************************************************
-		Common Functions
-		****************************************************/
-		fmi2GetTypesPlatformTYPE         *getTypesPlatform;
-		fmi2GetVersionTYPE               *getVersion;
-		fmi2SetDebugLoggingTYPE          *setDebugLogging;
-		fmi2InstantiateTYPE              *instantiate;
-		fmi2FreeInstanceTYPE             *freeInstance;
-		fmi2SetupExperimentTYPE          *setupExperiment;
-		fmi2EnterInitializationModeTYPE  *enterInitializationMode;
-		fmi2ExitInitializationModeTYPE   *exitInitializationMode;
-		fmi2TerminateTYPE                *terminate;
-		fmi2ResetTYPE                    *reset;
-		fmi2GetRealTYPE                  *getReal;
-		fmi2GetIntegerTYPE               *getInteger;
-		fmi2GetBooleanTYPE               *getBoolean;
-		fmi2GetStringTYPE                *getString;
-		fmi2SetRealTYPE                  *setReal;
-		fmi2SetIntegerTYPE               *setInteger;
-		fmi2SetBooleanTYPE               *setBoolean;
-		fmi2SetStringTYPE                *setString;
-		fmi2GetFMUstateTYPE              *getFMUstate;
-		fmi2SetFMUstateTYPE              *setFMUstate;
-		fmi2FreeFMUstateTYPE             *freeFMUstate;
-		fmi2SerializedFMUstateSizeTYPE   *serializedFMUstateSize;
-		fmi2SerializeFMUstateTYPE        *serializeFMUstate;
-		fmi2DeSerializeFMUstateTYPE      *deSerializeFMUstate;
-		fmi2GetDirectionalDerivativeTYPE *getDirectionalDerivative;
-		/***************************************************
-		Functions for FMI2 for Co-Simulation
-		****************************************************/
-		fmi2SetRealInputDerivativesTYPE  *setRealInputDerivatives;
-		fmi2GetRealOutputDerivativesTYPE *getRealOutputDerivatives;
-		fmi2DoStepTYPE                   *doStep;
-		fmi2CancelStepTYPE               *cancelStep;
-		fmi2GetStatusTYPE                *getStatus;
-		fmi2GetRealStatusTYPE            *getRealStatus;
-		fmi2GetIntegerStatusTYPE         *getIntegerStatus;
-		fmi2GetBooleanStatusTYPE         *getBooleanStatus;
-		fmi2GetStringStatusTYPE          *getStringStatus;
-		/***************************************************
-		Functions for FMI2 for Model Exchange
-		****************************************************/
-		fmi2EnterEventModeTYPE                *enterEventMode;
-		fmi2NewDiscreteStatesTYPE             *newDiscreteStates;
-		fmi2EnterContinuousTimeModeTYPE       *enterContinuousTimeMode;
-		fmi2CompletedIntegratorStepTYPE       *completedIntegratorStep;
-		fmi2SetTimeTYPE                       *setTime;
-		fmi2SetContinuousStatesTYPE           *setContinuousStates;
-		fmi2GetDerivativesTYPE                *getDerivatives;
-		fmi2GetEventIndicatorsTYPE            *getEventIndicators;
-		fmi2GetContinuousStatesTYPE           *getContinuousStates;
-		fmi2GetNominalsOfContinuousStatesTYPE *getNominalsOfContinuousStates;
-	};
 
 	FMUPrivate() :
 #if defined(_WIN32)
@@ -114,8 +51,6 @@ public:
 	*/
 	void loadLibrary(const IBK::Path & sharedLibraryDir);
 
-	/*! Function pointers to all functions provided by FMI v2. */
-	FMI2FunctionSet		m_fmi2Functions;
 
 #if defined(_WIN32)
 	HMODULE				m_dllHandle; // fmu.dll handle
@@ -185,49 +120,49 @@ void FMU::importFMIv2Functions() {
 	/***************************************************
 	Common Functions
 	****************************************************/
-	m_impl->m_fmi2Functions.getTypesPlatform			= reinterpret_cast<fmi2GetTypesPlatformTYPE*>(m_impl->importFunctionAddress("fmi2GetTypesPlatform"));
-	m_impl->m_fmi2Functions.getVersion					= reinterpret_cast<fmi2GetVersionTYPE*>(m_impl->importFunctionAddress("fmi2GetVersion"));
-	m_impl->m_fmi2Functions.setDebugLogging				= reinterpret_cast<fmi2SetDebugLoggingTYPE*>(m_impl->importFunctionAddress("fmi2SetDebugLogging"));
-	m_impl->m_fmi2Functions.instantiate					= reinterpret_cast<fmi2InstantiateTYPE*>(m_impl->importFunctionAddress("fmi2Instantiate"));
-	m_impl->m_fmi2Functions.freeInstance				= reinterpret_cast<fmi2FreeInstanceTYPE*>(m_impl->importFunctionAddress("fmi2FreeInstance"));
-	m_impl->m_fmi2Functions.setupExperiment				= reinterpret_cast<fmi2SetupExperimentTYPE*>(m_impl->importFunctionAddress("fmi2SetupExperiment"));
-	m_impl->m_fmi2Functions.enterInitializationMode		= reinterpret_cast<fmi2EnterInitializationModeTYPE*>(m_impl->importFunctionAddress("fmi2EnterInitializationMode"));
-	m_impl->m_fmi2Functions.exitInitializationMode		= reinterpret_cast<fmi2ExitInitializationModeTYPE*>(m_impl->importFunctionAddress("fmi2ExitInitializationMode"));
-	m_impl->m_fmi2Functions.terminate					= reinterpret_cast<fmi2TerminateTYPE*>(m_impl->importFunctionAddress("fmi2Terminate"));
-	m_impl->m_fmi2Functions.reset						= reinterpret_cast<fmi2ResetTYPE*>(m_impl->importFunctionAddress("fmi2Reset"));
-	m_impl->m_fmi2Functions.getReal						= reinterpret_cast<fmi2GetRealTYPE*>(m_impl->importFunctionAddress("fmi2GetReal"));
-	m_impl->m_fmi2Functions.getInteger					= reinterpret_cast<fmi2GetIntegerTYPE*>(m_impl->importFunctionAddress("fmi2GetInteger"));
-	m_impl->m_fmi2Functions.getBoolean					= reinterpret_cast<fmi2GetBooleanTYPE*>(m_impl->importFunctionAddress("fmi2GetBoolean"));
-	m_impl->m_fmi2Functions.getString					= reinterpret_cast<fmi2GetStringTYPE*>(m_impl->importFunctionAddress("fmi2GetString"));
-	m_impl->m_fmi2Functions.setReal						= reinterpret_cast<fmi2SetRealTYPE*>(m_impl->importFunctionAddress("fmi2SetReal"));
-	m_impl->m_fmi2Functions.setInteger					= reinterpret_cast<fmi2SetIntegerTYPE*>(m_impl->importFunctionAddress("fmi2SetInteger"));
-	m_impl->m_fmi2Functions.setBoolean					= reinterpret_cast<fmi2SetBooleanTYPE*>(m_impl->importFunctionAddress("fmi2SetBoolean"));
-	m_impl->m_fmi2Functions.setString					= reinterpret_cast<fmi2SetStringTYPE*>(m_impl->importFunctionAddress("fmi2SetString"));
+	m_fmi2Functions.getTypesPlatform			= reinterpret_cast<fmi2GetTypesPlatformTYPE*>(m_impl->importFunctionAddress("fmi2GetTypesPlatform"));
+	m_fmi2Functions.getVersion					= reinterpret_cast<fmi2GetVersionTYPE*>(m_impl->importFunctionAddress("fmi2GetVersion"));
+	m_fmi2Functions.setDebugLogging				= reinterpret_cast<fmi2SetDebugLoggingTYPE*>(m_impl->importFunctionAddress("fmi2SetDebugLogging"));
+	m_fmi2Functions.instantiate					= reinterpret_cast<fmi2InstantiateTYPE*>(m_impl->importFunctionAddress("fmi2Instantiate"));
+	m_fmi2Functions.freeInstance				= reinterpret_cast<fmi2FreeInstanceTYPE*>(m_impl->importFunctionAddress("fmi2FreeInstance"));
+	m_fmi2Functions.setupExperiment				= reinterpret_cast<fmi2SetupExperimentTYPE*>(m_impl->importFunctionAddress("fmi2SetupExperiment"));
+	m_fmi2Functions.enterInitializationMode		= reinterpret_cast<fmi2EnterInitializationModeTYPE*>(m_impl->importFunctionAddress("fmi2EnterInitializationMode"));
+	m_fmi2Functions.exitInitializationMode		= reinterpret_cast<fmi2ExitInitializationModeTYPE*>(m_impl->importFunctionAddress("fmi2ExitInitializationMode"));
+	m_fmi2Functions.terminate					= reinterpret_cast<fmi2TerminateTYPE*>(m_impl->importFunctionAddress("fmi2Terminate"));
+	m_fmi2Functions.reset						= reinterpret_cast<fmi2ResetTYPE*>(m_impl->importFunctionAddress("fmi2Reset"));
+	m_fmi2Functions.getReal						= reinterpret_cast<fmi2GetRealTYPE*>(m_impl->importFunctionAddress("fmi2GetReal"));
+	m_fmi2Functions.getInteger					= reinterpret_cast<fmi2GetIntegerTYPE*>(m_impl->importFunctionAddress("fmi2GetInteger"));
+	m_fmi2Functions.getBoolean					= reinterpret_cast<fmi2GetBooleanTYPE*>(m_impl->importFunctionAddress("fmi2GetBoolean"));
+	m_fmi2Functions.getString					= reinterpret_cast<fmi2GetStringTYPE*>(m_impl->importFunctionAddress("fmi2GetString"));
+	m_fmi2Functions.setReal						= reinterpret_cast<fmi2SetRealTYPE*>(m_impl->importFunctionAddress("fmi2SetReal"));
+	m_fmi2Functions.setInteger					= reinterpret_cast<fmi2SetIntegerTYPE*>(m_impl->importFunctionAddress("fmi2SetInteger"));
+	m_fmi2Functions.setBoolean					= reinterpret_cast<fmi2SetBooleanTYPE*>(m_impl->importFunctionAddress("fmi2SetBoolean"));
+	m_fmi2Functions.setString					= reinterpret_cast<fmi2SetStringTYPE*>(m_impl->importFunctionAddress("fmi2SetString"));
 	if (m_modelDescription.m_canGetAndSetFMUstate) {
-		m_impl->m_fmi2Functions.getFMUstate					= reinterpret_cast<fmi2GetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2GetFMUstate"));
-		m_impl->m_fmi2Functions.setFMUstate					= reinterpret_cast<fmi2SetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SetFMUstate"));
-		m_impl->m_fmi2Functions.freeFMUstate				= reinterpret_cast<fmi2FreeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2FreeFMUstate"));
+		m_fmi2Functions.getFMUstate					= reinterpret_cast<fmi2GetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2GetFMUstate"));
+		m_fmi2Functions.setFMUstate					= reinterpret_cast<fmi2SetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SetFMUstate"));
+		m_fmi2Functions.freeFMUstate				= reinterpret_cast<fmi2FreeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2FreeFMUstate"));
 	}
 	if (m_modelDescription.m_canSerializeFMUstate) {
-		m_impl->m_fmi2Functions.serializedFMUstateSize		= reinterpret_cast<fmi2SerializedFMUstateSizeTYPE*>(m_impl->importFunctionAddress("fmi2SerializedFMUstateSize"));
-		m_impl->m_fmi2Functions.serializeFMUstate			= reinterpret_cast<fmi2SerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SerializeFMUstate"));
-		m_impl->m_fmi2Functions.deSerializeFMUstate			= reinterpret_cast<fmi2DeSerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2DeSerializeFMUstate"));
+		m_fmi2Functions.serializedFMUstateSize		= reinterpret_cast<fmi2SerializedFMUstateSizeTYPE*>(m_impl->importFunctionAddress("fmi2SerializedFMUstateSize"));
+		m_fmi2Functions.serializeFMUstate			= reinterpret_cast<fmi2SerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SerializeFMUstate"));
+		m_fmi2Functions.deSerializeFMUstate			= reinterpret_cast<fmi2DeSerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2DeSerializeFMUstate"));
 	}
 	if (m_modelDescription.m_providesDirectionalDerivative) {
-		m_impl->m_fmi2Functions.getDirectionalDerivative	= reinterpret_cast<fmi2GetDirectionalDerivativeTYPE*>(m_impl->importFunctionAddress("fmi2GetDirectionalDerivative"));
+		m_fmi2Functions.getDirectionalDerivative	= reinterpret_cast<fmi2GetDirectionalDerivativeTYPE*>(m_impl->importFunctionAddress("fmi2GetDirectionalDerivative"));
 	}
 	/***************************************************
 	Functions for FMI2 for Co-Simulation
 	****************************************************/
-	m_impl->m_fmi2Functions.setRealInputDerivatives		= reinterpret_cast<fmi2SetRealInputDerivativesTYPE*>(m_impl->importFunctionAddress("fmi2SetRealInputDerivatives"));
-	m_impl->m_fmi2Functions.getRealOutputDerivatives	= reinterpret_cast<fmi2GetRealOutputDerivativesTYPE*>(m_impl->importFunctionAddress("fmi2GetRealOutputDerivatives"));
-	m_impl->m_fmi2Functions.doStep						= reinterpret_cast<fmi2DoStepTYPE*>(m_impl->importFunctionAddress("fmi2DoStep"));
-	m_impl->m_fmi2Functions.cancelStep					= reinterpret_cast<fmi2CancelStepTYPE*>(m_impl->importFunctionAddress("fmi2CancelStep"));
-	m_impl->m_fmi2Functions.getStatus					= reinterpret_cast<fmi2GetStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetStatus"));
-	m_impl->m_fmi2Functions.getRealStatus				= reinterpret_cast<fmi2GetRealStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetRealStatus"));
-	m_impl->m_fmi2Functions.getIntegerStatus			= reinterpret_cast<fmi2GetIntegerStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetIntegerStatus"));
-	m_impl->m_fmi2Functions.getBooleanStatus			= reinterpret_cast<fmi2GetBooleanStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetBooleanStatus"));
-	m_impl->m_fmi2Functions.getStringStatus				= reinterpret_cast<fmi2GetStringStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetStringStatus"));
+	m_fmi2Functions.setRealInputDerivatives		= reinterpret_cast<fmi2SetRealInputDerivativesTYPE*>(m_impl->importFunctionAddress("fmi2SetRealInputDerivatives"));
+	m_fmi2Functions.getRealOutputDerivatives	= reinterpret_cast<fmi2GetRealOutputDerivativesTYPE*>(m_impl->importFunctionAddress("fmi2GetRealOutputDerivatives"));
+	m_fmi2Functions.doStep						= reinterpret_cast<fmi2DoStepTYPE*>(m_impl->importFunctionAddress("fmi2DoStep"));
+	m_fmi2Functions.cancelStep					= reinterpret_cast<fmi2CancelStepTYPE*>(m_impl->importFunctionAddress("fmi2CancelStep"));
+	m_fmi2Functions.getStatus					= reinterpret_cast<fmi2GetStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetStatus"));
+	m_fmi2Functions.getRealStatus				= reinterpret_cast<fmi2GetRealStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetRealStatus"));
+	m_fmi2Functions.getIntegerStatus			= reinterpret_cast<fmi2GetIntegerStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetIntegerStatus"));
+	m_fmi2Functions.getBooleanStatus			= reinterpret_cast<fmi2GetBooleanStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetBooleanStatus"));
+	m_fmi2Functions.getStringStatus				= reinterpret_cast<fmi2GetStringStatusTYPE*>(m_impl->importFunctionAddress("fmi2GetStringStatus"));
 //	/***************************************************
 //	Functions for FMI2 for Model Exchange
 //	****************************************************/

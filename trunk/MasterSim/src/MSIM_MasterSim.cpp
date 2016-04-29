@@ -45,6 +45,8 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 		m_fmuManager.importFMU(fmuBaseDir, *it);
 	}
 
+	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
+
 	m_tStepSize = prj.m_tStepStart;
 }
 
