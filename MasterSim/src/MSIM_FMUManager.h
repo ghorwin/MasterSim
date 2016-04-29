@@ -44,7 +44,7 @@ public:
 	/*! If true, debug logging during FMU unzipping/ModelDescription reading is enabled. */
 	bool	m_debugLogging;
 
-	/*! All FMUs already imported. */
+	/*! All FMUs already imported (owned by FMUManager). */
 	std::vector<FMU*>	m_fmus;
 
 private:

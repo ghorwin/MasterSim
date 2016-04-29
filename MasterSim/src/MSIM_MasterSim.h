@@ -15,7 +15,11 @@ namespace MASTER_SIM {
 */
 class MasterSimulator {
 public:
+	/*! Constructor. */
 	MasterSimulator();
+
+	/*! Destructor, cleans up slaves. */
+	~MasterSimulator();
 
 	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
 		Throws an exception if an error occurs during instantiation.
@@ -75,8 +79,8 @@ private:
 	/*! Holds and owns all FMU objects (contant of the FMU archives). */
 	FMUManager				m_fmuManager;
 
-	/*! Vector of instantiated simulation slaves. */
-	std::vector<Slave>		m_slaves;
+	/*! Vector of instantiated simulation slaves (owned by MasterSim). */
+	std::vector<Slave*>		m_slaves;
 
 
 	double					m_tCurrent;
