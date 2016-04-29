@@ -28,8 +28,8 @@
 
 namespace MASTER_SIM {
 
-/*! Implementation class for the FMU interface, hides all details about
-	loading and interfacing an FMU.
+/*! Implementation class for the FMU interface, hides all platform specific details about
+	loading and interfacing an FMU and keeps all platform specific includes limited to this file.
 */
 class FMUPrivate {
 public:
@@ -105,12 +105,6 @@ public:
 
 	/*! Destructor, cleans up memory. */
 	~FMUPrivate();
-
-	/*! This imports the function pointers from the DLL.
-		\param modelIdentifier ID name of model (used to compose file name of shared library)
-		\param fmuDir Directory where FMU archive was extracted in.
-	*/
-	void import(ModelDescription::FMUType, const ModelDescription & modelIdentifier, const IBK::Path & fmuDir);
 
 	/*! Imports a function address from shared library. */
 	void * importFunctionAddress(const char* functionName);
@@ -209,13 +203,19 @@ void FMU::importFMIv2Functions() {
 	m_impl->m_fmi2Functions.setInteger					= reinterpret_cast<fmi2SetIntegerTYPE*>(m_impl->importFunctionAddress("fmi2SetInteger"));
 	m_impl->m_fmi2Functions.setBoolean					= reinterpret_cast<fmi2SetBooleanTYPE*>(m_impl->importFunctionAddress("fmi2SetBoolean"));
 	m_impl->m_fmi2Functions.setString					= reinterpret_cast<fmi2SetStringTYPE*>(m_impl->importFunctionAddress("fmi2SetString"));
-	m_impl->m_fmi2Functions.getFMUstate					= reinterpret_cast<fmi2GetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2GetFMUstate"));
-	m_impl->m_fmi2Functions.setFMUstate					= reinterpret_cast<fmi2SetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SetFMUstate"));
-	m_impl->m_fmi2Functions.freeFMUstate				= reinterpret_cast<fmi2FreeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2FreeFMUstate"));
-	m_impl->m_fmi2Functions.serializedFMUstateSize		= reinterpret_cast<fmi2SerializedFMUstateSizeTYPE*>(m_impl->importFunctionAddress("fmi2SerializedFMUstateSize"));
-	m_impl->m_fmi2Functions.serializeFMUstate			= reinterpret_cast<fmi2SerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SerializeFMUstate"));
-	m_impl->m_fmi2Functions.deSerializeFMUstate			= reinterpret_cast<fmi2DeSerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2DeSerializeFMUstate"));
-	m_impl->m_fmi2Functions.getDirectionalDerivative	= reinterpret_cast<fmi2GetDirectionalDerivativeTYPE*>(m_impl->importFunctionAddress("fmi2GetDirectionalDerivative"));
+	if (m_modelDescription.m_canGetAndSetFMUstate) {
+		m_impl->m_fmi2Functions.getFMUstate					= reinterpret_cast<fmi2GetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2GetFMUstate"));
+		m_impl->m_fmi2Functions.setFMUstate					= reinterpret_cast<fmi2SetFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SetFMUstate"));
+		m_impl->m_fmi2Functions.freeFMUstate				= reinterpret_cast<fmi2FreeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2FreeFMUstate"));
+	}
+	if (m_modelDescription.m_canSerializeFMUstate) {
+		m_impl->m_fmi2Functions.serializedFMUstateSize		= reinterpret_cast<fmi2SerializedFMUstateSizeTYPE*>(m_impl->importFunctionAddress("fmi2SerializedFMUstateSize"));
+		m_impl->m_fmi2Functions.serializeFMUstate			= reinterpret_cast<fmi2SerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2SerializeFMUstate"));
+		m_impl->m_fmi2Functions.deSerializeFMUstate			= reinterpret_cast<fmi2DeSerializeFMUstateTYPE*>(m_impl->importFunctionAddress("fmi2DeSerializeFMUstate"));
+	}
+	if (m_modelDescription.m_providesDirectionalDerivative) {
+		m_impl->m_fmi2Functions.getDirectionalDerivative	= reinterpret_cast<fmi2GetDirectionalDerivativeTYPE*>(m_impl->importFunctionAddress("fmi2GetDirectionalDerivative"));
+	}
 	/***************************************************
 	Functions for FMI2 for Co-Simulation
 	****************************************************/
