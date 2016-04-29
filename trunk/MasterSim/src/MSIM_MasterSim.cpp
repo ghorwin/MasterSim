@@ -3,11 +3,21 @@
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 
+#include "MSIM_FMU.h"
+#include "MSIM_Slave.h"
+
 namespace MASTER_SIM {
 
 MasterSimulator::MasterSimulator() :
 	m_tCurrent(0)
 {
+}
+
+
+MasterSimulator::~MasterSimulator() {
+	// release allocated memory of slaves
+	for (unsigned int i=0; i<m_slaves.size(); ++i)
+		delete m_slaves[i];
 }
 
 
@@ -46,6 +56,23 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	}
 
 	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
+	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
+
+	IBK::IBK_Message("Instantiation simulation slaves.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
+		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
+		// search FMU to instantiate
+		FMU * fmu = m_fmuManager.fmuByPath(slaveDef.m_pathToFMU.absolutePath());
+		// check if we try to instantiate an FMU twice that forbids this
+		if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
+			if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
+				throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
+									 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
+		}
+		instantiatedFMUs.insert(fmu);
+
+	}
+
 
 	m_tStepSize = prj.m_tStepStart;
 }
