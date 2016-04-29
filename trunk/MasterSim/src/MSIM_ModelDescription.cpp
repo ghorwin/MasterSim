@@ -19,7 +19,7 @@ void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionF
 	if (!modelDescriptionFilePath.exists())
 		throw IBK::Exception(IBK::FormatString("Missing file '%1'").arg(modelDescriptionFilePath), FUNC_ID);
 	try {
-		IBK::IBK_Message(IBK::FormatString("%1\n").arg(modelDescriptionFilePath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		IBK::IBK_Message(IBK::FormatString("  %1\n").arg(modelDescriptionFilePath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		TiXmlDocument doc( modelDescriptionFilePath.c_str() );
 		if (!doc.LoadFile()) {
 			throw IBK::Exception(IBK::FormatString("Error in line %1 of project file:\n%2")
@@ -79,6 +79,7 @@ void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_csV2ModelIdentifier = readRequiredAttribute(element, "modelIdentifier");
 	m_canHandleVariableCommunicationStepSize = readBoolAttribute(element, "canHandleVariableCommunicationStepSize");
 	m_canInterpolateInputs = readBoolAttribute(element, "canInterpolateInputs");
+	m_canGetAndSetFMUstate = readBoolAttribute(element, "canGetAndSetFMUstate");
 	m_canSerializeFMUstate = readBoolAttribute(element, "canSerializeFMUstate");
 	m_canBeInstantiatedOnlyOncePerProcess = readBoolAttribute(element, "canBeInstantiatedOnlyOncePerProcess");
 	m_providesDirectionalDerivative = readBoolAttribute(element, "providesDirectionalDerivative");

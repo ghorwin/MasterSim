@@ -49,7 +49,7 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 		IBK::IBK_Message(IBK::FormatString("  into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// check if target directory exists
 		if (unzipPath.exists()) {
-			IBK::IBK_Message(IBK::FormatString("Directory exists, unzipping will overwrite files!"), IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
+			IBK::IBK_Message(IBK::FormatString("  Directory exists, unzipping will overwrite files!"), IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
 		}
 
 		// extract FMU into target directory
@@ -65,9 +65,11 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 
 	IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
+		IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v2\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		fmu->import(ModelDescription::CS_v2);
 	}
 	else if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v1\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		fmu->import(ModelDescription::CS_v1);
 	}
 	else {

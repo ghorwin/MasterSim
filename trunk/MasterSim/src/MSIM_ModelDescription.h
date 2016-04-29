@@ -43,6 +43,7 @@ public:
 
 	bool	m_canHandleVariableCommunicationStepSize;
 	bool	m_canInterpolateInputs;
+	bool	m_canGetAndSetFMUstate;
 	bool	m_canSerializeFMUstate;
 	bool	m_canBeInstantiatedOnlyOncePerProcess;
 	bool	m_providesDirectionalDerivative;
