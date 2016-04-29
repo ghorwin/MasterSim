@@ -6,6 +6,7 @@
 #include "MSIM_Project.h"
 #include "MSIM_ArgParser.h"
 #include "MSIM_FMUManager.h"
+#include "MSIM_Slave.h"
 
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
@@ -71,8 +72,11 @@ private:
 	/*! Copy of project data. */
 	Project					m_project;
 
-	/*! Holds and owns all FMU objects. */
+	/*! Holds and owns all FMU objects (contant of the FMU archives). */
 	FMUManager				m_fmuManager;
+
+	/*! Vector of instantiated simulation slaves. */
+	std::vector<Slave>		m_slaves;
 
 
 	double					m_tCurrent;

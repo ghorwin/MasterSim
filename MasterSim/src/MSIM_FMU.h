@@ -3,6 +3,8 @@
 
 #include <IBK_Path.h>
 
+//#include "fmi/fmiFunctions.h"
+#include "fmi/fmi2Functions.h"
 
 #include "MSIM_ModelDescription.h"
 
@@ -13,6 +15,68 @@ class FMUPrivate;
 /*! Holds all data about an imported FMU. */
 class FMU {
 public:
+	/*! Function pointers to functions published by FMIv1 FMUs. */
+	struct FMI1FunctionSet {
+	};
+
+	/*! Function pointers to functions published by FMIv2 FMUs. */
+	struct FMI2FunctionSet {
+		/***************************************************
+		Common Functions
+		****************************************************/
+		fmi2GetTypesPlatformTYPE         *getTypesPlatform;
+		fmi2GetVersionTYPE               *getVersion;
+		fmi2SetDebugLoggingTYPE          *setDebugLogging;
+		fmi2InstantiateTYPE              *instantiate;
+		fmi2FreeInstanceTYPE             *freeInstance;
+		fmi2SetupExperimentTYPE          *setupExperiment;
+		fmi2EnterInitializationModeTYPE  *enterInitializationMode;
+		fmi2ExitInitializationModeTYPE   *exitInitializationMode;
+		fmi2TerminateTYPE                *terminate;
+		fmi2ResetTYPE                    *reset;
+		fmi2GetRealTYPE                  *getReal;
+		fmi2GetIntegerTYPE               *getInteger;
+		fmi2GetBooleanTYPE               *getBoolean;
+		fmi2GetStringTYPE                *getString;
+		fmi2SetRealTYPE                  *setReal;
+		fmi2SetIntegerTYPE               *setInteger;
+		fmi2SetBooleanTYPE               *setBoolean;
+		fmi2SetStringTYPE                *setString;
+		fmi2GetFMUstateTYPE              *getFMUstate;
+		fmi2SetFMUstateTYPE              *setFMUstate;
+		fmi2FreeFMUstateTYPE             *freeFMUstate;
+		fmi2SerializedFMUstateSizeTYPE   *serializedFMUstateSize;
+		fmi2SerializeFMUstateTYPE        *serializeFMUstate;
+		fmi2DeSerializeFMUstateTYPE      *deSerializeFMUstate;
+		fmi2GetDirectionalDerivativeTYPE *getDirectionalDerivative;
+		/***************************************************
+		Functions for FMI2 for Co-Simulation
+		****************************************************/
+		fmi2SetRealInputDerivativesTYPE  *setRealInputDerivatives;
+		fmi2GetRealOutputDerivativesTYPE *getRealOutputDerivatives;
+		fmi2DoStepTYPE                   *doStep;
+		fmi2CancelStepTYPE               *cancelStep;
+		fmi2GetStatusTYPE                *getStatus;
+		fmi2GetRealStatusTYPE            *getRealStatus;
+		fmi2GetIntegerStatusTYPE         *getIntegerStatus;
+		fmi2GetBooleanStatusTYPE         *getBooleanStatus;
+		fmi2GetStringStatusTYPE          *getStringStatus;
+		/***************************************************
+		Functions for FMI2 for Model Exchange
+		****************************************************/
+		fmi2EnterEventModeTYPE                *enterEventMode;
+		fmi2NewDiscreteStatesTYPE             *newDiscreteStates;
+		fmi2EnterContinuousTimeModeTYPE       *enterContinuousTimeMode;
+		fmi2CompletedIntegratorStepTYPE       *completedIntegratorStep;
+		fmi2SetTimeTYPE                       *setTime;
+		fmi2SetContinuousStatesTYPE           *setContinuousStates;
+		fmi2GetDerivativesTYPE                *getDerivatives;
+		fmi2GetEventIndicatorsTYPE            *getEventIndicators;
+		fmi2GetContinuousStatesTYPE           *getContinuousStates;
+		fmi2GetNominalsOfContinuousStatesTYPE *getNominalsOfContinuousStates;
+	};
+
+
 	/*! Default constructor.
 		\param fmuFilePath Path to FMU archive file, not needed for importing since FMU is expected to be extracted already,
 			but the file path serves as unique identification of an FMU file (file path must be unique).
@@ -33,6 +97,10 @@ public:
 	*/
 	void import(ModelDescription::FMUType fmu2import);
 
+	// ** FMU wrapper functions **
+
+	void fmi2FreeInstance(fmi2Component c);
+
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
 	/*! Directory where FMU was extracted to (as absolute file path). */
@@ -41,6 +109,10 @@ public:
 	/*! Content of model description. */
 	ModelDescription	m_modelDescription;
 
+	/*! Function pointers to all functions provided by FMI v1. */
+	FMI1FunctionSet		m_fmi1Functions;
+	/*! Function pointers to all functions provided by FMI v2. */
+	FMI2FunctionSet		m_fmi2Functions;
 
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
