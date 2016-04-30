@@ -71,6 +71,13 @@ public:
 	void writeOutputs();
 
 private:
+	/*! This function handles the FMU unzipping and shared library loading stuff. */
+	void importFMUs();
+
+	/*! Here all simulation slaves are instantiated. */
+	void instatiateSlaves();
+
+
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
 	/*! Copy of project data. */

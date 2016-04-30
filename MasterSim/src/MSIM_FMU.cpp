@@ -303,15 +303,17 @@ void FMUPrivate::loadLibrary(IBK::Path & sharedLibraryPath) {
 // Linux/Mac implementation
 
 FMUPrivate::~FMUPrivate() {
-	if (m_soHandle != NULL)
+	if (m_soHandle != NULL) {
 		dlclose( m_soHandle );
+	}
 }
 
 
 void * FMUPrivate::importFunctionAddress(const char* functionName) {
 	void * ptr = dlsym( m_soHandle, functionName );
 	if (ptr == NULL) {
-		throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
+		throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library")
+							  .arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
 	}
 	return ptr;
 }
@@ -321,13 +323,16 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
 	IBK::Path sharedLibraryPath = sharedLibraryDir;
 	sharedLibraryPath.addExtension(".so");
+	IBK::IBK_Message(IBK::FormatString("Loading shared library '%1'.\n").arg(sharedLibraryPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 
-	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW );
+	const char * const p = sharedLibraryPath.c_str();
+	m_soHandle = dlopen( p, RTLD_NOW );
 
 	if (m_soHandle == NULL)
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library.").arg(dlerror()), FUNC_ID);
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
+							 .arg(dlerror()).arg(sharedLibraryPath), FUNC_ID);
 }
 
 #endif // _WIN32
