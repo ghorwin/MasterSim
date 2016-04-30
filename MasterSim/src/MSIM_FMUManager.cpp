@@ -75,13 +75,16 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	else {
 		throw IBK::Exception("FMU does provide CoSimulation interface (neither version 1 or 2).", FUNC_ID);
 	}
+
+	// import successful, remember FMU instance
+	m_fmus.push_back(fmu.release());
 }
 
 
 FMU * FMUManager::fmuByPath(const IBK::Path & fmuFilePath) {
 	const char * const FUNC_ID = "[FMUManager::fmuByPath]";
 	for (unsigned int i=0; i<m_fmus.size(); ++i) {
-		if (m_fmus[i]->m_fmuFilePath == fmuFilePath) {
+		if (m_fmus[i]->fmuFilePath() == fmuFilePath) {
 			return m_fmus[i];
 		}
 	}
@@ -99,7 +102,7 @@ IBK::Path FMUManager::generateFilePath(const IBK::Path & fmuBaseDirectory, const
 	while (found) {
 		found = false;
 		for (unsigned int i=0; i<m_fmus.size(); ++i) {
-			if (m_fmus[i]->m_fmuDir == p) {
+			if (m_fmus[i]->fmuDir() == p) {
 				found = true;
 				break;
 			}

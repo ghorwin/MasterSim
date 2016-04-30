@@ -97,14 +97,13 @@ public:
 	*/
 	void import(ModelDescription::FMUType fmu2import);
 
-	// ** FMU wrapper functions **
-
-	void fmi2FreeInstance(fmi2Component c);
-
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
-	IBK::Path			m_fmuFilePath;
+	const IBK::Path & fmuFilePath() const { return m_fmuFilePath;}
 	/*! Directory where FMU was extracted to (as absolute file path). */
-	IBK::Path			m_fmuDir;
+	const IBK::Path & fmuDir() const { return m_fmuDir;}
+
+	/*! Returns a persistant pointer to the resource directory of the extracted FMU. */
+	const char * resourcePath() const { return m_resourcePath.c_str(); }
 
 	/*! Content of model description. */
 	ModelDescription	m_modelDescription;
@@ -124,6 +123,7 @@ public:
 	/*! Composes the shared library directory for the current platform. */
 	static IBK::Path binarySubDirectory();
 
+
 private:
 	/*! Imports functions for Version 2.0 FMU. */
 	void importFMIv2Functions();
@@ -132,6 +132,15 @@ private:
 	FMU(const FMU &);
 	/*! Disable assignment operator. */
 	FMU & operator=(const FMU &);
+
+	/*! File path to FMU as referenced in project file (should be an absolute file path). */
+	IBK::Path			m_fmuFilePath;
+	/*! Directory where FMU was extracted to (as absolute file path). */
+	IBK::Path			m_fmuDir;
+	/*! Resource path within FMU directory.
+		\note This variable is needed as persistant string
+	*/
+	IBK::Path			m_resourcePath;
 
 	/*! Holds the actual implementation and data so that details of importing are hidden to user of class. */
 	FMUPrivate	*m_impl;
