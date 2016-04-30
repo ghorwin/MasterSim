@@ -17,11 +17,11 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment c, fmi2String instanceName, fm
 
 
 fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
-	.logger = fmi2LoggerCallback,
-	.allocateMemory = calloc,
-	.freeMemory = free,
-	.stepFinished = NULL,
-	.componentEnvironment = NULL
+	.logger					= fmi2LoggerCallback,
+	.allocateMemory			= calloc,
+	.freeMemory				= free,
+	.stepFinished			= NULL,
+	.componentEnvironment	= NULL
 };
 
 

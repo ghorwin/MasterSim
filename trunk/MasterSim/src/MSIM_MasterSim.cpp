@@ -28,54 +28,10 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	m_args = args;
 	m_project = prj;
 
-	IBK::IBK_Message("Importing FMUs.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::MessageIndentor indent; (void)indent;
 
-	// collect list of FMU-Dlls to load dynamically
-	std::set<IBK::Path> fmuFiles;
-	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
-		// Using IBK::Path will ensure that the same files though addressed by different
-		// relative paths are converted to the same:
-		//   project/fmu/myFmu.fmu   and ../project/fmu/myFmu.fmu
-		// are the same files.
-		IBK::Path p = prj.m_simulators[i].m_pathToFMU; // may be a relative path
-		if (!p.isAbsolute())
-			p = args.m_projectFile.parentPath() / p;
-		fmuFiles.insert(p.absolutePath());
-	}
+	importFMUs();
 
-	m_fmuManager.m_unzipFMUs = !args.flagEnabled("skip-unzip");
-	IBK::Path fmuBaseDir = (args.m_workingDir / IBK::Path("fmus")).absolutePath();
-	if (!fmuBaseDir.exists() && !IBK::Path::makePath(fmuBaseDir))
-		throw IBK::Exception(IBK::FormatString("Error creating fmu extraction base directory: '%1'").arg(fmuBaseDir), FUNC_ID);
-
-	// load FMU library for each fmu
-	for (std::set<IBK::Path>::const_iterator it = fmuFiles.begin(); it != fmuFiles.end(); ++it) {
-		/// \todo check if user has specified extraction path override in project file
-		m_fmuManager.importFMU(fmuBaseDir, *it);
-	}
-
-	// NOTE: From now on, the FMU instances in m_fmuManager must not be modified anylonger, since
-	//       member variables/memory is treated as persistant during lifetime of FMU slaves
-
-	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
-	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
-
-	IBK::IBK_Message("Instantiation simulation slaves.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
-		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
-		// search FMU to instantiate
-		FMU * fmu = m_fmuManager.fmuByPath(slaveDef.m_pathToFMU.absolutePath());
-		// check if we try to instantiate an FMU twice that forbids this
-		if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
-			if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
-				throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
-									 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
-		}
-		instantiatedFMUs.insert(fmu);
-
-	}
-
+	instatiateSlaves();
 
 	m_tStepSize = prj.m_tStepStart;
 }
@@ -148,6 +104,70 @@ void MasterSimulator::writeOutputs() {
 
 	// 1. state of input/output variables vector
 	// 2. statistics of master / counter variables
+
+}
+
+
+void MasterSimulator::importFMUs() {
+	const char * const FUNC_ID = "[MasterSimulator::importFMUs]";
+	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
+	IBK::IBK_Message("Importing FMUs.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent; (void)indent;
+
+	// collect list of FMU-Dlls to load dynamically
+	std::set<IBK::Path> fmuFiles;
+	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
+		// Using IBK::Path will ensure that the same files though addressed by different
+		// relative paths are converted to the same:
+		//   project/fmu/myFmu.fmu   and ../project/fmu/myFmu.fmu
+		// are the same files.
+		IBK::Path p = m_project.m_simulators[i].m_pathToFMU; // may be a relative path
+		if (!p.isAbsolute())
+			p =  absoluteProjectFilePath / p;
+		fmuFiles.insert(p.absolutePath());
+	}
+
+	m_fmuManager.m_unzipFMUs = !m_args.flagEnabled("skip-unzip");
+	IBK::Path fmuBaseDir = (m_args.m_workingDir / IBK::Path("fmus")).absolutePath();
+	if (!fmuBaseDir.exists() && !IBK::Path::makePath(fmuBaseDir))
+		throw IBK::Exception(IBK::FormatString("Error creating fmu extraction base directory: '%1'").arg(fmuBaseDir), FUNC_ID);
+
+	// load FMU library for each fmu
+	for (std::set<IBK::Path>::const_iterator it = fmuFiles.begin(); it != fmuFiles.end(); ++it) {
+		/// \todo check if user has specified extraction path override in project file
+		m_fmuManager.importFMU(fmuBaseDir, *it);
+	}
+
+	// NOTE: From now on, the FMU instances in m_fmuManager must not be modified anylonger, since
+	//       member variables/memory is treated as persistant during lifetime of FMU slaves
+}
+
+
+void MasterSimulator::instatiateSlaves() {
+	const char * const FUNC_ID = "[MasterSimulator::instatiateSlaves]";
+	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
+
+	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
+	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
+
+	IBK::IBK_Message("Instantiation simulation slaves.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
+		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
+		IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
+		if (!fmuSlavePath.isAbsolute())
+			fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;
+		// search FMU to instantiate
+		FMU * fmu = m_fmuManager.fmuByPath(fmuSlavePath.absolutePath());
+		// check if we try to instantiate an FMU twice that forbids this
+		if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
+			if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
+				throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
+									 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
+		}
+		// create new simulation slave
+		instantiatedFMUs.insert(fmu);
+
+	}
 
 }
 
