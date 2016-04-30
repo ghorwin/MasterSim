@@ -6,7 +6,9 @@
 #if defined(_WIN32)
 
 	#define WIN32_LEAN_AND_MEAN
+#ifndef NOMINMAX
 	#define NOMINMAX
+#endif
 	#include <windows.h>
 
 #else  // defined(_WIN32)
@@ -285,17 +287,20 @@ void * FMUPrivate::importFunctionAddress(const char* functionName ) {
 	return ptr;
 }
 
-void FMUPrivate::loadLibrary(IBK::Path & sharedLibraryPath) {
+void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
+	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
+	IBK::Path sharedLibraryPath = sharedLibraryDir;
 	sharedLibraryPath.addExtension(".dll");
+	IBK::IBK_Message(IBK::FormatString("Loading DLL '%1'.\n").arg(sharedLibraryPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 	// use wide-char version of LoadLibrary
 	std::wstring dllPath = sharedLibraryPath.wstrOS();
-	m_impl->m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+	m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
 
-	if ( m_impl->m_dllHandle == 0 ) {
-		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL.").arg(GetLastErrorStdStr()), FUNC_ID);
-	}
+	if ( m_dllHandle == 0 )
+		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2' (maybe missing dependencies).")
+							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
 }
 
 #else // _WIN32
@@ -327,8 +332,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 
-	const char * const p = sharedLibraryPath.c_str();
-	m_soHandle = dlopen( p, RTLD_NOW );
+	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW );
 
 	if (m_soHandle == NULL)
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
