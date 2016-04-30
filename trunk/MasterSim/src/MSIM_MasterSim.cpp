@@ -55,6 +55,9 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 		m_fmuManager.importFMU(fmuBaseDir, *it);
 	}
 
+	// NOTE: From now on, the FMU instances in m_fmuManager must not be modified anylonger, since
+	//       member variables/memory is treated as persistant during lifetime of FMU slaves
+
 	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
 	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
 

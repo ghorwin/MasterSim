@@ -17,13 +17,16 @@ public:
 	/*! Initializing constructor. */
 	Slave(FMU * fmu, const std::string & name);
 
+	/*! Destructor, frees instance and cleans up memory. */
+	~Slave();
+
 	/*! Calls FMU instantiation function to create this simulation slave.
 		This function essentially populates the m_components pointer.
 	*/
 	void instantiateSlave();
 
-	/*! Destructor, frees instance and cleans up memory. */
-	~Slave();
+//	/*! Called via call-back function from FMU. */
+//	void stepCompleted(fmi2Status status);
 
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */
@@ -36,7 +39,7 @@ private:
 	void		*m_component;
 
 	/*! Structure with function pointers to required call back functions. */
-	static	fmi2CallbackFunctions	m_callBackFunctions;
+	static	fmi2CallbackFunctions	m_fmi2CallBackFunctions;
 };
 
 } // namespace MASTER_SIM
