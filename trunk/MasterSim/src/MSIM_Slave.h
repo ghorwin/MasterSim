@@ -2,6 +2,7 @@
 #define MSIM_FMUSLAVE_H
 
 #include <string>
+#include <vector>
 
 #include "fmi/fmi2Functions.h"
 
@@ -24,6 +25,15 @@ public:
 		This function essentially populates the m_components pointer.
 	*/
 	void instantiateSlave();
+
+	/*! Cached output variables of type bool, updated at end of doStep(). */
+	std::vector<bool>			m_boolOutputs;
+	/*! Cached output variables of type int, updated at end of doStep(). */
+	std::vector<int>			m_intOutputs;
+	/*! Cached output variables of type string, updated at end of doStep(). */
+	std::vector<std::string>	m_stringOutputs;
+	/*! Cached output variables of type double, updated at end of doStep(). */
+	std::vector<fmi2Real>		m_realOutputs;
 
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */

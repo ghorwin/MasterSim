@@ -8,7 +8,9 @@
 
 namespace MASTER_SIM {
 
-Project::Project()
+Project::Project() :
+	m_masterMode(MM_GAUSS_SEIDEL_SINGLE),
+	m_errorControlMode(EM_NONE)
 {
 }
 

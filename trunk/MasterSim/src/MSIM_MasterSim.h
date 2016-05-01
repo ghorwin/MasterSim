@@ -77,6 +77,9 @@ private:
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
 
+	/*! Performs error checking. */
+	bool doErrorCheck();
+
 
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
