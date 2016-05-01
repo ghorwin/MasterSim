@@ -74,7 +74,7 @@ FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuDir(fmuDir),
 	m_impl(new FMUPrivate)
 {
-	m_resourcePath = m_fmuDir / "resources";
+	m_resourcePath = IBK::Path("file://") / m_fmuDir / "resources";
 }
 
 
@@ -132,6 +132,16 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 void FMU::importFMIv1Functions() {
 	try {
 		std::string modelPrefix = m_modelDescription.m_modelName + "_";
+
+		m_fmi1Functions.getReal						= reinterpret_cast<fmiGetRealTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetReal"));
+		m_fmi1Functions.getInteger					= reinterpret_cast<fmiGetIntegerTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetInteger"));
+		m_fmi1Functions.getBoolean					= reinterpret_cast<fmiGetBooleanTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetBoolean"));
+		m_fmi1Functions.getString					= reinterpret_cast<fmiGetStringTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetString"));
+		m_fmi1Functions.setReal						= reinterpret_cast<fmiSetRealTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiSetReal"));
+		m_fmi1Functions.setInteger					= reinterpret_cast<fmiSetIntegerTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiSetInteger"));
+		m_fmi1Functions.setBoolean					= reinterpret_cast<fmiSetBooleanTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiSetBoolean"));
+		m_fmi1Functions.setString					= reinterpret_cast<fmiSetStringTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiSetString"));
+
 		m_fmi1Functions.instantiateSlave			= reinterpret_cast<fmiInstantiateSlaveTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiInstantiateSlave"));
 		m_fmi1Functions.freeSlaveInstance			= reinterpret_cast<fmiFreeSlaveInstanceTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiFreeSlaveInstance"));
 		m_fmi1Functions.doStep						= reinterpret_cast<fmiDoStepTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiDoStep"));

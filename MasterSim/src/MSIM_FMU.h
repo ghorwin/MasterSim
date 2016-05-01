@@ -17,6 +17,14 @@ class FMU {
 public:
 	/*! Function pointers to functions published by FMIv1 FMUs. */
 	struct FMI1FunctionSet {
+		fmiGetRealTYPE					*getReal;
+		fmiGetIntegerTYPE				*getInteger;
+		fmiGetBooleanTYPE				*getBoolean;
+		fmiGetStringTYPE				*getString;
+		fmiSetRealTYPE					*setReal;
+		fmiSetIntegerTYPE				*setInteger;
+		fmiSetBooleanTYPE				*setBoolean;
+		fmiSetStringTYPE				*setString;
 		fmiInstantiateSlaveTYPE			*instantiateSlave;
 		fmiFreeSlaveInstanceTYPE		*freeSlaveInstance;
 		fmiDoStepTYPE					*doStep;

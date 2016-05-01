@@ -66,6 +66,8 @@ private:
 	void		*m_component;
 
 	/*! Structure with function pointers to required call back functions. */
+	static	fmiCallbackFunctions	m_fmiCallBackFunctions;
+	/*! Structure with function pointers to required call back functions. */
 	static	fmi2CallbackFunctions	m_fmi2CallBackFunctions;
 };
 

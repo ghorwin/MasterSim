@@ -7,12 +7,25 @@
 
 namespace MASTER_SIM {
 
+void fmiLoggerCallback( fmiComponent c, fmiString instanceName, fmiStatus status,
+						fmiString category, fmiString message, ... )
+{
+	/// \todo use vsprintf to forward message into string, the feed into message handler
+}
+
 void fmi2LoggerCallback( fmi2ComponentEnvironment c, fmi2String instanceName, fmi2Status status,
 							  fmi2String category, fmi2String message, ... )
 {
 	/// \todo use vsprintf to forward message into string, the feed into message handler
 }
 
+
+fmiCallbackFunctions Slave::m_fmiCallBackFunctions = {
+	.logger					= fmiLoggerCallback,
+	.allocateMemory			= calloc,
+	.freeMemory				= free,
+	.stepFinished			= NULL,
+};
 
 fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 	.logger					= fmi2LoggerCallback,
@@ -42,12 +55,15 @@ Slave::~Slave() {
 
 void Slave::instantiateSlave() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
-//		m_fmu->m_fmi1Functions.instantiate(m_name.c_str(),
-//										   fmiCoSimulation,
-//										   m_fmu->m_modelDescription.m_guid.c_str(),
-//										   &m_fmi2CallBackFunctions,
-//										   fmi2False,  // not visible
-//										   fmi2False); // no debug logging for now
+		m_fmu->m_fmi1Functions.instantiateSlave(m_name.c_str(),
+												m_fmu->m_modelDescription.m_guid.c_str(),
+												m_fmu->resourcePath(),
+												"application/x-mastersim",
+												0, // timeout
+												fmiFalse, // visible
+												fmiFalse, // interactive
+												m_fmiCallBackFunctions,
+												fmiFalse); // no debug logging for now
 	}
 	else {
 		m_fmu->m_fmi2Functions.instantiate(m_name.c_str(),
@@ -68,7 +84,7 @@ void Slave::instantiateSlave() {
 
 
 int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
-	const char * const FUNC_ID = "[Slave::doStep]";
+//	const char * const FUNC_ID = "[Slave::doStep]";
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		return fmi2OK;
 	}
