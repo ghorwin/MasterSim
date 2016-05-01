@@ -74,6 +74,9 @@ private:
 	/*! This function handles the FMU unzipping and shared library loading stuff. */
 	void importFMUs();
 
+	/*! Checks all imported FMUs whether they provide the necessary functionality for the selected master algorithm. */
+	void checkCapabilities();
+
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
 

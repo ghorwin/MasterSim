@@ -32,6 +32,7 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	importFMUs();
 
 	// check required capabilities of FMUs, this depends on the selected master algorithm
+	checkCapabilities();
 
 	// instantiate all slaves
 	instatiateSlaves();
@@ -159,6 +160,23 @@ void MasterSimulator::importFMUs() {
 }
 
 
+void MasterSimulator::checkCapabilities() {
+	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
+	// depending on master algorithm, an FMU may be required to have certain capabilities
+
+	if (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL_ITERATIVE) {
+		// check each FMU for capability flag
+		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
+			const FMU * fmu = m_fmuManager.fmus()[i];
+			if (!fmu->m_modelDescription.m_canGetAndSetFMUstate)
+				throw IBK::Exception(IBK::FormatString("FMU '%1' does not provide canGetAndSetFMUState capability, "
+													   "which is required by master algorithm.").arg(fmu->fmuFilePath()),
+									 FUNC_ID);
+		}
+	}
+}
+
+
 void MasterSimulator::instatiateSlaves() {
 	const char * const FUNC_ID = "[MasterSimulator::instatiateSlaves]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
@@ -170,7 +188,8 @@ void MasterSimulator::instatiateSlaves() {
 	IBK::MessageIndentor indent; (void)indent;
 	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
 		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
-		IBK::IBK_Message( IBK::FormatString("%1 (fmu %2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::IBK_Message( IBK::FormatString("%1 (fmu %2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
 		if (!fmuSlavePath.isAbsolute())
 			fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;
@@ -184,9 +203,7 @@ void MasterSimulator::instatiateSlaves() {
 		}
 		// create new simulation slave
 		instantiatedFMUs.insert(fmu);
-
 	}
-
 }
 
 
