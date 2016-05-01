@@ -22,22 +22,23 @@ MasterSimulator::~MasterSimulator() {
 
 
 void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj) {
-	const char * const FUNC_ID = "[MasterSimulator::instantiateFMUs]";
+	//const char * const FUNC_ID = "[MasterSimulator::instantiateFMUs]";
 
 	// create copy of input data (needed for multi-threaded application)
 	m_args = args;
 	m_project = prj;
 
-
+	// import all FMUs
 	importFMUs();
 
+	// instantiate all slaves
 	instatiateSlaves();
-
-	m_tStepSize = prj.m_tStepStart;
 }
 
 
+
 void MasterSimulator::initialize() {
+	m_tStepSize = m_project.m_tStepStart;
 	m_tLastOutput = -1;
 }
 

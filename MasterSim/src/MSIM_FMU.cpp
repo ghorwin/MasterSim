@@ -59,8 +59,7 @@ public:
 #else
 	void				*m_soHandle;
 #endif
-};
-
+}; // class FMUPrivate
 
 
 // **** Class FMU Implementation ****
@@ -332,6 +331,12 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 
+	/// \bug On Unix/Linux system the absolute file path of a shared library files may be different but, due to symlinks,
+	///		 point to the same file. In this case, the library will only be loaded once and two instances of FMU
+	///		 will hold the same so-handle. When the destructor of the first FMU is called the library gets released. But
+	///		 when dlclose() is called again with the same pointer, an access violation/segfault occurs.
+	///		 There should be a sanity check here that whenever a handle is returned that previously had been returned already,
+	///		 the import should fail.
 	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW );
 
 	if (m_soHandle == NULL)

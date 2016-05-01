@@ -15,16 +15,19 @@ class FMU;
 */
 class FMUManager {
 public:
-	FMUManager();
+	/*! Constructor. */
+	FMUManager() :
+		m_unzipFMUs(true)
+	{
+	}
 
 	/*! Releases all allocated memory. */
 	~FMUManager();
 
-	/*! Imports an FMU.
-		The actual import path (unzip directory) is auto-generated.
+	/*! Imports an FMU to an auto-generated unzip directory.
 		\param fmuTargetDirectory Target directory for extracted FMUs.
 		\param fmuFilePath Full path to FMU-file (from master project file).
-		\return Returns a pointer to the FMUSlave instance that contains all data provided by this FMU.
+		\return Returns a pointer to the FMU object that contains all data provided by this FMU.
 
 		\note Throws an exception if an error occurs. In this case, all resources are deallocated again.
 	*/
@@ -32,24 +35,27 @@ public:
 
 	/*! Alternative version of FMU import where unzip directory is provided by user and not auto-generated.
 		If another FMU had been instantiated with same unzip directory, an IBK::Exception will be thrown.
+		\param fmuFilePath Full path to FMU-file (from master project file).
+		\param unzipPath Directory where archive shall be extracted to.
 	*/
 	void importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & unzipPath);
 
 	/*! Convenience function, returns FMU by file path to fmu archive as passed to importFMU. */
 	FMU * fmuByPath(const IBK::Path & fmuFilePath);
 
-	/*! If true, FMUs are unzipped to directories first, before ModelDescriptions are read. */
+	/*! If true, FMUs are unzipped to directories first (the default), before ModelDescriptions are read. */
 	bool	m_unzipFMUs;
 
-	/*! If true, debug logging during FMU unzipping/ModelDescription reading is enabled. */
-	bool	m_debugLogging;
-
-	/*! All FMUs already imported (owned by FMUManager). */
-	std::vector<FMU*>	m_fmus;
+	// const std::vector<const FMU*> & fmus() const { return *(std::vector<const FMU*>*)(&m_fmus); }
 
 private:
 	/*! Generates a unique FMU file path based on fmu base directory and fmuFilePath. */
 	IBK::Path generateFilePath(const IBK::Path & fmuBaseDirectory, const IBK::Path & fmuFilePath);
+
+	/*! All FMUs already imported (owned by FMUManager).
+		\warning External functions shall only use read-only access to m_fmus vector.
+	*/
+	std::vector<FMU*>	m_fmus;
 
 };
 

@@ -14,13 +14,6 @@
 namespace MASTER_SIM {
 
 
-FMUManager::FMUManager() :
-	m_unzipFMUs(true),
-	m_debugLogging(true)
-{
-}
-
-
 FMUManager::~FMUManager() {
 	for (std::vector<FMU*>::iterator it = m_fmus.begin(); it != m_fmus.end(); ++it) {
 		delete *it;
