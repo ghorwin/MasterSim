@@ -165,14 +165,22 @@ Common Functions
 
 /* Data Exchange Functions*/
    DllExport fmiStatus fmiGetReal   (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiReal    value[]);
+   typedef fmiStatus fmiGetRealTYPE (fmiComponent, const fmiValueReference[], size_t, fmiReal[]);
    DllExport fmiStatus fmiGetInteger(fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiInteger value[]);
+   typedef fmiStatus fmiGetIntegerTYPE (fmiComponent, const fmiValueReference[], size_t, fmiInteger[]);
    DllExport fmiStatus fmiGetBoolean(fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiBoolean value[]);
+   typedef fmiStatus fmiGetBooleanTYPE (fmiComponent, const fmiValueReference[], size_t, fmiBoolean[]);
    DllExport fmiStatus fmiGetString (fmiComponent c, const fmiValueReference vr[], size_t nvr, fmiString  value[]);
+   typedef fmiStatus fmiGetStringTYPE (fmiComponent, const fmiValueReference[], size_t, fmiString[]);
 
    DllExport fmiStatus fmiSetReal    (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiReal    value[]);
+   typedef fmiStatus fmiSetRealTYPE (fmiComponent, const fmiValueReference[], size_t, const fmiReal[]);
    DllExport fmiStatus fmiSetInteger (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiInteger value[]);
+   typedef fmiStatus fmiSetIntegerTYPE (fmiComponent, const fmiValueReference[], size_t, const fmiInteger[]);
    DllExport fmiStatus fmiSetBoolean (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiBoolean value[]);
+   typedef fmiStatus fmiSetBooleanTYPE (fmiComponent, const fmiValueReference[], size_t, const fmiBoolean[]);
    DllExport fmiStatus fmiSetString  (fmiComponent c, const fmiValueReference vr[], size_t nvr, const fmiString  value[]);
+   typedef fmiStatus fmiSetStringTYPE (fmiComponent, const fmiValueReference[], size_t, const fmiString[]);
 
 /***************************************************
 Functions for FMI for Co-Simulation
