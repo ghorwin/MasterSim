@@ -59,4 +59,10 @@ HEADERS += \
 	../../src/MSIM_Slave.h \
 	../../src/MSIM_FMU.h \
 	../../src/MSIM_ModelDescription.h \
-    ../../src/MSIM_FMIVariable.h
+    ../../src/MSIM_FMIVariable.h \
+    ../../src/fmi/fmi2Functions.h \
+    ../../src/fmi/fmi2FunctionTypes.h \
+    ../../src/fmi/fmi2TypesPlatform.h \
+    ../../src/fmi/fmiFunctions.h \
+    ../../src/fmi/fmiModelTypes.h \
+    ../../src/fmi/fmiPlatformTypes.h

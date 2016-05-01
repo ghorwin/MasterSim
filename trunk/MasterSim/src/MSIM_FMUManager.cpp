@@ -56,20 +56,23 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	// parse modelDescription.xml so that we get the model identifyer
 	IBK::IBK_Message(IBK::FormatString("Reading modelDescription.xml\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	fmu->readModelDescription();
-
-	IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-	if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
-		IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v2\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-		fmu->import(ModelDescription::CS_v2);
+	try {
+		IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
+			IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v2\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			fmu->import(ModelDescription::CS_v2);
+		}
+		else if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+			IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v1\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			fmu->import(ModelDescription::CS_v1);
+		}
+		else {
+			throw IBK::Exception("FMU does provide CoSimulation interface (neither version 1 or 2).", FUNC_ID);
+		}
 	}
-	else if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
-		IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v1\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-		fmu->import(ModelDescription::CS_v1);
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, "Import of FMU failed.", FUNC_ID);
 	}
-	else {
-		throw IBK::Exception("FMU does provide CoSimulation interface (neither version 1 or 2).", FUNC_ID);
-	}
-
 	// import successful, remember FMU instance
 	m_fmus.push_back(fmu.release());
 }
