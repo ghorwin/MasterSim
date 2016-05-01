@@ -10,11 +10,6 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment c, fmi2String instanceName, fm
 	/// \todo use vsprintf to forward message into string, the feed into message handler
 }
 
-//void stepFinishedCallBack( fmi2ComponentEnvironment c, fmi2Status status ) {
-//	Slave * s = reinterpret_cast<Slave*>(c);
-//	s->stepCompleted(status);
-//}
-
 
 fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 	.logger					= fmi2LoggerCallback,

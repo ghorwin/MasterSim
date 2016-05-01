@@ -25,9 +25,6 @@ public:
 	*/
 	void instantiateSlave();
 
-//	/*! Called via call-back function from FMU. */
-//	void stepCompleted(fmi2Status status);
-
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	FMU			*m_fmu;

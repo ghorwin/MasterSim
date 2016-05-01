@@ -86,6 +86,7 @@ void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_fmuType = (FMUType)(m_fmuType | CS_v2);
 }
 
+
 // *** Static Function Implementations ***
 
 std::string ModelDescription::readRequiredAttribute(const TiXmlElement * xmlElem, const char * attribName) {
