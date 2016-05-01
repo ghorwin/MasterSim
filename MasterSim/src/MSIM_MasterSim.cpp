@@ -167,8 +167,10 @@ void MasterSimulator::instatiateSlaves() {
 	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
 
 	IBK::IBK_Message("Instantiation simulation slaves.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent; (void)indent;
 	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
 		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
+		IBK::IBK_Message( IBK::FormatString("%1 (fmu %2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
 		if (!fmuSlavePath.isAbsolute())
 			fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;

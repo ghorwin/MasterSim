@@ -2,7 +2,6 @@
 
 #include <memory> // for std::autoptr
 #include <cstdlib>
-#include <iostream>
 
 
 #include <IBK_messages.h>
@@ -80,9 +79,7 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 
 FMU * FMUManager::fmuByPath(const IBK::Path & fmuFilePath) {
 	const char * const FUNC_ID = "[FMUManager::fmuByPath]";
-	std::cout << fmuFilePath << std::endl;
 	for (unsigned int i=0; i<m_fmus.size(); ++i) {
-		std::cout << m_fmus[i]->fmuFilePath() << std::endl;
 		if (m_fmus[i]->fmuFilePath() == fmuFilePath) {
 			return m_fmus[i];
 		}

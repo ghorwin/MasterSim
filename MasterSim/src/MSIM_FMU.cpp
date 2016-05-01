@@ -48,6 +48,10 @@ public:
 
 	/*! Imports a function address from shared library. */
 	void * importFunctionAddress(const char* functionName);
+	/*! Imports a function address from shared library. */
+	void * importFunctionAddress(const std::string & functionName) {
+		return importFunctionAddress(functionName.c_str());
+	}
 
 	/*! Import library.
 		\param sharedLibraryPath Path to directory containing the shared libraries (not the path to an individual dll/so file).
@@ -127,9 +131,10 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 
 void FMU::importFMIv1Functions() {
 	try {
-		m_fmi1Functions.instantiateSlave			= reinterpret_cast<fmiInstantiateSlaveTYPE*>(m_impl->importFunctionAddress("fmiInstantiateSlave"));
-		m_fmi1Functions.freeSlaveInstance			= reinterpret_cast<fmiFreeSlaveInstanceTYPE*>(m_impl->importFunctionAddress("fmiFreeSlaveInstance"));
-		m_fmi1Functions.doStep						= reinterpret_cast<fmiDoStepTYPE*>(m_impl->importFunctionAddress("fmidoStep"));
+		std::string modelPrefix = m_modelDescription.m_modelName + "_";
+		m_fmi1Functions.instantiateSlave			= reinterpret_cast<fmiInstantiateSlaveTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiInstantiateSlave"));
+		m_fmi1Functions.freeSlaveInstance			= reinterpret_cast<fmiFreeSlaveInstanceTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiFreeSlaveInstance"));
+		m_fmi1Functions.doStep						= reinterpret_cast<fmiDoStepTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiDoStep"));
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, "Error importing FMI version 1 functions from shared library.", "[FMU::importFMIv1Functions]");
