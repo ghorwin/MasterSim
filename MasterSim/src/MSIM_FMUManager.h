@@ -46,7 +46,7 @@ public:
 	/*! If true, FMUs are unzipped to directories first (the default), before ModelDescriptions are read. */
 	bool	m_unzipFMUs;
 
-	// const std::vector<const FMU*> & fmus() const { return *(std::vector<const FMU*>*)(&m_fmus); }
+	const std::vector<const FMU*> & fmus() const { return *(std::vector<const FMU*>*)(&m_fmus); }
 
 private:
 	/*! Generates a unique FMU file path based on fmu base directory and fmuFilePath. */
