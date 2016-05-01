@@ -3,7 +3,7 @@
 
 #include <IBK_Path.h>
 
-//#include "fmi/fmiFunctions.h"
+#include "fmi/fmiFunctions.h"
 #include "fmi/fmi2Functions.h"
 
 #include "MSIM_ModelDescription.h"
@@ -17,6 +17,9 @@ class FMU {
 public:
 	/*! Function pointers to functions published by FMIv1 FMUs. */
 	struct FMI1FunctionSet {
+		fmiInstantiateSlaveTYPE			*instantiateSlave;
+		fmiFreeSlaveInstanceTYPE		*freeSlaveInstance;
+		fmiDoStepTYPE					*doStep;
 	};
 
 	/*! Function pointers to functions published by FMIv2 FMUs. */
@@ -125,6 +128,8 @@ public:
 
 
 private:
+	/*! Imports functions for Version 1.0 FMU. */
+	void importFMIv1Functions();
 	/*! Imports functions for Version 2.0 FMU. */
 	void importFMIv2Functions();
 

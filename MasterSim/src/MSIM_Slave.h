@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 
+#include "fmi/fmiFunctions.h"
 #include "fmi/fmi2Functions.h"
+
+#include "MSIM_FMIVariable.h"
 
 namespace MASTER_SIM {
 
@@ -26,14 +29,29 @@ public:
 	*/
 	void instantiateSlave();
 
+	/*! Tells the slave to integrate up the tEnd.
+		At end of function, all output quantities are updated.
+		\param tEnd A time larger than m_tCurrent
+		\param noSetFMUStatePriorToCurrentPoint Flag is passed on in call to slave.
+		\return Returns either fmiStatus or fmi2Status value (depending on FMU type) to be handled by the master algorithm.
+	*/
+	int doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint);
+
 	/*! Cached output variables of type bool, updated at end of doStep(). */
-	std::vector<bool>			m_boolOutputs;
+	std::vector<fmi2Boolean>	m_boolOutputs;
+	std::vector<unsigned int>	m_boolValueRefs;
 	/*! Cached output variables of type int, updated at end of doStep(). */
 	std::vector<int>			m_intOutputs;
+	std::vector<unsigned int>	m_intValueRefs;
 	/*! Cached output variables of type string, updated at end of doStep(). */
 	std::vector<std::string>	m_stringOutputs;
+	std::vector<unsigned int>	m_stringValueRefs;
 	/*! Cached output variables of type double, updated at end of doStep(). */
-	std::vector<fmi2Real>		m_realOutputs;
+	std::vector<double>			m_doubleOutputs;
+	std::vector<unsigned int>	m_doubleValueRefs;
+
+	/*! Holds definitions all variables of this slave. */
+	std::vector<FMIVariable>	m_variables;
 
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */
@@ -41,6 +59,9 @@ private:
 
 	/*! Simulator/slave ID name. */
 	std::string	m_name;
+
+	/*! Current time the FMU is at. */
+	double		m_t;
 
 	/*! Component pointer returned by instantiation function of FMU. */
 	void		*m_component;

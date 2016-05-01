@@ -2,8 +2,5 @@
 
 namespace MASTER_SIM {
 
-FMIVariable::FMIVariable()
-{
-}
 
 } // namespace MASTER_SIM

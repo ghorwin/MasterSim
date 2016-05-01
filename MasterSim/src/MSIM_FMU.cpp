@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 
 #if defined(_WIN32)
 
@@ -105,16 +106,34 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 			throw IBK::Exception("Invalid selection of model type (can only import a single FMU at a time).", FUNC_ID);
 	}
 
-	// load library
-	m_impl->loadLibrary(sharedLibraryPath);
-	if ((fmu2import & ModelDescription::ME_v1) || (fmu2import & ModelDescription::CS_v1)) {
+	try {
+		// load library
+		m_impl->loadLibrary(sharedLibraryPath);
 
+		if ((fmu2import & ModelDescription::ME_v1) || (fmu2import & ModelDescription::CS_v1)) {
+			importFMIv1Functions();
+		}
+		else {
+			importFMIv2Functions();
+		}
 	}
-	else {
-		importFMIv2Functions();
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, "Error importing library/function symbols.", FUNC_ID);
 	}
 
 	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+}
+
+
+void FMU::importFMIv1Functions() {
+	try {
+		m_fmi1Functions.instantiateSlave			= reinterpret_cast<fmiInstantiateSlaveTYPE*>(m_impl->importFunctionAddress("fmiInstantiateSlave"));
+		m_fmi1Functions.freeSlaveInstance			= reinterpret_cast<fmiFreeSlaveInstanceTYPE*>(m_impl->importFunctionAddress("fmiFreeSlaveInstance"));
+		m_fmi1Functions.doStep						= reinterpret_cast<fmiDoStepTYPE*>(m_impl->importFunctionAddress("fmidoStep"));
+	}
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, "Error importing FMI version 1 functions from shared library.", "[FMU::importFMIv1Functions]");
+	}
 }
 
 
