@@ -31,6 +31,8 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 	// import all FMUs
 	importFMUs();
 
+	// check required capabilities of FMUs, this depends on the selected master algorithm
+
 	// instantiate all slaves
 	instatiateSlaves();
 }
@@ -85,11 +87,24 @@ void MasterSimulator::simulate() {
 
 void MasterSimulator::doStep() {
 
+	// state of master and fmus at this point:
+	// - all FMUs and their outputs correspond to master time t
+	// -
+
 	// step size reduction loop
+	while (true) {
+		// if we have error control enabled, store current state
 
+		// do we have error control enabled
+		if (m_project.m_errorControlMode == Project::EM_NONE)
+			break; // done with step
 
+		if (doErrorCheck())
+			break;
 
-	// ..
+		// reduce step size and roll back to
+		// ...
+	}
 
 	m_tCurrent += m_tStepSize;
 }
@@ -170,6 +185,12 @@ void MasterSimulator::instatiateSlaves() {
 
 	}
 
+}
+
+
+bool MasterSimulator::doErrorCheck() {
+	/// \todo implement
+	return true;
 }
 
 

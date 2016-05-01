@@ -20,6 +20,12 @@ public:
 		MM_NEWTON					= 9
 	};
 
+	/*! Different options for controlling time integration error. */
+	enum ErrorControlMode {
+		EM_NONE,
+		EM_CHECK_ONLY
+	};
+
 	/*! Holds all information that define a simulator. */
 	struct SimulatorDef {
 		SimulatorDef() : m_id() {}
@@ -69,6 +75,9 @@ public:
 
 	/*! Operation mode of the master algorithm. */
 	MasterMode		m_masterMode;
+
+	/*! Type of error control/time step adjustment scheme used. */
+	ErrorControlMode	m_errorControlMode;
 
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
 	unsigned int	m_maxSteps;
