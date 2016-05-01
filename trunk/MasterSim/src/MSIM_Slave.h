@@ -37,18 +37,17 @@ public:
 	*/
 	int doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint);
 
+	/*! Retrieve all output quantities from slave and store in local vectors.*/
+	void cacheOutputs();
+
 	/*! Cached output variables of type bool, updated at end of doStep(). */
 	std::vector<fmi2Boolean>	m_boolOutputs;
-	std::vector<unsigned int>	m_boolValueRefs;
 	/*! Cached output variables of type int, updated at end of doStep(). */
 	std::vector<int>			m_intOutputs;
-	std::vector<unsigned int>	m_intValueRefs;
 	/*! Cached output variables of type string, updated at end of doStep(). */
 	std::vector<std::string>	m_stringOutputs;
-	std::vector<unsigned int>	m_stringValueRefs;
 	/*! Cached output variables of type double, updated at end of doStep(). */
 	std::vector<double>			m_doubleOutputs;
-	std::vector<unsigned int>	m_doubleValueRefs;
 
 	/*! Holds definitions all variables of this slave. */
 	std::vector<FMIVariable>	m_variables;

@@ -1,6 +1,7 @@
 #include "MSIM_Slave.h"
 
 #include <IBK_Exception.h>
+#include <IBK_assert.h>
 
 #include "MSIM_FMU.h"
 
@@ -57,6 +58,12 @@ void Slave::instantiateSlave() {
 										   fmi2False,  // not visible
 										   fmi2False); // no debug logging for now
 	}
+
+	// resize vectors
+	m_boolOutputs.resize(m_fmu->m_boolValueRefs.size());
+	m_intOutputs.resize(m_fmu->m_intValueRefs.size());
+	m_doubleOutputs.resize(m_fmu->m_doubleValueRefs.size());
+	m_stringOutputs.resize(m_fmu->m_stringValueRefs.size());
 }
 
 
@@ -71,31 +78,38 @@ int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
 
 		// if integration was successful, updated cached output quantities
 		if (res == fmi2OK) {
-			if (!m_boolValueRefs.empty()) {
-				fmi2Status r = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_boolValueRefs[0],
-						m_boolValueRefs.size(), &m_boolOutputs[0]);
-				if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
-			}
-			if (!m_intValueRefs.empty()) {
-				fmi2Status r = m_fmu->m_fmi2Functions.getInteger(m_component, &m_intValueRefs[0],
-						m_intValueRefs.size(), &m_intOutputs[0]);
-				if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
-			}
-			if (!m_doubleValueRefs.empty()) {
-				fmi2Status r = m_fmu->m_fmi2Functions.getReal(m_component, &m_doubleValueRefs[0],
-						m_doubleValueRefs.size(), &m_doubleOutputs[0]);
-				if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
-			}
-
+			cacheOutputs();
 		}
 		return res;
 	}
 }
 
 
-
-//void Slave::stepCompleted(fmi2Status status) {
-
-//}
+void Slave::cacheOutputs() {
+	const char * const FUNC_ID = "[Slave::cacheOutputs]";
+	if (!m_fmu->m_boolValueRefs.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_fmu->m_boolValueRefs[0],
+				m_fmu->m_boolValueRefs.size(), &m_boolOutputs[0]);
+		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	}
+	if (!m_fmu->m_intValueRefs.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getInteger(m_component, &m_fmu->m_intValueRefs[0],
+				m_fmu->m_intValueRefs.size(), &m_intOutputs[0]);
+		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	}
+	if (!m_fmu->m_doubleValueRefs.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefs[0],
+				m_fmu->m_doubleValueRefs.size(), &m_doubleOutputs[0]);
+		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	}
+	// strings are queried one-by-one
+	for (unsigned int i=0; i<m_fmu->m_stringValueRefs.size(); ++i) {
+		const char * str;
+		fmi2Status r = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefs[i], 1, &str);
+		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+		IBK_ASSERT(str != NULL);
+		m_stringOutputs[i] = std::string(str);
+	}
+}
 
 } // namespace MASTER_SIM

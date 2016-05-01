@@ -116,6 +116,15 @@ public:
 	/*! Function pointers to all functions provided by FMI v2. */
 	FMI2FunctionSet		m_fmi2Functions;
 
+	// Value references for output variables.
+
+	std::vector<unsigned int>	m_boolValueRefs;
+	std::vector<unsigned int>	m_intValueRefs;
+	std::vector<unsigned int>	m_stringValueRefs;
+	std::vector<unsigned int>	m_doubleValueRefs;
+
+
+
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
 		\param pathToFMU Holds path to FMU.
