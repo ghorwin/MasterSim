@@ -1,5 +1,7 @@
 #include "MSIM_MasterSim.h"
 
+#include <memory> // for auto_ptr
+
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 
@@ -45,6 +47,9 @@ void MasterSim::instantiateFMUs(const ArgParser &args, const Project & prj) {
 
 	// instantiate all slaves
 	instatiateSlaves();
+
+	// collect all output and input variables from all slaves, ordered according to cycles
+	composeVariableVector();
 }
 
 
@@ -181,7 +186,8 @@ void MasterSim::checkCapabilities() {
 	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
-	if (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL_ITERATIVE) {
+	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
+	if (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1) {
 		// check each FMU for capability flag
 		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
 			const FMU * fmu = m_fmuManager.fmus()[i];
@@ -221,14 +227,34 @@ void MasterSim::instatiateSlaves() {
 		// remember that this FMU was instantiated
 		instantiatedFMUs.insert(fmu);
 		// create new simulation slave
-		Slave * slave = new Slave(fmu, slaveDef.m_name);
+		std::auto_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
+		try {
+			slave->instantiateSlave();
+		}
+		catch (IBK::Exception & ex) {
+			throw IBK::Exception(ex, IBK::FormatString("Error setting up slave '%1'").arg(slaveDef.m_name), FUNC_ID);
+		}
 		// set global index
 		slave->m_slaveIndex = m_slaves.size();
 		// add slave to vector with slaves
-		m_slaves.push_back(slave);
+		Slave * s = slave.get();
+		m_slaves.push_back(slave.release());
+
+		// insert slave into cycle/priority
+		if (m_cycles.size() <= slaveDef.m_priority)
+			m_cycles.resize(slaveDef.m_priority+1);
+		m_cycles[slaveDef.m_priority].m_slaves.push_back(s);
 
 		/// \todo remaining initialization code
 	}
+
+
+}
+
+
+void MasterSim::composeVariableVector() {
+	// loop over all cycles
+
 }
 
 

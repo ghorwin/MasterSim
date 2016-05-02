@@ -4,12 +4,13 @@
 #include <fstream>
 
 #include <IBK_StringUtils.h>
+#include <IBK_FileUtils.h>
 #include <IBK_assert.h>
 
 namespace MASTER_SIM {
 
 Project::Project() :
-	m_masterMode(MM_GAUSS_SEIDEL_SINGLE),
+	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE)
 {
 }
@@ -28,6 +29,18 @@ void Project::read(const IBK::Path & prjFile) {
 	if (!in)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
 
+//	// explode sections
+//	std::vector<std::string> sections;
+//	std::vector<std::string> headers;
+//	headers.push_back("MasterSimProject");
+//	headers.push_back("SimulationParameter");
+//	headers.push_back("Simulators");
+//	headers.push_back("Connections");
+//	IBK::explode_lines(content, sections);
+
+//	// read simulation parameter section
+//	std::stringstream lstrm(sections[1]);
+
 	// read file line-by-line
 	std::string line;
 	int lineNr = 0;
@@ -37,6 +50,7 @@ void Project::read(const IBK::Path & prjFile) {
 		// skip empty lines or comments
 		if (line.find_first_not_of(" \t\r") == std::string::npos || line[0] == '#')
 			continue;
+
 
 		try {
 			std::vector<std::string> tokens;
@@ -66,7 +80,7 @@ void Project::read(const IBK::Path & prjFile) {
 				throw IBK::Exception(IBK::FormatString("Expected format '<keyword> <value>'.").arg(line), FUNC_ID);
 
 			std::string keyword = IBK::trim_copy(tokens[0]);
-			std::string value = tokens[1];
+			std::string value = IBK::trim_copy(tokens[1]);
 
 			if (keyword == "tstart")
 				m_tStart = IBK::string2val<double>(value);
@@ -80,8 +94,16 @@ void Project::read(const IBK::Path & prjFile) {
 				m_absTol = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_rel")
 				m_relTol = IBK::string2val<double>(value);
-			else if (keyword == "MasterMode")
-				m_masterMode = (MasterMode)IBK::string2val<unsigned int>(value);
+			else if (keyword == "MasterMode") {
+				if (value == "GAUSS_JACOBI")
+					m_masterMode = MM_GAUSS_JACOBI;
+				else if (value == "GAUSS_SEIDEL")
+					m_masterMode = MM_GAUSS_SEIDEL;
+				else if (value == "NEWTON")
+					m_masterMode = MM_NEWTON;
+				else
+					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
+			}
 			else if (keyword == "it_max_steps")
 				m_maxIterations = IBK::string2val<unsigned int>(value);
 			else

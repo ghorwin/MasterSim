@@ -24,7 +24,7 @@
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
-
+#include <IBK_assert.h>
 
 namespace MASTER_SIM {
 
@@ -85,6 +85,21 @@ FMU::~FMU() {
 
 void FMU::readModelDescription() {
 	m_modelDescription.parseModelDescription(m_fmuDir / "modelDescription.xml");
+
+	// now collect all output variable valueReferences
+	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
+		const FMIVariable & var = m_modelDescription.m_variables[i];
+		if (var.m_causality == FMIVariable::C_OUTPUT) {
+			switch (var.m_type) {
+				case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
+				default:
+					IBK_ASSERT_X(false, "bad variable initialization");
+			}
+		}
+	}
 }
 
 
@@ -124,8 +139,6 @@ void FMU::import(ModelDescription::FMUType typeToImport) {
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, "Error importing library/function symbols.", FUNC_ID);
 	}
-
-	IBK::IBK_Message("Shared library imported successfully.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 }
 
 

@@ -12,12 +12,12 @@ class Project {
 public:
 	/*! Operation modi of the master algorithm. */
 	enum MasterMode {
-		/*! Gauss-Seidel iteration with single iteration per step. */
-		MM_GAUSS_SEIDEL_SINGLE		= 1,
-		/*! Gauss-Seidel iteration with iteration until convergence. */
-		MM_GAUSS_SEIDEL_ITERATIVE	= 2,
+		/*! Gauss-Jacoby (without iteration). */
+		MM_GAUSS_JACOBI,
+		/*! Gauss-Seidel with iteration until convergence or maxIterations. */
+		MM_GAUSS_SEIDEL,
 		/*! Newton iteration. */
-		MM_NEWTON					= 9
+		MM_NEWTON
 	};
 
 	/*! Different options for controlling time integration error. */
