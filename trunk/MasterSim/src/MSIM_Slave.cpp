@@ -66,7 +66,7 @@ Slave::~Slave() {
 
 void Slave::instantiateSlave() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
-		m_fmu->m_fmi1Functions.instantiateSlave(m_name.c_str(),
+		m_component = m_fmu->m_fmi1Functions.instantiateSlave(m_name.c_str(),
 												m_fmu->m_modelDescription.m_guid.c_str(),
 												m_fmu->resourcePath(),
 												"application/x-mastersim",
@@ -77,7 +77,7 @@ void Slave::instantiateSlave() {
 												fmiFalse); // no debug logging for now
 	}
 	else {
-		m_fmu->m_fmi2Functions.instantiate(m_name.c_str(),
+		m_component = m_fmu->m_fmi2Functions.instantiate(m_name.c_str(),
 										   fmi2CoSimulation,
 										   m_fmu->m_modelDescription.m_guid.c_str(),
 										   m_fmu->resourcePath(),
@@ -85,6 +85,9 @@ void Slave::instantiateSlave() {
 										   fmi2False,  // not visible
 										   fmi2False); // no debug logging for now
 	}
+
+	if (m_component == NULL)
+		throw IBK::Exception("Error instantiating slave.", "[Slave::instantiateSlave]");
 
 	// resize vectors
 	m_boolOutputs.resize(m_fmu->m_boolValueRefsOutput.size());

@@ -20,8 +20,8 @@ void FMIVariable::read(const TiXmlElement * element) {
 		const char * attrib = element->Attribute("description");
 		if (attrib != NULL)
 			m_description = std::string(attrib);
-		std::string description = ModelDescription::readRequiredAttribute(element, "description");
 		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
+		/// \todo variability is currently ignored, all variables are treated as continuous or discrete
 
 		// read child element
 		const TiXmlElement * child = element->FirstChild()->ToElement();

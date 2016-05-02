@@ -85,7 +85,9 @@ private:
 	*/
 	struct Cycle {
 		/*! Holds pointers to all slaves belonging to this cycle in the order they should be
-			evaluated (for Gauss-Seidel). */
+			evaluated (for Gauss-Seidel).
+			\note Pointers are not owned.
+		*/
 		std::vector<Slave*>			m_slaves;
 
 		/*! All global variable indexes that are exchanged in this cycle, only variables
@@ -102,6 +104,9 @@ private:
 
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
+
+	/*! collect all output and input variables from all slaves, ordered according to cycles. */
+	void composeVariableVector();
 
 	/*! Performs error checking.
 		If test is successful, m_stepSizeProposed is updated as well.

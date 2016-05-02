@@ -41,7 +41,7 @@ public:
 	/*! Model identifier for CoSimulation v2. */
 	std::string		m_csV2ModelIdentifier;
 
-	// CoSim V2 Properties
+	// CoSim Properties
 
 	bool	m_canHandleVariableCommunicationStepSize;
 	bool	m_canInterpolateInputs;
