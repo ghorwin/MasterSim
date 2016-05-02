@@ -19,6 +19,17 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment c, fmi2String instanceName, fm
 	/// \todo use vsprintf to forward message into string, the feed into message handler
 }
 
+#if defined(_MSC_VER)
+
+fmiCallbackFunctions Slave::m_fmiCallBackFunctions = {
+	{ fmiLoggerCallback }, { calloc }, { free }, {NULL}
+};
+
+fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
+	{ fmi2LoggerCallback }, { calloc }, { free }, {NULL}, {NULL}
+};
+
+#else
 
 fmiCallbackFunctions Slave::m_fmiCallBackFunctions = {
 	.logger					= fmiLoggerCallback,
@@ -35,7 +46,7 @@ fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 	.componentEnvironment	= NULL
 };
 
-
+#endif
 
 
 Slave::Slave(FMU * fmu, const std::string & name) :
