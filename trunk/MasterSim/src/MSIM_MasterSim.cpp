@@ -5,23 +5,29 @@
 
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
+#include "MSIM_AlgorithmGaussJacobi.h"
 
 namespace MASTER_SIM {
 
-MasterSimulator::MasterSimulator() :
+MasterSim::MasterSim() :
+	m_algorithmGaussJacobi(NULL),
 	m_tCurrent(0)
 {
 }
 
 
-MasterSimulator::~MasterSimulator() {
+MasterSim::~MasterSim() {
+	// clean up master algorithms, wether they are used or not
+	delete m_algorithmGaussJacobi;
+
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
 		delete m_slaves[i];
+
 }
 
 
-void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj) {
+void MasterSim::instantiateFMUs(const ArgParser &args, const Project & prj) {
 	//const char * const FUNC_ID = "[MasterSimulator::instantiateFMUs]";
 
 	// create copy of input data (needed for multi-threaded application)
@@ -40,13 +46,14 @@ void MasterSimulator::instantiateFMUs(const ArgParser &args, const Project & prj
 
 
 
-void MasterSimulator::initialize() {
+void MasterSim::initialize() {
 	m_tStepSize = m_project.m_tStepStart;
+	m_tStepSizeProposed = m_tStepSize;
 	m_tLastOutput = -1;
 }
 
 
-void MasterSimulator::restoreState(double t, const IBK::Path & stateDirectory) {
+void MasterSim::restoreState(double t, const IBK::Path & stateDirectory) {
 	// all FMUs must be able to restore state!
 
 	// for all FMU instances:
@@ -59,7 +66,7 @@ void MasterSimulator::restoreState(double t, const IBK::Path & stateDirectory) {
 }
 
 
-void MasterSimulator::storeState(const IBK::Path & stateDirectory) {
+void MasterSim::storeState(const IBK::Path & stateDirectory) {
 	// all FMUs must be able to store state!
 
 	// for all FMU instances:
@@ -72,7 +79,7 @@ void MasterSimulator::storeState(const IBK::Path & stateDirectory) {
 }
 
 
-void MasterSimulator::simulate() {
+void MasterSim::simulate() {
 	while (m_tCurrent < m_project.m_tEnd) {
 		// do an internal step with the selected master algorithm
 		// after a successful call to doStep(), the master's internal state has
@@ -86,11 +93,13 @@ void MasterSimulator::simulate() {
 
 
 
-void MasterSimulator::doStep() {
+void MasterSim::doStep() {
 
 	// state of master and fmus at this point:
 	// - all FMUs and their outputs correspond to master time t
 	// -
+
+	m_tStepSize = m_tStepSizeProposed; // set proposed time step size
 
 	// step size reduction loop
 	while (true) {
@@ -107,11 +116,16 @@ void MasterSimulator::doStep() {
 		// ...
 	}
 
+	/// \todo Compute new time step to be used in next step.
+	///		  Also consider event indicators here.
+	m_tStepSizeProposed = m_tStepSize; // no time step adjustment yet!
+
+	// advance current master time
 	m_tCurrent += m_tStepSize;
 }
 
 
-void MasterSimulator::writeOutputs() {
+void MasterSim::writeOutputs() {
 	// skip output writing, if last output was written within minimum output
 	// time step size
 	if (m_tLastOutput >= 0 && m_tLastOutput + m_project.m_tOutputStepMin > m_tCurrent)
@@ -125,7 +139,7 @@ void MasterSimulator::writeOutputs() {
 }
 
 
-void MasterSimulator::importFMUs() {
+void MasterSim::importFMUs() {
 	const char * const FUNC_ID = "[MasterSimulator::importFMUs]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
 	IBK::IBK_Message("Importing FMUs.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -160,7 +174,7 @@ void MasterSimulator::importFMUs() {
 }
 
 
-void MasterSimulator::checkCapabilities() {
+void MasterSim::checkCapabilities() {
 	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
@@ -177,7 +191,7 @@ void MasterSimulator::checkCapabilities() {
 }
 
 
-void MasterSimulator::instatiateSlaves() {
+void MasterSim::instatiateSlaves() {
 	const char * const FUNC_ID = "[MasterSimulator::instatiateSlaves]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
 
@@ -207,9 +221,14 @@ void MasterSimulator::instatiateSlaves() {
 }
 
 
-bool MasterSimulator::doErrorCheck() {
+bool MasterSim::doErrorCheck() {
 	/// \todo implement
 	return true;
+}
+
+
+void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & variables) {
+
 }
 
 

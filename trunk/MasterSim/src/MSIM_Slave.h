@@ -40,6 +40,14 @@ public:
 	/*! Retrieve all output quantities from slave and store in local vectors.*/
 	void cacheOutputs();
 
+	/*! Sets an input variable in the master.
+
+	*/
+	void setReal(int globalVariableIdx, double value);
+
+	/*! Simulator/slave ID name. */
+	std::string	m_name;
+
 	/*! Cached output variables of type bool, updated at end of doStep(). */
 	std::vector<fmi2Boolean>	m_boolOutputs;
 	/*! Cached output variables of type int, updated at end of doStep(). */
@@ -55,9 +63,6 @@ public:
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	FMU			*m_fmu;
-
-	/*! Simulator/slave ID name. */
-	std::string	m_name;
 
 	/*! Current time the FMU is at. */
 	double		m_t;
