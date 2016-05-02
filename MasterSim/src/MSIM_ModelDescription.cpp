@@ -80,7 +80,10 @@ void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionF
 		readElementVariables(element);
 
 	}
-	catch( std::exception & ex) {
+	catch ( IBK::Exception & ex) {
+		throw IBK::Exception(ex,  IBK::FormatString("Error parsing modelDescription.xml"), FUNC_ID);
+	}
+	catch ( std::exception & ex) {
 		throw IBK::Exception( IBK::FormatString("Error parsing modelDescription.xml: %1").arg(ex.what()), FUNC_ID);
 	}
 }

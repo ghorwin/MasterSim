@@ -52,10 +52,11 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	// create FMU instance
 	std::auto_ptr<FMU> fmu(new FMU(fmuFilePath, unzipPath));
 
-	// parse modelDescription.xml so that we get the model identifyer
-	IBK::IBK_Message(IBK::FormatString("Reading modelDescription.xml\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-	fmu->readModelDescription();
 	try {
+		// parse modelDescription.xml so that we get the model identifyer
+		IBK::IBK_Message(IBK::FormatString("Reading modelDescription.xml\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		fmu->readModelDescription();
+
 		IBK::IBK_Message(IBK::FormatString("Importing shared library\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		if (fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
 			IBK::IBK_Message(IBK::FormatString("  CoSimulation Interface v2\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
