@@ -150,7 +150,8 @@ void MasterSim::writeOutputs() {
 void MasterSim::importFMUs() {
 	const char * const FUNC_ID = "[MasterSimulator::importFMUs]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
-	IBK::IBK_Message("Importing FMUs.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Importing FMUs\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 
 	// collect list of FMU-Dlls to load dynamically
@@ -207,11 +208,12 @@ void MasterSim::instatiateSlaves() {
 	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
 	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
 
-	IBK::IBK_Message("Instantiation simulation slaves.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Instantiating simulation slaves\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
 		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
-		IBK::IBK_Message( IBK::FormatString("%1 (fmu %2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU),
+		IBK::IBK_Message( IBK::FormatString("%1 (%2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
 		if (!fmuSlavePath.isAbsolute())

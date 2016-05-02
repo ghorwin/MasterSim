@@ -173,7 +173,7 @@ private:
 	/*! Resource path within FMU directory.
 		\note This variable is needed as persistant string
 	*/
-	IBK::Path			m_resourcePath;
+	std::string			m_resourcePath;
 
 	/*! Holds the actual implementation and data so that details of importing are hidden to user of class. */
 	FMUPrivate	*m_impl;

@@ -2,6 +2,10 @@
 
 #include <IBK_Exception.h>
 #include <IBK_assert.h>
+#include <IBK_messages.h>
+
+#include <cstdlib>
+#include <cstdarg>
 
 #include "MSIM_FMU.h"
 
@@ -16,7 +20,19 @@ void fmiLoggerCallback( fmiComponent c, fmiString instanceName, fmiStatus status
 void fmi2LoggerCallback( fmi2ComponentEnvironment c, fmi2String instanceName, fmi2Status status,
 							  fmi2String category, fmi2String message, ... )
 {
+	IBK::msg_type_t msgType = IBK::MSG_PROGRESS;
+	switch (status) {
+		case fmi2Warning	: msgType = IBK::MSG_WARNING; break;
+		case fmi2Error		: msgType = IBK::MSG_ERROR; break;
+		default :;
+	}
+
 	/// \todo use vsprintf to forward message into string, the feed into message handler
+	static char buffer[5000];
+	va_list args;
+	va_start (args, message);
+	std::vsnprintf(buffer, 5000, message, args);
+	IBK::IBK_Message( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmi2LoggerCallback]", IBK::VL_INFO);
 }
 
 #if defined(_MSC_VER)
