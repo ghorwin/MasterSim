@@ -77,7 +77,12 @@ std::vector<unsigned char> read_some_bytes(const IBK::Path& filename, unsigned i
 
 
 std::string file2String(const IBK::Path & fname) {
-	std::ifstream in(fname.str().c_str());
+	std::ifstream in;
+#if defined(_WIN32) && !defined(__MINGW32__)
+	in.open(fname.wstr().c_str());
+#else
+	in.open(fname.c_str());
+#endif // _WIN32
 	std::stringstream strm;
 	strm << in.rdbuf();
 	return strm.str();
