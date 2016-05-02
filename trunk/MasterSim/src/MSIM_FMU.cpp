@@ -74,7 +74,7 @@ FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuDir(fmuDir),
 	m_impl(new FMUPrivate)
 {
-	m_resourcePath = IBK::Path("file://") / m_fmuDir / "resources";
+	m_resourcePath = "file://" + (m_fmuDir / "resources").str();
 }
 
 

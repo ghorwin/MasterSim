@@ -22,6 +22,8 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
+QMAKE_CXXFLAGS +=  -std=c++11
+
 INCLUDEPATH = \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
@@ -47,9 +49,9 @@ SOURCES += \
 	../../src/MSIM_Slave.cpp \
 	../../src/MSIM_FMU.cpp \
 	../../src/MSIM_ModelDescription.cpp \
-    ../../src/MSIM_FMIVariable.cpp \
-    ../../src/MSIM_AlgorithmGaussJacobi.cpp \
-    ../../src/MSIM_AlgorithmGaussSeidel.cpp
+	../../src/MSIM_FMIVariable.cpp \
+	../../src/MSIM_AlgorithmGaussJacobi.cpp \
+	../../src/MSIM_AlgorithmGaussSeidel.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -61,12 +63,12 @@ HEADERS += \
 	../../src/MSIM_Slave.h \
 	../../src/MSIM_FMU.h \
 	../../src/MSIM_ModelDescription.h \
-    ../../src/MSIM_FMIVariable.h \
-    ../../src/fmi/fmi2Functions.h \
-    ../../src/fmi/fmi2FunctionTypes.h \
-    ../../src/fmi/fmi2TypesPlatform.h \
-    ../../src/fmi/fmiFunctions.h \
-    ../../src/fmi/fmiModelTypes.h \
-    ../../src/fmi/fmiPlatformTypes.h \
-    ../../src/MSIM_AlgorithmGaussJacobi.h \
-    ../../src/MSIM_AlgorithmGaussSeidel.h
+	../../src/MSIM_FMIVariable.h \
+	../../src/fmi/fmi2Functions.h \
+	../../src/fmi/fmi2FunctionTypes.h \
+	../../src/fmi/fmi2TypesPlatform.h \
+	../../src/fmi/fmiFunctions.h \
+	../../src/fmi/fmiModelTypes.h \
+	../../src/fmi/fmiPlatformTypes.h \
+	../../src/MSIM_AlgorithmGaussJacobi.h \
+	../../src/MSIM_AlgorithmGaussSeidel.h
