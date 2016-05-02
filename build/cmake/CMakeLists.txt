@@ -57,7 +57,8 @@ include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt )
 
 if (MINGW)
 	# link statically to MinGW libraries
-	set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} " -static-libgcc -static-libstdc++" )
+	#set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} " -static-libgcc -static-libstdc++" )
+	add_definitions(-static-libgcc -static-libstdc++)
 endif (MINGW)
 
 # -------------------------------------------------------------

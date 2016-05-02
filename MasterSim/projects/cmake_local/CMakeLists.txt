@@ -12,6 +12,12 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
 )
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+	# set C++ 11 standard (needed for vsnprintf)
+	add_definitions(-std=c++11)
+
+endif (CMAKE_COMPILER_IS_GNUCXX)
+
 # collect a list of all source files of the library
 file( GLOB LIB_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 
