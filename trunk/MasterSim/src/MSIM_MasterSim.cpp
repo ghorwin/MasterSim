@@ -232,5 +232,10 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & var
 }
 
 
+void MasterSim::syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables) {
+
+}
+
+
 } // namespace MASTER_SIM
 

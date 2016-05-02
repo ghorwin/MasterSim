@@ -108,6 +108,9 @@ private:
 	/*! Updates all inputs of a given slave using the variables in provided vector. */
 	void updateSlaveInputs(Slave * slave, const std::vector<double> & variables);
 
+	/*! Updates all inputs of a given slave using the variables in provided vector. */
+	void syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables);
+
 
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
@@ -140,6 +143,9 @@ private:
 
 	/*! Slave variables (input and output) at current master time. */
 	std::vector<double>		m_yt;
+
+	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
+	std::vector<double>		m_ytNext;
 
 	friend class AlgorithmGaussJacobi;
 };
