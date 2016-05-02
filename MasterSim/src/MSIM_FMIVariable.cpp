@@ -20,6 +20,7 @@ void FMIVariable::read(const TiXmlElement * element) {
 		const char * attrib = element->Attribute("description");
 		if (attrib != NULL)
 			m_description = std::string(attrib);
+		std::string description = ModelDescription::readRequiredAttribute(element, "description");
 		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
 
 		// read child element
@@ -54,7 +55,6 @@ void FMIVariable::read(const TiXmlElement * element) {
 		}
 	}
 	catch (IBK::Exception & ex) {
-		IBK::IBK_Message(ex.what());
 		throw IBK::Exception(ex, IBK::FormatString("Error reading definition for variable '%1'").arg(m_name), FUNC_ID);
 	}
 
