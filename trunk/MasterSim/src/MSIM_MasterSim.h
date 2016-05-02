@@ -12,6 +12,7 @@
 namespace MASTER_SIM {
 
 class AlgorithmGaussJacobi;
+class AlgorithmGaussSeidel;
 
 /*! Main class of the library.
 	This class encapsulates all functionality of the master and can be used from GUI
@@ -137,6 +138,7 @@ private:
 	std::vector<Cycle>		m_cycles;
 
 	AlgorithmGaussJacobi	*m_algorithmGaussJacobi;
+	AlgorithmGaussSeidel	*m_algorithmGaussSeidel;
 
 
 	/*! Current simulation time point. */

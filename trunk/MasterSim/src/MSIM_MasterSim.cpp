@@ -6,11 +6,13 @@
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
 #include "MSIM_AlgorithmGaussJacobi.h"
+#include "MSIM_AlgorithmGaussSeidel.h"
 
 namespace MASTER_SIM {
 
 MasterSim::MasterSim() :
 	m_algorithmGaussJacobi(NULL),
+	m_algorithmGaussSeidel(NULL),
 	m_tCurrent(0)
 {
 }
@@ -19,6 +21,7 @@ MasterSim::MasterSim() :
 MasterSim::~MasterSim() {
 	// clean up master algorithms, wether they are used or not
 	delete m_algorithmGaussJacobi;
+	delete m_algorithmGaussSeidel;
 
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
