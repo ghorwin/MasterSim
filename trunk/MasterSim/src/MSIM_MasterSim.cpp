@@ -215,13 +215,27 @@ void MasterSim::instatiateSlaves() {
 				throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
 									 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
 		}
-		// create new simulation slave
+		// remember that this FMU was instantiated
 		instantiatedFMUs.insert(fmu);
+		// create new simulation slave
+		Slave * slave = new Slave(fmu, slaveDef.m_name);
+		// set global index
+		slave->m_slaveIndex = m_slaves.size();
+		// add slave to vector with slaves
+		m_slaves.push_back(slave);
+
+		/// \todo remaining initialization code
 	}
 }
 
 
 bool MasterSim::doErrorCheck() {
+	/// \todo implement
+	return true;
+}
+
+
+bool MasterSim::doConvergenceTest() {
 	/// \todo implement
 	return true;
 }
@@ -234,6 +248,13 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & var
 
 void MasterSim::syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables) {
 
+}
+
+
+void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		slaveStates[i] = m_slaves[i]->currentState();
+	}
 }
 
 

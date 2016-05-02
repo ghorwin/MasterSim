@@ -101,6 +101,16 @@ int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
 }
 
 
+void * Slave::currentState() const {
+	return NULL;
+}
+
+
+void Slave::setState(void * slaveState) {
+
+}
+
+
 void Slave::cacheOutputs() {
 	const char * const FUNC_ID = "[Slave::cacheOutputs]";
 	if (!m_fmu->m_boolValueRefsOutput.empty()) {
