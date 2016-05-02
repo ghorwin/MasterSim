@@ -40,8 +40,15 @@ void AlgorithmGaussJacobi::doStep() {
 			int res = slave->doStep(tNext, true);
 			if (res != fmi2OK)
 				throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
+
+
+			// slave is now at time level tNext and its outputs are updated accordingly
+			// sync results into vector with newly computed quantities
+			m_master->syncSlaveOutputs(slave, m_master->m_ytNext);
 		}
 	}
+
+	// ** algorithm end **
 
 }
 
