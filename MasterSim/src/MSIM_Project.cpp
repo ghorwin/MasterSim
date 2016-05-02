@@ -83,7 +83,7 @@ void Project::read(const IBK::Path & prjFile) {
 			else if (keyword == "MasterMode")
 				m_masterMode = (MasterMode)IBK::string2val<unsigned int>(value);
 			else if (keyword == "it_max_steps")
-				m_maxSteps = IBK::string2val<unsigned int>(value);
+				m_maxIterations = IBK::string2val<unsigned int>(value);
 			else
 				throw IBK::Exception(IBK::FormatString("Unknown keyword '%1'").arg(keyword), FUNC_ID);
 		}

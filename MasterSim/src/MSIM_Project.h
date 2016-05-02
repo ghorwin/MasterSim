@@ -80,7 +80,7 @@ public:
 	ErrorControlMode	m_errorControlMode;
 
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
-	unsigned int	m_maxSteps;
+	unsigned int	m_maxIterations;
 
 	/*! Absolute tolerance - used for convergence check and for time integration error control. */
 	double			m_absTol;

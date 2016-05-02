@@ -102,8 +102,16 @@ private:
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
 
-	/*! Performs error checking. */
+	/*! Performs error checking.
+		If test is successful, m_stepSizeProposed is updated as well.
+		\return Returns true if test was passed.
+	*/
 	bool doErrorCheck();
+
+	/*! Performs convergence test by comparing values in m_ytNext and m_ytNextIter.
+		\return Returns true if test has passed.
+	*/
+	bool doConvergenceTest();
 
 	/*! Updates all inputs of a given slave using the variables in provided vector. */
 	void updateSlaveInputs(Slave * slave, const std::vector<double> & variables);
@@ -111,6 +119,8 @@ private:
 	/*! Updates all inputs of a given slave using the variables in provided vector. */
 	void syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables);
 
+	/*! Loops over all slaves and retrieves current states. */
+	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
 
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
@@ -147,7 +157,22 @@ private:
 	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
 	std::vector<double>		m_ytNext;
 
+	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
+	std::vector<double>		m_ytNextIter;
+
+	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
+	std::vector<void*>		m_iterationStates;
+
+	template<typename T>
+	static void copyVector(const std::vector<T> & src, std::vector<T> & target) {
+		IBK_ASSERT(src.size() == target.size());
+		IBK_ASSERT(!src.empty());
+
+		std::memcpy(&target[0], &src[0], src.size()*sizeof(T));
+	}
+
 	friend class AlgorithmGaussJacobi;
+	friend class AlgorithmGaussSeidel;
 };
 
 } // namespace MASTER_SIM

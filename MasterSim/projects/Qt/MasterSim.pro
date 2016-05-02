@@ -48,7 +48,8 @@ SOURCES += \
 	../../src/MSIM_FMU.cpp \
 	../../src/MSIM_ModelDescription.cpp \
     ../../src/MSIM_FMIVariable.cpp \
-    ../../src/MSIM_AlgorithmGaussJacobi.cpp
+    ../../src/MSIM_AlgorithmGaussJacobi.cpp \
+    ../../src/MSIM_AlgorithmGaussSeidel.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -67,4 +68,5 @@ HEADERS += \
     ../../src/fmi/fmiFunctions.h \
     ../../src/fmi/fmiModelTypes.h \
     ../../src/fmi/fmiPlatformTypes.h \
-    ../../src/MSIM_AlgorithmGaussJacobi.h
+    ../../src/MSIM_AlgorithmGaussJacobi.h \
+    ../../src/MSIM_AlgorithmGaussSeidel.h

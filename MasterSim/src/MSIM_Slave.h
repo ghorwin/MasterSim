@@ -37,6 +37,14 @@ public:
 	*/
 	int doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint);
 
+	/*! Call getFMUState() function in fmu and retrieves current state as pointer.
+
+	*/
+	void * currentState() const;
+
+	/*! Sets the state of the FMU (roll-back to recorded state). */
+	void setState(void * slaveState);
+
 	/*! Retrieve all output quantities from slave and store in local vectors.*/
 	void cacheOutputs();
 
@@ -46,7 +54,10 @@ public:
 	void setReal(int globalVariableIdx, double value);
 
 	/*! Simulator/slave ID name. */
-	std::string	m_name;
+	std::string					m_name;
+
+	/*! Index of this slave in global slave vector of master. */
+	unsigned int				m_slaveIndex;
 
 	/*! Cached output variables of type bool, updated at end of doStep(). */
 	std::vector<fmi2Boolean>	m_boolOutputs;
