@@ -11,15 +11,19 @@
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
 
+class AlgorithmGaussJacobi;
+
 /*! Main class of the library.
+	This class encapsulates all functionality of the master and can be used from GUI
+	applications as well as console masters.
 */
-class MasterSimulator {
+class MasterSim {
 public:
 	/*! Constructor. */
-	MasterSimulator();
+	MasterSim();
 
 	/*! Destructor, cleans up slaves. */
-	~MasterSimulator();
+	~MasterSim();
 
 	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
 		Throws an exception if an error occurs during instantiation.
@@ -39,8 +43,9 @@ public:
 	void storeState(const IBK::Path & stateDirectory);
 
 	/*! Contains the core simulation loop.
+		This is essentially a convenience function around doStep() calls.
 		This function calls doStep() until simulation time has reached/passed time point.
-
+		After each successful step, the function writeOutputs() is called.
 	*/
 	void simulate();
 
@@ -67,10 +72,27 @@ public:
 	/*! Time step size used in last call to doStep(). */
 	double tStepSize() const { return m_tStepSize; }
 
-	/*! Updates outputs when scheduled. */
+	/*! Updates outputs when scheduled.
+		This function is typically called after each successful step and decides
+		internally, whether outputs shall be written already, or not.
+	*/
 	void writeOutputs();
 
 private:
+	/*! Defines a group of FMUs that belong to a cycle.
+		A cycle may only contain a single slave.
+	*/
+	struct Cycle {
+		/*! Holds pointers to all slaves belonging to this cycle in the order they should be
+			evaluated (for Gauss-Seidel). */
+		std::vector<Slave*>			m_slaves;
+
+		/*! All global variable indexes that are exchanged in this cycle, only variables
+			that are both inputs and outputs of any of the slaves in this cycle.
+		*/
+		std::vector<unsigned int>	m_variableIndexes;
+	};
+
 	/*! This function handles the FMU unzipping and shared library loading stuff. */
 	void importFMUs();
 
@@ -82,6 +104,9 @@ private:
 
 	/*! Performs error checking. */
 	bool doErrorCheck();
+
+	/*! Updates all inputs of a given slave using the variables in provided vector. */
+	void updateSlaveInputs(Slave * slave, const std::vector<double> & variables);
 
 
 	/*! Copy of arg parser. */
@@ -95,11 +120,28 @@ private:
 	/*! Vector of instantiated simulation slaves (owned by MasterSim). */
 	std::vector<Slave*>		m_slaves;
 
+	/*! All cycles in order of their evaluation priority. */
+	std::vector<Cycle>		m_cycles;
 
+	AlgorithmGaussJacobi	*m_algorithmGaussJacobi;
+
+
+	/*! Current simulation time point. */
 	double					m_tCurrent;
+
+	/*! Simulation time step (that was used in last call to doStep(). */
 	double					m_tStepSize;
 
+	/*! Simulation time step that shall be used in next call to doStep(). */
+	double					m_tStepSizeProposed;
+
+	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
+
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<double>		m_yt;
+
+	friend class AlgorithmGaussJacobi;
 };
 
 } // namespace MASTER_SIM

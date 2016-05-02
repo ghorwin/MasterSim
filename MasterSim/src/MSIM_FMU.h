@@ -17,6 +17,9 @@ class FMU {
 public:
 	/*! Function pointers to functions published by FMIv1 FMUs. */
 	struct FMI1FunctionSet {
+		/***************************************************
+		Common Functions
+		****************************************************/
 		fmiGetRealTYPE					*getReal;
 		fmiGetIntegerTYPE				*getInteger;
 		fmiGetBooleanTYPE				*getBoolean;
@@ -25,6 +28,9 @@ public:
 		fmiSetIntegerTYPE				*setInteger;
 		fmiSetBooleanTYPE				*setBoolean;
 		fmiSetStringTYPE				*setString;
+		/***************************************************
+		Functions for FMI2 for Co-Simulation
+		****************************************************/
 		fmiInstantiateSlaveTYPE			*instantiateSlave;
 		fmiFreeSlaveInstanceTYPE		*freeSlaveInstance;
 		fmiDoStepTYPE					*doStep;
@@ -94,19 +100,21 @@ public:
 		\param fmuDir Path where FMU had been extracted to, must hold the modelDescription.xml file.
 	*/
 	FMU(const IBK::Path & fmuFilePath, const IBK::Path & fmuDir);
+
 	/*! Destructor, releases loaded shared library. */
 	~FMU();
 
 	/*! Reads model description file.
-		This function should be called before import, so that the model identifier is known (same as file name of
-		shared library).
+		This function should be called before import, so that the model identifier is known
+		(need to compose file name of shared library).
 	*/
 	void readModelDescription();
 
 	/*! This function imports the FMU, loads dynamic library, imports function pointers, reads model description.
 		Throws an IBK::Exception in case of any error.
+		\param typeToImport Selection of one of the interface types to import.
 	*/
-	void import(ModelDescription::FMUType fmu2import);
+	void import(ModelDescription::FMUType typeToImport);
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	const IBK::Path & fmuFilePath() const { return m_fmuFilePath;}
@@ -119,18 +127,21 @@ public:
 	/*! Content of model description. */
 	ModelDescription	m_modelDescription;
 
-	/*! Function pointers to all functions provided by FMI v1. */
+	/*! Function pointers to all functions provided by FMI v1.
+		Access these functions only after successful import of matching FMU.
+	*/
 	FMI1FunctionSet		m_fmi1Functions;
-	/*! Function pointers to all functions provided by FMI v2. */
+	/*! Function pointers to all functions provided by FMI v2.
+		Access these functions only after successful import of matching FMU.
+	*/
 	FMI2FunctionSet		m_fmi2Functions;
 
 	// Value references for output variables.
 
-	std::vector<unsigned int>	m_boolValueRefs;
-	std::vector<unsigned int>	m_intValueRefs;
-	std::vector<unsigned int>	m_stringValueRefs;
-	std::vector<unsigned int>	m_doubleValueRefs;
-
+	std::vector<unsigned int>	m_boolValueRefsOutput;
+	std::vector<unsigned int>	m_intValueRefsOutput;
+	std::vector<unsigned int>	m_stringValueRefsOutput;
+	std::vector<unsigned int>	m_doubleValueRefsOutput;
 
 
 	/*! Utility function to unzip an FMU archive into an existing directory.

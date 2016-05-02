@@ -39,8 +39,8 @@ fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 
 
 Slave::Slave(FMU * fmu, const std::string & name) :
-	m_fmu(fmu),
 	m_name(name),
+	m_fmu(fmu),
 	m_t(0),
 	m_component(NULL)
 {
@@ -76,10 +76,10 @@ void Slave::instantiateSlave() {
 	}
 
 	// resize vectors
-	m_boolOutputs.resize(m_fmu->m_boolValueRefs.size());
-	m_intOutputs.resize(m_fmu->m_intValueRefs.size());
-	m_doubleOutputs.resize(m_fmu->m_doubleValueRefs.size());
-	m_stringOutputs.resize(m_fmu->m_stringValueRefs.size());
+	m_boolOutputs.resize(m_fmu->m_boolValueRefsOutput.size());
+	m_intOutputs.resize(m_fmu->m_intValueRefsOutput.size());
+	m_doubleOutputs.resize(m_fmu->m_doubleValueRefsOutput.size());
+	m_stringOutputs.resize(m_fmu->m_stringValueRefsOutput.size());
 }
 
 
@@ -103,25 +103,25 @@ int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
 
 void Slave::cacheOutputs() {
 	const char * const FUNC_ID = "[Slave::cacheOutputs]";
-	if (!m_fmu->m_boolValueRefs.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_fmu->m_boolValueRefs[0],
-				m_fmu->m_boolValueRefs.size(), &m_boolOutputs[0]);
+	if (!m_fmu->m_boolValueRefsOutput.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_fmu->m_boolValueRefsOutput[0],
+				m_fmu->m_boolValueRefsOutput.size(), &m_boolOutputs[0]);
 		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 	}
-	if (!m_fmu->m_intValueRefs.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getInteger(m_component, &m_fmu->m_intValueRefs[0],
-				m_fmu->m_intValueRefs.size(), &m_intOutputs[0]);
+	if (!m_fmu->m_intValueRefsOutput.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getInteger(m_component, &m_fmu->m_intValueRefsOutput[0],
+				m_fmu->m_intValueRefsOutput.size(), &m_intOutputs[0]);
 		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 	}
-	if (!m_fmu->m_doubleValueRefs.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefs[0],
-				m_fmu->m_doubleValueRefs.size(), &m_doubleOutputs[0]);
+	if (!m_fmu->m_doubleValueRefsOutput.empty()) {
+		fmi2Status r = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefsOutput[0],
+				m_fmu->m_doubleValueRefsOutput.size(), &m_doubleOutputs[0]);
 		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 	}
 	// strings are queried one-by-one
-	for (unsigned int i=0; i<m_fmu->m_stringValueRefs.size(); ++i) {
+	for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
 		const char * str;
-		fmi2Status r = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefs[i], 1, &str);
+		fmi2Status r = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
 		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 		IBK_ASSERT(str != NULL);
 		m_stringOutputs[i] = std::string(str);

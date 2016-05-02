@@ -51,7 +51,7 @@ int main(int argc, char * argv[]) {
 		project.read(IBK::Path(parser.m_projectFile ));
 
 		// create simulator
-		MASTER_SIM::MasterSimulator masterSim;
+		MASTER_SIM::MasterSim masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
 		masterSim.instantiateFMUs(parser, project);
 

@@ -88,7 +88,7 @@ void FMU::readModelDescription() {
 }
 
 
-void FMU::import(ModelDescription::FMUType fmu2import) {
+void FMU::import(ModelDescription::FMUType typeToImport) {
 	const char * const FUNC_ID = "[FMU::import]";
 	if (!m_fmuDir.exists())
 		throw IBK::Exception(IBK::FormatString("FMU directory '%1' does not exist.").arg(m_fmuDir), FUNC_ID);
@@ -97,11 +97,11 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 	IBK::Path sharedLibraryPath = m_fmuDir / FMU::binarySubDirectory();
 
 	// first check if selected FMU-type is provided by the FMU
-	if (!(m_modelDescription.m_fmuType & fmu2import))
+	if (!(m_modelDescription.m_fmuType & typeToImport))
 		throw IBK::Exception("Requested FMU type is not provided by the FMU.", FUNC_ID);
 
 	// append model identifier for selected model
-	switch (fmu2import) {
+	switch (typeToImport) {
 		case ModelDescription::ME_v1 : ; // same as for CS_v1
 		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_modelIdentifier; break;
 		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier; break;
@@ -114,7 +114,7 @@ void FMU::import(ModelDescription::FMUType fmu2import) {
 		// load library
 		m_impl->loadLibrary(sharedLibraryPath);
 
-		if ((fmu2import & ModelDescription::ME_v1) || (fmu2import & ModelDescription::CS_v1)) {
+		if ((typeToImport & ModelDescription::ME_v1) || (typeToImport & ModelDescription::CS_v1)) {
 			importFMIv1Functions();
 		}
 		else {
