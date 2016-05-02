@@ -38,8 +38,8 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	if (!fmuFilePath.exists())
 		throw IBK::Exception(IBK::FormatString("FMU file '%1' not found.").arg(fmuFilePath), FUNC_ID);
 	if (m_unzipFMUs) {
-		IBK::IBK_Message(IBK::FormatString("Unzipping FMU\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-		IBK::IBK_Message(IBK::FormatString("  into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		IBK::IBK_Message(IBK::FormatString("Unzipping FMU\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+		IBK::IBK_Message(IBK::FormatString("  into directory: %1\n").arg(unzipPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 		// check if target directory exists
 		if (unzipPath.exists()) {
 			IBK::IBK_Message(IBK::FormatString("  Directory exists, unzipping will overwrite files!"), IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
