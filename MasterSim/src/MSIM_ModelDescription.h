@@ -3,6 +3,8 @@
 
 #include <IBK_Path.h>
 
+#include "MSIM_FMIVariable.h"
+
 class TiXmlElement;
 
 namespace MASTER_SIM {
@@ -29,15 +31,15 @@ public:
 	std::string		m_modelName;
 	std::string		m_guid;
 
-	/*! Bit mask of FMU types provided in this FMU. */
-	FMUType	m_fmuType;
+	/*! Bit mask of FMU types provided in this FMU (with FMI v2 there can be both ModelExchange and CoSimulation). */
+	FMUType			m_fmuType;
 
 	/*! Model identifier for ModelExchange/CoSimulation v1. */
-	std::string	m_modelIdentifier;
+	std::string		m_modelIdentifier;
 	/*! Model identifier for ModelExchange v2. */
-	std::string	m_meV2ModelIdentifier;
+	std::string		m_meV2ModelIdentifier;
 	/*! Model identifier for CoSimulation v2. */
-	std::string	m_csV2ModelIdentifier;
+	std::string		m_csV2ModelIdentifier;
 
 	// CoSim V2 Properties
 
@@ -48,12 +50,24 @@ public:
 	bool	m_canBeInstantiatedOnlyOncePerProcess;
 	bool	m_providesDirectionalDerivative;
 
+	/*! Vector of variables published by this FMU.
+		The ModelVariable index is the index of the variables in this vector + 1.
+	*/
+	std::vector<FMIVariable>	m_variables;
+
+	/*! Reads an attribute by name from an xml tag. */
+	static std::string readRequiredAttribute(const TiXmlElement *xmlElem, const char *attribName);
+	/*! Reads a boolean attribute by name from an xml tag and returns its value.
+		Function returns false if value is optional (required = false) and not present.
+	*/
+	static bool readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName, bool required = false);
+
 private:
 	/*! Reads CoSimulation element (version 2.0). */
 	void readElementCoSimulation(const TiXmlElement * element);
+	/*! Reads variables section. */
+	void readElementVariables(const TiXmlElement * element);
 
-	static std::string readRequiredAttribute(const TiXmlElement *xmlElem, const char *attribName);
-	static bool readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName, bool required = false);
 };
 
 } // namespace MASTER_SIM
