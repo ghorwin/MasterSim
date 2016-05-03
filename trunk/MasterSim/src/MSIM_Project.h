@@ -37,6 +37,13 @@ public:
 		unsigned int	m_cycle;
 		/*! Path to FMU file. */
 		IBK::Path		m_pathToFMU;
+
+		/*! Parameter list, key = variable name, value = value as string.
+			The conversion into the corresponding data type is done,
+			once the model description has been read and the
+			FMI variables are known for this slave/fmu.
+		*/
+		std::map<std::string, std::string>	m_parameters;
 	};
 
 	/*! Defines an edge of the coupling graph. */
