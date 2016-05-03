@@ -246,17 +246,19 @@ void MasterSim::instatiateSlaves() {
 		if (m_cycles.size() <= slaveDef.m_priority)
 			m_cycles.resize(slaveDef.m_priority+1);
 		m_cycles[slaveDef.m_priority].m_slaves.push_back(s);
-
-		/// \todo remaining initialization code
 	}
-
-
 }
 
 
 void MasterSim::composeVariableVector() {
 	// loop over all cycles
+	for (unsigned int c=0; c<m_cycles.size(); ++c) {
+		// loop over all slaves in cycle
+		for (unsigned int s=0; s<m_cycles[c].m_slaves.size(); ++s) {
+			// get all output variables and check if they are connected in the graph
 
+		}
+	}
 }
 
 
