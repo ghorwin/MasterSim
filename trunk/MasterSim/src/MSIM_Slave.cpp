@@ -6,6 +6,7 @@
 
 #include <cstdlib>
 #include <cstdarg>
+#include <cstdio>
 
 #include "MSIM_FMU.h"
 
@@ -24,8 +25,12 @@ void fmiLoggerCallback( fmiComponent /* c */, fmiString instanceName, fmiStatus 
 	static char buffer[5000];
 	va_list args;
 	va_start (args, message);
-#if defined(_MSC_VER)
-	vsnprintf_s(buffer, 5000, 4999, message, args);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		vsnprintf_s(buffer, 5000, 4999, message, args);
+	#else
+		vsnprintf(buffer, 5000, message, args);
+	#endif
 #else
 	std::vsnprintf(buffer, 5000, message, args);
 #endif
@@ -46,8 +51,12 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment /* c */, fmi2String instanceNa
 	static char buffer[5000];
 	va_list args;
 	va_start (args, message);
-#if defined(_MSC_VER)
-	vsnprintf_s(buffer, 5000, 4999, message, args);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		vsnprintf_s(buffer, 5000, 4999, message, args);
+	#else
+		vsnprintf(buffer, 5000, message, args);
+	#endif
 #else
 	std::vsnprintf(buffer, 5000, message, args);
 #endif
