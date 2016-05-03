@@ -11,6 +11,7 @@
 #include "MSIM_Slave.h"
 #include "MSIM_AlgorithmGaussJacobi.h"
 #include "MSIM_AlgorithmGaussSeidel.h"
+#include "MSIM_AlgorithmNewton.h"
 
 namespace MASTER_SIM {
 
@@ -56,6 +57,9 @@ void MasterSim::initialize() {
 
 	// select master algorithm
 	initMasterAlgorithm();
+
+	// compute initial conditions
+	initialConditions();
 
 	// setup time-stepping variables
 	m_tStepSize = m_project.m_tStepStart;
@@ -265,8 +269,36 @@ void MasterSim::initMasterAlgorithm() {
 		case Project::MM_GAUSS_SEIDEL : {
 			m_masterAlgorithm = new AlgorithmGaussSeidel(this);
 		} break;
+
+		case Project::MM_NEWTON : {
+			m_masterAlgorithm = new AlgorithmNewton(this);
+		} break;
 	}
 }
+
+
+void MasterSim::initialConditions() {
+	const char * const FUNC_ID = "[MasterSim::initialConditions]";
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Computing initial conditions\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	// loop over all slaves
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+
+		// set parameters and start values for all slaves
+
+		// cache outputs
+		slave->cacheOutputs();
+	}
+
+	// enter initialization mode
+
+	// if enabled, iterate over initial conditions using the selected master algorithm
+	// but disable doStep() and get/set state calls within algorithm
+
+	// exit initialization mode
+}
+
 
 
 std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std::string & flatVarName) const {
