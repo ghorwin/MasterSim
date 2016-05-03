@@ -126,6 +126,9 @@ private:
 	/*! Initializes the master algorithm. */
 	void initMasterAlgorithm();
 
+	/*! Computes initial conditions and updates output caches of all slaves so that master algorithms can start. */
+	void initialConditions();
+
 	/*! Performs error checking.
 		If test is successful, m_stepSizeProposed is updated as well.
 		\return Returns true if test was passed.
