@@ -24,7 +24,11 @@ void fmiLoggerCallback( fmiComponent /* c */, fmiString instanceName, fmiStatus 
 	static char buffer[5000];
 	va_list args;
 	va_start (args, message);
+#if defined(_MSC_VER)
+	vsnprintf_s(buffer, 5000, 4999, message, args);
+#else
 	std::vsnprintf(buffer, 5000, message, args);
+#endif
 	IBK::IBK_Message( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmiLoggerCallback]", IBK::VL_INFO);
 }
 
@@ -42,7 +46,11 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment /* c */, fmi2String instanceNa
 	static char buffer[5000];
 	va_list args;
 	va_start (args, message);
+#if defined(_MSC_VER)
+	vsnprintf_s(buffer, 5000, 4999, message, args);
+#else
 	std::vsnprintf(buffer, 5000, message, args);
+#endif
 	IBK::IBK_Message( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmi2LoggerCallback]", IBK::VL_INFO);
 }
 
@@ -110,7 +118,7 @@ void Slave::instantiateSlave() {
 							m_name.c_str(),
 							fmi2CoSimulation,
 							m_fmu->m_modelDescription.m_guid.c_str(),
-							m_fmu->resourcePath(),
+							"file://blub", //m_fmu->resourcePath(),
 							&m_fmi2CallBackFunctions,
 							fmi2False,  // not visible
 							m_useDebugLogging ? fmi2True : fmi2False); // debug logging

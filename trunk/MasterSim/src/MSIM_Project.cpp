@@ -65,8 +65,9 @@ void Project::read(const IBK::Path & prjFile) {
 
 			if (line.find("graph") == 0) {
 				std::string graphEdges = line.substr(5);
+				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
-				if (IBK::explode_in2(graphEdges, tokens) != 2)
+				if (IBK::explode_in2(graphEdges, tokens, ' ') != 2)
 					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>'.").arg(line), FUNC_ID);
 				GraphEdge g;
 				g.m_outputVariableRef = IBK::trim_copy(tokens[0]);

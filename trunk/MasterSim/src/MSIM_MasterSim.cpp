@@ -285,9 +285,12 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 void MasterSim::composeVariableVector() {
 	const char * const FUNC_ID = "[MasterSim::composeVariableVector]";
 	// process connection graph and find all slaves and their output variables
+	IBK::IBK_Message("Resolving connection graph and building variable mapping.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::MessageIndentor indent; (void)indent;
 	std::vector<std::string> tokens;
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_project.m_graph[i];
+		IBK::IBK_Message( IBK::FormatString("'%1' -> '%2'\n").arg(edge.m_inputVariableRef).arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// resolve variable references
 		std::pair<const Slave*, const FMIVariable*> inputVarRef = variableByName(edge.m_inputVariableRef);
 		std::pair<const Slave*, const FMIVariable*> outputVarRef = variableByName(edge.m_outputVariableRef);
