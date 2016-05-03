@@ -50,7 +50,8 @@ SOURCES += \
 	../../src/MSIM_ModelDescription.cpp \
 	../../src/MSIM_FMIVariable.cpp \
 	../../src/MSIM_AlgorithmGaussJacobi.cpp \
-	../../src/MSIM_AlgorithmGaussSeidel.cpp
+	../../src/MSIM_AlgorithmGaussSeidel.cpp \
+    ../../src/MSIM_AlgorithmNewton.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -69,4 +70,6 @@ HEADERS += \
 	../../src/fmi/fmiModelTypes.h \
 	../../src/fmi/fmiPlatformTypes.h \
 	../../src/MSIM_AlgorithmGaussJacobi.h \
-	../../src/MSIM_AlgorithmGaussSeidel.h
+	../../src/MSIM_AlgorithmGaussSeidel.h \
+    ../../src/MSIM_AbstractAlgorithm.h \
+    ../../src/MSIM_AlgorithmNewton.h
