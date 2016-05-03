@@ -49,14 +49,17 @@ void MasterSim::instantiateFMUs(const ArgParser &args, const Project & prj) {
 
 	// instantiate all slaves
 	instatiateSlaves();
-
-	// collect all output and input variables from all slaves, ordered according to cycles
-	composeVariableVector();
 }
 
 
-
 void MasterSim::initialize() {
+	// collect all output and input variables from all slaves, ordered according to cycles
+	composeVariableVector();
+
+	// select master algorithm
+	initMasterAlgorithm();
+
+	// setup time-stepping variables 
 	m_tStepSize = m_project.m_tStepStart;
 	m_tStepSizeProposed = m_tStepSize;
 	m_tLastOutput = -1;
@@ -113,7 +116,10 @@ void MasterSim::doStep() {
 
 	// step size reduction loop
 	while (true) {
-		// if we have error control enabled, store current state
+		// if we have error control enabled, store current state of master and all fmus
+
+		// let master do one step
+
 
 		// do we have error control enabled
 		if (m_project.m_errorControlMode == Project::EM_NONE)
@@ -248,6 +254,19 @@ void MasterSim::instatiateSlaves() {
 		if (m_cycles.size() <= slaveDef.m_cycle)
 			m_cycles.resize(slaveDef.m_cycle+1);
 		m_cycles[slaveDef.m_cycle].m_slaves.push_back(s);
+	}
+}
+
+
+void MasterSim::initMasterAlgorithm() {
+	switch (m_project.m_masterMode) {
+		case Project::MM_GAUSS_JACOBI : {
+			m_algorithmGaussJacobi = new AlgorithmGaussJacobi(this);
+		} break;
+
+		case Project::MM_GAUSS_SEIDEL : {
+			m_algorithmGaussSeidel = new AlgorithmGaussSeidel(this);
+		} break;
 	}
 }
 
