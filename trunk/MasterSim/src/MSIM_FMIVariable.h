@@ -51,6 +51,9 @@ public:
 
 	/*! Variable index from model description (1-based). */
 	unsigned int m_varIdx;
+
+	/*! Returns a string constant that describes the type. */
+	static const char * const varType2String(VarType t);
 };
 
 } // namespace MASTER_SIM

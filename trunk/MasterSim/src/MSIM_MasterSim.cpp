@@ -285,27 +285,36 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 void MasterSim::composeVariableVector() {
 	const char * const FUNC_ID = "[MasterSim::composeVariableVector]";
 	// process connection graph and find all slaves and their output variables
-	IBK::IBK_Message("Resolving connection graph and building variable mapping.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("Resolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::MessageIndentor indent; (void)indent;
 	std::vector<std::string> tokens;
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_project.m_graph[i];
-		IBK::IBK_Message( IBK::FormatString("'%1' -> '%2'\n").arg(edge.m_inputVariableRef).arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// resolve variable references
 		std::pair<const Slave*, const FMIVariable*> inputVarRef = variableByName(edge.m_inputVariableRef);
 		std::pair<const Slave*, const FMIVariable*> outputVarRef = variableByName(edge.m_outputVariableRef);
 
-	}
+		// check for consistent types
+		FMIVariable::VarType t = inputVarRef.second->m_type;
+		if (t != outputVarRef.second->m_type)
+			throw IBK::Exception( IBK::FormatString("Mismatching types in connection '%1' -> '%2'").arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef), FUNC_ID);
 
+		IBK::IBK_Message( IBK::FormatString("%1 \t'%2' -> '%3'    (%4)\n").arg(i+1)
+			.arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef).arg(FMIVariable::varType2String(t)), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
+		VariableMapping varMap;
+		varMap.m_globalIndex = i;
+		varMap.m_inputSlave = const_cast<Slave*>(inputVarRef.first);
+		varMap.m_inputValueReference = inputVarRef.second->m_valueReference;
+		varMap.m_outputSlave = const_cast<Slave*>(outputVarRef.first);
+		varMap.m_outputLocalIndex = varMap.m_outputSlave->fmu()->localOutputIndex(t, outputVarRef.second->m_valueReference);
 
-	// loop over all cycles
-	for (unsigned int c=0; c<m_cycles.size(); ++c) {
-		// loop over all slaves in cycle
-		for (unsigned int s=0; s<m_cycles[c].m_slaves.size(); ++s) {
-			// get all output variables and check if they are connected in the graph
-
-
+		// add variable mapping to corresponding vector
+		switch (t) {
+			case FMIVariable::VT_BOOL	: break;
+			case FMIVariable::VT_INT	: break;
+			case FMIVariable::VT_DOUBLE : m_realVariableMapping.push_back(varMap); break;
+			case FMIVariable::VT_STRING : break;
 		}
 	}
 }

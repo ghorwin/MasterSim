@@ -142,6 +142,20 @@ void FMU::import(ModelDescription::FMUType typeToImport) {
 }
 
 
+unsigned int FMU::localOutputIndex(FMIVariable::VarType t, unsigned int valueReference) const {
+	switch (t) {
+		case FMIVariable::VT_DOUBLE : {
+			// search corresponding vector for valueReference and return index
+			for (unsigned int i=0; i<m_doubleValueRefsOutput.size(); ++i)
+				if (m_doubleValueRefsOutput[i] == valueReference)
+					return i;
+		} break;
+	}
+	throw IBK::Exception( IBK::FormatString("Variable of type '%1' with value reference %2 is not defined in this FMU.")
+		.arg(FMIVariable::varType2String(t)).arg(valueReference), "[FMU::localOutputIndex]");
+}
+
+
 void FMU::importFMIv1Functions() {
 	try {
 		std::string modelPrefix = m_modelDescription.m_modelName + "_";
