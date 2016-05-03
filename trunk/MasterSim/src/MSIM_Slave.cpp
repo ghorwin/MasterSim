@@ -75,6 +75,7 @@ fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 
 #endif
 
+bool Slave::m_useDebugLogging = false;
 
 Slave::Slave(FMU * fmu, const std::string & name) :
 	m_name(name),
@@ -102,7 +103,7 @@ void Slave::instantiateSlave() {
 							fmiFalse, // visible
 							fmiFalse, // interactive
 							m_fmiCallBackFunctions,
-							fmiFalse); // no debug logging for now
+							m_useDebugLogging ? fmiTrue : fmiFalse); // debug logging
 	}
 	else {
 		m_component = m_fmu->m_fmi2Functions.instantiate(
@@ -112,7 +113,7 @@ void Slave::instantiateSlave() {
 							m_fmu->resourcePath(),
 							&m_fmi2CallBackFunctions,
 							fmi2False,  // not visible
-							fmi2False); // no debug logging for now
+							m_useDebugLogging ? fmi2True : fmi2False); // debug logging
 	}
 
 	if (m_component == NULL)

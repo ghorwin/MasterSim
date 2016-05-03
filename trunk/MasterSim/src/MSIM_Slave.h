@@ -71,6 +71,11 @@ public:
 	/*! Holds definitions all variables of this slave. */
 	std::vector<FMIVariable>	m_variables;
 
+	/*! Determines whether debug logging shall be enabled in FMU or not.
+		Defaults to false, is set by MasterSim after reading project.
+	*/
+	static bool					m_useDebugLogging;
+
 private:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	FMU			*m_fmu;
