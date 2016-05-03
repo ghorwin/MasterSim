@@ -16,7 +16,7 @@ void FMIVariable::read(const TiXmlElement * element) {
 
 	// read value reference, description and type
 	try {
-		m_valueReference = IBK::string2val<int>(ModelDescription::readRequiredAttribute(element, "valueReference"));
+		m_valueReference = IBK::string2val<unsigned int>(ModelDescription::readRequiredAttribute(element, "valueReference"));
 		const char * attrib = element->Attribute("description");
 		if (attrib != NULL)
 			m_description = std::string(attrib);
