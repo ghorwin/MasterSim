@@ -45,8 +45,11 @@ public:
 	/*! Sets the state of the FMU (roll-back to recorded state). */
 	void setState(void * slaveState);
 
-	/*! Retrieve all output quantities from slave and store in local vectors.*/
+	/*! Retrieve all output quantities from slave and store in local vectors. */
 	void cacheOutputs();
+
+	/*! Pointer to the FMU object that instantiated this slave. */
+	const FMU			* fmu() const { return m_fmu; }
 
 	/*! Sets an input variable in the master.
 
@@ -72,7 +75,7 @@ public:
 	std::vector<FMIVariable>	m_variables;
 
 	/*! Determines whether debug logging shall be enabled in FMU or not.
-		Defaults to false, is set by MasterSim after reading project.
+		Defaults to false, should be set by MasterSim after reading project.
 	*/
 	static bool					m_useDebugLogging;
 
