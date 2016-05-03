@@ -124,6 +124,10 @@ public:
 	/*! Returns a persistant pointer to the resource directory of the extracted FMU. */
 	const char * resourcePath() const { return m_resourcePath.c_str(); }
 
+	/*! Returns the index of the references output variable in the corresponding vector with output quantities. */
+	unsigned int localOutputIndex(FMIVariable::VarType t, unsigned int valueReference) const;
+
+
 	/*! Content of model description. */
 	ModelDescription	m_modelDescription;
 

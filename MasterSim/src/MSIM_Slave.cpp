@@ -127,7 +127,7 @@ void Slave::instantiateSlave() {
 							m_name.c_str(),
 							fmi2CoSimulation,
 							m_fmu->m_modelDescription.m_guid.c_str(),
-							"file://blub", //m_fmu->resourcePath(),
+							m_fmu->resourcePath(),
 							&m_fmi2CallBackFunctions,
 							fmi2False,  // not visible
 							m_useDebugLogging ? fmi2True : fmi2False); // debug logging

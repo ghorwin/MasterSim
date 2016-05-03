@@ -60,4 +60,15 @@ void FMIVariable::read(const TiXmlElement * element) {
 
 }
 
+
+const char * const FMIVariable::varType2String(VarType t) {
+	switch (t) {
+		case VT_BOOL : return "Boolean";
+		case VT_INT : return "Integer";
+		case VT_DOUBLE : return "Real";
+		case VT_STRING : return "String";
+		default: return "undefined";
+	}
+}
+
 } // namespace MASTER_SIM
