@@ -124,6 +124,9 @@ private:
 	/*! Collects all output variables from all slaves and adds them to the variables vector, ordered according to cycles. */
 	void composeVariableVector();
 
+	/*! Initializes the master algorithm. */
+	void initMasterAlgorithm();
+
 	/*! Performs error checking.
 		If test is successful, m_stepSizeProposed is updated as well.
 		\return Returns true if test was passed.
@@ -143,6 +146,8 @@ private:
 
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
+
+
 
 	/*! Copy of arg parser. */
 	ArgParser				m_args;

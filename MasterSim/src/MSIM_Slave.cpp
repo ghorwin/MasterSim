@@ -224,6 +224,7 @@ void Slave::cacheOutputs() {
 	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 }
 
+
 void Slave::setReal(unsigned int valueReference, double value) {
 	int res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
