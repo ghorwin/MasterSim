@@ -2,8 +2,8 @@
 #define MSIM_PROJECT_H
 
 #include <vector>
-
-#include "MSIM_Simulator.h"
+#include <string>
+#include <IBK_Path.h>
 
 namespace MASTER_SIM {
 
@@ -28,16 +28,13 @@ public:
 
 	/*! Holds all information that define a simulator. */
 	struct SimulatorDef {
-		SimulatorDef() : m_id() {}
 		/*! Parses content of simulator definition line. */
 		void parse(const std::string & simulatorDef);
 
-		/*! Descriptive name. */
+		/*! Unique identification name. */
 		std::string		m_name;
-		/*! Unique ID. */
-		unsigned int	m_id;
-		/*! Priority. */
-		unsigned int	m_priority;
+		/*! Cycle for this simulator. */
+		unsigned int	m_cycle;
 		/*! Path to FMU file. */
 		IBK::Path		m_pathToFMU;
 	};

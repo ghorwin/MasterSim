@@ -1,6 +1,8 @@
 #ifndef MSIM_MASTERSIM_H
 #define MSIM_MASTERSIM_H
 
+#include <utility> // for std::pair
+
 #include <IBK_Path.h>
 
 #include "MSIM_Project.h"
@@ -89,11 +91,17 @@ private:
 			\note Pointers are not owned.
 		*/
 		std::vector<Slave*>			m_slaves;
+	};
 
-		/*! All global variable indexes that are exchanged in this cycle, only variables
-			that are both inputs and outputs of any of the slaves in this cycle.
-		*/
-		std::vector<unsigned int>	m_variableIndexes;
+	/*! Variable mapping structure, used to map exchange quantities between FMUs for the different data types. */
+	struct VariableMapping {
+		unsigned int	m_globalIndex; // matches index of VariableMapping object in m_variableMappings vector
+
+		Slave			*m_outputSlave;
+		unsigned int	m_outputLocalIndex; // index of variable slot in locally cached output variables vector
+
+		Slave			*m_inputSlave;
+		unsigned int	m_inputValueReference;
 	};
 
 	/*! This function handles the FMU unzipping and shared library loading stuff. */
@@ -105,7 +113,15 @@ private:
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
 
-	/*! collect all output and input variables from all slaves, ordered according to cycles. */
+//	/*! Processes the connection graph and registers connected outputs and inputs in each slave. */
+//	void setupInputDependencies();
+
+	/*! Convenience function that extracts slave and variables names from flatVarName and
+		looks up slave and FMI variable in associated FMU.
+	*/
+	std::pair<const Slave*, const FMIVariable *> variableByName(const std::string & flatVarName) const;
+
+	/*! Collects all output variables from all slaves and adds them to the variables vector, ordered according to cycles. */
 	void composeVariableVector();
 
 	/*! Performs error checking.
@@ -158,17 +174,22 @@ private:
 	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
 
+
+	// exchange variables of type real
+
+	std::vector<VariableMapping>	m_realVariableMapping;
+
 	/*! Slave variables (input and output) at current master time. */
-	std::vector<double>		m_yt;
+	std::vector<double>				m_realyt;
 
 	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
-	std::vector<double>		m_ytNext;
+	std::vector<double>				m_realytNext;
 
 	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
-	std::vector<double>		m_ytNextIter;
+	std::vector<double>				m_realytNextIter;
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
-	std::vector<void*>		m_iterationStates;
+	std::vector<void*>				m_iterationStates;
 
 	template<typename T>
 	static void copyVector(const std::vector<T> & src, std::vector<T> & target) {

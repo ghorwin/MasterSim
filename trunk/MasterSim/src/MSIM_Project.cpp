@@ -128,9 +128,7 @@ void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 	if (tokens.size() != 4)
 		throw IBK::Exception( IBK::FormatString("Bad format of simulator definition line '%1'.").arg(simulatorDef), FUNC_ID);
 	try {
-		// convert first token to ID
-		m_id = IBK::string2val<unsigned int>(tokens[0]);
-		m_priority = IBK::string2val<unsigned int>(tokens[1]);
+		m_cycle = IBK::string2val<unsigned int>(tokens[1]);
 		m_name = IBK::trim_copy(tokens[2]);
 		m_pathToFMU = IBK::Path(tokens[3]);
 	}

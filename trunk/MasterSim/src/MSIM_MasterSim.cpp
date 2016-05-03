@@ -4,6 +4,7 @@
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
+#include <IBK_StringUtils.h>
 
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
@@ -243,19 +244,64 @@ void MasterSim::instatiateSlaves() {
 		m_slaves.push_back(slave.release());
 
 		// insert slave into cycle/priority
-		if (m_cycles.size() <= slaveDef.m_priority)
-			m_cycles.resize(slaveDef.m_priority+1);
-		m_cycles[slaveDef.m_priority].m_slaves.push_back(s);
+		if (m_cycles.size() <= slaveDef.m_cycle)
+			m_cycles.resize(slaveDef.m_cycle+1);
+		m_cycles[slaveDef.m_cycle].m_slaves.push_back(s);
 	}
 }
 
 
+std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std::string & flatVarName) const {
+	const char * const FUNC_ID = "[MasterSim::variableByName]";
+	std::vector<std::string> tokens;
+	// extract slave name for input
+	if (IBK::explode_in2(flatVarName, tokens, '.') != 2)
+		throw IBK::Exception(IBK::FormatString("Bad format of variable %1").arg(flatVarName), FUNC_ID);
+
+	std::string slaveName = tokens[0];
+	std::string varName = tokens[1];
+	const Slave * slave = NULL;
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		if (m_slaves[s]->m_name == slaveName) {
+			slave = m_slaves[s];
+			break;
+		}
+	}
+	if (slave == NULL)
+		throw IBK::Exception(IBK::FormatString("Unknown/undefined slave name %1").arg(slaveName), FUNC_ID);
+
+	// lookup variable in FMU variable list
+	for (unsigned int i=0; i<slave->fmu()->m_modelDescription.m_variables.size(); ++i) {
+		const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[i];
+		if (var.m_name == varName) {
+			return std::make_pair(slave, &var);
+		}
+	}
+	throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name %1 in FMU %2")
+						 .arg(varName).arg(slave->fmu()->fmuFilePath()), FUNC_ID);
+}
+
+
 void MasterSim::composeVariableVector() {
+	const char * const FUNC_ID = "[MasterSim::composeVariableVector]";
+	// process connection graph and find all slaves and their output variables
+	std::vector<std::string> tokens;
+	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
+		const Project::GraphEdge & edge = m_project.m_graph[i];
+		// resolve variable references
+		std::pair<const Slave*, const FMIVariable*> inputVarRef = variableByName(edge.m_inputVariableRef);
+		std::pair<const Slave*, const FMIVariable*> outputVarRef = variableByName(edge.m_outputVariableRef);
+
+	}
+
+
+
 	// loop over all cycles
 	for (unsigned int c=0; c<m_cycles.size(); ++c) {
 		// loop over all slaves in cycle
 		for (unsigned int s=0; s<m_cycles[c].m_slaves.size(); ++s) {
 			// get all output variables and check if they are connected in the graph
+
 
 		}
 	}

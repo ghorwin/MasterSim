@@ -27,9 +27,7 @@ public:
 
 	/*! Constructor. */
 	FMIVariable() :
-		m_type(VT_DOUBLE),
-		m_localVectorIdx(0),
-		m_globalVectorIdx(0)
+		m_type(VT_DOUBLE)
 	{
 	}
 
@@ -51,14 +49,8 @@ public:
 	/*! The value reference. */
 	unsigned int m_valueReference;
 
-	/*! Variable index from model description. */
+	/*! Variable index from model description (1-based). */
 	unsigned int m_varIdx;
-
-	/*! Index in data vector stored locally in each slave. */
-	unsigned int m_localVectorIdx;
-
-	/*! Index in global data vector from algorithm. */
-	unsigned int m_globalVectorIdx;
 };
 
 } // namespace MASTER_SIM
