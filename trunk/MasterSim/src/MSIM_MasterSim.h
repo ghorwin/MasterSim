@@ -13,8 +13,7 @@
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
 
-class AlgorithmGaussJacobi;
-class AlgorithmGaussSeidel;
+class AbstractAlgorithm;
 
 /*! Main class of the library.
 	This class encapsulates all functionality of the master and can be used from GUI
@@ -163,11 +162,8 @@ private:
 	/*! All cycles in order of their evaluation priority. */
 	std::vector<Cycle>		m_cycles;
 
-	/*! Implementation of the Gauss-Jacobi algorithm (non-iterative). */
-	AlgorithmGaussJacobi	*m_algorithmGaussJacobi;
-	/*! Implementation of the Gauss-Seidel algorithm (non-iterative or iterative, depending in maxIterations parameter). */
-	AlgorithmGaussSeidel	*m_algorithmGaussSeidel;
-
+	/*! Pointer to the actual master algorithm implementation (owned). */
+	AbstractAlgorithm		*m_masterAlgorithm;
 
 	/*! Current simulation time point. */
 	double					m_tCurrent;
@@ -208,6 +204,7 @@ private:
 
 	friend class AlgorithmGaussJacobi;
 	friend class AlgorithmGaussSeidel;
+	friend class AlgorithmNewton;
 };
 
 } // namespace MASTER_SIM

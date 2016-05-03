@@ -15,17 +15,15 @@
 namespace MASTER_SIM {
 
 MasterSim::MasterSim() :
-	m_algorithmGaussJacobi(NULL),
-	m_algorithmGaussSeidel(NULL),
+	m_masterAlgorithm(NULL),
 	m_tCurrent(0)
 {
 }
 
 
 MasterSim::~MasterSim() {
-	// clean up master algorithms, wether they are used or not
-	delete m_algorithmGaussJacobi;
-	delete m_algorithmGaussSeidel;
+	// clean up master algorithm
+	delete m_masterAlgorithm;
 
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
@@ -59,7 +57,7 @@ void MasterSim::initialize() {
 	// select master algorithm
 	initMasterAlgorithm();
 
-	// setup time-stepping variables 
+	// setup time-stepping variables
 	m_tStepSize = m_project.m_tStepStart;
 	m_tStepSizeProposed = m_tStepSize;
 	m_tLastOutput = -1;
@@ -261,11 +259,11 @@ void MasterSim::instatiateSlaves() {
 void MasterSim::initMasterAlgorithm() {
 	switch (m_project.m_masterMode) {
 		case Project::MM_GAUSS_JACOBI : {
-			m_algorithmGaussJacobi = new AlgorithmGaussJacobi(this);
+			m_masterAlgorithm = new AlgorithmGaussJacobi(this);
 		} break;
 
 		case Project::MM_GAUSS_SEIDEL : {
-			m_algorithmGaussSeidel = new AlgorithmGaussSeidel(this);
+			m_masterAlgorithm = new AlgorithmGaussSeidel(this);
 		} break;
 	}
 }

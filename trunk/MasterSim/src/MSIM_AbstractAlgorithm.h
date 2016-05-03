@@ -1,31 +1,35 @@
-#ifndef MSIM_ALGORITHMGAUSSJACOBI_H
-#define MSIM_ALGORITHMGAUSSJACOBI_H
+#ifndef MSIM_ABSTRACTALGORITHM_H
+#define MSIM_ABSTRACTALGORITHM_H
 
 namespace MASTER_SIM {
 
 class MasterSim;
 
-/*! Implementation class for Gauss-Jacobi algorithm.
-
-	This algorithm does not do any state-setting or state-getting, and is
-	compatible with FMI for CoSim v1.
+/*! Abstract base class for implementation of master algorithms.
 */
-class AlgorithmGaussJacobi {
+class AbstractAlgorithm {
 public:
+	enum Result {
+		R_CONVERGED,
+		R_DIVERGED,
+		R_ITERATION_LIMIT_EXCEEDED,
+		R_RETRY
+	};
+
 	/*! Default constructor. */
-	AlgorithmGaussJacobi(MasterSim * master) : m_master(master) {}
+	AbstractAlgorithm(MasterSim * master) : m_master(master) {}
 
-	/*! Master-algorithm will evaluate all FMUs and advance state in time.
-		Will throw an exception if any of the FMUs fails to compute or any
-		other error occurs.
-	*/
-	void doStep();
+	/*! Virtual d'tor. */
+	virtual ~AbstractAlgorithm() {}
 
-private:
-	/*! Cached pointer to master data structure. */
+	/*! Main stepper function for master algorithm. */
+	virtual Result doStep() = 0;
+
+protected:
+	/*! Cached pointer to master data structure (not owned). */
 	MasterSim	*m_master;
 };
 
 } // namespace MASTER_SIM
 
-#endif // MSIM_ALGORITHMGAUSSJACOBI_H
+#endif // MSIM_ABSTRACTALGORITHM_H

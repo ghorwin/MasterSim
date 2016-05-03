@@ -1,36 +1,24 @@
 #ifndef MSIM_ALGORITHMGAUSSSEIDEL_H
 #define MSIM_ALGORITHMGAUSSSEIDEL_H
 
-namespace MASTER_SIM {
+#include "MSIM_AbstractAlgorithm.h"
 
-class MasterSim;
+namespace MASTER_SIM {
 
 /*! Implementation class for Gauss-Seidel algorithm.
 
 	If run in non-iterative mode (m_maxIterations parameter == 1),
 	this algorithm does not do any state-setting or state-getting, and is compatible with FMI for CoSim v1.
 */
-class AlgorithmGaussSeidel {
+class AlgorithmGaussSeidel : public AbstractAlgorithm {
 public:
-	enum Result {
-		R_CONVERGED,
-		R_DIVERGED,
-		R_ITERATION_LIMIT_EXCEEDED,
-		R_RETRY
-	};
-
 	/*! Default constructor. */
-	AlgorithmGaussSeidel(MasterSim * master) : m_master(master) {
-	}
+	AlgorithmGaussSeidel(MasterSim * master) : AbstractAlgorithm(master) {}
 
 	/*! Master-algorithm will evaluate all FMUs and advance state in time.
 		Will throw an exception if any of the FMUs fails in unrecoverable manner.
 	*/
 	Result doStep();
-
-private:
-	/*! Cached pointer to master data structure. */
-	MasterSim	*m_master;
 };
 
 } // namespace MASTER_SIM

@@ -53,7 +53,7 @@ public:
 	unsigned int m_varIdx;
 
 	/*! Returns a string constant that describes the type. */
-	static const char * const varType2String(VarType t);
+	static const char * varType2String(VarType t);
 };
 
 } // namespace MASTER_SIM

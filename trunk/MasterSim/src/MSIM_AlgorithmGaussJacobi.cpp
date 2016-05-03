@@ -6,7 +6,7 @@
 
 namespace MASTER_SIM {
 
-void AlgorithmGaussJacobi::doStep() {
+AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 	const char * const FUNC_ID = "[AlgorithmGaussJacobi::doStep]";
 
 	// to make things simpler, that's just use fmi2status variables
@@ -49,7 +49,8 @@ void AlgorithmGaussJacobi::doStep() {
 	}
 
 	// ** algorithm end **
-
+	return R_CONVERGED; // no other option since we don't iterate
 }
+
 
 } // namespace MASTER_SIM
