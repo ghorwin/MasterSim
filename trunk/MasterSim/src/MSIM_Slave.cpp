@@ -174,29 +174,68 @@ void Slave::setState(void * slaveState) {
 
 void Slave::cacheOutputs() {
 	const char * const FUNC_ID = "[Slave::cacheOutputs]";
-	if (!m_fmu->m_boolValueRefsOutput.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_fmu->m_boolValueRefsOutput[0],
-				m_fmu->m_boolValueRefsOutput.size(), &m_boolOutputs[0]);
-		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	int res;
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		// booleans must be converted one-by-one for FMI 1
+		for (unsigned int i=0; i<m_fmu->m_boolValueRefsOutput.size(); ++i) {
+			fmiBoolean boolValue;
+			res = m_fmu->m_fmi1Functions.getBoolean(m_component, &m_fmu->m_boolValueRefsOutput[i], 1, &boolValue);
+			m_boolOutputs[i] = (boolValue == fmiTrue);
+		}
+		if (!m_fmu->m_intValueRefsOutput.empty()) {
+			res = m_fmu->m_fmi1Functions.getInteger(m_component, &m_fmu->m_intValueRefsOutput[0],
+					m_fmu->m_intValueRefsOutput.size(), &m_intOutputs[0]);
+		}
+		if (!m_fmu->m_doubleValueRefsOutput.empty()) {
+			res = m_fmu->m_fmi1Functions.getReal(m_component, &m_fmu->m_doubleValueRefsOutput[0],
+					m_fmu->m_doubleValueRefsOutput.size(), &m_doubleOutputs[0]);
+		}
+		// strings are queried one-by-one
+		for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
+			const char * str;
+			res = m_fmu->m_fmi1Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
+			if (res != fmi2OK) break;
+			IBK_ASSERT(str != NULL);
+			m_stringOutputs[i] = std::string(str);
+		}
 	}
-	if (!m_fmu->m_intValueRefsOutput.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getInteger(m_component, &m_fmu->m_intValueRefsOutput[0],
-				m_fmu->m_intValueRefsOutput.size(), &m_intOutputs[0]);
-		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	else {
+		if (!m_fmu->m_boolValueRefsOutput.empty()) {
+			res = m_fmu->m_fmi2Functions.getBoolean(m_component, &m_fmu->m_boolValueRefsOutput[0],
+					m_fmu->m_boolValueRefsOutput.size(), &m_boolOutputs[0]);
+		}
+		if (!m_fmu->m_intValueRefsOutput.empty()) {
+			res = m_fmu->m_fmi2Functions.getInteger(m_component, &m_fmu->m_intValueRefsOutput[0],
+					m_fmu->m_intValueRefsOutput.size(), &m_intOutputs[0]);
+		}
+		if (!m_fmu->m_doubleValueRefsOutput.empty()) {
+			res = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefsOutput[0],
+					m_fmu->m_doubleValueRefsOutput.size(), &m_doubleOutputs[0]);
+		}
+		// strings are queried one-by-one
+		for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
+			const char * str;
+			res = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
+			if (res != fmi2OK) break;
+			IBK_ASSERT(str != NULL);
+			m_stringOutputs[i] = std::string(str);
+		}
 	}
-	if (!m_fmu->m_doubleValueRefsOutput.empty()) {
-		fmi2Status r = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefsOutput[0],
-				m_fmu->m_doubleValueRefsOutput.size(), &m_doubleOutputs[0]);
-		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+}
+
+void Slave::setReal(unsigned int valueReference, double value) {
+	int res;
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		res = m_fmu->m_fmi1Functions.setReal(m_component, &valueReference, 1, &value);
 	}
-	// strings are queried one-by-one
-	for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
-		const char * str;
-		fmi2Status r = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
-		if (r != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
-		IBK_ASSERT(str != NULL);
-		m_stringOutputs[i] = std::string(str);
+	else {
+		res = m_fmu->m_fmi2Functions.setReal(m_component, &valueReference, 1, &value);
+	}
+	if (res != fmi2OK) {
+		throw IBK::Exception("Error setting input variable.", "[Slave::setReal]");
 	}
 }
+
 
 } // namespace MASTER_SIM

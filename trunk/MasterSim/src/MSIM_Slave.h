@@ -51,10 +51,11 @@ public:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	const FMU			* fmu() const { return m_fmu; }
 
-	/*! Sets an input variable in the master.
-
+	/*! Sets an input variable of type real in the slave. 
+		This is essentially a wrapper function around fmiSetReal or fmi2SetReal, depending on the 
+		standard supported by the FMU.
 	*/
-	void setReal(int globalVariableIdx, double value);
+	void setReal(unsigned int valueReference, double value);
 
 	/*! Simulator/slave ID name. */
 	std::string					m_name;

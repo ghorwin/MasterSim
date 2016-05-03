@@ -5,6 +5,7 @@
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
+#include <IBK_assert.h>
 
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
@@ -317,6 +318,11 @@ void MasterSim::composeVariableVector() {
 			case FMIVariable::VT_STRING : break;
 		}
 	}
+
+	// resize variable vectors
+	m_realyt.resize(m_realVariableMapping.size());
+	m_realytNext.resize(m_realVariableMapping.size());
+	m_realytNextIter.resize(m_realVariableMapping.size());
 }
 
 
@@ -333,12 +339,28 @@ bool MasterSim::doConvergenceTest() {
 
 
 void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & variables) {
-
+	IBK_ASSERT(variables.size() == m_realVariableMapping.size());
+	// process all connected variables
+	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_realVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// set input in slave
+		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, variables[i]);
+	}
 }
 
 
-void MasterSim::syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables) {
-
+void MasterSim::syncSlaveOutputs(const Slave * slave, std::vector<double> & variables) {
+	IBK_ASSERT(variables.size() == m_realVariableMapping.size());
+	// process all connected variables
+	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_realVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// copy local variable to global array
+		variables[i] = slave->m_doubleOutputs[varMap.m_outputLocalIndex];
+	}
 }
 
 

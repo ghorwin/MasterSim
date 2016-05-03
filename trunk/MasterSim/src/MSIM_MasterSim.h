@@ -135,11 +135,11 @@ private:
 	*/
 	bool doConvergenceTest();
 
-	/*! Updates all inputs of a given slave using the variables in provided vector. */
+	/*! Updates all connected inputs of a given slave using the variables in provided vector. */
 	void updateSlaveInputs(Slave * slave, const std::vector<double> & variables);
 
-	/*! Updates all inputs of a given slave using the variables in provided vector. */
-	void syncSlaveOutputs(const Slave * slave, const std::vector<double> & variables);
+	/*! Copies all connected outputs of a given slave into the vector 'variables'. */
+	void syncSlaveOutputs(const Slave * slave, std::vector<double> & variables);
 
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
@@ -158,7 +158,9 @@ private:
 	/*! All cycles in order of their evaluation priority. */
 	std::vector<Cycle>		m_cycles;
 
+	/*! Implementation of the Gauss-Jacobi algorithm (non-iterative). */
 	AlgorithmGaussJacobi	*m_algorithmGaussJacobi;
+	/*! Implementation of the Gauss-Seidel algorithm (non-iterative or iterative, depending in maxIterations parameter). */
 	AlgorithmGaussSeidel	*m_algorithmGaussSeidel;
 
 
@@ -174,10 +176,10 @@ private:
 	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
 
+	/*! Mapping of all connected variables of type real. */
+	std::vector<VariableMapping>	m_realVariableMapping;
 
 	// exchange variables of type real
-
-	std::vector<VariableMapping>	m_realVariableMapping;
 
 	/*! Slave variables (input and output) at current master time. */
 	std::vector<double>				m_realyt;
