@@ -29,6 +29,9 @@ public:
 	*/
 	void instantiateSlave();
 
+	void enterInitializationMode();
+	void exitInitializationMode();
+
 	/*! Tells the slave to integrate up the tEnd.
 		At end of function, all output quantities are updated.
 		\param tEnd A time larger than m_tCurrent

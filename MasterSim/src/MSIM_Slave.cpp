@@ -148,6 +148,22 @@ void Slave::instantiateSlave() {
 }
 
 
+void Slave::enterInitializationMode() {
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
+		if (m_fmu->m_fmi2Functions.enterInitializationMode(m_component) != fmi2OK)
+			throw IBK::Exception( IBK::FormatString("Error while entering initialization mode in slave '%1'.").arg(m_name), "[Slave::enterInitializationMode]");
+	}
+}
+
+
+void Slave::exitInitializationMode() {
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
+		if (m_fmu->m_fmi2Functions.exitInitializationMode(m_component) != fmi2OK)
+			throw IBK::Exception( IBK::FormatString("Error while leaving initialization mode in slave '%1'.").arg(m_name), "[Slave::exitInitializationMode]");
+	}
+}
+
+
 int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
 //	const char * const FUNC_ID = "[Slave::doStep]";
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
