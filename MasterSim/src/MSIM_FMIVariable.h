@@ -52,6 +52,9 @@ public:
 	/*! Variable index from model description (1-based). */
 	unsigned int m_varIdx;
 
+	/*! Start value for string input variables/parameters. */
+	std::string m_startValue;
+
 	/*! Returns a string constant that describes the type. */
 	static const char * varType2String(VarType t);
 };
