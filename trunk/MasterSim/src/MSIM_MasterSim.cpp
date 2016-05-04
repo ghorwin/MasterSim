@@ -287,16 +287,32 @@ void MasterSim::initialConditions() {
 
 		// set parameters and start values for all slaves
 
-		// cache outputs
-		slave->cacheOutputs();
 	}
 
 	// enter initialization mode
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+		slave->enterInitializationMode();
+	}
 
 	// if enabled, iterate over initial conditions using the selected master algorithm
 	// but disable doStep() and get/set state calls within algorithm
 
+	// for now just loop over all slaves
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+		// cache outputs
+		slave->cacheOutputs();
+		// and sync with global variables vector
+		syncSlaveOutputs(slave, m_realyt); // for now just real variables
+	}
+
 	// exit initialization mode
+	// enter initialization mode
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+		slave->exitInitializationMode();
+	}
 }
 
 
