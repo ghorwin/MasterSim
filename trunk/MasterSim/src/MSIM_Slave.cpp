@@ -104,8 +104,12 @@ Slave::Slave(FMU * fmu, const std::string & name) :
 
 
 Slave::~Slave() {
-	if (m_component != NULL)
-		m_fmu->m_fmi2Functions.freeInstance(m_component);
+	if (m_component != NULL) {
+		if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1)
+			m_fmu->m_fmi1Functions.freeSlaveInstance(m_component);
+		else
+			m_fmu->m_fmi2Functions.freeInstance(m_component);
+	}
 }
 
 

@@ -74,7 +74,13 @@ FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuDir(fmuDir),
 	m_impl(new FMUPrivate)
 {
+#ifdef _WIN32
+	// this is actually wrong, the URI prefix should be "file://" so that
+	// network paths become file:///path/to/network/share also on windows
+	m_resourcePath = "file:///" + (m_fmuDir / "resources").str();
+#else
 	m_resourcePath = "file://" + (m_fmuDir / "resources").str();
+#endif
 }
 
 
