@@ -29,3 +29,4 @@ popd
 xcopy /Y .\bb_VC\MasterSimulator\MasterSimulator.exe ..\..\bin\release
 xcopy /Y .\bb_VC\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release
 
+pause
