@@ -259,4 +259,18 @@ void Slave::setReal(unsigned int valueReference, double value) {
 }
 
 
+void Slave::setString(unsigned int valueReference, const std::string & str) {
+	int res;
+	const char * const cstr = str.c_str();
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		res = m_fmu->m_fmi1Functions.setString(m_component, &valueReference, 1, &cstr);
+	}
+	else {
+		res = m_fmu->m_fmi2Functions.setString(m_component, &valueReference, 1, &cstr);
+	}
+	if (res != fmi2OK) {
+		throw IBK::Exception("Error setting input variable.", "[Slave::setString]");
+	}
+}
+
 } // namespace MASTER_SIM

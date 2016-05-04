@@ -54,11 +54,17 @@ public:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	const FMU			* fmu() const { return m_fmu; }
 
-	/*! Sets an input variable of type real in the slave. 
-		This is essentially a wrapper function around fmiSetReal or fmi2SetReal, depending on the 
+	/*! Sets an input variable of type real in the slave.
+		This is essentially a wrapper function around fmiSetReal or fmi2SetReal, depending on the
 		standard supported by the FMU.
 	*/
 	void setReal(unsigned int valueReference, double value);
+
+	/*! Sets an input variable of type string in the slave.
+		This is essentially a wrapper function around fmiSetString or fmi2SetString, depending on the
+		standard supported by the FMU.
+	*/
+	void setString(unsigned int valueReference, const std::string & str);
 
 	/*! Simulator/slave ID name. */
 	std::string					m_name;

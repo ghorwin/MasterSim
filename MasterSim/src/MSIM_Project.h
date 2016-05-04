@@ -62,6 +62,9 @@ public:
 	*/
 	void read(const IBK::Path & prjFile);
 
+	/*! Retrieves simulator definition for a given slave/simulator name. */
+	const SimulatorDef & simulatorDefinition(const std::string & slaveName) const;
+
 	// Content of project file
 
 
