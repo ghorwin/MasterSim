@@ -88,6 +88,18 @@ void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionF
 	}
 }
 
+const FMIVariable & ModelDescription::variable(const std::string & varName) const {
+	const char * const FUNC_ID = "[ModelDescription::variableName]";
+
+//	for (const FMIVariable & fmiVar : m_variables) {
+	for (unsigned int i=0; i<m_variables.size(); ++i) {
+		const FMIVariable & fmiVar = m_variables[i];
+		if (fmiVar.m_name == varName)
+			return fmiVar;
+	}
+	throw IBK::Exception(IBK::FormatString("FMIVariable with name '%1' is not exported.").arg(varName), FUNC_ID);
+}
+
 
 void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_csV2ModelIdentifier = readRequiredAttribute(element, "modelIdentifier");

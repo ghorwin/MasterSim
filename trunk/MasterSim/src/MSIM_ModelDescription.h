@@ -28,6 +28,10 @@ public:
 	/*! Parses model description. */
 	void parseModelDescription(const IBK::Path & modelDescriptionFilePath);
 
+	/*! Returns a variable identified by name. */
+	const FMIVariable & variable(const std::string & varName) const;
+
+
 	std::string		m_modelName;
 	std::string		m_guid;
 
@@ -49,6 +53,8 @@ public:
 	bool	m_canSerializeFMUstate;
 	bool	m_canBeInstantiatedOnlyOncePerProcess;
 	bool	m_providesDirectionalDerivative;
+
+
 
 	/*! Vector of variables published by this FMU.
 		The ModelVariable index is the index of the variables in this vector + 1.

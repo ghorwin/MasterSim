@@ -68,11 +68,37 @@ void Project::read(const IBK::Path & prjFile) {
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
 				if (IBK::explode_in2(graphEdges, tokens, ' ') != 2)
-					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>'.").arg(line), FUNC_ID);
+					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
 				g.m_outputVariableRef = IBK::trim_copy(tokens[0]);
 				g.m_inputVariableRef = IBK::trim_copy(tokens[1]);
 				m_graph.push_back(g);
+				continue;
+			}
+
+			if (line.find("parameter") == 0) {
+				std::string paraString = line.substr(9);
+				IBK::trim(paraString);
+				// general parameters
+				if (IBK::explode_in2(paraString, tokens) != 2)
+					throw IBK::Exception(IBK::FormatString("Expected format 'parameter <flat name> <value>', got '%1'").arg(line), FUNC_ID);
+				std::string value = tokens[1];
+				// extract slave name
+				std::string parameter = tokens[0];
+				if (IBK::explode_in2(parameter, tokens, '.') != 2)
+					throw IBK::Exception(IBK::FormatString("Expected parameter name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
+				std::string slaveName = tokens[0];
+				parameter = tokens[1];
+				// add paramter to slave
+				unsigned int s=0;
+				for (; s<m_simulators.size(); ++s) {
+					if (m_simulators[s].m_name == slaveName) {
+						m_simulators[s].m_parameters[parameter] = value;
+						break;
+					}
+				}
+				if (s == m_simulators.size())
+					throw IBK::Exception(IBK::FormatString("Unknown slave referenced in parameter in line '%1'").arg(line), FUNC_ID);
 				continue;
 			}
 
@@ -116,6 +142,15 @@ void Project::read(const IBK::Path & prjFile) {
 	}
 
 	//	m_tOutputStepMin = 3600; // should be in project file
+}
+
+
+const Project::SimulatorDef & Project::simulatorDefinition(const std::string & slaveName) const {
+	for (unsigned int s=0; s<m_simulators.size(); ++s) {
+		if (m_simulators[s].m_name == slaveName)
+			return m_simulators[s];
+	}
+	throw IBK::Exception(IBK::FormatString("Cannot find simulator/slave definition with name '%1'.").arg(slaveName), "[Project::simulatorDefinition]");
 }
 
 
