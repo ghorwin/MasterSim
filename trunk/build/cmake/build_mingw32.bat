@@ -26,3 +26,4 @@ mkdir ..\..\bin\release_mingw32
 xcopy /Y .\bb_mingw32\MasterSimulator\MasterSimulator.exe ..\..\bin\release_mingw32
 xcopy /Y .\bb_mingw32\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release_mingw32
 
+pause
