@@ -23,6 +23,16 @@ void FMIVariable::read(const TiXmlElement * element) {
 		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
 		/// \todo variability is currently ignored, all variables are treated as continuous or discrete
 
+		std::string causality = ModelDescription::readRequiredAttribute(element, "causality");
+		if (causality == "output")
+			m_causality = C_OUTPUT;
+		else if (causality == "input")
+			m_causality = C_INPUT;
+		else if (causality == "parameter")
+			m_causality = C_PARAMETER;
+		else
+			m_causality = C_OTHER;
+
 		// read child element
 		const TiXmlElement * child = element->FirstChild()->ToElement();
 		if (child == NULL)
@@ -39,20 +49,16 @@ void FMIVariable::read(const TiXmlElement * element) {
 		else if (child->ValueStr() == "Boolean") {
 			m_type = VT_BOOL;
 		}
-		std::string causality = ModelDescription::readRequiredAttribute(element, "causality");
-		if (causality == "output")
-			m_causality = C_OUTPUT;
-		else if (causality == "input")
-			m_causality = C_INPUT;
-		else if (causality == "parameter")
-			m_causality = C_PARAMETER;
-		else
-			m_causality = C_OTHER;
+		// if we have causality input or parameter, read start element
+		if (m_causality == C_INPUT || m_causality == C_PARAMETER) {
+			m_startValue = ModelDescription::readRequiredAttribute(child, "start");
+		}
 
 		if (m_causality != C_OTHER) {
 			IBK::IBK_Message( IBK::FormatString("%1 (%2, %3)\n").arg(m_name).arg(child->ValueStr()).arg(causality), IBK::MSG_PROGRESS,
 							  FUNC_ID, IBK::VL_INFO);
 		}
+
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, IBK::FormatString("Error reading definition for variable '%1'").arg(m_name), FUNC_ID);

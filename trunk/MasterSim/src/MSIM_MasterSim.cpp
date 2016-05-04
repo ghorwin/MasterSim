@@ -282,27 +282,22 @@ void MasterSim::initialConditions() {
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message("Computing initial conditions\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
-	IBK::IBK_Message("Setting parameters and constant input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-	IBK::MessageIndentor indent2; (void)indent2;
-	// loop over all slaves
-	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
 
-		try {
-			// set parameters and start values for all slaves
-			const Project::SimulatorDef & simDef = m_project.simulatorDefinition(slave->m_name);
-			if (!simDef.m_parameters.empty())
-				IBK::IBK_Message(IBK::FormatString("Setting parameters in slave '%1'\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-			IBK::MessageIndentor indent2; (void)indent2;
-			for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin();
-				 it != simDef.m_parameters.end(); ++it)
-			{
-				const std::string & paraName = it->first;
-				const std::string & value = it->second;
-				// search for FMI variable with this name
-				const FMIVariable & var = slave->fmu()->m_modelDescription.variable(paraName);
+	IBK::IBK_Message("Setting default start values for input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	{
+		IBK::MessageIndentor indent3; (void)indent3;
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			Slave * slave = m_slaves[i];
+			// process all FMI variables and parameters and set their start values
+			for (unsigned int v=0; v<slave->fmu()->m_modelDescription.m_variables.size(); ++v) {
+				const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[v];
+				if (var.m_causality != FMIVariable::C_INPUT && var.m_causality != FMIVariable::C_PARAMETER)
+					continue;
+
+				// get start value
+				const std::string & value= var.m_startValue;
 				IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
-								 .arg(FMIVariable::varType2String(var.m_type)).arg(paraName).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+								 .arg(FMIVariable::varType2String(var.m_type)).arg(var.m_name).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 				// convert value into type
 				switch (var.m_type) {
 					case FMIVariable::VT_BOOL : break;
@@ -314,12 +309,52 @@ void MasterSim::initialConditions() {
 						slave->setString(var.m_valueReference, value);
 						break;
 				}
-
-				// set input value in FMU
 			}
 		}
-		catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Error while setting parameter in slave '%1'").arg(slave->m_name), FUNC_ID);
+	}
+
+
+	IBK::IBK_Message("Setting used-defined parameters and start values for input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	{
+		IBK::MessageIndentor indent3; (void)indent3;
+
+		// loop over all slaves
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			Slave * slave = m_slaves[i];
+
+			try {
+				// set parameters and start values for all slaves
+				const Project::SimulatorDef & simDef = m_project.simulatorDefinition(slave->m_name);
+				if (!simDef.m_parameters.empty())
+					IBK::IBK_Message(IBK::FormatString("Setting parameters in slave '%1'\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+				IBK::MessageIndentor indent2; (void)indent2;
+				for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin();
+					 it != simDef.m_parameters.end(); ++it)
+				{
+					const std::string & paraName = it->first;
+					const std::string & value = it->second;
+					// search for FMI variable with this name
+					const FMIVariable & var = slave->fmu()->m_modelDescription.variable(paraName);
+					IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
+									 .arg(FMIVariable::varType2String(var.m_type)).arg(paraName).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+					// convert value into type
+					switch (var.m_type) {
+						case FMIVariable::VT_BOOL : break;
+						case FMIVariable::VT_INT : break;
+						case FMIVariable::VT_DOUBLE :
+							slave->setReal(var.m_valueReference, IBK::string2val<double>(value));
+							break;
+						case FMIVariable::VT_STRING :
+							slave->setString(var.m_valueReference, value);
+							break;
+					}
+
+					// set input value in FMU
+				}
+			}
+			catch (IBK::Exception & ex) {
+				throw IBK::Exception(ex, IBK::FormatString("Error while setting parameter in slave '%1'").arg(slave->m_name), FUNC_ID);
+			}
 		}
 	}
 
@@ -333,7 +368,7 @@ void MasterSim::initialConditions() {
 	// if enabled, iterate over initial conditions using the selected master algorithm
 	// but disable doStep() and get/set state calls within algorithm
 
-	// for now just loop over all slaves
+	// for now just loop over all slaves retrieve outputs
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
 		// cache outputs
@@ -341,9 +376,15 @@ void MasterSim::initialConditions() {
 		// and sync with global variables vector
 		syncSlaveOutputs(slave, m_realyt); // for now just real variables
 	}
+	// and set inputs
 
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+		updateSlaveInputs(slave, m_realyt);
+	}
+
+	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// exit initialization mode
-	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
 		slave->exitInitializationMode();
