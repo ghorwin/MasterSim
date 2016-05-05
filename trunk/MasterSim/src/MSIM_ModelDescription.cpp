@@ -88,6 +88,7 @@ void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionF
 	}
 }
 
+
 const FMIVariable & ModelDescription::variable(const std::string & varName) const {
 	const char * const FUNC_ID = "[ModelDescription::variableName]";
 

@@ -259,6 +259,35 @@ void Slave::setReal(unsigned int valueReference, double value) {
 }
 
 
+void Slave::setInteger(unsigned int valueReference, int value) {
+	int res;
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		res = m_fmu->m_fmi1Functions.setInteger(m_component, &valueReference, 1, &value);
+	}
+	else {
+		res = m_fmu->m_fmi2Functions.setInteger(m_component, &valueReference, 1, &value);
+	}
+	if (res != fmi2OK) {
+		throw IBK::Exception("Error setting input variable.", "[Slave::setInteger]");
+	}
+}
+
+
+void Slave::setBoolean(unsigned int valueReference, fmi2Boolean value) {
+	int res;
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		fmiBoolean val = (value == fmi2True) ? fmiTrue : fmiFalse;
+		res = m_fmu->m_fmi1Functions.setBoolean(m_component, &valueReference, 1, &val);
+	}
+	else {
+		res = m_fmu->m_fmi2Functions.setBoolean(m_component, &valueReference, 1, &value);
+	}
+	if (res != fmi2OK) {
+		throw IBK::Exception("Error setting input variable.", "[Slave::setBoolean]");
+	}
+}
+
+
 void Slave::setString(unsigned int valueReference, const std::string & str) {
 	int res;
 	const char * const cstr = str.c_str();
@@ -272,5 +301,26 @@ void Slave::setString(unsigned int valueReference, const std::string & str) {
 		throw IBK::Exception("Error setting input variable.", "[Slave::setString]");
 	}
 }
+
+
+void Slave::setValue(const FMIVariable & var, const std::string & value) {
+	// convert value into type
+	switch (var.m_type) {
+		case FMIVariable::VT_BOOL :
+			if (value == "true")	setBoolean(var.m_valueReference, fmi2True);
+			else					setBoolean(var.m_valueReference, fmi2False);
+			break;
+		case FMIVariable::VT_INT :
+			setInteger(var.m_valueReference, IBK::string2val<int>(value));
+			break;
+		case FMIVariable::VT_DOUBLE :
+			setReal(var.m_valueReference, IBK::string2val<double>(value));
+			break;
+		case FMIVariable::VT_STRING :
+			setString(var.m_valueReference, value);
+			break;
+	}
+}
+
 
 } // namespace MASTER_SIM

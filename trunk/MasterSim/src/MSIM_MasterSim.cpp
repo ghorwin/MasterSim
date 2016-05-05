@@ -1,6 +1,7 @@
 #include "MSIM_MasterSim.h"
 
 #include <memory> // for auto_ptr
+#include <cmath>
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
@@ -298,17 +299,8 @@ void MasterSim::initialConditions() {
 				const std::string & value= var.m_startValue;
 				IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
 								 .arg(FMIVariable::varType2String(var.m_type)).arg(var.m_name).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
-				// convert value into type
-				switch (var.m_type) {
-					case FMIVariable::VT_BOOL : break;
-					case FMIVariable::VT_INT : break;
-					case FMIVariable::VT_DOUBLE :
-						slave->setReal(var.m_valueReference, IBK::string2val<double>(value));
-						break;
-					case FMIVariable::VT_STRING :
-						slave->setString(var.m_valueReference, value);
-						break;
-				}
+				// set input value in FMU
+				slave->setValue(var, value);
 			}
 		}
 	}
@@ -337,19 +329,8 @@ void MasterSim::initialConditions() {
 					const FMIVariable & var = slave->fmu()->m_modelDescription.variable(paraName);
 					IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
 									 .arg(FMIVariable::varType2String(var.m_type)).arg(paraName).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
-					// convert value into type
-					switch (var.m_type) {
-						case FMIVariable::VT_BOOL : break;
-						case FMIVariable::VT_INT : break;
-						case FMIVariable::VT_DOUBLE :
-							slave->setReal(var.m_valueReference, IBK::string2val<double>(value));
-							break;
-						case FMIVariable::VT_STRING :
-							slave->setString(var.m_valueReference, value);
-							break;
-					}
-
 					// set input value in FMU
+					slave->setValue(var, value);
 				}
 			}
 			catch (IBK::Exception & ex) {
@@ -374,13 +355,13 @@ void MasterSim::initialConditions() {
 		// cache outputs
 		slave->cacheOutputs();
 		// and sync with global variables vector
-		syncSlaveOutputs(slave, m_realyt); // for now just real variables
+		syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
 	}
 	// and set inputs
 
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
-		updateSlaveInputs(slave, m_realyt);
+		updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
 	}
 
 	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -429,7 +410,6 @@ void MasterSim::composeVariableVector() {
 	// process connection graph and find all slaves and their output variables
 	IBK::IBK_Message("Resolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::MessageIndentor indent; (void)indent;
-	std::vector<std::string> tokens;
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_project.m_graph[i];
 		// resolve variable references
@@ -453,10 +433,10 @@ void MasterSim::composeVariableVector() {
 
 		// add variable mapping to corresponding vector
 		switch (t) {
-			case FMIVariable::VT_BOOL	: break;
-			case FMIVariable::VT_INT	: break;
+			case FMIVariable::VT_BOOL	: m_boolVariableMapping.push_back(varMap); break;
+			case FMIVariable::VT_INT	: m_intVariableMapping.push_back(varMap); break;
 			case FMIVariable::VT_DOUBLE : m_realVariableMapping.push_back(varMap); break;
-			case FMIVariable::VT_STRING : break;
+			case FMIVariable::VT_STRING : m_stringVariableMapping.push_back(varMap); break;
 		}
 	}
 
@@ -464,43 +444,145 @@ void MasterSim::composeVariableVector() {
 	m_realyt.resize(m_realVariableMapping.size());
 	m_realytNext.resize(m_realVariableMapping.size());
 	m_realytNextIter.resize(m_realVariableMapping.size());
+
+	m_intyt.resize(m_intVariableMapping.size());
+	m_intytNext.resize(m_intVariableMapping.size());
+	m_intytNextIter.resize(m_intVariableMapping.size());
+
+	m_boolyt.resize(m_boolVariableMapping.size());
+	m_boolytNext.resize(m_boolVariableMapping.size());
+	m_boolytNextIter.resize(m_boolVariableMapping.size());
+
+	m_stringyt.resize(m_stringVariableMapping.size());
+	m_stringytNext.resize(m_stringVariableMapping.size());
+	m_stringytNextIter.resize(m_stringVariableMapping.size());
 }
 
 
 bool MasterSim::doErrorCheck() {
+
 	/// \todo implement
 	return true;
 }
 
 
 bool MasterSim::doConvergenceTest() {
-	/// \todo implement
+	// loop over all values in vector of last and new state
+
+	// compare all state-based values: int, bool and string
+	for (unsigned int i=0; i<m_intytNextIter.size(); ++i) {
+		if (m_intytNext[i] != m_intytNextIter[i])
+			return false;
+	}
+
+	for (unsigned int i=0; i<m_boolytNextIter.size(); ++i) {
+		if (m_boolytNext[i] != m_boolytNextIter[i])
+			return false;
+	}
+
+	for (unsigned int i=0; i<m_stringytNextIter.size(); ++i) {
+		if (m_stringytNext[i] != m_stringytNextIter[i])
+			return false;
+	}
+
+	// WRMS norm of real values
+	double norm = 0;
+	for (unsigned i=0; i<m_realytNextIter.size(); ++i) {
+		double diff = m_realytNextIter[i] - m_realytNext[i];
+		double absValue = std::fabs(m_realytNextIter[i]);
+		double weight = absValue*m_project.m_relTol + m_project.m_absTol;
+		diff /= weight;
+		norm += diff*diff;
+	}
+
+	norm = std::sqrt(norm);
+	if (norm > 1)
+		return false;
+
+
 	return true;
 }
 
 
-void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & variables) {
-	IBK_ASSERT(variables.size() == m_realVariableMapping.size());
+void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & realVariables,
+								  const std::vector<int> & intVariables,
+								  const std::vector<fmi2Boolean> &boolVariables,
+								  const std::vector<std::string> & stringVariables)
+{
+	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
+	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
+	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size());
+	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size());
 	// process all connected variables
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];
 		// skip variables that are not outputs of selected slave
 		if (varMap.m_outputSlave != slave) continue;
 		// set input in slave
-		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, variables[i]);
+		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realVariables[i]);
+	}
+	for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_intVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// set input in slave
+		varMap.m_inputSlave->setInteger(varMap.m_inputValueReference, intVariables[i]);
+	}
+	for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_boolVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// set input in slave
+		varMap.m_inputSlave->setBoolean(varMap.m_inputValueReference, boolVariables[i]);
+	}
+	for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_stringVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// set input in slave
+		varMap.m_inputSlave->setString(varMap.m_inputValueReference, stringVariables[i]);
 	}
 }
 
 
-void MasterSim::syncSlaveOutputs(const Slave * slave, std::vector<double> & variables) {
-	IBK_ASSERT(variables.size() == m_realVariableMapping.size());
+void MasterSim::syncSlaveOutputs(const Slave * slave,
+								 std::vector<double> & realVariables,
+								 std::vector<int> & intVariables,
+								 std::vector<fmi2Boolean> &boolVariables,
+								 std::vector<std::string> & stringVariables)
+{
+	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
+	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
+	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size());
+	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size());
 	// process all connected variables
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];
 		// skip variables that are not outputs of selected slave
 		if (varMap.m_outputSlave != slave) continue;
 		// copy local variable to global array
-		variables[i] = slave->m_doubleOutputs[varMap.m_outputLocalIndex];
+		realVariables[i] = slave->m_doubleOutputs[varMap.m_outputLocalIndex];
+	}
+	for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_intVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// copy local variable to global array
+		intVariables[i] = slave->m_intOutputs[varMap.m_outputLocalIndex];
+	}
+	for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_boolVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// copy local variable to global array
+		boolVariables[i] = slave->m_boolOutputs[varMap.m_outputLocalIndex];
+	}
+	for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_stringVariableMapping[i];
+		// skip variables that are not outputs of selected slave
+		if (varMap.m_outputSlave != slave) continue;
+		// copy local variable to global array
+		stringVariables[i] = slave->m_stringOutputs[varMap.m_outputLocalIndex];
 	}
 }
 

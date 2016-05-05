@@ -141,10 +141,18 @@ private:
 	bool doConvergenceTest();
 
 	/*! Updates all connected inputs of a given slave using the variables in provided vector. */
-	void updateSlaveInputs(Slave * slave, const std::vector<double> & variables);
+	void updateSlaveInputs(Slave * slave,
+						   const std::vector<double> & variables,
+						   const std::vector<int> &intVariables,
+						   const std::vector<fmi2Boolean> &boolVariables,
+						   const std::vector<std::string> &stringVariables);
 
 	/*! Copies all connected outputs of a given slave into the vector 'variables'. */
-	void syncSlaveOutputs(const Slave * slave, std::vector<double> & variables);
+	void syncSlaveOutputs(const Slave * slave,
+						  std::vector<double> & realVariables,
+						  std::vector<int> & intVariables,
+						  std::vector<fmi2Boolean> &boolVariables,
+						  std::vector<std::string> & stringVariables);
 
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
@@ -182,17 +190,48 @@ private:
 
 	/*! Mapping of all connected variables of type real. */
 	std::vector<VariableMapping>	m_realVariableMapping;
+	/*! Mapping of all connected variables of type int. */
+	std::vector<VariableMapping>	m_intVariableMapping;
+	/*! Mapping of all connected variables of type bool. */
+	std::vector<VariableMapping>	m_boolVariableMapping;
+	/*! Mapping of all connected variables of type string. */
+	std::vector<VariableMapping>	m_stringVariableMapping;
 
 	// exchange variables of type real
 
 	/*! Slave variables (input and output) at current master time. */
 	std::vector<double>				m_realyt;
-
 	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
 	std::vector<double>				m_realytNext;
-
 	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
 	std::vector<double>				m_realytNextIter;
+
+	// exchange variables of type int
+
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<int>				m_intyt;
+	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
+	std::vector<int>				m_intytNext;
+	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
+	std::vector<int>				m_intytNextIter;
+
+	// exchange variables of type boolean
+
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<fmi2Boolean>		m_boolyt;
+	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
+	std::vector<fmi2Boolean>		m_boolytNext;
+	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
+	std::vector<fmi2Boolean>		m_boolytNextIter;
+
+	// exchange variables of type string
+
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<std::string>		m_stringyt;
+	/*! Slave variables (input and output) at next master time (may be iterative quantities). */
+	std::vector<std::string>		m_stringytNext;
+	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
+	std::vector<std::string>		m_stringytNextIter;
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
