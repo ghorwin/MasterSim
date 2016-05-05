@@ -45,6 +45,9 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// create copy of current variables
 				/// \todo only copy variables that are port of this cycle, may speed up code a 'little'
 				MasterSim::copyVector(m_master->m_realytNext, m_master->m_realytNextIter);
+				MasterSim::copyVector(m_master->m_intytNext, m_master->m_intytNextIter);
+				MasterSim::copyVector(m_master->m_boolytNext, m_master->m_boolytNextIter);
+				MasterSim::copyVector(m_master->m_stringytNext, m_master->m_stringytNextIter);
 
 				// roll-back all slaves in this cycle, except for first iteration
 				if (iteration > 1) {
@@ -60,7 +63,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				Slave * slave = cycle.m_slaves[s];
 
 				// update input variables in all slaves, using variables from time t
-				m_master->updateSlaveInputs(slave, m_master->m_realytNext);
+				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
 
 				// advance slave, we have no roll-back
 				int res = slave->doStep(tNext, true);
@@ -79,7 +82,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// slave is now at time level tNext and its outputs are updated accordingly
 				// sync results into vector with newly computed quantities, so that next slave will use newly
 				// computed values already
-				m_master->syncSlaveOutputs(slave, m_master->m_realytNext);
+				m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
 			}
 
 			// when iterating, do convergence test

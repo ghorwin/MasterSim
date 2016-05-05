@@ -60,11 +60,29 @@ public:
 	*/
 	void setReal(unsigned int valueReference, double value);
 
+	/*! Sets an input variable of type int in the slave.
+		This is essentially a wrapper function around fmiSetInteger or fmi2SetInteger, depending on the
+		standard supported by the FMU.
+	*/
+	void setInteger(unsigned int valueReference, int value);
+
+	/*! Sets an input variable of type bool in the slave.
+		This is essentially a wrapper function around fmiSetBoolean or fmi2SetBoolean, depending on the
+		standard supported by the FMU.
+	*/
+	void setBoolean(unsigned int valueReference, fmi2Boolean value);
+
 	/*! Sets an input variable of type string in the slave.
 		This is essentially a wrapper function around fmiSetString or fmi2SetString, depending on the
 		standard supported by the FMU.
 	*/
 	void setString(unsigned int valueReference, const std::string & str);
+
+	/*! Convenience function for setting a variable of type defined by FMIVariable.
+		\param var The variable holding type and value reference.
+		\param value The value as string, will be decoded into the corresponding type.
+	*/
+	void setValue(const FMIVariable & var, const std::string & value);
 
 	/*! Simulator/slave ID name. */
 	std::string					m_name;
