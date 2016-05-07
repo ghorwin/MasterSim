@@ -3,7 +3,9 @@
 
 #include <vector>
 #include <string>
+
 #include <IBK_Path.h>
+#include <IBK_Unit.h>
 
 namespace MASTER_SIM {
 
@@ -69,33 +71,39 @@ public:
 
 
 	/*! Starting time point of simulation, if not 0 serialization of existing state of FMUs is done at startup. */
-	double			m_tStart;
+	double						m_tStart;
 
 	/*! Simulation end time point, must be > 0. */
-	double			m_tEnd;
+	double						m_tEnd;
 
 	/*! Maximum for communication step size (only in variable step-size mode). */
-	double			m_tStepMax;
+	double						m_tStepMax;
 
 	/*! Initial step size (for variable step-size mode) or fixed step size (for constant step-size mode). */
-	double			m_tStepStart;
+	double						m_tStepStart;
 
 	/*! Operation mode of the master algorithm. */
-	MasterMode		m_masterMode;
+	MasterMode					m_masterMode;
 
 	/*! Type of error control/time step adjustment scheme used. */
-	ErrorControlMode	m_errorControlMode;
+	ErrorControlMode			m_errorControlMode;
 
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
-	unsigned int	m_maxIterations;
+	unsigned int				m_maxIterations;
 
 	/*! Absolute tolerance - used for convergence check and for time integration error control. */
-	double			m_absTol;
+	double						m_absTol;
 	/*! Relative tolerance - used for convergence check and for time integration error control. */
-	double			m_relTol;
+	double						m_relTol;
 
 	/*! Minimum output time step. */
-	double			m_tOutputStepMin;
+	double						m_tOutputStepMin;
+
+	/*! Unit defined as master time. */
+	IBK::Unit					m_masterTimeUnit;
+	/*! Unit defined as output time for output files. */
+	IBK::Unit					m_outputTimeUnit;
+
 
 	/*! All simulators coupled in this master scenario. */
 	std::vector<SimulatorDef>	m_simulators;

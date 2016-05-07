@@ -11,7 +11,8 @@ namespace MASTER_SIM {
 
 Project::Project() :
 	m_masterMode(MM_GAUSS_JACOBI),
-	m_errorControlMode(EM_NONE)
+	m_errorControlMode(EM_NONE),
+	m_outputTimeUnit("s")
 {
 }
 

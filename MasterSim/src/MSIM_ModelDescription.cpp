@@ -102,6 +102,20 @@ const FMIVariable & ModelDescription::variable(const std::string & varName) cons
 }
 
 
+const FMIVariable & ModelDescription::variableByRef(unsigned int valueReference) const {
+	const char * const FUNC_ID = "[ModelDescription::variableByRef]";
+
+//	for (const FMIVariable & fmiVar : m_variables) {
+	for (unsigned int i=0; i<m_variables.size(); ++i) {
+		const FMIVariable & fmiVar = m_variables[i];
+		if (fmiVar.m_valueReference == valueReference)
+			return fmiVar;
+	}
+	throw IBK::Exception(IBK::FormatString("FMIVariable with value reference '%1' is not exported.").arg(valueReference), FUNC_ID);
+}
+
+
+
 void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_csV2ModelIdentifier = readRequiredAttribute(element, "modelIdentifier");
 	m_canHandleVariableCommunicationStepSize = readBoolAttribute(element, "canHandleVariableCommunicationStepSize");
