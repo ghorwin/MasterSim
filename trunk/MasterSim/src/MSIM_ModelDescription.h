@@ -31,6 +31,8 @@ public:
 	/*! Returns a variable identified by name. */
 	const FMIVariable & variable(const std::string & varName) const;
 
+	/*! Returns a variable identified by value reference. */
+	const FMIVariable & variableByRef(unsigned int valueReference) const;
 
 	std::string		m_modelName;
 	std::string		m_guid;

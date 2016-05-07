@@ -59,9 +59,14 @@ int main(int argc, char * argv[]) {
 		// set master and all FMUs to start time point
 		double tStart = masterSim.tStart(); // override with command line argument
 		masterSim.restoreState(tStart, stateDir);
+		// (re-)open output file
+		masterSim.openOutputFile(true);
 #else
 		// run master for entire simulation
 		masterSim.initialize();
+		// (re-)create output file
+		masterSim.openOutputFiles(false);
+		// and write initial conditions
 		masterSim.writeOutputs();
 #endif
 

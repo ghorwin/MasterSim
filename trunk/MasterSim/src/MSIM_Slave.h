@@ -41,12 +41,11 @@ public:
 	int doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint);
 
 	/*! Call getFMUState() function in fmu and retrieves current state as pointer.
-
 	*/
-	void * currentState() const;
+	void currentState(fmi2FMUstate * state) const;
 
 	/*! Sets the state of the FMU (roll-back to recorded state). */
-	void setState(void * slaveState);
+	void setState(fmi2FMUstate slaveState);
 
 	/*! Retrieve all output quantities from slave and store in local vectors. */
 	void cacheOutputs();

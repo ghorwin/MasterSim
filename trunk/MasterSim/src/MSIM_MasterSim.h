@@ -10,6 +10,10 @@
 #include "MSIM_FMUManager.h"
 #include "MSIM_Slave.h"
 
+namespace DATAIO {
+	class DataIO;
+}
+
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
 
@@ -37,6 +41,11 @@ public:
 		After call to this function, everything is initialized so that doStep() can be called.
 	*/
 	void initialize();
+
+	/*! Creates/opens output file.
+		\param reopen If true, attempts to reopen an existing output file. Use this when restarting a simulation.
+	*/
+	void openOutputFiles(bool reopen);
 
 	/*! Restores state of master and all FMUs using data stored below state directory. */
 	void restoreState(double t, const IBK::Path & stateDirectory);
@@ -112,9 +121,6 @@ private:
 	/*! Here all simulation slaves are instantiated. */
 	void instatiateSlaves();
 
-//	/*! Processes the connection graph and registers connected outputs and inputs in each slave. */
-//	void setupInputDependencies();
-
 	/*! Convenience function that extracts slave and variables names from flatVarName and
 		looks up slave and FMI variable in associated FMU.
 	*/
@@ -187,6 +193,24 @@ private:
 
 	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
+
+	/*! Mapping of output file types stored as DataIO. */
+	enum OutputFileTypes {
+		OF_BOOLEAN,
+		OF_INTEGER,
+		OF_REAL,
+		OF_REAL_WITH_UNIT
+	};
+
+	/*! Output data containers.
+		For each data type different files.
+		String outputs all together in one csv file (not a DataIO container).
+		Boolean outputs converted to 0 or 1 and stored in a single DataIO, index 0.
+		Integer outputs stored in single DataIO, index 1.
+		Real outputs of undefined/unknown unit, index 2.
+		All other real outputs of known units, index 3....
+	*/
+	std::vector<DATAIO::DataIO*>	m_dataIOs;
 
 	/*! Mapping of all connected variables of type real. */
 	std::vector<VariableMapping>	m_realVariableMapping;

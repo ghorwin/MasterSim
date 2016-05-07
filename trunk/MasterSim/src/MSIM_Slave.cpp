@@ -92,7 +92,7 @@ fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 
 #endif
 
-bool Slave::m_useDebugLogging = false;
+bool Slave::m_useDebugLogging = true;
 
 Slave::Slave(FMU * fmu, const std::string & name) :
 	m_name(name),
@@ -182,13 +182,19 @@ int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
 }
 
 
-void * Slave::currentState() const {
-	return NULL;
+void Slave::currentState(fmi2FMUstate * state) const {
+	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2);
+
+	if (m_fmu->m_fmi2Functions.getFMUstate(m_component, state) != fmi2OK) {
+		throw IBK::Exception(IBK::FormatString("Failed getting FMU state from slave '%1'.").arg(m_name), "[Slave::currentState]");
+	}
 }
 
 
-void Slave::setState(void * slaveState) {
-
+void Slave::setState(fmi2FMUstate slaveState) {
+	if (m_fmu->m_fmi2Functions.setFMUstate(m_component, slaveState) != fmi2OK) {
+		throw IBK::Exception(IBK::FormatString("Failed setting FMU state in slave '%1'.").arg(m_name), "[Slave::setState]");
+	}
 }
 
 
