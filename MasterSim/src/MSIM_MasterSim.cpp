@@ -67,6 +67,7 @@ void MasterSim::initialize() {
 	m_outputWriter.m_resultsDir = (m_args.m_workingDir / "results").absolutePath();
 	m_outputWriter.m_logDir = (m_args.m_workingDir / "logs").absolutePath();
 	m_outputWriter.m_projectFile = m_args.m_projectFile.str();
+	m_outputWriter.setupProgressReport();
 
 	// setup time-stepping variables
 	m_tStepSize = m_project.m_tStepStart;
@@ -164,8 +165,6 @@ void MasterSim::doStep() {
 
 	// advance current master time
 	m_tCurrent += m_tStepSize;
-
-	writeOutputs();
 }
 
 

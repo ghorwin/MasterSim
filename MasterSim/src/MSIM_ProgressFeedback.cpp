@@ -1,4 +1,4 @@
-#include "SOLFRA_SolverFeedback.h"
+#include "MSIM_ProgressFeedback.h"
 
 #include <sstream>
 #include <iomanip>
@@ -6,10 +6,10 @@
 #include <IBK_Time.h>
 #include <IBK_messages.h>
 
-namespace SOLFRA {
+namespace MASTER_SIM {
 
 
-void SolverFeedback::setup(std::ostream * progressLog, double t0, double tEnd, const std::string & interimMessage,
+void ProgressFeedback::setup(std::ostream * progressLog, double t0, double tEnd, const std::string & interimMessage,
 	double elapsedSecondsAtStart, double elapsedSimTimeAtStart)
 {
 	m_progressLog = progressLog;
@@ -37,7 +37,7 @@ void SolverFeedback::setup(std::ostream * progressLog, double t0, double tEnd, c
 }
 
 
-void SolverFeedback::writeFeedback(double t, bool betweenOutputs) {
+void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 	const char * const FUNC_ID = "[SolverFeedback::writeFeedback]";
 	//if (m_abort)  throw IBK_exception("Aborting solver...", "[ModelImpl::writeFeedback]");
 	// calculate statistics
@@ -128,7 +128,7 @@ void SolverFeedback::writeFeedback(double t, bool betweenOutputs) {
 
 
 // This feedback function is triggered from the solver system function calculateDivergences()
-void SolverFeedback::writeFeedbackFromF(double t) {
+void ProgressFeedback::writeFeedbackFromF(double t) {
 	double elapsedSeconds = m_stopWatch.difference()*0.001; // *0.001 to convert from ms in s
 	if (elapsedSeconds < m_notifyTime) return;
 	//if (m_abort)  throw IBK_exception("Aborting solver...", "[SolverFeedback::writeFeedbackFromF]");
@@ -141,5 +141,5 @@ void SolverFeedback::writeFeedbackFromF(double t) {
 // ---------------------------------------------------------------------------
 
 
-} // namespace SOLFRA
+} // namespace MASTER_SIM
 
