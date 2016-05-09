@@ -39,6 +39,13 @@ void FMIVariable::read(const TiXmlElement * element) {
 			throw IBK::Exception("Missing variable type declaration.", FUNC_ID);
 		if (child->ValueStr() == "Real") {
 			m_type = VT_DOUBLE;
+			// try to read unit
+			attrib = child->Attribute("unit");
+			if (attrib != NULL)
+				m_unit = attrib;
+			attrib = child->Attribute("declaredType");
+			if (attrib != NULL)
+				m_declaredType = attrib;
 		}
 		else if (child->ValueStr() == "Integer") {
 			m_type = VT_INT;

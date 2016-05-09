@@ -8,8 +8,6 @@
 #include <IBK_StringUtils.h>
 #include <IBK_assert.h>
 
-#include <DATAIO_DataIO.h>
-
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
 #include "MSIM_AlgorithmGaussJacobi.h"
@@ -28,9 +26,6 @@ MasterSim::MasterSim() :
 MasterSim::~MasterSim() {
 	// clean up master algorithm
 	delete m_masterAlgorithm;
-
-	for (unsigned int i=0; i<m_dataIOs.size(); ++i)
-		delete m_dataIOs[i];
 
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
@@ -66,138 +61,19 @@ void MasterSim::initialize() {
 	// compute initial conditions
 	initialConditions();
 
+	// setup output writer
+	m_outputWriter.m_project = &m_project; // Note: persistant pointer, must be valid for lifetime of output writer
+	m_outputWriter.m_slaves = m_slaves; // copy pointer as persistant pointers, must not modify m_slaves vector
+	m_outputWriter.m_resultsDir = (m_args.m_workingDir / "results").absolutePath();
+	m_outputWriter.m_logDir = (m_args.m_workingDir / "logs").absolutePath();
+	m_outputWriter.m_projectFile = m_args.m_projectFile.str();
 
 	// setup time-stepping variables
 	m_tStepSize = m_project.m_tStepStart;
 	m_tStepSizeProposed = m_tStepSize;
-	m_tLastOutput = -1;
 }
 
 
-void MasterSim::openOutputFiles(bool reopen) {
-	const char * const FUNC_ID = "[MasterSim::openOutputFile]";
-
-	// close existing output files if present
-	if (!m_dataIOs.empty()) {
-		for (unsigned int i=0; i<m_dataIOs.size(); ++i)
-			delete m_dataIOs[i];
-		m_dataIOs.clear();
-	}
-
-	// create new data containers for boolean, integer and real outputs
-	for (unsigned int i=0; i<3; ++i)
-		m_dataIOs.push_back(new DATAIO::DataIO);
-
-	// check if result path exists, otherwise create it
-	IBK::Path resultDir = (m_args.m_workingDir / "results").absolutePath();
-	if (!resultDir.exists()) {
-		if (!IBK::Path::makePath(resultDir))
-			throw IBK::Exception(IBK::FormatString("Cannot create directory for results '%1'.").arg(resultDir), FUNC_ID);
-	}
-
-	std::vector<IBK::Path> fileNames;
-	// compose path to output file
-	fileNames.push_back(resultDir / "boolean.d6o");
-	fileNames.push_back(resultDir / "integer.d6o");
-	fileNames.push_back(resultDir / "real.d6o");
-
-	IBK::IBK_Message("Creating output files\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::MessageIndentor indent; (void)indent;
-
-
-	for (unsigned int fileType=0; fileType<3; ++fileType) {
-		DATAIO::DataIO * dataIO = m_dataIOs[fileType];
-		const IBK::Path & outputFile = fileNames[fileType];
-
-		if (reopen) {
-			try {
-				dataIO->reopenForWriting(outputFile);
-				/// \todo check header read from file for consistency
-				continue;
-			}
-			catch (IBK::Exception & ex) {
-				IBK::IBK_Message(IBK::FormatString("Cannot reopen output file '%1', creating new one instead.").arg(outputFile), IBK::MSG_WARNING, FUNC_ID);
-			}
-		}
-
-		dataIO->m_projectFileName = m_args.m_projectFile.str();
-
-		// populate heder
-		dataIO->m_isBinary = false;
-
-		// no geometry file
-		dataIO->m_geoFileHash = 0;
-		dataIO->m_geoFileName.clear();
-
-		// we write sets of scalar variables
-		dataIO->m_type = DATAIO::DataIO::T_REFERENCE;
-
-		// no space or time integration
-		dataIO->m_spaceType = DATAIO::DataIO::ST_SINGLE;
-		dataIO->m_timeType = DATAIO::DataIO::TT_NONE;
-
-		// encode quantity to list all variable names
-		unsigned int varCount = 0;
-		for (unsigned int s=0; s<m_slaves.size(); ++s) {
-			const Slave * slave = m_slaves[s];
-
-			switch (fileType) {
-				case OF_BOOLEAN : {
-					// loop all boolean variables in slave
-					for (unsigned int v=0; v<slave->fmu()->m_boolValueRefsOutput.size(); ++v) {
-						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_boolValueRefsOutput[v]);
-						dataIO->m_quantity += var.m_name + " | ";
-						dataIO->m_nums.push_back(var.m_valueReference);
-						++varCount;
-					}
-				} break;
-				case OF_INTEGER : {
-					// loop all boolean variables in slave
-					for (unsigned int v=0; v<slave->fmu()->m_intValueRefsOutput.size(); ++v) {
-						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_intValueRefsOutput[v]);
-						dataIO->m_quantity += var.m_name + " | ";
-						dataIO->m_nums.push_back(var.m_valueReference);
-						++varCount;
-					}
-				} break;
-				case OF_REAL : {
-					// loop all boolean variables in slave
-					for (unsigned int v=0; v<slave->fmu()->m_doubleValueRefsOutput.size(); ++v) {
-						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_doubleValueRefsOutput[v]);
-						/// \todo unit filtering
-						dataIO->m_quantity += var.m_name + " | ";
-						dataIO->m_nums.push_back(var.m_valueReference);
-						++varCount;
-					}
-				} break;
-
-			}
-		}
-		if (varCount == 0) {
-			IBK::IBK_Message( IBK::FormatString("Skipping output file '%1', no outputs of this type are generated\n")
-							  .arg(outputFile.filename()), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-			delete m_dataIOs[fileType];
-			m_dataIOs[fileType] = NULL;
-			continue;
-		}
-		else {
-			dataIO->m_quantity = dataIO->m_quantity.substr(0, dataIO->m_quantity.size()-3);
-		}
-
-		dataIO->m_timeUnit = m_project.m_outputTimeUnit.name();
-		dataIO->m_valueUnit = "---"; // boolean, integer and real (undefined) all get the undefined unit
-
-		dataIO->m_filename = outputFile;
-		try {
-			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile).arg(varCount),
-							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-			dataIO->writeHeader();
-		}
-		catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1'.").arg(outputFile), FUNC_ID);
-		}
-	}
-}
 
 
 void MasterSim::restoreState(double t, const IBK::Path & stateDirectory) {
@@ -241,6 +117,7 @@ void MasterSim::simulate() {
 
 
 void MasterSim::doStep() {
+	const char * const FUNC_ID = "[MasterSim::doStep]";
 
 	// state of master and fmus at this point:
 	// - all FMUs and their outputs correspond to master time t
@@ -253,7 +130,22 @@ void MasterSim::doStep() {
 		// if we have error control enabled, store current state of master and all fmus
 
 		// let master do one step
+		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		switch (res) {
+			case AbstractAlgorithm::R_CONVERGED :
+				break;
 
+			default : {
+				if (m_tStepSize/2 < m_project.m_tStepMin)
+					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+														   "Reducing step would fall below minimum step size of %3.")
+										 .arg(m_tCurrent).arg(m_tStepSize).arg(m_project.m_tStepMin), FUNC_ID);
+				m_tStepSize /= 2;
+
+				/// \todo Reset slaves
+				continue; // try again
+			}
+		}
 
 		// do we have error control enabled
 		if (m_project.m_errorControlMode == Project::EM_NONE)
@@ -272,34 +164,6 @@ void MasterSim::doStep() {
 
 	// advance current master time
 	m_tCurrent += m_tStepSize;
-}
-
-
-void MasterSim::writeOutputs() {
-	// skip output writing, if last output was written within minimum output
-	// time step size
-	if (m_tLastOutput >= 0 && m_tLastOutput + m_project.m_tOutputStepMin > m_tCurrent)
-		return;
-
-	// dump state of master to output files
-
-	// 1. state of input/output variables vector
-
-//	/// \todo move this to header file
-//	std::vector<double> outputVariables(m_dataIO->nValues());
-//	unsigned int varCount = 0;
-//	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-//		const Slave * slave = m_slaves[i];
-//		// loop all variables in slave
-//		for (unsigned int v=0; v<slave->fmu()->m_modelDescription.m_variables.size(); ++v) {
-//			const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[v];
-//			if (var.m_causality != FMIVariable::C_OUTPUT) continue;
-
-//			outputVariables[varCount++] =
-//		}
-
-	// 2. statistics of master / counter variables
-
 }
 
 

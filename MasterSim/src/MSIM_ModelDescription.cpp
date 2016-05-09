@@ -1,5 +1,7 @@
 #include "MSIM_ModelDescription.h"
 
+#include <algorithm>
+
 #include <IBK_Exception.h>
 #include <IBK_FormatString.h>
 #include <IBK_messages.h>
@@ -13,7 +15,7 @@ ModelDescription::ModelDescription()
 }
 
 
-void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionFilePath) {
+void ModelDescription::read(const IBK::Path & modelDescriptionFilePath) {
 	const char * const FUNC_ID = "[ModelDescription::parseModelDescription]";
 	// check if file exists
 	if (!modelDescriptionFilePath.exists())
@@ -74,7 +76,26 @@ void ModelDescription::parseModelDescription(const IBK::Path & modelDescriptionF
 		}
 
 		// read model variables section
-		TiXmlElement * element = xmlRoot.FirstChild("ModelVariables").ToElement();
+		TiXmlElement * element = xmlRoot.FirstChild("TypeDefinitions").ToElement();
+		if (element != NULL) {
+			for (TiXmlElement * child = element->FirstChildElement(); child; child = child->NextSiblingElement()) {
+				if (child->ValueStr() == "SimpleType") {
+					try {
+						FMIType t;
+						t.read(child);
+						m_typeDefinitions.push_back(t);
+					}
+					catch (IBK::Exception & ex) {
+						throw IBK::Exception(ex, IBK::FormatString("Error reading type definition #%1.").arg(m_typeDefinitions.size()), FUNC_ID);
+					}
+				}
+				else {
+					/// \todo Is there anything else but simple type yet?
+				}
+			}
+		}
+		// read model variables section
+		element = xmlRoot.FirstChild("ModelVariables").ToElement();
 		if (element == NULL)
 			throw IBK::Exception("Missing ModelVariables tag.", FUNC_ID);
 		readElementVariables(element);
@@ -146,6 +167,13 @@ void ModelDescription::readElementVariables(const TiXmlElement * element) {
 			// skip all variables that are not input, output or parameter
 			if (var.m_causality == FMIVariable::C_OTHER)
 				continue;
+			// if no variable has been set, yet, and a declared type is given, try to resolve unit
+			if (var.m_unit.empty() && !var.m_declaredType.empty())  {
+				std::vector<FMIType>::const_iterator it = std::find(m_typeDefinitions.begin(), m_typeDefinitions.end(),
+																	var.m_declaredType);
+				if (it != m_typeDefinitions.end())
+					var.m_unit = it->m_unit;
+			}
 		}
 		catch (IBK::Exception & ex) {
 			throw IBK::Exception(ex, IBK::FormatString("Error reading ScalarVariable #%1.").arg(m_variables.size()+1), FUNC_ID);

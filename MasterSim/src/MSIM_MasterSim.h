@@ -9,10 +9,8 @@
 #include "MSIM_ArgParser.h"
 #include "MSIM_FMUManager.h"
 #include "MSIM_Slave.h"
+#include "MSIM_OutputWriter.h"
 
-namespace DATAIO {
-	class DataIO;
-}
 
 /*! Namespace MASTER_SIM holds all classes, functions, types of the MasterSim library. */
 namespace MASTER_SIM {
@@ -42,10 +40,8 @@ public:
 	*/
 	void initialize();
 
-	/*! Creates/opens output file.
-		\param reopen If true, attempts to reopen an existing output file. Use this when restarting a simulation.
-	*/
-	void openOutputFiles(bool reopen);
+	/*! Open output files. */
+	void openOutputFiles(bool reopen) { m_outputWriter.openOutputFiles(reopen); }
 
 	/*! Restores state of master and all FMUs using data stored below state directory. */
 	void restoreState(double t, const IBK::Path & stateDirectory);
@@ -83,11 +79,8 @@ public:
 	/*! Time step size used in last call to doStep(). */
 	double tStepSize() const { return m_tStepSize; }
 
-	/*! Updates outputs when scheduled.
-		This function is typically called after each successful step and decides
-		internally, whether outputs shall be written already, or not.
-	*/
-	void writeOutputs();
+	/*! Writes outputs. */
+	void writeOutputs() { m_outputWriter.writeOutputs(m_tCurrent); }
 
 private:
 	/*! Defines a group of FMUs that belong to a cycle.
@@ -164,7 +157,6 @@ private:
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
 
 
-
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
 	/*! Copy of project data. */
@@ -191,26 +183,9 @@ private:
 	/*! Simulation time step that shall be used in next call to doStep(). */
 	double					m_tStepSizeProposed;
 
-	/*! Last time point when outputs were written. */
-	double					m_tLastOutput;
+	/*! Manager of output files, handles all output file writing. */
+	OutputWriter			m_outputWriter;
 
-	/*! Mapping of output file types stored as DataIO. */
-	enum OutputFileTypes {
-		OF_BOOLEAN,
-		OF_INTEGER,
-		OF_REAL,
-		OF_REAL_WITH_UNIT
-	};
-
-	/*! Output data containers.
-		For each data type different files.
-		String outputs all together in one csv file (not a DataIO container).
-		Boolean outputs converted to 0 or 1 and stored in a single DataIO, index 0.
-		Integer outputs stored in single DataIO, index 1.
-		Real outputs of undefined/unknown unit, index 2.
-		All other real outputs of known units, index 3....
-	*/
-	std::vector<DATAIO::DataIO*>	m_dataIOs;
 
 	/*! Mapping of all connected variables of type real. */
 	std::vector<VariableMapping>	m_realVariableMapping;

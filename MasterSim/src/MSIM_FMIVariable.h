@@ -55,6 +55,13 @@ public:
 	/*! Start value for string input variables/parameters. */
 	std::string m_startValue;
 
+	/*! Unit of this quantity, if empty - undefined (only type Real). */
+	std::string m_unit;
+
+	/*! Type name of type definition for this quantity (only type Real). */
+	std::string m_declaredType;
+
+
 	/*! Returns a string constant that describes the type. */
 	static const char * varType2String(VarType t);
 };
