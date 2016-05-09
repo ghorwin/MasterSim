@@ -14,7 +14,7 @@ include_directories(
 
 if (CMAKE_COMPILER_IS_GNUCXX)
 	# set C++ 11 standard (needed for vsnprintf)
-	add_definitions(-std=c++11)
+	add_definitions(-std=gnu++11)
 
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
