@@ -180,7 +180,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		IBK::IBK_Message( IBK::FormatString("Creating output file 'strings.csv' with '%1' outputs.\n").arg(m_stringOutputMapping.size()),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 #ifdef _MSC_VER
-		m_stringOutputs = new std::ofwstream(stringOutputFilename.wstr().c_str());
+		m_stringOutputs = new std::ofstream(stringOutputFilename.wstr().c_str());
 #else
 		m_stringOutputs = new std::ofstream(stringOutputFilename.c_str());
 #endif
@@ -290,8 +290,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	unsigned int nValues = 0;
 	nValues = std::max<unsigned int>(nValues, m_outputFiles[0].m_outputMapping.size());
 	nValues = std::max<unsigned int>(nValues, m_outputFiles[1].m_outputMapping.size());
-	for (OutputFileData & outputFileData : m_realOutputFiles)
-		nValues = std::max<unsigned int>(nValues, outputFileData.m_outputMapping.size());
+	for (std::vector<OutputFileData>::const_iterator outputFileDataIt = m_realOutputFiles.begin(); outputFileDataIt != m_realOutputFiles.end(); ++outputFileDataIt)
+		nValues = std::max<unsigned int>(nValues, outputFileDataIt->m_outputMapping.size());
 	m_valueVector.resize(nValues);
 }
 
@@ -330,9 +330,9 @@ void OutputWriter::writeOutputs(double t) {
 	}
 
 	// now all real outputs
-	for (OutputFileData & outputFileData : m_realOutputFiles) {
+	for (std::vector<OutputFileData>::const_iterator it = m_realOutputFiles.begin(); it != m_realOutputFiles.end(); ++it) {
 		for (unsigned int i=0; i<outputFileData.m_outputMapping.size(); ++i) {
-			const std::pair<const Slave*, unsigned int> & outRef = outputFileData.m_outputMapping[i];
+			const std::pair<const Slave*, unsigned int> & outRef = it->m_outputMapping[i];
 			// gather all data in output file
 			m_valueVector[i] = outRef.first->m_doubleOutputs[outRef.second];
 		}
@@ -341,8 +341,8 @@ void OutputWriter::writeOutputs(double t) {
 
 	// string outputs
 	if (m_stringOutputs != NULL) {
-		for (const std::pair<const Slave*, unsigned int> & outRef : m_stringOutputMapping) {
-			*m_stringOutputs << outRef.first->m_stringOutputs[outRef.second] << " \t ";
+		for (std::vector< std::pair<const Slave*, unsigned int> >::const_iterator it = m_stringOutputMapping.begin(); it != m_stringOutputMapping.end(); ++it) {
+			*m_stringOutputs << it->first->m_stringOutputs[it->second] << " \t ";
 			// gather all data in output file
 		}
 		*m_stringOutputs << std::endl;
