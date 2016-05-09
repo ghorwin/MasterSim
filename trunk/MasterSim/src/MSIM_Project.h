@@ -76,6 +76,9 @@ public:
 	/*! Simulation end time point, must be > 0. */
 	double						m_tEnd;
 
+	/*! Lower limit for communication step size (only in variable step-size mode). */
+	double						m_tStepMin;
+
 	/*! Maximum for communication step size (only in variable step-size mode). */
 	double						m_tStepMax;
 

@@ -90,7 +90,7 @@ FMU::~FMU() {
 
 
 void FMU::readModelDescription() {
-	m_modelDescription.parseModelDescription(m_fmuDir / "modelDescription.xml");
+	m_modelDescription.read(m_fmuDir / "modelDescription.xml");
 
 	// now collect all output variable valueReferences
 	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
@@ -150,10 +150,28 @@ void FMU::import(ModelDescription::FMUType typeToImport) {
 
 unsigned int FMU::localOutputIndex(FMIVariable::VarType t, unsigned int valueReference) const {
 	switch (t) {
+		case FMIVariable::VT_BOOL : {
+			// search corresponding vector for valueReference and return index
+			for (unsigned int i=0; i<m_boolValueRefsOutput.size(); ++i)
+				if (m_boolValueRefsOutput[i] == valueReference)
+					return i;
+		} break;
+		case FMIVariable::VT_INT : {
+			// search corresponding vector for valueReference and return index
+			for (unsigned int i=0; i<m_intValueRefsOutput.size(); ++i)
+				if (m_intValueRefsOutput[i] == valueReference)
+					return i;
+		} break;
 		case FMIVariable::VT_DOUBLE : {
 			// search corresponding vector for valueReference and return index
 			for (unsigned int i=0; i<m_doubleValueRefsOutput.size(); ++i)
 				if (m_doubleValueRefsOutput[i] == valueReference)
+					return i;
+		} break;
+		case FMIVariable::VT_STRING : {
+			// search corresponding vector for valueReference and return index
+			for (unsigned int i=0; i<m_stringValueRefsOutput.size(); ++i)
+				if (m_stringValueRefsOutput[i] == valueReference)
 					return i;
 		} break;
 	}

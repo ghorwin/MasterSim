@@ -4,6 +4,7 @@
 #include <IBK_Path.h>
 
 #include "MSIM_FMIVariable.h"
+#include "MSIM_FMIType.h"
 
 class TiXmlElement;
 
@@ -26,7 +27,7 @@ public:
 	ModelDescription();
 
 	/*! Parses model description. */
-	void parseModelDescription(const IBK::Path & modelDescriptionFilePath);
+	void read(const IBK::Path & modelDescriptionFilePath);
 
 	/*! Returns a variable identified by name. */
 	const FMIVariable & variable(const std::string & varName) const;
@@ -56,7 +57,8 @@ public:
 	bool	m_canBeInstantiatedOnlyOncePerProcess;
 	bool	m_providesDirectionalDerivative;
 
-
+	/*! Vector of SimpleType definitions. */
+	std::vector<FMIType>		m_typeDefinitions;
 
 	/*! Vector of variables published by this FMU.
 		The ModelVariable index is the index of the variables in this vector + 1.

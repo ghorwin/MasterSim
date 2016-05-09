@@ -43,7 +43,7 @@ public:
 	/*! Convenience function, returns FMU by file path to fmu archive as passed to importFMU. */
 	FMU * fmuByPath(const IBK::Path & fmuFilePath);
 
-	/*! If true, FMUs are unzipped to directories first (the default), before ModelDescriptions are read. */
+	/*! If true, FMUs are unzipped to directories first (the default), before the modelDescription.xml file is read. */
 	bool	m_unzipFMUs;
 
 	const std::vector<FMU*> & fmus() const { return m_fmus; }
