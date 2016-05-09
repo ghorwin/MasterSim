@@ -13,13 +13,15 @@
 #include "MSIM_Slave.h"
 #include "MSIM_FMU.h"
 #include "MSIM_Project.h"
-//#include "MSIM_ModelDescription.h"
+
 
 namespace MASTER_SIM {
 
 OutputWriter::OutputWriter() :
+	m_project(NULL),
 	m_tLastOutput(-1),
-	m_stringOutputs(NULL)
+	m_stringOutputs(NULL),
+	m_progressOutputs(NULL)
 {
 }
 
@@ -33,6 +35,7 @@ OutputWriter::~OutputWriter() {
 		delete m_realOutputFiles[i].m_dataIO;
 
 	delete m_stringOutputs;
+	delete m_progressOutputs;
 }
 
 
@@ -296,15 +299,33 @@ void OutputWriter::openOutputFiles(bool reopen) {
 }
 
 
+void OutputWriter::setupProgressReport() {
+
+	// statistics and progress file
+	IBK::Path progressOutputFilename = m_logDir / "progress.txt";
+#ifdef _MSC_VER
+	m_progressOutputs = new std::ofstream(progressOutputFilename.wstr().c_str());
+#else
+	m_progressOutputs = new std::ofstream(progressOutputFilename.c_str());
+#endif
+	*m_progressOutputs << "Time\t Percentage completed [%]" << std::endl;
+
+	/// \todo For restart, add elapsed seconds + simtime
+	m_progressFeedback.setup(m_progressOutputs, m_project->m_tStart, m_project->m_tEnd, m_projectFile, 0, 0);
+}
+
+
 void OutputWriter::writeOutputs(double t) {
 	// skip output writing, if last output was written within minimum output
 	// time step size
-	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_tOutputStepMin > t)
+	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_tOutputStepMin > t) {
+		m_progressFeedback.writeFeedbackFromF(t);
 		return;
+	}
 
 	m_tLastOutput = t;
 
-	IBK::IBK_Message(
+	m_progressFeedback.writeFeedback(t, false);
 
 	// dump state of master to output files
 

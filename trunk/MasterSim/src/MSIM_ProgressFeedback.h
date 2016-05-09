@@ -1,5 +1,5 @@
-#ifndef SOLFRA_SolverFeedbackH
-#define SOLFRA_SolverFeedbackH
+#ifndef MSIM_PROGRESSFEEDBACK_H
+#define MSIM_PROGRESSFEEDBACK_H
 
 #include <vector>
 #include <string>
@@ -9,15 +9,12 @@
 
 
 
-namespace SOLFRA {
+namespace MASTER_SIM {
 
 /*! Class that provides member variables and feedback implementation for
-	writing solver feedback.
-
-	Use private inheritance or aggregation and call feedback() and feedbackFromF() in
-	your code after an initial call to setup().
+	writing progress feedback.
 */
-class SolverFeedback {
+class ProgressFeedback {
 public:
 	/*! Setup of the feedback class.
 		\param progressLog		Stream to a log file containing realtime, simtime, and gliding average (NULL to disable log file).
@@ -81,7 +78,7 @@ public:
 };
 
 
-} // namespace SOLFRA
+} // namespace MASTER_SIM
 
-#endif // SOLFRA_SolverFeedbackH
+#endif // MSIM_PROGRESSFEEDBACK_H
 

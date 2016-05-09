@@ -7,6 +7,8 @@
 
 #include <IBK_Path.h>
 
+#include "MSIM_ProgressFeedback.h"
+
 namespace DATAIO {
 	class DataIO;
 }
@@ -19,7 +21,7 @@ class Slave;
 /*! Handles creation and writing of master outputs (output variables of slaves). */
 class OutputWriter {
 public:
-	/*! Holds datao for an output file - data container and output variable mapping. */
+	/*! Holds dataIO for an output file - data container and output variable mapping. */
 	struct OutputFileData {
 		OutputFileData() : m_dataIO(NULL) {}
 
@@ -46,6 +48,9 @@ public:
 	*/
 	void openOutputFiles(bool reopen);
 
+	/*! Creates progress log and sets up progress reporting class. */
+	void setupProgressReport();
+
 	/*! Updates outputs when scheduled.
 		This function is typically called after each successful step and decides
 		internally, whether outputs shall be written already, or not.
@@ -70,6 +75,7 @@ public:
 	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
 
+	ProgressFeedback		m_progressFeedback;
 
 	/*! Output data containers.
 		For each data type different files.
@@ -89,7 +95,10 @@ public:
 	std::vector< std::pair<const Slave*, unsigned int> >	m_stringOutputMapping;
 
 	/*! Vector to cache output quantities in before appending data to DataIO container. */
-	std::vector<double>				m_valueVector;
+	std::vector<double>										m_valueVector;
+
+	/*! Holds progress output. */
+	std::ofstream											*m_progressOutputs;
 
 };
 
