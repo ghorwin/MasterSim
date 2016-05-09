@@ -10,7 +10,8 @@
 
 namespace MASTER_SIM {
 
-ModelDescription::ModelDescription()
+ModelDescription::ModelDescription() :
+	m_canBeInstantiatedOnlyOncePerProcess(false)
 {
 }
 

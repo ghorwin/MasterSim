@@ -313,7 +313,7 @@ void MasterSim::initialConditions() {
 
 				// get start value
 				const std::string & value= var.m_startValue;
-				IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
+				IBK::IBK_Message(IBK::FormatString("(%1)   %2=%3\n")
 								 .arg(FMIVariable::varType2String(var.m_type)).arg(var.m_name).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 				// set input value in FMU
 				slave->setValue(var, value);
@@ -342,7 +342,7 @@ void MasterSim::initialConditions() {
 					const std::string & value = it->second;
 					// search for FMI variable with this name
 					const FMIVariable & var = slave->fmu()->m_modelDescription.variable(paraName);
-					IBK::IBK_Message(IBK::FormatString("[%1]   %2=%3\n")
+					IBK::IBK_Message(IBK::FormatString("(%1)   %2=%3\n")
 									 .arg(FMIVariable::varType2String(var.m_type)).arg(paraName).arg(value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 					// set input value in FMU
 					slave->setValue(var, value);
