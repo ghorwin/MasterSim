@@ -79,7 +79,7 @@ int main(int argc, char * argv[]) {
 		IBK::MessageHandlerRegistry::instance().messageHandler()->setLogfileVerbosityLevel( std::max<unsigned int>(IBK::VL_STANDARD, parser.m_verbosityLevel));
 
 		// let master run the simulation until end
-		IBK::IBK_Message( IBK::FormatString("Starting simulation from t=%1.\n").arg(masterSim.tCurrent()), IBK::MSG_PROGRESS, FUNC_ID);
+		IBK::IBK_Message( IBK::FormatString("Starting simulation from t=%1\n").arg(masterSim.tCurrent()), IBK::MSG_PROGRESS, FUNC_ID);
 		masterSim.simulate();
 
 	}
