@@ -331,12 +331,12 @@ void OutputWriter::writeOutputs(double t) {
 
 	// now all real outputs
 	for (std::vector<OutputFileData>::const_iterator it = m_realOutputFiles.begin(); it != m_realOutputFiles.end(); ++it) {
-		for (unsigned int i=0; i<outputFileData.m_outputMapping.size(); ++i) {
+		for (unsigned int i=0; i<it->m_outputMapping.size(); ++i) {
 			const std::pair<const Slave*, unsigned int> & outRef = it->m_outputMapping[i];
 			// gather all data in output file
 			m_valueVector[i] = outRef.first->m_doubleOutputs[outRef.second];
 		}
-		outputFileData.m_dataIO->appendData(t, &m_valueVector[0]);
+		it->m_dataIO->appendData(t, &m_valueVector[0]);
 	}
 
 	// string outputs
