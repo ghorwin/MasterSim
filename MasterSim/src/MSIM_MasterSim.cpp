@@ -58,7 +58,7 @@ void MasterSim::initialize() {
 	// select master algorithm
 	initMasterAlgorithm();
 
-	// compute initial conditions
+	// compute initial conditions (enter and exit initialization mode)
 	initialConditions();
 
 	// setup output writer
@@ -164,6 +164,8 @@ void MasterSim::doStep() {
 
 	// advance current master time
 	m_tCurrent += m_tStepSize;
+
+	writeOutputs();
 }
 
 
@@ -294,6 +296,15 @@ void MasterSim::initMasterAlgorithm() {
 
 void MasterSim::initialConditions() {
 	const char * const FUNC_ID = "[MasterSim::initialConditions]";
+
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Setting up experiment\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	// enter initialization mode
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		Slave * slave = m_slaves[i];
+		slave->setupExperiment(m_project.m_relTol, m_tCurrent, m_project.m_tEnd);
+	}
+
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message("Computing initial conditions\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;

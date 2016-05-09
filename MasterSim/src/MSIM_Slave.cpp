@@ -148,6 +148,19 @@ void Slave::instantiateSlave() {
 }
 
 
+void Slave::setupExperiment(double relTol, double tStart, double tEnd) {
+	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
+		// fmi 1 code
+	}
+	else {
+		// fmi 2 code
+		if (m_fmu->m_fmi2Functions.setupExperiment(m_component, fmi2True, relTol, tStart, fmi2True, tEnd) != fmi2OK)
+			throw IBK::Exception( IBK::FormatString("Error while setting up simulation in slave '%1'.").arg(m_name), "[Slave::setupExperiment]");
+	}
+
+}
+
+
 void Slave::enterInitializationMode() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
 		if (m_fmu->m_fmi2Functions.enterInitializationMode(m_component) != fmi2OK)
@@ -164,13 +177,13 @@ void Slave::exitInitializationMode() {
 }
 
 
-int Slave::doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint) {
+int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 //	const char * const FUNC_ID = "[Slave::doStep]";
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		return fmi2OK;
 	}
 	else {
-		fmi2Status res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, tEnd,
+		fmi2Status res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, stepSize,
 													   noSetFMUStatePriorToCurrentPoint ? fmi2True : fmi2False);
 
 		// if integration was successful, updated cached output quantities

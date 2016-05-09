@@ -37,7 +37,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt);
 
 			// advance slave, we have no roll-back
-			int res = slave->doStep(tNext, true);
+			int res = slave->doStep(m_master->m_tStepSize, true);
 			if (res != fmi2OK)
 				throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
 

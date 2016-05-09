@@ -304,6 +304,8 @@ void OutputWriter::writeOutputs(double t) {
 
 	m_tLastOutput = t;
 
+	IBK::IBK_Message(
+
 	// dump state of master to output files
 
 	// 1. state of output variables

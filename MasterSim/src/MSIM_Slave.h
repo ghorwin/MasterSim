@@ -29,16 +29,19 @@ public:
 	*/
 	void instantiateSlave();
 
+	/*! Wraps the call to setup experiment. */
+	void setupExperiment(double relTol, double tStart, double tEnd);
+
 	void enterInitializationMode();
 	void exitInitializationMode();
 
 	/*! Tells the slave to integrate up the tEnd.
 		At end of function, all output quantities are updated.
-		\param tEnd A time larger than m_tCurrent
+		\param stepSize Step size to take for integration.
 		\param noSetFMUStatePriorToCurrentPoint Flag is passed on in call to slave.
 		\return Returns either fmiStatus or fmi2Status value (depending on FMU type) to be handled by the master algorithm.
 	*/
-	int doStep(double tEnd, bool noSetFMUStatePriorToCurrentPoint);
+	int doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint);
 
 	/*! Call getFMUState() function in fmu and retrieves current state as pointer.
 	*/
