@@ -149,15 +149,18 @@ void Slave::instantiateSlave() {
 
 
 void Slave::setupExperiment(double relTol, double tStart, double tEnd) {
+	const char * const FUNC_ID = "[Slave::setupExperiment]";
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		// fmi 1 code
+		if (m_fmu->m_fmi1Functions.initializeSlave(m_component, tStart, fmiTrue, tEnd) != fmiOK)
+			throw IBK::Exception( IBK::FormatString("Error while setting up simulation in slave '%1'.").arg(m_name), FUNC_ID);
 	}
 	else {
 		// fmi 2 code
 		if (m_fmu->m_fmi2Functions.setupExperiment(m_component, fmi2True, relTol, tStart, fmi2True, tEnd) != fmi2OK)
-			throw IBK::Exception( IBK::FormatString("Error while setting up simulation in slave '%1'.").arg(m_name), "[Slave::setupExperiment]");
+			throw IBK::Exception( IBK::FormatString("Error while setting up simulation in slave '%1'.").arg(m_name), FUNC_ID);
 	}
-
+	m_t = tStart;
 }
 
 
@@ -179,19 +182,22 @@ void Slave::exitInitializationMode() {
 
 int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 //	const char * const FUNC_ID = "[Slave::doStep]";
+	fmi2Status res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
-		return fmi2OK;
+		res = (fmi2Status)m_fmu->m_fmi1Functions.doStep(m_component, m_t, stepSize,
+													   noSetFMUStatePriorToCurrentPoint ? fmiTrue : fmiFalse);
 	}
 	else {
-		fmi2Status res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, stepSize,
+		res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, stepSize,
 													   noSetFMUStatePriorToCurrentPoint ? fmi2True : fmi2False);
 
-		// if integration was successful, updated cached output quantities
-		if (res == fmi2OK) {
-			cacheOutputs();
-		}
-		return res;
 	}
+	// if integration was successful, updated cached output quantities
+	if (res == fmi2OK) {
+		cacheOutputs();
+		m_t += stepSize;
+	}
+	return res;
 }
 
 
@@ -204,10 +210,11 @@ void Slave::currentState(fmi2FMUstate * state) const {
 }
 
 
-void Slave::setState(fmi2FMUstate slaveState) {
+void Slave::setState(double t, fmi2FMUstate slaveState) {
 	if (m_fmu->m_fmi2Functions.setFMUstate(m_component, slaveState) != fmi2OK) {
 		throw IBK::Exception(IBK::FormatString("Failed setting FMU state in slave '%1'.").arg(m_name), "[Slave::setState]");
 	}
+	m_t = t;
 }
 
 

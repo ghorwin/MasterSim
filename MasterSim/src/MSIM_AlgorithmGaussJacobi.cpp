@@ -15,8 +15,6 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 	// master and FMUs are expected to be at time t
 	double t = m_master->m_tCurrent;
-	// and we integrate to tNext
-	double tNext = t + m_master->m_tStepSize;
 
 	// all slave output variables are expected to be in sync with internal states of slaves
 	// i.e. cacheOutputs() has been called successfully on all slaves
@@ -49,6 +47,9 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 	}
 
 	// ** algorithm end **
+
+	// m_XXXyt     -> still values at time point t
+	// m_XXXytNext -> values at time point t + tStepSize
 	return R_CONVERGED; // no other option since we don't iterate
 }
 

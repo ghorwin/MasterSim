@@ -111,8 +111,12 @@ void MasterSim::simulate() {
 		doStep();
 
 		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
-		writeOutputs();
+		if (m_tCurrent < m_project.m_tEnd)
+			writeOutputs();
 	}
+	// write final results
+	m_outputWriter.m_tLastOutput = -1;  // this ensures that final results are definitely written
+	writeOutputs();
 }
 
 
@@ -137,6 +141,11 @@ void MasterSim::doStep() {
 				break;
 
 			default : {
+				if (!m_enableVariableStepSizes) {
+					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+														   "Reduction of time step is not allowed, stopping here.")
+										 .arg(m_tCurrent).arg(m_tStepSize), FUNC_ID);
+				}
 				if (m_tStepSize/2 < m_project.m_tStepMin)
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reducing step would fall below minimum step size of %3.")
@@ -159,12 +168,28 @@ void MasterSim::doStep() {
 		// ...
 	}
 
-	/// \todo Compute new time step to be used in next step.
-	///		  Also consider event indicators here.
-	m_tStepSizeProposed = m_tStepSize; // no time step adjustment yet!
+	// transfer computed results at end of iteration
+	m_realyt.swap(m_realytNext);
+	m_intyt.swap(m_intytNext);
+	m_boolyt.swap(m_boolytNext);
+	m_stringyt.swap(m_stringytNext);
 
 	// advance current master time
 	m_tCurrent += m_tStepSize;
+
+	// adjust step size
+	if (m_enableVariableStepSizes) {
+		/// \todo Compute new time step to be used in next step.
+		///		  Also consider event indicators here.
+		m_tStepSizeProposed = m_tStepSize;
+
+		// adjust step size to not exceed end time point
+		if (m_tCurrent + m_tStepSizeProposed > m_project.m_tEnd)
+			m_tStepSizeProposed = m_project.m_tEnd - m_tCurrent;
+		// if we fall just a little short of the end time point, increase time step size a little to hit end time point exactly
+		if ( m_tCurrent + m_tStepSizeProposed > m_project.m_tEnd*0.999999)
+			m_tStepSizeProposed = m_project.m_tEnd - m_tCurrent;
+	}
 }
 
 
@@ -208,8 +233,13 @@ void MasterSim::checkCapabilities() {
 	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
+	/// \todo Make this is project file setting.
+	m_enableVariableStepSizes = false;
+
 	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
-	if (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1) {
+	m_enableIteration = (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1);
+
+	if (m_enableIteration) {
 		// check each FMU for capability flag
 		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
 			const FMU * fmu = m_fmuManager.fmus()[i];
@@ -541,28 +571,28 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & rea
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];
 		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
+		if (varMap.m_inputSlave != slave) continue;
 		// set input in slave
 		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realVariables[i]);
 	}
 	for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_intVariableMapping[i];
 		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
+		if (varMap.m_inputSlave != slave) continue;
 		// set input in slave
 		varMap.m_inputSlave->setInteger(varMap.m_inputValueReference, intVariables[i]);
 	}
 	for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_boolVariableMapping[i];
 		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
+		if (varMap.m_inputSlave != slave) continue;
 		// set input in slave
 		varMap.m_inputSlave->setBoolean(varMap.m_inputValueReference, boolVariables[i]);
 	}
 	for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_stringVariableMapping[i];
 		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
+		if (varMap.m_inputSlave != slave) continue;
 		// set input in slave
 		varMap.m_inputSlave->setString(varMap.m_inputValueReference, stringVariables[i]);
 	}

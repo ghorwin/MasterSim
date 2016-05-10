@@ -32,6 +32,7 @@ public:
 		Functions for FMI2 for Co-Simulation
 		****************************************************/
 		fmiInstantiateSlaveTYPE			*instantiateSlave;
+		fmiInitializeSlaveTYPE			*initializeSlave;
 		fmiFreeSlaveInstanceTYPE		*freeSlaveInstance;
 		fmiDoStepTYPE					*doStep;
 	};

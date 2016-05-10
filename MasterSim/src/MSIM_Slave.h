@@ -48,7 +48,7 @@ public:
 	void currentState(fmi2FMUstate * state) const;
 
 	/*! Sets the state of the FMU (roll-back to recorded state). */
-	void setState(fmi2FMUstate slaveState);
+	void setState(double t, fmi2FMUstate slaveState);
 
 	/*! Retrieve all output quantities from slave and store in local vectors. */
 	void cacheOutputs();
@@ -113,7 +113,10 @@ private:
 	/*! Pointer to the FMU object that instantiated this slave. */
 	FMU			*m_fmu;
 
-	/*! Current time the FMU is at. */
+	/*! Current time the FMU is at. 
+		This value is initialized in setupExperiment() and updated in each successfuly call to 
+		doStep() and setState().
+	*/
 	double		m_t;
 
 	/*! Component pointer returned by instantiation function of FMU. */

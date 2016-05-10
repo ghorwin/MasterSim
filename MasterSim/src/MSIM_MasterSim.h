@@ -162,6 +162,15 @@ private:
 	/*! Copy of project data. */
 	Project					m_project;
 
+	/*! If true, all FMUs must have the variable time step flag set - required for adjusting time step size.
+		This variable is set in checkCapabilities().
+	*/
+	bool					m_enableVariableStepSizes;
+	/*! If true, all FMUs must be able to get/set their state - required for retrying time step.
+		This variable is set in checkCapabilities().
+	*/
+	bool					m_enableIteration;
+
 	/*! Holds and owns all FMU objects (contant of the FMU archives). */
 	FMUManager				m_fmuManager;
 
@@ -235,10 +244,12 @@ private:
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
 
+	/*! Utility function to copy one vector to another using memcpy. */
 	template<typename T>
 	static void copyVector(const std::vector<T> & src, std::vector<T> & target) {
 		IBK_ASSERT(src.size() == target.size());
-		IBK_ASSERT(!src.empty());
+		if (src.empty())
+			return;
 
 		std::memcpy(&target[0], &src[0], src.size()*sizeof(T));
 	}
