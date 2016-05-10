@@ -14,8 +14,6 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 	// master and FMUs are expected to be at time t
 	double t = m_master->m_tCurrent;
-	// and we integrate to tNext
-	double tNext = t + m_master->m_tStepSize;
 
 	// all slave output variables are expected to be in sync with internal states of slaves
 	// i.e. cacheOutputs() has been called successfully on all slaves
@@ -26,9 +24,12 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 	// create a copy of variable array to iterative variable array
 	MasterSim::copyVector(m_master->m_realyt, m_master->m_realytNext);
+	MasterSim::copyVector(m_master->m_intyt, m_master->m_intytNext);
+	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);
+	std::copy(m_master->m_stringyt.begin(), m_master->m_stringyt.end(), m_master->m_stringytNext.begin());
 
 	// when iterating, request state from all slaves
-	if (m_master->m_project.m_maxIterations > 1) {
+	if (m_master->m_enableIteration) {
 		m_master->storeCurrentSlaveStates(m_master->m_iterationStates);
 	}
 
@@ -41,7 +42,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 		while (++iteration <= m_master->m_project.m_maxIterations) {
 
 			// when iterating
-			if (m_master->m_project.m_maxIterations > 1) {
+			if (m_master->m_enableIteration) {
 				// create copy of current variables
 				/// \todo only copy variables that are port of this cycle, may speed up code a 'little'
 				MasterSim::copyVector(m_master->m_realytNext, m_master->m_realytNextIter);
@@ -53,7 +54,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				if (iteration > 1) {
 					for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 						Slave * slave = cycle.m_slaves[s];
-						slave->setState(m_master->m_iterationStates[slave->m_slaveIndex]);
+						slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
 					}
 				}
 			}
@@ -66,7 +67,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
 
 				// advance slave, we have no roll-back
-				int res = slave->doStep(tNext, true);
+				int res = slave->doStep(m_master->m_tStepSize, true);
 				switch (res) {
 					case fmi2Discard	:
 					case fmi2Error		:
@@ -86,20 +87,20 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			}
 
 			// when iterating, do convergence test
-			if (m_master->m_project.m_maxIterations > 1) {
+			if (m_master->m_enableIteration) {
 				if (m_master->doConvergenceTest())
 					break; // break iteration loop
 			}
 		}
-		if (m_master->m_project.m_maxIterations != 1 &&
+		if (m_master->m_enableIteration &&
 			iteration > m_master->m_project.m_maxIterations)
 			return R_ITERATION_LIMIT_EXCEEDED;
 	}
 
 	// ** algorithm end **
 
-	// m_yt     -> still values at time point t
-	// m_ytNext -> values at time point tNext
+	// m_XXXyt     -> still values at time point t
+	// m_XXXytNext -> values at time point t + tStepSize
 	return R_CONVERGED;
 }
 

@@ -11,6 +11,7 @@ namespace MASTER_SIM {
 
 Project::Project() :
 	m_tStepMin(1e-5),
+	m_tOutputStepMin(120),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
 	m_outputTimeUnit("s")
@@ -119,6 +120,8 @@ void Project::read(const IBK::Path & prjFile) {
 				m_tStepMax = IBK::string2val<double>(value);
 			else if (keyword == "tstepstart")
 				m_tStepStart = IBK::string2val<double>(value);
+			else if (keyword == "toutputstepmin")
+				m_tOutputStepMin = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_abs")
 				m_absTol = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_rel")

@@ -194,6 +194,7 @@ void FMU::importFMIv1Functions() {
 		m_fmi1Functions.setString					= reinterpret_cast<fmiSetStringTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiSetString"));
 
 		m_fmi1Functions.instantiateSlave			= reinterpret_cast<fmiInstantiateSlaveTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiInstantiateSlave"));
+		m_fmi1Functions.initializeSlave				= reinterpret_cast<fmiInitializeSlaveTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiInitializeSlave"));
 		m_fmi1Functions.freeSlaveInstance			= reinterpret_cast<fmiFreeSlaveInstanceTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiFreeSlaveInstance"));
 		m_fmi1Functions.doStep						= reinterpret_cast<fmiDoStepTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiDoStep"));
 	}

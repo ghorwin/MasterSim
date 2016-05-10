@@ -202,6 +202,7 @@ Functions for FMI for Co-Simulation
 										  fmiReal      tStart,
 										  fmiBoolean   StopTimeDefined,
 										  fmiReal      tStop);
+   typedef fmiStatus fmiInitializeSlaveTYPE (fmiComponent, fmiReal, fmiBoolean, fmiReal);
 
    DllExport fmiStatus fmiTerminateSlave   (fmiComponent c);
    DllExport fmiStatus fmiResetSlave       (fmiComponent c);
