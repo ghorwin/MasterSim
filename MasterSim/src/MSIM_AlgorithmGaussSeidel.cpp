@@ -1,6 +1,7 @@
 #include "MSIM_AlgorithmGaussSeidel.h"
 
 #include <IBK_assert.h>
+#include <IBK_messages.h>
 
 #include "MSIM_MasterSim.h"
 
@@ -92,6 +93,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				if (m_master->doConvergenceTest())
 					break; // break iteration loop
 			}
+			IBK::IBK_Message(IBK::FormatString("Cycle #%1, Iteration #%2\n").arg(c).arg(iteration), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		}
 		if (m_master->m_enableIteration &&
 			iteration > m_master->m_project.m_maxIterations)

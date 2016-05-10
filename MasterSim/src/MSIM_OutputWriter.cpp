@@ -142,9 +142,6 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			m_outputFiles[fileType].m_dataIO = NULL;
 			continue;
 		}
-		else {
-			dataIO->m_quantity = dataIO->m_quantity.substr(0, dataIO->m_quantity.size()-3);
-		}
 
 		dataIO->m_timeUnit = m_project->m_outputTimeUnit.name();
 		dataIO->m_valueUnit = "---"; // boolean and integer get the undefined unit
@@ -153,12 +150,13 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		try {
 			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile).arg(varCount),
 							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+			dataIO->m_quantity = dataIO->m_quantity.substr(0, dataIO->m_quantity.size()-3);
 			dataIO->writeHeader();
 		}
 		catch (IBK::Exception & ex) {
 			throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1'.").arg(outputFile), FUNC_ID);
 		}
-	}
+	} // for fileType
 
 	// for string outputs, things are fairly simple as well
 	std::string descriptions;
@@ -280,6 +278,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 				IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n")
 								  .arg(outputFile).arg(m_realOutputFiles[i].m_outputMapping.size()),
 								  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+				// strip trailing | from quantity string
+				m_realOutputFiles[i].m_dataIO->m_quantity = m_realOutputFiles[i].m_dataIO->m_quantity.substr(0, m_realOutputFiles[i].m_dataIO->m_quantity.size()-3);
 				m_realOutputFiles[i].m_dataIO->writeHeader();
 			}
 			catch (IBK::Exception & ex) {
