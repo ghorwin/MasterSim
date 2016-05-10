@@ -521,7 +521,7 @@ bool MasterSim::doErrorCheck() {
 
 
 bool MasterSim::doConvergenceTest() {
-	// loop over all values in vector of last and new state
+	const char * const FUNC_ID = "[MasterSim::doConvergenceTest]";
 
 	// compare all state-based values: int, bool and string
 	for (unsigned int i=0; i<m_intytNextIter.size(); ++i) {
@@ -550,8 +550,10 @@ bool MasterSim::doConvergenceTest() {
 	}
 
 	norm = std::sqrt(norm);
-	if (norm > 1)
+	if (norm > 1) {
+		IBK::IBK_Message(IBK::FormatString("WRMS norm = %1 : ").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		return false;
+	}
 
 
 	return true;
