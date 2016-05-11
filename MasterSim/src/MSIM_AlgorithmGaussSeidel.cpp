@@ -58,8 +58,10 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				if (iteration > 1) {
 					for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 						Slave * slave = cycle.m_slaves[s];
-						++m_master->m_statRollBackCounters[slave->m_slaveIndex];
+						m_timer.start();
 						slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
+						m_master->m_statRollBackTimes[slave->m_slaveIndex] = 1e-3*m_timer.difference(); // add elapsed time in seconds
+						++m_master->m_statRollBackCounters[slave->m_slaveIndex];
 					}
 				}
 			}
@@ -75,6 +77,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				m_timer.start();
 				int res = slave->doStep(m_master->m_tStepSize, true);
 				m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] = 1e-3*m_timer.difference(); // add elapsed time in seconds
+				++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
 				switch (res) {
 					case fmi2Discard	:
 					case fmi2Error		:

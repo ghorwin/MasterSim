@@ -117,8 +117,13 @@ void Project::read(const IBK::Path & prjFile) {
 				m_tStart = IBK::string2val<double>(value);
 			else if (keyword == "tend")
 				m_tEnd = IBK::string2val<double>(value);
+			
 			else if (keyword == "tstepmax")
 				m_tStepMax = IBK::string2val<double>(value);
+			else if (keyword == "tstepmin")
+				m_tStepMin = IBK::string2val<double>(value);
+			else if (keyword == "tstepiterlimit")
+				m_tStepSizeFallBackLimit = IBK::string2val<double>(value);
 			else if (keyword == "tstepstart")
 				m_tStepStart = IBK::string2val<double>(value);
 			else if (keyword == "toutputstepmin")

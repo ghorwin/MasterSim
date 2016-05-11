@@ -73,6 +73,10 @@ void MasterSim::initialize() {
 	// setup time-stepping variables
 	m_tStepSize = m_project.m_tStepStart;
 	m_tStepSizeProposed = m_tStepSize;
+
+	// setup statistics
+	m_statOutputTime = 0;
+	m_statAlgorithmTime = 0;
 }
 
 
@@ -112,8 +116,11 @@ void MasterSim::simulate() {
 		doStep();
 
 		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
-		if (m_tCurrent < m_project.m_tEnd)
+		if (m_tCurrent < m_project.m_tEnd) {
+			m_timer.start();
 			appendOutputs();
+			m_statOutputTime += m_timer.stop()*1e-3;
+		}
 	}
 	// write final results
 	m_outputWriter.m_tLastOutput = -1;  // this ensures that final results are definitely written
@@ -125,9 +132,11 @@ void MasterSim::simulate() {
 void MasterSim::doStep() {
 	const char * const FUNC_ID = "[MasterSim::doStep]";
 
+
 	// state of master and fmus at this point:
 	// - all FMUs and their outputs correspond to master time t
-	// -
+	// - m_tStepSizeProposed holds suggested time step size for next step
+	// - m_tStepSize holds time step size of _last_ completed step
 
 	m_tStepSize = m_tStepSizeProposed; // set proposed time step size
 
@@ -137,7 +146,9 @@ void MasterSim::doStep() {
 
 
 		// let master do one step
+		m_timer.start();
 		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		switch (res) {
 			case AbstractAlgorithm::R_CONVERGED :
 				break;
@@ -206,15 +217,26 @@ void MasterSim::writeMetrics() const {
 	IBK::IBK_Message( IBK::FormatString("Wall clock time                            = %1\n").arg(IBK::Time::format_time_difference(wct, ustr, true),13),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Output writing                             = %1\n")
+		.arg(IBK::Time::format_time_difference(m_statOutputTime, ustr, true),13),
+						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Time spend in algorithm                    = %1\n")
+		.arg(IBK::Time::format_time_difference(m_statAlgorithmTime, ustr, true),13),
+						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		std::stringstream strm;
 		strm << std::left << std::setw(30) << m_slaves[i]->m_name;
-		IBK::IBK_Message( IBK::FormatString("%1             = %2\n").arg(strm.str())
-						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13),
+		IBK::IBK_Message( IBK::FormatString("%1      doStep = %2    %3\n").arg(strm.str())
+						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13)
+						  .arg(m_statSlaveEvalCounters[i], 6),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::IBK_Message( IBK::FormatString("%1    setState = %2    %3\n").arg(strm.str())
+						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13)
+						  .arg(m_statRollBackCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
-
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 }
 
@@ -345,13 +367,17 @@ void MasterSim::instatiateSlaves() {
 	m_iterationStates.resize(nSlaves);
 	// resize statistics vectors
 	m_statRollBackCounters.resize(nSlaves);
+	m_statSlaveEvalCounters.resize(nSlaves);
 	m_statSlaveEvalTimes.resize(nSlaves);
+	m_statRollBackTimes.resize(nSlaves);
 
 	// initialize vectors
 	for (unsigned int i=0; i<nSlaves; ++i) {
 		m_iterationStates[i] = NULL;
 		m_statRollBackCounters[i] = 0;
+		m_statSlaveEvalCounters[i] = 0;
 		m_statSlaveEvalTimes[i] = 0;
+		m_statRollBackTimes[i] = 0;
 	}
 }
 

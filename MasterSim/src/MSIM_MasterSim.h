@@ -4,6 +4,7 @@
 #include <utility> // for std::pair
 
 #include <IBK_Path.h>
+#include <IBK_StopWatch.h>
 
 #include "MSIM_Project.h"
 #include "MSIM_ArgParser.h"
@@ -249,8 +250,17 @@ private:
 
 	/*! Counts for roll backs of all slaves (size nSlaves). */
 	std::vector<unsigned int>		m_statRollBackCounters;
+	/*! Counts for slave evaluation of all slaves (size nSlaves). */
+	std::vector<unsigned int>		m_statSlaveEvalCounters;
 	/*! Time taken while doStep() calls to all slaves during iteration (not Jacobi matrix setup). */
 	std::vector<double>				m_statSlaveEvalTimes;
+	/*! Time taken while setState() calls to all slaves during iteration (not Jacobi matrix setup). */
+	std::vector<double>				m_statRollBackTimes;
+
+	IBK::StopWatch					m_timer;
+
+	double							m_statOutputTime;
+	double							m_statAlgorithmTime;
 
 
 	/*! Utility function to copy one vector to another using memcpy. */
