@@ -181,7 +181,7 @@ void Slave::exitInitializationMode() {
 
 
 int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
-//	const char * const FUNC_ID = "[Slave::doStep]";
+	const char * const FUNC_ID = "[Slave::doStep]";
 	fmi2Status res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = (fmi2Status)m_fmu->m_fmi1Functions.doStep(m_component, m_t, stepSize,
@@ -194,6 +194,14 @@ int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 	}
 	// if integration was successful, updated cached output quantities
 	if (res == fmi2OK) {
+#if 0
+		double stopTime;
+		res = m_fmu->m_fmi2Functions.getRealStatus(m_component, fmi2LastSuccessfulTime, &stopTime);
+		if (res == fmi2OK) {
+			IBK::IBK_Message(IBK::FormatString("Slave '%1' stopped at '%2'.\n").arg(m_name).arg(stopTime), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+		}
+#endif
+
 		cacheOutputs();
 		m_t += stepSize;
 	}
