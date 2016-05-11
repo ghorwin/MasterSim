@@ -21,11 +21,12 @@ int main(int argc, char * argv[]) {
 		MASTER_SIM::ArgParser parser;
 		parser.parse(argc, argv);
 
+		IBK::WaitOnExit wait(!parser.flagEnabled('x'));
+
 		// help and man-page
 		if (parser.handleDefaultFlags(std::cout))
 			return EXIT_SUCCESS;
 
-		IBK::WaitOnExit wait(parser.flagEnabled('x'));
 
 		if (parser.flagEnabled('v')) {
 			std::cout << "MasterSimulator, version " << MASTER_SIM::LONG_VERSION << std::endl;
