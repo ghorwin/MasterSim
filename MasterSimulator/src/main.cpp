@@ -88,6 +88,7 @@ int main(int argc, char * argv[]) {
 	}
 	catch (IBK::Exception & ex) {
 		ex.writeMsgStackToError();
+		IBK::IBK_Message("Try running with --verbosity-level=4 for more detailed outputs to track down errors.", IBK::MSG_ERROR, FUNC_ID);
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

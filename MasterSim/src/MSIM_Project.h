@@ -25,7 +25,8 @@ public:
 	/*! Different options for controlling time integration error. */
 	enum ErrorControlMode {
 		EM_NONE,
-		EM_CHECK_ONLY
+		EM_CHECK,
+		EM_ADAPT_STEP
 	};
 
 	/*! Holds all information that define a simulator. */
