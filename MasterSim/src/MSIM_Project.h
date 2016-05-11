@@ -76,6 +76,11 @@ public:
 	/*! Simulation end time point, must be > 0. */
 	double						m_tEnd;
 
+	/*! Lower time step limit (should be larger than m_tStepMin), if time step falls below this value,
+		Gauss-Seidel without iteration is used. This allows to pass over step changes in outputs.
+	*/
+	double						m_tStepSizeFallBackLimit;
+
 	/*! Lower limit for communication step size (only in variable step-size mode). */
 	double						m_tStepMin;
 
@@ -84,6 +89,7 @@ public:
 
 	/*! Initial step size (for variable step-size mode) or fixed step size (for constant step-size mode). */
 	double						m_tStepStart;
+
 
 	/*! Operation mode of the master algorithm. */
 	MasterMode					m_masterMode;

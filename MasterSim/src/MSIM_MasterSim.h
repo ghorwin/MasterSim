@@ -79,8 +79,11 @@ public:
 	/*! Time step size used in last call to doStep(). */
 	double tStepSize() const { return m_tStepSize; }
 
-	/*! Writes outputs. */
-	void writeOutputs() { m_outputWriter.writeOutputs(m_tCurrent); }
+	/*! Appends current output variables of all slaves to output files. */
+	void appendOutputs() { m_outputWriter.appendOutputs(m_tCurrent); }
+
+	/*! Writes final statistics. */
+	void writeMetrics() const;
 
 private:
 	/*! Defines a group of FMUs that belong to a cycle.
@@ -243,6 +246,12 @@ private:
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
+
+	/*! Counts for roll backs of all slaves (size nSlaves). */
+	std::vector<unsigned int>		m_statRollBackCounters;
+	/*! Time taken while doStep() calls to all slaves during iteration (not Jacobi matrix setup). */
+	std::vector<double>				m_statSlaveEvalTimes;
+
 
 	/*! Utility function to copy one vector to another using memcpy. */
 	template<typename T>

@@ -7,6 +7,7 @@
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
 #include <IBK_assert.h>
+#include <IBK_Time.h>
 
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
@@ -112,11 +113,11 @@ void MasterSim::simulate() {
 
 		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
 		if (m_tCurrent < m_project.m_tEnd)
-			writeOutputs();
+			appendOutputs();
 	}
 	// write final results
 	m_outputWriter.m_tLastOutput = -1;  // this ensures that final results are definitely written
-	writeOutputs();
+	appendOutputs();
 }
 
 
@@ -134,6 +135,7 @@ void MasterSim::doStep() {
 	while (true) {
 		// if we have error control enabled, store current state of master and all fmus
 
+
 		// let master do one step
 		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
 		switch (res) {
@@ -141,7 +143,7 @@ void MasterSim::doStep() {
 				break;
 
 			default : {
-				if (!m_enableVariableStepSizes) {
+				if (!m_enableVariableStepSizes && !m_enableIteration) {
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reduction of time step is not allowed, stopping here.")
 										 .arg(m_tCurrent).arg(m_tStepSize), FUNC_ID);
@@ -193,6 +195,33 @@ void MasterSim::doStep() {
 }
 
 
+
+void MasterSim::writeMetrics() const {
+	const char * const FUNC_ID = "[MasterSim::writeMetrics]";
+	IBK::IBK_Message( IBK::FormatString("\nSolver statistics\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	double wct = m_outputWriter.m_progressFeedback.m_stopWatch.difference()*1e-3; // in seconds
+	// determine suitable unit
+	std::string ustr = IBK::Time::suitableTimeUnit(wct);
+	IBK::IBK_Message( IBK::FormatString("Wall clock time                            = %1\n").arg(IBK::Time::format_time_difference(wct, ustr, true),13),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		std::stringstream strm;
+		strm << std::left << std::setw(30) << m_slaves[i]->m_name;
+		IBK::IBK_Message( IBK::FormatString("%1             = %2\n").arg(strm.str())
+						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	}
+
+	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+}
+
+
+
+// *** PRIVATE FUNCTIONS ***
+
 void MasterSim::importFMUs() {
 	const char * const FUNC_ID = "[MasterSimulator::importFMUs]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
@@ -234,7 +263,18 @@ void MasterSim::checkCapabilities() {
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
 	/// \todo Make this is project file setting.
-	m_enableVariableStepSizes = false;
+	m_enableVariableStepSizes = true;
+
+	if (m_enableVariableStepSizes) {
+		// check each FMU for capability flag
+		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
+			const FMU * fmu = m_fmuManager.fmus()[i];
+			if (!fmu->m_modelDescription.m_canHandleVariableCommunicationStepSize)
+				throw IBK::Exception(IBK::FormatString("FMU '%1' does not provide canHandleVariableCommunicationStepSize capability, "
+													   "which is required by time step adjustment algorithm.").arg(fmu->fmuFilePath()),
+									 FUNC_ID);
+		}
+	}
 
 	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
 	m_enableIteration = (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1);
@@ -299,10 +339,20 @@ void MasterSim::instatiateSlaves() {
 		m_cycles[slaveDef.m_cycle].m_slaves.push_back(s);
 	}
 
+	unsigned int nSlaves = m_slaves.size();
+
 	// resize vector for iterative states
-	m_iterationStates.resize(m_slaves.size());
-	for (unsigned int i=0; i<m_iterationStates.size(); ++i)
+	m_iterationStates.resize(nSlaves);
+	// resize statistics vectors
+	m_statRollBackCounters.resize(nSlaves);
+	m_statSlaveEvalTimes.resize(nSlaves);
+
+	// initialize vectors
+	for (unsigned int i=0; i<nSlaves; ++i) {
 		m_iterationStates[i] = NULL;
+		m_statRollBackCounters[i] = 0;
+		m_statSlaveEvalTimes[i] = 0;
+	}
 }
 
 
