@@ -1,6 +1,8 @@
 #ifndef MSIM_ABSTRACTALGORITHM_H
 #define MSIM_ABSTRACTALGORITHM_H
 
+#include <IBK_StopWatch.h>
+
 namespace MASTER_SIM {
 
 class MasterSim;
@@ -27,7 +29,10 @@ public:
 
 protected:
 	/*! Cached pointer to master data structure (not owned). */
-	MasterSim	*m_master;
+	MasterSim		*m_master;
+
+	/*! Timer to use for instrumenting calls to FMUs. */
+	IBK::StopWatch	m_timer;
 };
 
 } // namespace MASTER_SIM

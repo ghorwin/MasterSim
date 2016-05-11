@@ -55,7 +55,7 @@ public:
 		This function is typically called after each successful step and decides
 		internally, whether outputs shall be written already, or not.
 	*/
-	void writeOutputs(double t);
+	void appendOutputs(double t);
 
 
 	/*! Directory where to write result files to. */

@@ -10,6 +10,7 @@
 namespace MASTER_SIM {
 
 Project::Project() :
+	m_tStepSizeFallBackLimit(1e-3),
 	m_tStepMin(1e-5),
 	m_tOutputStepMin(120),
 	m_masterMode(MM_GAUSS_JACOBI),

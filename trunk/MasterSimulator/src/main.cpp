@@ -67,7 +67,7 @@ int main(int argc, char * argv[]) {
 		// (re-)create output file
 		masterSim.openOutputFiles(false);
 		// and write initial conditions
-		masterSim.writeOutputs();
+		masterSim.appendOutputs();
 #endif
 
 		if (parser.flagEnabled("test-init")) {
@@ -80,6 +80,9 @@ int main(int argc, char * argv[]) {
 
 		// let master run the simulation until end
 		masterSim.simulate();
+
+		// print final statistics
+		masterSim.writeMetrics();
 
 	}
 	catch (IBK::Exception & ex) {
