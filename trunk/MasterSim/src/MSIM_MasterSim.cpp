@@ -154,7 +154,7 @@ void MasterSim::doStep() {
 				break;
 
 			default : {
-				if (!m_enableVariableStepSizes && !m_enableIteration) {
+				if (!m_enableVariableStepSizes || !m_enableIteration) {
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reduction of time step is not allowed, stopping here.")
 										 .arg(m_tCurrent).arg(m_tStepSize), FUNC_ID);
@@ -285,7 +285,7 @@ void MasterSim::checkCapabilities() {
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
 	/// \todo Make this is project file setting.
-	m_enableVariableStepSizes = true;
+	m_enableVariableStepSizes = (m_project.m_errorControlMode == Project::EM_ADAPT_STEP);
 
 	if (m_enableVariableStepSizes) {
 		// check each FMU for capability flag

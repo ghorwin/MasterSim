@@ -142,6 +142,16 @@ void Project::read(const IBK::Path & prjFile) {
 				else
 					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
 			}
+			else if (keyword == "ErrorControlMode") {
+				if (value == "NONE")
+					m_errorControlMode = EM_NONE;
+				else if (value == "CHECK")
+					m_errorControlMode = EM_CHECK;
+				else if (value == "STEP_ADJUSTMENT")
+					m_errorControlMode = EM_ADAPT_STEP;
+				else
+					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
+			}
 			else if (keyword == "it_max_steps")
 				m_maxIterations = IBK::string2val<unsigned int>(value);
 			else
