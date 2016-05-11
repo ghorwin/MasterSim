@@ -61,6 +61,11 @@ if (MINGW)
 	add_definitions(-static-libgcc -static-libstdc++)
 endif (MINGW)
 
+if (MSVC)
+	add_definitions(/wd"4996")
+
+endif (MSVC)
+
 # -------------------------------------------------------------
 # Subdirectories and subprojects
 # -------------------------------------------------------------
