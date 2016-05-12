@@ -30,9 +30,9 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);
 	std::copy(m_master->m_stringyt.begin(), m_master->m_stringyt.end(), m_master->m_stringytNext.begin());
 
-	// init for iteration
-	if (m_master->m_enableIteration) {
-		// request state from all slaves
+	// init for iteration, request state from all slaves unless time step adjustment is used, in which
+	// case states have already been stored
+	if (m_master->m_enableIteration && (m_master->m_project.m_errorControlMode != Project::EM_ADAPT_STEP)) {
 		m_master->storeCurrentSlaveStates(m_master->m_iterationStates);
 	}
 
@@ -104,14 +104,18 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 				// stability measure: if time step falls below a certain threshhold, we fall back to non-iterating
 				// gauss seidel
-				if (m_master->m_tStepSize < m_master->m_project.m_tStepSizeFallBackLimit)
+				if (m_master->m_tStepSize < m_master->m_project.m_tStepSizeFallBackLimit) {
+					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_tStepSize).arg(m_master->m_project.m_tStepSizeFallBackLimit), 
+						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 					break; // no more iterating
+				}
 
 				// convergence test is based on difference between
 				if (m_master->doConvergenceTest())
 					break; // break iteration loop
 			}
-			IBK::IBK_Message(IBK::FormatString("Cycle #%1, Iteration #%2\n").arg(c).arg(iteration), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+			IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_tStepSize).arg(c).arg(iteration), 
+				IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		}
 		if (m_master->m_enableIteration &&
 			iteration > m_master->m_project.m_maxIterations)

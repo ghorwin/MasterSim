@@ -20,16 +20,17 @@ void FMIVariable::read(const TiXmlElement * element) {
 		const char * attrib = element->Attribute("description");
 		if (attrib != NULL)
 			m_description = std::string(attrib);
-		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
-		/// \todo variability is currently ignored, all variables are treated as continuous or discrete
 
-		std::string causality = ModelDescription::readRequiredAttribute(element, "causality");
+		std::string causality = ModelDescription::readOptionalAttribute(element, "causality");
 		if (causality == "output")
 			m_causality = C_OUTPUT;
 		else if (causality == "input")
 			m_causality = C_INPUT;
-		else if (causality == "parameter")
+		else if (causality == "parameter") {
 			m_causality = C_PARAMETER;
+			std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
+			/// \todo variability is currently ignored, all variables are treated as continuous or discrete
+		}
 		else
 			m_causality = C_OTHER;
 

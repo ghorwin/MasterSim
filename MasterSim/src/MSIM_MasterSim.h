@@ -160,6 +160,8 @@ private:
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
 
+	/*! Loops over all slaves and restores state from saved states. */
+	void restoreSlaveStates(double t, const std::vector<void*> & slaveStates);
 
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
@@ -250,18 +252,23 @@ private:
 
 	/*! Counts for roll backs of all slaves (size nSlaves). */
 	std::vector<unsigned int>		m_statRollBackCounters;
+	/*! Time taken while setState() calls to all slaves during iteration (not Jacobi matrix setup). */
+	std::vector<double>				m_statRollBackTimes;
+	/*! Counts for setting states of all slaves (size nSlaves). */
+	std::vector<unsigned int>		m_statStoreStateCounters;
+	/*! Time taken while currentState() calls to all slaves during iteration (not Jacobi matrix setup). */
+	std::vector<double>				m_statStoreStateTimes;
 	/*! Counts for slave evaluation of all slaves (size nSlaves). */
 	std::vector<unsigned int>		m_statSlaveEvalCounters;
 	/*! Time taken while doStep() calls to all slaves during iteration (not Jacobi matrix setup). */
 	std::vector<double>				m_statSlaveEvalTimes;
-	/*! Time taken while setState() calls to all slaves during iteration (not Jacobi matrix setup). */
-	std::vector<double>				m_statRollBackTimes;
 
 	IBK::StopWatch					m_timer;
 
 	double							m_statOutputTime;
 	double							m_statAlgorithmTime;
-
+	unsigned int					m_statConvergenceFailsCounter;
+	unsigned int					m_statStepCounter;
 
 	/*! Utility function to copy one vector to another using memcpy. */
 	template<typename T>

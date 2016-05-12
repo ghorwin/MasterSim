@@ -194,6 +194,14 @@ std::string ModelDescription::readRequiredAttribute(const TiXmlElement * xmlElem
 }
 
 
+std::string ModelDescription::readOptionalAttribute(const TiXmlElement * xmlElem, const char * attribName) {
+	const char * attrib = xmlElem->Attribute(attribName);
+	if (attrib == NULL)
+		return std::string();
+	return std::string(attrib);
+}
+
+
 bool ModelDescription::readBoolAttribute(const TiXmlElement *xmlElem, const char *attribName, bool required) {
 	const char * const FUNC_ID = "[ModelDescription::readBoolAttribute]";
 	const char * attrib = xmlElem->Attribute(attribName);

@@ -147,7 +147,7 @@ void Project::read(const IBK::Path & prjFile) {
 					m_errorControlMode = EM_NONE;
 				else if (value == "CHECK")
 					m_errorControlMode = EM_CHECK;
-				else if (value == "STEP_ADJUSTMENT")
+				else if (value == "ADAPT_STEP")
 					m_errorControlMode = EM_ADAPT_STEP;
 				else
 					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
