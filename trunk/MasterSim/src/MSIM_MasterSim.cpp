@@ -242,11 +242,11 @@ void MasterSim::writeMetrics() const {
 						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13)
 						  .arg(m_statSlaveEvalCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-		IBK::IBK_Message( IBK::FormatString("%1    getState = %2    %3\n").arg(strm.str())
+		IBK::IBK_Message( IBK::FormatString("                                  getState = %1    %2\n")
 						  .arg(IBK::Time::format_time_difference(m_statStoreStateTimes[i], ustr, true),13)
 						  .arg(m_statStoreStateCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-		IBK::IBK_Message( IBK::FormatString("%1    setState = %2    %3\n").arg(strm.str())
+		IBK::IBK_Message( IBK::FormatString("                                  setState = %1    %2\n")
 						  .arg(IBK::Time::format_time_difference(m_statRollBackTimes[i], ustr, true),13)
 						  .arg(m_statRollBackCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -743,7 +743,7 @@ void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
 		Slave * slave = m_slaves[s];
 		w.start();
 		slave->currentState(&slaveStates[s]);
-		m_statStoreStateTimes[slave->m_slaveIndex] = 1e-3*w.difference(); // add elapsed time in seconds
+		m_statStoreStateTimes[slave->m_slaveIndex] += 1e-3*w.stop(); // add elapsed time in seconds
 		++m_statStoreStateCounters[slave->m_slaveIndex];
 	}
 }
@@ -755,7 +755,7 @@ void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveSta
 		Slave * slave = m_slaves[s];
 		w.start();
 		slave->setState(t, slaveStates[slave->m_slaveIndex]);
-		m_statRollBackTimes[slave->m_slaveIndex] = 1e-3*w.difference(); // add elapsed time in seconds
+		m_statRollBackTimes[slave->m_slaveIndex] += 1e-3*w.stop(); // add elapsed time in seconds
 		++m_statRollBackCounters[slave->m_slaveIndex];
 	}
 }

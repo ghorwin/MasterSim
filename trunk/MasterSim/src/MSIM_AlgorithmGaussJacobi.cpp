@@ -36,7 +36,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 			// advance slave
 			m_timer.start();
 			int res = slave->doStep(m_master->m_tStepSize, true);
-			m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] = 1e-3*m_timer.difference(); // add elapsed time in seconds
+			m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] += 1e-3*m_timer.stop(); // add elapsed time in seconds
 			++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
 			if (res != fmi2OK)
 				throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
