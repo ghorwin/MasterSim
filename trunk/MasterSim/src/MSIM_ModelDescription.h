@@ -67,6 +67,8 @@ public:
 
 	/*! Reads an attribute by name from an xml tag. */
 	static std::string readRequiredAttribute(const TiXmlElement *xmlElem, const char *attribName);
+	/*! Reads an optional attribute by name from an xml tag (if missing, an emptry string is returned). */
+	static std::string readOptionalAttribute(const TiXmlElement *xmlElem, const char *attribName);
 	/*! Reads a boolean attribute by name from an xml tag and returns its value.
 		Function returns false if value is optional (required = false) and not present.
 	*/

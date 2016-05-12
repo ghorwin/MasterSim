@@ -77,6 +77,8 @@ void MasterSim::initialize() {
 	// setup statistics
 	m_statOutputTime = 0;
 	m_statAlgorithmTime = 0;
+	m_statConvergenceFailsCounter = 0;
+	m_statStepCounter = 0;
 }
 
 
@@ -114,6 +116,7 @@ void MasterSim::simulate() {
 		// after a successful call to doStep(), the master's internal state has
 		// moved to the next time point m_tCurrent
 		doStep();
+		++m_statStepCounter;
 
 		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
 		if (m_tCurrent < m_project.m_tEnd) {
@@ -140,10 +143,14 @@ void MasterSim::doStep() {
 
 	m_tStepSize = m_tStepSizeProposed; // set proposed time step size
 
+	// if we have error control enabled, store current state of all fmu slaves
+	if (m_enableIteration && (m_project.m_errorControlMode == Project::EM_ADAPT_STEP)) {
+		// request state from all slaves
+		storeCurrentSlaveStates(m_iterationStates);
+	}
+
 	// step size reduction loop
 	while (true) {
-		// if we have error control enabled, store current state of master and all fmus
-
 
 		// let master do one step
 		m_timer.start();
@@ -165,7 +172,9 @@ void MasterSim::doStep() {
 										 .arg(m_tCurrent).arg(m_tStepSize).arg(m_project.m_tStepMin), FUNC_ID);
 				m_tStepSize /= 2;
 
-				/// \todo Reset slaves
+				// Reset slaves
+				restoreSlaveStates(m_tCurrent, m_iterationStates);
+				++m_statConvergenceFailsCounter;
 				continue; // try again
 			}
 		}
@@ -177,8 +186,9 @@ void MasterSim::doStep() {
 		if (doErrorCheck())
 			break;
 
-		// reduce step size and roll back to
-		// ...
+		// reduce step size and roll back slaves
+		m_tStepSize /= 2;
+		restoreSlaveStates(m_tCurrent, m_iterationStates);
 	}
 
 	// transfer computed results at end of iteration
@@ -192,9 +202,8 @@ void MasterSim::doStep() {
 
 	// adjust step size
 	if (m_enableVariableStepSizes) {
-		/// \todo Compute new time step to be used in next step.
-		///		  Also consider event indicators here.
-		m_tStepSizeProposed = m_tStepSize;
+		// increase time step for next step
+		m_tStepSizeProposed = 1.2*m_tStepSize;
 
 		// adjust step size to not exceed end time point
 		if (m_tCurrent + m_tStepSizeProposed > m_project.m_tEnd)
@@ -217,12 +226,13 @@ void MasterSim::writeMetrics() const {
 	IBK::IBK_Message( IBK::FormatString("Wall clock time                            = %1\n").arg(IBK::Time::format_time_difference(wct, ustr, true),13),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::IBK_Message( IBK::FormatString("Output writing                             = %1\n")
-		.arg(IBK::Time::format_time_difference(m_statOutputTime, ustr, true),13),
-						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::IBK_Message( IBK::FormatString("Time spend in algorithm                    = %1\n")
-		.arg(IBK::Time::format_time_difference(m_statAlgorithmTime, ustr, true),13),
-						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Output writing                             = %1\n").arg(IBK::Time::format_time_difference(m_statOutputTime, ustr, true),13),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Master-Algorithm                           = %1    %2\n")
+		.arg(IBK::Time::format_time_difference(m_statAlgorithmTime, ustr, true),13).arg(m_statStepCounter,6),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Convergence failures                       =                  %1\n").arg(m_statConvergenceFailsCounter, 6),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
@@ -232,8 +242,12 @@ void MasterSim::writeMetrics() const {
 						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13)
 						  .arg(m_statSlaveEvalCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::IBK_Message( IBK::FormatString("%1    getState = %2    %3\n").arg(strm.str())
+						  .arg(IBK::Time::format_time_difference(m_statStoreStateTimes[i], ustr, true),13)
+						  .arg(m_statStoreStateCounters[i], 6),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		IBK::IBK_Message( IBK::FormatString("%1    setState = %2    %3\n").arg(strm.str())
-						  .arg(IBK::Time::format_time_difference(m_statSlaveEvalTimes[i], ustr, true),13)
+						  .arg(IBK::Time::format_time_difference(m_statRollBackTimes[i], ustr, true),13)
 						  .arg(m_statRollBackCounters[i], 6),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
@@ -370,6 +384,8 @@ void MasterSim::instatiateSlaves() {
 	m_statSlaveEvalCounters.resize(nSlaves);
 	m_statSlaveEvalTimes.resize(nSlaves);
 	m_statRollBackTimes.resize(nSlaves);
+	m_statStoreStateCounters.resize(nSlaves);
+	m_statStoreStateTimes.resize(nSlaves);
 
 	// initialize vectors
 	for (unsigned int i=0; i<nSlaves; ++i) {
@@ -378,6 +394,8 @@ void MasterSim::instatiateSlaves() {
 		m_statSlaveEvalCounters[i] = 0;
 		m_statSlaveEvalTimes[i] = 0;
 		m_statRollBackTimes[i] = 0;
+		m_statStoreStateCounters[i] = 0;
+		m_statStoreStateTimes[i] = 0;
 	}
 }
 
@@ -720,11 +738,27 @@ void MasterSim::syncSlaveOutputs(const Slave * slave,
 
 
 void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
-	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		m_slaves[i]->currentState(&slaveStates[i]);
+	IBK::StopWatch w;
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		Slave * slave = m_slaves[s];
+		w.start();
+		slave->currentState(&slaveStates[s]);
+		m_statStoreStateTimes[slave->m_slaveIndex] = 1e-3*w.difference(); // add elapsed time in seconds
+		++m_statStoreStateCounters[slave->m_slaveIndex];
 	}
 }
 
+
+void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveStates) {
+	IBK::StopWatch w;
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		Slave * slave = m_slaves[s];
+		w.start();
+		slave->setState(t, slaveStates[slave->m_slaveIndex]);
+		m_statRollBackTimes[slave->m_slaveIndex] = 1e-3*w.difference(); // add elapsed time in seconds
+		++m_statRollBackCounters[slave->m_slaveIndex];
+	}
+}
 
 } // namespace MASTER_SIM
 
