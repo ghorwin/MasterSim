@@ -12,9 +12,10 @@ namespace MASTER_SIM {
 Project::Project() :
 	m_tStepSizeFallBackLimit(1e-3),
 	m_tStepMin(1e-5),
-	m_tOutputStepMin(120),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
+	m_tOutputStepMin(120),
+	m_masterTimeUnit("s"),
 	m_outputTimeUnit("s")
 {
 }
@@ -117,7 +118,7 @@ void Project::read(const IBK::Path & prjFile) {
 				m_tStart = IBK::string2val<double>(value);
 			else if (keyword == "tend")
 				m_tEnd = IBK::string2val<double>(value);
-			
+
 			else if (keyword == "tstepmax")
 				m_tStepMax = IBK::string2val<double>(value);
 			else if (keyword == "tstepmin")

@@ -54,7 +54,8 @@ SOURCES += \
     ../../src/MSIM_AlgorithmNewton.cpp \
     ../../src/MSIM_FMIType.cpp \
     ../../src/MSIM_OutputWriter.cpp \
-    ../../src/MSIM_ProgressFeedback.cpp
+    ../../src/MSIM_ProgressFeedback.cpp \
+    ../../src/MSIM_ErrorControl.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -78,4 +79,5 @@ HEADERS += \
     ../../src/MSIM_AlgorithmNewton.h \
     ../../src/MSIM_FMIType.h \
     ../../src/MSIM_OutputWriter.h \
-    ../../src/MSIM_ProgressFeedback.h
+    ../../src/MSIM_ProgressFeedback.h \
+    ../../src/MSIM_ErrorControl.h
