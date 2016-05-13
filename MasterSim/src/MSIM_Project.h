@@ -109,7 +109,7 @@ public:
 	/*! Minimum output time step. */
 	double						m_tOutputStepMin;
 
-	/*! Unit defined as master time. */
+	/*! Unit defined as master time (for progress output, defaults to "s"). */
 	IBK::Unit					m_masterTimeUnit;
 	/*! Unit defined as output time for output files. */
 	IBK::Unit					m_outputTimeUnit;

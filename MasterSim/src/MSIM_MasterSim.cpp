@@ -189,7 +189,9 @@ void MasterSim::doStep() {
 		// reduce step size and roll back slaves
 		m_tStepSize /= 2;
 		restoreSlaveStates(m_tCurrent, m_iterationStates);
+
 	}
+
 
 	// transfer computed results at end of iteration
 	m_realyt.swap(m_realytNext);
