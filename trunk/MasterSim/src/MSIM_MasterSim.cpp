@@ -628,8 +628,69 @@ void MasterSim::composeVariableVector() {
 
 
 bool MasterSim::doErrorCheck() {
+	const char * const FUNC_ID = "[MasterSim::doErrorCheck]";
 
-	/// \todo implement
+	// when this function is called, we excpect a converged solution
+	//
+	// - m_h -> holds size of current step
+	// - m_realyt -> holds old states at time t
+	// - m_realytNext -> holds states at t + h computed by master algorithm
+	//
+	//   (same for all other data types)
+
+	m_errTOriginal = m_t;
+
+	// we now copy the real vectors to our temporary location
+	unsigned int nValues = m_realyt.size();
+	if (m_errRealyt.size() != nValues) {
+		// resize required memory on first use
+		m_errRealyt.resize(nValues);
+		m_errRealytFirst.resize(nValues);
+	}
+	MasterSim::copyVector(m_realyt, m_errRealyt);
+	MasterSim::copyVector(m_realytNext, m_errRealytFirst);
+
+
+	// half step size
+	m_h /= 2;
+
+	// we will now reset the state of all slaves to be back at time t
+//	for (unsigned int s=0; s<m_master->m_slaves)
+
+
+
+	// compare computed solutions via WRMS Norm of differences
+	double diffNorm = 0;
+	for (unsigned int i=0; i<nValues; ++i) {
+		double diff = m_realytNext[i] - m_errRealytFirst[i];
+		// factor 2 comes from analogy to implicit Euler
+		double scaledDiff = 2*diff/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+		diffNorm += scaledDiff*scaledDiff;
+	}
+	diffNorm = std::sqrt(diffNorm);
+
+	if (diffNorm > 1) {
+		// failure
+		IBK::IBK_Message(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
+						 .arg(m_errTOriginal).arg(2*m_h).arg(diffNorm), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+
+		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
+			// restore state to time t
+
+			/// \todo reset slaves
+
+			m_t = m_errTOriginal;
+			return false;
+		}
+	}
+
+
+	// slaves are now positioned at t + 2 * h2
+
+	// reset original step size
+	m_h = 2*m_h;
+	m_t = m_errTOriginal;
+
 	return true;
 }
 
