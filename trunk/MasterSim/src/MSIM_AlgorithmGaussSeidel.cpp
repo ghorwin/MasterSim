@@ -14,7 +14,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	IBK_STATIC_ASSERT((int)fmiOK == (int)fmi2OK);
 
 	// master and FMUs are expected to be at current time point t
-	double t = m_master->m_tCurrent;
+	double t = m_master->m_t;
 
 	// all slave output variables are expected to be in sync with internal states of slaves
 	// i.e. cacheOutputs() has been called successfully on all slaves
@@ -75,7 +75,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 				// advance slave
 				m_timer.start();
-				int res = slave->doStep(m_master->m_tStepSize, true);
+				int res = slave->doStep(m_master->m_h, true);
 				m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] += 1e-3*m_timer.stop(); // add elapsed time in seconds
 				++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
 				switch (res) {
@@ -104,8 +104,8 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 				// stability measure: if time step falls below a certain threshhold, we fall back to non-iterating
 				// gauss seidel
-				if (m_master->m_tStepSize < m_master->m_project.m_tStepSizeFallBackLimit) {
-					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_tStepSize).arg(m_master->m_project.m_tStepSizeFallBackLimit), 
+				if (m_master->m_h < m_master->m_project.m_hFallBackLimit) {
+					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_h).arg(m_master->m_project.m_hFallBackLimit),
 						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 					break; // no more iterating
 				}
@@ -114,7 +114,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				if (m_master->doConvergenceTest())
 					break; // break iteration loop
 			}
-			IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_tStepSize).arg(c).arg(iteration), 
+			IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_h).arg(c).arg(iteration),
 				IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		}
 		if (m_master->m_enableIteration &&
@@ -125,7 +125,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	// ** algorithm end **
 
 	// m_XXXyt     -> still values at time point t
-	// m_XXXytNext -> values at time point t + tStepSize
+	// m_XXXytNext -> values at time point t + h
 	return R_CONVERGED;
 }
 

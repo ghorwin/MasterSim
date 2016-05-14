@@ -5,6 +5,7 @@
 
 #include <IBK_Path.h>
 #include <IBK_StopWatch.h>
+#include <IBK_assert.h>
 
 #include "MSIM_Project.h"
 #include "MSIM_ArgParser.h"
@@ -58,7 +59,7 @@ public:
 	void simulate();
 
 	/*! Returns current time point (of master state). */
-	double tCurrent() const { return m_tCurrent; }
+	double tCurrent() const { return m_t; }
 
 	/*! Attempts to integrate forward a single step.
 		For fixed step size mode, the step size m_h is used.
@@ -72,16 +73,16 @@ public:
 		failure means time step reduction below acceptable limit or any other error.
 
 		For variable time step scheme you can query the time step finally used by
-		using tStepSize() member function. The time point reached by the solver
+		using h() member function. The time point reached by the solver
 		can be queried with tCurrent().
 	*/
 	void doStep();
 
 	/*! Time step size used in last call to doStep(). */
-	double tStepSize() const { return m_tStepSize; }
+	double h() const { return m_h; }
 
 	/*! Appends current output variables of all slaves to output files. */
-	void appendOutputs() { m_outputWriter.appendOutputs(m_tCurrent); }
+	void appendOutputs() { m_outputWriter.appendOutputs(m_t); }
 
 	/*! Writes final statistics. */
 	void writeMetrics() const;
@@ -190,13 +191,13 @@ private:
 	AbstractAlgorithm		*m_masterAlgorithm;
 
 	/*! Current simulation time point. */
-	double					m_tCurrent;
+	double					m_t;
 
 	/*! Simulation time step (that was used in last call to doStep(). */
-	double					m_tStepSize;
+	double					m_h;
 
 	/*! Simulation time step that shall be used in next call to doStep(). */
-	double					m_tStepSizeProposed;
+	double					m_hProposed;
 
 	/*! Manager of output files, handles all output file writing. */
 	OutputWriter			m_outputWriter;
@@ -283,6 +284,8 @@ private:
 	friend class AlgorithmGaussJacobi;
 	friend class AlgorithmGaussSeidel;
 	friend class AlgorithmNewton;
+
+	friend class ErrorControl;
 };
 
 } // namespace MASTER_SIM

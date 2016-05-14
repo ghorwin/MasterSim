@@ -80,16 +80,16 @@ public:
 	/*! Lower time step limit (should be larger than m_tStepMin), if time step falls below this value,
 		Gauss-Seidel without iteration is used. This allows to pass over step changes in outputs.
 	*/
-	double						m_tStepSizeFallBackLimit;
+	double						m_hFallBackLimit;
 
 	/*! Lower limit for communication step size (only in variable step-size mode). */
-	double						m_tStepMin;
+	double						m_hMin;
 
 	/*! Maximum for communication step size (only in variable step-size mode). */
-	double						m_tStepMax;
+	double						m_hMax;
 
 	/*! Initial step size (for variable step-size mode) or fixed step size (for constant step-size mode). */
-	double						m_tStepStart;
+	double						m_hStart;
 
 
 	/*! Operation mode of the master algorithm. */

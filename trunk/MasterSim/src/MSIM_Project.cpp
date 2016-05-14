@@ -10,8 +10,8 @@
 namespace MASTER_SIM {
 
 Project::Project() :
-	m_tStepSizeFallBackLimit(1e-3),
-	m_tStepMin(1e-5),
+	m_hFallBackLimit(1e-3),
+	m_hMin(1e-5),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
 	m_tOutputStepMin(120),
@@ -33,18 +33,6 @@ void Project::read(const IBK::Path & prjFile) {
 
 	if (!in)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
-
-//	// explode sections
-//	std::vector<std::string> sections;
-//	std::vector<std::string> headers;
-//	headers.push_back("MasterSimProject");
-//	headers.push_back("SimulationParameter");
-//	headers.push_back("Simulators");
-//	headers.push_back("Connections");
-//	IBK::explode_lines(content, sections);
-
-//	// read simulation parameter section
-//	std::stringstream lstrm(sections[1]);
 
 	// read file line-by-line
 	std::string line;
@@ -120,13 +108,13 @@ void Project::read(const IBK::Path & prjFile) {
 				m_tEnd = IBK::string2val<double>(value);
 
 			else if (keyword == "tstepmax")
-				m_tStepMax = IBK::string2val<double>(value);
+				m_hMax = IBK::string2val<double>(value);
 			else if (keyword == "tstepmin")
-				m_tStepMin = IBK::string2val<double>(value);
+				m_hMin = IBK::string2val<double>(value);
 			else if (keyword == "tstepiterlimit")
-				m_tStepSizeFallBackLimit = IBK::string2val<double>(value);
+				m_hFallBackLimit = IBK::string2val<double>(value);
 			else if (keyword == "tstepstart")
-				m_tStepStart = IBK::string2val<double>(value);
+				m_hStart = IBK::string2val<double>(value);
 			else if (keyword == "toutputstepmin")
 				m_tOutputStepMin = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_abs")

@@ -13,7 +13,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 	IBK_STATIC_ASSERT((int)fmiOK == (int)fmi2OK);
 
 	// master and FMUs are expected to be at time t
-	double t = m_master->m_tCurrent;
+	double t = m_master->m_t;
 
 	// all slave output variables are expected to be in sync with internal states of slaves
 	// i.e. cacheOutputs() has been called successfully on all slaves
@@ -67,7 +67,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
 
 				// advance slave, we have no roll-back
-				int res = slave->doStep(m_master->m_tStepSize, true);
+				int res = slave->doStep(m_master->m_h, true);
 				switch (res) {
 					case fmi2Discard	:
 					case fmi2Error		:
@@ -100,7 +100,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 	// ** algorithm end **
 
 	// m_XXXyt     -> still values at time point t
-	// m_XXXytNext -> values at time point t + tStepSize
+	// m_XXXytNext -> values at time point t + h
 	return R_CONVERGED;
 }
 

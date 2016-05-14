@@ -19,7 +19,7 @@ namespace MASTER_SIM {
 
 MasterSim::MasterSim() :
 	m_masterAlgorithm(NULL),
-	m_tCurrent(0)
+	m_t(0)
 {
 }
 
@@ -64,15 +64,15 @@ void MasterSim::initialize() {
 
 	// setup output writer
 	m_outputWriter.m_project = &m_project; // Note: persistant pointer, must be valid for lifetime of output writer
-	m_outputWriter.m_slaves = m_slaves; // copy pointer as persistant pointers, must not modify m_slaves vector
+	m_outputWriter.m_slaves = m_slaves; // copy pointer as persistant pointers, must not modify m_slaves vector from here on
 	m_outputWriter.m_resultsDir = (m_args.m_workingDir / "results").absolutePath();
 	m_outputWriter.m_logDir = (m_args.m_workingDir / "logs").absolutePath();
 	m_outputWriter.m_projectFile = m_args.m_projectFile.str();
 	m_outputWriter.setupProgressReport();
 
 	// setup time-stepping variables
-	m_tStepSize = m_project.m_tStepStart;
-	m_tStepSizeProposed = m_tStepSize;
+	m_h = m_project.m_hStart;
+	m_hProposed = m_h;
 
 	// setup statistics
 	m_statOutputTime = 0;
@@ -111,15 +111,15 @@ void MasterSim::storeState(const IBK::Path & stateDirectory) {
 
 
 void MasterSim::simulate() {
-	while (m_tCurrent < m_project.m_tEnd) {
+	while (m_t < m_project.m_tEnd) {
 		// do an internal step with the selected master algorithm
 		// after a successful call to doStep(), the master's internal state has
-		// moved to the next time point m_tCurrent
+		// moved to the next time point m_t
 		doStep();
 		++m_statStepCounter;
 
 		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
-		if (m_tCurrent < m_project.m_tEnd) {
+		if (m_t < m_project.m_tEnd) {
 			m_timer.start();
 			appendOutputs();
 			m_statOutputTime += m_timer.stop()*1e-3;
@@ -138,10 +138,10 @@ void MasterSim::doStep() {
 
 	// state of master and fmus at this point:
 	// - all FMUs and their outputs correspond to master time t
-	// - m_tStepSizeProposed holds suggested time step size for next step
-	// - m_tStepSize holds time step size of _last_ completed step
+	// - m_hProposed holds suggested time step size for next step
+	// - m_h holds time step size of _last_ completed step
 
-	m_tStepSize = m_tStepSizeProposed; // set proposed time step size
+	m_h = m_hProposed; // set proposed time step size
 
 	// if we have error control enabled, store current state of all fmu slaves
 	if (m_enableIteration && (m_project.m_errorControlMode == Project::EM_ADAPT_STEP)) {
@@ -164,16 +164,16 @@ void MasterSim::doStep() {
 				if (!m_enableVariableStepSizes || !m_enableIteration) {
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reduction of time step is not allowed, stopping here.")
-										 .arg(m_tCurrent).arg(m_tStepSize), FUNC_ID);
+										 .arg(m_t).arg(m_h), FUNC_ID);
 				}
-				if (m_tStepSize/2 < m_project.m_tStepMin)
+				if (m_h/2 < m_project.m_hMin)
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reducing step would fall below minimum step size of %3.")
-										 .arg(m_tCurrent).arg(m_tStepSize).arg(m_project.m_tStepMin), FUNC_ID);
-				m_tStepSize /= 2;
+										 .arg(m_t).arg(m_h).arg(m_project.m_hMin), FUNC_ID);
+				m_h /= 2;
 
 				// Reset slaves
-				restoreSlaveStates(m_tCurrent, m_iterationStates);
+				restoreSlaveStates(m_t, m_iterationStates);
 				++m_statConvergenceFailsCounter;
 				continue; // try again
 			}
@@ -187,8 +187,8 @@ void MasterSim::doStep() {
 			break;
 
 		// reduce step size and roll back slaves
-		m_tStepSize /= 2;
-		restoreSlaveStates(m_tCurrent, m_iterationStates);
+		m_h /= 2;
+		restoreSlaveStates(m_t, m_iterationStates);
 
 	}
 
@@ -200,19 +200,19 @@ void MasterSim::doStep() {
 	m_stringyt.swap(m_stringytNext);
 
 	// advance current master time
-	m_tCurrent += m_tStepSize;
+	m_t += m_h;
 
 	// adjust step size
 	if (m_enableVariableStepSizes) {
 		// increase time step for next step
-		m_tStepSizeProposed = 1.2*m_tStepSize;
+		m_hProposed = 1.2*m_h;
 
 		// adjust step size to not exceed end time point
-		if (m_tCurrent + m_tStepSizeProposed > m_project.m_tEnd)
-			m_tStepSizeProposed = m_project.m_tEnd - m_tCurrent;
+		if (m_t + m_hProposed > m_project.m_tEnd)
+			m_hProposed = m_project.m_tEnd - m_t;
 		// if we fall just a little short of the end time point, increase time step size a little to hit end time point exactly
-		if ( m_tCurrent + m_tStepSizeProposed > m_project.m_tEnd*0.999999)
-			m_tStepSizeProposed = m_project.m_tEnd - m_tCurrent;
+		if ( m_t + m_hProposed > m_project.m_tEnd*0.999999)
+			m_hProposed = m_project.m_tEnd - m_t;
 	}
 }
 
@@ -339,43 +339,60 @@ void MasterSim::instatiateSlaves() {
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message("Instantiating simulation slaves\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::MessageIndentor indent; (void)indent;
-	for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
-		const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
-		IBK::IBK_Message( IBK::FormatString("%1 (%2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU),
-						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-		IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
-		if (!fmuSlavePath.isAbsolute())
-			fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;
-		// search FMU to instantiate
-		FMU * fmu = m_fmuManager.fmuByPath(fmuSlavePath.absolutePath());
-		// check if we try to instantiate an FMU twice that forbids this
-		if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
-			if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
-				throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
-									 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
-		}
-		// remember that this FMU was instantiated
-		instantiatedFMUs.insert(fmu);
-		// create new simulation slave
-		std::auto_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
-		try {
-			slave->instantiateSlave();
-		}
-		catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Error setting up slave '%1'").arg(slaveDef.m_name), FUNC_ID);
-		}
-		// store index of slave in global slaves vector
-		slave->m_slaveIndex = m_slaves.size();
-		// add slave to vector with slaves
-		Slave * s = slave.get();
-		m_slaves.push_back(slave.release());
+	{
+		IBK::MessageIndentor indent; (void)indent;
+		for (unsigned int i=0; i<m_project.m_simulators.size(); ++i) {
+			const Project::SimulatorDef & slaveDef = m_project.m_simulators[i];
+			IBK::IBK_Message( IBK::FormatString("%1 (%2)\n").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU),
+							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+			IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
+			if (!fmuSlavePath.isAbsolute())
+				fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;
+			// search FMU to instantiate
+			FMU * fmu = m_fmuManager.fmuByPath(fmuSlavePath.absolutePath());
+			// check if we try to instantiate an FMU twice that forbids this
+			if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
+				if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
+					throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
+										 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
+			}
+			// remember that this FMU was instantiated
+			instantiatedFMUs.insert(fmu);
+			// create new simulation slave
+			std::auto_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
+			try {
+				slave->instantiateSlave();
+			}
+			catch (IBK::Exception & ex) {
+				throw IBK::Exception(ex, IBK::FormatString("Error setting up slave '%1'").arg(slaveDef.m_name), FUNC_ID);
+			}
+			// store index of slave in global slaves vector
+			slave->m_slaveIndex = m_slaves.size();
+			// add slave to vector with slaves
+			Slave * s = slave.get();
+			m_slaves.push_back(slave.release());
 
-		// insert slave into cycle/priority
-		if (m_cycles.size() <= slaveDef.m_cycle)
-			m_cycles.resize(slaveDef.m_cycle+1);
-		m_cycles[slaveDef.m_cycle].m_slaves.push_back(s);
+			// insert slave into cycle/priority
+			if (m_cycles.size() <= slaveDef.m_cycle)
+				m_cycles.resize(slaveDef.m_cycle+1);
+			m_cycles[slaveDef.m_cycle].m_slaves.push_back(s);
+		}
 	}
+
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Cycles\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent2; (void)indent2;
+
+	for (unsigned int i=0; i<m_cycles.size(); ++i) {
+		IBK::IBK_Message( IBK::FormatString("Cycle %1:\n").arg(i+1),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		for (unsigned int s=0; s<m_cycles[i].m_slaves.size(); ++s) {
+			const Slave * slave = m_cycles[i].m_slaves[s];
+			IBK::IBK_Message( IBK::FormatString("  %1 (%2)\n").arg(slave->m_name).arg(slave->fmu()->fmuFilePath().filename()),
+						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		}
+	}
+
 
 	unsigned int nSlaves = m_slaves.size();
 
@@ -427,7 +444,7 @@ void MasterSim::initialConditions() {
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
-		slave->setupExperiment(m_project.m_relTol, m_tCurrent, m_project.m_tEnd);
+		slave->setupExperiment(m_project.m_relTol, m_t, m_project.m_tEnd);
 	}
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -558,6 +575,7 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 void MasterSim::composeVariableVector() {
 	const char * const FUNC_ID = "[MasterSim::composeVariableVector]";
 	// process connection graph and find all slaves and their output variables
+	IBK::IBK_Message("\nResolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::IBK_Message("Resolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::MessageIndentor indent; (void)indent;
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {

@@ -1,6 +1,8 @@
 #ifndef MSIM_ERRORCONTROL_H
 #define MSIM_ERRORCONTROL_H
 
+#include <vector>
+
 namespace MASTER_SIM {
 
 class MasterSim;
@@ -30,6 +32,14 @@ public:
 
 private:
 	MasterSim	*m_master;
+
+	/*! Original step size at start of error check. */
+	double							m_hOriginal;
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<double>				m_realyt;
+	/*! Slave variables (input and output) at next master time, computed by first (long) step. */
+	std::vector<double>				m_realytFirst;
+
 };
 
 } // namespace MASTER_SIM

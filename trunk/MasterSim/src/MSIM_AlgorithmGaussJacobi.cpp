@@ -35,14 +35,14 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 			// advance slave
 			m_timer.start();
-			int res = slave->doStep(m_master->m_tStepSize, true);
+			int res = slave->doStep(m_master->m_h, true);
 			m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] += 1e-3*m_timer.stop(); // add elapsed time in seconds
 			++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
 			if (res != fmi2OK)
 				throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
 
 
-			// slave is now at time level t + stepsize and its outputs are updated accordingly
+			// slave is now at time level t + h and its outputs are updated accordingly
 			// sync results into vector with newly computed quantities
 			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
 		}
@@ -52,7 +52,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 
 	// m_XXXyt     -> still values at time point t
-	// m_XXXytNext -> values at time point t + tStepSize
+	// m_XXXytNext -> values at time point t + h
 	return R_CONVERGED; // no other option since we don't iterate
 }
 
