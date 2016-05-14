@@ -133,8 +133,23 @@ private:
 	/*! Computes initial conditions and updates output caches of all slaves so that master algorithms can start. */
 	void initialConditions();
 
-	/*! Performs error checking.
-		If test is successful, m_stepSizeProposed is updated as well.
+	/*! This function starts with an integration step completed.
+		It remembers the state at the old time point t, the newly
+		computed states at time t + h. Then it resets all
+		slaves back to the point t and takes two steps with size
+		h/2. The comparison of the first (long) step result
+		and the result obtained with the two steps makes up the error
+		test.
+		If test is successful, the result of the two smaller steps
+		is stored in the m_xxxNext variables and m_h is reset
+		to the total step size. So, the calling function can complete
+		the step just as if doErrorCheck() was never called.
+
+		In case of failure, the calling function should decide whether
+		a reset of the step is meaningful or if the integration shall
+		continue with the errorenous solution.
+
+		If test is successful, m_hProposed is updated as well.
 		\return Returns true if test was passed.
 	*/
 	bool doErrorCheck();
@@ -247,6 +262,17 @@ private:
 	std::vector<std::string>		m_stringytNext;
 	/*! Slave variables (input and output) at next master time and last iteration level, needed for convergence test. */
 	std::vector<std::string>		m_stringytNextIter;
+
+
+	// variables related to error checking
+
+	/*! Time point at start of original step. */
+	double							m_errTOriginal;
+	/*! Slave variables (input and output) at current master time. */
+	std::vector<double>				m_errRealyt;
+	/*! Slave variables (input and output) at next master time, computed by first (long) step. */
+	std::vector<double>				m_errRealytFirst;
+
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
