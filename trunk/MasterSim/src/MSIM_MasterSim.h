@@ -176,7 +176,10 @@ private:
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);
 
-	/*! Loops over all slaves and restores state from saved states. */
+	/*! Loops over all slaves and restores state from saved states.
+		This will not automatically cache the slave outputs and sync with the
+		variable vectors.
+	*/
 	void restoreSlaveStates(double t, const std::vector<void*> & slaveStates);
 
 	/*! Copy of arg parser. */
@@ -188,8 +191,9 @@ private:
 		This variable is set in checkCapabilities().
 	*/
 	bool					m_enableVariableStepSizes;
-	/*! If true, all FMUs must be able to get/set their state - required for retrying time step.
-		This variable is set in checkCapabilities().
+
+	/*! If true, an iterative master algorithm is used and state need to be stored prior to calling master algorithm.
+		All FMUs must be able to get/set their state. This variable is set in checkCapabilities().
 	*/
 	bool					m_enableIteration;
 
@@ -276,6 +280,8 @@ private:
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
+	/*! Vector for holding states of FMU slaves at begin of error check interval to roll back when error check has failed. */
+	std::vector<void*>				m_errorCheckStates;
 
 	/*! Counts for roll backs of all slaves (size nSlaves). */
 	std::vector<unsigned int>		m_statRollBackCounters;
@@ -295,6 +301,7 @@ private:
 	double							m_statOutputTime;
 	double							m_statAlgorithmTime;
 	unsigned int					m_statConvergenceFailsCounter;
+	unsigned int					m_statErrorTestFailsCounter;
 	unsigned int					m_statStepCounter;
 
 	/*! Utility function to copy one vector to another using memcpy. */
