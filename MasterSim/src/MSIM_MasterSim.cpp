@@ -78,6 +78,7 @@ void MasterSim::initialize() {
 	m_statOutputTime = 0;
 	m_statAlgorithmTime = 0;
 	m_statConvergenceFailsCounter = 0;
+	m_statErrorTestFailsCounter = 0;
 	m_statStepCounter = 0;
 }
 
@@ -135,7 +136,6 @@ void MasterSim::simulate() {
 void MasterSim::doStep() {
 	const char * const FUNC_ID = "[MasterSim::doStep]";
 
-
 	// state of master and fmus at this point:
 	// - all FMUs and their outputs correspond to master time t
 	// - m_hProposed holds suggested time step size for next step
@@ -144,7 +144,7 @@ void MasterSim::doStep() {
 	m_h = m_hProposed; // set proposed time step size
 
 	// if we have error control enabled, store current state of all fmu slaves
-	if (m_enableIteration && (m_project.m_errorControlMode == Project::EM_ADAPT_STEP)) {
+	if (m_enableIteration) {
 		// request state from all slaves
 		storeCurrentSlaveStates(m_iterationStates);
 	}
@@ -183,12 +183,11 @@ void MasterSim::doStep() {
 		if (m_project.m_errorControlMode == Project::EM_NONE)
 			break; // done with step
 
+		// this handles the step-doubling and error estimation
+		// when this function returns with true, m_realytNext (and the other xxxNext) quantities hold the results
+		// after the completed half-step which should be aquivalent to not calling doErrorCheck() at all
 		if (doErrorCheck())
 			break;
-
-		// reduce step size and roll back slaves
-		m_h /= 2;
-		restoreSlaveStates(m_t, m_iterationStates);
 
 	}
 
@@ -300,8 +299,15 @@ void MasterSim::checkCapabilities() {
 	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
-	/// \todo Make this is project file setting.
-	m_enableVariableStepSizes = (m_project.m_errorControlMode == Project::EM_ADAPT_STEP);
+	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
+	m_enableIteration = (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1);
+
+	// for now, iteration also indicates variable time stepping.
+	m_enableVariableStepSizes = m_enableIteration;
+	// override this setting if an error control model is used
+	if (m_project.m_errorControlMode != Project::EM_NONE && !m_enableIteration) {
+		throw IBK::Exception("Using error control requires iterative master algorithm.", FUNC_ID);
+	}
 
 	if (m_enableVariableStepSizes) {
 		// check each FMU for capability flag
@@ -313,9 +319,6 @@ void MasterSim::checkCapabilities() {
 									 FUNC_ID);
 		}
 	}
-
-	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
-	m_enableIteration = (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1);
 
 	if (m_enableIteration) {
 		// check each FMU for capability flag
@@ -398,6 +401,7 @@ void MasterSim::instatiateSlaves() {
 
 	// resize vector for iterative states
 	m_iterationStates.resize(nSlaves);
+	m_errorCheckStates.resize(nSlaves);
 	// resize statistics vectors
 	m_statRollBackCounters.resize(nSlaves);
 	m_statSlaveEvalCounters.resize(nSlaves);
@@ -409,6 +413,7 @@ void MasterSim::instatiateSlaves() {
 	// initialize vectors
 	for (unsigned int i=0; i<nSlaves; ++i) {
 		m_iterationStates[i] = NULL;
+		m_errorCheckStates[i] = NULL;
 		m_statRollBackCounters[i] = 0;
 		m_statSlaveEvalCounters[i] = 0;
 		m_statSlaveEvalTimes[i] = 0;
@@ -638,8 +643,6 @@ bool MasterSim::doErrorCheck() {
 	//
 	//   (same for all other data types)
 
-	m_errTOriginal = m_t;
-
 	// we now copy the real vectors to our temporary location
 	unsigned int nValues = m_realyt.size();
 	if (m_errRealyt.size() != nValues) {
@@ -650,26 +653,81 @@ bool MasterSim::doErrorCheck() {
 	MasterSim::copyVector(m_realyt, m_errRealyt);
 	MasterSim::copyVector(m_realytNext, m_errRealytFirst);
 
+	// we will now reset the state of all slaves to be back at time t
+	restoreSlaveStates(m_t, m_iterationStates);
 
-	// half step size
+	// Note: we do not need to sync states with vectors m_realyt and other m_xxxyt since they are still at
+	// time level t.
+
+
+	// set half step size
 	m_h /= 2;
 
-	// we will now reset the state of all slaves to be back at time t
-//	for (unsigned int s=0; s<m_master->m_slaves)
+	// save iteration states in vector for error states for later roll-back to time t
+	m_errTOriginal = m_t;
+	m_errorCheckStates.swap(m_iterationStates);  // no copy here, need a swap because we swap back later
 
+	bool failed = false;
+	try {
 
+		// if we have an iterative algorithm, store iteration states
+		if (m_enableIteration) {
+			storeCurrentSlaveStates(m_iterationStates);
+		}
 
-	// compare computed solutions via WRMS Norm of differences
-	double diffNorm = 0;
-	for (unsigned int i=0; i<nValues; ++i) {
-		double diff = m_realytNext[i] - m_errRealytFirst[i];
-		// factor 2 comes from analogy to implicit Euler
-		double scaledDiff = 2*diff/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
-		diffNorm += scaledDiff*scaledDiff;
+		// now ask master algorithm to do a step
+		m_timer.start();
+		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		m_statAlgorithmTime += m_timer.stop()*1e-3;
+		if (res != AbstractAlgorithm::R_CONVERGED) {
+			IBK::IBK_Message("First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			failed = true;
+		}
+		else {
+			// complete step: transfer computed results at end of iteration and advance current master time
+			m_realyt.swap(m_realytNext);
+			m_intyt.swap(m_intytNext);
+			m_boolyt.swap(m_boolytNext);
+			m_stringyt.swap(m_stringytNext);
+			m_t += m_h;
+
+			// if we have an iterative algorithm, store iteration states
+			if (m_enableIteration) {
+				storeCurrentSlaveStates(m_iterationStates); // mind: errorStates still holds the states at start of error test step
+			}
+		}
+
+		// take second step
+		if (!failed) {
+			m_timer.start();
+			res = m_masterAlgorithm->doStep();
+			m_statAlgorithmTime += m_timer.stop()*1e-3;
+			if (res != AbstractAlgorithm::R_CONVERGED) {
+				IBK::IBK_Message("Second half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+				failed = true;
+			}
+		}
 	}
-	diffNorm = std::sqrt(diffNorm);
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, "Error taking half-steps of error test.", FUNC_ID);
+	}
 
+	double diffNorm = 2; // initialized with failure
+	if (!failed) {
+		diffNorm = 0;
+		// compare computed solutions via WRMS Norm of differences
+		for (unsigned int i=0; i<nValues; ++i) {
+			double diff = m_realytNext[i] - m_errRealytFirst[i];
+			// factor 2 comes from analogy to implicit Euler
+			double scaledDiff = 2*diff/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			diffNorm += scaledDiff*scaledDiff;
+		}
+		diffNorm = std::sqrt(diffNorm);
+	}
+
+	// if error limit has been exceeded, restore master and slave states to last time point
 	if (diffNorm > 1) {
+		++m_statErrorTestFailsCounter;
 		// failure
 		IBK::IBK_Message(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
 						 .arg(m_errTOriginal).arg(2*m_h).arg(diffNorm), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -677,9 +735,26 @@ bool MasterSim::doErrorCheck() {
 		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
 			// restore state to time t
 
-			/// \todo reset slaves
+			// roll back slaves
+			restoreSlaveStates(m_t, m_errorCheckStates);
+			// sync slave output caches and variables with m_XXXyt variables
+			for (unsigned int s=0; s<m_slaves.size(); ++s) {
+				Slave * slave = m_slaves[s];
+				slave->cacheOutputs();
+				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
+			}
 
+			// estimate step size:
+			// if step size of m_h lead to an error of diffNorm, we want to know the step size that
+			// gives a little less than 1 as diffNorm -> assuming linear relation
+			// m_hProposed/1 = m_h/diffNorm;
+
+			diffNorm = std::min(diffNorm, 3.0); // limit reduction factor to 3
+			m_h /= diffNorm;
 			m_t = m_errTOriginal;
+			// swap back iteration and error states
+			m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+
 			return false;
 		}
 	}
@@ -690,6 +765,7 @@ bool MasterSim::doErrorCheck() {
 	// reset original step size
 	m_h = 2*m_h;
 	m_t = m_errTOriginal;
+	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
 	return true;
 }

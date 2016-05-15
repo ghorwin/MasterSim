@@ -16,17 +16,18 @@ void setupLogFile(const MASTER_SIM::ArgParser & parser);
 int main(int argc, char * argv[]) {
 	const char * const FUNC_ID = "[main]";
 
+	IBK::WaitOnExit wait;
+
 	try {
 		// parse command line
 		MASTER_SIM::ArgParser parser;
 		parser.parse(argc, argv);
 
-		IBK::WaitOnExit wait(!parser.flagEnabled('x'));
-
 		// help and man-page
 		if (parser.handleDefaultFlags(std::cout))
 			return EXIT_SUCCESS;
 
+		wait.m_wait = !parser.flagEnabled('x');
 
 		if (parser.flagEnabled('v')) {
 			std::cout << "MasterSimulator, version " << MASTER_SIM::LONG_VERSION << std::endl;
@@ -48,6 +49,8 @@ int main(int argc, char * argv[]) {
 		MASTER_SIM::Project project;
 
 		// read project file
+		if (!parser.m_projectFile.exists())
+			throw IBK::Exception(IBK::FormatString("Project file '%1' doesn't exist.").arg(parser.m_projectFile), FUNC_ID);
 		IBK::IBK_Message(IBK::FormatString("Reading project '%1'\n").arg(parser.m_projectFile), IBK::MSG_PROGRESS, FUNC_ID);
 		project.read(IBK::Path(parser.m_projectFile ));
 

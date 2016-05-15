@@ -16,16 +16,33 @@ public:
 	enum MasterMode {
 		/*! Gauss-Jacoby (without iteration). */
 		MM_GAUSS_JACOBI,
-		/*! Gauss-Seidel with iteration until convergence or maxIterations. */
+		/*! Gauss-Seidel either with or without iteration (disabled when maxIterations == 1).
+			Without iteration also error checking and time step adjustment is disabled.
+			With iteration requires FMUs to support roll-back.
+		*/
 		MM_GAUSS_SEIDEL,
-		/*! Newton iteration. */
+		/*! Newton iteration.
+			Requires FMUs to support roll-back.
+		*/
 		MM_NEWTON
 	};
 
 	/*! Different options for controlling time integration error. */
 	enum ErrorControlMode {
+		/*! Error test disabled, does not execute step-doubling, use for non-iterative methods. */
 		EM_NONE,
+		/*! Does error test including step-doubling (requires FMUs to support variable steps and roll back) but
+			only informs about missed checks, does not reduce time step.
+		*/
 		EM_CHECK,
+		/*! Does error test including step-doubling (requires FMUs to support variable steps and roll back).
+			Halves time step in case of error fault.
+
+			\todo Idea: when test failed and time step is halved, the result of the first half-step should be used as converged result and
+				error test repeated. So the re-doing of the full step is not needed. If time step is reduced to a fraction
+				of the original step assuming linear growth of error in time, then a full step has to be taken again
+				with the proposed time step (current implementation).
+		*/
 		EM_ADAPT_STEP
 	};
 

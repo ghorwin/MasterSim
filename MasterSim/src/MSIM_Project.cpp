@@ -14,6 +14,8 @@ Project::Project() :
 	m_hMin(1e-5),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
+	m_absTol(1e-6),
+	m_relTol(1e-5),
 	m_tOutputStepMin(120),
 	m_masterTimeUnit("s"),
 	m_outputTimeUnit("s")
@@ -43,7 +45,6 @@ void Project::read(const IBK::Path & prjFile) {
 		// skip empty lines or comments
 		if (line.find_first_not_of(" \t\r") == std::string::npos || line[0] == '#')
 			continue;
-
 
 		try {
 			std::vector<std::string> tokens;
@@ -96,7 +97,7 @@ void Project::read(const IBK::Path & prjFile) {
 			}
 
 			// general parameters
-			if (IBK::explode_in2(line, tokens) != 2)
+			if (IBK::explode_in2(line, tokens) != 2 && IBK::explode_in2(line, tokens, '\t') != 2)
 				throw IBK::Exception(IBK::FormatString("Expected format '<keyword> <value>'.").arg(line), FUNC_ID);
 
 			std::string keyword = IBK::trim_copy(tokens[0]);
@@ -150,8 +151,6 @@ void Project::read(const IBK::Path & prjFile) {
 			throw IBK::Exception(ex, IBK::FormatString("Error in line #%1: '%2'.").arg(lineNr).arg(line), FUNC_ID);
 		}
 	}
-
-	//	m_tOutputStepMin = 3600; // should be in project file
 }
 
 

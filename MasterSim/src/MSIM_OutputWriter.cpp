@@ -67,6 +67,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 	IBK::IBK_Message("Creating output files\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
+	IBK::IBK_Message( IBK::FormatString("Results directory '%1'\n").arg(m_resultsDir), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
 
 	// create output files for booleans and integer
@@ -86,7 +87,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			}
 			catch (IBK::Exception & ex) {
 				IBK::IBK_Message(IBK::FormatString("%1").arg(ex.what()), IBK::MSG_WARNING, FUNC_ID);
-				IBK::IBK_Message(IBK::FormatString("Cannot reopen output file '%1', creating new one instead.").arg(outputFile), IBK::MSG_WARNING, FUNC_ID);
+				IBK::IBK_Message(IBK::FormatString("Cannot reopen output file '%1', creating new one instead.").arg(outputFile.filename()), IBK::MSG_WARNING, FUNC_ID);
 			}
 		}
 
@@ -148,13 +149,13 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		dataIO->m_filename = outputFile;
 		try {
-			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile).arg(varCount),
+			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile.filename()).arg(varCount),
 							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 			dataIO->m_quantity = dataIO->m_quantity.substr(0, dataIO->m_quantity.size()-3);
 			dataIO->writeHeader();
 		}
 		catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1'.").arg(outputFile), FUNC_ID);
+			throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1'.").arg(outputFile.filename()), FUNC_ID);
 		}
 	} // for fileType
 
@@ -276,7 +277,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			const std::string & outputFile = m_realOutputFiles[i].m_dataIO->m_filename.str();
 			try {
 				IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n")
-								  .arg(outputFile).arg(m_realOutputFiles[i].m_outputMapping.size()),
+								  .arg(IBK::Path(outputFile).filename()).arg(m_realOutputFiles[i].m_outputMapping.size()),
 								  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 				// strip trailing | from quantity string
 				m_realOutputFiles[i].m_dataIO->m_quantity = m_realOutputFiles[i].m_dataIO->m_quantity.substr(0, m_realOutputFiles[i].m_dataIO->m_quantity.size()-3);
@@ -284,7 +285,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			}
 			catch (IBK::Exception & ex) {
 				throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1' of type real.")
-									 .arg(outputFile), FUNC_ID);
+									 .arg(IBK::Path(outputFile).filename()), FUNC_ID);
 			}
 		}
 

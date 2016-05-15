@@ -30,13 +30,6 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);
 	std::copy(m_master->m_stringyt.begin(), m_master->m_stringyt.end(), m_master->m_stringytNext.begin());
 
-	// init for iteration, request state from all slaves unless time step adjustment is used, in which
-	// case states have already been stored
-	if (m_master->m_enableIteration && (m_master->m_project.m_errorControlMode != Project::EM_ADAPT_STEP)) {
-		m_master->storeCurrentSlaveStates(m_master->m_iterationStates);
-	}
-
-
 	// loop over all cycles
 	for (unsigned int c=0; c<m_master->m_cycles.size(); ++c) {
 		const MasterSim::Cycle & cycle = m_master->m_cycles[c];

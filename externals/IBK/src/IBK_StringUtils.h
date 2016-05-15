@@ -325,7 +325,6 @@ size_t explode(const std::string& str, std::list<std::string>& tokens,
 */
 size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, char delim = ' ');
 
-
 /*! Explodes the CSV (comma-separated-values) string 'str' into substrings stored
 	in the string list 'tokens'.
 	\deprecated
