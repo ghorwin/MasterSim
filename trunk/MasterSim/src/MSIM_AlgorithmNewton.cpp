@@ -3,10 +3,46 @@
 #include <IBK_assert.h>
 
 #include "MSIM_MasterSim.h"
+#include "MSIM_Slave.h"
 
 namespace MASTER_SIM {
 
 void AlgorithmNewton::init() {
+	// resize matrix and variable index mapping vectors
+	unsigned int nCycles = m_master->m_cycles.size();
+	m_jacobianMatrix.resize(nCycles);
+	m_variableIdxMapping.resize(nCycles);
+
+	// now process each cycle
+	for (unsigned int c=0; c<nCycles; ++c) {
+		const MasterSim::Cycle & cycle = m_master->m_cycles[c];
+		// loop over all variables and collect indexes of all variables
+		// that are both input and output of the slaves in this cycle
+		for (unsigned int varIdx=0; varIdx<m_master->m_realVariableMapping.size(); ++varIdx) {
+			// check if slave is in current cycle
+			bool foundInput = false;
+			bool foundOutput = false;
+			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
+				const Slave * slave = cycle.m_slaves[s];
+				// mind that an output of a slave may be directly connected to its own input
+				// so we can have the same slave being used
+				if (m_master->m_realVariableMapping[varIdx].m_inputSlave == slave)
+					foundInput = true;
+				if (m_master->m_realVariableMapping[varIdx].m_outputSlave == slave)
+					foundOutput = true;
+			}
+			if (foundInput && foundOutput) {
+				// remember global variable index
+				m_variableIdxMapping[c].push_back(varIdx);
+			}
+		}
+
+		// finally resize DenseMatrix
+		unsigned int dim = m_variableIdxMapping[c].size();
+		if (dim != 0)
+			m_jacobianMatrix[c].resize(dim);
+	}
+
 
 }
 
