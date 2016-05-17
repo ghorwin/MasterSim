@@ -3,7 +3,7 @@
 
 #include <vector>
 
-//#include <IBK_DenseMatrix.h>
+#include <IBKMK_DenseMatrix.h>
 
 #include "MSIM_AbstractAlgorithm.h"
 
@@ -19,13 +19,16 @@ public:
 	/*! Default constructor. */
 	AlgorithmNewton(MasterSim * master) : AbstractAlgorithm(master) {}
 
+	/*! Initializes Jacobian matrix and auxilliary structures. */
+	void init();
+
 	/*! Master-algorithm will evaluate all FMUs and advance state in time.
 		Will throw an exception if any of the FMUs fails in unrecoverable manner.
 	*/
 	Result doStep();
 
-	// Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle
-//	std::vector<DenseMatrix>	m_jacobianMatrix;
+	/*! Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle. */
+	std::vector<IBKMK::DenseMatrix>	m_jacobianMatrix;
 };
 
 } // namespace MASTER_SIM

@@ -27,6 +27,7 @@ QMAKE_CXXFLAGS +=  -std=c++11
 INCLUDEPATH = \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
+	../../../externals/IBKMK/src \
 	../../../externals/DataIO/src \
 	../../../externals/TiCPP/src
 
@@ -34,6 +35,7 @@ LIBS += -L../../../externals/lib
 
 LIBS += \
 	-lDataIO \
+	-lIBKMK \
 	-lIBK \
 	-lTiCPP \
 	-lminizip \
@@ -51,10 +53,10 @@ SOURCES += \
 	../../src/MSIM_FMIVariable.cpp \
 	../../src/MSIM_AlgorithmGaussJacobi.cpp \
 	../../src/MSIM_AlgorithmGaussSeidel.cpp \
-    ../../src/MSIM_AlgorithmNewton.cpp \
-    ../../src/MSIM_FMIType.cpp \
-    ../../src/MSIM_OutputWriter.cpp \
-    ../../src/MSIM_ProgressFeedback.cpp
+	../../src/MSIM_AlgorithmNewton.cpp \
+	../../src/MSIM_FMIType.cpp \
+	../../src/MSIM_OutputWriter.cpp \
+	../../src/MSIM_ProgressFeedback.cpp
 
 HEADERS += \
 	../../src/MSIM_MasterSim.h \
@@ -74,8 +76,8 @@ HEADERS += \
 	../../src/fmi/fmiPlatformTypes.h \
 	../../src/MSIM_AlgorithmGaussJacobi.h \
 	../../src/MSIM_AlgorithmGaussSeidel.h \
-    ../../src/MSIM_AbstractAlgorithm.h \
-    ../../src/MSIM_AlgorithmNewton.h \
-    ../../src/MSIM_FMIType.h \
-    ../../src/MSIM_OutputWriter.h \
-    ../../src/MSIM_ProgressFeedback.h
+	../../src/MSIM_AbstractAlgorithm.h \
+	../../src/MSIM_AlgorithmNewton.h \
+	../../src/MSIM_FMIType.h \
+	../../src/MSIM_OutputWriter.h \
+	../../src/MSIM_ProgressFeedback.h

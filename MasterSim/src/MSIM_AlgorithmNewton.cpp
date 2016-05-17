@@ -6,6 +6,11 @@
 
 namespace MASTER_SIM {
 
+void AlgorithmNewton::init() {
+
+}
+
+
 AlgorithmNewton::Result AlgorithmNewton::doStep() {
 	const char * const FUNC_ID = "[AlgorithmNewton::doStep]";
 

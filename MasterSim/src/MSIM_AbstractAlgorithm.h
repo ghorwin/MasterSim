@@ -11,6 +11,7 @@ class MasterSim;
 */
 class AbstractAlgorithm {
 public:
+	/*! Return values for the doStep() function. */
 	enum Result {
 		R_CONVERGED,
 		R_DIVERGED,
@@ -23,6 +24,9 @@ public:
 
 	/*! Virtual d'tor. */
 	virtual ~AbstractAlgorithm() {}
+
+	/*! Initialization function, called once all slaves have been set up. */
+	virtual void init() {}
 
 	/*! Main stepper function for master algorithm. */
 	virtual Result doStep() = 0;
