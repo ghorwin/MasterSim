@@ -34,7 +34,7 @@ public:
 	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
 		Throws an exception if an error occurs during instantiation.
 	*/
-	void instantiateFMUs(const ArgParser & args, const Project & prj);
+	void importFMUs(const ArgParser & args, const Project & prj);
 
 	/*! Initialize FMUs (enter initialization mode, iterate over start conditions, everything
 		up to ExitInitializationMode).
@@ -129,6 +129,12 @@ private:
 
 	/*! Initializes the master algorithm. */
 	void initMasterAlgorithm();
+
+	/*! This generates default parameters recognized by the master.
+		The parameters will be set for each FMU that imports the matching parameter and
+		a value was not yet specified by the user manually.
+	*/
+	void setupDefaultParameters();
 
 	/*! Computes initial conditions and updates output caches of all slaves so that master algorithms can start. */
 	void initialConditions();

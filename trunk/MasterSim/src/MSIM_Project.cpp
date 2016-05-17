@@ -61,7 +61,7 @@ void Project::read(const IBK::Path & prjFile) {
 				std::string graphEdges = line.substr(5);
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
-				if (IBK::explode_in2(graphEdges, tokens, ' ') != 2)
+				if (IBK::explode_in2(graphEdges, tokens, " \t") != 2)
 					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
 				g.m_outputVariableRef = IBK::trim_copy(tokens[0]);
@@ -74,7 +74,7 @@ void Project::read(const IBK::Path & prjFile) {
 				std::string paraString = line.substr(9);
 				IBK::trim(paraString);
 				// general parameters
-				if (IBK::explode_in2(paraString, tokens) != 2)
+				if (IBK::explode_in2(paraString, tokens, " \t") != 2)
 					throw IBK::Exception(IBK::FormatString("Expected format 'parameter <flat name> <value>', got '%1'").arg(line), FUNC_ID);
 				std::string value = tokens[1];
 				// extract slave name
@@ -97,7 +97,7 @@ void Project::read(const IBK::Path & prjFile) {
 			}
 
 			// general parameters
-			if (IBK::explode_in2(line, tokens) != 2 && IBK::explode_in2(line, tokens, '\t') != 2)
+			if (IBK::explode_in2(line, tokens, " \t") != 2)
 				throw IBK::Exception(IBK::FormatString("Expected format '<keyword> <value>'.").arg(line), FUNC_ID);
 
 			std::string keyword = IBK::trim_copy(tokens[0]);

@@ -34,8 +34,8 @@ MasterSim::~MasterSim() {
 }
 
 
-void MasterSim::instantiateFMUs(const ArgParser &args, const Project & prj) {
-	//const char * const FUNC_ID = "[MasterSimulator::instantiateFMUs]";
+void MasterSim::importFMUs(const ArgParser &args, const Project & prj) {
+	//const char * const FUNC_ID = "[MasterSimulator::importFMUs]";
 
 	// create copy of input data (needed for multi-threaded application)
 	m_args = args;
@@ -46,18 +46,21 @@ void MasterSim::instantiateFMUs(const ArgParser &args, const Project & prj) {
 
 	// check required capabilities of FMUs, this depends on the selected master algorithm
 	checkCapabilities();
-
-	// instantiate all slaves
-	instatiateSlaves();
 }
 
 
 void MasterSim::initialize() {
+	// instantiate all slaves
+	instatiateSlaves();
+
 	// collect all output and input variables from all slaves, ordered according to cycles
 	composeVariableVector();
 
 	// select master algorithm
 	initMasterAlgorithm();
+
+	// sets up default parameters like ResultsRootDir
+	setupDefaultParameters();
 
 	// compute initial conditions (enter and exit initialization mode)
 	initialConditions();
@@ -438,6 +441,41 @@ void MasterSim::initMasterAlgorithm() {
 		case Project::MM_NEWTON : {
 			m_masterAlgorithm = new AlgorithmNewton(this);
 		} break;
+	}
+	// Algorithm specific initialization
+	m_masterAlgorithm->init();
+}
+
+
+void MasterSim::setupDefaultParameters() {
+	const char * const FUNC_ID = "[MasterSim::setupDefaultParameters]";
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Setting up default parameters\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent; (void)indent;
+
+	// loop over all slaves
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		// find corresponding parametrization in project file
+		const Slave * slave = m_slaves[s];
+		Project::SimulatorDef & simDef = const_cast<Project::SimulatorDef &>(m_project.simulatorDefinition(slave->m_name));
+		// check if ResultsRootDir parameter is imported by FMU
+		const FMU * fmu = slave->fmu();
+		for (unsigned int i=0; i<fmu->m_modelDescription.m_variables.size(); ++i) {
+			const FMIVariable & fmiVar = fmu->m_modelDescription.m_variables[i];
+			if (fmiVar.m_causality != FMIVariable::C_INPUT) continue;
+
+			// first string types
+			if (fmiVar.m_type == FMIVariable::VT_STRING) {
+				if (fmiVar.m_name == "ResultsRootDir") {
+					// check if user-defined parameter has already been specified
+					if (simDef.m_parameters.find(fmiVar.m_name) == simDef.m_parameters.end())
+						simDef.m_parameters[fmiVar.m_name] = (m_args.m_workingDir / "slaves" / slave->m_name).str();
+					IBK::IBK_Message( IBK::FormatString("%1.ResultsRootDir = %2\n").arg(slave->m_name).arg(simDef.m_parameters[fmiVar.m_name]),
+							IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+				}
+			}
+		}
+
 	}
 }
 
