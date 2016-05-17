@@ -28,7 +28,15 @@ public:
 	Result doStep();
 
 	/*! Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle. */
-	std::vector<IBKMK::DenseMatrix>	m_jacobianMatrix;
+	std::vector<IBKMK::DenseMatrix>				m_jacobianMatrix;
+
+	/*! Maps the index of a variable in the matrix to the index of the corresponding variable in
+		the global index array. First index is the cycle, second index the matrix index.
+		\code
+		unsigned int varIdx = m_variableIdxMapping[cycle][matrixIdx];
+		\endcode
+	*/
+	std::vector< std::vector<unsigned int> >	m_variableIdxMapping;
 };
 
 } // namespace MASTER_SIM
