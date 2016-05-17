@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -401,6 +401,30 @@ size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, cha
 	tokens.clear();
 	std::string::const_iterator it=str.begin();
 	while( it!= str.end() && *it!=delim ) {
+		tmp += *it;
+		++it;
+	}
+	tokens.push_back(tmp);
+	if( it != str.end()) {
+		std::string tstr(it+1, str.end());
+		tokens.push_back(tstr);
+	}
+	return tokens.size();
+}
+// ---------------------------------------------------------------------------
+
+size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, const std::string & delims) {
+	std::string tmp;
+	tokens.clear();
+	std::string::const_iterator it=str.begin();
+	while( it != str.end()) {
+		std::string::const_iterator delit = delims.begin();
+		for (; delit != delims.end(); ++delit) {
+			if (*it == *delit)
+				break;
+		}
+		if (*it == *delit)
+			break;
 		tmp += *it;
 		++it;
 	}
