@@ -113,24 +113,19 @@ void MasterSim::storeState(const IBK::Path & stateDirectory) {
 
 void MasterSim::simulate() {
 	while (m_t < m_project.m_tEnd) {
-		// do an internal step with the selected master algorithm
-		// after a successful call to doStep(), the master's internal state has
-		// moved to the next time point m_t
+		// Do an internal step with the selected master algorithm
 		doStep();
 		++m_statStepCounter;
+		// Now the master's internal state has moved to the next time point m_t = m_t + m_h
+		// m_h holds the step size used during the last master step
 
-		// handle outputs (filtering/scheduling is implemented inside writeOutputs()).
-		if (m_t < m_project.m_tEnd) {
-			m_timer.start();
-			appendOutputs();
-			m_statOutputTime += m_timer.stop()*1e-3;
-		}
+		if (m_t < m_project.m_tEnd)
+			appendOutputs();// appends outputs (filtering/scheduling is implemented inside OutputWriter class)
 	}
 	// write final results
 	m_outputWriter.m_tLastOutput = -1;  // this ensures that final results are definitely written
 	appendOutputs();
 }
-
 
 
 void MasterSim::doStep() {
@@ -215,6 +210,12 @@ void MasterSim::doStep() {
 	}
 }
 
+
+void MasterSim::appendOutputs() {
+	m_timer.start();
+	m_outputWriter.appendOutputs(m_t);
+	m_statOutputTime += m_timer.stop()*1e-3;
+}
 
 
 void MasterSim::writeMetrics() const {
