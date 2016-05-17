@@ -82,7 +82,7 @@ public:
 	double h() const { return m_h; }
 
 	/*! Appends current output variables of all slaves to output files. */
-	void appendOutputs() { m_outputWriter.appendOutputs(m_t); }
+	void appendOutputs();
 
 	/*! Writes final statistics. */
 	void writeMetrics() const;
