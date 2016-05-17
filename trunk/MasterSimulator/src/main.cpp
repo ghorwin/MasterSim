@@ -51,13 +51,13 @@ int main(int argc, char * argv[]) {
 		// read project file
 		if (!parser.m_projectFile.exists())
 			throw IBK::Exception(IBK::FormatString("Project file '%1' doesn't exist.").arg(parser.m_projectFile), FUNC_ID);
-		IBK::IBK_Message(IBK::FormatString("Reading project '%1'\n").arg(parser.m_projectFile), IBK::MSG_PROGRESS, FUNC_ID);
+		IBK::IBK_Message(IBK::FormatString("Reading project '%1'\n").arg(parser.m_projectFile), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		project.read(IBK::Path(parser.m_projectFile ));
 
 		// create simulator
 		MASTER_SIM::MasterSim masterSim;
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
-		masterSim.instantiateFMUs(parser, project);
+		masterSim.importFMUs(parser, project);
 
 #if HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point
@@ -75,7 +75,7 @@ int main(int argc, char * argv[]) {
 #endif
 
 		if (parser.flagEnabled("test-init")) {
-			IBK::IBK_Message("Stopping after successful initialization.\n", IBK::MSG_PROGRESS, FUNC_ID);
+			IBK::IBK_Message("Stopping after successful initialization.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 			return EXIT_SUCCESS;
 		}
 
