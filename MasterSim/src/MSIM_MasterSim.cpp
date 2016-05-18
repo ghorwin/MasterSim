@@ -471,15 +471,17 @@ void MasterSim::setupDefaultParameters() {
 			if (fmiVar.m_type == FMIVariable::VT_STRING) {
 				if (fmiVar.m_name == "ResultsRootDir") {
 					// check if user-defined parameter has already been specified
-					if (simDef.m_parameters.find(fmiVar.m_name) == simDef.m_parameters.end())
+					if (simDef.m_parameters.find(fmiVar.m_name) == simDef.m_parameters.end()) {
 						simDef.m_parameters[fmiVar.m_name] = (m_args.m_workingDir / "slaves" / slave->m_name).absolutePath().str();
-					IBK::IBK_Message( IBK::FormatString("%1.ResultsRootDir = %2\n").arg(slave->m_name).arg(simDef.m_parameters[fmiVar.m_name]),
+						IBK::IBK_Message( IBK::FormatString("%1.ResultsRootDir = %2\n").arg(slave->m_name).arg(simDef.m_parameters[fmiVar.m_name]),
 							IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+					}
 				}
-			}
-		}
+			} // string vars
 
-	}
+		} // variables
+
+	} // slaves
 }
 
 
