@@ -56,8 +56,8 @@ MessageHandlerRegistry::~MessageHandlerRegistry() {
 }
 
 MessageHandlerRegistry& MessageHandlerRegistry::instance() {
-	static MessageHandlerRegistry myMsgHandler2;
-	return myMsgHandler2;
+	static MessageHandlerRegistry myMsgHandler;
+	return myMsgHandler;
 }
 
 void MessageHandlerRegistry::setDefaultMsgHandler() {
