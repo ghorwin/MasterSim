@@ -181,7 +181,7 @@ void Slave::exitInitializationMode() {
 
 
 int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
-	const char * const FUNC_ID = "[Slave::doStep]";
+	//const char * const FUNC_ID = "[Slave::doStep]";
 	fmi2Status res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = (fmi2Status)m_fmu->m_fmi1Functions.doStep(m_component, m_t, stepSize,

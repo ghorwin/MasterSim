@@ -65,6 +65,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	fileNames.push_back(m_resultsDir / "boolean.d6o");
 	fileNames.push_back(m_resultsDir / "integer.d6o");
 
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message("Creating output files\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 	IBK::IBK_Message( IBK::FormatString("Results directory '%1'\n").arg(m_resultsDir), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
