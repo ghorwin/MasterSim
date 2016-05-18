@@ -341,6 +341,9 @@ void MasterSim::instatiateSlaves() {
 	const char * const FUNC_ID = "[MasterSimulator::instatiateSlaves]";
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
 
+	// turn on debug logging for high verbosity levels
+	Slave::m_useDebugLogging = m_args.m_verbosityLevel > 3;
+
 	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
 	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
 
@@ -462,14 +465,14 @@ void MasterSim::setupDefaultParameters() {
 		const FMU * fmu = slave->fmu();
 		for (unsigned int i=0; i<fmu->m_modelDescription.m_variables.size(); ++i) {
 			const FMIVariable & fmiVar = fmu->m_modelDescription.m_variables[i];
-			if (fmiVar.m_causality != FMIVariable::C_INPUT) continue;
+			if (fmiVar.m_causality != FMIVariable::C_PARAMETER) continue;
 
 			// first string types
 			if (fmiVar.m_type == FMIVariable::VT_STRING) {
 				if (fmiVar.m_name == "ResultsRootDir") {
 					// check if user-defined parameter has already been specified
 					if (simDef.m_parameters.find(fmiVar.m_name) == simDef.m_parameters.end())
-						simDef.m_parameters[fmiVar.m_name] = (m_args.m_workingDir / "slaves" / slave->m_name).str();
+						simDef.m_parameters[fmiVar.m_name] = (m_args.m_workingDir / "slaves" / slave->m_name).absolutePath().str();
 					IBK::IBK_Message( IBK::FormatString("%1.ResultsRootDir = %2\n").arg(slave->m_name).arg(simDef.m_parameters[fmiVar.m_name]),
 							IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 				}
@@ -619,7 +622,7 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 void MasterSim::composeVariableVector() {
 	const char * const FUNC_ID = "[MasterSim::composeVariableVector]";
 	// process connection graph and find all slaves and their output variables
-	IBK::IBK_Message("\nResolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::IBK_Message("Resolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::MessageIndentor indent; (void)indent;
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
