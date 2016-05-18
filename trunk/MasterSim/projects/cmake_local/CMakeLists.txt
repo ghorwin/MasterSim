@@ -6,6 +6,7 @@ project( MasterSim )
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
+	${PROJECT_SOURCE_DIR}/../../../externals/IBKMK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
 	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src

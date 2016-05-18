@@ -16,6 +16,7 @@ file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 set( LINK_LIBS
 	MasterSim
 	DataIO
+	IBKMK
 	IBK
 	TiCPP
 	minizip

@@ -25,6 +25,7 @@ file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/../../src/*.ui )
 set( LINK_LIBS
 	MasterSim
 	DataIO
+	IBKMK
 	IBK
 	TiCPP
 	minizip
