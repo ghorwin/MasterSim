@@ -139,7 +139,12 @@ private:
 	/*! Computes initial conditions and updates output caches of all slaves so that master algorithms can start. */
 	void initialConditions();
 
-	/*! This function starts with an integration step completed.
+	/*! Error testing procedure based on Richardson-Extrapolation.
+		This method will take two half-steps and compare the result
+		obtained after the two half steps with the original result to
+		estimate the error (may involve many doStep() calls to FMU slaves).
+
+		This function starts with an integration step completed.
 		It remembers the state at the old time point t, the newly
 		computed states at time t + h. Then it resets all
 		slaves back to the point t and takes two steps with size
@@ -158,7 +163,33 @@ private:
 		If test is successful, m_hProposed is updated as well.
 		\return Returns true if test was passed.
 	*/
-	bool doErrorCheck();
+	bool doErrorCheckRichardson();
+
+	/*! Simplified error check without iteration but extrapolation
+		of comparison value from historical values (essentially a
+		two-step method with extrapolation).
+
+		This function starts with an integration step completed.
+		It remembers the state at the old time point t, the newly
+		computed states at time t + h.
+
+		The test is based on extrapolated values using solution from
+		t - h and t, and the newly computed solution t + h.
+
+		In case of failure, the calling function should decide whether
+		a reset of the step is meaningful or if the integration shall
+		continue with the errorenous solution.
+
+		If test is successful, m_hProposed is updated as well.
+		\return Returns true if test was passed.
+	*/
+	bool doErrorCheckWithoutIteration();
+
+	/*! Implementation of the error adjustment formulae.
+		Computes new time step based on current error estimate and time step m_h but obeys upper and lower scaling limits.
+		\return Returns the computed time step.
+	*/
+	double adaptTimeStepAfterError(double errEstimate) const;
 
 	/*! Performs convergence test by comparing values in m_ytNext and m_ytNextIter.
 		\return Returns true if test has passed.

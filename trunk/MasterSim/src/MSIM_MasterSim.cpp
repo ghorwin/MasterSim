@@ -184,7 +184,7 @@ void MasterSim::doStep() {
 		// this handles the step-doubling and error estimation
 		// when this function returns with true, m_realytNext (and the other xxxNext) quantities hold the results
 		// after the completed half-step which should be aquivalent to not calling doErrorCheck() at all
-		if (doErrorCheck())
+		if (doErrorCheckRichardson())
 			break;
 
 	}
@@ -676,8 +676,8 @@ void MasterSim::composeVariableVector() {
 }
 
 
-bool MasterSim::doErrorCheck() {
-	const char * const FUNC_ID = "[MasterSim::doErrorCheck]";
+bool MasterSim::doErrorCheckRichardson() {
+	const char * const FUNC_ID = "[MasterSim::doErrorCheckRichardson]";
 
 	// when this function is called, we excpect a converged solution
 	//
@@ -756,17 +756,76 @@ bool MasterSim::doErrorCheck() {
 		throw IBK::Exception(ex, "Error taking half-steps of error test.", FUNC_ID);
 	}
 
+	double err = 2; // initialized with failure
+	if (!failed) {
+		err = 0;
+		// compare computed solutions via WRMS Norm of differences
+		for (unsigned int i=0; i<nValues; ++i) {
+			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/(1-2);
+			// scale the error by tolerances
+			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			// sum up error squared
+			err += scaledDiff*scaledDiff;
+		}
+		err = std::sqrt(err/nValues);
+	}
+
+	// if error limit has been exceeded, restore master and slave states to last time point
+	if (err > 1) {
+		++m_statErrorTestFailsCounter;
+		// failure
+		IBK::IBK_Message(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
+						 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+
+		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
+			// restore state to time t
+
+			// roll back slaves
+			restoreSlaveStates(m_t, m_errorCheckStates);
+			// sync slave output caches and variables with m_XXXyt variables
+			for (unsigned int s=0; s<m_slaves.size(); ++s) {
+				Slave * slave = m_slaves[s];
+				slave->cacheOutputs();
+				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
+			}
+
+			// adjust step size
+			m_h = adaptTimeStepAfterError(err);
+
+			m_t = m_errTOriginal;
+			// swap back iteration and error states
+			m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+
+			return false;
+		}
+	}
+
+
+	// slaves are now positioned at t + 2 * h2
+
+	// compute new estimate for time step size
+	m_hProposed = adaptTimeStepAfterError(err);
+	m_t = m_errTOriginal;
+	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+
+	return true;
+}
+
+
+bool MasterSim::doErrorCheckWithoutIteration() {
+
 	double diffNorm = 2; // initialized with failure
 	if (!failed) {
 		diffNorm = 0;
 		// compare computed solutions via WRMS Norm of differences
 		for (unsigned int i=0; i<nValues; ++i) {
-			double diff = m_realytNext[i] - m_errRealytFirst[i];
-			// factor 2 comes from analogy to implicit Euler
-			double scaledDiff = 2*diff/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/(1-2);
+			// scale the error by tolerances
+			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			// sum up error squared
 			diffNorm += scaledDiff*scaledDiff;
 		}
-		diffNorm = std::sqrt(diffNorm);
+		diffNorm = std::sqrt(diffNorm/nValues);
 	}
 
 	// if error limit has been exceeded, restore master and slave states to last time point
@@ -794,25 +853,16 @@ bool MasterSim::doErrorCheck() {
 			// m_hProposed/1 = m_h/diffNorm;
 
 			diffNorm = std::min(diffNorm, 3.0); // limit reduction factor to 3
-			m_h /= diffNorm;
-			m_t = m_errTOriginal;
-			// swap back iteration and error states
-			m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+
+			m_h /= std::sqrt(diffNorm);
 
 			return false;
 		}
 	}
 
-
-	// slaves are now positioned at t + 2 * h2
-
-	// reset original step size
-	m_h = 2*m_h;
-	m_t = m_errTOriginal;
-	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
-
 	return true;
 }
+
 
 
 bool MasterSim::doConvergenceTest() {
@@ -836,7 +886,8 @@ bool MasterSim::doConvergenceTest() {
 
 	// WRMS norm of real values
 	double norm = 0;
-	for (unsigned i=0; i<m_realytNextIter.size(); ++i) {
+	unsigned int nValues = m_realyt.size();
+	for (unsigned i=0; i<nValues; ++i) {
 		double diff = m_realytNextIter[i] - m_realytNext[i];
 		double absValue = std::fabs(m_realytNextIter[i]);
 		double weight = absValue*m_project.m_relTol + m_project.m_absTol;
@@ -844,7 +895,7 @@ bool MasterSim::doConvergenceTest() {
 		norm += diff*diff;
 	}
 
-	norm = std::sqrt(norm);
+	norm = std::sqrt(norm/nValues);
 	if (norm > 1) {
 		IBK::IBK_Message(IBK::FormatString("WRMS norm = %1 : ").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		return false;
@@ -852,6 +903,15 @@ bool MasterSim::doConvergenceTest() {
 
 
 	return true;
+}
+
+
+void MasterSim::adaptTimeStepAfterError(double errEstimate) {
+	double MAX_SCALE = 1.5; // upper limit for scaling up time step
+	double MIN_SCALE = 0.3; // lower limit for scaling down time step
+	double SAFETY = 0.9; // safety factor
+	double scale = std::max(MIN_SCALE, std::min(MAX_SCALE, SAFETY/std::sqrt(errEstimate) ) );
+	m_h *= scale;
 }
 
 
