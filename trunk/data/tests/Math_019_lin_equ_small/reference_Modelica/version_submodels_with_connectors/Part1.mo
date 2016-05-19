@@ -4,12 +4,13 @@ within ;
 model Part1 "Part1"
 	conout out_x1 annotation(Placement(
 		transformation(extent={{72,-10},{92,10}}),
-		iconTransformation(extent={{90,-10},{110,10}})));
+		iconTransformation(extent={{-110,-10},{-90,10}})));
 	conin in_x3 annotation(Placement(
 		transformation(extent={{72,32},{92,52}}),
 		iconTransformation(
-			origin={-100,0},
-			extent={{-10,-10},{10,10}})));
+			origin={100,0},
+			extent={{-10,-10},{10,10}},
+			rotation=180)));
 	equation
 		1 = in_x3.value + out_x1.value;
 	annotation(
