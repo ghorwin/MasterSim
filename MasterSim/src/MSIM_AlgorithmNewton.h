@@ -27,6 +27,9 @@ public:
 	*/
 	Result doStep();
 
+	/*! Computes Jacobian using DQ approximation and factorizes it. */
+	void generateJacobian(unsigned int cycleIdx);
+
 	/*! Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle. */
 	std::vector<IBKMK::DenseMatrix>				m_jacobianMatrix;
 
