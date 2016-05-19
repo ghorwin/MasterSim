@@ -326,7 +326,11 @@ void OutputWriter::appendOutputs(double t) {
 		m_progressFeedback.writeFeedbackFromF(t);
 		return;
 	}
-
+	if (m_tLastOutput == -1) {
+		// subtract a little time from last time stamp that outputs were written
+		// in order to get the final progress statistics printed out for sure
+		m_progressFeedback.m_lastElapsedSecondsWithOutput -= 1;
+	}
 	m_tLastOutput = t;
 
 	m_progressFeedback.writeFeedback(t, false);

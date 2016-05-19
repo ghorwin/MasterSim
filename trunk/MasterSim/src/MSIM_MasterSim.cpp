@@ -82,6 +82,7 @@ void MasterSim::initialize() {
 	m_statAlgorithmTime = 0;
 	m_statConvergenceFailsCounter = 0;
 	m_statErrorTestFailsCounter = 0;
+	m_statErrorTestTime = 0;
 	m_statStepCounter = 0;
 }
 
@@ -184,7 +185,10 @@ void MasterSim::doStep() {
 		// this handles the step-doubling and error estimation
 		// when this function returns with true, m_realytNext (and the other xxxNext) quantities hold the results
 		// after the completed half-step which should be aquivalent to not calling doErrorCheck() at all
-		if (doErrorCheckRichardson())
+		m_timer.start();
+		bool success = doErrorCheckRichardson();
+		m_statErrorTestTime += m_timer.stop()*1e-3;
+		if (success)
 			break;
 
 	}
@@ -243,6 +247,9 @@ void MasterSim::writeMetrics() const {
 		.arg(IBK::Time::format_time_difference(m_statAlgorithmTime, ustr, true),13).arg(m_statStepCounter,6),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("Convergence failures                       =                  %1\n").arg(m_statConvergenceFailsCounter, 6),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Error test time and failure count          = %1    %2\n")
+		.arg(IBK::Time::format_time_difference(m_statErrorTestTime, ustr, true),13).arg(m_statErrorTestFailsCounter,6),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
