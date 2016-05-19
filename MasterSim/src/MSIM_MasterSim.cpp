@@ -201,8 +201,12 @@ void MasterSim::doStep() {
 
 	// adjust step size
 	if (m_enableVariableStepSizes) {
-		// increase time step for next step
-		m_hProposed = 1.2*m_h;
+		// When not running with error control mode simply increase the step by some factor
+		// This could be made dependend on iteration count...
+		if (m_project.m_errorControlMode == Project::EM_NONE) {
+			// increase time step for next step
+			m_hProposed = 1.2*m_h;
+		}
 
 		// adjust step size to not exceed end time point
 		if (m_t + m_hProposed > m_project.m_tEnd)
@@ -211,6 +215,8 @@ void MasterSim::doStep() {
 		if ( m_t + m_hProposed > m_project.m_tEnd*0.999999)
 			m_hProposed = m_project.m_tEnd - m_t;
 	}
+	IBK::IBK_Message(IBK::FormatString("step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 }
 
 
@@ -771,6 +777,7 @@ bool MasterSim::doErrorCheckRichardson() {
 	}
 
 	// if error limit has been exceeded, restore master and slave states to last time point
+	IBK::IBK_Message(IBK::FormatString("ERR norm  = %1\n").arg(err, 16, 'f', 3), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 	if (err > 1) {
 		++m_statErrorTestFailsCounter;
 		// failure
@@ -790,7 +797,7 @@ bool MasterSim::doErrorCheckRichardson() {
 			}
 
 			// adjust step size
-			m_h = adaptTimeStepAfterError(err);
+			m_h = adaptTimeStepAfterError(err)*2; // mind factor two, because error step adaptation is based on m_h = h/2
 
 			m_t = m_errTOriginal;
 			// swap back iteration and error states
@@ -804,9 +811,13 @@ bool MasterSim::doErrorCheckRichardson() {
 	// slaves are now positioned at t + 2 * h2
 
 	// compute new estimate for time step size
-	m_hProposed = adaptTimeStepAfterError(err);
-	m_t = m_errTOriginal;
+	m_hProposed = adaptTimeStepAfterError(err)*2; // mind factor two, because error step adaptation is based on m_h = h/2
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+
+	// t is at start of the last half-step,
+	// and m_h has the half-step size, so that when we complete the
+	// step in the calling routined, it appears as if we just had
+	// taken a step from t + h/2 to t + h
 
 	return true;
 }
@@ -897,8 +908,8 @@ bool MasterSim::doConvergenceTest() {
 	}
 
 	norm = std::sqrt(norm/nValues);
+	IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 	if (norm > 1) {
-		IBK::IBK_Message(IBK::FormatString("WRMS norm = %1 : ").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		return false;
 	}
 
