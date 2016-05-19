@@ -103,12 +103,13 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 					break; // no more iterating
 				}
 
+				IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_h).arg(c).arg(iteration),
+					IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+
 				// convergence test is based on difference between
 				if (m_master->doConvergenceTest())
 					break; // break iteration loop
 			}
-			IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_h).arg(c).arg(iteration),
-				IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		}
 		if (m_master->m_enableIteration &&
 			iteration > m_master->m_project.m_maxIterations)

@@ -15,7 +15,7 @@ into this directory (externals)
 
 For example:
 
-IBK-4.2.1/IBK  -> should go to master-sim/trunk/externals/IBK
+`IBK-4.2.2/IBK`  -> should go to `master-sim/trunk/externals/IBK`
 
 
 2. DataIO-Library
@@ -29,7 +29,7 @@ into this directory (externals)
 
 For example:
 
-DataIO-7.1.0/DataIO  -> should go to master-sim/trunk/externals/DataIO
+`DataIO-7.1.0/DataIO`  -> should go to `master-sim/trunk/externals/DataIO`
 
 
 3. minizip
@@ -42,6 +42,16 @@ Utility library for unzipping archives from FMILibrary/ThirdParty
 -------
 
 Zip library (only for Windows, on Unix/Mac using system zlib).
+
+5. IBKMK
+--------
+
+IBK Math Kernel Library (subset), see IBK.
+
+6. TICPP
+--------
+
+TinyXML Library
 
 
 
