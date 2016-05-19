@@ -339,6 +339,7 @@ private:
 	double							m_statAlgorithmTime;
 	unsigned int					m_statConvergenceFailsCounter;
 	unsigned int					m_statErrorTestFailsCounter;
+	double							m_statErrorTestTime;
 	unsigned int					m_statStepCounter;
 
 	/*! Utility function to copy one vector to another using memcpy. */
