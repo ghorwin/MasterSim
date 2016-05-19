@@ -252,6 +252,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 					dataIO->m_valueUnit = var.m_unit;
 
 				std::string fname = IBK::FormatString("real_%1.d6o").arg(dataIO->m_valueUnit).str();
+				if (var.m_unit == "-")
+					fname = "real.d6o"; // convenience name for unitless outputs
 				fname = IBK::replace_string(fname, "/", "_");
 				dataIO->m_filename = m_resultsDir / fname;
 			}

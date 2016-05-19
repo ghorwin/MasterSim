@@ -524,7 +524,7 @@ void MasterSim::initialConditions() {
 	}
 
 
-	IBK::IBK_Message("Setting used-defined parameters and start values for input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("Setting user-defined parameters and start values for input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	{
 		IBK::MessageIndentor indent3; (void)indent3;
 
@@ -814,6 +814,7 @@ bool MasterSim::doErrorCheckRichardson() {
 
 bool MasterSim::doErrorCheckWithoutIteration() {
 
+#if 0
 	double diffNorm = 2; // initialized with failure
 	if (!failed) {
 		diffNorm = 0;
@@ -859,7 +860,7 @@ bool MasterSim::doErrorCheckWithoutIteration() {
 			return false;
 		}
 	}
-
+#endif
 	return true;
 }
 
@@ -906,12 +907,12 @@ bool MasterSim::doConvergenceTest() {
 }
 
 
-void MasterSim::adaptTimeStepAfterError(double errEstimate) {
+double MasterSim::adaptTimeStepAfterError(double errEstimate) const {
 	double MAX_SCALE = 1.5; // upper limit for scaling up time step
 	double MIN_SCALE = 0.3; // lower limit for scaling down time step
 	double SAFETY = 0.9; // safety factor
 	double scale = std::max(MIN_SCALE, std::min(MAX_SCALE, SAFETY/std::sqrt(errEstimate) ) );
-	m_h *= scale;
+	return m_h * scale;
 }
 
 
