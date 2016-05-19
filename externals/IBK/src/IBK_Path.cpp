@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -1269,7 +1269,7 @@ bool Path::makePath( const IBK::Path & p ) {
 			int res = CreateDirectoryW(wdirname.c_str(), 0);
 			if(!res) {
 				std:: string errmsg = GetLastErrorMessage();
-				IBK_Message(FormatString("Error in LocalFileTimeToFileTime '%1' !").arg(errmsg), MSG_ERROR, FUNC_ID);
+				IBK_Message(FormatString("%1\nError in CreateDirectoryW().").arg(errmsg), MSG_ERROR, FUNC_ID);
 				return false;
 			}
 		}
