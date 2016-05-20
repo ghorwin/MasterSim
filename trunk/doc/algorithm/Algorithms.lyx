@@ -1,0 +1,859 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{booktabs}
+\usepackage{dsfont}
+\usepackage[ruled,vlined]{algorithm2e}
+
+% captions
+\usepackage[font=small, labelfont=bf, format=hang]{caption}
+
+% colors
+\definecolor{linkblue}{rgb}{0,0,0.4}
+\definecolor{dark-gray}{gray}{0.45}
+
+\newcommand{\sgn}{\mathop{\mathrm{sgn}}}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 11
+\spacing single
+\use_hyperref true
+\pdf_title "MasterSim-Algorithms"
+\pdf_author "Andreas Nicolai"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "linkcolor=linkblue, citecolor=linkblue"
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2.5cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip 6pt
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Algorithms in MasterSim
+\end_layout
+
+\begin_layout Section
+Master-Algorithms
+\end_layout
+
+\begin_layout Standard
+All algorithms are called with current time point 
+\begin_inset Formula $t$
+\end_inset
+
+, step size to be taken 
+\begin_inset Formula $h$
+\end_inset
+
+ and vector of current solution 
+\begin_inset Formula $\mathbf{y_{t}}$
+\end_inset
+
+ with the mapping 
+\begin_inset Formula $\mathbf{u_{t}=c\left(y_{t}\right)}$
+\end_inset
+
+ for the inputs to all slaves.
+\end_layout
+
+\begin_layout Subsection
+Gauss-Jacobi
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithm}[H]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+DontPrintSemicolon
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwIn{$t$, $h$, $
+\backslash
+mathbf{y_t}$ vector with reals at time level $t$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwOut{$
+\backslash
+mathbf{y_{t+h}}$ vector with solution at time level $t+h$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Begin{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+For{cycle $
+\backslash
+in$ cycles} {
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+For{slave $
+\backslash
+in$ cycle.slaves} {
+\end_layout
+
+\begin_layout Plain Layout
+
+			Set slave inputs using inputs from variable vector $
+\backslash
+mathbf{y_t}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			Advance slave to time level $t+h$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			Retrieve outputs and store in vector $
+\backslash
+mathbf{y_{t+h}}$ (partially overwriting vector elements) 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Gauss-Jacobi Algorithm
+\backslash
+label{algo:GaussJacobi}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Iterative Gauss-Seidel
+\end_layout
+
+\begin_layout Standard
+Needs temporary vector 
+\begin_inset Formula $\mathbf{y_{t+h}^{m}}$
+\end_inset
+
+ for iterative quantities.
+ Expects FMU states from time 
+\begin_inset Formula $t$
+\end_inset
+
+ and matching inputs 
+\begin_inset Formula $\mathbf{u_{t}}$
+\end_inset
+
+ has been stored.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithm}[H]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+DontPrintSemicolon
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwIn{$t$, $h$, $
+\backslash
+mathbf{y_t}$ vector with reals at time level $t$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwOut{$
+\backslash
+mathbf{y_{t+h}}$ vector with solution at time level $t+h$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Begin{
+\end_layout
+
+\begin_layout Plain Layout
+
+	$
+\backslash
+mathbf{y_{t+h}} := 
+\backslash
+mathbf{y_{t}}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+For{cycle $
+\backslash
+in$ cycles} {
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+While {iteration $<$ maxIterations} {
+\end_layout
+
+\begin_layout Plain Layout
+
+			Store iterative solution for convergence test 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$
+\backslash
+mathbf{y^m_{t+h}} := 
+\backslash
+mathbf{y_{t+h}}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {iteration > 1} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				Restore slave states
+\end_layout
+
+\begin_layout Plain Layout
+
+			} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+For{slave $
+\backslash
+in$ cycle.slaves} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				Set slave inputs using inputs from variable vector $
+\backslash
+mathbf{y_{t+h}}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				Advance slave to time level $t+h$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				Retrieve outputs and store in vector $
+\backslash
+mathbf{y_{t+h}}$ (partially overwriting vector elements) 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {cycle.slaves.count() == 1} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				No need to iterate when only one slave in cycle 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\backslash
+textbf{break} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {$h < h_{limit}$} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				If time step is too low, skip iteration (to get past discontinuities)
+ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\backslash
+textbf{break} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			Compute Weighted-Root-Mean-Square norm of differences 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$res = 
+\backslash
+mathbf{
+\backslash
+mbox{WRMS}}
+\backslash
+left(
+\backslash
+mathbf{y^m_{t+h}}, 
+\backslash
+mathbf{y_{t+h}}
+\backslash
+right)$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {$res < 1$} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				Converged 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\backslash
+textbf{break} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+If {iteration $>=$ maxIterations} {
+\end_layout
+
+\begin_layout Plain Layout
+
+			Max.
+ iteration count exceeded, algorithm 
+\backslash
+textbf{not} converged 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+textbf{return IterationLimitExceeded} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Gauss-Seidel Algorithm
+\backslash
+label{algo:GaussSeidel}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Newton
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+begin{algorithm}[H]
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+DontPrintSemicolon
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwIn{$t$, $h$, $
+\backslash
+mathbf{y_t}$ vector with reals at time level $t$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+KwOut{$
+\backslash
+mathbf{y_{t+h}}$ vector with solution at time level $t+h$}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+BlankLine
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+Begin{
+\end_layout
+
+\begin_layout Plain Layout
+
+	
+\backslash
+For{cycle $
+\backslash
+in$ cycles} {
+\end_layout
+
+\begin_layout Plain Layout
+
+		Setup Jacobian (will restore slave states at end of function)
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		
+\backslash
+While {iteration $<$ maxIterations} {
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+For{slave $
+\backslash
+in$ cycle.slaves} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				Set slave inputs using inputs from variable vector $
+\backslash
+mathbf{y_{t+h}}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				Advance slave to time level $t+h$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+				Retrieve outputs and store in vector $
+\backslash
+mathbf{r}$
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+			Compute residuals
+\end_layout
+
+\begin_layout Plain Layout
+
+			$
+\backslash
+mathbf{r} := 
+\backslash
+mathbf{r} - 
+\backslash
+mathbf{y_{t+h}}$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			Extract all $r_i$ that belong to the cycle and put them into vector $F$
+  
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$F := -F$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			backsolving: 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$F := J^{-1} F$ 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+		}
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+caption{Newton Algorithm
+\backslash
+label{algo:GaussJacobi}}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+end{algorithm}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
