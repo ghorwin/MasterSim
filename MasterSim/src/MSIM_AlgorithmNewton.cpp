@@ -1,6 +1,7 @@
 #include "MSIM_AlgorithmNewton.h"
 
 #include <IBK_assert.h>
+#include <IBK_messages.h>
 
 #include "MSIM_MasterSim.h"
 #include "MSIM_Slave.h"
@@ -91,12 +92,11 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 		unsigned int iteration = 0; // iteration counter in current cycle
 		while (++iteration <= m_master->m_project.m_maxIterations) {
 
-			// create copy of current variables
-			/// \todo only copy variables that are port of this cycle, may speed up code a 'little'
+			// copy current estimates to y_{t+h} to NextIter vectors (they will be selectively updated below)
 			MasterSim::copyVector(m_master->m_realytNext, m_master->m_realytNextIter);
 			MasterSim::copyVector(m_master->m_intytNext, m_master->m_intytNextIter);
 			MasterSim::copyVector(m_master->m_boolytNext, m_master->m_boolytNextIter);
-			MasterSim::copyVector(m_master->m_stringytNext, m_master->m_stringytNextIter);
+			std::copy(m_master->m_stringytNext.begin(), m_master->m_stringytNext.end(), m_master->m_stringytNextIter.begin());
 
 			// in first iteration generate Jacobian matrix
 			if (iteration == 1) {
@@ -115,7 +115,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				Slave * slave = cycle.m_slaves[s];
 
 				// update input variables in all slaves, using updated variables from time t
-				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
+				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, true);
 
 				// advance slave, we have no roll-back
 				int res = slave->doStep(m_master->m_h, true);
@@ -132,18 +132,54 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				}
 
 				// slave is now at time level tNext and its outputs are updated accordingly
-				// sync results into vector with newly computed quantities, so that next slave will use newly
-				// computed values already
-				m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
+				// sync only real-results into m_master->m_realytNextIter vector
+				m_master->syncSlaveOutputs(slave, m_master->m_realytNextIter, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, true);
 			}
 
-			// do convergence test
-			if (m_master->doConvergenceTest())
+			// m_realytNextIter now holds y_{t+h}^{i+1} where m_realytNext holds y_{t+h}^i (last iteration step)
+
+			if (m_variableIdxMapping[c].empty()) {
+				// if we do not have any variables connected in this cycle, we can move on to the next cycle
+				break;
+			}
+
+			// compute difference of all variables connected in current cycle and store in vector m_res
+			for (unsigned int i=0; i<m_variableIdxMapping[c].size(); ++i) {
+				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
+				m_res[i] = m_master->m_realytNextIter[varIdx] - m_master->m_realytNext[varIdx];
+			}
+
+			// backsolve with Jacobian, we use only the first m_variableIdxMapping[c].size() values of m_res
+			m_jacobianMatrix[c].backsolve(&m_res[0]);
+			// m_res contains now delta_y^{i+1}
+
+			// do convergence test but first compute WRMS norm
+			double norm = 0;
+			for (unsigned int i=0; i<m_variableIdxMapping[c].size(); ++i) {
+				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
+				double diff = m_res[i];
+				double absValue = std::fabs(m_master->m_realytNextIter[varIdx]);
+				double weight = absValue*m_master->m_project.m_relTol + m_master->m_project.m_absTol;
+				diff /= weight;
+				norm += diff*diff;
+			}
+			norm = std::sqrt(norm/m_variableIdxMapping[c].size());
+			IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+			if (norm < 1)
 				break; // break iteration loop
 		}
+
 		if (iteration > m_master->m_project.m_maxIterations)
 			return R_ITERATION_LIMIT_EXCEEDED;
-	}
+
+		// cycle done, also sync variables of other types with global variable array ytNext so that the results
+		// of the current cycle are available in the next cycle
+		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
+			Slave * slave = cycle.m_slaves[s];
+			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
+		}
+
+	} // cycles
 
 	// ** algorithm end **
 

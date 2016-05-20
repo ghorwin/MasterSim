@@ -585,13 +585,13 @@ void MasterSim::initialConditions() {
 		// cache outputs
 		slave->cacheOutputs();
 		// and sync with global variables vector
-		syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
+		syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
 	}
 	// and set inputs
 
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
-		updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
+		updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
 	}
 
 	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -804,7 +804,7 @@ bool MasterSim::doErrorCheckRichardson() {
 			for (unsigned int s=0; s<m_slaves.size(); ++s) {
 				Slave * slave = m_slaves[s];
 				slave->cacheOutputs();
-				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
+				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
 			}
 
 			// reduce step size, but mind factor two, because error step adaptation is based on current m_h = h/2
@@ -887,48 +887,6 @@ bool MasterSim::doErrorCheckWithoutIteration() {
 }
 
 
-
-bool MasterSim::doConvergenceTest() {
-	const char * const FUNC_ID = "[MasterSim::doConvergenceTest]";
-
-	// compare all state-based values: int, bool and string
-	for (unsigned int i=0; i<m_intytNextIter.size(); ++i) {
-		if (m_intytNext[i] != m_intytNextIter[i])
-			return false;
-	}
-
-	for (unsigned int i=0; i<m_boolytNextIter.size(); ++i) {
-		if (m_boolytNext[i] != m_boolytNextIter[i])
-			return false;
-	}
-
-	for (unsigned int i=0; i<m_stringytNextIter.size(); ++i) {
-		if (m_stringytNext[i] != m_stringytNextIter[i])
-			return false;
-	}
-
-	// WRMS norm of real values
-	double norm = 0;
-	unsigned int nValues = m_realyt.size();
-	for (unsigned i=0; i<nValues; ++i) {
-		double diff = m_realytNextIter[i] - m_realytNext[i];
-		double absValue = std::fabs(m_realytNextIter[i]);
-		double weight = absValue*m_project.m_relTol + m_project.m_absTol;
-		diff /= weight;
-		norm += diff*diff;
-	}
-
-	norm = std::sqrt(norm/nValues);
-	IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
-	if (norm > 1) {
-		return false;
-	}
-
-
-	return true;
-}
-
-
 double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 	double MAX_SCALE = 1.5; // upper limit for scaling up time step
 	double MIN_SCALE = 0.3; // lower limit for scaling down time step
@@ -941,7 +899,8 @@ double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & realVariables,
 								  const std::vector<int> & intVariables,
 								  const std::vector<fmi2Boolean> &boolVariables,
-								  const std::vector<std::string> & stringVariables)
+								  const std::vector<std::string> & stringVariables,
+								  bool realOnly)
 {
 	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
 	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
@@ -955,26 +914,28 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & rea
 		// set input in slave
 		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realVariables[i]);
 	}
-	for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_intVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_inputSlave != slave) continue;
-		// set input in slave
-		varMap.m_inputSlave->setInteger(varMap.m_inputValueReference, intVariables[i]);
-	}
-	for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_boolVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_inputSlave != slave) continue;
-		// set input in slave
-		varMap.m_inputSlave->setBoolean(varMap.m_inputValueReference, boolVariables[i]);
-	}
-	for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_stringVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_inputSlave != slave) continue;
-		// set input in slave
-		varMap.m_inputSlave->setString(varMap.m_inputValueReference, stringVariables[i]);
+	if (!realOnly) {
+		for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_intVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_inputSlave != slave) continue;
+			// set input in slave
+			varMap.m_inputSlave->setInteger(varMap.m_inputValueReference, intVariables[i]);
+		}
+		for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_boolVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_inputSlave != slave) continue;
+			// set input in slave
+			varMap.m_inputSlave->setBoolean(varMap.m_inputValueReference, boolVariables[i]);
+		}
+		for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_stringVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_inputSlave != slave) continue;
+			// set input in slave
+			varMap.m_inputSlave->setString(varMap.m_inputValueReference, stringVariables[i]);
+		}
 	}
 }
 
@@ -983,7 +944,8 @@ void MasterSim::syncSlaveOutputs(const Slave * slave,
 								 std::vector<double> & realVariables,
 								 std::vector<int> & intVariables,
 								 std::vector<fmi2Boolean> &boolVariables,
-								 std::vector<std::string> & stringVariables)
+								 std::vector<std::string> & stringVariables,
+								 bool realOnly)
 {
 	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
 	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
@@ -997,26 +959,28 @@ void MasterSim::syncSlaveOutputs(const Slave * slave,
 		// copy local variable to global array
 		realVariables[i] = slave->m_doubleOutputs[varMap.m_outputLocalIndex];
 	}
-	for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_intVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
-		// copy local variable to global array
-		intVariables[i] = slave->m_intOutputs[varMap.m_outputLocalIndex];
-	}
-	for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_boolVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
-		// copy local variable to global array
-		boolVariables[i] = slave->m_boolOutputs[varMap.m_outputLocalIndex];
-	}
-	for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
-		VariableMapping & varMap = m_stringVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_outputSlave != slave) continue;
-		// copy local variable to global array
-		stringVariables[i] = slave->m_stringOutputs[varMap.m_outputLocalIndex];
+	if (!realOnly) {
+		for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_intVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_outputSlave != slave) continue;
+			// copy local variable to global array
+			intVariables[i] = slave->m_intOutputs[varMap.m_outputLocalIndex];
+		}
+		for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_boolVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_outputSlave != slave) continue;
+			// copy local variable to global array
+			boolVariables[i] = slave->m_boolOutputs[varMap.m_outputLocalIndex];
+		}
+		for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
+			VariableMapping & varMap = m_stringVariableMapping[i];
+			// skip variables that are not outputs of selected slave
+			if (varMap.m_outputSlave != slave) continue;
+			// copy local variable to global array
+			stringVariables[i] = slave->m_stringOutputs[varMap.m_outputLocalIndex];
+		}
 	}
 }
 

@@ -42,6 +42,8 @@ public:
 	std::vector< std::vector<unsigned int> >	m_variableIdxMapping;
 
 	/*! Residuals of Newton (also used to compose rhs of equation system. */
+	std::vector<double>							m_realytNextIter;
+	/*! Residuals of Newton (also used to compose rhs of equation system. */
 	std::vector<double>							m_res;
 };
 
