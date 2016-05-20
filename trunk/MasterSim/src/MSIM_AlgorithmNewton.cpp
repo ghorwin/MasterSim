@@ -135,7 +135,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			// compute difference of all variables connected in current cycle and store in vector m_res
 			for (unsigned int i=0; i<varCount; ++i) {
 				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
-				m_rhs[i] = m_res[varIdx] - m_master->m_realytNext[varIdx];
+				m_rhs[i] = m_res[varIdx] - m_master->m_realytNext[varIdx]; // = - (y - Sy)
 			}
 
 			if (iteration == 1) {
@@ -157,7 +157,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				delta /= weight;
 				norm += delta*delta;
 				// also update next iterative guess
-				m_master->m_realytNext[varIdx] = m_master->m_realytNextIter[varIdx] + delta;
+				m_master->m_realytNext[varIdx] = m_master->m_realytNextIter[varIdx] + m_rhs[i];
 			}
 			norm = std::sqrt(norm/varCount);
 			IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
@@ -224,10 +224,14 @@ void AlgorithmNewton::generateJacobian(unsigned int c) {
 
 	MasterSim::Cycle & cycle = m_master->m_cycles[c];
 
-	// m_realytNext holds S(y_{t+h}^i)
+	// m_realyt holds y_{t} = y_{t+h}^0
+	// m_realytNextIter holds also y_{t+h}^0
 
-	// We now modify values of m_realytNext, evaluate slaves, compute DQ approximations and
-	// restore values in m_realytNext
+	MasterSim::copyVector(m_res, m_master->m_realytNext);
+	// m_realytNext now holds Sy=S(y_{t+h}^0)
+
+	// We now modify values of m_realyt, evaluate slaves, compute DQ approximations and
+	// restore values in m_realyt
 
 	// loop all variables in this cycle
 	unsigned int varCount = m_variableIdxMapping[c].size();
@@ -235,22 +239,23 @@ void AlgorithmNewton::generateJacobian(unsigned int c) {
 		unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
 		// modify variable
 		double delta = std::fabs(m_master->m_realytNext[varIdx])*m_master->m_project.m_relTol + 0.01*m_master->m_project.m_absTol;
-		m_master->m_realytNext[varIdx] += delta;
+		m_master->m_realytNextIter[varIdx] += delta;
 		// evaluate all slaves in cycle
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 			Slave * slave = cycle.m_slaves[s];
 			// reset slave
 			slave->setState(m_master->m_t, m_master->m_iterationStates[slave->m_slaveIndex]);
 			// then evaluate slave
-			evaluateSlave(slave, m_master->m_realytNext, m_res);
+			evaluateSlave(slave, m_master->m_realytNextIter, m_res);
 		}
 		// restore original values
-		m_master->m_realytNext[varIdx] -= delta;
+		m_master->m_realytNextIter[varIdx] -= delta;
 		// compute dS/dy = (Sy(y+delta) - Sy(y))/delta
 
 		for (unsigned int j=0; j<varCount; ++j) {
+			unsigned int colVarIdx = m_variableIdxMapping[c][j]; // global index of variable
 			// process column i, row j
-			double dq = (m_res[varIdx] - m_master->m_realytNext[varIdx])/delta;
+			double dq = (m_res[colVarIdx] - m_master->m_realytNext[colVarIdx])/delta;
 			// add unit matrix
 			if (j == i)
 				dq += 1;
