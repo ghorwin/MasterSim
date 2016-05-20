@@ -9,6 +9,8 @@
 
 namespace MASTER_SIM {
 
+class Slave;
+
 /*! Implementation class for Newton algorithm.
 
 	This algorithm uses a difference-quotient approximation to the Jacobi matrix which is
@@ -27,8 +29,12 @@ public:
 	*/
 	Result doStep();
 
+	/*! Advances slave using xi as inputs and updates xi1 (only real values). */
+	Result evaluateSlave(MASTER_SIM::Slave * slave, const std::vector<double> & xi, std::vector<double> & xi1);
+
 	/*! Computes Jacobian using DQ approximation and factorizes it. */
 	void generateJacobian(unsigned int cycleIdx);
+
 
 	/*! Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle. */
 	std::vector<IBKMK::DenseMatrix>				m_jacobianMatrix;
@@ -43,8 +49,10 @@ public:
 
 	/*! Residuals of Newton (also used to compose rhs of equation system. */
 	std::vector<double>							m_realytNextIter;
-	/*! Residuals of Newton (also used to compose rhs of equation system. */
+	/*! Residuals of Newton equation (full vector size with all real variables). */
 	std::vector<double>							m_res;
+	/*! Right-hand-side of Newton equation system (size matches dimension of Jacobian matrix/only coupled variables). */
+	std::vector<double>							m_rhs;
 };
 
 } // namespace MASTER_SIM

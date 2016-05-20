@@ -14,6 +14,10 @@ void AlgorithmNewton::init() {
 	m_jacobianMatrix.resize(nCycles);
 	m_variableIdxMapping.resize(nCycles);
 	m_res.resize(m_master->m_realyt.size());
+	// Note: typically, rhs will be smaller than res with more than one cycle is used
+	//       however, since we need continuous memory mapping we have to copy values anyway and
+	//       we can just reuse the array for all cycles - so we make it as big as the possible maximum (all values)
+	m_rhs.resize(m_master->m_realyt.size());
 
 	// now process each cycle
 	for (unsigned int c=0; c<nCycles; ++c) {
@@ -92,78 +96,64 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 		unsigned int iteration = 0; // iteration counter in current cycle
 		while (++iteration <= m_master->m_project.m_maxIterations) {
 
-			// copy current estimates to y_{t+h} to NextIter vectors (they will be selectively updated below)
+			// copy current estimates to y_{t+h} to NextIter vectors, they will be used to update ytNext vectors once cycle
+			// is complete
 			MasterSim::copyVector(m_master->m_realytNext, m_master->m_realytNextIter);
 			MasterSim::copyVector(m_master->m_intytNext, m_master->m_intytNextIter);
 			MasterSim::copyVector(m_master->m_boolytNext, m_master->m_boolytNextIter);
 			std::copy(m_master->m_stringytNext.begin(), m_master->m_stringytNext.end(), m_master->m_stringytNextIter.begin());
 
-			// in first iteration generate Jacobian matrix
 			if (iteration == 1) {
+				// in first iteration generate Jacobian matrix, if dimension is 0, this is a NOOP
 				generateJacobian(c);
 			}
-			// roll-back all slaves in this cycle, except for first iteration
 			else {
+				// in following iterations roll-back all slaves in this cycle
 				for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 					Slave * slave = cycle.m_slaves[s];
 					slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
 				}
 			}
 
-			// loop over all slaves
+			// loop over all slaves and compute S(y_{t+h}^i)
 			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 				Slave * slave = cycle.m_slaves[s];
-
-				// update input variables in all slaves, using updated variables from time t
-				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, true);
-
-				// advance slave, we have no roll-back
-				int res = slave->doStep(m_master->m_h, true);
-				switch (res) {
-					case fmi2Discard	:
-					case fmi2Error		:
-						return R_RETRY;
-					case fmi2Pending	: throw IBK::Exception("Asynchronous slaves are not supported, yet.", FUNC_ID);
-					case fmi2Fatal		:
-						throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
-					case fmi2OK			:
-					default				:
-						break;
-				}
-
-				// slave is now at time level tNext and its outputs are updated accordingly
-				// sync only real-results into m_master->m_realytNextIter vector
-				m_master->syncSlaveOutputs(slave, m_master->m_realytNextIter, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, true);
+				Result res = evaluateSlave(slave, m_master->m_realytNext, m_res);
+				if (res != R_CONVERGED)
+					return res;
 			}
 
-			// m_realytNextIter now holds y_{t+h}^{i+1} where m_realytNext holds y_{t+h}^i (last iteration step)
+			// m_res now holds Sy and m_realytNext holds y_{t+h}^i (last iteration step)
 
-			if (m_variableIdxMapping[c].empty()) {
+			unsigned int varCount = m_variableIdxMapping[c].size();
+			if (varCount == 0) {
 				// if we do not have any variables connected in this cycle, we can move on to the next cycle
 				break;
 			}
 
 			// compute difference of all variables connected in current cycle and store in vector m_res
-			for (unsigned int i=0; i<m_variableIdxMapping[c].size(); ++i) {
+			for (unsigned int i=0; i<varCount; ++i) {
 				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
-				m_res[i] = m_master->m_realytNextIter[varIdx] - m_master->m_realytNext[varIdx];
+				m_rhs[i] = m_res[varIdx] - m_master->m_realytNext[varIdx];
 			}
 
 			// backsolve with Jacobian, we use only the first m_variableIdxMapping[c].size() values of m_res
-			m_jacobianMatrix[c].backsolve(&m_res[0]);
-			// m_res contains now delta_y^{i+1}
+			m_jacobianMatrix[c].backsolve(&m_rhs[0]);
+			// m_rhs contains now delta_y^{i+1}
 
-			// do convergence test but first compute WRMS norm
+			// do convergence test with WRMS norm of
 			double norm = 0;
-			for (unsigned int i=0; i<m_variableIdxMapping[c].size(); ++i) {
+			for (unsigned int i=0; i<varCount; ++i) {
 				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
-				double diff = m_res[i];
+				double delta = m_rhs[i];
 				double absValue = std::fabs(m_master->m_realytNextIter[varIdx]);
 				double weight = absValue*m_master->m_project.m_relTol + m_master->m_project.m_absTol;
-				diff /= weight;
-				norm += diff*diff;
+				delta /= weight;
+				norm += delta*delta;
+				// also update next iterative guess
+				m_master->m_realytNext[varIdx] = m_master->m_realytNextIter[varIdx] + delta;
 			}
-			norm = std::sqrt(norm/m_variableIdxMapping[c].size());
+			norm = std::sqrt(norm/varCount);
 			IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 			if (norm < 1)
 				break; // break iteration loop
@@ -189,7 +179,38 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 }
 
 
+AbstractAlgorithm::Result AlgorithmNewton::evaluateSlave(Slave * slave, const std::vector<double> & xi, std::vector<double> & xi1) {
+	const char * const FUNC_ID = "[AlgorithmNewton::evaluateF]";
+	// update input variables in all slaves, using variables from time t
+	m_master->updateSlaveInputs(slave, xi, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, true);
+
+	// advance slave
+	m_timer.start();
+	int res = slave->doStep(m_master->m_h, true);
+	m_master->m_statSlaveEvalTimes[slave->m_slaveIndex] += 1e-3*m_timer.stop(); // add elapsed time in seconds
+	++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
+	switch (res) {
+		case fmi2Discard	:
+		case fmi2Error		:
+			return R_RETRY;
+		case fmi2Pending	: throw IBK::Exception("Asynchronous slaves are not supported, yet.", FUNC_ID);
+		case fmi2Fatal		:
+			throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
+		case fmi2OK			:
+		default				:
+			break;
+	}
+
+	// slave is now at time level t + h and its outputs are updated accordingly
+	// sync results into vector with newly computed quantities
+	m_master->syncSlaveOutputs(slave, xi1, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, true);
+	return R_CONVERGED;
+}
+
+
 void AlgorithmNewton::generateJacobian(unsigned int cycleIdx) {
+	if (m_jacobianMatrix[cycleIdx].n() == 0)
+		return;
 
 	// loop all variables in this cycle
 	// modify variable
