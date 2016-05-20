@@ -189,7 +189,7 @@ private:
 		Computes new time step based on current error estimate and time step m_h but obeys upper and lower scaling limits.
 		\return Returns the computed time step.
 	*/
-	double adaptTimeStepAfterError(double errEstimate) const;
+	double adaptTimeStepBasedOnErrorEstimate(double errEstimate) const;
 
 	/*! Performs convergence test by comparing values in m_ytNext and m_ytNextIter.
 		\return Returns true if test has passed.
