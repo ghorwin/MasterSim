@@ -40,6 +40,9 @@ public:
 		\endcode
 	*/
 	std::vector< std::vector<unsigned int> >	m_variableIdxMapping;
+
+	/*! Residuals of Newton (also used to compose rhs of equation system. */
+	std::vector<double>							m_res;
 };
 
 } // namespace MASTER_SIM

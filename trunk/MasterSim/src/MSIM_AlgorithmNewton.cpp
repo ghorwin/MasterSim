@@ -12,6 +12,7 @@ void AlgorithmNewton::init() {
 	unsigned int nCycles = m_master->m_cycles.size();
 	m_jacobianMatrix.resize(nCycles);
 	m_variableIdxMapping.resize(nCycles);
+	m_res.resize(m_master->m_realyt.size());
 
 	// now process each cycle
 	for (unsigned int c=0; c<nCycles; ++c) {
@@ -41,6 +42,9 @@ void AlgorithmNewton::init() {
 		unsigned int dim = m_variableIdxMapping[c].size();
 		if (dim != 0)
 			m_jacobianMatrix[c].resize(dim);
+		// Note: dim == 0 means there are no outputs of the slaves in the current cycle connected
+		//       to any of the inputs. Therefore we do not need to iterate in this cycle and can
+		//       just accept the results from the first doStep() calculations.
 	}
 }
 
@@ -59,10 +63,22 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 	// global variable array is expected to be in sync with all slaves
 
+	// Storage memory used:
+	//   m_master->m_realyt          - y_t
+	//   m_master->m_realytNext      - y_{t+h}, inputs to slaves
+	//   m_res                       - r_{t+h}, holds updated solution after each call to slave
+
+	// residual calculated:               m_res -= m_master->m_realytNext
+	// Newton-backsolving inplace in:     m_res
+	// new solution at end of iteration:  m_master->m_realytNextIter = m_master->m_realytNext + m_res
+	// convergence test based on:         m_master->m_realytNextIter - m_master->m_realytNext
+
+	// final result:                      m_master->m_realytNextIter -> m_master->m_realytNext
+
 
 	// ** algorithm start **
 
-	// create a copy of variable array to updated variable array, since we will use this for input in Gauss-Seidel
+	// create a copy of variable array to updated variable array, since we will use this for input in Newton
 	MasterSim::copyVector(m_master->m_realyt, m_master->m_realytNext);
 	MasterSim::copyVector(m_master->m_intyt, m_master->m_intytNext);
 	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);

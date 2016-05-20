@@ -670,6 +670,10 @@ void MasterSim::composeVariableVector() {
 		}
 	}
 
+	// need at least one real variable to compute vector norms
+	if (m_realVariableMapping.empty())
+		throw IBK::Exception("No real variables in connection graph. This is currently considered an error.", FUNC_ID);
+
 	// resize variable vectors
 	m_realyt.resize(m_realVariableMapping.size());
 	m_realytNext.resize(m_realVariableMapping.size());
@@ -774,7 +778,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		err = 0;
 		// compare computed solutions via WRMS Norm of differences
 		for (unsigned int i=0; i<nValues; ++i) {
-			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/(1-2);
+			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/2; // Note: mind the division of 2
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
@@ -803,8 +807,8 @@ bool MasterSim::doErrorCheckRichardson() {
 				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
 			}
 
-			// adjust step size
-			m_h = adaptTimeStepAfterError(err)*2; // mind factor two, because error step adaptation is based on m_h = h/2
+			// reduce step size, but mind factor two, because error step adaptation is based on current m_h = h/2
+			m_h = adaptTimeStepBasedOnErrorEstimate(err)*2;
 
 			m_t = m_errTOriginal;
 			// swap back iteration and error states
@@ -817,8 +821,8 @@ bool MasterSim::doErrorCheckRichardson() {
 
 	// slaves are now positioned at t + 2 * h2
 
-	// compute new estimate for time step size
-	m_hProposed = adaptTimeStepAfterError(err)*2; // mind factor two, because error step adaptation is based on m_h = h/2
+	// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
+	m_hProposed = adaptTimeStepBasedOnErrorEstimate(err)*2;
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
 	// t is at start of the last half-step,
@@ -925,7 +929,7 @@ bool MasterSim::doConvergenceTest() {
 }
 
 
-double MasterSim::adaptTimeStepAfterError(double errEstimate) const {
+double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 	double MAX_SCALE = 1.5; // upper limit for scaling up time step
 	double MIN_SCALE = 0.3; // lower limit for scaling down time step
 	double SAFETY = 0.9; // safety factor
