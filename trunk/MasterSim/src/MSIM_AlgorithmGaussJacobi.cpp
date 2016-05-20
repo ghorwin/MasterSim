@@ -31,7 +31,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 			Slave * slave = cycle.m_slaves[s];
 
 			// update input variables in all slaves, using variables from time t
-			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt);
+			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, false);
 
 			// advance slave
 			m_timer.start();
@@ -44,7 +44,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 			// slave is now at time level t + h and its outputs are updated accordingly
 			// sync results into vector with newly computed quantities
-			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
+			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
 		}
 	}
 

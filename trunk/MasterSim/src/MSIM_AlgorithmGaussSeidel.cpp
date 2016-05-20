@@ -1,5 +1,7 @@
 #include "MSIM_AlgorithmGaussSeidel.h"
 
+#include <cmath>
+
 #include <IBK_assert.h>
 #include <IBK_messages.h>
 
@@ -64,7 +66,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				Slave * slave = cycle.m_slaves[s];
 
 				// update input variables in all slaves, using variables from time t + stepsize (partially updated from previous slaves)
-				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
+				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
 
 				// advance slave
 				m_timer.start();
@@ -86,7 +88,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// slave is now at time level t + stepsize and its outputs are updated accordingly
 				// sync results into vector with newly computed quantities, so that next slave will use newly
 				// computed values already
-				m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext);
+				m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
 			}
 
 			// when iterating, do convergence test
@@ -107,7 +109,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 					IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 
 				// convergence test is based on difference between
-				if (m_master->doConvergenceTest())
+				if (doConvergenceTest())
 					break; // break iteration loop
 			}
 		}
@@ -122,5 +124,47 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	// m_XXXytNext -> values at time point t + h
 	return R_CONVERGED;
 }
+
+
+bool AlgorithmGaussSeidel::doConvergenceTest() {
+	const char * const FUNC_ID = "[AlgorithmGaussSeidel::doConvergenceTest]";
+
+	// compare all state-based values: int, bool and string
+	for (unsigned int i=0; i<m_master->m_intytNextIter.size(); ++i) {
+		if (m_master->m_intytNext[i] != m_master->m_intytNextIter[i])
+			return false;
+	}
+
+	for (unsigned int i=0; i<m_master->m_boolytNextIter.size(); ++i) {
+		if (m_master->m_boolytNext[i] != m_master->m_boolytNextIter[i])
+			return false;
+	}
+
+	for (unsigned int i=0; i<m_master->m_stringytNextIter.size(); ++i) {
+		if (m_master->m_stringytNext[i] != m_master->m_stringytNextIter[i])
+			return false;
+	}
+
+	// WRMS norm of real values
+	double norm = 0;
+	unsigned int nValues = m_master->m_realyt.size();
+	for (unsigned i=0; i<nValues; ++i) {
+		double diff = m_master->m_realytNextIter[i] - m_master->m_realytNext[i];
+		double absValue = std::fabs(m_master->m_realytNextIter[i]);
+		double weight = absValue*m_master->m_project.m_relTol + m_master->m_project.m_absTol;
+		diff /= weight;
+		norm += diff*diff;
+	}
+
+	norm = std::sqrt(norm/nValues);
+	IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+	if (norm > 1) {
+		return false;
+	}
+
+
+	return true;
+}
+
 
 } // namespace MASTER_SIM

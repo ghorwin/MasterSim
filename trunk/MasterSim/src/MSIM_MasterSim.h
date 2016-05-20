@@ -191,24 +191,22 @@ private:
 	*/
 	double adaptTimeStepBasedOnErrorEstimate(double errEstimate) const;
 
-	/*! Performs convergence test by comparing values in m_ytNext and m_ytNextIter.
-		\return Returns true if test has passed.
-	*/
-	bool doConvergenceTest();
 
 	/*! Updates all connected inputs of a given slave using the variables in provided vector. */
 	void updateSlaveInputs(Slave * slave,
 						   const std::vector<double> & variables,
 						   const std::vector<int> &intVariables,
 						   const std::vector<fmi2Boolean> &boolVariables,
-						   const std::vector<std::string> &stringVariables);
+						   const std::vector<std::string> &stringVariables,
+						   bool realOnly);
 
 	/*! Copies all connected outputs of a given slave into the vector 'variables'. */
 	void syncSlaveOutputs(const Slave * slave,
 						  std::vector<double> & realVariables,
 						  std::vector<int> & intVariables,
 						  std::vector<fmi2Boolean> &boolVariables,
-						  std::vector<std::string> & stringVariables);
+						  std::vector<std::string> & stringVariables,
+						  bool realOnly);
 
 	/*! Loops over all slaves and retrieves current states. */
 	void storeCurrentSlaveStates(std::vector<void *> & slaveStates);

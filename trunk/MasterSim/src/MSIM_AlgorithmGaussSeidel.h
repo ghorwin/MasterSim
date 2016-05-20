@@ -19,6 +19,12 @@ public:
 		Will throw an exception if any of the FMUs fails in unrecoverable manner.
 	*/
 	Result doStep();
+
+	/*! Performs convergence test by comparing values in m_ytNext and m_ytNextIter.
+		\return Returns true if test has passed.
+	*/
+	bool doConvergenceTest();
+
 };
 
 } // namespace MASTER_SIM
