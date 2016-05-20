@@ -255,7 +255,7 @@ void AlgorithmNewton::generateJacobian(unsigned int c) {
 		for (unsigned int j=0; j<varCount; ++j) {
 			unsigned int colVarIdx = m_variableIdxMapping[c][j]; // global index of variable
 			// process column i, row j
-			double dq = (m_res[colVarIdx] - m_master->m_realytNext[colVarIdx])/delta;
+			double dq = -(m_res[colVarIdx] - m_master->m_realytNext[colVarIdx])/delta;
 			// add unit matrix
 			if (j == i)
 				dq += 1;
