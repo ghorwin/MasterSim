@@ -121,10 +121,18 @@ All algorithms are called with current time point
 \end_inset
 
  with the mapping 
-\begin_inset Formula $\mathbf{u_{t}=c\left(y_{t}\right)}$
+\begin_inset Formula $\mathbf{u_{s}=P_{s}\left(y\right)}$
 \end_inset
 
- for the inputs to all slaves.
+ for the inputs to all slaves
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Formula $s$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -203,7 +211,7 @@ in$ cycle.slaves} {
 
 			Set slave inputs using inputs from variable vector $
 \backslash
-mathbf{y_t}$ 
+mathbf{y_{t}}$ 
 \backslash
 ;
 \end_layout
@@ -217,9 +225,9 @@ mathbf{y_t}$
 
 \begin_layout Plain Layout
 
-			Retrieve outputs and store in vector $
+			Retrieve outputs and update $
 \backslash
-mathbf{y_{t+h}}$ (partially overwriting vector elements) 
+mathbf{y_{t+h}}$  (overwriting vector elements) 
 \backslash
 ;
 \end_layout
@@ -661,6 +669,48 @@ Newton
 \end_layout
 
 \begin_layout Standard
+Expects FMU states from time 
+\begin_inset Formula $t$
+\end_inset
+
+ and matching inputs 
+\begin_inset Formula $\mathbf{u_{t}}$
+\end_inset
+
+ has been stored.
+\end_layout
+
+\begin_layout Standard
+Newton algorithm:
+\begin_inset Formula 
+\begin{align}
+y & \coloneqq S\left(y\right)\nonumber \\
+0 & =y-S\left(y\right)=G\left(y\right)\nonumber \\
+\frac{\partial G}{\partial y}\Bigr|_{i}\Delta y^{i+1} & =-G\left(y^{i}\right)\nonumber \\
+\frac{\partial G}{\partial y}\Bigr|_{i}\Delta y^{i+1} & =y^{i}-S\left(y^{i}\right)\\
+y^{i+1} & =y^{i}+\Delta y^{i+1}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Jacobian matrix is approximated:
+\begin_inset Formula 
+\begin{eqnarray}
+\frac{\partial G}{\partial y} & \simeq & \frac{G\left(y+\epsilon\right)-G\left(y\right)}{\epsilon}\nonumber \\
+ & = & \frac{y+\epsilon+S\left(y+\epsilon\right)-y-S\left(y\right)}{\epsilon}\nonumber \\
+ & = & 1+\frac{S\left(y+\epsilon\right)-S\left(y\right)}{\epsilon}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -721,13 +771,6 @@ in$ cycles} {
 
 \begin_layout Plain Layout
 
-		Setup Jacobian (will restore slave states at end of function)
-\backslash
-;
-\end_layout
-
-\begin_layout Plain Layout
-
 		
 \backslash
 While {iteration $<$ maxIterations} {
@@ -746,14 +789,18 @@ in$ cycle.slaves} {
 
 				Set slave inputs using inputs from variable vector $
 \backslash
-mathbf{y_{t+h}}$ 
+mathbf{y_{t+h}^i}$ 
 \backslash
 ;
 \end_layout
 
 \begin_layout Plain Layout
 
-				Advance slave to time level $t+h$ 
+				Advance slave to time level $t+h$ to get $
+\backslash
+mathbf{Sy}=
+\backslash
+mathbf{S(y_{t+h}^i)}$
 \backslash
 ;
 \end_layout
@@ -785,14 +832,43 @@ mathbf{r} :=
 \backslash
 mathbf{r} - 
 \backslash
-mathbf{y_{t+h}}$ 
+mathbf{y_{t+h}^i}$ 
 \backslash
 ;
 \end_layout
 
 \begin_layout Plain Layout
 
-			Extract all $r_i$ that belong to the cycle and put them into vector $F$
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {iteration == 1} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				Setup Jacobian $
+\backslash
+mathbf{J}
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			Extract all $r_i$ that belong to the cycle and put them into vector $rhs$
   
 \backslash
 ;
@@ -800,7 +876,9 @@ mathbf{y_{t+h}}$
 
 \begin_layout Plain Layout
 
-			$F := -F$ 
+			$rhs := 
+\backslash
+mbox{variableMap}(r)$ 
 \backslash
 ;
 \end_layout
@@ -814,7 +892,7 @@ mathbf{y_{t+h}}$
 
 \begin_layout Plain Layout
 
-			$F := J^{-1} F$ 
+			$rhs := J^{-1} rhs$ 
 \backslash
 ;
 \end_layout
@@ -840,7 +918,7 @@ mathbf{y_{t+h}}$
 \backslash
 caption{Newton Algorithm
 \backslash
-label{algo:GaussJacobi}}
+label{algo:Newton}}
 \end_layout
 
 \begin_layout Plain Layout

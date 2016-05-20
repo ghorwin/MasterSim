@@ -70,20 +70,22 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 	// Storage memory used:
 	//   m_master->m_realyt          - y_t
-	//   m_master->m_realytNext      - y_{t+h}, inputs to slaves
-	//   m_res                       - r_{t+h}, holds updated solution after each call to slave
+	//   m_master->m_realytNext      - y_{t+h}^i, inputs to slaves
+	//   m_master->m_realytNextIter  - y_{t+h}^i, copy of inputs to slaves
+	//   m_res                       - Sy = S(y_{t+h}^i), holds function evaluation based on iterative guess
 
-	// residual calculated:               m_res -= m_master->m_realytNext
-	// Newton-backsolving inplace in:     m_res
-	// new solution at end of iteration:  m_master->m_realytNextIter = m_master->m_realytNext + m_res
-	// convergence test based on:         m_master->m_realytNextIter - m_master->m_realytNext
+	// residual calculated:               m_rhs = mapping(m_res - m_master->m_realytNext)
+	// Newton-backsolving inplace in:     m_rhs - delta_y^{i+1}
+	// convergence test based on:         ||delta_y^{i+1}||
+	// new solution at end of iteration:  m_master->m_realytNext = m_master->m_realytNextIter + m_res
 
-	// final result:                      m_master->m_realytNextIter -> m_master->m_realytNext
+	// final result:                      m_master->m_realytNext
 
 
 	// ** algorithm start **
 
 	// create a copy of variable array to updated variable array, since we will use this for input in Newton
+	// currently we use constant extrapolation
 	MasterSim::copyVector(m_master->m_realyt, m_master->m_realytNext);
 	MasterSim::copyVector(m_master->m_intyt, m_master->m_intytNext);
 	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);
@@ -103,12 +105,8 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			MasterSim::copyVector(m_master->m_boolytNext, m_master->m_boolytNextIter);
 			std::copy(m_master->m_stringytNext.begin(), m_master->m_stringytNext.end(), m_master->m_stringytNextIter.begin());
 
-			if (iteration == 1) {
-				// in first iteration generate Jacobian matrix, if dimension is 0, this is a NOOP
-				generateJacobian(c);
-			}
-			else {
-				// in following iterations roll-back all slaves in this cycle
+			if (iteration > 1) {
+				// except for the first iteration, roll-back all slaves in this cycle
 				for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 					Slave * slave = cycle.m_slaves[s];
 					slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
@@ -131,10 +129,18 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				break;
 			}
 
+			// TODO : We may add here a convergence test already and stop if we are fulfilling
+			//        the tolerance criterion.
+
 			// compute difference of all variables connected in current cycle and store in vector m_res
 			for (unsigned int i=0; i<varCount; ++i) {
 				unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
 				m_rhs[i] = m_res[varIdx] - m_master->m_realytNext[varIdx];
+			}
+
+			if (iteration == 1) {
+				// in first iteration generate Jacobian matrix, if dimension is 0, this is a NOOP
+				generateJacobian(c);
 			}
 
 			// backsolve with Jacobian, we use only the first m_variableIdxMapping[c].size() values of m_res
@@ -166,6 +172,9 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 		// of the current cycle are available in the next cycle
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 			Slave * slave = cycle.m_slaves[s];
+			// Note: when we have converged, m_master->m_realytNext holds corrected solution (with delta added), when
+			//       we now sync again with the last state of the slaves, we actually get the last iterative value
+			//       stored in the slave. However, the difference should be within the error limit.
 			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
 		}
 
@@ -208,22 +217,52 @@ AbstractAlgorithm::Result AlgorithmNewton::evaluateSlave(Slave * slave, const st
 }
 
 
-void AlgorithmNewton::generateJacobian(unsigned int cycleIdx) {
-	if (m_jacobianMatrix[cycleIdx].n() == 0)
+void AlgorithmNewton::generateJacobian(unsigned int c) {
+	const char * const FUNC_ID = "[AlgorithmNewton::generateJacobian]";
+	if (m_jacobianMatrix[c].n() == 0)
 		return;
 
+	MasterSim::Cycle & cycle = m_master->m_cycles[c];
+
+	// m_realytNext holds S(y_{t+h}^i)
+
+	// We now modify values of m_realytNext, evaluate slaves, compute DQ approximations and
+	// restore values in m_realytNext
+
 	// loop all variables in this cycle
-	// modify variable
+	unsigned int varCount = m_variableIdxMapping[c].size();
+	for (unsigned int i=0; i<varCount; ++i) {
+		unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
+		// modify variable
+		double delta = std::fabs(m_master->m_realytNext[varIdx])*m_master->m_project.m_relTol + 0.01*m_master->m_project.m_absTol;
+		m_master->m_realytNext[varIdx] += delta;
+		// evaluate all slaves in cycle
+		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
+			Slave * slave = cycle.m_slaves[s];
+			// reset slave
+			slave->setState(m_master->m_t, m_master->m_iterationStates[slave->m_slaveIndex]);
+			// then evaluate slave
+			evaluateSlave(slave, m_master->m_realytNext, m_res);
+		}
+		// restore original values
+		m_master->m_realytNext[varIdx] -= delta;
+		// compute dS/dy = (Sy(y+delta) - Sy(y))/delta
 
-	// loop all slaves in cycle
-	//   update all slave inputs
-	//   doStep in all slaves
+		for (unsigned int j=0; j<varCount; ++j) {
+			// process column i, row j
+			double dq = (m_res[varIdx] - m_master->m_realytNext[varIdx])/delta;
+			// add unit matrix
+			if (j == i)
+				dq += 1;
+			// store in Jacobian matrix column
+			m_jacobianMatrix[c](i,j) = dq;
+		}
 
-	// compute difference quotient for each variable in cycle
-	// reset all slaves
-
+	}
 
 	// factorize matrix
+	if (m_jacobianMatrix[c].lu() != 0)
+		throw IBK::Exception("Error during LU factorization of matrix.", FUNC_ID);
 }
 
 

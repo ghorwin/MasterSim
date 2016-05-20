@@ -32,8 +32,10 @@ public:
 	/*! Advances slave using xi as inputs and updates xi1 (only real values). */
 	Result evaluateSlave(MASTER_SIM::Slave * slave, const std::vector<double> & xi, std::vector<double> & xi1);
 
-	/*! Computes Jacobian using DQ approximation and factorizes it. */
-	void generateJacobian(unsigned int cycleIdx);
+	/*! Computes Jacobian using DQ approximation and factorizes it.
+		\param c Cycle index.
+	*/
+	void generateJacobian(unsigned int c);
 
 
 	/*! Jacobian matrixes for each cycle, can be empty in case of only one slave per cycle. */
@@ -47,8 +49,6 @@ public:
 	*/
 	std::vector< std::vector<unsigned int> >	m_variableIdxMapping;
 
-	/*! Residuals of Newton (also used to compose rhs of equation system. */
-	std::vector<double>							m_realytNextIter;
 	/*! Residuals of Newton equation (full vector size with all real variables). */
 	std::vector<double>							m_res;
 	/*! Right-hand-side of Newton equation system (size matches dimension of Jacobian matrix/only coupled variables). */
