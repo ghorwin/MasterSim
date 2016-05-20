@@ -89,7 +89,7 @@
 \quotes_language english
 \papercolumns 1
 \papersides 1
-\paperpagestyle fancy
+\paperpagestyle headings
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -101,6 +101,10 @@
 
 \begin_layout Title
 Algorithms in MasterSim
+\end_layout
+
+\begin_layout Author
+Andreas Nicolai
 \end_layout
 
 \begin_layout Section
@@ -282,15 +286,15 @@ Needs temporary vector
 \end_inset
 
  for iterative quantities.
- Expects FMU states from time 
+ This algorithm expects FMU states from time 
 \begin_inset Formula $t$
 \end_inset
 
  and matching inputs 
-\begin_inset Formula $\mathbf{u_{t}}$
+\begin_inset Formula $\mathbf{u_{t}}=\mathbf{P\left(y_{t}\right)}$
 \end_inset
 
- has been stored.
+ have been stored.
 \end_layout
 
 \begin_layout Standard
@@ -669,26 +673,69 @@ Newton
 \end_layout
 
 \begin_layout Standard
-Expects FMU states from time 
+This algorithm expects FMU states from time 
 \begin_inset Formula $t$
 \end_inset
 
  and matching inputs 
-\begin_inset Formula $\mathbf{u_{t}}$
+\begin_inset Formula $\mathbf{u_{t}}=\mathbf{P\left(y_{t}\right)}$
 \end_inset
 
- has been stored.
+ have been stored.
+ Needs temporary vector 
+\begin_inset Formula $\mathbf{y_{t+h}^{m}}$
+\end_inset
+
+ for iterative quantities, vector 
+\begin_inset Formula $\mathbf{r}$
+\end_inset
+
+ for residuals.
 \end_layout
 
 \begin_layout Standard
-Newton algorithm:
+Newton algorithm is based on rearranged fix point iteration scheme
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:FixPointIteration"
+
+\end_inset
+
+, which is transformed into the Newton step equation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:NewtonStep"
+
+\end_inset
+
+.
+ This gives the correction to the current value estimate
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:ValueCorrection"
+
+\end_inset
+
+.
 \begin_inset Formula 
 \begin{align}
-y & \coloneqq S\left(y\right)\nonumber \\
+y & \coloneqq S\left(y\right)\label{eq:FixPointIteration}\\
 0 & =y-S\left(y\right)=G\left(y\right)\nonumber \\
-\frac{\partial G}{\partial y}\Bigr|_{i}\Delta y^{i+1} & =-G\left(y^{i}\right)\nonumber \\
-\frac{\partial G}{\partial y}\Bigr|_{i}\Delta y^{i+1} & =y^{i}-S\left(y^{i}\right)\\
-y^{i+1} & =y^{i}+\Delta y^{i+1}
+\frac{\partial G}{\partial y}\Bigr|_{m}\Delta y^{m+1} & =-G\left(y^{m}\right)\nonumber \\
+\frac{\partial G}{\partial y}\Bigr|_{m}\Delta y^{m+1} & =y^{m}-S\left(y^{m}\right)\label{eq:NewtonStep}\\
+y^{m+1} & =y^{m}+\Delta y^{m+1}\label{eq:ValueCorrection}
 \end{align}
 
 \end_inset
@@ -697,13 +744,25 @@ y^{i+1} & =y^{i}+\Delta y^{i+1}
 \end_layout
 
 \begin_layout Standard
-Jacobian matrix is approximated:
+Jacobian matrix elements are computed via difference quotiont approximation
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:DQApproximation"
+
+\end_inset
+
+.
 \begin_inset Formula 
-\begin{eqnarray}
-\frac{\partial G}{\partial y} & \simeq & \frac{G\left(y+\epsilon\right)-G\left(y\right)}{\epsilon}\nonumber \\
- & = & \frac{y+\epsilon+S\left(y+\epsilon\right)-y-S\left(y\right)}{\epsilon}\nonumber \\
- & = & 1+\frac{S\left(y+\epsilon\right)-S\left(y\right)}{\epsilon}
-\end{eqnarray}
+\begin{align}
+\frac{\partial G_{i}}{\partial y_{j}} & \simeq\frac{G_{i}\left(\mathbf{y}+\varepsilon\mathbf{e}_{j}\right)-G_{i}\left(\mathbf{y}\right)}{\varepsilon}\nonumber \\
+ & =\frac{\left[\mathbf{y}+\varepsilon\mathbf{e}_{j}\right]_{i}-S_{i}\left(\mathbf{y}+\varepsilon\mathbf{e}_{j}\right)-y_{i}+S_{i}\left(\mathbf{y}\right)}{\varepsilon}\nonumber \\
+ & =\frac{y_{i}+\varepsilon\delta_{ij}-S_{i}\left(\mathbf{y}+\varepsilon\mathbf{e}_{j}\right)-y_{i}+S_{i}\left(\mathbf{y}\right)}{\varepsilon}\nonumber \\
+ & =\delta_{ij}-\frac{S_{i}\left(\mathbf{y}+\varepsilon\mathbf{e}_{j}\right)-S_{i}\left(\mathbf{y}\right)}{\varepsilon}\label{eq:DQApproximation}
+\end{align}
 
 \end_inset
 
@@ -852,7 +911,7 @@ If {iteration == 1} {
 
 				Setup Jacobian $
 \backslash
-mathbf{J}
+mathbf{J}$
 \backslash
 ;
 \end_layout
@@ -885,7 +944,11 @@ mbox{variableMap}(r)$
 
 \begin_layout Plain Layout
 
-			backsolving: 
+			Solve equation system, $rhs$ now holds $
+\backslash
+mathbf{
+\backslash
+Delta y}$ 
 \backslash
 ;
 \end_layout
@@ -895,6 +958,81 @@ mbox{variableMap}(r)$
 			$rhs := J^{-1} rhs$ 
 \backslash
 ;
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\end_layout
+
+\begin_layout Plain Layout
+
+			Compute WRMS norm 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$
+\backslash
+delta = || 
+\backslash
+mathbf{
+\backslash
+Delta y} ||_{WRMS}$ 
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\end_layout
+
+\begin_layout Plain Layout
+
+			Compute new solution 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			$
+\backslash
+mathbf{y_{t+h}^{i+1}} = 
+\backslash
+mathbf{y_{t+h}^{i}} + variableMapping(
+\backslash
+mathbf{
+\backslash
+Delta y})$
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+			
+\backslash
+If {$
+\backslash
+delta < 1$} {
+\end_layout
+
+\begin_layout Plain Layout
+
+				
+\backslash
+textbf{break} 
+\backslash
+;
+\end_layout
+
+\begin_layout Plain Layout
+
+			}
 \end_layout
 
 \begin_layout Plain Layout
