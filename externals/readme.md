@@ -1,11 +1,10 @@
 Third-Party libraries
----------------------
+-----------------
 
 The following third-party libraries are needed.
 Copies of the library releases are in master-sim/trunk/third-party.
 
-1. IBK-Library
-^^^^^^^^^^^^^^
+** 1. IBK-Library **
 
 New versions can be obtained from IBK at TU Dresden, Germany.
 Contact: andreas.nicolai -at- tu-dresden.de
@@ -18,8 +17,7 @@ For example:
 `IBK-4.2.2/IBK`  -> should go to `master-sim/trunk/externals/IBK`
 
 
-2. DataIO-Library
------------------
+** 2. DataIO-Library **
 
 New versions can be obtained from IBK at TU Dresden, Germany.
 Contact: andreas.nicolai -at- tu-dresden.de
