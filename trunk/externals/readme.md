@@ -1,11 +1,11 @@
 Third-Party libraries
-=====================
+---------------------
 
 The following third-party libraries are needed.
 Copies of the library releases are in master-sim/trunk/third-party.
 
 1. IBK-Library
---------------
+^^^^^^^^^^^^^^
 
 New versions can be obtained from IBK at TU Dresden, Germany.
 Contact: andreas.nicolai -at- tu-dresden.de
