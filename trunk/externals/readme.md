@@ -6,6 +6,7 @@ Copies of the library releases are in master-sim/trunk/third-party.
 
 1. IBK-Library
 --------------
+
 New versions can be obtained from IBK at TU Dresden, Germany.
 Contact: andreas.nicolai -at- tu-dresden.de
 
@@ -19,6 +20,7 @@ For example:
 
 2. DataIO-Library
 -----------------
+
 New versions can be obtained from IBK at TU Dresden, Germany.
 Contact: andreas.nicolai -at- tu-dresden.de
 
@@ -49,7 +51,7 @@ IBK Math Kernel Library (subset), see IBK.
 6. TICPP
 --------
 
-TinyXML Library
+TinyXML Library with IBK extensions
 
 
 
