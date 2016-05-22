@@ -14,6 +14,9 @@ public:
 	/*! Parses arguments and converts options to utf8 strings. */
 	void parse(int argc, const char * const argv[]);
 
+	/*! Prints customized help page. */
+	void printHelp(std::ostream & out) const;
+
 	/*! The executable path or installation directory. */
 	IBK::Path		m_executablePath;
 

@@ -72,4 +72,13 @@ void ArgParser::parse(int argc, const char * const argv[]) {
 	}
 }
 
+void ArgParser::printHelp(std::ostream & out) const {
+	out << "Syntax: " << m_appname << " [flags] [options] <project file>\n\n";
+	const unsigned int TEXT_WIDTH = 79;
+	const unsigned int TAB_WIDTH = 20;
+	printFlags(out,TEXT_WIDTH,TAB_WIDTH);
+	printOptions(out,TEXT_WIDTH,TAB_WIDTH);
+}
+
+
 } // namespace MASTER_SIM

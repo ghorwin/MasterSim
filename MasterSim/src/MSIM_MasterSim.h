@@ -31,6 +31,9 @@ public:
 	/*! Destructor, cleans up slaves. */
 	~MasterSim();
 
+	/*! Writes version info to message handler. */
+	static void writeVersionInfo();
+
 	/*! Initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking.
 		Throws an exception if an error occurs during instantiation.
 	*/
