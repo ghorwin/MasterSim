@@ -30,6 +30,7 @@ LIBS += -L../../../externals/lib \
 	-lMasterSim \
 	-lminizip \
 	-lz \
+	-lBlockMod \
 	-lDataIO \
 	-lIBK \
 	-lTiCPP
@@ -38,6 +39,7 @@ INCLUDEPATH = \
 	../../src \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src \
+	../../../externals/BlockMod/src \
 	../../../MasterSim/src
 
 
