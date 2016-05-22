@@ -9,6 +9,7 @@
 #include <IBK_assert.h>
 #include <IBK_Time.h>
 
+#include "MSIM_Constants.h"
 #include "MSIM_FMU.h"
 #include "MSIM_Slave.h"
 #include "MSIM_AlgorithmGaussJacobi.h"
@@ -31,6 +32,13 @@ MasterSim::~MasterSim() {
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
 		delete m_slaves[i];
+}
+
+
+void MasterSim::writeVersionInfo() {
+	const char * const FUNC_ID = "[MasterSim::writeVersionInfo]";
+	IBK::IBK_Message( IBK::FormatString("MasterSimulator, version %1\n").arg(LONG_VERSION), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( "Copyright by Andreas Nicolai, released under GPL license (see LICENSE file).\n\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 }
 
 

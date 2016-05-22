@@ -30,7 +30,7 @@ int main(int argc, char * argv[]) {
 		wait.m_wait = !parser.flagEnabled('x');
 
 		if (parser.flagEnabled('v')) {
-			std::cout << "MasterSimulator, version " << MASTER_SIM::LONG_VERSION << std::endl;
+			MASTER_SIM::MasterSim::writeVersionInfo();
 			return EXIT_SUCCESS;
 		}
 
