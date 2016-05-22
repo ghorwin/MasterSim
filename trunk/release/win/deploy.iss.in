@@ -1,0 +1,60 @@
+; setup section, needs to be application dependent
+[Setup]
+Compression=lzma
+SolidCompression=true
+OutputDir=.
+UsePreviousAppDir=false
+UsePreviousGroup=false
+InternalCompressLevel=ultra
+
+; application description
+AppName=MasterSimulator
+AppVerName=MasterSimulator ${Version}
+AppVersion=${LongVersion}
+DefaultDirName={pf}\IBK\MasterSimulator ${Version}
+DefaultGroupName=IBK\MasterSimulator ${Version}
+OutputBaseFilename=${OutputFileBasename}
+VersionInfoVersion=${LongVersion}
+VersionInfoDescription=MasterSimulator
+
+AppPublisher=Andreas Nicolai
+VersionInfoCopyright=${CurrentYear} Andreas Nicolai
+AppCopyright=${CurrentYear} Andreas Nicolai
+LicenseFile=..\..\doc\LICENSE
+
+
+[Files]
+
+; Program files
+Source: ..\..\bin\release\MasterSimulator.exe; DestDir: {app}
+Source: ..\..\bin\release\MasterSimulatorUI.exe; DestDir: {app}
+Source: VC10\msvcp100.dll; DestDir: {app}
+Source: VC10\msvcr100.dll; DestDir: {app}
+Source: VC10\QtCore4.dll; DestDir: {app}
+Source: VC10\QtGui4.dll; DestDir: {app}
+Source: VC10\QtNetwork4.dll; DestDir: {app}
+Source: VC10\QtXml4.dll; DestDir: {app}
+
+; Translation files
+Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
+
+Source: ..\..\doc\LICENSE ; DestDir: {app}\resources;
+
+; Documentation
+Source: ..\..\doc\manual\MasterSimulator_Manual.pdf; DestDir: {app}; DestName: MasterSimulator ${Version} Manual.pdf
+
+
+[InstallDelete]
+Name: {app}; Type: filesandordirs
+
+[UninstallDelete]
+Name: {app}; Type: filesandordirs
+
+[Icons]
+Name: {group}\MasterSimulator ${Version}; Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; IconIndex: 0
+Name: {group}\MasterSimulator ${Version} Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
+
+[Run]
+Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version}
+
+
