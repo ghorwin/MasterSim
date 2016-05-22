@@ -4,6 +4,5 @@ Release Checklist
 1. Increase version number
 2. Update and release translation (create *.qm file)
 3. Update manual (if any)
-4. Updated database files (Climate data, constructions, materials, ...)
 5. (optional) create tag for release
 
