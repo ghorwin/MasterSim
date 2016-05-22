@@ -48,3 +48,6 @@ HEADERS  += ../../src/MainWindow.h
 
 FORMS    += ../../src/MainWindow.ui
 
+TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
+CODECFORSRC = UTF-8
+
