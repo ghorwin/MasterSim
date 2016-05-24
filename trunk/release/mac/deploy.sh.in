@@ -39,7 +39,7 @@ cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/MasterSimu
 
 # Copy application icon and auxilliary files
 
-cp -R ../../MasterSimulatorUI/resources/Therakles.icns  $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources &&
+cp -R ../../MasterSimulatorUI/resources/MasterSimulatorUI.icns  $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources &&
 cp ../../doc/LICENSE $OUTPUT_DIRECTORY_NAME/LICENSE &&
 
 # Copy qt_menu.nib
