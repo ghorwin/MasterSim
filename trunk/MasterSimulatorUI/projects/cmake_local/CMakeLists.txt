@@ -9,6 +9,7 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../src			# needed so that ui-generated header files find our own headers
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src
+	${PROJECT_SOURCE_DIR}/../../../externals/BlockMod/src
 	${PROJECT_SOURCE_DIR}/../../../MasterSim/src
 )
 
@@ -25,6 +26,7 @@ file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/../../src/*.ui )
 set( LINK_LIBS
 	MasterSim
 	DataIO
+	BlockMod
 	IBKMK
 	IBK
 	TiCPP
