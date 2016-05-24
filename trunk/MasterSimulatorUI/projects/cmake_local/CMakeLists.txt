@@ -57,7 +57,7 @@ if( UNIX )
 	if( APPLE )
 		add_executable( ${PROJECT_NAME} 
 						 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
-						 ${PROJECT_SOURCE_DIR}/../../resources/Delphin6.icns 
+						 ${PROJECT_SOURCE_DIR}/../../resources/MasterSimulatorUI.icns 
 		)
 	else( APPLE )
 		add_executable( ${PROJECT_NAME} 
