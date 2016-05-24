@@ -74,6 +74,7 @@ if( APPLE )
 	# link against the dependent libraries
 	target_link_libraries( ${PROJECT_NAME} 
 		${LINK_LIBS}
+		${QT_LIBRARIES}
 		"-framework Security"
 	)
 
