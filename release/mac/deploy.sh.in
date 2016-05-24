@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# This script is expected to be executed from within release/linux
+# The script will be configured by the python script.
+
+OUTPUT_DIRECTORY_NAME=${OutputDirectoryName}
+OUTPUT_FILE_BASENAME=${OutputFileBasename}
+
+# cleanup existing deployment directory and dmg file
+if [ -d $OUTPUT_DIRECTORY_NAME ]; then
+    rm -rf $OUTPUT_DIRECTORY_NAME
+fi
+if [ -e $OUTPUT_FILE_BASENAME.dmg ]; then 
+    rm $OUTPUT_FILE_BASENAME.dmg
+fi
+
+mkdir -p $OUTPUT_DIRECTORY_NAME &&
+
+echo '*** Creating Application bundle and resources to '$OUTPUT_DIRECTORY_NAME &&
+
+# Copy application bundle into folder
+
+cp -R ../../bin/release/MasterSimulatorUI.app  $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app &&
+cp ../../bin/release/MasterSimulator $OUTPUT_DIRECTORY_NAME/ &&
+
+# Create missing Release-Path and subdirs
+
+mkdir -p $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/translations &&
+mkdir -p $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/doc &&
+
+# Copy translations
+
+cp ../../MasterSimulatorUI/resources/translations/MasterSimulatorUI_de.qm $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/translations/ &&
+cp ../../MasterSimulatorUI/resources/translations/qt_de.qm $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/translations/ &&
+
+# Copy manual
+
+cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/MasterSimulator_Manual.pdf &&
+
+# Copy application icon and auxilliary files
+
+cp -R ../../MasterSimulatorUI/resources/Therakles.icns  $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources &&
+cp ../../doc/LICENSE $OUTPUT_DIRECTORY_NAME/LICENSE &&
+
+# Copy qt_menu.nib
+
+cp -R qt_menu.nib $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/ && 
+
+# Copy Info.plist (configured by Python script)
+
+cp -f Info.plist $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/ &&
+
+echo '*** Creating Symlinks to Applications and Documentation directories' &&
+ln -s /Applications $OUTPUT_DIRECTORY_NAME/Applications && 
+ln -s /Library/Documentation $OUTPUT_DIRECTORY_NAME/Documentation &&
+
+# finally create dmg
+echo '*** Creating dmg' &&
+../scripts/mkdmg $OUTPUT_DIRECTORY_NAME &&
+mv $OUTPUT_DIRECTORY_NAME.dmg $OUTPUT_FILE_BASENAME.dmg &&
+
+echo "Created '$OUTPUT_FILE_BASENAME'.dmg"
+
