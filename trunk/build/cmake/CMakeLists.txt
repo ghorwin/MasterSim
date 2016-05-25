@@ -46,6 +46,8 @@ FIND_PACKAGE( Qt4 )
 if( QT4_FOUND )
 
 	set( QT_USE_QTXML TRUE )
+	set( QT_USE_QTSVG TRUE )
+	set( QT_USE_QTNETWORK TRUE )
 	include( ${QT_USE_FILE} )
 
 endif( QT4_FOUND )

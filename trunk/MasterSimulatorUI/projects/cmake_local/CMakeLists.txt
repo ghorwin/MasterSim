@@ -76,6 +76,7 @@ if( APPLE )
 		${LINK_LIBS}
 		${QT_LIBRARIES}
 		"-framework Security"
+		"-framework SystemConfiguration"
 	)
 
 else( APPLE )
