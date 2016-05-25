@@ -174,10 +174,6 @@ public:
 	/*! The version number stored during last run (used to detect version changes). */
 	QString						m_lastVersionNumber;
 
-	unsigned int				m_xSizeAtProgrammClose;		///< x size at program close
-	unsigned int				m_ySizeAtProgrammClose;		///< y size at program close
-
-
 	/*! Enumeration values for different properties to be managed in settings.
 	*/
 	enum PropertyType {

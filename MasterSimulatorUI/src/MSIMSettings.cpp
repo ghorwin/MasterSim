@@ -58,9 +58,6 @@ void MSIMSettings::setDefaults() {
 
 	m_maxNumUNDOSteps = 10000;
 
-	m_xSizeAtProgrammClose = 1024;
-	m_ySizeAtProgrammClose = 768;
-
 	// determine text executable
 	m_textEditorExecutable.clear();
 #ifdef Q_OS_UNIX
@@ -101,9 +98,6 @@ void MSIMSettings::read() {
 //	const char * const FUNC_ID = "[MSIMSettings::read]";
 
 	QSettings settings( m_organization, m_appName );
-	m_xSizeAtProgrammClose = settings.value("LastXSize", m_xSizeAtProgrammClose ).toUInt();
-	m_ySizeAtProgrammClose = settings.value("LastYSize", m_ySizeAtProgrammClose ).toUInt();
-
 	m_lastProjectFile = settings.value("LastProjectFile", QString()).toString();
 	m_recentProjects = settings.value("RecentProjects", QStringList()).toStringList();
 
@@ -136,8 +130,6 @@ void MSIMSettings::readMainWindowSettings(QByteArray &geometry, QByteArray &stat
 void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 
 	QSettings settings( m_organization, m_appName );
-	settings.setValue("LastXSize", m_xSizeAtProgrammClose);
-	settings.setValue("LastYSize", m_ySizeAtProgrammClose);
 	settings.setValue("LastProjectFile", m_lastProjectFile);
 	settings.setValue("RecentProjects", m_recentProjects);
 
