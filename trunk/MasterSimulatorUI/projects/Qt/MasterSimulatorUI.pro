@@ -49,14 +49,16 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMDirectories.cpp \
 	../../src/MSIMMainWindow.cpp \
 	../../src/MSIMProjectHandler.cpp \
-	../../src/MSIMSettings.cpp
+	../../src/MSIMSettings.cpp \
+    ../../src/MSIMConversion.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMDirectories.h \
 	../../src/MSIMMainWindow.h \
 	../../src/MSIMProjectHandler.h \
-	../../src/MSIMSettings.h
+	../../src/MSIMSettings.h \
+    ../../src/MSIMConversion.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui

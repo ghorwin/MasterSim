@@ -108,7 +108,7 @@ void MSIMMainWindow::closeEvent(QCloseEvent * event) {
 	MSIMSettings::instance().m_ySizeAtProgrammClose = height();
 
 	// save user config and recent file list
-	MSIMSettings::instance().write();
+	MSIMSettings::instance().write(saveGeometry(), saveState());
 
 	event->accept();
 }
