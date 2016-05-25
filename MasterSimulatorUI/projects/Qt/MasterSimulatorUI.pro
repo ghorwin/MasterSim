@@ -12,7 +12,7 @@ TARGET = MasterSimulatorUI
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
 TEMPLATE = app
-QT += xml core gui
+QT += xml core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -50,10 +50,17 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMMainWindow.cpp \
 	../../src/MSIMProjectHandler.cpp \
 	../../src/MSIMSettings.cpp \
-    ../../src/MSIMConversion.cpp \
-    ../../src/MSIMLanguageHandler.cpp \
-    ../../src/MSIMMessageHandler.cpp \
-    ../../src/MSIMDebugApplication.cpp
+	../../src/MSIMConversion.cpp \
+	../../src/MSIMLanguageHandler.cpp \
+	../../src/MSIMMessageHandler.cpp \
+	../../src/MSIMDebugApplication.cpp \
+	../../src/MSIMWelcomeScreen.cpp \
+    ../../src/MSIMLogWidget.cpp \
+    ../../src/MSIMPreferencesDialog.cpp \
+    ../../src/MSIMPreferencesPageGeneral.cpp \
+    ../../src/MSIMUndoCommandBase.cpp \
+    ../../src/MSIMUndoProject.cpp \
+    ../../src/MSIMBrowseFilenameWidget.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -61,17 +68,27 @@ HEADERS  += \
 	../../src/MSIMMainWindow.h \
 	../../src/MSIMProjectHandler.h \
 	../../src/MSIMSettings.h \
-    ../../src/MSIMConversion.h \
-    ../../src/MSIMLanguageHandler.h \
-    ../../src/MSIMMessageHandler.h \
-    ../../src/MSIMDebugApplication.h
+	../../src/MSIMConversion.h \
+	../../src/MSIMLanguageHandler.h \
+	../../src/MSIMMessageHandler.h \
+	../../src/MSIMDebugApplication.h \
+	../../src/MSIMWelcomeScreen.h \
+    ../../src/MSIMLogWidget.h \
+    ../../src/MSIMPreferencesDialog.h \
+    ../../src/MSIMPreferencesPageGeneral.h \
+    ../../src/MSIMUndoCommandBase.h \
+    ../../src/MSIMUndoProject.h \
+    ../../src/MSIMBrowseFilenameWidget.h
 
 FORMS    += \
-	../../src/MSIMMainWindow.ui
+	../../src/MSIMMainWindow.ui \
+	../../src/MSIMWelcomeScreen.ui \
+    ../../src/MSIMPreferencesDialog.ui \
+    ../../src/MSIMPreferencesPageGeneral.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
 
 RESOURCES += \
-    ../../resources/MasterSimulator.qrc
+	../../resources/MasterSimulator.qrc
 
