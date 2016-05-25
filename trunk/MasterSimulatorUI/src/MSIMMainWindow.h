@@ -1,8 +1,11 @@
-#ifndef MSIMMainWindowH
-#define MSIMMainWindowH
+#ifndef MSIMMainWindow_H
+#define MSIMMainWindow_H
 
 #include <QMainWindow>
 #include <QUndoStack>
+#include <QProcess>
+
+#include <map>
 
 #include "MSIMProjectHandler.h"
 
@@ -10,10 +13,14 @@ namespace Ui {
 	class MSIMMainWindow;
 }
 
+class MSIMWelcomeScreen;
+class MSIMLogWidget;
+class MSIMThreadBase;
+class MSIMPreferencesDialog;
+
 /*! Main window class. */
 class MSIMMainWindow : public QMainWindow {
 	Q_OBJECT
-
 public:
 
 	/*! Returns a pointer to the MSIMMainWindow instance.
@@ -27,7 +34,6 @@ public:
 	*/
 	static void addUndoCommand(QUndoCommand * command);
 
-
 	/*! Default MSIMMainWindow constructor. */
 #if QT_VERSION >= 0x050000
 // Qt5 code
@@ -40,7 +46,15 @@ public:
 	/*! Default destructor. */
 	~MSIMMainWindow();
 
+	/*! Public access function to save project file (called from simulation view).
+		\return Returns true if project was saved and project handler
+				has now an unmodified project with valid project filename.
+	*/
+	bool saveProject();
+
 protected:
+	/*! Checks if project file has been changed by external application. */
+	void changeEvent(QEvent *event);
 	/*! Does the confirm-saving-before-close stuff. */
 	void closeEvent(QCloseEvent * event);
 
@@ -49,10 +63,12 @@ private slots:
 	void on_actionFileOpen_triggered();
 	void on_actionFileSave_triggered();
 	void on_actionFileSaveAs_triggered();
+	void on_actionFileReload_triggered();
 	void on_actionFileExport_triggered();
 	void on_actionFileClose_triggered();
 	void on_actionFileQuit_triggered();
-
+	void on_actionEditTextEditProject_triggered();
+	void on_actionEditPreferences_triggered();
 	void on_actionHelpAboutQt_triggered();
 	void on_actionHelpAboutMasterSim_triggered();
 
@@ -63,7 +79,7 @@ private slots:
 	void onActionSwitchLanguage();
 
 	/*! Updates the state of all actions based on the current condition of the project.
-		This slot is connected to the signal updateActions() from ProjectHandler.
+		This slot is connected to the signal updateActions() from MSIMProjectHandler.
 	*/
 	void onUpdateActions();
 
@@ -79,7 +95,48 @@ private slots:
 	*/
 	void onUpdateRecentProjects();
 
+	/*! Opens a project with filename.
+		Called from onActionOpenRecentFile() and from welcome screen.
+	*/
+	void onOpenProjectByFilename(const QString & filename);
+
+
+
 private:
+	/*! Sets up all dock widgets with definition lists. */
+	void setupDockWidgets();
+
+	/*! Updates the window title. */
+	void updateWindowTitle();
+
+	/*! Exports the current project to the selected exportFilePath path.
+		Opens an (internationalized) message box on the first error encountered.
+		\return Returns true on success, false on error.
+	*/
+	bool exportProjectPackage(const QString & exportFilePath);
+
+	/*! Imports the project package to the selected import directory.
+		Opens an (internationalized) message box on the first error encountered.
+		\param packageFilePath Full path to package file.
+		\param targetDirectory Target dir to extract package content into (no subdirectory is created)
+		\param projectFilePath If package contains a project file, this file name (full path) will be stored
+		\param packageContainsMSIM True if package is an MSIM package and should contain an msim project file.
+		\return Returns true on success, false on error.
+	*/
+	bool importProjectPackage(const QString & packageFilePath, const QString & targetDirectory,
+							  QString & projectFilePath, bool packageContainsMSIM);
+
+	/*! Creates a thumbnail-image of the current project sketch. */
+	void saveThumbNail();
+
+	/*! Adds another language setting action, when the corresponding language files exist. */
+	void addLanguageAction(const QString & langId, const QString & actionCaption);
+
+	/*! Helper function to remove a directory recursivly.
+		\note in Qt5, see QDir::removeRecursively()
+	*/
+	static bool removeDirRecursively(const QString & dirName);
+
 	/*! Global pointer to main window instance.
 		Initialized in the constructor of MSIMMainWindow and
 		reset to NULL in the destructor. So be sure that the main window
@@ -87,9 +144,8 @@ private:
 	*/
 	static MSIMMainWindow		*m_self;
 
-
 	/*! Main user interface pointer. */
-	Ui::MSIMMainWindow			*ui;
+	Ui::MSIMMainWindow			*m_ui;
 	/*! The global undo stack in the program. */
 	QUndoStack					*m_undoStack;
 	/*! Menu for the recent projects entries. */
@@ -100,6 +156,16 @@ private:
 	QList<QAction*>				m_languageActions;
 	/*! The project handler that manages the actual project. */
 	MSIMProjectHandler			m_projectHandler;
+
+	/*! The welcome screen. */
+	MSIMWelcomeScreen			*m_welcomeScreen;
+
+	/*! User preferences. */
+	MSIMPreferencesDialog		*m_preferencesDialog;
+
+	/*! Widget for logging content. */
+	MSIMLogWidget				*m_logWidget;
+
 };
 
-#endif // MSIMMainWindowH
+#endif // MSIMMainWindow_H

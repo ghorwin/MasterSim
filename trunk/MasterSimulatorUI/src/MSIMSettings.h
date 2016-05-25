@@ -141,6 +141,8 @@ public:
 	/*! Maximum number of undo steps. */
 	unsigned int				m_maxNumUNDOSteps;
 
+	unsigned int				m_thumbNailSize;
+
 	/*! The file last opened in the UI.
 		This value should be set by the application whenever a project
 		file was successfully loaded or saved.

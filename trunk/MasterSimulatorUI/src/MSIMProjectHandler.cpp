@@ -4,32 +4,52 @@
 #include <QString>
 #include <QMessageBox>
 #include <QFileDialog>
-
-#include <QDebug>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
 
 #include <IBK_Exception.h>
 #include <IBK_FileUtils.h>
+#include <IBK_Path.h>
 #include <IBK_assert.h>
+
+#include <MSIM_Project.h>
 
 #include "MSIMSettings.h"
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
+#include "MSIMLogWidget.h"
+
+MSIMProjectHandler * MSIMProjectHandler::m_self = NULL;
+
+MSIMProjectHandler & MSIMProjectHandler::instance() {
+	Q_ASSERT_X(m_self != NULL, "[MSIMProjectHandler::instance]",
+		"You must not access MSIMProjectHandler::instance() when the is no MSIMProjectHandler "
+		"instance (anylonger).");
+	return *m_self;
+}
+
 
 MSIMProjectHandler::MSIMProjectHandler() :
 	m_project(NULL),
 	m_modified(false)
 {
-}
+	IBK_ASSERT(m_self == NULL);
+	m_self = this;
+ }
 
 
 MSIMProjectHandler::~MSIMProjectHandler( ){
 	// free owned project, if any
 	delete m_project;
+	m_self = NULL;
 }
 
 
-void MSIMProjectHandler::newProject() {
+void MSIMProjectHandler::newProject(QWidget * parent) {
+
 	createProject();
+
+	setModified(AllModified);
 
 	// signal UI that we now have a project
 	emit updateActions();
@@ -88,6 +108,7 @@ bool MSIMProjectHandler::closeProject(QWidget * parent) {
 
 
 void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,	bool silent) {
+	const char * const FUNC_ID = "[MSIMProjectHandler::loadProject]";
 
 	// we must not have a project loaded
 	IBK_ASSERT(!isValid());
@@ -95,7 +116,13 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 	// create a new project
 	createProject();
 
-	if (!read(fileName)) {
+	try {
+		if (!read(fileName))
+			throw IBK::Exception("Error reading project file.", FUNC_ID);
+		// project read successfully
+	}
+	catch (IBK::Exception & ex) {
+		ex.writeMsgStackToError();
 		if (!silent) {
 
 			QMessageBox::critical(
@@ -105,7 +132,17 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 						.arg(fileName)
 						.arg(MSIMDirectories::globalLogFile())
 			);
-
+			QDialog dlg;
+			QVBoxLayout * lay = new QVBoxLayout;
+			MSIMLogWidget * logWidget = new MSIMLogWidget;
+			logWidget->showLogFile(MSIMDirectories::globalLogFile());
+			lay->addWidget(logWidget);
+			QDialogButtonBox * btnBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, &dlg);
+			lay->addWidget(btnBox);
+			connect(btnBox, SIGNAL(accepted()), &dlg, SLOT(accept()));
+			dlg.setLayout(lay);
+			dlg.resize(1025,600);
+			dlg.exec();
 		}
 		// remove project again
 		destroyProject();
@@ -113,7 +150,6 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		// Note: no need to emit updateActions() here since view state hasn't finished.
 		return;
 	}
-	// project read successfully
 
 
 	// first tell project and thus all connected views that the
@@ -130,7 +166,7 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		if (!silent) {
 			QMessageBox::critical(
 					parent,
-					tr("Error loading project."),
+					tr("Error loading project"),
 					tr("Data in project was missing/invalid, see error log '%1' for details.").arg(MSIMDirectories::globalLogFile())
 			);
 		}
@@ -150,6 +186,15 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		// add project file name to recent file list
 		addToRecentFiles(fileName);
 	} // if (fileName == m_projectFile)
+
+}
+
+
+void MSIMProjectHandler::reloadProject(QWidget * parent) {
+	QString projectFileName = projectFile();
+	m_modified = false; // so that closeProject doesn't ask questions
+	closeProject(parent);
+	loadProject(parent, projectFileName, false); // emits updateActions() if project was successfully loaded
 }
 
 
@@ -168,9 +213,17 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveWithNewFilename(QWidget *
 
 	if (filename.isEmpty()) return SaveCanceled; // canceled
 
+	QString fnamebase = QFileInfo(filename).baseName();
+	if (fnamebase.isEmpty()) {
+		QMessageBox::critical(parent, tr("Invalid file name"), tr("Please enter a valid file name!"));
+		return SaveCanceled;
+	}
+
 	// relay to saveProject() which updates modified flag and emits corresponding signals.
 	if (saveProject(parent, filename) != SaveOK)
 		return SaveFailed; // saving failed
+
+	/// \todo signal a change of file name, for widgets that are displaying the current filename
 
 	return SaveOK;
 }
@@ -182,6 +235,11 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 	QString fname = fileName;
 	if (!fname.endsWith(DOT_FILE_EXTENSION))
 		fname.append(DOT_FILE_EXTENSION);
+
+	// updated created and lastEdited tags
+	if (m_project->m_created.empty())
+		m_project->m_created = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
+	m_project->m_lastEdited = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
 
 	// save project file
 	if (!write(fname)) {
@@ -209,7 +267,7 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 
 void MSIMProjectHandler::setModified(int modificationType, void * data) {
 	// special case:  modification type = NotModified
-	DefaultModificationTypes modType = static_cast<DefaultModificationTypes>(modificationType);
+	ModificationTypes modType = static_cast<ModificationTypes>(modificationType);
 	switch (modType) {
 
 		default: ; // skip all others
@@ -217,6 +275,23 @@ void MSIMProjectHandler::setModified(int modificationType, void * data) {
 	m_modified = true;
 
 	emit modified(modificationType, data);
+}
+
+
+const MASTER_SIM::Project & MSIMProjectHandler::project() const {
+	const char * const FUNC_ID = "[MSIMProjectHandler::project]";
+
+	if (m_project == NULL)
+		throw IBK::Exception("Must not call project() on invalid ProjectHandler.", FUNC_ID);
+	return *m_project;
+}
+
+
+void MSIMProjectHandler::updateLastReadTime() {
+	const char * const FUNC_ID = "[MSIMProjectHandler::updateLastReadTime]";
+	if (!isValid())
+		throw IBK::Exception("Must not call updateLastReadTime() on invalid project.", FUNC_ID);
+	m_lastReadTime = QFileInfo(projectFile()).lastModified();
 }
 
 
@@ -248,14 +323,17 @@ bool MSIMProjectHandler::read(const QString & fname) {
 
 	if (!QFileInfo(fname).exists()) {
 		IBK::IBK_Message(IBK::FormatString("File '%1' does not exist or permissions are missing for accessing the file.")
-						 .arg(IBK::Path(fname.toUtf8().data())), IBK::MSG_ERROR, FUNC_ID);
+						 .arg(fname.toUtf8().data()), IBK::MSG_ERROR, FUNC_ID);
 		return false;
 	}
 
 	try {
 
-		m_project->read(IBK::Path(fname.toUtf8().data()));
+		// filename is converted to utf8 before calling readXML
+		m_project->read(IBK::Path(fname.toUtf8().data()), false);
 		m_projectFile = fname;
+
+		m_lastReadTime = QFileInfo(fname).lastModified();
 
 		// after reading the project file, we should update the views
 		// this is done in a subsequent call to setModified() from the calling function
@@ -281,16 +359,18 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 	QFile file(fname);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		IBK::IBK_Message(IBK::FormatString("Cannot create/write file '%1' (path does not exists or missing permissions).")
-						 .arg(IBK::Path(fname.toUtf8().data())), IBK::MSG_ERROR, FUNC_ID);
+						 .arg(fname.toUtf8().data()), IBK::MSG_ERROR, FUNC_ID);
 		return false;
 	}
 	file.close();
 
 	try {
+		// filename is converted to utf8 before calling writeXML
 		m_project->write(IBK::Path(fname.toUtf8().data()));
 
 		// also set the project file name
 		m_projectFile = fname;
+		*const_cast<QDateTime*>(&m_lastReadTime) = QFileInfo(fname).lastModified();
 		return true;
 	}
 	catch (IBK::Exception & ex) {
@@ -307,17 +387,22 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 void MSIMProjectHandler::addToRecentFiles(const QString& fname) {
 
 	MSIMSettings & si = MSIMSettings::instance();
+	//qDebug() << si.m_recentProjects;
+
+	// compose absolute file name
+	QFileInfo finfo(fname);
+	QString filePath =  finfo.absoluteFilePath();
 
 	// check if recent project file is already in the list
-	int i = si.m_recentProjects.indexOf(fname);
+	int i = si.m_recentProjects.indexOf(filePath);
 
 	if (i != -1) {
 		// already there, move it to front
 		si.m_recentProjects.removeAt(i);
-		si.m_recentProjects.push_front(fname);
+		si.m_recentProjects.push_front(filePath);
 	}
 	else {
-		si.m_recentProjects.push_front(fname);
+		si.m_recentProjects.push_front(filePath);
 		while (static_cast<unsigned int>(si.m_recentProjects.count()) > si.m_maxRecentProjects)
 			si.m_recentProjects.pop_back();
 	}
@@ -325,4 +410,5 @@ void MSIMProjectHandler::addToRecentFiles(const QString& fname) {
 	// update recent project list
 	emit updateRecentProjects();
 }
+
 

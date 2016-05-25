@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QString>
+#include <QDateTime>
 
 #include <MSIM_Project.h>
 
@@ -20,13 +21,14 @@ class MSIMProjectHandler : public QObject {
 	Q_DISABLE_COPY(MSIMProjectHandler)
 public:
 
+	/*! Returns singleton instance of project handler. */
+	static MSIMProjectHandler & instance();
+
 	/*! Modification types used in undo actions.
 		\see setModified()
 	*/
-	enum DefaultModificationTypes {
-		/*! Used when project file name changes (for example in a save-as operation). */
-		ProjectFileChanged,
-		/*! Used whenever the project data changes completely (new project created, project loaded etc)
+	enum ModificationTypes {
+		/*! Used whenever the project data changes completely (new project created, project loaded etc.)
 			and a complete reset of all views and models is needed. */
 		AllModified = 0xFFFF0001
 	};
@@ -39,7 +41,7 @@ public:
 	};
 
 
-	/*! Constructor. */
+	/*! Constructor, only to be used by MSIMMainWindow (but MSIMMainWindow must not be a friend of us). */
 	MSIMProjectHandler();
 
 	/*! Destructor, destroys managed project. */
@@ -61,7 +63,7 @@ public:
 	/*! Creates a new project instance (must not have one already) and resets project file name.
 		Emits updateActions() to signal that view state has changed.
 	*/
-	void newProject();
+	void newProject(QWidget * parent);
 
 	/*! Checks for modifications and asks user to confirm saving, then closes project.
 		Also destroys project object.
@@ -85,6 +87,11 @@ public:
 	void loadProject(	QWidget * parent,
 						const QString & filename,
 						bool silent);
+
+	/*! Closes project (discarding modifications) and reopens the project.
+		Project must have a valid filename already.
+	*/
+	void reloadProject(QWidget *parent);
 
 	/*! Saves project with new filename (interactive function, asks user to input filename).
 		Calls saveProject() internally.
@@ -123,6 +130,16 @@ public:
 	*/
 	void setModified(int modificationType, void * data = NULL);
 
+	/*! Returns a const reference to the internal project.
+		\warning This function throws an exception if there isn't a valid project loaded.
+	*/
+	const MASTER_SIM::Project & project() const;
+
+	/*! Returns the time stamp of the last modification of the current project. */
+	const QDateTime lastReadTime() const { return m_lastReadTime; }
+
+	/*! Updates time stamp of the last modification of the current project, but only if project is present. */
+	void updateLastReadTime();
 
 signals:
 	/*! Emitted when the project has been modified.
@@ -194,7 +211,12 @@ private:
 	void addToRecentFiles(const QString& fname);
 
 
-	// *** PROTECTED DATA MEMBERS ***
+	// *** PRIVATE DATA MEMBERS ***
+
+	/*! Pointer to self instance.
+		Returned from instance().
+	*/
+	static MSIMProjectHandler	*m_self;
 
 	/*! Pointer to the general project data storage class.
 		This pointer is set and unset via the member functions create() and destroy().
@@ -202,6 +224,11 @@ private:
 		to undo actions via a suitable mechanism.
 	*/
 	MASTER_SIM::Project		*m_project;
+
+	/*! Holds the time stamp of the last time the project was read.
+		This time stamp is updated in read() and used to check for external project modifications.
+	*/
+	QDateTime				m_lastReadTime;
 
 	/*! Contains the state whether the project was modified or not. */
 	bool					m_modified;
@@ -215,5 +242,7 @@ private:
 	mutable QString			m_projectFile;
 };
 
+/*! Convenience function for accessing the MASTER_SIM::Project data directly with a shorter synopsis. */
+inline const MASTER_SIM::Project & project() { return MSIMProjectHandler::instance().project(); }
 
 #endif // MSIMProjectHandlerH
