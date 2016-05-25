@@ -50,7 +50,10 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMMainWindow.cpp \
 	../../src/MSIMProjectHandler.cpp \
 	../../src/MSIMSettings.cpp \
-    ../../src/MSIMConversion.cpp
+    ../../src/MSIMConversion.cpp \
+    ../../src/MSIMLanguageHandler.cpp \
+    ../../src/MSIMMessageHandler.cpp \
+    ../../src/MSIMDebugApplication.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -58,11 +61,17 @@ HEADERS  += \
 	../../src/MSIMMainWindow.h \
 	../../src/MSIMProjectHandler.h \
 	../../src/MSIMSettings.h \
-    ../../src/MSIMConversion.h
+    ../../src/MSIMConversion.h \
+    ../../src/MSIMLanguageHandler.h \
+    ../../src/MSIMMessageHandler.h \
+    ../../src/MSIMDebugApplication.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
+
+RESOURCES += \
+    ../../resources/MasterSimulator.qrc
 
