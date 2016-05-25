@@ -4,6 +4,8 @@
 #include <QCoreApplication>
 #include <QDir>
 #include <QObject>
+#include <QVariant>
+#include <QMap>
 
 #include <IBK_ArgParser.h>
 #include <IBK_messages.h>
@@ -75,11 +77,21 @@ public:
 	*/
 	void read();
 
+	/*! Reads the main window configuration properties.
+		\param geometry A bytearray with the main window geometry (see QMainWindow::saveGeometry())
+		\param state A bytearray with the main window state (toolbars, dockwidgets etc.)
+					(see QMainWindow::saveState())
+	*/
+	void readMainWindowSettings(QByteArray &geometry, QByteArray &state);
+
 	/*! Writes the user specific config data.
 		The data is writted in the usual method supported by the various platforms.
 		The default implementation writes all member variables.
+		\param geometry A bytearray with the main window geometry (see QMainWindow::saveGeometry())
+		\param state A bytearray with the main window state (toolbars, dockwidgets etc.)
+					(see QMainWindow::saveState())
 	*/
-	void write();
+	void write(QByteArray geometry, QByteArray state);
 
 
 	// ****** member variables ************
@@ -135,6 +147,13 @@ public:
 	*/
 	QString						m_lastProjectFile;
 
+
+	/*! Executable file name of external text editor.
+		The text editor executable is determined automatically in setDefaults(),
+		but can be customized by the user.
+	*/
+	QString						m_textEditorExecutable;
+
 	/*! Current language ID (en, de, etc.)
 		Can be interpreted by the application to load the respective translation files.
 		This should be done before any UI component is instantiated.
@@ -152,10 +171,32 @@ public:
 	/*! Stores the logging threshold for the log file. */
 	IBK::verbosity_levels_t		m_userLogLevelLogfile;
 
-	QString						m_lastVersionNumber;		///< The version number stored during last run (used to detect version changes).
+	/*! The version number stored during last run (used to detect version changes). */
+	QString						m_lastVersionNumber;
 
 	unsigned int				m_xSizeAtProgrammClose;		///< x size at program close
 	unsigned int				m_ySizeAtProgrammClose;		///< y size at program close
+
+
+	/*! Enumeration values for different properties to be managed in settings.
+	*/
+	enum PropertyType {
+		PT_LastImportDirectory,
+		PT_LastFileOpenDirectory,
+		NUM_PT
+	};
+
+	/*! Generic property map to store and retrieve configuration settings. */
+	QMap<PropertyType, QVariant>		m_propertyMap;
+
+	/*! Recursive directory search function.
+		Collects list of all files in directory 'baseDir' and all its child directories that
+		match any of the extensions in stringlist 'extensions'.
+	*/
+	static void recursiveSearch(QDir baseDir, QStringList & files, const QStringList & extensions);
+
+	/*! Keywords used for serialization of the properties. */
+	static const char * const			PROPERTY_KEYWORDS[NUM_PT];
 
 private:
 

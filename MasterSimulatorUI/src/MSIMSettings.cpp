@@ -8,8 +8,15 @@
 #include <QDesktopServices>
 #include <QSettings>
 
+#include "MSIMConversion.h"
 
 MSIMSettings * MSIMSettings::m_self = NULL;
+
+const char * const					MSIMSettings::PROPERTY_KEYWORDS[MSIMSettings::NUM_PT] = {
+	"LastImportDirectory",
+	"LastFileOpenDirectory"
+};
+
 
 MSIMSettings & MSIMSettings::instance() {
 	Q_ASSERT_X(m_self != NULL, "[MSIMSettings::instance]", "You must create an instance of "
@@ -54,6 +61,18 @@ void MSIMSettings::setDefaults() {
 	m_xSizeAtProgrammClose = 1024;
 	m_ySizeAtProgrammClose = 768;
 
+	// determine text executable
+	m_textEditorExecutable.clear();
+#ifdef Q_OS_UNIX
+	m_textEditorExecutable = "gedit";
+#elif defined(Q_OS_WIN)
+	m_textEditorExecutable = "C:\\Program Files (x86)\\Notepad++\\notepad++.exe";
+#else
+	// OS x editor?
+#endif
+
+	/// \todo Implement default text editor detection
+
 	m_flags[NoSplashScreen] = false;
 	m_flags[FullScreen] = false;
 }
@@ -71,8 +90,10 @@ void MSIMSettings::applyCommandLineArgs(const IBK::ArgParser & argParser) {
 	if (argParser.hasOption("lang"))
 		m_langId = QString::fromStdString(argParser.option("lang"));
 	// first positional argument is project file
-	if (argParser.args().size() > 1)
-		m_initialProjectFile = QString::fromStdString(argParser.args()[1]);
+	if (argParser.args().size() > 1){
+		std::string dummy = argParser.args()[1];
+		m_initialProjectFile = utf82QString(dummy);
+	}
 }
 
 
@@ -89,14 +110,30 @@ void MSIMSettings::read() {
 	m_maxRecentProjects = settings.value("MaxRecentProjects", m_maxRecentProjects).toUInt();
 	m_maxNumUNDOSteps = settings.value("MaxNumUndoSteps", m_maxNumUNDOSteps).toUInt();
 
+	QString tmpTextEditorExecutable = settings.value("TextEditorExecutable", m_textEditorExecutable ).toString();
+	if (!tmpTextEditorExecutable.isEmpty())
+		m_textEditorExecutable = tmpTextEditorExecutable;
 	m_langId = settings.value("LangID", QString() ).toString();
 
 	m_userLogLevelConsole = (IBK::verbosity_levels_t)settings.value("UserLogLevelConsole", m_userLogLevelConsole ).toInt();
 	m_userLogLevelLogfile = (IBK::verbosity_levels_t)settings.value("UserLogLevelLogfile", m_userLogLevelLogfile ).toInt();
+
+	for (unsigned int i=0; i<NUM_PT; ++i) {
+		QVariant var = settings.value(PROPERTY_KEYWORDS[i], QVariant());
+		if (var.isValid())
+			m_propertyMap.insert((PropertyType)i, var);
+	}
 }
 
 
-void MSIMSettings::write() {
+void MSIMSettings::readMainWindowSettings(QByteArray &geometry, QByteArray &state) {
+	QSettings settings( m_organization, m_appName );
+	geometry = settings.value("MainWindowGeometry", QByteArray()).toByteArray();
+	state = settings.value("MainWindowState", QByteArray()).toByteArray();
+}
+
+
+void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 
 	QSettings settings( m_organization, m_appName );
 	settings.setValue("LastXSize", m_xSizeAtProgrammClose);
@@ -107,9 +144,42 @@ void MSIMSettings::write() {
 	settings.setValue("MaxRecentProjects", m_maxRecentProjects );
 	settings.setValue("UndoSize",m_maxNumUNDOSteps);
 
+	settings.setValue("TextEditorExecutable", m_textEditorExecutable );
 	settings.setValue("LangID", m_langId );
 
 	settings.setValue("UserLogLevelConsole", m_userLogLevelConsole);
 	settings.setValue("UserLogLevelLogfile", m_userLogLevelLogfile);
+
+	settings.setValue("MainWindowGeometry", geometry);
+	settings.setValue("MainWindowState", state);
+
+	for (QMap<PropertyType, QVariant>::const_iterator it = m_propertyMap.constBegin();
+		 it != m_propertyMap.constEnd(); ++it)
+	{
+		settings.setValue(PROPERTY_KEYWORDS[it.key()], it.value());
+	}
 }
 
+
+void MSIMSettings::recursiveSearch(QDir baseDir, QStringList & files, const QStringList & extensions) {
+	QStringList	fileList = baseDir.entryList(QStringList(), QDir::AllEntries | QDir::NoDotAndDotDot, QDir::Name);
+
+	foreach (QString f, fileList) {
+		QString fullPath = baseDir.absoluteFilePath(f);
+		QFileInfo finfo(fullPath);
+		if (finfo.isDir()) {
+			recursiveSearch(QDir(fullPath), files, extensions);
+		}
+		else {
+			bool found = false;
+			foreach (QString ext, extensions) {
+				if (finfo.suffix() == ext) {
+					found = true;
+					break;
+				}
+			}
+			if (found)
+				files.append(fullPath);
+		}
+	}
+}
