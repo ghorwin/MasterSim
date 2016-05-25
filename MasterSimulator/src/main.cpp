@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
 		if (!parser.m_projectFile.exists())
 			throw IBK::Exception(IBK::FormatString("Project file '%1' doesn't exist.").arg(parser.m_projectFile), FUNC_ID);
 		IBK::IBK_Message(IBK::FormatString("Reading project '%1'\n").arg(parser.m_projectFile), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-		project.read(IBK::Path(parser.m_projectFile ));
+		project.read(IBK::Path(parser.m_projectFile), false);
 
 		// create simulator
 		MASTER_SIM::MasterSim masterSim;
