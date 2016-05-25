@@ -154,6 +154,11 @@ void Project::read(const IBK::Path & prjFile) {
 }
 
 
+void Project::write(const IBK::Path & prjFile) const {
+	// TODO : Implement
+}
+
+
 const Project::SimulatorDef & Project::simulatorDefinition(const std::string & slaveName) const {
 	for (unsigned int s=0; s<m_simulators.size(); ++s) {
 		if (m_simulators[s].m_name == slaveName)
