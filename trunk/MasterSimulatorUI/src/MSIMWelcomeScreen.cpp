@@ -224,22 +224,19 @@ void MSIMWelcomeScreen::on_toolButtonOpenProject_clicked() {
 
 void MSIMWelcomeScreen::downloadFinished(QNetworkReply *reply) {
 	if (reply->error()) {
-		m_welcomePageNews = QString("<i>%1</i>")
-							.arg(tr("unable to download news content"));
+		m_welcomePageNews = tr("<p>&nbsp;<p><hr><h1>No news today</h1><p><i>Unable to download news content at this time.</i></p>");
 	}
 	else {
 		QByteArray newsRaw = reply->readAll();
 		// extract text for current language
 		QString news = QString::fromUtf8(newsRaw);
-		if (news.indexOf("[lang:")) {
+		if (news.indexOf("[lang:") != -1) {
 			QStringList langTexts = news.split("[lang:");
 			for (int i=0; i<langTexts.count(); ++i) {
-				QString langHeader = langTexts[i].left(8);
-				if (langHeader.count() == 8) {
-					QString langId = langHeader.right(2);
-					if (langId == MSIMLanguageHandler::instance().langId()) {
-						news = langTexts[i].right(langTexts[i].count()-8);
-					}
+				QString langId = langTexts[i].left(2);
+				if (langId == MSIMLanguageHandler::instance().langId()) {
+					news = langTexts[i].right(langTexts[i].count()-3);
+					break;
 				}
 			}
 		}
