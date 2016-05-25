@@ -1,4 +1,28 @@
 <RCC>
     <qresource prefix="/">
+        <file>gfx/actions/64x64/new.png</file>
+        <file>gfx/actions/64x64/open.png</file>
+        <file>gfx/actions/24x24/edit.png</file>
+        <file>gfx/actions/24x24/fileopen.png</file>
+        <file>gfx/actions/24x24/filesave.png</file>
+        <file>gfx/actions/24x24/info.png</file>
+        <file>gfx/actions/24x24/minus.png</file>
+        <file>gfx/actions/24x24/plus.png</file>
+        <file>gfx/actions/64x64/D5import.png</file>
+        <file>gfx/actions/24x24/down.png</file>
+        <file>gfx/actions/24x24/print.png</file>
+        <file>gfx/actions/24x24/up.png</file>
+        <file>gfx/actions/24x24/editcopy.png</file>
+        <file>gfx/icons/de.png</file>
+        <file>gfx/icons/en.png</file>
+        <file>gfx/views/64x64/constructionView.png</file>
+        <file>gfx/views/64x64/projectProperties.png</file>
+        <file>gfx/views/64x64/simulationView.png</file>
+        <file>gfx/actions/24x24/filenew.png</file>
+        <file>gfx/actions/24x24/redo.png</file>
+        <file>gfx/actions/24x24/reload.png</file>
+        <file>gfx/actions/24x24/undo.png</file>
+        <file>gfx/actions/24x24/zoom-in-24.png</file>
+        <file>gfx/actions/24x24/zoom-out-24.png</file>
     </qresource>
 </RCC>
