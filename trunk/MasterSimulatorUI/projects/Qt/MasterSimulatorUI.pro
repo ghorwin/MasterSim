@@ -32,6 +32,7 @@ LIBS += -L../../../externals/lib \
 	-lz \
 	-lBlockMod \
 	-lDataIO \
+	-lIBKMK \
 	-lIBK \
 	-lTiCPP
 
@@ -44,11 +45,21 @@ INCLUDEPATH = \
 
 
 SOURCES += ../../src/main.cpp \
-		../../src/MainWindow.cpp
+	../../src/MSIMUIConstants.cpp \
+	../../src/MSIMDirectories.cpp \
+	../../src/MSIMMainWindow.cpp \
+	../../src/MSIMProjectHandler.cpp \
+	../../src/MSIMSettings.cpp
 
-HEADERS  += ../../src/MainWindow.h
+HEADERS  += \
+	../../src/MSIMUIConstants.h \
+	../../src/MSIMDirectories.h \
+	../../src/MSIMMainWindow.h \
+	../../src/MSIMProjectHandler.h \
+	../../src/MSIMSettings.h
 
-FORMS    += ../../src/MainWindow.ui
+FORMS    += \
+	../../src/MSIMMainWindow.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
