@@ -23,7 +23,7 @@ Project::Project() :
 }
 
 
-void Project::read(const IBK::Path & prjFile) {
+void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 	const char * const FUNC_ID = "[Project::read]";
 
 	std::ifstream in;

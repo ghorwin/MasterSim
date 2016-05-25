@@ -80,7 +80,7 @@ public:
 	/*! Reads project file.
 		Throws an exception if reading fails.
 	*/
-	void read(const IBK::Path & prjFile);
+	void read(const IBK::Path & prjFile, bool headerOnly);
 
 	/*! Writes project file.
 		Throws an exception if writing fails.
@@ -91,6 +91,16 @@ public:
 	const SimulatorDef & simulatorDefinition(const std::string & slaveName) const;
 
 	// Content of project file
+
+	// Meta data
+
+	/*! Time stamp when project was last edited. */
+	std::string					m_lastEdited;
+	/*! Time stamp when project was created. */
+	std::string					m_created;
+	/*! Descriptive comment (utf8 encoded). */
+	std::string					m_comment;
+
 
 
 	/*! Starting time point of simulation, if not 0 serialization of existing state of FMUs is done at startup. */
