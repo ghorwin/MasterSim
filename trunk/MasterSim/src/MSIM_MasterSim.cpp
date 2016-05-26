@@ -717,11 +717,19 @@ bool MasterSim::doErrorCheckRichardson() {
 	unsigned int nValues = m_realyt.size();
 	if (m_errRealyt.size() != nValues) {
 		// resize required memory on first use
-		m_errRealyt.resize(nValues);
 		m_errRealytFirst.resize(nValues);
+
+		m_errRealyt.resize(nValues);
+		m_errIntyt.resize(m_intyt.size());
+		m_errBoolyt.resize(m_boolyt.size());
+		m_errStringyt.resize(m_stringyt.size());
 	}
-	MasterSim::copyVector(m_realyt, m_errRealyt);
 	MasterSim::copyVector(m_realytNext, m_errRealytFirst);
+
+	MasterSim::copyVector(m_realyt, m_errRealyt);
+	MasterSim::copyVector(m_intyt, m_errIntyt);
+	MasterSim::copyVector(m_boolyt, m_errBoolyt);
+	std::copy(m_stringyt.begin(), m_stringyt.end(), m_errStringyt.begin());
 
 	// we will now reset the state of all slaves to be back at time t
 	restoreSlaveStates(m_t, m_iterationStates);
@@ -809,12 +817,11 @@ bool MasterSim::doErrorCheckRichardson() {
 
 			// roll back slaves
 			restoreSlaveStates(m_t, m_errorCheckStates);
-			// sync slave output caches and variables with m_XXXyt variables
-			for (unsigned int s=0; s<m_slaves.size(); ++s) {
-				Slave * slave = m_slaves[s];
-				slave->cacheOutputs();
-				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
-			}
+			// restore variables from time t
+			MasterSim::copyVector(m_errRealyt, m_realyt);
+			MasterSim::copyVector(m_errIntyt, m_intyt);
+			MasterSim::copyVector(m_errBoolyt, m_boolyt);
+			std::copy(m_errStringyt.begin(), m_errStringyt.end(), m_stringyt.begin());
 
 			// reduce step size, but mind factor two, because error step adaptation is based on current m_h = h/2
 			m_h = adaptTimeStepBasedOnErrorEstimate(err)*2;
@@ -831,7 +838,7 @@ bool MasterSim::doErrorCheckRichardson() {
 	// slaves are now positioned at t + 2 * h2
 
 	// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
-	m_hProposed = adaptTimeStepBasedOnErrorEstimate(err)*2;
+	m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax);
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
 	// t is at start of the last half-step,
