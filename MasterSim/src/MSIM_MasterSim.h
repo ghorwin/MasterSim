@@ -310,10 +310,17 @@ private:
 
 	/*! Time point at start of original step. */
 	double							m_errTOriginal;
-	/*! Slave variables (input and output) at current master time. */
-	std::vector<double>				m_errRealyt;
-	/*! Slave variables (input and output) at next master time, computed by first (long) step. */
+	/*! Slave variables (input and output) at time t+h, computed by long step. */
 	std::vector<double>				m_errRealytFirst;
+
+	/*! Slave variables (input and output) at current master time, type real, stored as backup for resetting state when error test fails. */
+	std::vector<double>				m_errRealyt;
+	/*! Slave variables (input and output) at current master time, type int, stored as backup for resetting state when error test fails. */
+	std::vector<int>				m_errIntyt;
+	/*! Slave variables (input and output) at current master time, type bool, stored as backup for resetting state when error test fails. */
+	std::vector<fmi2Boolean>		m_errBoolyt;
+	/*! Slave variables (input and output) at current master time, type string, stored as backup for resetting state when error test fails. */
+	std::vector<std::string>		m_errStringyt;
 
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
