@@ -423,7 +423,7 @@ size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, con
 			if (*it == *delit)
 				break;
 		}
-		if (*it == *delit)
+		if (delit != delims.end())
 			break;
 		tmp += *it;
 		++it;
