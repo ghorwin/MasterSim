@@ -217,7 +217,7 @@ void MasterSim::doStep() {
 		// This could be made dependend on iteration count...
 		if (m_project.m_errorControlMode == Project::EM_NONE) {
 			// increase time step for next step
-			m_hProposed = 1.2*m_h;
+			m_hProposed = std::min(m_project.m_hMax, 1.2*m_h);
 		}
 
 		// adjust step size to not exceed end time point

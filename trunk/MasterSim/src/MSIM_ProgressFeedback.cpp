@@ -110,8 +110,10 @@ void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 			<< ((m_ETC == -1) ? std::string("---") : IBK::Time::format_time_difference(m_ETC))
 			<< (betweenOutputs ? " *" : "") << "\n";
 	// write with higher output priority if at least half a second has passed
-	if (elapsedSecondsThisStep > 0.5)
+	if (elapsedSecondsThisStep > 0.5) {
 		IBK::IBK_Message( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		m_lastElapsedSecondsWithOutput = elapsedSeconds;
+	}
 	else
 		IBK::IBK_Message( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
@@ -123,7 +125,6 @@ void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 	}
 
 	m_notifyTime = 0.001*m_stopWatch.difference() + 15; // Notify again in 15 seconds
-	m_lastElapsedSecondsWithOutput = elapsedSeconds;
 }
 // ---------------------------------------------------------------------------
 
