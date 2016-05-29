@@ -7,5 +7,5 @@
 proj.file-list = [loc('compress_datafile.py')]
 proj.file-type = 'shared'
 proj.launch-config = {loc('compress_datafile.py'): ('project',
-        (u'/home/ghorwin/svn/mastersim-code/trunk/scripts/Temperatures_SimX.d6o --skip-rows 15',
+        (u'/home/ghorwin/svn/mastersim-code/trunk/scripts/ten_data_lines.txt --skip-rows 15',
          ''))}
