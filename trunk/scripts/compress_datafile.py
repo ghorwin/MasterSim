@@ -14,7 +14,7 @@
 import os
 import optparse
 
-RELTOL = 1e-4
+RELTOL = 1e-5
 ABSTOL = 1e-6
 
 def parseLine(lineStr):
