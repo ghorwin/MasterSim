@@ -34,6 +34,7 @@ def removeRedundantValues(valueLines, stringLines, offset):
 		# first process all intervals
 		j = 0
 		print ("{} lines to process".format(len(valueLines)))
+		skipIndexes = []
 		while j+2 < len(valueLines):
 			refVals = valueLines[j]
 			skipCandidate = valueLines[j+1]
@@ -55,14 +56,27 @@ def removeRedundantValues(valueLines, stringLines, offset):
 					break
 			if allGood:
 				# we can remove the line
-				del valueLines[j+1]
-				del lines[offset+ j+1]
-				j = j + 1
+				skipIndexes.append(j+1)
 				intervalFound = True
-			else:
-				j = j + 2 # keep the line
+			j = j + 2 # keep the line
+		if len(skipIndexes) != 0:
+			newValueLines = []
+			newLines = stringLines[:offset]
+			j = 0
+			for i in range(len(skipIndexes)):
+				nextSkipIndex = skipIndexes[i]
+				for k in range(j, nextSkipIndex):
+					newValueLines.append(valueLines[k])
+					newLines.append(stringLines[offset+k])
+				j = nextSkipIndex + 1
+			# append remaing lines
+			for k in range(j, len(valueLines)):
+				newValueLines.append(valueLines[k])
+				newLines.append(stringLines[offset+k])
+			stringLines = newLines
+			valueLines = newValueLines
+	return stringLines
 	
-
 parser = optparse.OptionParser("Syntax: %prog <datafile> --skip-rows 12 [--output-file <target datafile path>]")
 parser.add_option("--skip-rows", dest="skip_rows", default="0", type="int", 
                   help="specify number of header rows to skip")
@@ -141,7 +155,7 @@ try:
 		valueLines.append(vals)
 
 	# now remove values iteratively
-	removeRedundantValues(valueLines, lines, current)
+	lines = removeRedundantValues(valueLines, lines, current)
 
 	# now write all remaining lines out
 	for i in range(current, len(lines)):
