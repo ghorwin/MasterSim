@@ -67,6 +67,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_self = this;
 
 	m_ui->setupUi(this);
+	m_ui->centralWidget->layout()->setMargin(0);
 
 
 	// *** setup welcome widget ***
