@@ -10,147 +10,7 @@
     <height>625</height>
    </rect>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="tabPosition">
-       <enum>QTabWidget::North</enum>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tabFMUs">
-       <attribute name="title">
-        <string>FMUs and Slaves</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Functional Mockup Units</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0" rowspan="3">
-            <widget class="QTableWidget" name="tableWidgetFMUs"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QToolButton" name="toolButtonAddFMU">
-             <property name="icon">
-              <iconset resource="../resources/MasterSimulator.qrc">
-               <normaloff>:/gfx/actions/24x24/plus.png</normaloff>:/gfx/actions/24x24/plus.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QToolButton" name="toolButtonRemoveFMU">
-             <property name="icon">
-              <iconset resource="../resources/MasterSimulator.qrc">
-               <normaloff>:/gfx/actions/24x24/minus.png</normaloff>:/gfx/actions/24x24/minus.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>128</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Slaves/Simulators</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0" rowspan="3">
-            <widget class="QTableWidget" name="tableWidgetSlaves"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QToolButton" name="toolButtonAddSlave">
-             <property name="icon">
-              <iconset resource="../resources/MasterSimulator.qrc">
-               <normaloff>:/gfx/actions/24x24/plus.png</normaloff>:/gfx/actions/24x24/plus.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QToolButton" name="toolButtonRemoveSlave">
-             <property name="icon">
-              <iconset resource="../resources/MasterSimulator.qrc">
-               <normaloff>:/gfx/actions/24x24/minus.png</normaloff>:/gfx/actions/24x24/minus.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>135</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tabConnections">
-       <attribute name="title">
-        <string>Connections</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
-        <item>
-         <widget class="QTableWidget" name="tableWidget_3"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tabSimOptions">
-       <attribute name="title">
-        <string>Master Settings</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tabCharts">
-       <attribute name="title">
-        <string>Simulation and Diagrams</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
+  <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -215,6 +75,8 @@
    <addaction name="actionFileOpen"/>
    <addaction name="actionFileSave"/>
    <addaction name="separator"/>
+   <addaction name="actionViewSimulators"/>
+   <addaction name="actionViewConnections"/>
   </widget>
   <action name="actionFileNew">
    <property name="icon">
@@ -363,6 +225,22 @@
    </property>
    <property name="toolTip">
     <string>Reloads the current project</string>
+   </property>
+  </action>
+  <action name="actionViewSimulators">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FMUs and Simulators</string>
+   </property>
+  </action>
+  <action name="actionViewConnections">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Connections</string>
    </property>
   </action>
  </widget>
