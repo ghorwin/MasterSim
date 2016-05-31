@@ -31,6 +31,8 @@
 #include "MSIMUndoProject.h"
 #include "MSIMConversion.h"
 #include "MSIMPreferencesDialog.h"
+#include "MSIMViewSlaves.h"
+#include "MSIMViewConnections.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = NULL;
 
@@ -59,7 +61,10 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_ui(new Ui::MSIMMainWindow),
 	m_undoStack(new QUndoStack(this)),
 	m_recentProjectsMenu(NULL),
-	m_preferencesDialog(NULL)
+	m_preferencesDialog(NULL),
+	m_stackedWidget(NULL),
+	m_viewSlaves(NULL),
+	m_viewConnections(NULL)
 {
 //	const char * const FUNC_ID = "[MSIMMainWindow::MSIMMainWindow]";
 
@@ -67,7 +72,6 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_self = this;
 
 	m_ui->setupUi(this);
-	m_ui->centralWidget->layout()->setMargin(0);
 
 
 	// *** setup welcome widget ***
@@ -77,6 +81,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	lay->addWidget(m_welcomeScreen);
 	lay->setMargin(0);
 	lay->setSpacing(0);
+
 	m_ui->centralWidget->setLayout(lay);
 	m_welcomeScreen->updateWelcomePage();
 
@@ -85,11 +90,23 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	connect(m_welcomeScreen, SIGNAL(openProject(QString)), this, SLOT(onOpenProjectByFilename(QString)));
 	connect(m_welcomeScreen, SIGNAL(updateRecentList()), this, SLOT(onUpdateRecentProjects()));
 
+	// *** create views ***
+
+	m_stackedWidget = new QStackedWidget(this);
+	lay->addWidget(m_stackedWidget);
+	m_viewSlaves = new MSIMViewSlaves(this);
+	m_stackedWidget->insertWidget(0, m_viewSlaves);
+	m_viewConnections = new MSIMViewConnections(this);
+	m_stackedWidget->insertWidget(1, m_viewConnections);
+
+	// set FMU page as default
+	m_ui->actionViewSimulators->setChecked(true);
 
 	// *** connect to ProjectHandler signals ***
 
 	connect(&m_projectHandler, SIGNAL(updateActions()), this, SLOT(onUpdateActions()));
 	connect(&m_projectHandler, SIGNAL(updateRecentProjects()), this, SLOT(onUpdateRecentProjects()));
+
 
 	// *** Setup log widget ***
 
@@ -133,12 +150,15 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	if (!geometry.isEmpty())
 		restoreGeometry(geometry);
 
+
 	// *** update actions/UI State depending on project ***
 	onUpdateActions();
+
 
 	// *** Populate language menu ***
 	addLanguageAction("en", "English");
 	addLanguageAction("de", "Deutsch");
+
 
 	// *** read last loaded project/project specified on command line ***
 
@@ -452,6 +472,8 @@ void MSIMMainWindow::onUpdateActions() {
 	m_welcomeScreen->setVisible(!have_project);
 	// toolbar is only visible when we have a project
 	m_ui->toolBar->setVisible(have_project);
+	// views are only visible when we have a project
+	m_stackedWidget->setVisible(have_project);
 
 	// also update window caption and status bar
 	if (have_project) {
@@ -601,3 +623,18 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 	}
 }
 
+
+void MSIMMainWindow::on_actionViewSimulators_toggled(bool arg1) {
+	// toggle off all other view actions
+	m_ui->actionViewConnections->blockSignals(true);
+	m_ui->actionViewConnections->setChecked(false);
+	m_ui->actionViewConnections->blockSignals(false);
+	m_stackedWidget->setCurrentIndex(0);
+}
+
+void MSIMMainWindow::on_actionViewConnections_toggled(bool arg1) {
+	m_ui->actionViewSimulators->blockSignals(true);
+	m_ui->actionViewSimulators->setChecked(false);
+	m_ui->actionViewSimulators->blockSignals(false);
+	m_stackedWidget->setCurrentIndex(1);
+}

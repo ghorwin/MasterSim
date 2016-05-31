@@ -4,6 +4,7 @@
 #include <QSplashScreen>
 #include <QTimer>
 #include <QLocale>
+#include <QPalette>
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
@@ -38,6 +39,10 @@ int main(int argc, char *argv[]) {
 	const char * const FUNC_ID = "[main]";
 
 	MSIMDebugApplication a(argc, argv);
+
+//	QPalette p;
+//	p.setBrush(QPalette::Window, QColor(44,44,44));
+//	a.setPalette(p);
 
 #if QT_VERSION >= 0x050000
 	qInstallMessageHandler(qDebugMsgHandler);

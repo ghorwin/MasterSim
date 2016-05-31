@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QUndoStack>
 #include <QProcess>
+#include <QStackedWidget>
 
 #include <map>
 
@@ -17,6 +18,9 @@ class MSIMWelcomeScreen;
 class MSIMLogWidget;
 class MSIMThreadBase;
 class MSIMPreferencesDialog;
+class MSIMViewSlaves;
+class MSIMViewConnections;
+
 
 /*! Main window class. */
 class MSIMMainWindow : public QMainWindow {
@@ -102,6 +106,10 @@ private slots:
 
 
 
+	void on_actionViewSimulators_toggled(bool arg1);
+
+	void on_actionViewConnections_toggled(bool arg1);
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();
@@ -165,6 +173,11 @@ private:
 
 	/*! Widget for logging content. */
 	MSIMLogWidget				*m_logWidget;
+
+	QStackedWidget				*m_stackedWidget;
+
+	MSIMViewSlaves				*m_viewSlaves;
+	MSIMViewConnections			*m_viewConnections;
 
 };
 
