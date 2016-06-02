@@ -1,4 +1,4 @@
-#include "MSIMSlaveItemDelegate.h"
+#include "MSIMConnectionItemDelegate.h"
 
 #include <QPainter>
 #include <QColor>
@@ -6,19 +6,21 @@
 
 #include "MSIMUIConstants.h"
 
-MSIMSlaveItemDelegate::MSIMSlaveItemDelegate(QObject *parent) :
+MSIMConnectionItemDelegate::MSIMConnectionItemDelegate(QObject *parent) :
 	QItemDelegate(parent)
 {
 }
 
-void MSIMSlaveItemDelegate::paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
-	if (index.column() != 0) {
+void MSIMConnectionItemDelegate::paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
+	QVariant haveError = index.data(Qt::UserRole+1);
+	if (haveError.toBool()) {
 		QItemDelegate::paint(painter, option, index);
 		return;
 	}
 
 	QString text = index.data().toString();
 	QVariant data = index.data(Qt::UserRole);
+
 	QColor col = data.value<QColor>();
 	QRect r(option.rect);
 
@@ -49,6 +51,5 @@ void MSIMSlaveItemDelegate::paint( QPainter * painter, const QStyleOptionViewIte
 		doc.drawContents(painter, clip);
 
 		painter->restore();
-	}
-}
+	}}
 

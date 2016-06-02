@@ -26,15 +26,15 @@ Project::Project() :
 const unsigned int COLOR_COUNT = 10;
 const char * const SIMULATOR_COLORS[COLOR_COUNT] = {
 	"#FA8072",
-	"#FFD700",
+	"#0000CD",
 	"#9400D3",
 	"#008000",
 	"#20B2AA",
 	"#6A5ACD",
 	"#FF8C00",
-	"#0000CD",
 	"#A0522D",
-	"#4682B4"
+	"#4682B4",
+	"#FFD700"
 };
 
 
