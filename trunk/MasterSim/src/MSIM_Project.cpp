@@ -23,8 +23,22 @@ Project::Project() :
 {
 }
 
+const unsigned int COLOR_COUNT = 10;
+const char * const SIMULATOR_COLORS[COLOR_COUNT] = {
+	"#FA8072",
+	"#FFD700",
+	"#9400D3",
+	"#008000",
+	"#20B2AA",
+	"#6A5ACD",
+	"#FF8C00",
+	"#0000CD",
+	"#A0522D",
+	"#4682B4"
+};
 
-void Project::read(const IBK::Path & prjFile, bool headerOnly) {
+
+void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 	const char * const FUNC_ID = "[Project::read]";
 
 	std::ifstream in;
@@ -36,6 +50,7 @@ void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 
 	if (!in)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
+
 
 	// read file line-by-line
 	std::string line;
@@ -53,6 +68,7 @@ void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 			// switch to different section
 			if (line.find("simulator") == 0) {
 				SimulatorDef sim;
+				sim.m_color = IBK::Color::fromHtml(SIMULATOR_COLORS[m_simulators.size() % COLOR_COUNT]);
 				sim.parse(line);
 				m_simulators.push_back(sim);
 				continue;
@@ -62,7 +78,7 @@ void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 				std::string graphEdges = line.substr(5);
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
-				if (IBK::explode_in2(graphEdges, tokens, " \t") != 2)
+				if (IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens) != 2)
 					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
 				g.m_outputVariableRef = IBK::trim_copy(tokens[0]);
@@ -75,12 +91,12 @@ void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 				std::string paraString = line.substr(9);
 				IBK::trim(paraString);
 				// general parameters
-				if (IBK::explode_in2(paraString, tokens, " \t") != 2)
+				if (IBK::explode(paraString, tokens, " \t", IBK::EF_TrimTokens) != 2)
 					throw IBK::Exception(IBK::FormatString("Expected format 'parameter <flat name> <value>', got '%1'").arg(line), FUNC_ID);
 				std::string value = tokens[1];
 				// extract slave name
 				std::string parameter = tokens[0];
-				if (IBK::explode_in2(parameter, tokens, '.') != 2)
+				if (IBK::explode(parameter, tokens, ".", IBK::EF_TrimTokens) != 2)
 					throw IBK::Exception(IBK::FormatString("Expected parameter name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
 				std::string slaveName = tokens[0];
 				parameter = tokens[1];
@@ -171,6 +187,8 @@ const Project::SimulatorDef & Project::simulatorDefinition(const std::string & s
 }
 
 
+
+
 void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 	const char * const FUNC_ID = "[Project::SimulatorDef::parse]";
 	// simulator   0 0 Part1 fmus/simx/Part1.fmu
@@ -188,6 +206,15 @@ void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, IBK::FormatString("Bad format of simulator definition line '%1'.").arg(simulatorDef), FUNC_ID);
 	}
+}
+
+
+std::string Project::GraphEdge::extractSlaveName( const std::string & variableRef) {
+	std::vector<std::string> tokens;
+	unsigned int count = IBK::explode(variableRef, tokens, ".", IBK::EF_KeepEmptyTokens);
+	if (count < 2)
+		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef), "[Project::GraphEdge::extractSlaveName]");
+	return tokens[0];
 }
 
 

@@ -2,6 +2,7 @@
 #define MSIMUIConstantsH
 
 #include <QString>
+class QTableWidget;
 
 #include <MSIM_Constants.h>
 
@@ -24,5 +25,9 @@ extern const char * const DOT_FILE_EXTENSION;
 extern const int TABLE_FONT_SIZE;
 /*! Fixed-size font family to be used in tables. */
 extern const char * const FIXED_FONT_FAMILY;
+
+/*! Utility function to ensure consistant table formatting. */
+void formatTable(QTableWidget * tab);
+
 
 #endif  // MSIMUIConstantsH

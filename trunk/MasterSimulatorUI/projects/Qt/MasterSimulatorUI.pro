@@ -62,7 +62,8 @@ SOURCES += ../../src/main.cpp \
     ../../src/MSIMUndoProject.cpp \
     ../../src/MSIMBrowseFilenameWidget.cpp \
     ../../src/MSIMViewSlaves.cpp \
-    ../../src/MSIMViewConnections.cpp
+    ../../src/MSIMViewConnections.cpp \
+    ../../src/MSIMSlaveItemDelegate.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -82,7 +83,8 @@ HEADERS  += \
     ../../src/MSIMUndoProject.h \
     ../../src/MSIMBrowseFilenameWidget.h \
     ../../src/MSIMViewSlaves.h \
-    ../../src/MSIMViewConnections.h
+    ../../src/MSIMViewConnections.h \
+    ../../src/MSIMSlaveItemDelegate.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \

@@ -72,25 +72,25 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 				MASTER_SIM::Project pro;
 				try {
 					pro.read(IBK::Path(finfo.filePath().toUtf8().data()), true);
+					QString created;
+					if (pro.m_created.empty())
+						created = "---";
+					else
+						created = utf82QString(pro.m_created);
+					QString lastModified;
+					if (pro.m_lastEdited.empty())
+						lastModified = "---";
+					else
+						lastModified = utf82QString(pro.m_lastEdited);
+					description = tr("<i>Created: %1, Last modified: %2</i><br>%3")
+										  .arg(created)
+										  .arg(lastModified)
+										  .arg(utf82QString(pro.m_comment));
 				}
 				catch (IBK::Exception &) {
 					// error reading project file, missing permissions?
-					pro = MASTER_SIM::Project(); // reset with empty instance
+					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project</font></i> <a href=\"projectRemove:%1\">Remove %2</a>").arg( i ).arg( finfo.fileName() );
 				}
-				QString created;
-				if (pro.m_created.empty())
-					created = "---";
-				else
-					created = utf82QString(pro.m_created);
-				QString lastModified;
-				if (pro.m_lastEdited.empty())
-					lastModified = "---";
-				else
-					lastModified = utf82QString(pro.m_lastEdited);
-				description = tr("<i>Created: %1, Last modified: %2</i><br>%3")
-									  .arg(created)
-									  .arg(lastModified)
-									  .arg(utf82QString(pro.m_comment));
 			}
 			else {
 				description = tr("<i><font color=\"#800000\">Project not accessible</font></i> <a href=\"projectRemove:%1\">Remove %2</a>").arg( i ).arg( finfo.fileName() );

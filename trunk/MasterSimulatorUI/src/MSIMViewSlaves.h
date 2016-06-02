@@ -7,13 +7,16 @@ namespace Ui {
 class MSIMViewSlaves;
 }
 
-class MSIMViewSlaves : public QWidget
-{
+/*! The view containing FMU and slave definition tables. */
+class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
-
 public:
 	explicit MSIMViewSlaves(QWidget *parent = 0);
 	~MSIMViewSlaves();
+
+public slots:
+	/*! Connected to MSIMProjectHandler::modified() */
+	void onModified( int modificationType, void * data );
 
 private:
 	Ui::MSIMViewSlaves *m_ui;
