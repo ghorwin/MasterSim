@@ -7,6 +7,13 @@ namespace Ui {
 class MSIMViewSimulation;
 }
 
+class QLineEdit;
+class QComboBox;
+
+namespace IBK {
+	class Parameter;
+}
+
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSimulation : public QWidget {
 	Q_OBJECT
@@ -18,7 +25,13 @@ public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
 	void onModified( int modificationType, void * data );
 
+private slots:
+	void on_toolButtonStartInTerminal_clicked();
+
 private:
+
+	static void setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox * combo, const IBK::Parameter & p);
+
 	Ui::MSIMViewSimulation *m_ui;
 };
 

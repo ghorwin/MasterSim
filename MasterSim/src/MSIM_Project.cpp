@@ -124,21 +124,21 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			std::string keyword = IBK::trim_copy(tokens[0]);
 			std::string value = IBK::trim_copy(tokens[1]);
 
-			if (keyword == "tstart")
-				m_tStart.set("tstart", value);
-			else if (keyword == "tend")
-				m_tEnd.set("tend", value);
-			else if (keyword == "tstepmax")
-				m_hMax.set("tstepmax", value);
-			else if (keyword == "tstepmin")
-				m_hMin.set("tstepmin", value);
-			else if (keyword == "tstepiterlimit")
-				m_hFallBackLimit.set("tstepiterlimit", value);
-			else if (keyword == "tstepstart")
-				m_hStart.set("tstepstart", value);
-			else if (keyword == "toutputstepmin")
-				m_tOutputStepMin.set("toutputstepmin", value);
-			else if (keyword == "binaryOutputFiles")
+			if (keyword == "tstart") {
+				if (!m_tStart.set("tstart", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tend") {
+				if (!m_tEnd.set("tend", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tstepmax") {
+				if (!m_hMax.set("tstepmax", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tstepmin") {
+				if (!m_hMin.set("tstepmin", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tstepiterlimit") {
+				if (!m_hFallBackLimit.set("tstepiterlimit", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tstepstart") {
+				if (!m_hStart.set("tstepstart", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "toutputstepmin") {
+				if (!m_tOutputStepMin.set("toutputstepmin", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "binaryOutputFiles")
 				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "it_tol_abs")
 				m_absTol = IBK::string2val<double>(value);
