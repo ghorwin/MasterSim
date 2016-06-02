@@ -6,6 +6,7 @@
 
 #include <IBK_Path.h>
 #include <IBK_Unit.h>
+#include <IBK_Color.h>
 
 namespace MASTER_SIM {
 
@@ -57,6 +58,8 @@ public:
 		unsigned int	m_cycle;
 		/*! Path to FMU file. */
 		IBK::Path		m_pathToFMU;
+		/*! Color of simulator. */
+		IBK::Color		m_color;
 
 		/*! Parameter list, key = variable name, value = value as string.
 			The conversion into the corresponding data type is done,
@@ -68,6 +71,14 @@ public:
 
 	/*! Defines an edge of the coupling graph. */
 	struct GraphEdge {
+		/*! Extracts name of output slave (everything in front of first dot). */
+		std::string outputSlaveName() const { return extractSlaveName(m_outputVariableRef); }
+		/*! Extracts name of input slave (everything in front of first dot). */
+		std::string inputSlaveName() const { return extractSlaveName(m_inputVariableRef); }
+
+		/*! Extracts name of slave (everything in front of first dot). */
+		static std::string extractSlaveName( const std::string & variableRef);
+
 		/*! Variable reference in simulator and value ref that exports this variable. */
 		std::string m_outputVariableRef;
 		/*! Variable reference in simulator and value ref that imports this variable. */
