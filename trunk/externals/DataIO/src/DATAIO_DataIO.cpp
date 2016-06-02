@@ -555,6 +555,7 @@ void DataIO::writeHeader() const {
 		throw IBK::Exception( IBK::FormatString("Couldn't open output file '%1'.").arg(m_filename), FUNC_ID);
 	}
 	std::ostream & out = *m_ofstream; // readability improvement
+	out.precision(14);
 
 	// write magic header and version number
 	IBK::Version::write(out, MAGIC_NUMBER_BINARY_DATAIO, SECOND_MAGIC_NUMBER, MAGIC_NUMBER_ASCII_DATAIO, SECOND_MAGIC_NUMBER,
