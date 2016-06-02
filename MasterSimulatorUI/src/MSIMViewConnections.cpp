@@ -1,6 +1,8 @@
 #include "MSIMViewConnections.h"
 #include "ui_MSIMViewConnections.h"
 
+#include <QSortFilterProxyModel>
+
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
 
@@ -33,12 +35,13 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	headers << tr("Simulator Name");
 	m_ui->tableWidgetSlaves->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetSlaves->horizontalHeader()->setStretchLastSection(true);
+	m_ui->tableWidgetConnections->horizontalHeader()->setSortIndicatorShown(true);
 
 	formatTable(m_ui->tableWidgetConnections);
 	formatTable(m_ui->tableWidgetSlaves);
 
-	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
-	m_ui->tableWidgetConnections->setItemDelegate(new MSIMConnectionItemDelegate(this));
+//	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMConnectionItemDelegate(this));
+//	m_ui->tableWidgetConnections->setItemDelegate(new MSIMConnectionItemDelegate(this));
 }
 
 
@@ -55,20 +58,35 @@ void MSIMViewConnections::onModified( int modificationType, void * data ) {
 			return; // nothing to do for us
 	}
 
-	// TODO : store current check states before clearing table
+	/// \todo store current check states before clearing table
+	/// \todo store current sort column
 
 	// update tables based on project file content
 	m_ui->tableWidgetConnections->clearContents();
 	m_ui->tableWidgetSlaves->clearContents();
 
+	m_ui->comboBoxSlave1->clear();
+	m_ui->comboBoxSlave2->clear();
+
 	m_ui->tableWidgetSlaves->setRowCount(project().m_simulators.size());
 	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
 		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
-		QTableWidgetItem * item = new QTableWidgetItem( QString::fromUtf8(simDef.m_name.c_str()) );
+		QString slaveName = QString::fromUtf8(simDef.m_name.c_str());
+		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-		item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
+		item->setCheckState(Qt::Checked);
+		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		m_ui->tableWidgetSlaves->setItem(i, 0, item);
+
+		m_ui->comboBoxSlave1->addItem(slaveName);
+		m_ui->comboBoxSlave2->addItem(slaveName);
 	}
+
+	if (m_ui->comboBoxSlave1->count() > 0) {
+		m_ui->comboBoxSlave1->setCurrentIndex(0);
+		m_ui->comboBoxSlave2->setCurrentIndex(0);
+	}
+
 	m_ui->tableWidgetConnections->setRowCount(project().m_graph.size() );
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
 		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
@@ -78,7 +96,7 @@ void MSIMViewConnections::onModified( int modificationType, void * data ) {
 			std::string slaveName = edge.outputSlaveName();
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(slaveName);
-			item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
+			item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -94,7 +112,7 @@ void MSIMViewConnections::onModified( int modificationType, void * data ) {
 			std::string slaveName = edge.inputSlaveName();
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(slaveName);
-			item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
+			item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -104,6 +122,9 @@ void MSIMViewConnections::onModified( int modificationType, void * data ) {
 		}
 		m_ui->tableWidgetConnections->setItem(i, 1, item);
 	}
+
+	m_ui->tableWidgetConnections->sortByColumn(0);
+
 }
 
 
