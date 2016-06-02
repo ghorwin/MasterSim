@@ -318,14 +318,14 @@ void OutputWriter::setupProgressReport() {
 	*m_progressOutputs << "Time\t Percentage completed [%]" << std::endl;
 
 	/// \todo For restart, add elapsed seconds + simtime
-	m_progressFeedback.setup(m_progressOutputs, m_project->m_tStart, m_project->m_tEnd, m_projectFile, 0, 0);
+	m_progressFeedback.setup(m_progressOutputs, m_project->m_tStart.value, m_project->m_tEnd.value, m_projectFile, 0, 0);
 }
 
 
 void OutputWriter::appendOutputs(double t) {
 	// skip output writing, if last output was written within minimum output
 	// time step size
-	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_tOutputStepMin > t) {
+	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_tOutputStepMin.value > t) {
 		m_progressFeedback.writeFeedbackFromF(t);
 		return;
 	}

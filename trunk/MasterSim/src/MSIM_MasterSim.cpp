@@ -82,7 +82,7 @@ void MasterSim::initialize() {
 	m_outputWriter.setupProgressReport();
 
 	// setup time-stepping variables
-	m_h = m_project.m_hStart;
+	m_h = m_project.m_hStart.value;
 	m_hProposed = m_h;
 
 	// setup statistics
@@ -124,14 +124,14 @@ void MasterSim::storeState(const IBK::Path & stateDirectory) {
 
 
 void MasterSim::simulate() {
-	while (m_t < m_project.m_tEnd) {
+	while (m_t < m_project.m_tEnd.value) {
 		// Do an internal step with the selected master algorithm
 		doStep();
 		++m_statStepCounter;
 		// Now the master's internal state has moved to the next time point m_t = m_t + m_h
 		// m_h holds the step size used during the last master step
 
-		if (m_t < m_project.m_tEnd)
+		if (m_t < m_project.m_tEnd.value)
 			appendOutputs();// appends outputs (filtering/scheduling is implemented inside OutputWriter class)
 	}
 	// write final results
@@ -173,10 +173,10 @@ void MasterSim::doStep() {
 														   "Reduction of time step is not allowed, stopping here.")
 										 .arg(m_t).arg(m_h), FUNC_ID);
 				}
-				if (m_h/2 < m_project.m_hMin)
+				if (m_h/2 < m_project.m_hMin.value)
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reducing step would fall below minimum step size of %3.")
-										 .arg(m_t).arg(m_h).arg(m_project.m_hMin), FUNC_ID);
+										 .arg(m_t).arg(m_h).arg(m_project.m_hMin.value), FUNC_ID);
 				m_h /= 2;
 
 				// Reset slaves
@@ -217,15 +217,15 @@ void MasterSim::doStep() {
 		// This could be made dependend on iteration count...
 		if (m_project.m_errorControlMode == Project::EM_NONE) {
 			// increase time step for next step
-			m_hProposed = std::min(m_project.m_hMax, 1.2*m_h);
+			m_hProposed = std::min(m_project.m_hMax.value, 1.2*m_h);
 		}
 
 		// adjust step size to not exceed end time point
-		if (m_t + m_hProposed > m_project.m_tEnd)
-			m_hProposed = m_project.m_tEnd - m_t;
+		if (m_t + m_hProposed > m_project.m_tEnd.value)
+			m_hProposed = m_project.m_tEnd.value - m_t;
 		// if we fall just a little short of the end time point, increase time step size a little to hit end time point exactly
-		if ( m_t + m_hProposed > m_project.m_tEnd*0.999999)
-			m_hProposed = m_project.m_tEnd - m_t;
+		if ( m_t + m_hProposed > m_project.m_tEnd.value*0.999999)
+			m_hProposed = m_project.m_tEnd.value - m_t;
 	}
 	IBK::IBK_Message(IBK::FormatString("step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -515,7 +515,7 @@ void MasterSim::initialConditions() {
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		Slave * slave = m_slaves[i];
-		slave->setupExperiment(m_project.m_relTol, m_t, m_project.m_tEnd);
+		slave->setupExperiment(m_project.m_relTol, m_t, m_project.m_tEnd.value);
 	}
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -838,7 +838,7 @@ bool MasterSim::doErrorCheckRichardson() {
 	// slaves are now positioned at t + 2 * h2
 
 	// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
-	m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax);
+	m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax.value);
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
 	// t is at start of the last half-step,

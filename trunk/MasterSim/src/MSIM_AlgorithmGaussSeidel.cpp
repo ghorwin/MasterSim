@@ -99,8 +99,8 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 				// stability measure: if time step falls below a certain threshhold, we fall back to non-iterating
 				// gauss seidel
-				if (m_master->m_h < m_master->m_project.m_hFallBackLimit) {
-					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_h).arg(m_master->m_project.m_hFallBackLimit),
+				if (m_master->m_h < m_master->m_project.m_hFallBackLimit.value) {
+					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_h).arg(m_master->m_project.m_hFallBackLimit.value),
 						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 					break; // no more iterating
 				}
