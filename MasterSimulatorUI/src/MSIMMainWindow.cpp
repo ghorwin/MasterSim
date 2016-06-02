@@ -33,6 +33,7 @@
 #include "MSIMPreferencesDialog.h"
 #include "MSIMViewSlaves.h"
 #include "MSIMViewConnections.h"
+#include "MSIMViewSimulation.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = NULL;
 
@@ -64,7 +65,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_preferencesDialog(NULL),
 	m_stackedWidget(NULL),
 	m_viewSlaves(NULL),
-	m_viewConnections(NULL)
+	m_viewConnections(NULL),
+	m_viewSimulation(NULL)
 {
 //	const char * const FUNC_ID = "[MSIMMainWindow::MSIMMainWindow]";
 
@@ -98,9 +100,11 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_stackedWidget->insertWidget(0, m_viewSlaves);
 	m_viewConnections = new MSIMViewConnections(this);
 	m_stackedWidget->insertWidget(1, m_viewConnections);
+	m_viewSimulation = new MSIMViewSimulation(this);
+	m_stackedWidget->insertWidget(2, m_viewSimulation);
 
 	// set FMU page as default
-	m_ui->actionViewSimulators->setChecked(true);
+	m_ui->actionViewSlaves->setChecked(true);
 
 	// *** connect to ProjectHandler signals ***
 
@@ -141,6 +145,13 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 
 	m_ui->toolBar->addAction(undoAction);
 	m_ui->toolBar->addAction(redoAction);
+
+	// *** add view actions ***
+
+	m_ui->toolBar->addSeparator();
+	m_ui->toolBar->addAction(m_ui->actionViewSlaves);
+	m_ui->toolBar->addAction(m_ui->actionViewConnections);
+	m_ui->toolBar->addAction(m_ui->actionViewSimulation);
 
 	// *** restore state of UI ***
 	QByteArray geometry, state;
@@ -624,17 +635,33 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 }
 
 
-void MSIMMainWindow::on_actionViewSimulators_toggled(bool arg1) {
+void MSIMMainWindow::on_actionViewSlaves_toggled(bool arg1) {
 	// toggle off all other view actions
 	m_ui->actionViewConnections->blockSignals(true);
 	m_ui->actionViewConnections->setChecked(false);
 	m_ui->actionViewConnections->blockSignals(false);
+	m_ui->actionViewSimulation->blockSignals(true);
+	m_ui->actionViewSimulation->setChecked(false);
+	m_ui->actionViewSimulation->blockSignals(false);
 	m_stackedWidget->setCurrentIndex(0);
 }
 
 void MSIMMainWindow::on_actionViewConnections_toggled(bool arg1) {
-	m_ui->actionViewSimulators->blockSignals(true);
-	m_ui->actionViewSimulators->setChecked(false);
-	m_ui->actionViewSimulators->blockSignals(false);
+	m_ui->actionViewSlaves->blockSignals(true);
+	m_ui->actionViewSlaves->setChecked(false);
+	m_ui->actionViewSlaves->blockSignals(false);
+	m_ui->actionViewSimulation->blockSignals(true);
+	m_ui->actionViewSimulation->setChecked(false);
+	m_ui->actionViewSimulation->blockSignals(false);
 	m_stackedWidget->setCurrentIndex(1);
+}
+
+void MSIMMainWindow::on_actionViewSimulation_toggled(bool arg1) {
+	m_ui->actionViewSlaves->blockSignals(true);
+	m_ui->actionViewSlaves->setChecked(false);
+	m_ui->actionViewSlaves->blockSignals(false);
+	m_ui->actionViewConnections->blockSignals(true);
+	m_ui->actionViewConnections->setChecked(false);
+	m_ui->actionViewConnections->blockSignals(false);
+	m_stackedWidget->setCurrentIndex(2);
 }

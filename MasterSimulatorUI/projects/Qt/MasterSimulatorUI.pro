@@ -64,7 +64,8 @@ SOURCES += ../../src/main.cpp \
     ../../src/MSIMViewSlaves.cpp \
     ../../src/MSIMViewConnections.cpp \
     ../../src/MSIMSlaveItemDelegate.cpp \
-    ../../src/MSIMConnectionItemDelegate.cpp
+    ../../src/MSIMConnectionItemDelegate.cpp \
+    ../../src/MSIMViewSimulation.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -86,7 +87,8 @@ HEADERS  += \
     ../../src/MSIMViewSlaves.h \
     ../../src/MSIMViewConnections.h \
     ../../src/MSIMSlaveItemDelegate.h \
-    ../../src/MSIMConnectionItemDelegate.h
+    ../../src/MSIMConnectionItemDelegate.h \
+    ../../src/MSIMViewSimulation.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
@@ -94,7 +96,8 @@ FORMS    += \
     ../../src/MSIMPreferencesDialog.ui \
     ../../src/MSIMPreferencesPageGeneral.ui \
     ../../src/MSIMViewSlaves.ui \
-    ../../src/MSIMViewConnections.ui
+    ../../src/MSIMViewConnections.ui \
+    ../../src/MSIMViewSimulation.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
