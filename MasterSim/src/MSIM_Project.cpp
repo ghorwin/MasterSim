@@ -10,15 +10,19 @@
 namespace MASTER_SIM {
 
 Project::Project() :
-	m_hFallBackLimit(1e-3),
-	m_hMin(1e-5),
+	m_tStart("tstart", 0, "a"),
+	m_tEnd("tend", 1, "a"),
+	m_hFallBackLimit("tstepiterlimit", 1e-3, "s"),
+	m_hMin("tstepmin", 1e-5, "s"),
+	m_hMax("tstepmax", 30, "min"),
+	m_hStart("tstepstart", 0.01, "s"),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
+	m_maxIterations(10),
 	m_absTol(1e-6),
 	m_relTol(1e-5),
-	m_tOutputStepMin(120),
+	m_tOutputStepMin("toutputstepmin", 120, "s"),
 	m_binaryOutputFiles(false),
-	m_masterTimeUnit("s"),
 	m_outputTimeUnit("s")
 {
 }
@@ -121,20 +125,19 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			std::string value = IBK::trim_copy(tokens[1]);
 
 			if (keyword == "tstart")
-				m_tStart = IBK::string2val<double>(value);
+				m_tStart.set("tstart", value);
 			else if (keyword == "tend")
-				m_tEnd = IBK::string2val<double>(value);
-
+				m_tEnd.set("tend", value);
 			else if (keyword == "tstepmax")
-				m_hMax = IBK::string2val<double>(value);
+				m_hMax.set("tstepmax", value);
 			else if (keyword == "tstepmin")
-				m_hMin = IBK::string2val<double>(value);
+				m_hMin.set("tstepmin", value);
 			else if (keyword == "tstepiterlimit")
-				m_hFallBackLimit = IBK::string2val<double>(value);
+				m_hFallBackLimit.set("tstepiterlimit", value);
 			else if (keyword == "tstepstart")
-				m_hStart = IBK::string2val<double>(value);
+				m_hStart.set("tstepstart", value);
 			else if (keyword == "toutputstepmin")
-				m_tOutputStepMin = IBK::string2val<double>(value);
+				m_tOutputStepMin.set("toutputstepmin", value);
 			else if (keyword == "binaryOutputFiles")
 				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "it_tol_abs")

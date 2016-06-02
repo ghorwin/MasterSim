@@ -7,6 +7,7 @@
 #include <IBK_Path.h>
 #include <IBK_Unit.h>
 #include <IBK_Color.h>
+#include <IBK_Parameter.h>
 
 namespace MASTER_SIM {
 
@@ -115,24 +116,24 @@ public:
 
 
 	/*! Starting time point of simulation, if not 0 serialization of existing state of FMUs is done at startup. */
-	double						m_tStart;
+	IBK::Parameter				m_tStart;
 
 	/*! Simulation end time point, must be > 0. */
-	double						m_tEnd;
+	IBK::Parameter				m_tEnd;
 
 	/*! Lower time step limit (should be larger than m_tStepMin), if time step falls below this value,
 		Gauss-Seidel without iteration is used. This allows to pass over step changes in outputs.
 	*/
-	double						m_hFallBackLimit;
+	IBK::Parameter				m_hFallBackLimit;
 
 	/*! Lower limit for communication step size (only in variable step-size mode). */
-	double						m_hMin;
+	IBK::Parameter				m_hMin;
 
 	/*! Maximum for communication step size (only in variable step-size mode). */
-	double						m_hMax;
+	IBK::Parameter				m_hMax;
 
 	/*! Initial step size (for variable step-size mode) or fixed step size (for constant step-size mode). */
-	double						m_hStart;
+	IBK::Parameter				m_hStart;
 
 
 	/*! Operation mode of the master algorithm. */
@@ -150,13 +151,11 @@ public:
 	double						m_relTol;
 
 	/*! Minimum output time step. */
-	double						m_tOutputStepMin;
+	IBK::Parameter				m_tOutputStepMin;
 
 	/*! If true, binary output files are written (smaller and faster). */
 	bool						m_binaryOutputFiles;
 
-	/*! Unit defined as master time (for progress output, defaults to "s"). */
-	IBK::Unit					m_masterTimeUnit;
 	/*! Unit defined as output time for output files. */
 	IBK::Unit					m_outputTimeUnit;
 
