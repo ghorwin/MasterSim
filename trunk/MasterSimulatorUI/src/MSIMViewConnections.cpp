@@ -4,6 +4,9 @@
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
 
+#include "MSIMSlaveItemDelegate.h"
+#include "MSIMConnectionItemDelegate.h"
+
 #include <IBK_Exception.h>
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
@@ -33,6 +36,9 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 
 	formatTable(m_ui->tableWidgetConnections);
 	formatTable(m_ui->tableWidgetSlaves);
+
+	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
+	m_ui->tableWidgetConnections->setItemDelegate(new MSIMConnectionItemDelegate(this));
 }
 
 
