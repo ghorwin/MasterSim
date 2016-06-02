@@ -66,7 +66,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	fileNames.push_back(m_resultsDir / "integer.d6o");
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::IBK_Message("Creating output files\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Creating output files (%1 mode)\n").arg(m_project->m_binaryOutputFiles ? "binary" : "ASCII"),
+					  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 	IBK::IBK_Message( IBK::FormatString("Results directory '%1'\n").arg(m_resultsDir), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
@@ -94,8 +95,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		dataIO->m_projectFileName = m_projectFile;
 
-		// populate heder
-		dataIO->m_isBinary = false;
+		// populate header
+		dataIO->m_isBinary = m_project->m_binaryOutputFiles;
 
 		// no geometry file
 		dataIO->m_geoFileHash = 0;
@@ -149,6 +150,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		dataIO->m_valueUnit = "---"; // boolean and integer get the undefined unit
 
 		dataIO->m_filename = outputFile;
+		dataIO->adjustFileName();
 		try {
 			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile.filename()).arg(varCount),
 							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -231,8 +233,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 				dataIO->m_projectFileName = m_projectFile;
 
-				// populate heder
-				dataIO->m_isBinary = false;
+				// populate header
+				dataIO->m_isBinary = m_project->m_binaryOutputFiles;
 
 				// no geometry file
 				dataIO->m_geoFileHash = 0;
@@ -256,6 +258,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 					fname = "real.d6o"; // convenience name for unitless outputs
 				fname = IBK::replace_string(fname, "/", "_");
 				dataIO->m_filename = m_resultsDir / fname;
+				dataIO->adjustFileName();
 			}
 			else {
 				outputFileData = &m_realOutputFiles[u];

@@ -17,6 +17,7 @@ Project::Project() :
 	m_absTol(1e-6),
 	m_relTol(1e-5),
 	m_tOutputStepMin(120),
+	m_binaryOutputFiles(false),
 	m_masterTimeUnit("s"),
 	m_outputTimeUnit("s")
 {
@@ -118,6 +119,8 @@ void Project::read(const IBK::Path & prjFile, bool headerOnly) {
 				m_hStart = IBK::string2val<double>(value);
 			else if (keyword == "toutputstepmin")
 				m_tOutputStepMin = IBK::string2val<double>(value);
+			else if (keyword == "binaryOutputFiles")
+				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "it_tol_abs")
 				m_absTol = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_rel")
