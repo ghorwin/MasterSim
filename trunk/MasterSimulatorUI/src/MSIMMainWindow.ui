@@ -75,8 +75,6 @@
    <addaction name="actionFileOpen"/>
    <addaction name="actionFileSave"/>
    <addaction name="separator"/>
-   <addaction name="actionViewSimulators"/>
-   <addaction name="actionViewConnections"/>
   </widget>
   <action name="actionFileNew">
    <property name="icon">
@@ -227,7 +225,7 @@
     <string>Reloads the current project</string>
    </property>
   </action>
-  <action name="actionViewSimulators">
+  <action name="actionViewSlaves">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -241,6 +239,17 @@
    </property>
    <property name="text">
     <string>Connections</string>
+   </property>
+  </action>
+  <action name="actionViewSimulation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Simulation Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Simulation/Project settings</string>
    </property>
   </action>
  </widget>

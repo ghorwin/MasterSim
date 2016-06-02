@@ -20,6 +20,7 @@ class MSIMThreadBase;
 class MSIMPreferencesDialog;
 class MSIMViewSlaves;
 class MSIMViewConnections;
+class MSIMViewSimulation;
 
 
 /*! Main window class. */
@@ -105,10 +106,9 @@ private slots:
 	void onOpenProjectByFilename(const QString & filename);
 
 
-
-	void on_actionViewSimulators_toggled(bool arg1);
-
+	void on_actionViewSlaves_toggled(bool arg1);
 	void on_actionViewConnections_toggled(bool arg1);
+	void on_actionViewSimulation_toggled(bool arg1);
 
 private:
 	/*! Sets up all dock widgets with definition lists. */
@@ -178,7 +178,7 @@ private:
 
 	MSIMViewSlaves				*m_viewSlaves;
 	MSIMViewConnections			*m_viewConnections;
-
+	MSIMViewSimulation			*m_viewSimulation;
 };
 
 #endif // MSIMMainWindow_H
