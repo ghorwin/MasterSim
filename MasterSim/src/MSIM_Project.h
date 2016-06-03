@@ -142,6 +142,13 @@ public:
 	/*! Type of error control/time step adjustment scheme used. */
 	ErrorControlMode			m_errorControlMode;
 
+	/*! If error control mode is not adjusting step size, this option can be used for iterative
+		methods to enable step size adjustment.
+		If adjustStepSize is off, and error control mode does not adjust step size, any iterative
+		algorithm that fails to converge will cause the simulation to stop.
+	*/
+	bool						m_adjustStepSize;
+
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
 	unsigned int				m_maxIterations;
 

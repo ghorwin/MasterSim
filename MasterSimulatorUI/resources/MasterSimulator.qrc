@@ -25,5 +25,6 @@
         <file>gfx/actions/24x24/zoom-in-24.png</file>
         <file>gfx/actions/24x24/zoom-out-24.png</file>
         <file>gfx/actions/64x64/simStart.png</file>
+        <file>gfx/logo/icon_64.jpg</file>
     </qresource>
 </RCC>
