@@ -28,6 +28,10 @@ public slots:
 private slots:
 	void on_toolButtonStartInTerminal_clicked();
 
+	void on_checkBoxCloseOnExit_clicked();
+
+	void on_comboBoxVerbosityLevel_currentIndexChanged(int index);
+
 private:
 	void updateCommandLine();
 

@@ -59,7 +59,7 @@ qt4_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
 # build application executable for the different platforms
 if( WIN32 )
 	add_executable( ${PROJECT_NAME} WIN32 
-					 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
+					 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS}  ${APP_WIN_RC}
 	)
 endif( WIN32 ) 
 

@@ -195,6 +195,8 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 void MSIMViewSimulation::updateCommandLine() {
 	// command line depends on Windows/MacOSX/Linux
 
+	m_commandLineArgs.clear();
+
 	// arguments, currently only project file
 	if (m_ui->checkBoxCloseOnExit->isChecked())
 		m_commandLineArgs.append("--close-on-exit");
@@ -226,4 +228,14 @@ void MSIMViewSimulation::setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox 
 	unsigned int idx = combo->findText( QString::fromStdString(p.unit().name()));
 	combo->setCurrentIndex(idx);
 	combo->blockSignals(false);
+}
+
+
+void MSIMViewSimulation::on_checkBoxCloseOnExit_clicked() {
+	updateCommandLine();
+}
+
+
+void MSIMViewSimulation::on_comboBoxVerbosityLevel_currentIndexChanged(int) {
+	updateCommandLine();
 }

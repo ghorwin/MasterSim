@@ -18,6 +18,7 @@ Project::Project() :
 	m_hStart("tstepstart", 0.01, "s"),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
+	m_adjustStepSize(true),
 	m_maxIterations(10),
 	m_absTol(1e-6),
 	m_relTol(1e-5),
