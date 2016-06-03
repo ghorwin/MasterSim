@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1026</width>
-    <height>616</height>
+    <width>1021</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -198,30 +198,16 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditDtOutput"/>
-        </item>
         <item row="0" column="2">
          <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
         </item>
-        <item row="1" column="0" colspan="2">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="lineEditDtOutput"/>
+        </item>
+        <item row="1" column="0" colspan="3">
          <widget class="QCheckBox" name="checkBoxBinaryOutputFiles">
           <property name="text">
            <string>Write binary output files</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Base directory:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEditBaseDirectory">
-          <property name="placeholderText">
-           <string>default</string>
           </property>
          </widget>
         </item>
@@ -249,56 +235,102 @@
       <string>Start Simulation</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="3">
+      <item row="3" column="0" colspan="3">
        <widget class="QLabel" name="label_3">
         <property name="text">
          <string>Command line:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="3">
+      <item row="4" column="0" colspan="3">
        <widget class="QLineEdit" name="lineEditCommandLine"/>
       </item>
-      <item row="2" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="labelTerminalCommand">
         <property name="text">
          <string>Terminal program command:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" colspan="2">
+      <item row="5" column="2">
        <widget class="QComboBox" name="comboBoxTerminalCommand">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="editable">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="2">
-       <spacer name="horizontalSpacer">
+      <item row="6" column="0" colspan="3">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QToolButton" name="toolButtonStartInTerminal">
+          <property name="toolTip">
+           <string>Starts the simulation.</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources/MasterSimulator.qrc">
+            <normaloff>:/gfx/actions/64x64/simStart.png</normaloff>:/gfx/actions/64x64/simStart.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>472</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_3">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Fixed</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>472</width>
+          <width>20</width>
           <height>20</height>
          </size>
         </property>
        </spacer>
       </item>
-      <item row="3" column="2">
-       <widget class="QToolButton" name="toolButtonStartInTerminal">
-        <property name="icon">
-         <iconset resource="../resources/MasterSimulator.qrc">
-          <normaloff>:/gfx/actions/64x64/simStart.png</normaloff>:/gfx/actions/64x64/simStart.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>64</width>
-          <height>64</height>
-         </size>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="checkBoxCloseOnExit">
+        <property name="text">
+         <string>Close console window on ext</string>
         </property>
        </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>Verbosity/Logging detail:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="QComboBox" name="comboBoxVerbosityLevel"/>
       </item>
      </layout>
     </widget>

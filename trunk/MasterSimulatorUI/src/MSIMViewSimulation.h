@@ -29,8 +29,13 @@ private slots:
 	void on_toolButtonStartInTerminal_clicked();
 
 private:
+	void updateCommandLine();
 
 	static void setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox * combo, const IBK::Parameter & p);
+
+	QStringList				m_commandLineArgs;
+	QString					m_solverName;
+	QString					m_commandLine;
 
 	Ui::MSIMViewSimulation *m_ui;
 };
