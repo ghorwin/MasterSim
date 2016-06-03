@@ -131,7 +131,6 @@ public:
 	*/
 	QString						m_installDir;
 
-
 	/*! Maximum number of files in the MRU (most-recently-used) files list. */
 	unsigned int				m_maxRecentProjects;
 

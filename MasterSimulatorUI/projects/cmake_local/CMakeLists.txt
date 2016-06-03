@@ -22,6 +22,14 @@ file( GLOB APP_HDRS ${PROJECT_SOURCE_DIR}/../../src/*.h )
 # collect a list of all form files
 file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/../../src/*.ui )
 
+# The Qt resource file (*.qrc)
+set( APP_QRCS	${PROJECT_SOURCE_DIR}/../../resources/MasterSimulator.qrc )
+
+# set rc file
+set ( APP_WIN_RC
+	${PROJECT_SOURCE_DIR}/../../resources/MasterSimulator.rc
+)
+
 # set variable for dependent libraries
 set( LINK_LIBS
 	MasterSim
