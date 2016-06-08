@@ -28,6 +28,9 @@ public:
 		\see setModified()
 	*/
 	enum ModificationTypes {
+		/*! Used when simulation settings have been modified.
+			Only updates simulation settings page, all other views remain unmodified. */
+		SimulationSettingsModified,
 		/*! Used whenever the project data changes completely (new project created, project loaded etc.)
 			and a complete reset of all views and models is needed. */
 		AllModified = 0xFFFF0001

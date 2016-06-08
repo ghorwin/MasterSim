@@ -224,7 +224,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write simulators
 	for (unsigned int i=0; i<m_simulators.size(); ++i) {
 		const SimulatorDef & simDef = m_simulators[i];
-		out << "simulator " << i << " " << /* simDef.m_cycle << " " << */ simDef.m_name << " " << simDef.m_color.toHtmlString() << " " << simDef.m_pathToFMU.str() << std::endl;
+		out << "simulator " << i << " " << simDef.m_cycle << " " << simDef.m_name << " " << simDef.m_color.toHtmlString() << " \"" << simDef.m_pathToFMU.str() << "\"" << std::endl;
 	}
 	out << std::endl;
 
@@ -255,17 +255,19 @@ const Project::SimulatorDef & Project::simulatorDefinition(const std::string & s
 
 void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 	const char * const FUNC_ID = "[Project::SimulatorDef::parse]";
-	// simulator   0 0 Part1 fmus/simx/Part1.fmu
+	// simulator   0 0 Part1 #00bdcf "fmus/simx/Part1.fmu"
 	std::size_t pos = simulatorDef.find("simulator");
 	IBK_ASSERT(pos != std::string::npos);
 	std::vector<std::string> tokens;
-	IBK::explode(simulatorDef.substr(pos+9), tokens, ' ');
-	if (tokens.size() != 4)
-		throw IBK::Exception( IBK::FormatString("Bad format of simulator definition line '%1'.").arg(simulatorDef), FUNC_ID);
+	// first extract
 	try {
+		IBK::explode(simulatorDef.substr(pos+9), tokens, " \t", IBK::EF_UseQuotes | IBK::EF_TrimTokens);
+		if (tokens.size() != 5)
+			throw IBK::Exception("Missing properties.", FUNC_ID);
 		m_cycle = IBK::string2val<unsigned int>(tokens[1]);
 		m_name = IBK::trim_copy(tokens[2]);
-		m_pathToFMU = IBK::Path(tokens[3]);
+		m_color = IBK::Color::fromHtml(tokens[3]);
+		m_pathToFMU = IBK::Path( IBK::trim_copy(tokens[4], "\"") );
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, IBK::FormatString("Bad format of simulator definition line '%1'.").arg(simulatorDef), FUNC_ID);

@@ -38,6 +38,10 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 
 	// setup combo boxes
 	QStringList units;
+//	std::vector<IBK::Unit> uvec;
+//	IBK::UnitList::instance().convertible_units(uvec, IBK::Unit("s"));
+//	foreach (IBK::Unit u, uvec)
+//		units << QString::fromStdString(u.name());
 	units << "ms" << "s" << "min" << "h" <<"d" << "a";
 	m_ui->comboBoxStartTimeUnit->addItems(units);
 	m_ui->comboBoxEndTimeUnit->addItems(units);
@@ -80,7 +84,9 @@ MSIMViewSimulation::~MSIMViewSimulation() {
 void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
+		case MSIMProjectHandler::SimulationSettingsModified :
 			break;
+
 		default:
 			return; // nothing to do for us
 	}
@@ -97,6 +103,8 @@ void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 
 	m_ui->lineEditRelTol->setText( QString("%L1").arg(project().m_relTol));
 	m_ui->lineEditAbsTol->setText( QString("%L1").arg(project().m_absTol));
+
+	m_ui->spinBoxMaxIteration->setValue(project().m_maxIterations);
 
 	m_ui->comboBoxMasterAlgorithm->setCurrentIndex(project().m_masterMode);
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
@@ -172,7 +180,7 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	std::auto_ptr<QProcess> myProcess (new QProcess(this));
 	commandLineArgs.append(projectFile);
 	/// \todo Bug: startDetached returns true even if solver fails to start due to missing shared libs.
-	bool success;
+//	bool success;
 
 #ifdef Q_OS_LINUX
 	// open terminal and start solver in terminal
@@ -182,8 +190,8 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	terminalCommand = IBK::replace_string(terminalCommand, "%cmdline", bashCmdLine);
 
 	QString allCmdLine = QString::fromUtf8(terminalCommand.c_str());
-	int res = myProcess->execute(allCmdLine);
-	success = (res == 0);
+	/*int res = */ myProcess->execute(allCmdLine);
+//	success = (res == 0);
 #else
 	/// \todo check how to spawn a terminal on mac
 	success = myProcess->startDetached(m_solverName, commandLineArgs);
@@ -229,7 +237,8 @@ void MSIMViewSimulation::updateCommandLine() {
 void MSIMViewSimulation::setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox * combo, const IBK::Parameter & p) {
 	lineEdit->setText( QString("%L1").arg(p.get_value()));
 	combo->blockSignals(true);
-	unsigned int idx = combo->findText( QString::fromStdString(p.unit().name()));
+	QString uname = QString::fromStdString(p.IO_unit.name());
+	unsigned int idx = combo->findText( uname, Qt::MatchExactly );
 	combo->setCurrentIndex(idx);
 	combo->blockSignals(false);
 }
@@ -264,6 +273,73 @@ void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
 
 
 void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
-	// check if value is valid
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Start time must be >= 0."));
+		m_ui->lineEditStartTime->selectAll();
+		return;
+	}
 
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tStart = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+
+void MSIMViewSimulation::on_comboBoxStartTimeUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tStart.IO_unit.set( m_ui->comboBoxStartTimeUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_comboBoxEndTimeUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tEnd.IO_unit.set( m_ui->comboBoxEndTimeUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_comboBoxMinDtUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hMin.IO_unit.set( m_ui->comboBoxMinDtUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_comboBoxMaxDtUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hMax.IO_unit.set( m_ui->comboBoxMaxDtUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_comboBoxDtIterLimitUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hFallBackLimit.IO_unit.set( m_ui->comboBoxDtIterLimitUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_comboBoxDtOutputUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tOutputStepMin.IO_unit.set( m_ui->comboBoxDtOutputUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
 }

@@ -233,8 +233,9 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 
 	// check project file ending, if there is none append it
 	QString fname = fileName;
-	if (!fname.endsWith(DOT_FILE_EXTENSION))
+	if (!fname.endsWith(DOT_FILE_EXTENSION)) {
 		fname.append(DOT_FILE_EXTENSION);
+	}
 
 	// updated created and lastEdited tags
 	if (m_project->m_created.empty())

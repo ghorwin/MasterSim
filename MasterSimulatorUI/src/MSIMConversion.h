@@ -14,6 +14,8 @@
 
 class QCheckBox;
 class QWidget;
+class QLineEdit;
+class QComboBox;
 
 namespace QtExt {
 	class ValidatingLineEdit;
@@ -50,5 +52,11 @@ inline QColor color2QColor(const IBK::Color & color) {
 
 /*! Utility function that recursively calls blockSignal() on all widgets and their child widgets. */
 void blockMySignals(QWidget * p, bool block);
+
+/*! Parses value from line edit, if combo box is given (not NULL), sets the value with the IO unit and
+	specifies parameter.
+	In case of error shows an error message.
+*/
+bool lineEditToParameter(QWidget * parent, const std::string & name, IBK::Parameter & p, QLineEdit * lineEdit, QComboBox * unitCombo);
 
 #endif // MSIMConversionH

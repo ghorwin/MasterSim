@@ -24,13 +24,18 @@ QString MSIMDirectories::resourcesRootDir() {
 	// in deployment mode, we have them in "/usr/share/MasterSim" or "/usr/local/share/MasterSim"
 	// unless otherwise specified in the settings
 
-	QString dbpath;
+	QString resRootPath;
 	if (installPath.indexOf("/usr/bin") == 0)
-		dbpath = "/usr/share/MasterSim";
+		resRootPath = "/usr/share/MasterSim";
 	else if (installPath.indexOf("/usr/local/bin") == 0)
-		dbpath = "/usr/local/share/MasterSim";
+		resRootPath = "/usr/local/share/MasterSim";
 	else
-		dbpath = installPath + "/../Resources/MasterSim";
+		resRootPath = installPath + "/../resources";
+
+	// check for database install-path override
+	QSettings config(ORG_NAME, PROGRAM_NAME);
+	resRootPath = config.value("ResourcesRoot", resRootPath).toString();
+	return resRootPath;
 
 #endif
 
@@ -56,12 +61,18 @@ QString MSIMDirectories::resourcesRootDir() {
 
 QString MSIMDirectories::translationsDir() {
 #ifdef IBK_DEPLOYMENT
+
 	// deployment mode
 	return resourcesRootDir() + "/translations";
 
 #else // IBK_DEPLOYMENT
 	// development (IDE) mode
-	return resourcesRootDir() + "/translations";
+	QString installPath = qApp->applicationDirPath();
+#if defined(Q_OS_MAC)
+	return installPath + "/../../../../../MasterSimulatorUI/resources/translations";
+#else
+	return installPath + "/../../MasterSimulatorUI/resources/translations";
+#endif
 
 #endif // IBK_DEPLOYMENT
 }
