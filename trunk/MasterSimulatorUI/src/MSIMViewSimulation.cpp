@@ -38,13 +38,10 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 
 	// setup combo boxes
 	QStringList units;
-//	std::vector<IBK::Unit> uvec;
-//	IBK::UnitList::instance().convertible_units(uvec, IBK::Unit("s"));
-//	foreach (IBK::Unit u, uvec)
-//		units << QString::fromStdString(u.name());
 	units << "ms" << "s" << "min" << "h" <<"d" << "a";
 	m_ui->comboBoxStartTimeUnit->addItems(units);
 	m_ui->comboBoxEndTimeUnit->addItems(units);
+	m_ui->comboBoxDtStartUnit->addItems(units);
 	m_ui->comboBoxDtIterLimitUnit->addItems(units);
 	m_ui->comboBoxMaxDtUnit->addItems(units);
 	m_ui->comboBoxMinDtUnit->addItems(units);
@@ -81,6 +78,7 @@ MSIMViewSimulation::~MSIMViewSimulation() {
 	delete m_ui;
 }
 
+
 void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
@@ -94,6 +92,7 @@ void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	blockMySignals(this, true);
 	setupLineEditUnitCombo(m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit, project().m_tStart);
 	setupLineEditUnitCombo(m_ui->lineEditEndTime, m_ui->comboBoxEndTimeUnit, project().m_tEnd);
+	setupLineEditUnitCombo(m_ui->lineEditDtStart, m_ui->comboBoxDtStartUnit, project().m_hStart);
 
 	setupLineEditUnitCombo(m_ui->lineEditDtMax, m_ui->comboBoxMaxDtUnit, project().m_hMax);
 	setupLineEditUnitCombo(m_ui->lineEditDtMin, m_ui->comboBoxMinDtUnit, project().m_hMin);
@@ -263,6 +262,15 @@ void MSIMViewSimulation::on_comboBoxMasterAlgorithm_currentIndexChanged(int inde
 }
 
 
+void MSIMViewSimulation::on_comboBoxErrorControl_currentIndexChanged(int index) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_errorControlMode = (MASTER_SIM::Project::ErrorControlMode)index;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
 void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
 	MASTER_SIM::Project p = project(); // create copy of project
 	p.m_maxIterations = arg1;
@@ -272,22 +280,6 @@ void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
 }
 
 
-void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
-	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit))
-		return;
-	if (par.value < 0) {
-		QMessageBox::critical(this, tr("Invalid input"), tr("Start time must be >= 0."));
-		m_ui->lineEditStartTime->selectAll();
-		return;
-	}
-
-	MASTER_SIM::Project p = project(); // create copy of project
-	p.m_tStart = par;
-
-	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
-}
 
 
 
@@ -343,3 +335,194 @@ void MSIMViewSimulation::on_comboBoxDtOutputUnit_currentIndexChanged(int) {
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push(); // reset focus on combo box
 }
+
+
+void MSIMViewSimulation::on_comboBoxDtStartUnit_currentIndexChanged(int) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hStart.IO_unit.set( m_ui->comboBoxDtStartUnit->currentText().toStdString());
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Time must be >= 0."));
+		m_ui->lineEditStartTime->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tStart = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditEndTime_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tend", par, m_ui->lineEditEndTime, m_ui->comboBoxEndTimeUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Time must be >= 0."));
+		m_ui->lineEditEndTime->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tEnd = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditRelTol_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "it_tol_rel", par, m_ui->lineEditRelTol, NULL))
+		return;
+	if (par.value <= 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Tolerance must be > 0."));
+		m_ui->lineEditRelTol->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_relTol = par.value;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditAbsTol_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "it_tol_abs", par, m_ui->lineEditAbsTol, NULL))
+		return;
+	if (par.value <= 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Tolerance must be > 0."));
+		m_ui->lineEditAbsTol->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_absTol = par.value;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_checkBoxAdjustStepSize_toggled(bool checked) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_adjustStepSize = checked;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_checkBoxBinaryOutputFiles_toggled(bool checked) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_binaryOutputFiles = checked;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditDtMin_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstepmin", par, m_ui->lineEditDtMin, m_ui->comboBoxMinDtUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
+		m_ui->lineEditDtMin->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hMin = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditDtMax_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstepmax", par, m_ui->lineEditDtMax, m_ui->comboBoxMaxDtUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
+		m_ui->lineEditDtMax->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hMax = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditDtIterLimit_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstepiterlimit", par, m_ui->lineEditDtIterLimit, m_ui->comboBoxDtIterLimitUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
+		m_ui->lineEditDtIterLimit->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hFallBackLimit = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditDtOutput_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "toutputstepmin", par, m_ui->lineEditDtOutput, m_ui->comboBoxDtOutputUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
+		m_ui->lineEditDtOutput->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_tOutputStepMin = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditDtStart_editingFinished() {
+	IBK::Parameter par;
+	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditDtStart, m_ui->comboBoxDtStartUnit))
+		return;
+	if (par.value < 0) {
+		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
+		m_ui->lineEditDtStart->selectAll();
+		return;
+	}
+
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_hStart = par;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
