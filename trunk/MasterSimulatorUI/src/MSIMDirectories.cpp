@@ -32,9 +32,6 @@ QString MSIMDirectories::resourcesRootDir() {
 	else
 		resRootPath = installPath + "/../resources";
 
-	// check for database install-path override
-	QSettings config(ORG_NAME, PROGRAM_NAME);
-	resRootPath = config.value("ResourcesRoot", resRootPath).toString();
 	return resRootPath;
 
 #endif
