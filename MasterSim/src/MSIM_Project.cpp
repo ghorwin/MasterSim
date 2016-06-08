@@ -144,6 +144,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				if (!m_tOutputStepMin.set("toutputstepmin", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
 			} else if (keyword == "binaryOutputFiles")
 				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
+			else if (keyword == "adjustStepSize")
+				m_adjustStepSize = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "it_tol_abs")
 				m_absTol = IBK::string2val<double>(value);
 			else if (keyword == "it_tol_rel")
@@ -202,6 +204,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!m_hStart.empty())		m_hStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
 	if (!m_tOutputStepMin.empty())		m_tOutputStepMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
 	out << std::setw(KEYWORD_WIDTH) << std::left << "binaryOutputFiles" << " " << (m_binaryOutputFiles ? "yes" : "no") << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_abs" << " " << m_absTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_rel" << " " << m_relTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "MasterMode" << " ";
