@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -38,6 +38,8 @@
 #ifndef IBK_WaitOnExitH
 #define IBK_WaitOnExitH
 
+#include <iostream>
+
 #include "IBK_configuration.h"
 
 namespace IBK {
@@ -60,12 +62,16 @@ public:
 					upon destruction.
 	*/
 	WaitOnExit(bool wait = true) : m_wait(wait) {}
-#ifdef WIN32
 	/*! Destructor, only on Windows systems. */
 	~WaitOnExit() {
+#ifdef WIN32
 		if (m_wait) system("pause");
-	}
+#else
+		std::cout << "Press <RETURN> to continue...";
+		std::cin.ignore();
+		std::cout << std::endl;
 #endif // WIN32
+	}
 
 	/*! If true, the "pause" command is issued on destruction of this object, if false, nothing happens. */
 	bool m_wait;

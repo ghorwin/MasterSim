@@ -56,16 +56,14 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->comboBoxVerbosityLevel->setCurrentIndex(MSIMSettings::instance().m_userLogLevelConsole);
 
 	// preset for terminal command
-	m_ui->comboBoxTerminalCommand->addItem("gnome-terminal %cmdline");
+	m_ui->comboBoxTerminalCommand->addItem("gnome-terminal --working-directory=\"%wd\" -x %cmdline");
 
 #ifdef Q_OS_WIN
 	m_ui->labelTerminalCommand->setVisible(false);
 	m_ui->comboBoxTerminalCommand->setVisible(false);
-	m_ui->checkBoxCloseOnExit->setChecked(false);
 #else
-	m_ui->checkBoxCloseOnExit->setVisible(false);
-	m_ui->checkBoxCloseOnExit->setChecked(false);
 #endif
+	m_ui->checkBoxCloseOnExit->setChecked(false);
 }
 
 
@@ -172,12 +170,12 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 
 #ifdef Q_OS_LINUX
 	// open terminal and start solver in terminal
-	QString terminalCommand = m_ui->comboBoxTerminalCommand->currentText();
-	QStringList cmdLineArgs;
-	cmdLineArgs << QString("--working-directory=\"%1\"").arg(MSIMSettings::instance().m_installDir);
-	QString bashCmdLine = "-x " + m_solverName + " " + commandLineArgs.join(" ");
-	cmdLineArgs << bashCmdLine;
-	QString allCmdLine = terminalCommand + " " + cmdLineArgs.join(" ");
+	std::string terminalCommand = m_ui->comboBoxTerminalCommand->currentText().toUtf8().data();
+	terminalCommand = IBK::replace_string(terminalCommand, "%wd", MSIMSettings::instance().m_installDir.toUtf8().data());
+	std::string bashCmdLine = (m_solverName + " " + commandLineArgs.join(" ")).toUtf8().data();
+	terminalCommand = IBK::replace_string(terminalCommand, "%cmdline", bashCmdLine);
+
+	QString allCmdLine = QString::fromUtf8(terminalCommand.c_str());
 	int res = myProcess->execute(allCmdLine);
 	success = (res == 0);
 #else
@@ -185,7 +183,7 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	success = myProcess->startDetached(m_solverName, commandLineArgs);
 #endif
 
-	// check if solver thread is running
+	// release process
 	myProcess.release();
 
 #endif // Q_OS_WIN
