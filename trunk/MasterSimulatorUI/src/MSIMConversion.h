@@ -13,6 +13,7 @@
 #include <IBK_Color.h>
 
 class QCheckBox;
+class QWidget;
 
 namespace QtExt {
 	class ValidatingLineEdit;
@@ -46,5 +47,8 @@ IBK::Unit s2Unit(const QString & str);
 inline QColor color2QColor(const IBK::Color & color) {
 	return QColor( (QRgb)color.toQRgb() );
 }
+
+/*! Utility function that recursively calls blockSignal() on all widgets and their child widgets. */
+void blockMySignals(QWidget * p, bool block);
 
 #endif // MSIMConversionH

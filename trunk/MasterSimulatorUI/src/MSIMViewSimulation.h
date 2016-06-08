@@ -32,6 +32,12 @@ private slots:
 
 	void on_comboBoxVerbosityLevel_currentIndexChanged(int index);
 
+	void on_comboBoxMasterAlgorithm_currentIndexChanged(int index);
+
+	void on_spinBoxMaxIteration_valueChanged(int arg1);
+
+	void on_lineEditStartTime_editingFinished();
+
 private:
 	void updateCommandLine();
 

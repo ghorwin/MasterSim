@@ -22,6 +22,8 @@
 #include "MSIMUIConstants.h"
 #include "MSIMSettings.h"
 #include "MSIMMainWindow.h"
+#include "MSIMConversion.h"
+#include "MSIMUndoSimulationSettings.h"
 
 
 MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
@@ -31,6 +33,8 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->setupUi(this);
 
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
+
+	blockMySignals(this, true);
 
 	// setup combo boxes
 	QStringList units;
@@ -64,13 +68,14 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 #else
 #endif
 	m_ui->checkBoxCloseOnExit->setChecked(false);
+
+	blockMySignals(this, false);
 }
 
 
 MSIMViewSimulation::~MSIMViewSimulation() {
 	delete m_ui;
 }
-
 
 void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
@@ -80,7 +85,7 @@ void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 			return; // nothing to do for us
 	}
 
-	blockSignals(true);
+	blockMySignals(this, true);
 	setupLineEditUnitCombo(m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit, project().m_tStart);
 	setupLineEditUnitCombo(m_ui->lineEditEndTime, m_ui->comboBoxEndTimeUnit, project().m_tEnd);
 
@@ -97,7 +102,8 @@ void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
 	m_ui->checkBoxAdjustStepSize->setChecked( project().m_adjustStepSize);
 	m_ui->checkBoxBinaryOutputFiles->setChecked( project().m_binaryOutputFiles);
-	blockSignals(false);
+
+	blockMySignals(this, false);
 
 	updateCommandLine();
 }
@@ -236,4 +242,28 @@ void MSIMViewSimulation::on_checkBoxCloseOnExit_clicked() {
 
 void MSIMViewSimulation::on_comboBoxVerbosityLevel_currentIndexChanged(int) {
 	updateCommandLine();
+}
+
+
+void MSIMViewSimulation::on_comboBoxMasterAlgorithm_currentIndexChanged(int index) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_masterMode = (MASTER_SIM::Project::MasterMode)index;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_maxIterations = arg1;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push(); // reset focus on combo box
+}
+
+
+void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
+	// check if value is valid
+
 }

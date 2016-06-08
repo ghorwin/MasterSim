@@ -635,7 +635,7 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 }
 
 
-void MSIMMainWindow::on_actionViewSlaves_toggled(bool arg1) {
+void MSIMMainWindow::on_actionViewSlaves_toggled(bool) {
 	// toggle off all other view actions
 	m_ui->actionViewConnections->blockSignals(true);
 	m_ui->actionViewConnections->setChecked(false);
@@ -646,7 +646,7 @@ void MSIMMainWindow::on_actionViewSlaves_toggled(bool arg1) {
 	m_stackedWidget->setCurrentIndex(0);
 }
 
-void MSIMMainWindow::on_actionViewConnections_toggled(bool arg1) {
+void MSIMMainWindow::on_actionViewConnections_toggled(bool) {
 	m_ui->actionViewSlaves->blockSignals(true);
 	m_ui->actionViewSlaves->setChecked(false);
 	m_ui->actionViewSlaves->blockSignals(false);
@@ -656,7 +656,7 @@ void MSIMMainWindow::on_actionViewConnections_toggled(bool arg1) {
 	m_stackedWidget->setCurrentIndex(1);
 }
 
-void MSIMMainWindow::on_actionViewSimulation_toggled(bool arg1) {
+void MSIMMainWindow::on_actionViewSimulation_toggled(bool) {
 	m_ui->actionViewSlaves->blockSignals(true);
 	m_ui->actionViewSlaves->setChecked(false);
 	m_ui->actionViewSlaves->blockSignals(false);

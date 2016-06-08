@@ -181,7 +181,7 @@ void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 
 		// extract project index to delete and remove it from list
 		QString index = link.toString();
-		index = index.right(index.length()-9);
+		index = index.right(index.length()-14);
 		bool ok;
 		int ind = index.toInt(&ok);
 		if (ok && ind < MSIMSettings::instance().m_recentProjects.size()){
