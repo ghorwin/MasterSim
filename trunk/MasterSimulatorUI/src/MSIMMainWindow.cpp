@@ -280,7 +280,7 @@ void MSIMMainWindow::on_actionFileOpen_triggered() {
 							this,
 							tr("Select project file"),
 							MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory].toString(),
-							tr("MasterSim Projects (*.cfg *%1);;All files (*.*)").arg(DOT_FILE_EXTENSION).arg(DOT_FILE_EXTENSION)
+							tr("MasterSim Projects (*.cfg *%1);;All files (*.*)").arg(DOT_FILE_EXTENSION)
 						);
 
 	if (filename.isEmpty()) return;
