@@ -38,6 +38,19 @@ private slots:
 
 	void on_lineEditStartTime_editingFinished();
 
+
+	void on_comboBoxStartTimeUnit_currentIndexChanged(int index);
+
+	void on_comboBoxEndTimeUnit_currentIndexChanged(int index);
+
+	void on_comboBoxMinDtUnit_currentIndexChanged(int index);
+
+	void on_comboBoxMaxDtUnit_currentIndexChanged(int index);
+
+	void on_comboBoxDtIterLimitUnit_currentIndexChanged(int index);
+
+	void on_comboBoxDtOutputUnit_currentIndexChanged(int index);
+
 private:
 	void updateCommandLine();
 
