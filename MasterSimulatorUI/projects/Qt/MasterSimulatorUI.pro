@@ -65,7 +65,8 @@ SOURCES += ../../src/main.cpp \
     ../../src/MSIMViewConnections.cpp \
     ../../src/MSIMSlaveItemDelegate.cpp \
     ../../src/MSIMConnectionItemDelegate.cpp \
-    ../../src/MSIMViewSimulation.cpp
+    ../../src/MSIMViewSimulation.cpp \
+    ../../src/MSIMUndoSimulationSettings.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -88,7 +89,8 @@ HEADERS  += \
     ../../src/MSIMViewConnections.h \
     ../../src/MSIMSlaveItemDelegate.h \
     ../../src/MSIMConnectionItemDelegate.h \
-    ../../src/MSIMViewSimulation.h
+    ../../src/MSIMViewSimulation.h \
+    ../../src/MSIMUndoSimulationSettings.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \

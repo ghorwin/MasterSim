@@ -9,6 +9,10 @@ extern const char * const VERSION;
 /*! Long Version number. */
 extern const char * const LONG_VERSION;
 
+/*! Indentation of keyword */
+extern const unsigned int KEYWORD_INDENTATION;
+/*! Width of parameter value */
+extern const unsigned int KEYWORD_WIDTH;
 
 } // namespace MASTER_SIM
 

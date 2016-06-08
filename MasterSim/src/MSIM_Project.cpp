@@ -7,6 +7,8 @@
 #include <IBK_FileUtils.h>
 #include <IBK_assert.h>
 
+#include "MSIM_Constants.h"
+
 namespace MASTER_SIM {
 
 Project::Project() :
@@ -27,6 +29,7 @@ Project::Project() :
 	m_outputTimeUnit("s")
 {
 }
+
 
 const unsigned int COLOR_COUNT = 10;
 const char * const SIMULATOR_COLORS[COLOR_COUNT] = {
@@ -178,7 +181,66 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 
 
 void Project::write(const IBK::Path & prjFile) const {
-	// TODO : Implement
+	const char * const FUNC_ID = "[Project::write]";
+
+	std::ofstream out;
+#if defined(_WIN32) && !defined(__MINGW32__)
+	out.open(prjFile.wstr().c_str());
+#else
+	out.open(prjFile.str().c_str());
+#endif // _WIN32
+
+	if (!out)
+		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
+
+
+	if (!m_tStart.empty())		m_tStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_tEnd.empty())		m_tEnd.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_hMax.empty())		m_hMax.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_hMin.empty())		m_hMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_hFallBackLimit.empty())		m_hFallBackLimit.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_hStart.empty())		m_hStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_tOutputStepMin.empty())		m_tOutputStepMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	out << std::setw(KEYWORD_WIDTH) << std::left << "binaryOutputFiles" << " " << (m_binaryOutputFiles ? "yes" : "no") << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_abs" << " " << m_absTol << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_rel" << " " << m_relTol << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "MasterMode" << " ";
+	switch (m_masterMode) {
+		case MM_GAUSS_JACOBI : out << "GAUSS_JACOBI"; break;
+		case MM_GAUSS_SEIDEL : out << "GAUSS_SEIDEL"; break;
+		case MM_NEWTON : out << "NEWTON"; break;
+	}
+	out << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "ErrorControlMode" << " ";
+	switch (m_errorControlMode) {
+		case EM_NONE : out << "NONE"; break;
+		case EM_CHECK : out << "CHECK"; break;
+		case EM_ADAPT_STEP : out << "ADAPT_STEP"; break;
+	}
+	out << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "it_max_steps" << " " << m_maxIterations << std::endl;
+	out << std::endl;
+
+	// write simulators
+	for (unsigned int i=0; i<m_simulators.size(); ++i) {
+		const SimulatorDef & simDef = m_simulators[i];
+		out << "simulator " << i << " " << /* simDef.m_cycle << " " << */ simDef.m_name << " " << simDef.m_color.toHtmlString() << " " << simDef.m_pathToFMU.str() << std::endl;
+	}
+	out << std::endl;
+
+	// write graph
+	for (unsigned int i=0; i<m_graph.size(); ++i) {
+		const Project::GraphEdge & edge = m_graph[i];
+		out << "graph " << edge.m_outputVariableRef << " " << edge.m_inputVariableRef << std::endl;
+	}
+
+	// write parameters
+	for (unsigned int i=0; i<m_simulators.size(); ++i) {
+		const SimulatorDef & simDef = m_simulators[i];
+		for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin(); it != simDef.m_parameters.end(); ++it)
+			out << "parameter " << simDef.m_name << "." << it->first << "   " << it->second << std::endl;
+	}
+	out << std::endl;
 }
 
 
@@ -189,8 +251,6 @@ const Project::SimulatorDef & Project::simulatorDefinition(const std::string & s
 	}
 	throw IBK::Exception(IBK::FormatString("Cannot find simulator/slave definition with name '%1'.").arg(slaveName), "[Project::simulatorDefinition]");
 }
-
-
 
 
 void Project::SimulatorDef::parse(const std::string & simulatorDef) {
