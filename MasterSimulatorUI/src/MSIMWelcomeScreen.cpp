@@ -89,11 +89,11 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 				}
 				catch (IBK::Exception &) {
 					// error reading project file, missing permissions?
-					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project</font></i> <a href=\"projectRemove:%1\">Remove %2</a>").arg( i ).arg( finfo.fileName() );
+					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project <a href=\"projectRemove:%1\">[remove from list]</a></font></i>").arg( i );
 				}
 			}
 			else {
-				description = tr("<i><font color=\"#800000\">Project not accessible</font></i> <a href=\"projectRemove:%1\">Remove %2</a>").arg( i ).arg( finfo.fileName() );
+				description = tr("<i><font color=\"#800000\">Project not accessible <a href=\"projectRemove:%1\">[remove from list]</a></font></i>").arg( i );
 			}
 
 			QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + finfo.fileName() + ".png";
