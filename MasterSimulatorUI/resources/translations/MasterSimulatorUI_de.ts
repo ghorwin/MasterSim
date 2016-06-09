@@ -851,7 +851,7 @@
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="60"/>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="119"/>
         <source>Examples/Validation cases</source>
-        <translation>Beispiel/Validierungsfälle</translation>
+        <translation>Beispiele/Validierungsfälle</translation>
     </message>
     <message>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="85"/>
