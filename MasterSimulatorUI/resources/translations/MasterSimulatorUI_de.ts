@@ -529,12 +529,12 @@
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="86"/>
         <source>A value of 1 disables iteration</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Wert 1 deaktiviert die Iteration</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="89"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of iterations:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <source>Maximum number of iterations:</source>
+        <translation>Maximale Anzahl von Iterationen:</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="109"/>
@@ -756,37 +756,67 @@
     <message>
         <location filename="../../src/MSIMViewSlaves.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSlaves.ui" line="37"/>
         <source>Simulators/Slaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulatoren/Slaves</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.ui" line="111"/>
+        <location filename="../../src/MSIMViewSlaves.ui" line="68"/>
+        <source>Del</source>
+        <translation>Entf</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.ui" line="120"/>
         <source>Functional Mockup Units</source>
-        <translation type="unfinished"></translation>
+        <translation>Functional Mockup Units</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="27"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="33"/>
         <source>Full path</source>
-        <translation type="unfinished"></translation>
+        <translation>Vollständiger Pfad</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="35"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="35"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
         <source>FMU</source>
-        <translation type="unfinished"></translation>
+        <translation>FMU</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="35"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
         <source>Cycle Nr.</source>
-        <translation type="unfinished"></translation>
+        <translation>Zyklus Nr.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="125"/>
+        <source>Select FMU</source>
+        <translation>Wähle FMU</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="125"/>
+        <source>FMU files (*.fmu)</source>
+        <translation>FMU Dateien (*.fmu)</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="144"/>
+        <source>Slave added</source>
+        <translation>Slave hinzugefügt</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="173"/>
+        <source>Slave removed</source>
+        <translation>Slave entfernt</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="203"/>
+        <source>Slave modified</source>
+        <translation>Slave verändert</translation>
     </message>
 </context>
 <context>
@@ -830,13 +860,13 @@
     </message>
     <message>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="92"/>
-        <source>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Project not accessible/error reading project&lt;/font&gt;&lt;/i&gt; &lt;a href=&quot;projectRemove:%1&quot;&gt;Remove %2&lt;/a&gt;</source>
-        <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Projekt kann nicht gelesen werden&lt;/font&gt;&lt;/i&gt; &lt;a href=&quot;projectRemove:%1&quot;&gt;Entferne %2&lt;/a&gt;</translation>
+        <source>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Project not accessible/error reading project &lt;a href=&quot;projectRemove:%1&quot;&gt;[remove from list]&lt;/a&gt;&lt;/font&gt;&lt;/i&gt;</source>
+        <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Auf Projekt kann nicht zugegriffen werden/Fehler beim Laden des Projekts &lt;a href=&quot;projectRemove:%1&quot;&gt;[von Liste entfernen]&lt;/a&gt;&lt;/font&gt;&lt;/i&gt;</translation>
     </message>
     <message>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="96"/>
-        <source>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Project not accessible&lt;/font&gt;&lt;/i&gt; &lt;a href=&quot;projectRemove:%1&quot;&gt;Remove %2&lt;/a&gt;</source>
-        <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Projekt kann nicht gefunden werden&lt;/font&gt;&lt;/i&gt; &lt;a href=&quot;projectRemove:%1&quot;&gt;Entferne %2&lt;/a&gt;</translation>
+        <source>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Project not accessible &lt;a href=&quot;projectRemove:%1&quot;&gt;[remove from list]&lt;/a&gt;&lt;/font&gt;&lt;/i&gt;</source>
+        <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Auf Projekt kann nicht zugegriffen werden &lt;a href=&quot;projectRemove:%1&quot;&gt;[von Liste entfernen]&lt;/a&gt;&lt;/font&gt;&lt;/i&gt;</translation>
     </message>
     <message>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="227"/>

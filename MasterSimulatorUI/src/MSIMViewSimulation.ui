@@ -86,7 +86,7 @@
            <string>A value of 1 disables iteration</string>
           </property>
           <property name="text">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum number of iterations:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>Maximum number of iterations:</string>
           </property>
          </widget>
         </item>
