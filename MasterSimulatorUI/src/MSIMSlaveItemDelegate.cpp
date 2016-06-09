@@ -4,6 +4,7 @@
 #include <QColor>
 #include <QTextDocument>
 #include <QColorDialog>
+#include <QSpinBox>
 
 #include "MSIMUIConstants.h"
 
@@ -29,66 +30,99 @@ void MSIMSlaveItemDelegate::paint( QPainter * painter, const QStyleOptionViewIte
 		painter->setBrush(col);
 		painter->drawRect(r);
 	}
-	else {
-		// write colored text otherwise
-		QStyleOptionViewItemV4 options = option;
+//	else {
+//		// write colored text otherwise
+//		QStyleOptionViewItemV4 options = option;
 
-		painter->save();
+//		painter->save();
 
-		QTextDocument doc;
-		QFont f;
-		f.setPointSize(TABLE_FONT_SIZE);
-		doc.setDefaultFont(f);
-		doc.setDocumentMargin(0);
-		QString htmlText = QString("<div style=\"margin:0; color:%1\">%2</div>").arg(col.name()).arg(text);
-		doc.setHtml(htmlText);
+//		QTextDocument doc;
+//		QFont f;
+//		f.setPointSize(TABLE_FONT_SIZE);
+//		doc.setDefaultFont(f);
+//		doc.setDocumentMargin(0);
+//		QString htmlText = QString("<div style=\"margin:0; color:%1\">%2</div>").arg(col.name()).arg(text);
+//		doc.setHtml(htmlText);
 
-		options.text = "";
-		options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+//		options.text = "";
+//		options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
-		painter->translate(r.left()+2, r.top());
-		QRect clip(0, 0, r.width(), r.height());
-		doc.drawContents(painter, clip);
+//		painter->translate(r.left()+2, r.top());
+//		QRect clip(0, 0, r.width(), r.height());
+//		doc.drawContents(painter, clip);
 
-		painter->restore();
-	}
+//		painter->restore();
+//	}
 }
 
 
 QWidget * MSIMSlaveItemDelegate::createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
-	if (index.column() == 0) {
-		QColorDialog * editor = new QColorDialog(parent);
-		connect(editor, SIGNAL(accepted()), this, SLOT(commitAndCloseEditor()));
-		connect(editor, SIGNAL(rejected()), this, SLOT(rejectCloseEditor()));
-		return editor;
-	}
-	else {
-		return QItemDelegate::createEditor(parent, option, index);
+	switch (index.column()) {
+		case 0 : {
+			QColorDialog * editor = new QColorDialog(parent);
+			connect(editor, SIGNAL(accepted()), this, SLOT(commitAndCloseEditor()));
+			connect(editor, SIGNAL(rejected()), this, SLOT(rejectCloseEditor()));
+			return editor;
+		}
+		case 3 : {
+			QSpinBox * editor = new QSpinBox(parent);
+			editor->setMinimum(0);
+			editor->setMaximum(1000);
+			return editor;
+		}
+		default :
+			return QItemDelegate::createEditor(parent, option, index);
 	}
 }
 
 
 void MSIMSlaveItemDelegate::setEditorData ( QWidget * editor, const QModelIndex & index ) const {
-	if (index.column() == 0) {
-		QVariant data = index.model()->data(index, Qt::UserRole);
-		QColor col = data.value<QColor>();
-		QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
-		colorDialog->setCurrentColor(col);
-	}
-	else {
-		QItemDelegate::setEditorData(editor, index);
+	switch (index.column()) {
+		case 0 : {
+			QVariant data = index.model()->data(index, Qt::UserRole);
+			QColor col = data.value<QColor>();
+			QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
+			colorDialog->setCurrentColor(col);
+		} break;
+
+		case 3 : {
+			int value = index.model()->data(index, Qt::DisplayRole).toInt();
+			QSpinBox *spinBox = qobject_cast<QSpinBox *>(editor);
+			spinBox->setValue(value);
+		} break;
+
+		default :	QItemDelegate::setEditorData(editor, index);
 	}
 }
 
 
 void MSIMSlaveItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-	if (index.column() == 0) {
-		QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
-		model->setData(index, colorDialog->currentColor(), Qt::UserRole);
+	switch (index.column()) {
+		case 0 : {
+			QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
+			model->setData(index, colorDialog->currentColor(), Qt::UserRole);
+		} break;
+
+		case 3 : {
+			QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+			spinBox->interpretText();
+			int value = spinBox->value();
+
+			model->setData(index, value, Qt::EditRole);
+		} break;
+
+		default : QItemDelegate::setModelData(editor, model, index);
 	}
-	else {
-		QItemDelegate::setModelData(editor, model, index);
-	}
+}
+
+
+void MSIMSlaveItemDelegate::updateEditorGeometry(QWidget *editor,
+	const QStyleOptionViewItem &option, const QModelIndex & index) const
+{
+	if (index.column() == 3)
+		editor->setGeometry(option.rect);
+	else
+		QItemDelegate::updateEditorGeometry(editor, option, index);
 }
 
 
