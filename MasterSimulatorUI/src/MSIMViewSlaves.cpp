@@ -7,6 +7,9 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QFileInfo>
+#include <QScrollBar>
+#include <QDebug>
+#include <QMessageBox>
 
 #include <IBK_algorithm.h>
 
@@ -93,6 +96,20 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	}
 	m_ui->tableWidgetSlaves->resizeColumnsToContents();
 	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
+	// if there is space, stretch 2nd column
+	unsigned int colSizeSum = 0;
+	for (unsigned int i=0; i<4; ++i)
+		colSizeSum += m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(i);
+	unsigned int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
+//	qDebug() << m_ui->tableWidgetSlaves->width();
+//	qDebug() << contentsRectWith;
+//	qDebug() << colSizeSum;
+	if (colSizeSum < contentsRectWith-20) {
+		unsigned int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
+								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
+								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
+		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
+	}
 	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
 	unsigned int rowIdx = 0;
 	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
@@ -189,11 +206,39 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	switch (column) {
 		case 0 : p.m_simulators[row].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
 		case 1 : {
-			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().toUtf8().data();
+			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().trimmed().toUtf8().data();
 			if (newSlaveName != p.m_simulators[row].m_name) {
+				if (newSlaveName.find_first_of(" \t") != std::string::npos) {
+					QMessageBox::critical(this, tr("Invalid input"), tr("Slave names may not contain spaces or tabulator characters."));
+					item->setText( QString::fromUtf8(p.m_simulators[row].m_name.c_str()) );
+					return;
+				}
 				// check for ambiguous name
+				bool found = false;
+				for (unsigned int i=0; i<p.m_simulators.size(); ++i) {
+					if (i == (unsigned int)row) continue;
+					if (newSlaveName == p.m_simulators[row].m_name)
+						found = true;
+				}
+				if (found) {
+					QMessageBox::critical(this, tr("Invalid input"), tr("Slave names must be unique identifiers."));
+					item->setText( QString::fromUtf8(p.m_simulators[row].m_name.c_str()) );
+					return;
+				}
 			}
+			std::string oldName = p.m_simulators[row].m_name;
 			p.m_simulators[row].m_name = newSlaveName;
+
+			// now rename all connections with this slave name
+			for (unsigned int i=0; i<p.m_graph.size(); ++i) {
+				MASTER_SIM::Project::GraphEdge & edge = p.m_graph[i];
+				if (edge.inputSlaveName() == oldName) {
+					edge.m_inputVariableRef = MASTER_SIM::Project::GraphEdge::replaceSlaveName(edge.m_inputVariableRef, newSlaveName);
+				}
+				if (edge.outputSlaveName() == oldName) {
+					edge.m_outputVariableRef = MASTER_SIM::Project::GraphEdge::replaceSlaveName(edge.m_outputVariableRef, newSlaveName);
+				}
+			}
 		} break;
 		case 2 : p.m_simulators[row].m_pathToFMU = item->text().toUtf8().data(); break;
 		case 3 : p.m_simulators[row].m_cycle = item->text().toUInt(); break;
