@@ -154,10 +154,52 @@ void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 	int currentIdx = m_ui->tableWidgetSlaves->currentRow();
 	Q_ASSERT(currentIdx != -1);
 
-	// create undo action
+	// create copy of all connections not made to this slave
+	std::string slaveName = p.m_simulators[currentIdx].m_name;
+
+	std::vector<MASTER_SIM::Project::GraphEdge>	graph;
+	for (unsigned int i=0; i<p.m_graph.size(); ++i) {
+		MASTER_SIM::Project::GraphEdge & edge = p.m_graph[i];
+		if (edge.inputSlaveName() != slaveName && edge.outputSlaveName() != slaveName)
+			graph.push_back(edge);
+	}
+	// modify connections
+	p.m_graph = graph;
+
+	// remove slave instance
 	p.m_simulators.erase( p.m_simulators.begin() + currentIdx);
 
+	// create undo action
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave removed"), p);
 	cmd->push();
+}
 
+
+void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
+	// triggered when editor finishes, update simulator definition in selected row
+
+	MASTER_SIM::Project p = project();
+
+	// special handling for column 1 - when user edits the name to match the name of an existing
+	// slave, reject the change and simply update the table again
+	if (column == 1)  {
+	}
+
+	QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(row, column);
+	switch (column) {
+		case 0 : p.m_simulators[row].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
+		case 1 : {
+			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().toUtf8().data();
+			if (newSlaveName != p.m_simulators[row].m_name) {
+				// check for ambiguous name
+			}
+			p.m_simulators[row].m_name = newSlaveName;
+		} break;
+		case 2 : p.m_simulators[row].m_pathToFMU = item->text().toUtf8().data(); break;
+		case 3 : p.m_simulators[row].m_cycle = item->text().toUInt(); break;
+	}
+
+	// create undo action
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave modified"), p);
+	cmd->push();
 }

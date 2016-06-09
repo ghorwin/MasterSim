@@ -23,6 +23,8 @@ private slots:
 
 	void on_toolButtonRemoveSlave_clicked();
 
+	void on_tableWidgetSlaves_cellChanged(int row, int column);
+
 private:
 	Ui::MSIMViewSlaves *m_ui;
 };

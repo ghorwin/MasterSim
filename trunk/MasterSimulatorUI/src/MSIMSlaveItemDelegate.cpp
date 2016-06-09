@@ -3,6 +3,7 @@
 #include <QPainter>
 #include <QColor>
 #include <QTextDocument>
+#include <QColorDialog>
 
 #include "MSIMUIConstants.h"
 
@@ -10,6 +11,7 @@ MSIMSlaveItemDelegate::MSIMSlaveItemDelegate(QObject *parent) :
 	QItemDelegate(parent)
 {
 }
+
 
 void MSIMSlaveItemDelegate::paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
 	if (index.column() != 0) {
@@ -52,3 +54,52 @@ void MSIMSlaveItemDelegate::paint( QPainter * painter, const QStyleOptionViewIte
 	}
 }
 
+
+QWidget * MSIMSlaveItemDelegate::createEditor ( QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
+	if (index.column() == 0) {
+		QColorDialog * editor = new QColorDialog(parent);
+		connect(editor, SIGNAL(accepted()), this, SLOT(commitAndCloseEditor()));
+		connect(editor, SIGNAL(rejected()), this, SLOT(rejectCloseEditor()));
+		return editor;
+	}
+	else {
+		return QItemDelegate::createEditor(parent, option, index);
+	}
+}
+
+
+void MSIMSlaveItemDelegate::setEditorData ( QWidget * editor, const QModelIndex & index ) const {
+	if (index.column() == 0) {
+		QVariant data = index.model()->data(index, Qt::UserRole);
+		QColor col = data.value<QColor>();
+		QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
+		colorDialog->setCurrentColor(col);
+	}
+	else {
+		QItemDelegate::setEditorData(editor, index);
+	}
+}
+
+
+void MSIMSlaveItemDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
+	if (index.column() == 0) {
+		QColorDialog *colorDialog = qobject_cast<QColorDialog *>(editor);
+		model->setData(index, colorDialog->currentColor(), Qt::UserRole);
+	}
+	else {
+		QItemDelegate::setModelData(editor, model, index);
+	}
+}
+
+
+void MSIMSlaveItemDelegate::rejectCloseEditor() {
+	QColorDialog *editor = qobject_cast<QColorDialog *>(sender());
+	emit closeEditor(editor);
+}
+
+
+void MSIMSlaveItemDelegate::commitAndCloseEditor() {
+	QColorDialog *editor = qobject_cast<QColorDialog *>(sender());
+	emit commitData(editor);
+	emit closeEditor(editor);
+}
