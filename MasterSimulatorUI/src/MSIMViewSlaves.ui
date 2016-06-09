@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>936</width>
+    <width>1026</width>
     <height>614</height>
    </rect>
   </property>
@@ -64,6 +64,9 @@
             <height>16</height>
            </size>
           </property>
+          <property name="shortcut">
+           <string>Del</string>
+          </property>
          </widget>
         </item>
         <item row="1" column="2">
@@ -93,11 +96,17 @@
           <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QLabel" name="label">
@@ -117,12 +126,18 @@
           <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
          </widget>
         </item>
        </layout>
       </widget>
      </widget>
-     <widget class="BLOCKMOD::ZoomMeshGraphicsView" name="widget" native="true">
+     <widget class="BLOCKMOD::ZoomMeshGraphicsView" name="blockModWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>1</horstretch>

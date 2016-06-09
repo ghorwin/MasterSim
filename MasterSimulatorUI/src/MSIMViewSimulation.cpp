@@ -258,7 +258,7 @@ void MSIMViewSimulation::on_comboBoxMasterAlgorithm_currentIndexChanged(int inde
 	p.m_masterMode = (MASTER_SIM::Project::MasterMode)index;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -267,7 +267,7 @@ void MSIMViewSimulation::on_comboBoxErrorControl_currentIndexChanged(int index) 
 	p.m_errorControlMode = (MASTER_SIM::Project::ErrorControlMode)index;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -276,7 +276,7 @@ void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
 	p.m_maxIterations = arg1;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -288,7 +288,7 @@ void MSIMViewSimulation::on_comboBoxStartTimeUnit_currentIndexChanged(int) {
 	p.m_tStart.IO_unit.set( m_ui->comboBoxStartTimeUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -297,7 +297,7 @@ void MSIMViewSimulation::on_comboBoxEndTimeUnit_currentIndexChanged(int) {
 	p.m_tEnd.IO_unit.set( m_ui->comboBoxEndTimeUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -306,7 +306,7 @@ void MSIMViewSimulation::on_comboBoxMinDtUnit_currentIndexChanged(int) {
 	p.m_hMin.IO_unit.set( m_ui->comboBoxMinDtUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -315,7 +315,7 @@ void MSIMViewSimulation::on_comboBoxMaxDtUnit_currentIndexChanged(int) {
 	p.m_hMax.IO_unit.set( m_ui->comboBoxMaxDtUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -324,7 +324,7 @@ void MSIMViewSimulation::on_comboBoxDtIterLimitUnit_currentIndexChanged(int) {
 	p.m_hFallBackLimit.IO_unit.set( m_ui->comboBoxDtIterLimitUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -333,7 +333,7 @@ void MSIMViewSimulation::on_comboBoxDtOutputUnit_currentIndexChanged(int) {
 	p.m_tOutputStepMin.IO_unit.set( m_ui->comboBoxDtOutputUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -342,7 +342,7 @@ void MSIMViewSimulation::on_comboBoxDtStartUnit_currentIndexChanged(int) {
 	p.m_hStart.IO_unit.set( m_ui->comboBoxDtStartUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -360,7 +360,7 @@ void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
 	p.m_tStart = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -378,7 +378,7 @@ void MSIMViewSimulation::on_lineEditEndTime_editingFinished() {
 	p.m_tEnd = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -396,7 +396,7 @@ void MSIMViewSimulation::on_lineEditRelTol_editingFinished() {
 	p.m_relTol = par.value;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -414,7 +414,7 @@ void MSIMViewSimulation::on_lineEditAbsTol_editingFinished() {
 	p.m_absTol = par.value;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -423,7 +423,7 @@ void MSIMViewSimulation::on_checkBoxAdjustStepSize_toggled(bool checked) {
 	p.m_adjustStepSize = checked;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -432,7 +432,7 @@ void MSIMViewSimulation::on_checkBoxBinaryOutputFiles_toggled(bool checked) {
 	p.m_binaryOutputFiles = checked;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -450,7 +450,7 @@ void MSIMViewSimulation::on_lineEditDtMin_editingFinished() {
 	p.m_hMin = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -468,7 +468,7 @@ void MSIMViewSimulation::on_lineEditDtMax_editingFinished() {
 	p.m_hMax = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -486,7 +486,7 @@ void MSIMViewSimulation::on_lineEditDtIterLimit_editingFinished() {
 	p.m_hFallBackLimit = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -504,7 +504,7 @@ void MSIMViewSimulation::on_lineEditDtOutput_editingFinished() {
 	p.m_tOutputStepMin = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 
@@ -522,7 +522,7 @@ void MSIMViewSimulation::on_lineEditDtStart_editingFinished() {
 	p.m_hStart = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push(); // reset focus on combo box
+	cmd->push();
 }
 
 

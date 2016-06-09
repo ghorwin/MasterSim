@@ -18,6 +18,11 @@ public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
 	void onModified( int modificationType, void * data );
 
+private slots:
+	void on_toolButtonAddSlave_clicked();
+
+	void on_toolButtonRemoveSlave_clicked();
+
 private:
 	Ui::MSIMViewSlaves *m_ui;
 };

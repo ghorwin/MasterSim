@@ -4,11 +4,17 @@
 #include <QHeaderView>
 #include <QTableWidget>
 #include <QTableWidgetItem>
+#include <QFileDialog>
+#include <QSettings>
+#include <QFileInfo>
+
+#include <IBK_algorithm.h>
 
 #include "MSIMProjectHandler.h"
 #include "MSIMUIConstants.h"
 #include "MSIMSlaveItemDelegate.h"
-
+#include "MSIMConversion.h"
+#include "MSIMUndoSlaves.h"
 
 MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	QWidget(parent),
@@ -48,13 +54,18 @@ MSIMViewSlaves::~MSIMViewSlaves() {
 }
 
 
-void MSIMViewSlaves::onModified( int modificationType, void * data ) {
+void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
+		case MSIMProjectHandler::SlavesModified :
 			break;
 		default:
 			return; // nothing to do for us
 	}
+
+	blockMySignals(this, true);
+
+	int currentSlaveIdx = m_ui->tableWidgetSlaves->currentRow();
 
 	// update tables based on project file content
 	m_ui->tableWidgetFMUs->clear();
@@ -90,5 +101,63 @@ void MSIMViewSlaves::onModified( int modificationType, void * data ) {
 		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
 	}
 	m_ui->tableWidgetFMUs->resizeColumnsToContents();
+
+	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
+	if (!project().m_simulators.empty()) {
+		if (currentSlaveIdx == -1)
+			currentSlaveIdx = 0;
+		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
+		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
+	}
+
+	blockMySignals(this, false);
+}
+
+
+void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
+	// open file dialog and let user select FMU file
+	QSettings settings(ORG_NAME, PROGRAM_NAME);
+	QString fmuSearchPath = settings.value("FMUSearchPath", QString()).toString();
+	if (fmuSearchPath.isEmpty()) {
+		fmuSearchPath = QFileInfo(MSIMProjectHandler::instance().projectFile()).dir().absolutePath();
+	}
+
+	QString fname = QFileDialog::getOpenFileName(this, tr("Select FMU"), fmuSearchPath, tr("FMU files (*.fmu)"));
+	if (fname.isEmpty())
+		return; // Dialog was cancelled
+
+	QFileInfo finfo(fname);
+	fmuSearchPath = finfo.dir().absolutePath();
+	settings.setValue("FMUSearchPath", fmuSearchPath);
+
+	MASTER_SIM::Project p = project();
+
+	// create simulator definition
+	MASTER_SIM::Project::SimulatorDef simDef;
+	simDef.m_name = finfo.baseName().toUtf8().data(); // disambiguity?
+	simDef.m_name = IBK::pick_name(simDef.m_name, p.m_simulators.begin(), p.m_simulators.end());
+	simDef.m_pathToFMU = fname.toUtf8().data();
+
+	// create undo action
+	p.m_simulators.push_back(simDef);
+
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p);
+	cmd->push();
+}
+
+
+void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
+
+	MASTER_SIM::Project p = project();
+
+	// find currently selected slave definition
+	int currentIdx = m_ui->tableWidgetSlaves->currentRow();
+	Q_ASSERT(currentIdx != -1);
+
+	// create undo action
+	p.m_simulators.erase( p.m_simulators.begin() + currentIdx);
+
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave removed"), p);
+	cmd->push();
 
 }
