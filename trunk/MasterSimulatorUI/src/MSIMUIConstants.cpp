@@ -33,6 +33,6 @@ void formatTable(QTableWidget * tab) {
 	f.setPointSize(TABLE_FONT_SIZE);
 	tab->setFont(f);
 	QFontMetrics fm(f);
-	int pixels = fm.lineSpacing()+2;
+	int pixels = fm.lineSpacing()+8;
 	tab->verticalHeader()->setDefaultSectionSize(pixels);
 }
