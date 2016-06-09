@@ -64,13 +64,15 @@ public:
 	WaitOnExit(bool wait = true) : m_wait(wait) {}
 	/*! Destructor, only on Windows systems. */
 	~WaitOnExit() {
+		if (m_wait) {
 #ifdef WIN32
-		if (m_wait) system("pause");
+			system("pause");
 #else
-		std::cout << "Press <RETURN> to continue...";
-		std::cin.ignore();
-		std::cout << std::endl;
+			std::cout << "Press <RETURN> to continue...";
+			std::cin.ignore();
+			std::cout << std::endl;
 #endif // WIN32
+		}
 	}
 
 	/*! If true, the "pause" command is issued on destruction of this object, if false, nothing happens. */
