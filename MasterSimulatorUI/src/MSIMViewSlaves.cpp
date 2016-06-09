@@ -197,11 +197,6 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 
 	MASTER_SIM::Project p = project();
 
-	// special handling for column 1 - when user edits the name to match the name of an existing
-	// slave, reject the change and simply update the table again
-	if (column == 1)  {
-	}
-
 	QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(row, column);
 	switch (column) {
 		case 0 : p.m_simulators[row].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
