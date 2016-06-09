@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cstdlib> // for std::rand()
 
 #include <IBK_StringUtils.h>
 #include <IBK_FileUtils.h>
@@ -253,6 +254,13 @@ const Project::SimulatorDef & Project::simulatorDefinition(const std::string & s
 			return m_simulators[s];
 	}
 	throw IBK::Exception(IBK::FormatString("Cannot find simulator/slave definition with name '%1'.").arg(slaveName), "[Project::simulatorDefinition]");
+}
+
+
+Project::SimulatorDef::SimulatorDef() :
+	m_cycle(0)
+{
+	m_color = IBK::Color::fromHtml(SIMULATOR_COLORS[rand() % COLOR_COUNT]);
 }
 
 

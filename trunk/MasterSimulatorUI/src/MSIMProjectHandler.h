@@ -28,6 +28,8 @@ public:
 		\see setModified()
 	*/
 	enum ModificationTypes {
+		/*! Used whenever simulator/slave definitions are modified. */
+		SlavesModified,
 		/*! Used when simulation settings have been modified.
 			Only updates simulation settings page, all other views remain unmodified. */
 		SimulationSettingsModified,

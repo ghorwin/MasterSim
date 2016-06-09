@@ -50,9 +50,10 @@ MSIMViewConnections::~MSIMViewConnections() {
 }
 
 
-void MSIMViewConnections::onModified( int modificationType, void * data ) {
+void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
+		case MSIMProjectHandler::SlavesModified : // slaves may have been renamed
 			break;
 		default:
 			return; // nothing to do for us

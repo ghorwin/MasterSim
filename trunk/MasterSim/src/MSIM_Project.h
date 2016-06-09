@@ -50,6 +50,7 @@ public:
 
 	/*! Holds all information that define a simulator. */
 	struct SimulatorDef {
+		SimulatorDef();
 		/*! Parses content of simulator definition line. */
 		void parse(const std::string & simulatorDef);
 
@@ -68,6 +69,9 @@ public:
 			FMI variables are known for this slave/fmu.
 		*/
 		std::map<std::string, std::string>	m_parameters;
+
+		/*! Comparison operator to find slaves by name. */
+		bool operator==(const std::string & slaveName) const { return m_name == slaveName; }
 	};
 
 	/*! Defines an edge of the coupling graph. */

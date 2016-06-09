@@ -45,7 +45,7 @@ MSIMProjectHandler::~MSIMProjectHandler( ){
 }
 
 
-void MSIMProjectHandler::newProject(QWidget * parent) {
+void MSIMProjectHandler::newProject(QWidget * /* parent */) {
 
 	createProject();
 
