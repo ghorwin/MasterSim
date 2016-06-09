@@ -84,6 +84,9 @@ public:
 		/*! Extracts name of slave (everything in front of first dot). */
 		static std::string extractSlaveName( const std::string & variableRef);
 
+		/*! Replaces slave name in variable reference with new slave name. */
+		static std::string replaceSlaveName( const std::string & variableRef, const std::string & newSlaveName);
+
 		/*! Variable reference in simulator and value ref that exports this variable. */
 		std::string m_outputVariableRef;
 		/*! Variable reference in simulator and value ref that imports this variable. */

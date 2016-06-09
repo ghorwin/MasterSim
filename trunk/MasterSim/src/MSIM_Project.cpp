@@ -288,11 +288,19 @@ void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 
 std::string Project::GraphEdge::extractSlaveName( const std::string & variableRef) {
 	std::vector<std::string> tokens;
-	unsigned int count = IBK::explode(variableRef, tokens, ".", IBK::EF_KeepEmptyTokens);
+	unsigned int count = IBK::explode_in2(variableRef, tokens, '.');
 	if (count < 2)
 		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef), "[Project::GraphEdge::extractSlaveName]");
 	return tokens[0];
 }
 
+
+std::string Project::GraphEdge::replaceSlaveName( const std::string & variableRef, const std::string & newSlaveName) {
+	std::vector<std::string> tokens;
+	unsigned int count = IBK::explode_in2(variableRef, tokens, '.');
+	if (count < 2)
+		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef), "[Project::GraphEdge::replaceSlaveName]");
+	return newSlaveName + "." + tokens[1];
+}
 
 } // namespace MASTER_SIM
