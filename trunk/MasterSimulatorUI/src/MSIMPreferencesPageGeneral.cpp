@@ -15,11 +15,6 @@ MSIMPreferencesPageGeneral::MSIMPreferencesPageGeneral(QWidget *parent) :
 	m_ui->filepathTextEditor->setup("", true, true, tr("All files (*.*)"));
 #endif
 
-	m_ui->lineEditTerminal->setVisible(false);
-	m_ui->checkBoxUseTerminal->setVisible(false);
-	m_ui->labelUseTerminal->setVisible(false);
-
-	/// \todo Qt Support: Tab order in custom widgets...
 }
 
 

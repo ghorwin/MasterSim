@@ -364,19 +364,19 @@ void MSIMMainWindow::on_actionFileExport_triggered() {
 
 	// request export directory
 	QFileInfo finfo(m_projectHandler.projectFile());
-	QString fnameSuggestion = finfo.absoluteDir().absolutePath() + "/" + finfo.baseName() + ".d6pp";
+	QString fnameSuggestion = finfo.absoluteDir().absolutePath() + "/" + finfo.baseName() + ".msip";
 	QString filename = QFileDialog::getSaveFileName(
 							this,
-							tr("Specify MSIMphin project package file"),
+							tr("Specify MasterSim project package file"),
 							fnameSuggestion,
-							tr("MSIMphin Project Packages (*.d6pp);;All files (*.*)"));
+							tr("MasterSim Project Packages (*.msip);;All files (*.*)"));
 
 	if (filename.isEmpty())
 		return;
 
 	// ensure that we have the proper extension
-	if (!filename.endsWith(".d6pp")) {
-		filename.append(".d6pp");
+	if (!filename.endsWith(".msip")) {
+		filename.append(".msip");
 	}
 
 	QString dirName = QFileInfo(filename).baseName();
