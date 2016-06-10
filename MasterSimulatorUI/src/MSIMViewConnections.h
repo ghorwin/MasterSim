@@ -7,8 +7,10 @@ namespace Ui {
 class MSIMViewConnections;
 }
 
-class MSIMViewConnections : public QWidget
-{
+class MSIMCreateConnectionDialog;
+
+/*! The view where connections can be defined. */
+class MSIMViewConnections : public QWidget {
 	Q_OBJECT
 
 public:
@@ -29,6 +31,8 @@ private slots:
 
 private:
 	void updateConnectionsTable();
+
+	MSIMCreateConnectionDialog *m_createConnectionDialog;
 
 	Ui::MSIMViewConnections *m_ui;
 };

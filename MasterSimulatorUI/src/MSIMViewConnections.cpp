@@ -14,9 +14,11 @@
 #include "MSIMConnectionItemDelegate.h"
 #include "MSIMConversion.h"
 #include "MSIMUndoConnections.h"
+#include "MSIMCreateConnectionDialog.h"
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QWidget(parent),
+	m_createConnectionDialog(NULL),
 	m_ui(new Ui::MSIMViewConnections)
 {
 	m_ui->setupUi(this);
@@ -203,7 +205,11 @@ void MSIMViewConnections::updateConnectionsTable() {
 
 
 void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
+	if (m_createConnectionDialog == NULL)
+		m_createConnectionDialog = new MSIMCreateConnectionDialog(this);
 
+	m_createConnectionDialog->updateTables();
+	m_createConnectionDialog->exec();
 }
 
 
@@ -312,7 +318,7 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 
 	}
 	catch (IBK::Exception & /* ex */) {
-		QMessageBox::critical(this, tr("Error connecting slaves"), tr("Slaves could not be connected. Try parsing modelDescription data first!"));
+		QMessageBox::critical(this, tr("Error connecting slaves"), tr("Slaves could not be connected. Try analyzing FMUs first!"));
 		return;
 	}
 
