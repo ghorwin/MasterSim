@@ -49,6 +49,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 
 	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
 	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
+
+	m_ui->tableWidgetFMUs->setSortingEnabled(true);
 }
 
 
@@ -62,72 +64,15 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified :
 			break;
+		case MSIMProjectHandler::ProjectPathModified :
+			// only need to update if we show relative FMU paths
+			if (m_ui->checkBoxRelativeFMUPaths->isChecked())
+				break;
 		default:
 			return; // nothing to do for us
 	}
 
-	blockMySignals(this, true);
-
-	int currentSlaveIdx = m_ui->tableWidgetSlaves->currentRow();
-
-	// update tables based on project file content
-	m_ui->tableWidgetFMUs->clear();
-	m_ui->tableWidgetSlaves->clearContents();
-	QSet<QString> fmuPaths;
-
-	m_ui->tableWidgetSlaves->setRowCount(project().m_simulators.size());
-	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
-		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
-		QTableWidgetItem * item = new QTableWidgetItem();
-		item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
-		m_ui->tableWidgetSlaves->setItem(i, 0, item);
-
-		item = new QTableWidgetItem( QString::fromUtf8(simDef.m_name.c_str()) );
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
-		m_ui->tableWidgetSlaves->setItem(i, 1, item);
-
-		QString fmuPath = QString::fromUtf8(simDef.m_pathToFMU.c_str());
-		fmuPaths.insert(fmuPath);
-		item = new QTableWidgetItem( fmuPath );
-		m_ui->tableWidgetSlaves->setItem(i, 2, item);
-
-		item = new QTableWidgetItem( QString("%1").arg(simDef.m_cycle) );
-		m_ui->tableWidgetSlaves->setItem(i, 3, item);
-	}
-	m_ui->tableWidgetSlaves->resizeColumnsToContents();
-	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
-	// if there is space, stretch 2nd column
-	unsigned int colSizeSum = 0;
-	for (unsigned int i=0; i<4; ++i)
-		colSizeSum += m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(i);
-	unsigned int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
-//	qDebug() << m_ui->tableWidgetSlaves->width();
-//	qDebug() << contentsRectWith;
-//	qDebug() << colSizeSum;
-	if (colSizeSum < contentsRectWith-20) {
-		unsigned int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
-								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
-								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
-		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
-	}
-	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
-	unsigned int rowIdx = 0;
-	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
-		QTableWidgetItem * item = new QTableWidgetItem( *it );
-		item->setFlags(Qt::ItemIsEnabled);
-		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
-	}
-	m_ui->tableWidgetFMUs->resizeColumnsToContents();
-
-	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
-	if (!project().m_simulators.empty()) {
-		if (currentSlaveIdx == -1)
-			currentSlaveIdx = 0;
-		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
-		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
-	}
-
-	blockMySignals(this, false);
+	updateSlaveTable();
 }
 
 
@@ -235,7 +180,15 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 				}
 			}
 		} break;
-		case 2 : p.m_simulators[row].m_pathToFMU = item->text().toUtf8().data(); break;
+		case 2 : {
+			IBK::Path path( item->text().toUtf8().data() );
+			if (!path.isAbsolute()) {
+				IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
+				path = projectFilePath.parentPath() / path;
+				path.removeRelativeParts();
+			}
+			p.m_simulators[row].m_pathToFMU = path;
+		} break;
 		case 3 : p.m_simulators[row].m_cycle = item->text().toUInt(); break;
 	}
 
@@ -243,3 +196,84 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave modified"), p);
 	cmd->push();
 }
+
+
+void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool checked) {
+	updateSlaveTable();
+}
+
+
+void MSIMViewSlaves::updateSlaveTable() {
+	blockMySignals(this, true);
+
+	int currentSlaveIdx = m_ui->tableWidgetSlaves->currentRow();
+
+	// update tables based on project file content
+	m_ui->tableWidgetFMUs->clear();
+	m_ui->tableWidgetSlaves->clearContents();
+	QSet<QString> fmuPaths;
+
+	m_ui->tableWidgetSlaves->setRowCount(project().m_simulators.size());
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+		QTableWidgetItem * item = new QTableWidgetItem();
+		item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
+		m_ui->tableWidgetSlaves->setItem(i, 0, item);
+
+		item = new QTableWidgetItem( QString::fromUtf8(simDef.m_name.c_str()) );
+		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable | Qt::ItemIsSelectable);
+		m_ui->tableWidgetSlaves->setItem(i, 1, item);
+
+		IBK::Path fmuFilePath = simDef.m_pathToFMU;
+		if (m_ui->checkBoxRelativeFMUPaths->isChecked()) {
+			IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
+			projectFilePath = projectFilePath.parentPath();
+			// now compose relative path
+			bool success;
+			fmuFilePath = fmuFilePath.relativePath(projectFilePath, &success);
+			if (!success)
+				fmuFilePath = simDef.m_pathToFMU;
+		}
+		QString fmuPath = QString::fromUtf8(fmuFilePath.c_str());
+		fmuPaths.insert(QString::fromUtf8(simDef.m_pathToFMU.c_str()));
+		item = new QTableWidgetItem( fmuPath );
+		m_ui->tableWidgetSlaves->setItem(i, 2, item);
+
+		item = new QTableWidgetItem( QString("%1").arg(simDef.m_cycle) );
+		m_ui->tableWidgetSlaves->setItem(i, 3, item);
+	}
+	m_ui->tableWidgetSlaves->resizeColumnsToContents();
+	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
+	// if there is space, stretch 2nd column
+	unsigned int colSizeSum = 0;
+	for (unsigned int i=0; i<4; ++i)
+		colSizeSum += m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(i);
+	unsigned int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
+//	qDebug() << m_ui->tableWidgetSlaves->width();
+//	qDebug() << contentsRectWith;
+//	qDebug() << colSizeSum;
+	if (colSizeSum < contentsRectWith-20) {
+		unsigned int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
+								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
+								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
+		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
+	}
+	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
+	unsigned int rowIdx = 0;
+	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
+		QTableWidgetItem * item = new QTableWidgetItem( *it );
+		item->setFlags(Qt::ItemIsEnabled);
+		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
+	}
+	m_ui->tableWidgetFMUs->resizeColumnsToContents();
+
+	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
+	if (!project().m_simulators.empty()) {
+		if (currentSlaveIdx == -1)
+			currentSlaveIdx = 0;
+		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
+		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
+	}
+	m_ui->tableWidgetFMUs->sortByColumn(0, Qt::AscendingOrder);
+
+	blockMySignals(this, false);}

@@ -8,6 +8,8 @@
 
 #include <map>
 
+#include <MSIM_ModelDescription.h>
+
 #include "MSIMProjectHandler.h"
 
 namespace Ui {
@@ -110,6 +112,8 @@ private slots:
 	void on_actionViewConnections_toggled(bool arg1);
 	void on_actionViewSimulation_toggled(bool arg1);
 
+	void on_actionEditParseFMUs_triggered();
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();
@@ -164,6 +168,11 @@ private:
 	QList<QAction*>				m_languageActions;
 	/*! The project handler that manages the actual project. */
 	MSIMProjectHandler			m_projectHandler;
+
+	/*! Model description data for all FMUs currently parsed.
+		This map is updated in on_actionEditParseFMUs_triggered().
+	*/
+	std::map<IBK::Path, MASTER_SIM::ModelDescription>	m_modelDescriptions;
 
 	/*! The welcome screen. */
 	MSIMWelcomeScreen			*m_welcomeScreen;

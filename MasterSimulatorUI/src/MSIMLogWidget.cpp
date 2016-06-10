@@ -83,3 +83,8 @@ void MSIMLogWidget::onMsgReceived(int type, QString msgText) {
 void MSIMLogWidget::clear() {
 	m_textBrowser->clear();
 }
+
+
+void MSIMLogWidget::addPlainTextMessage(const QString & text) {
+	m_textBrowser->append(text);
+}

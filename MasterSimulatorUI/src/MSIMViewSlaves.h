@@ -25,7 +25,11 @@ private slots:
 
 	void on_tableWidgetSlaves_cellChanged(int row, int column);
 
+	void on_checkBoxRelativeFMUPaths_toggled(bool checked);
+
 private:
+	void updateSlaveTable();
+
 	Ui::MSIMViewSlaves *m_ui;
 };
 
