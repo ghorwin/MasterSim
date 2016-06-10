@@ -30,6 +30,17 @@ void ModelDescription::read(const IBK::Path & modelDescriptionFilePath) {
 					.arg(doc.ErrorRow()).arg(doc.ErrorDesc()), FUNC_ID);
 		}
 
+		readXMLDoc(doc);
+	}
+	catch ( IBK::Exception & ex) {
+		throw IBK::Exception(ex,  IBK::FormatString("Error parsing modelDescription.xml"), FUNC_ID);
+	}
+}
+
+
+void ModelDescription::readXMLDoc(TiXmlDocument & doc) {
+	const char * const FUNC_ID = "[ModelDescription::readXMLDoc]";
+	try {
 		// we use a handle so that NULL pointer checks are done during the query functions
 		TiXmlHandle xmlHandleDoc(&doc);
 

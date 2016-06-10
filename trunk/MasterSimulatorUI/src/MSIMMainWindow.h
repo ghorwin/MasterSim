@@ -75,6 +75,7 @@ private slots:
 	void on_actionFileClose_triggered();
 	void on_actionFileQuit_triggered();
 	void on_actionEditTextEditProject_triggered();
+	void on_actionEditParseFMUs_triggered();
 	void on_actionEditPreferences_triggered();
 	void on_actionHelpAboutQt_triggered();
 	void on_actionHelpAboutMasterSim_triggered();
@@ -112,7 +113,6 @@ private slots:
 	void on_actionViewConnections_toggled(bool arg1);
 	void on_actionViewSimulation_toggled(bool arg1);
 
-	void on_actionEditParseFMUs_triggered();
 
 private:
 	/*! Sets up all dock widgets with definition lists. */

@@ -17,6 +17,10 @@
 
 #include <numeric>
 
+#include <unzip.h>
+
+#include <tinyxml.h>
+
 #include <IBK_FileUtils.h>
 #include <IBK_messages.h>
 
@@ -422,10 +426,12 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	// open log window
 	// start reading FMUs
 	QDialog dlg(this);
+	dlg.setWindowTitle(tr("Extracting FMUs and parsing modelDescription.xml"));
 	QVBoxLayout * lay = new QVBoxLayout(&dlg);
 	MSIMLogWidget * logWidget = new MSIMLogWidget(this);
 	lay->addWidget(logWidget);
 	dlg.setLayout(lay);
+	dlg.resize(1200,800);
 	dlg.show();
 
 	std::set<IBK::Path> fmus;
@@ -440,6 +446,65 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 		// attempt to unzip FMU
 		logWidget->addPlainTextMessage(tr("Extracting '%1'").arg(QString::fromUtf8(it->c_str())));
 		qApp->processEvents();
+
+		std::string fileContent;
+		unzFile zip = unzOpen(it->c_str());
+		if (zip) {
+			if (unzLocateFile(zip, "modelDescription.xml", 1) != UNZ_OK) {
+				logWidget->addPlainTextMessage(tr("ERROR: FMU does not contain the file modelDescription.xml."));
+				unzClose( zip );
+				continue;
+			}
+
+			if (unzOpenCurrentFile( zip ) != UNZ_OK) {
+				logWidget->addPlainTextMessage(tr("ERROR: Could not open modelDescription.xml."));
+				unzClose( zip );
+				continue;
+			}
+
+			unsigned char buffer[4096];
+			int readBytes;
+			do {
+				readBytes = unzReadCurrentFile(zip, buffer, 4096);
+				if (readBytes < 0) {
+					logWidget->addPlainTextMessage(tr("ERROR: Error while extracting modelDescription.xml."));
+					unzCloseCurrentFile(zip);
+					unzClose( zip );
+					continue;
+				}
+				if (readBytes > 0) {
+					fileContent += std::string(buffer, buffer+readBytes);
+				}
+			}
+			while (readBytes > 0);
+
+			unzCloseCurrentFile(zip);
+			unzClose(zip);
+		}
+		else {
+			logWidget->addPlainTextMessage(tr("ERROR: Could not open FMU file (not a zip archive?)."));
+			continue;
+		}
+		MASTER_SIM::ModelDescription modelDesc;
+		try {
+			TiXmlDocument doc;
+			if (doc.Parse(fileContent.c_str(), 0, TIXML_ENCODING_UTF8) == 0) {
+				logWidget->addPlainTextMessage(tr("ERROR: Error parsing XML file."));
+				continue;
+			}
+			modelDesc.readXMLDoc(doc);
+			logWidget->addPlainTextMessage(tr("  Model (V1/ME_V2/CS_V2): %1").arg(
+											   QString::fromUtf8(modelDesc.m_modelIdentifier.c_str()) + "/" +
+											   QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str()) + "/" +
+											   QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
+			logWidget->addPlainTextMessage(tr("  Variables: %1").arg(modelDesc.m_variables.size()));
+			m_modelDescriptions[*it] = modelDesc;
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			logWidget->addPlainTextMessage(tr("ERROR: Error parsing model description."));
+			continue;
+		}
 	}
 	dlg.exec();
 }

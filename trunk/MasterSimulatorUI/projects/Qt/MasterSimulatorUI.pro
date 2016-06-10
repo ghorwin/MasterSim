@@ -38,9 +38,11 @@ LIBS += -L../../../externals/lib \
 
 INCLUDEPATH = \
 	../../src \
+	../../../externals/minizip/src \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src \
 	../../../externals/BlockMod/src \
+	../../../externals/TiCPP/src \
 	../../../MasterSim/src
 
 
@@ -55,19 +57,19 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMMessageHandler.cpp \
 	../../src/MSIMDebugApplication.cpp \
 	../../src/MSIMWelcomeScreen.cpp \
-    ../../src/MSIMLogWidget.cpp \
-    ../../src/MSIMPreferencesDialog.cpp \
-    ../../src/MSIMPreferencesPageGeneral.cpp \
-    ../../src/MSIMUndoCommandBase.cpp \
-    ../../src/MSIMUndoProject.cpp \
-    ../../src/MSIMBrowseFilenameWidget.cpp \
-    ../../src/MSIMViewSlaves.cpp \
-    ../../src/MSIMViewConnections.cpp \
-    ../../src/MSIMSlaveItemDelegate.cpp \
-    ../../src/MSIMConnectionItemDelegate.cpp \
-    ../../src/MSIMViewSimulation.cpp \
-    ../../src/MSIMUndoSimulationSettings.cpp \
-    ../../src/MSIMUndoSlaves.cpp
+	../../src/MSIMLogWidget.cpp \
+	../../src/MSIMPreferencesDialog.cpp \
+	../../src/MSIMPreferencesPageGeneral.cpp \
+	../../src/MSIMUndoCommandBase.cpp \
+	../../src/MSIMUndoProject.cpp \
+	../../src/MSIMBrowseFilenameWidget.cpp \
+	../../src/MSIMViewSlaves.cpp \
+	../../src/MSIMViewConnections.cpp \
+	../../src/MSIMSlaveItemDelegate.cpp \
+	../../src/MSIMConnectionItemDelegate.cpp \
+	../../src/MSIMViewSimulation.cpp \
+	../../src/MSIMUndoSimulationSettings.cpp \
+	../../src/MSIMUndoSlaves.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -80,28 +82,28 @@ HEADERS  += \
 	../../src/MSIMMessageHandler.h \
 	../../src/MSIMDebugApplication.h \
 	../../src/MSIMWelcomeScreen.h \
-    ../../src/MSIMLogWidget.h \
-    ../../src/MSIMPreferencesDialog.h \
-    ../../src/MSIMPreferencesPageGeneral.h \
-    ../../src/MSIMUndoCommandBase.h \
-    ../../src/MSIMUndoProject.h \
-    ../../src/MSIMBrowseFilenameWidget.h \
-    ../../src/MSIMViewSlaves.h \
-    ../../src/MSIMViewConnections.h \
-    ../../src/MSIMSlaveItemDelegate.h \
-    ../../src/MSIMConnectionItemDelegate.h \
-    ../../src/MSIMViewSimulation.h \
-    ../../src/MSIMUndoSimulationSettings.h \
-    ../../src/MSIMUndoSlaves.h
+	../../src/MSIMLogWidget.h \
+	../../src/MSIMPreferencesDialog.h \
+	../../src/MSIMPreferencesPageGeneral.h \
+	../../src/MSIMUndoCommandBase.h \
+	../../src/MSIMUndoProject.h \
+	../../src/MSIMBrowseFilenameWidget.h \
+	../../src/MSIMViewSlaves.h \
+	../../src/MSIMViewConnections.h \
+	../../src/MSIMSlaveItemDelegate.h \
+	../../src/MSIMConnectionItemDelegate.h \
+	../../src/MSIMViewSimulation.h \
+	../../src/MSIMUndoSimulationSettings.h \
+	../../src/MSIMUndoSlaves.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
 	../../src/MSIMWelcomeScreen.ui \
-    ../../src/MSIMPreferencesDialog.ui \
-    ../../src/MSIMPreferencesPageGeneral.ui \
-    ../../src/MSIMViewSlaves.ui \
-    ../../src/MSIMViewConnections.ui \
-    ../../src/MSIMViewSimulation.ui
+	../../src/MSIMPreferencesDialog.ui \
+	../../src/MSIMPreferencesPageGeneral.ui \
+	../../src/MSIMViewSlaves.ui \
+	../../src/MSIMViewConnections.ui \
+	../../src/MSIMViewSimulation.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8

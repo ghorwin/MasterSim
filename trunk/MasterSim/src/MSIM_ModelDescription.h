@@ -7,6 +7,7 @@
 #include "MSIM_FMIType.h"
 
 class TiXmlElement;
+class TiXmlDocument;
 
 namespace MASTER_SIM {
 
@@ -28,6 +29,9 @@ public:
 
 	/*! Parses model description. */
 	void read(const IBK::Path & modelDescriptionFilePath);
+
+	/*! Parses model description from an existing TiXmlDocument. */
+	void readXMLDoc(TiXmlDocument &doc);
 
 	/*! Returns a variable identified by name. */
 	const FMIVariable & variable(const std::string & varName) const;
