@@ -7,7 +7,7 @@ namespace Ui {
 class MSIMViewConnections;
 }
 
-class MSIMCreateConnectionDialog;
+class QTableWidgetItem;
 
 /*! The view where connections can be defined. */
 class MSIMViewConnections : public QWidget {
@@ -29,10 +29,13 @@ private slots:
 	void on_toolButtonRemoveConnection_clicked();
 	void on_pushButtonConnectByVariableName_clicked();
 
+	void on_tableWidgetOutputVariable_itemDoubleClicked(QTableWidgetItem *item);
+
+	void on_tableWidgetInputVariable_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
 	void updateConnectionsTable();
-
-	MSIMCreateConnectionDialog *m_createConnectionDialog;
+	void updateInputOutputVariablesTables();
 
 	Ui::MSIMViewConnections *m_ui;
 };

@@ -521,6 +521,10 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 		}
 	}
 	dlg.exec();
+
+	// signal modified to all views
+	m_viewConnections->onModified(MSIMProjectHandler::AllModified, NULL);
+	m_viewSlaves->onModified(MSIMProjectHandler::AllModified, NULL);
 }
 
 
