@@ -30,7 +30,7 @@ private slots:
 private:
 	void updateSlaveTable();
 
-	Ui::MSIMViewSlaves *m_ui;
+	Ui::MSIMViewSlaves				*m_ui;
 };
 
 #endif // MSIMVIEWSLAVES_H
