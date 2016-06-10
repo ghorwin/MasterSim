@@ -64,7 +64,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="95"/>
         <source>Ctrl+N</source>
-        <translation>Strg+N</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="104"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="110"/>
         <source>Ctrl+O</source>
-        <translation>Strg+O</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="119"/>
@@ -94,7 +94,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="125"/>
         <source>Ctrl+S</source>
-        <translation>Strg+S</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="130"/>
@@ -109,7 +109,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="136"/>
         <source>Ctrl+Shift+S</source>
-        <translation>Strg+Umschalten+S</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="141"/>
@@ -124,7 +124,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="147"/>
         <source>Ctrl+E</source>
-        <translation>Strg+E</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="152"/>
@@ -149,7 +149,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="166"/>
         <source>Ctrl+Q</source>
-        <translation>Strg + Q</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="174"/>
@@ -774,47 +774,63 @@
         <translation>Functional Mockup Units</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="33"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="36"/>
         <source>Full path</source>
         <translation>Vollständiger Pfad</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="44"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="44"/>
         <source>FMU</source>
         <translation>FMU</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="41"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="44"/>
         <source>Cycle Nr.</source>
         <translation>Zyklus Nr.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="125"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="142"/>
         <source>Select FMU</source>
         <translation>Wähle FMU</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="125"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="142"/>
         <source>FMU files (*.fmu)</source>
         <translation>FMU Dateien (*.fmu)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="144"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="161"/>
         <source>Slave added</source>
         <translation>Slave hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="173"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="190"/>
         <source>Slave removed</source>
         <translation>Slave entfernt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="203"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="207"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="219"/>
+        <source>Invalid input</source>
+        <translation type="unfinished">Ungültige Eingabe</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="207"/>
+        <source>Slave names may not contain spaces or tabulator characters.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="219"/>
+        <source>Slave names must be unique identifiers.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="243"/>
         <source>Slave modified</source>
         <translation>Slave verändert</translation>
     </message>

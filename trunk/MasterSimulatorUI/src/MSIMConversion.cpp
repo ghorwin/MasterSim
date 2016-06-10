@@ -20,7 +20,6 @@ void blockMySignals(QWidget * p, bool block) {
 			blockMySignals(w, block);
 		}
 	}
-
 }
 
 

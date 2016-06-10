@@ -13,6 +13,8 @@ public:
 	/*! Shows application log file (for use in dialog). */
 	void showLogFile( const QString & path);
 
+	void addPlainTextMessage(const QString & text);
+
 public slots:
 	/*! Clears the text browser, connected to the project handler's signal when
 		a new project has been read.

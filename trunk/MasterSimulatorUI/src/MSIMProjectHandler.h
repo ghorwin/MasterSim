@@ -28,6 +28,8 @@ public:
 		\see setModified()
 	*/
 	enum ModificationTypes {
+		/*! When project file path has changed. */
+		ProjectPathModified,
 		/*! Used whenever simulator/slave definitions are added/modified/removed (alongside with their connections). */
 		SlavesModified,
 		/*! Used when simulation settings have been modified.

@@ -49,6 +49,7 @@
       <string>Application language</string>
      </property>
     </widget>
+    <addaction name="actionEditParseFMUs"/>
     <addaction name="actionEditTextEditProject"/>
     <addaction name="separator"/>
     <addaction name="actionEditPreferences"/>
@@ -254,6 +255,14 @@
    </property>
    <property name="toolTip">
     <string>Simulation/Project settings</string>
+   </property>
+  </action>
+  <action name="actionEditParseFMUs">
+   <property name="text">
+    <string>Parse FMUs</string>
+   </property>
+   <property name="toolTip">
+    <string>Attemps to extract and parse the modelDescription.xml file from the FMU archives.</string>
    </property>
   </action>
  </widget>

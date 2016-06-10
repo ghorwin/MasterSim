@@ -18,6 +18,7 @@
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
 #include "MSIMLogWidget.h"
+#include "MSIMUndoProject.h"
 
 MSIMProjectHandler * MSIMProjectHandler::m_self = NULL;
 
@@ -120,6 +121,16 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		if (!read(fileName))
 			throw IBK::Exception("Error reading project file.", FUNC_ID);
 		// project read successfully
+		// m_projectFile now holds current project file
+
+		// convert all slave references to absolute file paths
+		IBK::Path absoluteProjectFilePath = IBK::Path(m_projectFile.toUtf8().data()).parentPath();
+		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
+			IBK::Path p = m_project->m_simulators[i].m_pathToFMU; // may be a relative path
+			if (!p.isAbsolute()) {
+				m_project->m_simulators[i].m_pathToFMU = absoluteProjectFilePath / p;
+			}
+		}
 	}
 	catch (IBK::Exception & ex) {
 		ex.writeMsgStackToError();
@@ -223,8 +234,6 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveWithNewFilename(QWidget *
 	if (saveProject(parent, filename) != SaveOK)
 		return SaveFailed; // saving failed
 
-	/// \todo signal a change of file name, for widgets that are displaying the current filename
-
 	return SaveOK;
 }
 
@@ -242,6 +251,8 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 		m_project->m_created = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
 	m_project->m_lastEdited = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
 
+	QString lastFileName = m_projectFile;
+
 	// save project file
 	if (!write(fname)) {
 
@@ -252,6 +263,11 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 				);
 
 		return SaveFailed;
+	}
+
+	if (fileName != lastFileName) {
+		// signal that project file has changed
+		emit modified(ProjectPathModified, NULL);
 	}
 
 	// clear modified flag

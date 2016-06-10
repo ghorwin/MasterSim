@@ -418,6 +418,33 @@ void MSIMMainWindow::on_actionEditTextEditProject_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
+	// open log window
+	// start reading FMUs
+	QDialog dlg(this);
+	QVBoxLayout * lay = new QVBoxLayout(&dlg);
+	MSIMLogWidget * logWidget = new MSIMLogWidget(this);
+	lay->addWidget(logWidget);
+	dlg.setLayout(lay);
+	dlg.show();
+
+	std::set<IBK::Path> fmus;
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		IBK::Path p = project().m_simulators[i].m_pathToFMU;
+		fmus.insert(p.absolutePath());
+	}
+
+	// now process all FMUs
+	m_modelDescriptions.clear();
+	for (std::set<IBK::Path>::const_iterator it = fmus.begin(); it != fmus.end(); ++it) {
+		// attempt to unzip FMU
+		logWidget->addPlainTextMessage(tr("Extracting '%1'").arg(QString::fromUtf8(it->c_str())));
+		qApp->processEvents();
+	}
+	dlg.exec();
+}
+
+
 void MSIMMainWindow::on_actionEditPreferences_triggered() {
 	// spawn preferences dialog
 	if (m_preferencesDialog == NULL)
@@ -568,6 +595,7 @@ void MSIMMainWindow::updateWindowTitle() {
 	setWindowTitle(QString("%1 - %2").arg(PROGRAM_VERSION_NAME()).arg(shortFileName));
 }
 
+
 bool MSIMMainWindow::removeDirRecursively(const QString & dirName) {
 	bool result = true;
 	QDir dir(dirName);
@@ -635,6 +663,8 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 }
 
 
+
+
 void MSIMMainWindow::on_actionViewSlaves_toggled(bool) {
 	// toggle off all other view actions
 	m_ui->actionViewConnections->blockSignals(true);
@@ -646,6 +676,7 @@ void MSIMMainWindow::on_actionViewSlaves_toggled(bool) {
 	m_stackedWidget->setCurrentIndex(0);
 }
 
+
 void MSIMMainWindow::on_actionViewConnections_toggled(bool) {
 	m_ui->actionViewSlaves->blockSignals(true);
 	m_ui->actionViewSlaves->setChecked(false);
@@ -656,6 +687,7 @@ void MSIMMainWindow::on_actionViewConnections_toggled(bool) {
 	m_stackedWidget->setCurrentIndex(1);
 }
 
+
 void MSIMMainWindow::on_actionViewSimulation_toggled(bool) {
 	m_ui->actionViewSlaves->blockSignals(true);
 	m_ui->actionViewSlaves->setChecked(false);
@@ -665,3 +697,5 @@ void MSIMMainWindow::on_actionViewSimulation_toggled(bool) {
 	m_ui->actionViewConnections->blockSignals(false);
 	m_stackedWidget->setCurrentIndex(2);
 }
+
+
