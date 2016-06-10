@@ -3,13 +3,15 @@
 
 #include <QSortFilterProxyModel>
 
+#include <IBK_Exception.h>
+
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
 
 #include "MSIMSlaveItemDelegate.h"
 #include "MSIMConnectionItemDelegate.h"
+#include "MSIMConversion.h"
 
-#include <IBK_Exception.h>
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QWidget(parent),
@@ -36,12 +38,10 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	m_ui->tableWidgetSlaves->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetSlaves->horizontalHeader()->setStretchLastSection(true);
 	m_ui->tableWidgetConnections->horizontalHeader()->setSortIndicatorShown(true);
+	m_ui->tableWidgetConnections->sortByColumn(0, Qt::AscendingOrder);
 
 	formatTable(m_ui->tableWidgetConnections);
 	formatTable(m_ui->tableWidgetSlaves);
-
-//	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMConnectionItemDelegate(this));
-//	m_ui->tableWidgetConnections->setItemDelegate(new MSIMConnectionItemDelegate(this));
 }
 
 
@@ -59,11 +59,12 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 			return; // nothing to do for us
 	}
 
+	blockMySignals(this, true);
+
 	/// \todo store current check states before clearing table
 	/// \todo store current sort column
 
 	// update tables based on project file content
-	m_ui->tableWidgetConnections->clearContents();
 	m_ui->tableWidgetSlaves->clearContents();
 
 	m_ui->comboBoxSlave1->clear();
@@ -88,44 +89,9 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 		m_ui->comboBoxSlave2->setCurrentIndex(0);
 	}
 
-	m_ui->tableWidgetConnections->setRowCount(project().m_graph.size() );
-	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
-		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
-		QTableWidgetItem * item = new QTableWidgetItem( QString::fromStdString(edge.m_outputVariableRef)); // no utf8 here
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		try {
-			std::string slaveName = edge.outputSlaveName();
-			// find slave in list of slaves
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(slaveName);
-			item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			item->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
-			item->setBackground( QColor("#B22222") );
-			item->setData(Qt::UserRole+1, true);
-		}
-		m_ui->tableWidgetConnections->setItem(i, 0, item);
+	blockMySignals(this, false);
 
-		item = new QTableWidgetItem( QString::fromStdString(edge.m_inputVariableRef)); // no utf8 here
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		try {
-			std::string slaveName = edge.inputSlaveName();
-			// find slave in list of slaves
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(slaveName);
-			item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			item->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
-			item->setBackground( QColor("#B22222") );
-			item->setData(Qt::UserRole+1, true);
-		}
-		m_ui->tableWidgetConnections->setItem(i, 1, item);
-	}
-
-	m_ui->tableWidgetConnections->sortByColumn(0);
-
+	updateConnectionsTable();
 }
 
 
@@ -136,3 +102,77 @@ void MSIMViewConnections::on_pushButton_clicked() {
 	// create graph edges
 	// create undo action for graph editing
 }
+
+
+void MSIMViewConnections::on_tableWidgetSlaves_cellChanged(int /* row */, int /* column */) {
+	updateConnectionsTable();
+}
+
+
+void MSIMViewConnections::updateConnectionsTable() {
+	blockMySignals(this, true);
+
+	std::set<std::string> checkedSlaveNames;
+	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
+		if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Checked)
+			checkedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
+	}
+
+	m_ui->tableWidgetConnections->clearContents();
+	m_ui->tableWidgetConnections->setRowCount(0);
+	m_ui->tableWidgetConnections->setSortingEnabled(false);
+	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
+		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
+		QTableWidgetItem * outItem = new QTableWidgetItem( QString::fromStdString(edge.m_outputVariableRef)); // no utf8 here
+		outItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		std::string inputSlaveName;
+		std::string outputSlaveName;
+		try {
+			outputSlaveName = edge.outputSlaveName();
+			// find slave in list of slaves
+			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
+			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			outItem->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
+			outItem->setBackground( QColor("#B22222") );
+			outItem->setData(Qt::UserRole+1, true);
+		}
+
+		QTableWidgetItem * inItem = new QTableWidgetItem( QString::fromStdString(edge.m_inputVariableRef)); // no utf8 here
+		inItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		try {
+			inputSlaveName = edge.inputSlaveName();
+			// find slave in list of slaves
+			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(inputSlaveName);
+			inItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			inItem->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
+			inItem->setBackground( QColor("#B22222") );
+			inItem->setData(Qt::UserRole+1, true);
+		}
+
+		// check if both input and output slaves are selected
+		if (checkedSlaveNames.find(inputSlaveName) != checkedSlaveNames.end() &&
+			checkedSlaveNames.find(outputSlaveName) != checkedSlaveNames.end())
+		{
+			int currentRow = m_ui->tableWidgetConnections->rowCount();
+			m_ui->tableWidgetConnections->setRowCount(currentRow+1);
+
+			m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
+			m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
+		}
+		else {
+			delete outItem;
+			delete inItem;
+		}
+	}
+
+	m_ui->tableWidgetConnections->setSortingEnabled(true);
+
+	blockMySignals(this, false);
+}
+

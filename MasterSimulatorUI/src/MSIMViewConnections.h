@@ -22,7 +22,11 @@ public slots:
 private slots:
 	void on_pushButton_clicked();
 
+	void on_tableWidgetSlaves_cellChanged(int row, int column);
+
 private:
+	void updateConnectionsTable();
+
 	Ui::MSIMViewConnections *m_ui;
 };
 
