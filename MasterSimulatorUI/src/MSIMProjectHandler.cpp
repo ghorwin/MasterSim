@@ -382,9 +382,30 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 	file.close();
 
 	try {
-		// filename is converted to utf8 before calling writeXML
-		m_project->write(IBK::Path(fname.toUtf8().data()));
+		// filename is converted to utf8 before calling write
+		IBK::Path fpath = IBK::Path(fname.toUtf8().data());
 
+		// create a copy of the project file
+		MASTER_SIM::Project pCopy = *m_project;
+
+		// convert all slave references to realtive file paths
+		IBK::Path absoluteProjectFilePath = IBK::Path(m_projectFile.toUtf8().data()).parentPath();
+		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
+			IBK::Path p = m_project->m_simulators[i].m_pathToFMU; // should be an absolute
+			if (p.isAbsolute()) {
+				try {
+					IBK::Path relPath = p.relativePath(absoluteProjectFilePath);
+					m_project->m_simulators[i].m_pathToFMU = relPath;
+				}
+				catch (...) {}
+			}
+		}
+		m_project->write(fpath);
+
+		// and now restore filepath from copy
+		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
+			m_project->m_simulators[i].m_pathToFMU = pCopy.m_simulators[i].m_pathToFMU;
+		}
 		// also set the project file name
 		m_projectFile = fname;
 		*const_cast<QDateTime*>(&m_lastReadTime) = QFileInfo(fname).lastModified();

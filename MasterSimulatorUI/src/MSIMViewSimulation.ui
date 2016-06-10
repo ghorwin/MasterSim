@@ -260,21 +260,14 @@
       </item>
       <item row="5" column="0">
        <widget class="QLabel" name="labelTerminalCommand">
-        <property name="text">
-         <string>Terminal program command:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="QComboBox" name="comboBoxTerminalCommand">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="editable">
-         <bool>true</bool>
+        <property name="text">
+         <string>Terminal program command:</string>
         </property>
        </widget>
       </item>
@@ -342,6 +335,19 @@
        <widget class="QCheckBox" name="checkBoxCloseOnExit">
         <property name="text">
          <string>Close console/terminal window on exit</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" colspan="2">
+       <widget class="QComboBox" name="comboBoxTerminalCommand">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="editable">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
