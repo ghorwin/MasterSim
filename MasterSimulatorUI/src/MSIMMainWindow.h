@@ -59,6 +59,14 @@ public:
 	*/
 	bool saveProject();
 
+	/*! Returns model descriptions from FMUs. */
+	const std::map<IBK::Path, MASTER_SIM::ModelDescription>	& modelDescriptions() const { return m_modelDescriptions; }
+
+	/*! Returns model description for a given slave name.
+		Throws an IBK::Exception if either slave name is invalid, or FMU model description is not in the map.
+	*/
+	const MASTER_SIM::ModelDescription & modelDescription(const std::string & slaveName) const;
+
 protected:
 	/*! Checks if project file has been changed by external application. */
 	void changeEvent(QEvent *event);

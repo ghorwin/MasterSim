@@ -20,13 +20,12 @@ public slots:
 	void onModified( int modificationType, void * data );
 
 private slots:
-	void on_pushButton_clicked();
 
 	void on_tableWidgetSlaves_cellChanged(int row, int column);
 
 	void on_toolButtonAddConnection_clicked();
-
 	void on_toolButtonRemoveConnection_clicked();
+	void on_pushButtonConnectByVariableName_clicked();
 
 private:
 	void updateConnectionsTable();
