@@ -24,6 +24,10 @@ private slots:
 
 	void on_tableWidgetSlaves_cellChanged(int row, int column);
 
+	void on_toolButtonAddConnection_clicked();
+
+	void on_toolButtonRemoveConnection_clicked();
+
 private:
 	void updateConnectionsTable();
 

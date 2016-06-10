@@ -32,6 +32,8 @@ public:
 		ProjectPathModified,
 		/*! Used whenever simulator/slave definitions are added/modified/removed (alongside with their connections). */
 		SlavesModified,
+		/*! Used whenever connections have been modified. */
+		ConnectionsModified,
 		/*! Used when simulation settings have been modified.
 			Only updates simulation settings page, all other views remain unmodified. */
 		SimulationSettingsModified,

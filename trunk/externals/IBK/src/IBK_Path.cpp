@@ -209,9 +209,8 @@ std::wstring Path::wstrOS() const {
 
 Path Path::absolutePath() const {
 
-	/*! Removes relative parts if possible.
-		A leading . or .. will be replaced by using current directory.
-	*/
+	// Removes relative parts if possible.
+	//	A leading . or .. will be replaced by using current directory.
 
 	// no path exists
 	if( m_path.empty())
@@ -239,50 +238,27 @@ Path Path::absolutePath() const {
 }
 
 
-Path Path::relativePath(const Path& otherPath, bool* success) const {
-
+Path Path::relativePath(const Path& toPath) const {
 	const char * const FUNC_ID = "[Path::relativePath]";
 
-//	Makes nothing if the path is empty.
-//	\code
-//	Path = "."
-//	Path = "/"
-//	Path = ""
-//	Path = "d:"
-//	relPath = ""
-//	relPath = "."
-//	relPath = ".."
-//	relPath = "/"
-//	\endcode
-//	If relpath is empty, it will be assumed as / (root path) and simply return path.
-//	\code
-//	relative_path("bla/blub.txt", "bla"); // returns 'blub.txt'
-//	relative_path("bla/blubber", "bla/blub"); // returns '../blubber'
-//	\endcode
 
+	if (!isValid() )
+		throw IBK::Exception("Empty/invalid path.", FUNC_ID);
 
-	if( success)
-		*success = false;
-
-	if( m_path.empty() )
-		return *this;
-
-	if( !otherPath.isValid() )
-		return *this;
+	if( !toPath.isValid() )
+		throw IBK::Exception("Other path argument is an empty/invalid path.", FUNC_ID);
 
 	Path absolute = absolutePath();
 
 	std::string driveCurrent = absolute.drive();
-	std::string driveRelPath = otherPath.drive();
+	std::string driveRelPath = toPath.drive();
 
 	// cannot create relative path for windows if drives are different
-	if( driveCurrent != driveRelPath)
-		return Path();
+	if (driveCurrent != driveRelPath)
+		throw IBK::Exception("Different drives.", FUNC_ID);
 
-	if ( !absolute.isValid() ){
-		IBK::IBK_Message( "Got empty file name!", MSG_WARNING, FUNC_ID);
-		return *this;
-	}
+	if ( !absolute.isValid() )
+		throw IBK::Exception("Cannot create absolute path.", FUNC_ID);
 
 	// final Path to return
 	std::string finalPath;
@@ -298,7 +274,7 @@ Path Path::relativePath(const Path& otherPath, bool* success) const {
 
 		remove_trailing_slash(fpath);
 
-		std::string path = otherPath.str();
+		std::string path = toPath.str();
 		trim(path);
 		remove_trailing_slash(path);
 
@@ -362,9 +338,6 @@ Path Path::relativePath(const Path& otherPath, bool* success) const {
 		return *this;
 	}
 
-	if( success)
-		*success = true;
-
 	return Path(finalPath);
 
 }
@@ -408,7 +381,7 @@ Path Path::parentPath() const {
 
 
 bool Path::isValid() const {
-	return m_path.find_first_not_of(" \t") != std::string::npos;
+	return !m_path.empty();
 }
 
 
@@ -773,7 +746,7 @@ bool Path::extractPlaceholder(std::string & placeholderName, IBK::Path & relativ
 }
 
 
-bool Path::insertPlaceholder(const std::string & placeholderName, const IBK::Path & placeholderPath){
+bool Path::insertPlaceholder(const std::string & placeholderName, const IBK::Path & placeholderPath) {
 
 	// get length of replacement
 	std::string replacement = placeholderPath.str();
@@ -904,34 +877,6 @@ Path Path::subBranch(unsigned int begin, unsigned int count) const {
 }
 
 
-bool Path::isRootPath(const Path& src) {
-
-	IBK::Path cur = current();
-
-	std::vector<std::string> currentBranches;
-	std::vector<std::string> srcBranches;
-	IBK::explode( cur.str(), currentBranches, '/' );
-	IBK::explode( src.m_path, srcBranches, '/' );
-	for(unsigned int i=0; i<currentBranches.size(); ++i) {
-		if(i<srcBranches.size() && srcBranches[i] != currentBranches[i])
-			return false;
-	}
-	return true;
-}
-
-bool Path::isRootPath( const Path& target, const Path& src ){
-
-	std::vector<std::string> currentBranches;
-	std::vector<std::string> srcBranches;
-	IBK::explode( target.str(), currentBranches, '/' );
-	IBK::explode( src.m_path, srcBranches, '/' );
-	for(unsigned int i=0; i<currentBranches.size(); ++i) {
-		if(i<srcBranches.size() && srcBranches[i] != currentBranches[i])
-			return false;
-	}
-	return true;
-
-}
 
 
 int64_t Path::fileSize() const {
@@ -1170,7 +1115,38 @@ bool Path::setFileTime(	const IBK::Path& filename,
 
 
 // static functions
-Path Path::current(){
+
+bool Path::isRootPath(const Path& src) {
+
+	IBK::Path cur = current();
+
+	std::vector<std::string> currentBranches;
+	std::vector<std::string> srcBranches;
+	IBK::explode( cur.str(), currentBranches, '/' );
+	IBK::explode( src.m_path, srcBranches, '/' );
+	for(unsigned int i=0; i<currentBranches.size(); ++i) {
+		if(i<srcBranches.size() && srcBranches[i] != currentBranches[i])
+			return false;
+	}
+	return true;
+}
+
+
+bool Path::isRootPath( const Path& target, const Path& src ){
+
+	std::vector<std::string> currentBranches;
+	std::vector<std::string> srcBranches;
+	IBK::explode( target.str(), currentBranches, '/' );
+	IBK::explode( src.m_path, srcBranches, '/' );
+	for(unsigned int i=0; i<currentBranches.size(); ++i) {
+		if(i<srcBranches.size() && srcBranches[i] != currentBranches[i])
+			return false;
+	}
+	return true;
+}
+
+
+Path Path::current() {
 
 #if defined(_WIN32)
 	wchar_t currentDir[FILENAME_MAX] = {0};
@@ -1628,6 +1604,18 @@ Path Path::fromURI(std::string uripath) {
 }
 
 
+Path & Path::operator+(const char * const str) {
+	m_path += IBK::trim_copy(str);
+	return *this;
+}
+
+
+Path & Path::operator+(const std::string & str) {
+	m_path += IBK::trim_copy(str);
+	return *this;
+}
+
+
 #if defined(_WIN32)
 Path::DriveInformation Path::driveType() const {
 
@@ -1831,56 +1819,5 @@ const Path operator/(const std::string& lhs, const Path& rhs) {
 	return result;
 }
 
-
-/*******************************
- *
- * Path Class Interface End
- *
-********************************/
-
-//void remove_relative_path_parts(std::string& path) {
-//	// make sure we deal with /
-//	std::replace(path.begin(), path.end(), '\\', '/');
-//	// look for .. in the string
-//	std::string::size_type pos = 0;
-//	std::string::size_type dots_pos;
-//	while ((dots_pos = path.find("/..", pos)) != std::string::npos) {
-//		// try to find a slash prior to the position with the dots
-//		std::string::size_type slash_pos = path.rfind("/", dots_pos-1);
-//		if (slash_pos != std::string::npos && path.substr(slash_pos+1, dots_pos - slash_pos - 1) != "..") {
-//			path = path.substr(0, slash_pos) + path.substr(dots_pos+3);
-//			pos = slash_pos;
-//		}
-//		else
-//			pos = dots_pos + 3;
-//		if (pos >= path.size()) break;
-//	}
-//}
-
-//std::string replace_spaces(const std::string& path) {
-//	// for unix, replace spaces in path with escaped spaces
-//	std::string fname;
-//	size_t pos = path.find(" ");
-//	size_t lastpos = 0;
-//	while (pos != std::string::npos) {
-//		fname += path.substr(lastpos, pos-lastpos) + "\\ ";
-//		lastpos = pos+1;
-//		pos = path.find(" ", lastpos);
-//	}
-//	fname += path.substr(lastpos);
-//	return fname;
-//}
-
-//bool filter(char c)
-//{
-//	return c==' ' || c==':' || c=='*' || c=='?' || c=='"' || c=='<' || c=='>' || c=='/' || c=='\\';
-//}
-
-//std::string remove_special_chars( const std::string& path) {
-
-//	std::string str = path;
-//	str.erase(std::remove_if(str.begin(), str.end(), filter), str.end());  // remove spaces from string
-//	return str;
-//}
 
 } // namespace IBK

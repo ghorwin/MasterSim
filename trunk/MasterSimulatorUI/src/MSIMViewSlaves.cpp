@@ -232,10 +232,12 @@ void MSIMViewSlaves::updateSlaveTable() {
 			IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
 			projectFilePath = projectFilePath.parentPath();
 			// now compose relative path
-			bool success;
-			fmuFilePath = fmuFilePath.relativePath(projectFilePath, &success);
-			if (!success)
+			try {
+				fmuFilePath = fmuFilePath.relativePath(projectFilePath);
+			}
+			catch (IBK::Exception &) {
 				fmuFilePath = simDef.m_pathToFMU;
+			}
 		}
 		QString fmuPath = QString::fromUtf8(fmuFilePath.c_str());
 		fmuPaths.insert(QString::fromUtf8(simDef.m_pathToFMU.c_str()));

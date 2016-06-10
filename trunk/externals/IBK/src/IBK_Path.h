@@ -98,7 +98,8 @@ namespace IBK {
 
 	An empty Path (IBK::Path("")) is invalid. Most query functions will throw an exception.
 
-	Leading and trailing whitespaces are automatically removed by all member functions.
+	Leading and trailing whitespaces are automatically removed by all member functions. This implies
+	that a valid path may not consist of whitespaces (tabs and spaces) only!
 */
 class Path {
 public:
@@ -139,7 +140,7 @@ public:
 	*/
 	Path& operator=(const char * const path);
 
-	/*! Clears the content.*/
+	/*! Clears the content (creates an invalid/empty path).*/
 	void clear();
 
 	/*! Swap function with nothrow guarantee.*/
@@ -163,7 +164,7 @@ public:
 	*/
 	std::string str() const;
 
-	/*! Returns a pointer to the start of the internal string representation. 
+	/*! Returns a pointer to the start of the internal string representation.
 		This pointer is valid as long as the path is not modified.
 	*/
 	const char * c_str() const { return &m_path[0]; }
@@ -197,14 +198,14 @@ public:
 		to the path passed as argument.
 		Returns an empty/invalid path if the path itself (this object) is empty.
 		\code
-			Path p = "/home/myfiles/data/datfile.txt";
-			// imagine you are in directory /home/myfiles/otherfiles and
-			// want to access datfile.txt
-			Path relPath = p.relativePath("/home/myfiles/otherfiles");
-			// relPath == "../data/datfile.txt"
+			Path("/home/myfiles/data/datfile.txt").relativePath("/home/myfiles/otherfiles") == "../data/datfile.txt";
+			Path("bla/blub.txt").relativePath("bla"); == "blub.txt";
+			Path("").relativePath("/blubb") --> Exception
+			Path("bla/blubber").relativePath("bla/blub"); == "../blubber";
 		\endcode
+		Throws an IBK::Exception if path or toPath is invalid or relative path cannot be created.
 	*/
-	Path relativePath(const Path& otherPath, bool* success) const;
+	Path relativePath(const Path& toPath) const;
 
 	/*! Returns the name of the drive if one exists.
 		This works only for absolute paths under Windows.
@@ -234,7 +235,10 @@ public:
 	Path parentPath() const;
 
 	/*! Returns true if path holds an non-empty string.
-		The string must contain at least one non-whitespace character.
+		\code
+		// equivalent to
+		bool valid = !m_path.empty();
+		\endcode
 	*/
 	bool isValid() const;
 
@@ -302,6 +306,7 @@ public:
 
 
 	// ** Modification Routines **
+
 	/*! Appends another path to this path.
 		This function always adds a / and afterwards the other path.
 		\code
@@ -466,28 +471,6 @@ public:
 	*/
 	Path subBranch(unsigned int begin, unsigned int count = 0) const;
 
-
-
-	/*! Returns true if the path given by \a src is a root path of the current path.
-		For example:
-		\code
-		current path d:/programs/IBK/Delphin/Delphin5/Climate_DB
-		isRootPath(Path("d:/programs/IBK")) returns true
-		isRootPath(Path("d:/programs/test")) returns false
-		\endcode
-	*/
-	static bool isRootPath(const Path& src);
-
-
-	/*! Returns true if the path given by \a src is a root path of \a target path.
-		\code
-		isRootPath(Path("d:/programs/IBK/Delphin/Delphin5/Climate_DB"), Path("d:/programs/IBK")) returns true
-		isRootPath(Path("d:/programs/IBK/Delphin/Delphin5/Climate_DB"), Path("d:/programs/test")) returns false
-		\endcode
-	*/
-	static bool isRootPath( const Path& target, const Path& src );
-
-
 	/*! Returns the size of the file in bytes then the given path is a file otherwise it returns -1.*/
 	int64_t fileSize() const;
 
@@ -517,6 +500,24 @@ public:
 
 
 	// ** static functions **
+
+	/*! Returns true if the path given by \a src is a root path of the current path.
+		For example:
+		\code
+		current path d:/programs/IBK/Delphin/Delphin5/Climate_DB
+		isRootPath(Path("d:/programs/IBK")) returns true
+		isRootPath(Path("d:/programs/test")) returns false
+		\endcode
+	*/
+	static bool isRootPath(const Path& src);
+
+	/*! Returns true if the path given by \a src is a root path of \a target path.
+		\code
+		isRootPath(Path("d:/programs/IBK/Delphin/Delphin5/Climate_DB"), Path("d:/programs/IBK")) returns true
+		isRootPath(Path("d:/programs/IBK/Delphin/Delphin5/Climate_DB"), Path("d:/programs/test")) returns false
+		\endcode
+	*/
+	static bool isRootPath( const Path& target, const Path& src );
 
 	/*! Returns current working directory. */
 	static Path current();
@@ -624,31 +625,27 @@ public:
 
 	/*! Read the path from a stream as text.*/
 	friend std::istream& operator>>(std::istream& in, Path& val) {
-		in >> val.m_path;
+		std::string pstr;
+		in >> pstr;
+		val.set(pstr);
 		return in;
 	}
 
 	/*! Adds a string to the path.
 		This is a convenience function and replaces
 		\code
-		path = IBK::Path(path.str() + str);
+		path = IBK::Path(path.str() + IBK::trim_copy(str));
 		\endcode
 	*/
-	Path & operator+(const char * const str) {
-		m_path += str;
-		return *this;
-	}
+	Path & operator+(const char * const str);
 
 	/*! Adds a string to the path.
 		This is a convenience function and replaces
 		\code
-		path = IBK::Path(path.str() + str);
+		path = IBK::Path(path.str() + IBK::trim_copy(str));
 		\endcode
 	*/
-	Path & operator+(const std::string & str) {
-		m_path += str;
-		return *this;
-	}
+	Path & operator+(const std::string & str);
 
 protected:
 #if defined(_WIN32)

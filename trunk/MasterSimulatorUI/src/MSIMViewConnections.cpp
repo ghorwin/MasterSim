@@ -11,7 +11,7 @@
 #include "MSIMSlaveItemDelegate.h"
 #include "MSIMConnectionItemDelegate.h"
 #include "MSIMConversion.h"
-
+#include "MSIMUndoConnections.h"
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QWidget(parent),
@@ -54,6 +54,7 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified : // slaves may have been renamed
+		case MSIMProjectHandler::ConnectionsModified :
 			break;
 		default:
 			return; // nothing to do for us
@@ -61,8 +62,21 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 
 	blockMySignals(this, true);
 
-	/// \todo store current check states before clearing table
-	/// \todo store current sort column
+
+	std::set<std::string> checkedSlaveNames;
+	if (m_ui->tableWidgetSlaves->rowCount() == 0) {
+		// table is empty - on first fill, use all names
+		for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+			const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+			checkedSlaveNames.insert(simDef.m_name);
+		}
+	}
+	else {
+		for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
+			if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Checked)
+				checkedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
+		}
+	}
 
 	// update tables based on project file content
 	m_ui->tableWidgetSlaves->clearContents();
@@ -76,7 +90,10 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 		QString slaveName = QString::fromUtf8(simDef.m_name.c_str());
 		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-		item->setCheckState(Qt::Checked);
+		if (checkedSlaveNames.find(slaveName.toUtf8().data()) != checkedSlaveNames.end())
+			item->setCheckState(Qt::Checked);
+		else
+			item->setCheckState(Qt::Unchecked);
 		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		m_ui->tableWidgetSlaves->setItem(i, 0, item);
 
@@ -112,11 +129,16 @@ void MSIMViewConnections::on_tableWidgetSlaves_cellChanged(int /* row */, int /*
 void MSIMViewConnections::updateConnectionsTable() {
 	blockMySignals(this, true);
 
+	// store current sort column
+	int sortColumn = m_ui->tableWidgetConnections->horizontalHeader()->sortIndicatorSection();
+
 	std::set<std::string> checkedSlaveNames;
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
 		if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Checked)
 			checkedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
 	}
+
+	int currentIdx = m_ui->tableWidgetConnections->currentRow();
 
 	m_ui->tableWidgetConnections->clearContents();
 	m_ui->tableWidgetConnections->setRowCount(0);
@@ -132,6 +154,7 @@ void MSIMViewConnections::updateConnectionsTable() {
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
 			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+			outItem->setData(Qt::UserRole, i); // also store index in global connection list
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -172,7 +195,40 @@ void MSIMViewConnections::updateConnectionsTable() {
 	}
 
 	m_ui->tableWidgetConnections->setSortingEnabled(true);
+	m_ui->tableWidgetConnections->sortByColumn(sortColumn);
+
+	if (m_ui->tableWidgetConnections->rowCount() > 0) {
+		if (currentIdx == -1)
+			currentIdx = 0;
+		currentIdx = qMin<int>(currentIdx, m_ui->tableWidgetConnections->rowCount()-1);
+		m_ui->tableWidgetConnections->selectRow(currentIdx);
+	}
+	m_ui->toolButtonRemoveConnection->setEnabled(m_ui->tableWidgetConnections->currentRow() != -1);
 
 	blockMySignals(this, false);
 }
 
+
+void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
+
+}
+
+
+void MSIMViewConnections::on_toolButtonRemoveConnection_clicked() {
+
+	MASTER_SIM::Project p = project();
+
+	// find currently selected slave definition
+	int currentIdx = m_ui->tableWidgetConnections->currentRow();
+	Q_ASSERT(currentIdx != -1);
+
+	QTableWidgetItem * outItem = m_ui->tableWidgetConnections->item(currentIdx, 0);
+	unsigned int connIdx = outItem->data(Qt::UserRole).toUInt();
+
+	// remove slave instance
+	p.m_graph.erase( p.m_graph.begin() + connIdx);
+
+	// create undo action
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p);
+	cmd->push();
+}
