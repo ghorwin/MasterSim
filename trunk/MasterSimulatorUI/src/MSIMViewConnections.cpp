@@ -14,11 +14,9 @@
 #include "MSIMConnectionItemDelegate.h"
 #include "MSIMConversion.h"
 #include "MSIMUndoConnections.h"
-#include "MSIMCreateConnectionDialog.h"
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QWidget(parent),
-	m_createConnectionDialog(NULL),
 	m_ui(new Ui::MSIMViewConnections)
 {
 	m_ui->setupUi(this);
@@ -44,8 +42,29 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	m_ui->tableWidgetConnections->horizontalHeader()->setSortIndicatorShown(true);
 	m_ui->tableWidgetConnections->sortByColumn(0, Qt::AscendingOrder);
 
+	// setup tables
+	m_ui->tableWidgetOutputVariable->verticalHeader()->setVisible(false);
+	m_ui->tableWidgetOutputVariable->setColumnCount(3);
+	headers.clear();
+	headers << tr("Slave") << tr("Variable") << tr("Type");
+	m_ui->tableWidgetOutputVariable->setHorizontalHeaderLabels(headers);
+	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->setSortIndicatorShown(true);
+	m_ui->tableWidgetOutputVariable->sortByColumn(0, Qt::AscendingOrder);
+
+	m_ui->tableWidgetInputVariable->verticalHeader()->setVisible(false);
+	m_ui->tableWidgetInputVariable->setColumnCount(3);
+	headers.clear();
+	headers << tr("Slave") << tr("Variable") << tr("Type");
+	m_ui->tableWidgetInputVariable->setHorizontalHeaderLabels(headers);
+	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetInputVariable->horizontalHeader()->setSortIndicatorShown(true);
+	m_ui->tableWidgetInputVariable->sortByColumn(0, Qt::AscendingOrder);
+
 	formatTable(m_ui->tableWidgetConnections);
 	formatTable(m_ui->tableWidgetSlaves);
+	formatTable(m_ui->tableWidgetOutputVariable);
+	formatTable(m_ui->tableWidgetInputVariable);
 }
 
 
@@ -113,6 +132,7 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 	blockMySignals(this, false);
 
 	updateConnectionsTable();
+	updateInputOutputVariablesTables();
 }
 
 
@@ -204,12 +224,87 @@ void MSIMViewConnections::updateConnectionsTable() {
 }
 
 
-void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
-	if (m_createConnectionDialog == NULL)
-		m_createConnectionDialog = new MSIMCreateConnectionDialog(this);
+void MSIMViewConnections::updateInputOutputVariablesTables() {
+	// remember select rows
+	int outputVarRow = m_ui->tableWidgetOutputVariable->currentRow();
+	int inputVarRow = m_ui->tableWidgetInputVariable->currentRow();
 
-	m_createConnectionDialog->updateTables();
-	m_createConnectionDialog->exec();
+	int outputSortColumn = m_ui->tableWidgetOutputVariable->horizontalHeader()->sortIndicatorSection();
+	int inputSortColumn = m_ui->tableWidgetInputVariable->horizontalHeader()->sortIndicatorSection();
+
+	m_ui->tableWidgetOutputVariable->setSortingEnabled(false);
+	m_ui->tableWidgetInputVariable->setSortingEnabled(false);
+
+	// first clear tables
+	m_ui->tableWidgetOutputVariable->clearContents();
+	m_ui->tableWidgetInputVariable->clearContents();
+	m_ui->tableWidgetOutputVariable->setRowCount(0);
+	m_ui->tableWidgetInputVariable->setRowCount(0);
+
+	// process all simulators in project
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+
+		// find associated ModelDescription
+		try {
+			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(simDef.m_name);
+
+			// loop over all variables
+			for (unsigned int v=0; v<modelDesc.m_variables.size(); ++v) {
+				const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[v];
+				QTableWidget * table;
+				if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+					table = m_ui->tableWidgetOutputVariable;
+				}
+				else if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+					table = m_ui->tableWidgetInputVariable;
+
+					// check if this input variable is already connected
+					std::string variableRef = simDef.m_name + "." + var.m_name;
+					unsigned int e=0;
+					for (; e<project().m_graph.size(); ++e) {
+						const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[e];
+						if (edge.m_inputVariableRef == variableRef)
+							break;
+					}
+					if (e != project().m_graph.size())
+						continue; // skip this input variable
+				}
+				else continue;
+
+
+				int currentRow = table->rowCount();
+				table->setRowCount(currentRow+1);
+				QTableWidgetItem * item = new QTableWidgetItem( QString::fromUtf8(simDef.m_name.c_str()));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 0, item);
+				item = new QTableWidgetItem( QString::fromUtf8(var.m_name.c_str()));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 1, item);
+				item = new QTableWidgetItem( QString::fromLatin1( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 2, item);
+			}
+		}
+		catch (IBK::Exception &) {
+			// FMU not yet loaded?
+		}
+	}
+
+	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
+	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
+
+}
+
+
+void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
+	// get selected output variable and input variable
+	// create new graph edge and add it to project
 }
 
 
@@ -353,3 +448,12 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 
 
 
+
+void MSIMViewConnections::on_tableWidgetOutputVariable_itemDoubleClicked(QTableWidgetItem *) {
+	on_toolButtonAddConnection_clicked();
+}
+
+
+void MSIMViewConnections::on_tableWidgetInputVariable_itemDoubleClicked(QTableWidgetItem *) {
+	on_toolButtonAddConnection_clicked();
+}
