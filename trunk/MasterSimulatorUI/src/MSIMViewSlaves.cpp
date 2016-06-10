@@ -52,8 +52,6 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
 
 	m_ui->tableWidgetFMUs->setSortingEnabled(true);
-
-	connect(m_ui->pushButtonParseFMUs, SIGNAL(clicked()), &MSIMMainWindow::instance(), SLOT(on_actionEditParseFMUs_triggered()));
 }
 
 

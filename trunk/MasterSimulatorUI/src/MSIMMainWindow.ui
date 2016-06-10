@@ -80,6 +80,8 @@
    <addaction name="actionFileOpen"/>
    <addaction name="actionFileSave"/>
    <addaction name="separator"/>
+   <addaction name="actionEditParseFMUs"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionFileNew">
    <property name="icon">
@@ -258,11 +260,15 @@
    </property>
   </action>
   <action name="actionEditParseFMUs">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/32x32/FMU_32x32.png</normaloff>:/gfx/actions/32x32/FMU_32x32.png</iconset>
+   </property>
    <property name="text">
-    <string>Parse FMUs</string>
+    <string>Analyze FMUs</string>
    </property>
    <property name="toolTip">
-    <string>Attemps to extract and parse the modelDescription.xml file from the FMU archives.</string>
+    <string>Extracts FMUs and reads modelDescription.xml files.</string>
    </property>
   </action>
  </widget>

@@ -144,13 +144,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonParseFMUs">
-          <property name="text">
-           <string>Parse FMUs</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </widget>
      </widget>

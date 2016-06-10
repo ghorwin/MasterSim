@@ -346,3 +346,4 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 }
 
 
+
