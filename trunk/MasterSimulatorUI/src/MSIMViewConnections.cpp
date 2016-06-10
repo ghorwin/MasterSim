@@ -226,8 +226,8 @@ void MSIMViewConnections::updateConnectionsTable() {
 
 void MSIMViewConnections::updateInputOutputVariablesTables() {
 	// remember select rows
-	int outputVarRow = m_ui->tableWidgetOutputVariable->currentRow();
-	int inputVarRow = m_ui->tableWidgetInputVariable->currentRow();
+	int outputVarCurrentIdx = m_ui->tableWidgetOutputVariable->currentRow();
+	int inputVarCurrentIdx = m_ui->tableWidgetInputVariable->currentRow();
 
 	int outputSortColumn = m_ui->tableWidgetOutputVariable->horizontalHeader()->sortIndicatorSection();
 	int inputSortColumn = m_ui->tableWidgetInputVariable->horizontalHeader()->sortIndicatorSection();
@@ -294,17 +294,64 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 		}
 	}
 
+	if (m_ui->tableWidgetInputVariable->rowCount() > 0) {
+		if (inputVarCurrentIdx == -1)
+			inputVarCurrentIdx = 0;
+		inputVarCurrentIdx = qMin<int>(inputVarCurrentIdx, m_ui->tableWidgetInputVariable->rowCount()-1);
+		m_ui->tableWidgetInputVariable->selectRow(inputVarCurrentIdx);
+	}
+	if (m_ui->tableWidgetOutputVariable->rowCount() > 0) {
+		if (outputVarCurrentIdx == -1)
+			outputVarCurrentIdx = 0;
+		outputVarCurrentIdx = qMin<int>(outputVarCurrentIdx, m_ui->tableWidgetOutputVariable->rowCount()-1);
+		m_ui->tableWidgetOutputVariable->selectRow(outputVarCurrentIdx);
+	}
+
+	m_ui->toolButtonAddConnection->setEnabled( (m_ui->tableWidgetInputVariable->currentRow() != -1) &&
+											   (m_ui->tableWidgetOutputVariable->currentRow() != -1));
+
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(2);
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
+
+	m_ui->tableWidgetInputVariable->resizeColumnToContents(2);
 	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
-
 }
 
 
 void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 	// get selected output variable and input variable
+	int outputVarCurrentIdx = m_ui->tableWidgetOutputVariable->currentRow();
+	int inputVarCurrentIdx = m_ui->tableWidgetInputVariable->currentRow();
+
+	Q_ASSERT(outputVarCurrentIdx != -1);
+	Q_ASSERT(inputVarCurrentIdx != -1);
+
+	// check for matching variable types
+	if (m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->text() !=
+		m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 2)->text())
+	{
+		QMessageBox::critical(this, tr("Connection error"), tr("Cannot connect variables of different type."));
+		return;
+	}
+
 	// create new graph edge and add it to project
+	MASTER_SIM::Project::GraphEdge edge;
+	edge.m_outputVariableRef = m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 0)->text().toUtf8().data();
+	edge.m_outputVariableRef += ".";
+	edge.m_outputVariableRef += m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 1)->text().toUtf8().data();
+
+	edge.m_inputVariableRef = m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 0)->text().toUtf8().data();
+	edge.m_inputVariableRef += ".";
+	edge.m_inputVariableRef += m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 1)->text().toUtf8().data();
+
+	MASTER_SIM::Project p = project();
+	p.m_graph.push_back(edge);
+
+	// create undo action
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p);
+	cmd->push();
 }
 
 
@@ -386,7 +433,7 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 				// extract last token
 				std::vector<std::string> tokens;
 				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
-				outputVars[tokens.back()] = slave1Name + "." + var.m_name;
+				outputVars[tokens.back()] = slave2Name + "." + var.m_name;
 			}
 		}
 		for (unsigned int i=0; i<modelDesc1.m_variables.size(); ++i) {
@@ -395,7 +442,7 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 				// extract last token
 				std::vector<std::string> tokens;
 				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
-				inputVars[tokens.back()] = slave2Name + "." + var.m_name;
+				inputVars[tokens.back()] = slave1Name + "." + var.m_name;
 			}
 		}
 
