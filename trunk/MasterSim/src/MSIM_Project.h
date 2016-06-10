@@ -91,6 +91,11 @@ public:
 		std::string m_outputVariableRef;
 		/*! Variable reference in simulator and value ref that imports this variable. */
 		std::string m_inputVariableRef;
+
+		/*! Comparison operator for graph edges. */
+		bool operator==(const GraphEdge & other) const {
+			return m_outputVariableRef == other.m_outputVariableRef && m_inputVariableRef == other.m_inputVariableRef;
+		}
 	};
 
 	/*! Constructor. */

@@ -204,6 +204,20 @@ bool MSIMMainWindow::saveProject() {
 }
 
 
+const MASTER_SIM::ModelDescription & MSIMMainWindow::modelDescription(const std::string & slaveName) const {
+	const MASTER_SIM::Project::SimulatorDef & slaveDef = project().simulatorDefinition( slaveName );
+	IBK::Path fmuFullPath = slaveDef.m_pathToFMU;
+	for (std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = m_modelDescriptions.begin();
+		 it != m_modelDescriptions.end(); ++it)
+	{
+		if (it->first == fmuFullPath) {
+			return it->second;
+		}
+	}
+	throw IBK::Exception(IBK::FormatString("Cannot find modelDescription data for slave '%1'").arg(slaveName), "[MSIMMainWindow::modelDescription]");
+}
+
+
 void MSIMMainWindow::changeEvent(QEvent *event) {
 	if (event->type() == QEvent::ActivationChange && this->isActiveWindow()){
 		if (MSIMProjectHandler::instance().isValid() && !MSIMProjectHandler::instance().projectFile().isEmpty()) {

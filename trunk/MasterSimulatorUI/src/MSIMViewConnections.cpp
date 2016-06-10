@@ -2,11 +2,13 @@
 #include "ui_MSIMViewConnections.h"
 
 #include <QSortFilterProxyModel>
+#include <QMessageBox>
 
 #include <IBK_Exception.h>
 
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
+#include "MSIMMainWindow.h"
 
 #include "MSIMSlaveItemDelegate.h"
 #include "MSIMConnectionItemDelegate.h"
@@ -109,15 +111,6 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 	blockMySignals(this, false);
 
 	updateConnectionsTable();
-}
-
-
-void MSIMViewConnections::on_pushButton_clicked() {
-	// check that slave names are not the same
-
-	// find all matches
-	// create graph edges
-	// create undo action for graph editing
 }
 
 
@@ -232,3 +225,124 @@ void MSIMViewConnections::on_toolButtonRemoveConnection_clicked() {
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p);
 	cmd->push();
 }
+
+
+void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
+
+	std::vector<MASTER_SIM::Project::GraphEdge> newEdges;
+
+	try {
+		// get slave names and simulator definitions
+		std::string slave1Name = m_ui->comboBoxSlave1->currentText().toUtf8().data();
+		std::string slave2Name = m_ui->comboBoxSlave2->currentText().toUtf8().data();
+//		const MASTER_SIM::Project::SimulatorDef & slave1Def = project().simulatorDefinition( slave1Name );
+//		const MASTER_SIM::Project::SimulatorDef & slave2Def = project().simulatorDefinition( slave2Name );
+
+		// get model descriptions for selected slaves
+		const MASTER_SIM::ModelDescription & modelDesc1 = MSIMMainWindow::instance().modelDescription(slave1Name);
+		const MASTER_SIM::ModelDescription & modelDesc2 = MSIMMainWindow::instance().modelDescription(slave2Name);
+
+		// slave 1 -> slave 2
+		std::map<std::string, std::string> outputVars; // map with key = last part of variable name, value = full variable name
+		std::map<std::string, std::string> inputVars; // map with key = last part of variable name, value = full variable name
+
+		for (unsigned int i=0; i<modelDesc1.m_variables.size(); ++i) {
+			const MASTER_SIM::FMIVariable & var = modelDesc1.m_variables[i];
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+				// extract last token
+				std::vector<std::string> tokens;
+				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
+				outputVars[tokens.back()] = slave1Name + "." + var.m_name;
+			}
+		}
+		for (unsigned int i=0; i<modelDesc2.m_variables.size(); ++i) {
+			const MASTER_SIM::FMIVariable & var = modelDesc2.m_variables[i];
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+				// extract last token
+				std::vector<std::string> tokens;
+				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
+				inputVars[tokens.back()] = slave2Name + "." + var.m_name;
+			}
+		}
+
+		// now process all input variables and check if there are matching outputs
+		for (std::map<std::string, std::string>::const_iterator it = inputVars.begin(); it != inputVars.end(); ++it) {
+			std::map<std::string, std::string>::const_iterator out_it = outputVars.find(it->first);
+			if (out_it != outputVars.end()) {
+				// create graph edges
+				MASTER_SIM::Project::GraphEdge edge;
+				edge.m_inputVariableRef = it->second;
+				edge.m_outputVariableRef = out_it->second;
+				newEdges.push_back(edge);
+			}
+		}
+
+		outputVars.clear();
+		inputVars.clear();
+		for (unsigned int i=0; i<modelDesc2.m_variables.size(); ++i) {
+			const MASTER_SIM::FMIVariable & var = modelDesc2.m_variables[i];
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+				// extract last token
+				std::vector<std::string> tokens;
+				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
+				outputVars[tokens.back()] = slave1Name + "." + var.m_name;
+			}
+		}
+		for (unsigned int i=0; i<modelDesc1.m_variables.size(); ++i) {
+			const MASTER_SIM::FMIVariable & var = modelDesc1.m_variables[i];
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+				// extract last token
+				std::vector<std::string> tokens;
+				IBK::explode(var.m_name, tokens, ".", IBK::EF_NoFlags);
+				inputVars[tokens.back()] = slave2Name + "." + var.m_name;
+			}
+		}
+
+		// now process all input variables and check if there are matching outputs
+		for (std::map<std::string, std::string>::const_iterator it = inputVars.begin(); it != inputVars.end(); ++it) {
+			std::map<std::string, std::string>::const_iterator out_it = outputVars.find(it->first);
+			if (out_it != outputVars.end()) {
+				// create graph edges
+				MASTER_SIM::Project::GraphEdge edge;
+				edge.m_inputVariableRef = it->second;
+				edge.m_outputVariableRef = out_it->second;
+				newEdges.push_back(edge);
+			}
+		}
+
+	}
+	catch (IBK::Exception & /* ex */) {
+		QMessageBox::critical(this, tr("Error connecting slaves"), tr("Slaves could not be connected. Try parsing modelDescription data first!"));
+		return;
+	}
+
+	if (newEdges.empty()) {
+		QMessageBox::information(this, tr("Connection result"), tr("No connections possible between slaves."));
+		return;
+	}
+
+
+	MASTER_SIM::Project p = project();
+
+	unsigned int newConnections = 0;
+	// add connections to graph that are not yet existing
+	for (unsigned int i=0; i<newEdges.size(); ++i) {
+		if (std::find(p.m_graph.begin(), p.m_graph.end(), newEdges[i])==p.m_graph.end()) {
+			++newConnections;
+			p.m_graph.push_back(newEdges[i]);
+		}
+	}
+
+	if (newConnections == 0) {
+		QMessageBox::information(this, tr("Connection result"), tr("No new connections could be made between slaves."));
+		return;
+	}
+
+	// create undo action
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connections added"), p);
+	cmd->push();
+
+//	QMessageBox::information(this, tr("Connection result"), tr("%1 new connections are made between slaves.").arg(newConnections));
+}
+
+
