@@ -9,6 +9,8 @@
 
 #include "MSIMUIConstants.h"
 #include "MSIMMainWindow.h"
+#include "MSIMUndoConnections.h"
+#include "MSIMProjectHandler.h"
 
 MSIMCreateConnectionDialog::MSIMCreateConnectionDialog(QWidget *parent) :
 	QDialog(parent),
@@ -54,6 +56,17 @@ void MSIMCreateConnectionDialog::updateTables() {
 	m_ui->tableWidgetOutputVariable->clearContents();
 	m_ui->tableWidgetInputVariable->clearContents();
 
-	// process all FMUs currently loaded
+	// process all simulators in project
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+
+		// find associated ModelDescription
+		try {
+
+		}
+		catch (IBK::Exception &) {
+			// FMU not yet loaded?
+		}
+	}
 
 }
