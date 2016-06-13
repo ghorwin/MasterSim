@@ -13,6 +13,8 @@ IBK::Unit s2Unit(const QString & str) {
 
 
 void blockMySignals(QWidget * p, bool block) {
+#if 0
+	// my original version
 	foreach (QObject * child, p->children()) {
 		QWidget * w = dynamic_cast<QWidget*>(child);
 		if (w != NULL) {
@@ -20,6 +22,12 @@ void blockMySignals(QWidget * p, bool block) {
 			blockMySignals(w, block);
 		}
 	}
+#else
+	// version suggested by Qt Support
+	QList<QWidget *> allChildren = p->findChildren<QWidget *>();
+		foreach (QWidget *child, allChildren)
+			child->blockSignals(block);
+#endif
 }
 
 
