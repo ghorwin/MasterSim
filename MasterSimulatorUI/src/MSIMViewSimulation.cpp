@@ -193,7 +193,10 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 //	success = (res == 0);
 #else
 	/// \todo check how to spawn a terminal on mac
-	success = myProcess->startDetached(m_solverName, commandLineArgs);
+    QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
+    QString allCmdLine = "osascript -e 'tell application \"Terminal\" to do script \"ls\"'";
+    //myProcess->execute(allCmdLine);//.arg(bashCmdLine));
+    QMessageBox::critical(this, tr("Error starting command"), tr("On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now."));
 #endif
 
 	// release process
