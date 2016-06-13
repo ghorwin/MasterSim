@@ -38,6 +38,7 @@ LIBS += -L../../../externals/lib \
 
 INCLUDEPATH = \
 	../../src \
+	../../../externals/zlib/src \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src \
