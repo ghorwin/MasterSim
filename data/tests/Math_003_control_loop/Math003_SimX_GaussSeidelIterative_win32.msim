@@ -4,19 +4,19 @@
 # No error test included, time step adjustment enabled.
 #
 
-tstart          			0.0 s
-tend            			10.0 s
-tstepmin        			1e-5 s
-tstepiterlimit  			0.001 s
-tstepmax        			0.2 s
-tstepstart      			0.01 s
-toutputstepmin  			0.01 s
+tStart          			0.0 s
+tEnd            			10.0 s
+hStart      				0.001 s
+hOutputMin  				0.01 s
+hMin        				1e-5 s
+hFallBackLimit  			0.001 s
+hMax	        			0.2 s
 MasterMode      			GAUSS_SEIDEL
 ErrorControlMode 			NONE
 
-it_max_steps    			6
-it_tol_abs      			1e-6
-it_tol_rel      			1e-4
+maxIterations    			6
+absTol						1e-6
+relTol						1e-4
 
 simulator 0 0 Part1 #ff447cb4 "fmus/simx/Part1.fmu"
 simulator 1 1 Part2 #ffc38200 "fmus/simx/Part2.fmu"

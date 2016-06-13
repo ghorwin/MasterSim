@@ -98,7 +98,7 @@ void MSIMViewSimulation::onModified( int modificationType, void * data ) {
 	setupLineEditUnitCombo(m_ui->lineEditDtMin, m_ui->comboBoxMinDtUnit, project().m_hMin);
 	setupLineEditUnitCombo(m_ui->lineEditDtIterLimit, m_ui->comboBoxDtIterLimitUnit, project().m_hFallBackLimit);
 
-	setupLineEditUnitCombo(m_ui->lineEditDtOutput, m_ui->comboBoxDtOutputUnit, project().m_tOutputStepMin);
+	setupLineEditUnitCombo(m_ui->lineEditDtOutput, m_ui->comboBoxDtOutputUnit, project().m_hOutputMin);
 
 	m_ui->lineEditRelTol->setText( QString("%L1").arg(project().m_relTol));
 	m_ui->lineEditAbsTol->setText( QString("%L1").arg(project().m_absTol));
@@ -193,10 +193,10 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 //	success = (res == 0);
 #else
 	/// \todo check how to spawn a terminal on mac
-    QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
-    QString allCmdLine = "osascript -e 'tell application \"Terminal\" to do script \"ls\"'";
-    //myProcess->execute(allCmdLine);//.arg(bashCmdLine));
-    QMessageBox::critical(this, tr("Error starting command"), tr("On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now."));
+	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
+	QString allCmdLine = "osascript -e 'tell application \"Terminal\" to do script \"ls\"'";
+	//myProcess->execute(allCmdLine);//.arg(bashCmdLine));
+	QMessageBox::critical(this, tr("Error starting command"), tr("On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now."));
 #endif
 
 	// release process
@@ -333,7 +333,7 @@ void MSIMViewSimulation::on_comboBoxDtIterLimitUnit_currentIndexChanged(int) {
 
 void MSIMViewSimulation::on_comboBoxDtOutputUnit_currentIndexChanged(int) {
 	MASTER_SIM::Project p = project(); // create copy of project
-	p.m_tOutputStepMin.IO_unit.set( m_ui->comboBoxDtOutputUnit->currentText().toStdString());
+	p.m_hOutputMin.IO_unit.set( m_ui->comboBoxDtOutputUnit->currentText().toStdString());
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();
@@ -351,7 +351,7 @@ void MSIMViewSimulation::on_comboBoxDtStartUnit_currentIndexChanged(int) {
 
 void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit))
+	if (!lineEditToParameter(this, "tStart", par, m_ui->lineEditStartTime, m_ui->comboBoxStartTimeUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Time must be >= 0."));
@@ -369,7 +369,7 @@ void MSIMViewSimulation::on_lineEditStartTime_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditEndTime_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tend", par, m_ui->lineEditEndTime, m_ui->comboBoxEndTimeUnit))
+	if (!lineEditToParameter(this, "tEnd", par, m_ui->lineEditEndTime, m_ui->comboBoxEndTimeUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Time must be >= 0."));
@@ -387,7 +387,7 @@ void MSIMViewSimulation::on_lineEditEndTime_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditRelTol_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "it_tol_rel", par, m_ui->lineEditRelTol, NULL))
+	if (!lineEditToParameter(this, "relTol", par, m_ui->lineEditRelTol, NULL))
 		return;
 	if (par.value <= 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Tolerance must be > 0."));
@@ -405,7 +405,7 @@ void MSIMViewSimulation::on_lineEditRelTol_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditAbsTol_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "it_tol_abs", par, m_ui->lineEditAbsTol, NULL))
+	if (!lineEditToParameter(this, "absTol", par, m_ui->lineEditAbsTol, NULL))
 		return;
 	if (par.value <= 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Tolerance must be > 0."));
@@ -441,7 +441,7 @@ void MSIMViewSimulation::on_checkBoxBinaryOutputFiles_toggled(bool checked) {
 
 void MSIMViewSimulation::on_lineEditDtMin_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstepmin", par, m_ui->lineEditDtMin, m_ui->comboBoxMinDtUnit))
+	if (!lineEditToParameter(this, "hMin", par, m_ui->lineEditDtMin, m_ui->comboBoxMinDtUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
@@ -459,7 +459,7 @@ void MSIMViewSimulation::on_lineEditDtMin_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditDtMax_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstepmax", par, m_ui->lineEditDtMax, m_ui->comboBoxMaxDtUnit))
+	if (!lineEditToParameter(this, "hMax", par, m_ui->lineEditDtMax, m_ui->comboBoxMaxDtUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
@@ -477,7 +477,7 @@ void MSIMViewSimulation::on_lineEditDtMax_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditDtIterLimit_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstepiterlimit", par, m_ui->lineEditDtIterLimit, m_ui->comboBoxDtIterLimitUnit))
+	if (!lineEditToParameter(this, "hFallBackLimit", par, m_ui->lineEditDtIterLimit, m_ui->comboBoxDtIterLimitUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
@@ -495,7 +495,7 @@ void MSIMViewSimulation::on_lineEditDtIterLimit_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditDtOutput_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "toutputstepmin", par, m_ui->lineEditDtOutput, m_ui->comboBoxDtOutputUnit))
+	if (!lineEditToParameter(this, "hOutputMin", par, m_ui->lineEditDtOutput, m_ui->comboBoxDtOutputUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
@@ -504,7 +504,7 @@ void MSIMViewSimulation::on_lineEditDtOutput_editingFinished() {
 	}
 
 	MASTER_SIM::Project p = project(); // create copy of project
-	p.m_tOutputStepMin = par;
+	p.m_hOutputMin = par;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();
@@ -513,7 +513,7 @@ void MSIMViewSimulation::on_lineEditDtOutput_editingFinished() {
 
 void MSIMViewSimulation::on_lineEditDtStart_editingFinished() {
 	IBK::Parameter par;
-	if (!lineEditToParameter(this, "tstart", par, m_ui->lineEditDtStart, m_ui->comboBoxDtStartUnit))
+	if (!lineEditToParameter(this, "hStart", par, m_ui->lineEditDtStart, m_ui->comboBoxDtStartUnit))
 		return;
 	if (par.value < 0) {
 		QMessageBox::critical(this, tr("Invalid input"), tr("Step size must be >= 0."));
