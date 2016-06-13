@@ -8,7 +8,6 @@
         <file>gfx/actions/24x24/info.png</file>
         <file>gfx/actions/24x24/minus.png</file>
         <file>gfx/actions/24x24/plus.png</file>
-        <file>gfx/actions/64x64/D5import.png</file>
         <file>gfx/actions/24x24/down.png</file>
         <file>gfx/actions/24x24/print.png</file>
         <file>gfx/actions/24x24/up.png</file>
@@ -25,7 +24,7 @@
         <file>gfx/actions/24x24/zoom-in-24.png</file>
         <file>gfx/actions/24x24/zoom-out-24.png</file>
         <file>gfx/actions/64x64/simStart.png</file>
-        <file>gfx/logo/icon_64.jpg</file>
+        <file>gfx/logo/icon_64.png</file>
         <file>gfx/actions/32x32/FMI_32x32.png</file>
         <file>gfx/actions/32x32/FMU_32x32.png</file>
     </qresource>
