@@ -148,6 +148,8 @@ void DataIO::clear() {
 	m_nums.clear();
 	m_nValues = 0;
 	m_isBinary = true;
+	m_asciiFmtFlags = std::ios_base::fmtflags();
+	m_asciiPrecision = -1;
 
 	m_startYear = INVALID_START_YEAR;
 
@@ -494,6 +496,9 @@ void DataIO::adjustFileName() {
 void DataIO::write(IBK::NotificationHandler * notify) const {
 	const char * const FUNC_ID = "[DataIO::write]";
 
+	IBK::StopWatch timer;
+	timer.setIntervalLength(1);
+
 	checkDataConsistency();
 
 	// Data is valid, now write the header (here, the remaining checks are done)
@@ -508,7 +513,7 @@ void DataIO::write(IBK::NotificationHandler * notify) const {
 		catch (IBK::Exception & ex) {
 			throw IBK::Exception(ex, IBK::FormatString("Error writing data at time index %1.").arg(i), FUNC_ID);
 		}
-		if (notify)
+		if (notify && timer.intervalCompleted())
 			notify->notify(double(i+1)/m_timepoints.size());
 	}
 	if (notify != 0)
@@ -555,7 +560,6 @@ void DataIO::writeHeader() const {
 		throw IBK::Exception( IBK::FormatString("Couldn't open output file '%1'.").arg(m_filename), FUNC_ID);
 	}
 	std::ostream & out = *m_ofstream; // readability improvement
-	out.precision(14);
 
 	// write magic header and version number
 	IBK::Version::write(out, MAGIC_NUMBER_BINARY_DATAIO, SECOND_MAGIC_NUMBER, MAGIC_NUMBER_ASCII_DATAIO, SECOND_MAGIC_NUMBER,
@@ -641,6 +645,14 @@ void DataIO::writeHeader() const {
 		out.flush();
 
 		// done writing ASCII header
+
+		// prepare ASCII output format
+		if (m_asciiPrecision != -1)
+			out.precision(m_asciiPrecision);
+		if (m_asciiFmtFlags & std::ios_base::floatfield) {
+			out.setf(m_asciiFmtFlags);
+		}
+
 	}
 	if (!out.good())
 		throw IBK::Exception( IBK::FormatString("Error writing file '%1'.").arg(m_filename), FUNC_ID);
