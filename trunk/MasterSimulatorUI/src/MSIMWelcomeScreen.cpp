@@ -66,6 +66,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 		for (int i=0; i<MSIMSettings::instance().m_recentProjects.count(); ++i) {
 			QFileInfo finfo(MSIMSettings::instance().m_recentProjects[i]);
 			QString recentProjectTable = RECENT_PROJECT_TABLE_TEMPLATE;
+			recentProjectTable = recentProjectTable.arg(i); // insert index for remove-from-list
 			QString description;
 			// check if file still exists
 			if (finfo.exists()) {
@@ -89,11 +90,11 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 				}
 				catch (IBK::Exception &) {
 					// error reading project file, missing permissions?
-					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project <a href=\"projectRemove:%1\">[remove from list]</a></font></i>").arg( i );
+					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project</font></i>");
 				}
 			}
 			else {
-				description = tr("<i><font color=\"#800000\">Project not accessible <a href=\"projectRemove:%1\">[remove from list]</a></font></i>").arg( i );
+				description = tr("<i><font color=\"#800000\">Project not accessible </font></i>");
 			}
 
 			QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + finfo.fileName() + ".png";
@@ -296,7 +297,7 @@ const char * const HTML_TEMPLATE =
 const char * const RECENT_PROJECT_TABLE_TEMPLATE =
 		"<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n"
 		"<tr valign=center><th width=\"${THUMBNAILSIZE}\" rowspan=\"3\">${IMG_FILENAME}</th><th align=left>${PROJECT_FILENAME}</th></tr>\n"
-		"<tr valign=center><td align=left><a href=\"project:${PROJECT_FULL_PATH}\">${PROJECT_FULL_PATH}</a></td></tr>\n"
+		"<tr valign=center><td align=left><a href=\"project:${PROJECT_FULL_PATH}\">${PROJECT_FULL_PATH}</a>&nbsp;&nbsp;<i><a href=\"projectRemove:%1\">[remove from list]</a></i></td></tr>\n"
 		"<tr valign=top><td align=justify>${PROJECT_DESCRIPTION}</td></tr>\n"
 		"</table>\n"
 		"<br>\n"
