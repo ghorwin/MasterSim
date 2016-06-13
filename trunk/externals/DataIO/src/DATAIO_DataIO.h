@@ -402,6 +402,21 @@ public:
 	*/
 	bool								m_isBinary;
 
+	/*! Format flags for ASCII file output, used for time points and values.
+		Default is empty. Typically you may want to set std::fixed or std::scientific.
+		\code
+		// enable scientific format
+		m_asciiFmtFlags |= std::ios_base::scientific;
+
+		// to unset format flags
+		m_asciiFmtFlags &= ~std::ios_base::scientific;
+		\endcode
+	*/
+	std::ios_base::fmtflags				m_asciiFmtFlags;
+
+	/*! Precision used for ASCII file output, -1 means default. */
+	int									m_asciiPrecision;
+
 	/*! Vector with index numbers of elements (field outputs) or sides (flux outputs).
 		\see nValues()
 		\warning The size of this vector should be the same as nValues() and the size of the vectors
