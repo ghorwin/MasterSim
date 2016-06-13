@@ -235,6 +235,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 				// populate header
 				dataIO->m_isBinary = m_project->m_binaryOutputFiles;
+				dataIO->m_asciiPrecision = 14;
 
 				// no geometry file
 				dataIO->m_geoFileHash = 0;
