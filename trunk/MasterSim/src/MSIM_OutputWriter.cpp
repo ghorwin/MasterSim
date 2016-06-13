@@ -326,7 +326,7 @@ void OutputWriter::setupProgressReport() {
 void OutputWriter::appendOutputs(double t) {
 	// skip output writing, if last output was written within minimum output
 	// time step size
-	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_tOutputStepMin.value > t) {
+	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_hOutputMin.value > t) {
 		m_progressFeedback.writeFeedbackFromF(t);
 		return;
 	}

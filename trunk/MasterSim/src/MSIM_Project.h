@@ -170,7 +170,7 @@ public:
 	double						m_relTol;
 
 	/*! Minimum output time step. */
-	IBK::Parameter				m_tOutputStepMin;
+	IBK::Parameter				m_hOutputMin;
 
 	/*! If true, binary output files are written (smaller and faster). */
 	bool						m_binaryOutputFiles;

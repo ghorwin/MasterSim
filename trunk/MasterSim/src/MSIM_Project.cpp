@@ -13,19 +13,19 @@
 namespace MASTER_SIM {
 
 Project::Project() :
-	m_tStart("tstart", 0, "a"),
-	m_tEnd("tend", 1, "a"),
-	m_hFallBackLimit("tstepiterlimit", 1e-3, "s"),
-	m_hMin("tstepmin", 1e-5, "s"),
-	m_hMax("tstepmax", 30, "min"),
-	m_hStart("tstepstart", 0.01, "s"),
+	m_tStart("tStart", 0, "a"),
+	m_tEnd("tEnd", 1, "a"),
+	m_hFallBackLimit("hFallBackLimit", 1e-3, "s"),
+	m_hMin("hMin", 1e-5, "s"),
+	m_hMax("hMax", 30, "min"),
+	m_hStart("hStart", 0.01, "s"),
 	m_masterMode(MM_GAUSS_JACOBI),
 	m_errorControlMode(EM_NONE),
 	m_adjustStepSize(true),
 	m_maxIterations(10),
 	m_absTol(1e-6),
 	m_relTol(1e-5),
-	m_tOutputStepMin("toutputstepmin", 120, "s"),
+	m_hOutputMin("hOutputMin", 120, "s"),
 	m_binaryOutputFiles(false),
 	m_outputTimeUnit("s")
 {
@@ -129,27 +129,27 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			std::string keyword = IBK::trim_copy(tokens[0]);
 			std::string value = IBK::trim_copy(tokens[1]);
 
-			if (keyword == "tstart") {
-				if (!m_tStart.set("tstart", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "tend") {
-				if (!m_tEnd.set("tend", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "tstepmax") {
-				if (!m_hMax.set("tstepmax", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "tstepmin") {
-				if (!m_hMin.set("tstepmin", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "tstepiterlimit") {
-				if (!m_hFallBackLimit.set("tstepiterlimit", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "tstepstart") {
-				if (!m_hStart.set("tstepstart", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "toutputstepmin") {
-				if (!m_tOutputStepMin.set("toutputstepmin", value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			if (keyword == "tStart") {
+				if (!m_tStart.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "tEnd") {
+				if (!m_tEnd.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "hMax") {
+				if (!m_hMax.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "hMin") {
+				if (!m_hMin.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "hFallBackLimit") {
+				if (!m_hFallBackLimit.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "hStart") {
+				if (!m_hStart.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "hOutputMin") {
+				if (!m_hOutputMin.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
 			} else if (keyword == "binaryOutputFiles")
 				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "adjustStepSize")
 				m_adjustStepSize = (value == "true" || value == "yes" || value == "1");
-			else if (keyword == "it_tol_abs")
+			else if (keyword == "absTol")
 				m_absTol = IBK::string2val<double>(value);
-			else if (keyword == "it_tol_rel")
+			else if (keyword == "relTol")
 				m_relTol = IBK::string2val<double>(value);
 			else if (keyword == "MasterMode") {
 				if (value == "GAUSS_JACOBI")
@@ -171,7 +171,7 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				else
 					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
 			}
-			else if (keyword == "it_max_steps")
+			else if (keyword == "maxIterations")
 				m_maxIterations = IBK::string2val<unsigned int>(value);
 			else
 				throw IBK::Exception(IBK::FormatString("Unknown keyword '%1'").arg(keyword), FUNC_ID);
@@ -203,11 +203,11 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!m_hMin.empty())		m_hMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
 	if (!m_hFallBackLimit.empty())		m_hFallBackLimit.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
 	if (!m_hStart.empty())		m_hStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_tOutputStepMin.empty())		m_tOutputStepMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_hOutputMin.empty())		m_hOutputMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
 	out << std::setw(KEYWORD_WIDTH) << std::left << "binaryOutputFiles" << " " << (m_binaryOutputFiles ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
-	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_abs" << " " << m_absTol << std::endl;
-	out << std::setw(KEYWORD_WIDTH) << std::left << "it_tol_rel" << " " << m_relTol << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "absTol" << " " << m_absTol << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "relTol" << " " << m_relTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "MasterMode" << " ";
 	switch (m_masterMode) {
 		case MM_GAUSS_JACOBI : out << "GAUSS_JACOBI"; break;
@@ -222,7 +222,7 @@ void Project::write(const IBK::Path & prjFile) const {
 		case EM_ADAPT_STEP : out << "ADAPT_STEP"; break;
 	}
 	out << std::endl;
-	out << std::setw(KEYWORD_WIDTH) << std::left << "it_max_steps" << " " << m_maxIterations << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "maxIterations" << " " << m_maxIterations << std::endl;
 	out << std::endl;
 
 	// write simulators

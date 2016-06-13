@@ -4,10 +4,10 @@
 # No error test included, time step adjustment disabled.
 # GaussJacobi is run without iteration.
 
-tstart          			0.0 s
-tend            			10.0 s
-tstepstart      			0.001 s
-toutputstepmin  			0.01 s
+tStart          			0.0 s
+tEnd            			10.0 s
+hStart      				0.001 s
+hOutputMin  				0.01 s
 MasterMode      			GAUSS_JACOBI
 ErrorControlMode			NONE
 
