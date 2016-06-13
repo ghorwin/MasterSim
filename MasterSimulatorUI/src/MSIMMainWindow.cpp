@@ -582,6 +582,7 @@ void MSIMMainWindow::onUpdateActions() {
 	m_ui->actionFileReload->setEnabled(have_project);
 	m_ui->actionFileClose->setEnabled(have_project);
 	m_ui->actionEditTextEditProject->setEnabled(have_project);
+	m_ui->actionEditParseFMUs->setEnabled(have_project);
 
 	// no project, no undo actions -> clearing undostack also disables undo actions
 	if (!have_project)

@@ -388,8 +388,8 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 		// create a copy of the project file
 		MASTER_SIM::Project pCopy = *m_project;
 
-		// convert all slave references to realtive file paths
-		IBK::Path absoluteProjectFilePath = IBK::Path(m_projectFile.toUtf8().data()).parentPath();
+		// convert all slave references to relative file paths
+		IBK::Path absoluteProjectFilePath = fpath.parentPath();
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
 			IBK::Path p = m_project->m_simulators[i].m_pathToFMU; // should be an absolute
 			if (p.isAbsolute()) {
