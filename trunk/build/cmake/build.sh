@@ -150,8 +150,11 @@ echo "*** Copying MasterSimulator and MasterSimulatorUI to bin/release ***" &&
 if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
   cp $BUILDDIR/MasterSimulator/MasterSimulator ../../bin/release/MasterSimulator
 fi &&
-if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
-  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI 
+if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
+  if [ -e ../../bin/release/MasterSimulatorUI.app ]; then
+    rm -rf ../../bin/release/MasterSimulatorUI.app 
+  fi &&
+  cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ../../bin/release/MasterSimulatorUI.app 
 fi &&
 echo "*** Build MasterSimulator ***" &&
 if [[ $SKIP_TESTS = "false"  ]]; 

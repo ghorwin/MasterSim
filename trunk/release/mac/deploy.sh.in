@@ -22,6 +22,7 @@ echo '*** Creating Application bundle and resources to '$OUTPUT_DIRECTORY_NAME &
 
 cp -R ../../bin/release/MasterSimulatorUI.app  $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app &&
 cp ../../bin/release/MasterSimulator $OUTPUT_DIRECTORY_NAME/ &&
+cp ../../bin/release/MasterSimulator $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/MacOS &&
 
 # Create missing Release-Path and subdirs
 
