@@ -85,20 +85,13 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 
 	blockMySignals(this, true);
 
-
-	std::set<std::string> checkedSlaveNames;
-	if (m_ui->tableWidgetSlaves->rowCount() == 0) {
-		// table is empty - on first fill, use all names
-		for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
-			checkedSlaveNames.insert(simDef.m_name);
-		}
-	}
-	else {
-		for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
-			if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Checked)
-				checkedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
-		}
+	// Mind: when loading a new project the "unchecked" states of the old project will be
+	//       used. So when a slave "xxx" was unchecked in the current project, it will
+	//       also be unchecked in the newly opened project, when there is a slave "xxx" as well.
+	std::set<std::string> uncheckedSlaveNames;
+	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
+		if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Unchecked)
+			uncheckedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
 	}
 
 	// update tables based on project file content
@@ -113,10 +106,10 @@ void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
 		QString slaveName = QString::fromUtf8(simDef.m_name.c_str());
 		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-		if (checkedSlaveNames.find(slaveName.toUtf8().data()) != checkedSlaveNames.end())
-			item->setCheckState(Qt::Checked);
-		else
+		if (uncheckedSlaveNames.find(slaveName.toUtf8().data()) != uncheckedSlaveNames.end())
 			item->setCheckState(Qt::Unchecked);
+		else
+			item->setCheckState(Qt::Checked);
 		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		m_ui->tableWidgetSlaves->setItem(i, 0, item);
 
@@ -310,11 +303,22 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 	m_ui->toolButtonAddConnection->setEnabled( (m_ui->tableWidgetInputVariable->currentRow() != -1) &&
 											   (m_ui->tableWidgetOutputVariable->currentRow() != -1));
 
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(0);
 	m_ui->tableWidgetOutputVariable->resizeColumnToContents(2);
+	int w = m_ui->tableWidgetOutputVariable->contentsRect().width();
+	w -= m_ui->tableWidgetOutputVariable->columnWidth(0) + m_ui->tableWidgetOutputVariable->columnWidth(2);
+	w = qMax(100, w);
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(1, w);
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
 
+	m_ui->tableWidgetInputVariable->resizeColumnToContents(0);
 	m_ui->tableWidgetInputVariable->resizeColumnToContents(2);
+	w = m_ui->tableWidgetInputVariable->contentsRect().width();
+	w -= m_ui->tableWidgetInputVariable->columnWidth(0) + m_ui->tableWidgetInputVariable->columnWidth(2);
+	w = qMax(100, w);
+	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(1, w);
+
 	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
 }
