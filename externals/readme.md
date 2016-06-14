@@ -54,6 +54,13 @@ IBK Math Kernel Library (subset), see IBK.
 TinyXML Library with IBK extensions
 
 
+7. BlockMod
+-----------
+
+Library for block-based schematic modeling, see 
+https://sourceforge.net/projects/blockmod
+
+
 
 
 
