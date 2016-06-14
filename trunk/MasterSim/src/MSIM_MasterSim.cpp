@@ -588,19 +588,29 @@ void MasterSim::initialConditions() {
 	// if enabled, iterate over initial conditions using the selected master algorithm
 	// but disable doStep() and get/set state calls within algorithm
 
-	// for now just loop over all slaves retrieve outputs
-	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
-		// cache outputs
-		slave->cacheOutputs();
-		// and sync with global variables vector
-		syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
-	}
-	// and set inputs
+	// Do a Gauss-Jacobi Iteration
+	for (unsigned int i=0; i<3; ++i) {
 
-	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
-		updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
+		IBK::IBK_Message(IBK::FormatString("Gauss-Jacobi-Iteration, loop #%1.\n").arg(i+1), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+		for (unsigned int j=0; j<m_realyt.size(); ++j) {
+			IBK::IBK_Message(IBK::FormatString("  real[%1] = %2.\n").arg(j).arg(m_realyt[j]), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+		}
+
+		// for now just loop over all slaves retrieve outputs
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			Slave * slave = m_slaves[i];
+			// cache outputs
+			slave->cacheOutputs();
+			// and sync with global variables vector
+			syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
+		}
+		// and set inputs
+
+
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			Slave * slave = m_slaves[i];
+			updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
+		}
 	}
 
 	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
