@@ -17,10 +17,12 @@ OutputBaseFilename=${OutputFileBasename}
 VersionInfoVersion=${LongVersion}
 VersionInfoDescription=MasterSimulator
 
-AppPublisher=Andreas Nicolai
+AppPublisher=MasterSim Developers
 VersionInfoCopyright=${CurrentYear} Andreas Nicolai
 AppCopyright=${CurrentYear} Andreas Nicolai
 LicenseFile=..\..\doc\LICENSE
+AppPublisherURL=http://mastersim.sourceforge.net
+UninstallDisplayIcon={app}\MasterSimulatorUI.exe
 
 
 [Files]
