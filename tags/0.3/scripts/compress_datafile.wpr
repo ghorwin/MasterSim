@@ -1,0 +1,11 @@
+#!wing
+#!version=5.0
+##################################################################
+# Wing IDE project file                                          #
+##################################################################
+[project attributes]
+proj.file-list = [loc('compress_datafile.py')]
+proj.file-type = 'shared'
+proj.launch-config = {loc('compress_datafile.py'): ('project',
+        (u'/home/ghorwin/svn/mastersim-code/trunk/scripts/ten_data_lines.txt --skip-rows 15',
+         ''))}

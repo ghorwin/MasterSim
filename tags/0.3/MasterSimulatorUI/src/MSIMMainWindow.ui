@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MSIMMainWindow</class>
+ <widget class="QMainWindow" name="MSIMMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>625</height>
+   </rect>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/MasterSimulator.qrc">
+    <normaloff>:/gfx/logo/icon_64.jpg</normaloff>:/gfx/logo/icon_64.jpg</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1100</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionFileNew"/>
+    <addaction name="actionFileOpen"/>
+    <addaction name="actionFileReload"/>
+    <addaction name="actionFileRecentProjects"/>
+    <addaction name="actionFileSave"/>
+    <addaction name="actionFileSaveAs"/>
+    <addaction name="actionFileClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileQuit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Application language</string>
+     </property>
+    </widget>
+    <addaction name="actionEditParseFMUs"/>
+    <addaction name="actionEditTextEditProject"/>
+    <addaction name="separator"/>
+    <addaction name="actionEditPreferences"/>
+    <addaction name="menuLanguage"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelpAboutMasterSim"/>
+    <addaction name="actionHelpAboutQt"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Main toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionFileNew"/>
+   <addaction name="actionFileOpen"/>
+   <addaction name="actionFileSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionEditParseFMUs"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionFileNew">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/filenew.png</normaloff>:/gfx/actions/24x24/filenew.png</iconset>
+   </property>
+   <property name="text">
+    <string>New...</string>
+   </property>
+   <property name="toolTip">
+    <string>Creates a new project</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionFileOpen">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/fileopen.png</normaloff>:/gfx/actions/24x24/fileopen.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open...</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens a project file.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionFileSave">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/filesave.png</normaloff>:/gfx/actions/24x24/filesave.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves current changes.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionFileSaveAs">
+   <property name="text">
+    <string>Save as...</string>
+   </property>
+   <property name="toolTip">
+    <string>Saves project under new name.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionFileExport">
+   <property name="text">
+    <string>Export project package...</string>
+   </property>
+   <property name="toolTip">
+    <string>Exports project as package.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionFileClose">
+   <property name="text">
+    <string>Close</string>
+   </property>
+   <property name="toolTip">
+    <string>Closes current project.</string>
+   </property>
+  </action>
+  <action name="actionFileQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+   <property name="toolTip">
+    <string>Quits the application.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::QuitRole</enum>
+   </property>
+  </action>
+  <action name="actionFileRecentProjects">
+   <property name="text">
+    <string>Recent projects</string>
+   </property>
+  </action>
+  <action name="actionEditTextEditProject">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open project in text editor</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens the project file in a text editor</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionHelpAboutQt">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="actionHelpAboutMasterSim">
+   <property name="text">
+    <string>About MasterSimulator...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="actionEditPreferences">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Preferences...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::PreferencesRole</enum>
+   </property>
+  </action>
+  <action name="actionFileReload">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/reload.png</normaloff>:/gfx/actions/24x24/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reload project</string>
+   </property>
+   <property name="toolTip">
+    <string>Reloads the current project</string>
+   </property>
+  </action>
+  <action name="actionViewSlaves">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>FMUs and Simulators</string>
+   </property>
+  </action>
+  <action name="actionViewConnections">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Connections</string>
+   </property>
+  </action>
+  <action name="actionViewSimulation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Simulation Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Simulation/Project settings</string>
+   </property>
+  </action>
+  <action name="actionEditParseFMUs">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/32x32/FMU_32x32.png</normaloff>:/gfx/actions/32x32/FMU_32x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Analyze FMUs</string>
+   </property>
+   <property name="toolTip">
+    <string>Extracts FMUs and reads modelDescription.xml files.</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../resources/MasterSimulator.qrc"/>
+ </resources>
+ <connections/>
+</ui>
