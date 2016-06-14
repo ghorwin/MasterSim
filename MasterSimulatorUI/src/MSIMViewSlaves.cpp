@@ -228,10 +228,10 @@ void MSIMViewSlaves::updateSlaveTable() {
 		IBK::Path fmuFilePath = simDef.m_pathToFMU;
 		if (m_ui->checkBoxRelativeFMUPaths->isChecked()) {
 			IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
-			projectFilePath = projectFilePath.parentPath();
-			// now compose relative path
 			try {
-				fmuFilePath = fmuFilePath.relativePath(projectFilePath);
+				// now compose relative path
+				projectFilePath = projectFilePath.parentPath(); // may throw an exception if file path is invalid
+				fmuFilePath = fmuFilePath.relativePath(projectFilePath); // may throw an exception if relative path cannot be computed
 			}
 			catch (IBK::Exception &) {
 				fmuFilePath = simDef.m_pathToFMU;
