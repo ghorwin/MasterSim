@@ -146,14 +146,19 @@ fi
 cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT && 
 cd $CMAKELISTSDIR &&
 mkdir -p ../../bin/release &&
-echo "*** Copying MasterSimulator and MasterSimulatorUI to bin/release ***" &&
 if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
+  echo "*** Copying MasterSimulator to bin/release ***" &&
   cp $BUILDDIR/MasterSimulator/MasterSimulator ../../bin/release/MasterSimulator
+fi &&
+if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
+  echo "*** Copying MasterSimulatorUI to bin/release ***" &&
+  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI
 fi &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
   if [ -e ../../bin/release/MasterSimulatorUI.app ]; then
     rm -rf ../../bin/release/MasterSimulatorUI.app 
   fi &&
+  echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
   cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ../../bin/release/MasterSimulatorUI.app 
 fi &&
 echo "*** Build MasterSimulator ***" &&
