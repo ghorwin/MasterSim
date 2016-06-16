@@ -30,6 +30,8 @@ cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/doc/Master
 
 # Copy desktop icon and auxilliary files
 
+cp ../../MasterSimulatorUI/resources/gfx/logo/icon_64.png $OUTPUT_DIRECTORY_NAME/resources/MasterSimulatorUI-64.png &&
+cp ../../release/linux/MasterSimulatorUI.desktop $OUTPUT_DIRECTORY_NAME/bin/MasterSimulatorUI.desktop &&
 cp ../../doc/LICENSE $OUTPUT_DIRECTORY_NAME/resources/LICENSE &&
 
 ${CreateArchive}
