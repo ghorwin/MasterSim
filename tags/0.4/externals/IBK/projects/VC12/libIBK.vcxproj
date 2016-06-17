@@ -1,0 +1,317 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\IBKMK.h" />
+    <ClInclude Include="..\..\src\IBKMK_band_matrix.h" />
+    <ClInclude Include="..\..\src\IBKMK_dense_matrix.h" />
+    <ClInclude Include="..\..\src\IBKMK_sparse_matrix.h" />
+    <ClInclude Include="..\..\src\IBKMK_vector_operations.h" />
+    <ClInclude Include="..\..\src\IBK_AbstractProject.h" />
+    <ClInclude Include="..\..\src\IBK_AbstractProjectParameter.h" />
+    <ClInclude Include="..\..\src\IBK_algorithm.h" />
+    <ClInclude Include="..\..\src\IBK_ArgParser.h" />
+    <ClInclude Include="..\..\src\IBK_array.h" />
+    <ClInclude Include="..\..\src\IBK_assert.h" />
+    <ClInclude Include="..\..\src\IBK_BandMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_bitfield.h" />
+    <ClInclude Include="..\..\src\IBK_BlockBandMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_BlockSparseMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_BlockTridiagMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_BlockVector.h" />
+    <ClInclude Include="..\..\src\IBK_BuildFlags.h" />
+    <ClInclude Include="..\..\src\IBK_Color.h" />
+    <ClInclude Include="..\..\src\IBK_configuration.h" />
+    <ClInclude Include="..\..\src\IBK_constants.h" />
+    <ClInclude Include="..\..\src\IBK_CRSpline.h" />
+    <ClInclude Include="..\..\src\IBK_crypt.h" />
+    <ClInclude Include="..\..\src\IBK_cuboid.h" />
+    <ClInclude Include="..\..\src\IBK_Database.h" />
+    <ClInclude Include="..\..\src\IBK_Date.h" />
+    <ClInclude Include="..\..\src\IBK_DblFunction.h" />
+    <ClInclude Include="..\..\src\IBK_DefaultMessageHandler.h" />
+    <ClInclude Include="..\..\src\IBK_DenseMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_DependencyGraph.h" />
+    <ClInclude Include="..\..\src\IBK_DependencyGroup.h" />
+    <ClInclude Include="..\..\src\IBK_DependencyObject.h" />
+    <ClInclude Include="..\..\src\IBK_Element.h" />
+    <ClInclude Include="..\..\src\IBK_EOLStreamBuffer.h" />
+    <ClInclude Include="..\..\src\IBK_Exception.h" />
+    <ClInclude Include="..\..\src\IBK_FileReader.h" />
+    <ClInclude Include="..\..\src\IBK_FileUtils.h" />
+    <ClInclude Include="..\..\src\IBK_Flag.h" />
+    <ClInclude Include="..\..\src\IBK_FormatString.h" />
+    <ClInclude Include="..\..\src\IBK_functional.h" />
+    <ClInclude Include="..\..\src\IBK_headers.h" />
+    <ClInclude Include="..\..\src\IBK_IdGeneratorSingelton.h" />
+    <ClInclude Include="..\..\src\IBK_IndexGenerator.h" />
+    <ClInclude Include="..\..\src\IBK_InputOutput.h" />
+    <ClInclude Include="..\..\src\IBK_Keyword.h" />
+    <ClInclude Include="..\..\src\IBK_KeywordListManager.h" />
+    <ClInclude Include="..\..\src\IBK_Line.h" />
+    <ClInclude Include="..\..\src\IBK_LinearSpline.h" />
+    <ClInclude Include="..\..\src\IBK_LinearSplineGenerator.h" />
+    <ClInclude Include="..\..\src\IBK_Logfile.h" />
+    <ClInclude Include="..\..\src\IBK_math.h" />
+    <ClInclude Include="..\..\src\IBK_math_vector.h" />
+    <ClInclude Include="..\..\src\IBK_matrix.h" />
+    <ClInclude Include="..\..\src\IBK_matrix_dense.h" />
+    <ClInclude Include="..\..\src\IBK_matrix_view.h" />
+    <ClInclude Include="..\..\src\IBK_MessageHandler.h" />
+    <ClInclude Include="..\..\src\IBK_MessageHandlerBase.h" />
+    <ClInclude Include="..\..\src\IBK_messages.h" />
+    <ClInclude Include="..\..\src\IBK_MetaTemplates.h" />
+    <ClInclude Include="..\..\src\IBK_minimization.h" />
+    <ClInclude Include="..\..\src\IBK_MultiLanguageString.h" />
+    <ClInclude Include="..\..\src\IBK_NotificationHandler.h" />
+    <ClInclude Include="..\..\src\IBK_numerics.h" />
+    <ClInclude Include="..\..\src\IBK_ObjectReference.h" />
+    <ClInclude Include="..\..\src\IBK_Parameter.h" />
+    <ClInclude Include="..\..\src\IBK_para_test.h" />
+    <ClInclude Include="..\..\src\IBK_physics.h" />
+    <ClInclude Include="..\..\src\IBK_point.h" />
+    <ClInclude Include="..\..\src\IBK_Polygon.h" />
+    <ClInclude Include="..\..\src\IBK_prehead.h" />
+    <ClInclude Include="..\..\src\IBK_ptr_list.h" />
+    <ClInclude Include="..\..\src\IBK_Quantity.h" />
+    <ClInclude Include="..\..\src\IBK_QuantityData.h" />
+    <ClInclude Include="..\..\src\IBK_QuantityManager.h" />
+    <ClInclude Include="..\..\src\IBK_random.h" />
+    <ClInclude Include="..\..\src\IBK_rational_number.h" />
+    <ClInclude Include="..\..\src\IBK_rectangle.h" />
+    <ClInclude Include="..\..\src\IBK_resourceOutputs.h" />
+    <ClInclude Include="..\..\src\IBK_RungeKuttaIntegrator.h" />
+    <ClInclude Include="..\..\src\IBK_SimpleString.h" />
+    <ClInclude Include="..\..\src\IBK_simple_matrix.h" />
+    <ClInclude Include="..\..\src\IBK_simple_matrix_3D.h" />
+    <ClInclude Include="..\..\src\IBK_SolverArgsParser.h" />
+    <ClInclude Include="..\..\src\IBK_SolverFeedback.h" />
+    <ClInclude Include="..\..\src\IBK_SparseMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_SparseMatrixIndexGenerator.h" />
+    <ClInclude Include="..\..\src\IBK_StackedPoint.h" />
+    <ClInclude Include="..\..\src\IBK_StopWatch.h" />
+    <ClInclude Include="..\..\src\IBK_StringUtils.h" />
+    <ClInclude Include="..\..\src\IBK_Time.h" />
+    <ClInclude Include="..\..\src\IBK_TridiagMatrix.h" />
+    <ClInclude Include="..\..\src\IBK_UndoAction.h" />
+    <ClInclude Include="..\..\src\IBK_UndoListManager.h" />
+    <ClInclude Include="..\..\src\IBK_Unit.h" />
+    <ClInclude Include="..\..\src\IBK_UnitData.h" />
+    <ClInclude Include="..\..\src\IBK_UnitList.h" />
+    <ClInclude Include="..\..\src\IBK_UnitVector.h" />
+    <ClInclude Include="..\..\src\IBK_utilities.h" />
+    <ClInclude Include="..\..\src\IBK_Vector3D.h" />
+    <ClInclude Include="..\..\src\IBK_WaitOnExit.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\IBKMK_band_matrix.c" />
+    <ClCompile Include="..\..\src\IBKMK_dense_matrix.c" />
+    <ClCompile Include="..\..\src\IBKMK_sparse_matrix.c" />
+    <ClCompile Include="..\..\src\IBKMK_vector_operations.c" />
+    <ClCompile Include="..\..\src\IBK_ArgParser.cpp" />
+    <ClCompile Include="..\..\src\IBK_BandMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_BlockBandMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_BlockSparseMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_BlockTridiagMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_Color.cpp" />
+    <ClCompile Include="..\..\src\IBK_constants.cpp" />
+    <ClCompile Include="..\..\src\IBK_CRSpline.cpp" />
+    <ClCompile Include="..\..\src\IBK_crypt.cpp" />
+    <ClCompile Include="..\..\src\IBK_Date.cpp" />
+    <ClCompile Include="..\..\src\IBK_DefaultMessageHandler.cpp" />
+    <ClCompile Include="..\..\src\IBK_DenseMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_DependencyGraph.cpp" />
+    <ClCompile Include="..\..\src\IBK_DependencyGroup.cpp" />
+    <ClCompile Include="..\..\src\IBK_EOLStreamBuffer.cpp" />
+    <ClCompile Include="..\..\src\IBK_Exception.cpp" />
+    <ClCompile Include="..\..\src\IBK_FileReader.cpp" />
+    <ClCompile Include="..\..\src\IBK_FileUtils.cpp" />
+    <ClCompile Include="..\..\src\IBK_Flag.cpp" />
+    <ClCompile Include="..\..\src\IBK_FormatString.cpp" />
+    <ClCompile Include="..\..\src\IBK_IndexGenerator.cpp" />
+    <ClCompile Include="..\..\src\IBK_InputOutput.cpp" />
+    <ClCompile Include="..\..\src\IBK_Keyword.cpp" />
+    <ClCompile Include="..\..\src\IBK_KeywordListManager.cpp" />
+    <ClCompile Include="..\..\src\IBK_Line.cpp" />
+    <ClCompile Include="..\..\src\IBK_LinearSpline.cpp" />
+    <ClCompile Include="..\..\src\IBK_LinearSplineGenerator.cpp" />
+    <ClCompile Include="..\..\src\IBK_Logfile.cpp" />
+    <ClCompile Include="..\..\src\IBK_math.cpp" />
+    <ClCompile Include="..\..\src\IBK_MessageHandler.cpp" />
+    <ClCompile Include="..\..\src\IBK_MultiLanguageString.cpp" />
+    <ClCompile Include="..\..\src\IBK_numerics.cpp" />
+    <ClCompile Include="..\..\src\IBK_ObjectReference.cpp" />
+    <ClCompile Include="..\..\src\IBK_Parameter.cpp" />
+    <ClCompile Include="..\..\src\IBK_Polygon.cpp" />
+    <ClCompile Include="..\..\src\IBK_Quantity.cpp" />
+    <ClCompile Include="..\..\src\IBK_QuantityData.cpp" />
+    <ClCompile Include="..\..\src\IBK_QuantityManager.cpp" />
+    <ClCompile Include="..\..\src\IBK_SolverArgsParser.cpp" />
+    <ClCompile Include="..\..\src\IBK_SolverFeedback.cpp" />
+    <ClCompile Include="..\..\src\IBK_SparseMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_SparseMatrixIndexGenerator.cpp" />
+    <ClCompile Include="..\..\src\IBK_StackedPoint.cpp" />
+    <ClCompile Include="..\..\src\IBK_StopWatch.cpp" />
+    <ClCompile Include="..\..\src\IBK_StringUtils.cpp" />
+    <ClCompile Include="..\..\src\IBK_Time.cpp" />
+    <ClCompile Include="..\..\src\IBK_TridiagMatrix.cpp" />
+    <ClCompile Include="..\..\src\IBK_UndoListManager.cpp" />
+    <ClCompile Include="..\..\src\IBK_Unit.cpp" />
+    <ClCompile Include="..\..\src\IBK_UnitList.cpp" />
+    <ClCompile Include="..\..\src\IBK_UnitVector.cpp" />
+    <ClCompile Include="..\..\src\IBK_utilities.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\IBK_configuration.h.in" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{ADD5097F-8DA9-4E93-B3DC-7FBE40CC3E0D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>libIBK</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(SolutionDir)$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;REUSE_SUNDIALS_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;REUSE_SUNDIALS_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
