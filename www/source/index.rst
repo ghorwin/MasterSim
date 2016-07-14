@@ -17,7 +17,7 @@ The project is hosted on SourceForge: https://sourceforge.net/projects/mastersim
 
     <a href="https://sourceforge.net/projects/mastersim/files/latest/download" rel="nofollow"><img alt="Download MasterSim" src="https://a.fsdn.com/con/app/sf-download-button"></a>
 
-Other downloads can be found on https://sourceforge.net/projects/mastersim/files/releases
+Other downloads at https://sourceforge.net/projects/mastersim/files/releases
 
 
 
