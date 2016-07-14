@@ -691,7 +691,7 @@ void MasterSim::composeVariableVector() {
 
 	// need at least one real variable to compute vector norms
 	if (m_realVariableMapping.empty())
-		throw IBK::Exception("No real variables in connection graph. This is currently considered an error.", FUNC_ID);
+		IBK::IBK_Message("No real variables in connection graph. This may be an error since FMUs won't communicate with each other.", IBK::MSG_WARNING, FUNC_ID);
 
 	// resize variable vectors
 	m_realyt.resize(m_realVariableMapping.size());

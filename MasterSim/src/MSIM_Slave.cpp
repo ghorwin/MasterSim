@@ -228,7 +228,7 @@ void Slave::setState(double t, fmi2FMUstate slaveState) {
 
 void Slave::cacheOutputs() {
 	const char * const FUNC_ID = "[Slave::cacheOutputs]";
-	int res;
+	int res = fmi2OK;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		// booleans must be converted one-by-one for FMI 1
 		for (unsigned int i=0; i<m_fmu->m_boolValueRefsOutput.size(); ++i) {
