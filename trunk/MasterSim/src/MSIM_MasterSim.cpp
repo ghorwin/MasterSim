@@ -627,7 +627,7 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 	std::vector<std::string> tokens;
 	// extract slave name for input
 	if (IBK::explode_in2(flatVarName, tokens, '.') != 2)
-		throw IBK::Exception(IBK::FormatString("Bad format of variable %1").arg(flatVarName), FUNC_ID);
+		throw IBK::Exception(IBK::FormatString("Bad format of variable '%1'").arg(flatVarName), FUNC_ID);
 
 	std::string slaveName = tokens[0];
 	std::string varName = tokens[1];
@@ -935,30 +935,30 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & rea
 	// process all connected variables
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];
-		// skip variables that are not outputs of selected slave
-		if (varMap.m_inputSlave != slave) continue;
+		// skip variables that are not inputs to selected slave
+		if (varMap.m_inputSlave == NULL || varMap.m_inputSlave != slave) continue;
 		// set input in slave
 		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realVariables[i]);
 	}
 	if (!realOnly) {
 		for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
 			VariableMapping & varMap = m_intVariableMapping[i];
-			// skip variables that are not outputs of selected slave
-			if (varMap.m_inputSlave != slave) continue;
+			// skip variables that are not inputs to selected slave
+			if (varMap.m_inputSlave == NULL || varMap.m_inputSlave != slave) continue;
 			// set input in slave
 			varMap.m_inputSlave->setInteger(varMap.m_inputValueReference, intVariables[i]);
 		}
 		for (unsigned int i=0; i<m_boolVariableMapping.size(); ++i) {
 			VariableMapping & varMap = m_boolVariableMapping[i];
-			// skip variables that are not outputs of selected slave
-			if (varMap.m_inputSlave != slave) continue;
+			// skip variables that are not inputs to selected slave
+			if (varMap.m_inputSlave == NULL || varMap.m_inputSlave != slave) continue;
 			// set input in slave
 			varMap.m_inputSlave->setBoolean(varMap.m_inputValueReference, boolVariables[i]);
 		}
 		for (unsigned int i=0; i<m_stringVariableMapping.size(); ++i) {
 			VariableMapping & varMap = m_stringVariableMapping[i];
-			// skip variables that are not outputs of selected slave
-			if (varMap.m_inputSlave != slave) continue;
+			// skip variables that are not inputs to selected slave
+			if (varMap.m_inputSlave == NULL || varMap.m_inputSlave != slave) continue;
 			// set input in slave
 			varMap.m_inputSlave->setString(varMap.m_inputValueReference, stringVariables[i]);
 		}
