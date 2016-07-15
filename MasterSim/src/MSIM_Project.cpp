@@ -122,6 +122,15 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				continue;
 			}
 
+			if (line.find("output") == 0) {
+				std::string outputVarString = line.substr(6);
+				IBK::trim(outputVarString);
+				if (outputVarString.empty())
+					throw IBK::Exception(IBK::FormatString("Expected format 'output <flat name>', got '%1'").arg(line), FUNC_ID);
+				m_outputFilter.insert(outputVarString);
+				continue;
+			}
+
 			// general parameters
 			if (IBK::explode_in2(line, tokens, " \t") != 2)
 				throw IBK::Exception(IBK::FormatString("Expected format '<keyword> <value>'.").arg(line), FUNC_ID);

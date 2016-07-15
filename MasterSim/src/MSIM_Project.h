@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <set>
 
 #include <IBK_Path.h>
 #include <IBK_Unit.h>
@@ -184,6 +185,9 @@ public:
 
 	/*! Defines the connection graph. */
 	std::vector<GraphEdge>		m_graph;
+
+	/*! If not empty, only the values in the filter are dumped to file. */
+	std::set<std::string>		m_outputFilter;
 
 };
 

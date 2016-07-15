@@ -119,7 +119,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 					// loop all boolean variables in slave
 					for (unsigned int v=0; v<slave->fmu()->m_boolValueRefsOutput.size(); ++v) {
 						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_boolValueRefsOutput[v]);
-						dataIO->m_quantity += slave->m_name + "." + var.m_name + " | ";
+						std::string flatName = slave->m_name + "." + var.m_name;
+						dataIO->m_quantity += flatName + " | ";
 						dataIO->m_nums.push_back(var.m_valueReference);
 						m_outputFiles[fileType].m_outputMapping.push_back( std::make_pair(slave, v));
 						++varCount;
@@ -129,7 +130,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 					// loop all boolean variables in slave
 					for (unsigned int v=0; v<slave->fmu()->m_intValueRefsOutput.size(); ++v) {
 						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_intValueRefsOutput[v]);
-						dataIO->m_quantity += slave->m_name + "." + var.m_name + " | ";
+						std::string flatName = slave->m_name + "." + var.m_name;
+						dataIO->m_quantity += flatName + " | ";
 						dataIO->m_nums.push_back(var.m_valueReference);
 						m_outputFiles[fileType].m_outputMapping.push_back( std::make_pair(slave, v));
 						++varCount;
@@ -171,7 +173,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop all string variables in slave
 		for (unsigned int v=0; v<slave->fmu()->m_stringValueRefsOutput.size(); ++v) {
 			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_stringValueRefsOutput[v]);
-			descriptions += slave->m_name + "." + var.m_name + " \t ";
+			std::string flatName = slave->m_name + "." + var.m_name;
+			descriptions += flatName + " \t ";
 			m_stringOutputMapping.push_back( std::make_pair(slave, v));
 		}
 	} // for
@@ -203,6 +206,10 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop over all real variables in slave
 		for (unsigned int v=0; v<slave->fmu()->m_doubleValueRefsOutput.size(); ++v) {
 			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_doubleValueRefsOutput[v]);
+			std::string flatName = slave->m_name + "." + var.m_name;
+			// check if variable is in output filter
+			if (!m_project->m_outputFilter.empty() && m_project->m_outputFilter.find(flatName) == m_project->m_outputFilter.end())
+				continue;
 			// try to find unit
 			unsigned int u=0;
 			for (; u<units.size(); ++u)
@@ -267,7 +274,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			}
 
 			// remember variable name and store reference
-			dataIO->m_quantity += slave->m_name + "." + var.m_name + " | ";
+			dataIO->m_quantity += flatName + " | ";
 			dataIO->m_nums.push_back(var.m_valueReference);
 			outputFileData->m_outputMapping.push_back( std::make_pair(slave, v));
 
