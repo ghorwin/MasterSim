@@ -1,0 +1,86 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+<link rel="stylesheet" href="../../mainstyle.css">
+<script type="text/javascript" language="JavaScript" src="../../frameset.js"></script>
+</head>
+
+<body onload="detect()">
+<table border=0 cellspacing=5 cellpadding=5 width="1020">
+<tr valign=top><td width="490">
+<h1>About MasterSim ...</h1>
+<p>
+MasterSim is an FMI Co-Simulation master and <i>programming library</i>. It supports the
+Functional Mockup Interface for Co-Simulation in Version 1.0 and 2.0. Using the functionality
+of Version 2.0, it implements various iteration algorithms that rollback FMU slaves and
+increase stablity of coupled simulation.
+</p>
+<p>
+MasterSim is actively developed at the Technische Universität Dresden, Institut für Bauklimatik (see contact page).
+</p>
+<h2>Parts of MasterSim</h2>
+<p>
+MasterSim consists of three parts:
+<ul>
+<li>MasterSimulator command line executable</li>
+<li>MasterSimulator user interface</li>
+<li>MasterSim programming library</li>
+</ul>
+
+<h2>Why use MasterSim?</h2>
+<p>
+First of all, it is <b>free</b>! The complete source code is available on its [<a target="_blank" href="https://sourceforge.net/projects/mastersim">SourceForge-project page</a>] under
+an open source license.</p>
+<p>
+But there are many other reasons for using MasterSim:
+<ul>
+<li>MasterSim is a cross-platform development, available for Windows, Linux and MacOS</li>
+<li>Support for <i>scripted execution</i></li>
+<li>Support for <i>several FMU instances</i> within the same co-simulation scenario</li>
+<li>Highly <i>configurable master algorithms</i></li>
+<li><i>Auto-connection feature</i> in user interface (very useful when connecting FMUs with many matching inputs and outputs)</li>
+<li><i>Detailed simulation statistics</i> inform about where in your co-simulation is most of the simulation time spend which is very helpful for performance tuning and optimal algorithm selection</li>
+<li>Support for parallel executed variation studies (several MasterSimulator processes), where the same FMU file is used concurrently in several simulations running in parallel</li>
+<li>Diagnostic options that assist FMU developers when <i>debugging their FMU code</i></li>
+<li>Source code comes with few dependencies on other libraries (only C/C++ standard library and Qt for the user interface), which ensures long lifetime and compatibility for many platforms.</li>
+<li>Software and code is <i>actively developed, used and maintained</i> at the Institut für Bauklimatik, TU Dresden</li>
+</ul>
+<p>Details about these features can be found on the [<a href="documentation.html">documentation page</a>] or on the SourceForge-project [<a href="https://sourceforge.net/p/mastersim/wiki/" target=_blank>WIKI-pages</a>].
+</p>
+</td>
+
+<td width="20">&nbsp;</td>
+
+<td width="490">
+<h1>MasterSim Software Library</h1>
+<h2>Library Functionality</h2>
+<p>
+With the library you can implement co-simulation functionality into your own simulation
+programs with little effort. 
+<h3>FMU Import functionality</h3>
+<p>
+The library supports extraction of FMU archives, reading 
+of <span style="font-family:monospace">modelDescription.xml</span> files, importing shared
+library symbols into memory. This is all neatly encapsulated in corresponding classes.
+<h3>Master-Algorithms</h3>
+<p>
+Included in the library source code are standard master algorithms, such 
+as <i>Gauss-Jacobi</i>, <i>Gauss-Seidel</i> and <i>Newton</i>. They can be readily
+used in own code without any work necessary (except for tuning of some numerical parameters, perhaps).
+
+<h3>Best-practice guide and example code</h3>
+<p>
+The command line co-simulation solver <i>MasterSimulator</i> and the user interface code
+can be used as guide and tutorial on how to write such code yourself.
+
+<h2>Co-Simulation Standard Support</h2>
+<p>The library supports currently the FMI Co-Simulation Standard 1.0 and 2.0. Some
+of the algorithms (i.e. all algorithms that need setting back of FMU states) require
+FMI v2.0, but <i>Gauss-Jacobi</i> and <i>Gauss-Seidel</i> work with FMU 1.0 as well.
+</td>
+
+</tr>
+</table>
+
+</body>
+</html>
