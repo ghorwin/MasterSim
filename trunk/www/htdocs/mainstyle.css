@@ -1,0 +1,34 @@
+body     { font-family: verdana, tahoma, helvetica; font-size: 10pt; color: black; background-color: white }
+#framed  { border-width:1px; border-style:solid; border-color:white; padding: 4pt; text-align: justify }
+a        { font-family: verdana, tahoma, helvetica; font-size: 10pt; color: #0053A6; text-decoration:none }
+a:hover  { color: #1C7DEF; background-color: white }
+p        { font-family: verdana, tahoma, helvetica; font-size: 10pt; text-align: justify; margin-top:0pt; margin-bottom:5pt;   }
+p.navbar   { font-family: verdana, tahoma, helvetica; font-size: 10pt; text-align: left; background-color: white }
+h1       { font-family: tahoma, helvetica; font-size: 12pt; color: #003264; font-weight:bold; 
+           text-decoration: none; margin-top:15pt; margin-bottom:6pt }
+h2       { font-size: 11pt; color: #0069A8; font-weight:bold; margin-top:15pt; margin-bottom:6pt }
+h3       { font-size: 10pt; color: #00660F; font-weight:bold; margin-top:10pt; margin-bottom:2pt}
+address  { font-family: verdana, tahoma, helvetica; font-size: 10pt; margin-left: 1cm }
+table    { font-family: verdana, tahoma, helvetica; font-size: 10pt }
+b        { color: black }
+li       { text-align: justify }
+span.highlighted { color: white }
+pre.code { margin: 10px;
+           font-family: monospace; 
+           background-color: #f5f5f5; 
+		   color: #101010;
+		   border:1px solid white;
+		   padding:10px;
+		 }
+tr.dark { background-color:#101010; }
+tr.bright { background-color:#303030; }
+
+a.restricted { font-size: 8pt; color: #F03D00 }
+a.restricted:hover { font-size: 8pt; color: #9F0000 }
+
+a.download { font-size: 8pt;  }
+
+table.lightgray { border-style:dotted; border-width:1px; border-color:#c0c0c0; }
+td.lightgray { border-style:none; border-color:#c0c0c0; text-align:center; font-size: 8pt}
+
+img.noborder { border: none; }
