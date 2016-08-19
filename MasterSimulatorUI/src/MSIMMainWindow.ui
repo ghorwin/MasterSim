@@ -12,7 +12,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/MasterSimulator.qrc">
-    <normaloff>:/gfx/logo/icon_64.jpg</normaloff>:/gfx/logo/icon_64.jpg</iconset>
+    <normaloff>:/gfx/logo/icon_64.png</normaloff>:/gfx/logo/icon_64.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">

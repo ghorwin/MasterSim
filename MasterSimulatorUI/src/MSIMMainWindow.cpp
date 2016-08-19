@@ -38,6 +38,7 @@
 #include "MSIMViewSlaves.h"
 #include "MSIMViewConnections.h"
 #include "MSIMViewSimulation.h"
+#include "MSIMAboutDialog.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = NULL;
 
@@ -70,7 +71,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	m_stackedWidget(NULL),
 	m_viewSlaves(NULL),
 	m_viewConnections(NULL),
-	m_viewSimulation(NULL)
+	m_viewSimulation(NULL),
+	m_aboutDialog(NULL)
 {
 //	const char * const FUNC_ID = "[MSIMMainWindow::MSIMMainWindow]";
 
@@ -545,8 +547,9 @@ void MSIMMainWindow::on_actionHelpAboutQt_triggered() {
 
 
 void MSIMMainWindow::on_actionHelpAboutMasterSim_triggered() {
-	QMessageBox::about(this, tr("About MasterSim"),
-	tr("This is the placeholder for the MasterSim aboutbox, see https://sourceforge.net/projects/mastersim."));
+	if (m_aboutDialog == NULL)
+		m_aboutDialog = new MSIMAboutDialog(this);
+	m_aboutDialog->exec();
 }
 
 

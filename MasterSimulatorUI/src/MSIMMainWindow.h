@@ -23,6 +23,7 @@ class MSIMPreferencesDialog;
 class MSIMViewSlaves;
 class MSIMViewConnections;
 class MSIMViewSimulation;
+class MSIMAboutDialog;
 
 
 /*! Main window class. */
@@ -196,6 +197,8 @@ private:
 	MSIMViewSlaves				*m_viewSlaves;
 	MSIMViewConnections			*m_viewConnections;
 	MSIMViewSimulation			*m_viewSimulation;
+
+	MSIMAboutDialog				*m_aboutDialog;
 };
 
 #endif // MSIMMainWindow_H

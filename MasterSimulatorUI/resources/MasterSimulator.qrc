@@ -27,5 +27,6 @@
         <file>gfx/logo/icon_64.png</file>
         <file>gfx/actions/32x32/FMI_32x32.png</file>
         <file>gfx/actions/32x32/FMU_32x32.png</file>
+        <file>gfx/SplashScreen_MasterSim.png</file>
     </qresource>
 </RCC>
