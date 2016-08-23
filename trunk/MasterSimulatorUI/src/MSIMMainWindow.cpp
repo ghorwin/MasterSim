@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QTextStream>
 #include <QToolButton>
+#include <QLabel>
 
 #include <numeric>
 
@@ -456,6 +457,9 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	QDialog dlg(this);
 	dlg.setWindowTitle(tr("Extracting FMUs and parsing modelDescription.xml"));
 	QVBoxLayout * lay = new QVBoxLayout(&dlg);
+	QLabel * label = new QLabel(tr("All FMUs referenced in the project are being extracted, their modelDescription.xml file is read and "
+								"a summary of the data is shown below:"));
+	lay->addWidget(label);
 	MSIMLogWidget * logWidget = new MSIMLogWidget(this);
 	lay->addWidget(logWidget);
 	dlg.setLayout(lay);
