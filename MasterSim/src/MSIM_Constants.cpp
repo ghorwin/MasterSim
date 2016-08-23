@@ -4,7 +4,7 @@ namespace MASTER_SIM {
 
 const char * const VERSION = "0.4";
 
-const char * const LONG_VERSION = "0.4.1";
+const char * const LONG_VERSION = "0.4.2";
 
 const unsigned int KEYWORD_INDENTATION = 0;
 
