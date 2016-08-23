@@ -13,7 +13,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QTextStream>
-#include <QDebug>
+#include <QToolButton>
 
 #include <numeric>
 
@@ -39,6 +39,7 @@
 #include "MSIMViewConnections.h"
 #include "MSIMViewSimulation.h"
 #include "MSIMAboutDialog.h"
+#include "MSIMButtonBar.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = NULL;
 
@@ -112,6 +113,24 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	// set FMU page as default
 	m_ui->actionViewSlaves->setChecked(true);
 
+	// *** button bar ***
+
+	m_buttonBar = new MSIMButtonBar(this);
+	lay->addWidget(m_buttonBar);
+	connect(m_buttonBar->toolButtonAbout,				SIGNAL(clicked()), this, SLOT(on_actionHelpAboutMasterSim_triggered()));
+	connect(m_buttonBar->toolButtonNew,					SIGNAL(clicked()), this, SLOT(on_actionFileNew_triggered()));
+	connect(m_buttonBar->toolButtonSave,				SIGNAL(clicked()), this, SLOT(on_actionFileSave_triggered()));
+	connect(m_buttonBar->toolButtonLoad,				SIGNAL(clicked()), this, SLOT(on_actionFileOpen_triggered()));
+
+	m_buttonBar->toolButtonAnalyze->setDefaultAction(m_ui->actionEditParseFMUs);
+
+	m_buttonBar->toolButtonEditFMUs->setDefaultAction(m_ui->actionViewSlaves);
+	m_buttonBar->toolButtonEditConnections->setDefaultAction(m_ui->actionViewConnections);
+	m_buttonBar->toolButtonSimulate->setDefaultAction(m_ui->actionViewSimulation);
+
+	connect(m_buttonBar->toolButtonQuit,				SIGNAL(clicked()), this, SLOT(on_actionFileQuit_triggered()));
+
+
 	// *** connect to ProjectHandler signals ***
 
 	connect(&m_projectHandler, SIGNAL(updateActions()), this, SLOT(onUpdateActions()));
@@ -149,15 +168,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
 	for (int i=0; i<acts.count(); ++i)
 		m_ui->menu_Edit->addAction(acts[i]);
 
-	m_ui->toolBar->addAction(undoAction);
-	m_ui->toolBar->addAction(redoAction);
-
-	// *** add view actions ***
-
-	m_ui->toolBar->addSeparator();
-	m_ui->toolBar->addAction(m_ui->actionViewSlaves);
-	m_ui->toolBar->addAction(m_ui->actionViewConnections);
-	m_ui->toolBar->addAction(m_ui->actionViewSimulation);
+	m_buttonBar->toolButtonUndo->setDefaultAction(undoAction);
+	m_buttonBar->toolButtonRedo->setDefaultAction(redoAction);
 
 	// *** restore state of UI ***
 	QByteArray geometry, state;
@@ -595,8 +607,8 @@ void MSIMMainWindow::onUpdateActions() {
 
 	// show welcome page only when we have no project
 	m_welcomeScreen->setVisible(!have_project);
-	// toolbar is only visible when we have a project
-	m_ui->toolBar->setVisible(have_project);
+	// buttonbar is only visible when we have a project
+	m_buttonBar->setVisible(have_project);
 	// views are only visible when we have a project
 	m_stackedWidget->setVisible(have_project);
 

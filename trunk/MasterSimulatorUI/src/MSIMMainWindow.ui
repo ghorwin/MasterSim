@@ -66,23 +66,6 @@
    <addaction name="menu_Edit"/>
    <addaction name="menu_Help"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>Main toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionFileNew"/>
-   <addaction name="actionFileOpen"/>
-   <addaction name="actionFileSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionEditParseFMUs"/>
-   <addaction name="separator"/>
-  </widget>
   <action name="actionFileNew">
    <property name="icon">
     <iconset resource="../resources/MasterSimulator.qrc">
@@ -236,27 +219,45 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>FMUs and Simulators</string>
+   </property>
+   <property name="toolTip">
+    <string>Switches to FMU setup mode</string>
    </property>
   </action>
   <action name="actionViewConnections">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>Connections</string>
+   </property>
+   <property name="toolTip">
+    <string>Switches to connection edit mode</string>
    </property>
   </action>
   <action name="actionViewSimulation">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>Simulation Settings</string>
    </property>
    <property name="toolTip">
-    <string>Simulation/Project settings</string>
+    <string>Switches to simulation setup mode</string>
    </property>
   </action>
   <action name="actionEditParseFMUs">
