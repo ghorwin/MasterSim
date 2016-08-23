@@ -1,5 +1,5 @@
-#ifndef MSIMABOUTDIALOG_H
-#define MSIMABOUTDIALOG_H
+#ifndef MSIMAboutDialogH
+#define MSIMAboutDialogH
 
 #include <QDialog>
 
@@ -19,4 +19,4 @@ private:
 	Ui::MSIMAboutDialog *m_ui;
 };
 
-#endif // MSIMABOUTDIALOG_H
+#endif // MSIMAboutDialogH
