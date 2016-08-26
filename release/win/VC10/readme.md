@@ -1,6 +1,6 @@
 For deployment in Windows the following files need to be copied into this directory.
 
-!! DO NOT CHECKIN THESE FILES INTO THE SUBVERSION REPOSITORY !!
+!! PLEASE DO NOT UPDATE/RECOMMIT THESE LARGE BINARY FILES SINCE THEY WILL ENLARGE THE REPOSITORY EXREMELY !!
 
 msvcp100.dll
 msvcr100.dll
