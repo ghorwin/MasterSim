@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 
 
 	// *** Create and initialize setting object ***
-	MSIMSettings settings(ORG_NAME, PROGRAM_NAME);
+	MSIMSettings settings(ORG_NAME, PROGRAM_VERSION_NAME());
 	settings.setDefaults();
 	settings.read();
 
