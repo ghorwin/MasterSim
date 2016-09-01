@@ -116,7 +116,7 @@ def buildApplication(build_script):
 			build_script = 'build.sh'
 		# ../../build/cmake/build.sh
 
-		command = './'+build_script+' 4 skip-test'
+		command = './'+build_script+' release 4 skip-test'
 
 	elif currentOS == "win" :
 		if build_script == None:
