@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -176,7 +176,7 @@ double f_powN(double base) {
 }
 
 /*! Function for efficient calculation of x^4. */
-inline double f_pow4(double x) { register double x2(x); x2*=x2; x2*=x2; return x2; }
+inline double f_pow4(double x) { double x2(x); x2*=x2; x2*=x2; return x2; }
 
 /*! Tests if a is equal to b including a certain range for potential rounding errors. */
 inline bool near_equal(double a, double b) {
