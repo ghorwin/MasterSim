@@ -47,6 +47,7 @@
 #include <locale>
 #include <cctype>
 #include <cmath>
+#include <utility>
 
 #ifdef _WIN32
 #ifdef NOMINMAX
@@ -297,7 +298,7 @@ std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 				(IBK::string2val<unsigned int>(tokens.front()), defaultValue.second);
 #		else
 				defaultValue = std::make_pair<unsigned int, double>
-				(IBK::string2val<unsigned int>(tokens.front()), defaultValue.second);
+				(IBK::string2val<unsigned int>(tokens.front()), (double)defaultValue.second);
 #		endif
 
 			}
