@@ -4,8 +4,6 @@ project( MasterSimulatorUI )
 
 # add include directories
 include_directories(
-	${CMAKE_BINARY_DIR}						# needed to find ui-header files
-	${PROJECT_BINARY_DIR}					# needed so that ui-generated header files find our own headers
 	${PROJECT_SOURCE_DIR}/../../src			# needed so that ui-generated header files find our own headers
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src
@@ -14,6 +12,9 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
 	${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
+	${Qt5Widgets_INCLUDE_DIRS}
+	${Qt5Network_INCLUDE_DIRS}
+	${Qt5Svg_INCLUDE_DIRS}
 )
 
 # collect a list of all source files
@@ -33,8 +34,68 @@ set ( APP_WIN_RC
 	${PROJECT_SOURCE_DIR}/../../resources/MasterSimulator.rc
 )
 
-# set variable for dependent libraries
-set( LINK_LIBS
+# run uic and moc compilers, add resources
+if (Qt5Widgets_INCLUDE_DIRS)
+
+	qt5_add_resources( APP_RC_SRCS ${APP_QRCS} )
+	qt5_wrap_ui( APP_UI_SRCS ${APP_UIS} )
+	qt5_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
+
+	# generate list of all required QT_LIBRARIES
+	set ( QT_LIBRARIES 
+		Qt5::Widgets
+		Qt5::Svg
+		Qt5::Network
+	)
+
+else (Qt5Widgets_INCLUDE_DIRS)
+
+	qt4_add_resources( APP_RC_SRCS ${APP_QRCS} )
+	qt4_wrap_ui( APP_UI_SRCS ${APP_UIS} )
+	qt4_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
+
+	# add missing QTMAIN library
+	set( QT_LIBRARIES 
+		${QT_LIBRARIES}
+		${QT_QTMAIN_LIBRARY} # to avoid "error LNK2019: unresolved external symbol _WinMain@16 referenced in function ___tmainCRTStartup"
+	)
+
+endif (Qt5Widgets_INCLUDE_DIRS)
+
+
+if( WIN32 )
+	set (LINK_Z_LIBS zlibstatic)
+else( WIN32 )
+	set (LINK_Z_LIBS z dl)
+endif( WIN32 )
+
+# build application executable for the different platforms
+if( WIN32 )
+	add_executable( ${PROJECT_NAME} WIN32 
+					 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} ${APP_WIN_RC}
+	)
+
+	set(WIN_FRAMEWORKS iphlpapi)
+
+endif( WIN32 ) 
+
+if( UNIX )
+	if( APPLE )
+		add_executable( ${PROJECT_NAME} MACOSX_BUNDLE 
+						 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
+		)
+	else( APPLE )
+		add_executable( ${PROJECT_NAME} 
+						${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
+						${PROJECT_SOURCE_DIR}/../../resources/MasterSimulatorUI.icns
+		)
+	endif( APPLE ) 
+
+endif( UNIX )
+
+
+# link against the dependent libraries
+target_link_libraries( ${PROJECT_NAME} 
 	MasterSim
 	DataIO
 	BlockMod
@@ -42,64 +103,11 @@ set( LINK_LIBS
 	IBK
 	TiCPP
 	minizip
+	${LINK_Z_LIBS}
+	${QT_LIBRARIES}
+	${APPLE_FRAMEWORKS}
+	${WIN_FRAMEWORKS}
 )
-
-if( WIN32 )
-	set (LINK_LIBS ${LINK_LIBS} zlibstatic)
-else( WIN32 )
-	set (LINK_LIBS ${LINK_LIBS} z dl)
-endif( WIN32 )
-
-# this command will generate rules that will run rcc on all qrc files
-qt4_add_resources( APP_RC_SRCS ${APP_QRCS} )
-
-# this will run uic on .ui files:
-qt4_wrap_ui( APP_UI_SRCS ${APP_UIS} )
-
-# and finally this will run moc:
-qt4_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
-
-# build application executable for the different platforms
-if( WIN32 )
-	add_executable( ${PROJECT_NAME} WIN32 
-					 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS}  ${APP_WIN_RC}
-	)
-endif( WIN32 ) 
-
-if( UNIX )
-	if( APPLE )
-		add_executable( ${PROJECT_NAME} MACOSX_BUNDLE 
-						 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
-						 ${PROJECT_SOURCE_DIR}/../../resources/MasterSimulatorUI.icns 
-		)
-	else( APPLE )
-		add_executable( ${PROJECT_NAME} 
-						 ${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
-		)
-	endif( APPLE ) 
-endif( UNIX )
-
-
-if( APPLE )
-
-	# link against the dependent libraries
-	target_link_libraries( ${PROJECT_NAME} 
-		${LINK_LIBS}
-		${QT_LIBRARIES}
-		"-framework Security"
-		"-framework SystemConfiguration"
-	)
-
-else( APPLE )
-
-	# link against the dependent libraries
-	target_link_libraries( ${PROJECT_NAME} 
-		${LINK_LIBS}
-		${QT_LIBRARIES}
-		${QT_QTMAIN_LIBRARY} # to avoid "error LNK2019: unresolved external symbol _WinMain@16 referenced in function ___tmainCRTStartup"
-	)
-
-endif( APPLE )
 
 
 
