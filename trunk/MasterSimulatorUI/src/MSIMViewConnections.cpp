@@ -30,8 +30,13 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QStringList headers;
 	headers << tr("Output variable") << tr("Input variable");
 	m_ui->tableWidgetConnections->setHorizontalHeaderLabels(headers);
+#if QT_VERSION < 0x050000
 	m_ui->tableWidgetConnections->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
 	m_ui->tableWidgetConnections->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
+#else // QT_VERSION < 0x050000
+	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+#endif // QT_VERSION < 0x050000
 
 	m_ui->tableWidgetSlaves->verticalHeader()->setVisible(false);
 	m_ui->tableWidgetSlaves->setColumnCount(1);
