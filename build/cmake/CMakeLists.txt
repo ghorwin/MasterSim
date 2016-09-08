@@ -1,56 +1,81 @@
-# CMakeLists.txt file
-# Copyright Andreas Nicolai (andreas.nicolai -at- tu-dresden.de)
+# CMakeLists.txt file for MasterSim library and applications
+# Author: Andreas Nicolai (andreas.nicolai -at- tu-dresden.de)
+
+cmake_minimum_required( VERSION 2.6 )
 
 # The project name
-project( MasterSim )
+project( MasterSimBundle )
 
 # -------------------------------------------------------------
 # Initial commands
 # -------------------------------------------------------------
 
-# Require a fairly recent cmake version
-cmake_minimum_required( VERSION 2.4.3 )
-
-# set the policy to the new variant
-if (COMMAND cmake_policy)
-    cmake_policy(VERSION 2.6)
-endif (COMMAND cmake_policy)
-
 # Uncomment this to enable detailed make output
 # set( CMAKE_VERBOSE_MAKEFILE ON )
 
-
-# Hide some more cache variables to keep things tidy
-MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
-MARK_AS_ADVANCED(EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH)
-
 # Set release mode as default, except for the Borland Compiler
 if (NOT CMAKE_BUILD_TYPE)
-	set( CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+	set( CMAKE_BUILD_TYPE Release CACHE STRING
 		"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 # on Unix we want really detailed warnings
 if (UNIX)
-	ADD_DEFINITIONS( -Wall )
+	ADD_DEFINITIONS( -Wall -fPIC)
 endif (UNIX)
 
+# for VC compiler, add the flag to disable wchar_t as native type
+if (MSVC)
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-" )
+
+	set( CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.7.0_VC10\\msvc2010\\")
+endif (MSVC)
 
 # -------------------------------------------------------------
 # Required packages
 # -------------------------------------------------------------
 
-# need Qt4 for user interface
-FIND_PACKAGE( Qt4 )
+# automatically add CMAKE_CURRENT_SOURCE_DIR and CMAKE_CURRENT_BINARY_DIR to the include directories in every processed CMakeLists.txt
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if( QT4_FOUND )
+# Test for Qt5
+find_package(Qt5Widgets)
+
+if (Qt5Widgets_INCLUDE_DIRS)
+	message("*** Building with Qt5 ***")
+
+	find_package(Qt5Xml REQUIRED)
+	find_package(Qt5Svg REQUIRED)
+	find_package(Qt5Network REQUIRED)
+
+else (Qt5Widgets_INCLUDE_DIRS)
+
+	# not found, fall back to Qt4
+	message("*** Building with Qt4 ***")
+
+	# We need Qt for building
+	find_package( Qt4  REQUIRED )
 
 	set( QT_USE_QTXML TRUE )
 	set( QT_USE_QTSVG TRUE )
 	set( QT_USE_QTNETWORK TRUE )
 	include( ${QT_USE_FILE} )
 
-endif( QT4_FOUND )
+endif (Qt5Widgets_INCLUDE_DIRS)
+
+if( APPLE )
+	find_library(IOKIT NAMES IOKit REQUIRED)
+	find_library(SYSTEM_CONFIGURATION SystemConfiguration REQUIRED)
+	find_library(COREFOUNDATION NAMES CoreFoundation REQUIRED)
+	find_library(SECURITY_FRAMEWORK Security REQUIRED)
+
+	set(APPLE_FRAMEWORKS 
+		${IOKIT}
+		${SECURITY_FRAMEWORK}
+		${COREFOUNDATION}
+		${SYSTEM_CONFIGURATION}
+	)
+endif( APPLE )
 
 # -------------------------------------------------------------
 # Support for build flags
@@ -88,7 +113,7 @@ add_subdirectory( ../../MasterSim/projects/cmake_local MasterSim)
 
 add_subdirectory( ../../MasterSimulator/projects/cmake_local MasterSimulator)
 
-if( QT4_FOUND )
+if (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 	add_subdirectory( ../../MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
-endif( QT4_FOUND )
+endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 
