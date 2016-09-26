@@ -48,6 +48,11 @@ if (Qt5Widgets_INCLUDE_DIRS)
 	find_package(Qt5Svg REQUIRED)
 	find_package(Qt5Network REQUIRED)
 
+# on mac we need cxx11
+if( APPLE )
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11" )
+endif( APPLE )
+
 else (Qt5Widgets_INCLUDE_DIRS)
 
 	# not found, fall back to Qt4
