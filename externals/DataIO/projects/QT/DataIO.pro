@@ -2,6 +2,8 @@
 # Project for DataIO library
 # -------------------------------------------------
 TARGET = DataIO
+TEMPLATE = lib
+
 
 # this is the central configuration file for all IBK dependent libraries
 # we check if this file was created by our build tool helper python what ever
@@ -12,9 +14,6 @@ TARGET = DataIO
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
-
-# This MUST be done after pri is included
-TEMPLATE = lib
 
 unix|mac {
 	VER_MAJ = 7
@@ -28,7 +27,6 @@ LIBS += -L../../../lib \
 
 INCLUDEPATH += \
 	../../../IBK/src
-
 SOURCES += ../../src/DATAIO_DataIO.cpp \
 	../../src/DATAIO_Utils.cpp \
 	../../src/DATAIO_GeoFile.cpp \

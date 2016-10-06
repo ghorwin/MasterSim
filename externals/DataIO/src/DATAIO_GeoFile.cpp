@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -66,10 +66,15 @@ void GeoFile::read(const IBK::Path &fname, IBK::NotificationHandler * notify){
 	IBK_STATIC_ASSERT(sizeof(double) == 8);
 
 	// open file in binary mode
-#if defined(_WIN32) && !defined(__MINGW32__)
-	std::ifstream in( fname.wstr().c_str(), std::ios_base::binary);
-#else
-	std::ifstream in( fname.str().c_str(), std::ios_base::binary);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			std::ifstream in(fname.wstr().c_str(), std::ios_base::binary);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
+			std::ifstream in(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
+#else // _WIN32
+			std::ifstream in(fname.c_str(), std::ios_base::binary);
 #endif
 
 	// check if successful
@@ -190,11 +195,17 @@ void GeoFile::write(IBK::NotificationHandler * notify) const {
 	}
 
 	// open file
-#if defined(_WIN32) && !defined(__MINGW32__)
-	std::ofstream out( m_filename.wstr().c_str(), std::ios_base::binary);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		std::ofstream out( m_filename.wstr().c_str(), std::ios_base::binary);
+	#else
+		std::string filenameAnsi = IBK::WstringToANSI(m_filename.wstr(), false);
+		std::ofstream out( filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
 #else
-	std::ofstream out( m_filename.str().c_str(), std::ios_base::binary);
+	std::ofstream out( m_filename.c_str(), std::ios_base::binary);
 #endif
+
 	// check if successful
 	if (!out)
 		throw IBK::Exception(IBK::FormatString("Couldn't open file '%1'.").arg(m_filename), FUNC_ID);
