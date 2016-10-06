@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,14 +30,17 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_VersionH
 #define IBK_VersionH
 
 #include <iosfwd>
+#include <string>
 
 namespace IBK {
 
@@ -83,6 +85,17 @@ public:
 	static void write(std::ostream & out, unsigned int magicNumberFirstBinary, unsigned int magicNumberSecondBinary,
 					  unsigned int magicNumberFirstASCII, unsigned int magicNumberSecondASCII,
 					  bool isBinary, unsigned int majorVersion, unsigned int minorVersion);
+
+	/*! Extracts the major and minor version number from a string with version (2 numbers) or long version (3 numbers) format.
+		\code
+		unsigned int major, minor;
+		Version::extractMajorMinorVersionNumber("2.4", major, minor); // returns true, and 2 and 4 as numbers in major and minor
+		Version::extractMajorMinorVersionNumber("2.4.3", major, minor); // returns true, and 2 and 4 as numbers in major and minor
+		Version::extractMajorMinorVersionNumber("2.", major, minor); // returns false, values of major and minor are undefined
+		\endcode
+		\return Returns true, if both numbers could be extracted, otherwise returns false.
+	*/
+	static bool extractMajorMinorVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor);
 
 private:
 	/*! Decodes a combined single unsigned integer number into two version numbers.

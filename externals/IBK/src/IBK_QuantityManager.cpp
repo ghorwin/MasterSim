@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_QuantityManager.h"
@@ -97,11 +98,17 @@ void QuantityManager::write(std::ostream & out) {
 
 void QuantityManager::readFromFile(const IBK::Path & fname) {
 	const char * const FUNC_ID = "[QuantityManager::readFromFile]";
-#ifdef _MSC_VER
-	std::ifstream in(fname.wstr().c_str());
-#else // _WIN32
-	std::ifstream in(fname.str().c_str());
-#endif // _WIN32
+
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		std::ifstream in(fname.wstr().c_str());
+	#else  // MinGW
+		std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
+		std::ifstream in(filenameAnsi.c_str());
+	#endif
+#else  // !defined(_WIN32)
+	std::ifstream in(fname.c_str());
+#endif
 
 	if (!in) {
 		throw IBK::Exception(IBK::FormatString("Cannot open quantity file '%1'.").arg(fname), FUNC_ID);
@@ -119,11 +126,16 @@ void QuantityManager::readFromFile(const IBK::Path & fname) {
 
 void QuantityManager::writeToFile(const IBK::Path & fname) {
 	const char * const FUNC_ID = "[QuantityManager::writeToFile]";
-#ifdef _MSC_VER
-	std::ofstream out(fname.wstr().c_str());
-#else // _WIN32
-	std::ofstream out(fname.str().c_str());
-#endif // _WIN32
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		std::ofstream out(fname.wstr().c_str());
+	#else  // MinGW
+		std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
+		std::ofstream out(filenameAnsi.c_str());
+	#endif
+#else  // !defined(_WIN32)
+	std::ofstream out(fname.c_str());
+#endif
 	if (!out) {
 		throw IBK::Exception(IBK::FormatString("Cannot open quantity file '%1' for writing.").arg(fname), FUNC_ID);
 	}
@@ -152,6 +164,15 @@ const Quantity & QuantityManager::quantity(unsigned int globalIndex) const {
 			.arg(globalIndex)
 			.arg((unsigned int)m_quantities.size()), "[Quantity::quantity]" );
 	return m_quantities[globalIndex];
+}
+
+
+const Quantity & QuantityManager::quantity(const std::string & quantityName) const {
+	int qIdx = index(quantityName);
+	if (qIdx == -1)
+		throw IBK::Exception( IBK::FormatString("Unknown or undefined quantity '%1' (check/regenerate quantity list).")
+			.arg(quantityName), "[Quantity::quantity]" );
+	return quantity(qIdx);
 }
 
 

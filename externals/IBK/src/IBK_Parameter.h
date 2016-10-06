@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_ParameterH
@@ -111,6 +112,16 @@ public:
 		The function throws a IBK::Exception exception if the units cannot be related.
 	*/
 	double get_value(const std::string& ustr) const { return get_value(Unit(ustr)); }
+
+	/*! Returns the value of the parameter converted to 'unit' or the default value if the parameter's name is empty
+		(parameter not set).
+	*/
+	double get_value_or_default(Unit unit, double defaultValue) const;
+
+	/*! Convenience function overload, takes unit as string. */
+	double get_value_or_default(const std::string &ustr, double defaultValue) const {
+		return get_value_or_default(IBK::Unit(ustr), defaultValue);
+	}
 
 	/*! Returns the parameter fully formatted as std::string.
 		The parameter is converted into the IO_unit.
@@ -207,23 +218,25 @@ public:
 		return IBK::nearly_equal<5>(value, other.value);
 	}
 
-	/*! This method is used to test lower limits of a physical parameter.
-		In case of an error this method throws an exception. Errors are missmatching parameter names,
-		missmatching base units, and comparsion operation missmatches.
-		\param parameterLowerBound Unit, parameter name and value to be tested against.
+	/*! This method is used to test if a physical parameter is lower than a given limit.
+		It throws an exception if the value is not lower or not lower equal.
+		Other errors are missmatching parameter names or missmatching base units.
+		\param limit Unit, parameter name and value to be tested against.
 		\param isLessEqual If set to true comparison operator is <= is used, if false < is applied.
 		\return True is returned if parameter name and unit can be matched, as well as the value test is valid as well.
+		\todo refactor to name checkIfValueIsBelowLimit
 	*/
-	void checkLowerBound (	const IBK::Parameter& parameterLowerBound,
+	void checkIfValueIsLowerBound (	const IBK::Parameter& limit,
 							bool isLessEqual ) const;
 
-	/*! This method is used to test lower limits of a physical parameter.
-		In case of an error this method throws an exception. Errors are missmatching parameter names,
-		missmatching base units, and comparsion operation missmatches.
-		\param parameterUpperBound Unit, parameter name and value to be tested against.
+	/*! This method is used to test if a physical parameter is higher than a given limit.
+		It throws an exception if the value is not higher or not higher equal.
+		Other errors are missmatching parameter names or missmatching base units.
+		\param limit Unit, parameter name and value to be tested against.
 		\param isGreaterEqual If set to true comparison operator is >= is used, if false > is applied.
+		\todo refactor to name checkIfValueIsAboveLimit
 	*/
-	void checkUpperBound (	const IBK::Parameter& parameterUpperBound,
+	void checkIfValueIsUpperBound (	const IBK::Parameter& limit,
 							bool isGreaterEqual ) const;
 
 
@@ -247,8 +260,8 @@ private:
 	};
 
 
-	/*! Test routine for code reuse by \sa checkLowerBound and \sa checkUpperBound. */
-	void test( Parameter val, oper_t op ) const;
+	/*! Test routine for code reuse by \sa checkIfValueIsUpperBound and \sa checkIfValueIsLowerBound. */
+	void test( const IBK::Parameter& val, oper_t op ) const;
 
 };
 

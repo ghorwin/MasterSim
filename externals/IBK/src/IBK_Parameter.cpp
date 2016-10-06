@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -13,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_configuration.h"
@@ -108,6 +109,13 @@ double Parameter::get_value(Unit unit) const {
 	return v;
 }
 
+double Parameter::get_value_or_default(Unit unit, double defaultValue) const {
+	if (name.empty())
+		return defaultValue;
+	else
+		return get_value(unit);
+}
+
 std::string Parameter::toString(bool without_name) const {
 	std::stringstream strm;
 	if (!without_name)
@@ -146,9 +154,9 @@ void Parameter::write(std::ostream& out, unsigned int indent, unsigned int param
 	out << std::string(indent, ' ');
 	if (name.size() && writeName) {
 		if (paramWidth > name.size())
-			out << std::setw(paramWidth) << std::left << name << " ";
+			out << std::setw(paramWidth) << std::left << name << " = ";
 		else
-			out << name << " ";
+			out << name << " = ";
 	}
 	out << v << " " << IO_unit.name() << std::endl;
 }
@@ -186,59 +194,61 @@ void Parameter::clear() {
 }
 
 
-void Parameter::checkLowerBound (	const IBK::Parameter& parameterLowerBound,
-									bool isLessEqual ) const
+void Parameter::checkIfValueIsLowerBound (	const IBK::Parameter& limit,
+											bool isLessEqual ) const
 {
 
-	const char * const FUNC_ID = "[Parameter::checkLowerBound]";
+	const char * const FUNC_ID = "[Parameter::checkIfValueIsLowerBound]";
 
 	// check parameter
-	if ( name.empty() || name != parameterLowerBound.name ) {
-		std::string msg = parameterLowerBound.name + " is required";
+	if ( name.empty() || name != limit.name ) {
+		std::string msg = limit.name + " is required";
 		throw IBK::Exception(msg, FUNC_ID);
 	}
 
 	// check unit
-	if (IO_unit.base_id() != parameterLowerBound.unit().base_id()) {
-		std::string msg = "Invalid or unrecognized unit in parameter '"+parameterLowerBound.name+"' (must be convertible into " + parameterLowerBound.unit().name() + ")";
+	if (IO_unit.base_id() != limit.unit().base_id()) {
+		std::string msg = "Invalid or unrecognized unit in parameter '" + limit.name +
+						  "' (must be convertible into " + limit.unit().name() + ")";
 		throw IBK::Exception(msg, FUNC_ID);
 	}
 
 	// test limits
 	if (isLessEqual)
-		test( parameterLowerBound, OP_LE);
+		test( limit, OP_LE);
 	else
-		test( parameterLowerBound, OP_LT);
+		test( limit, OP_LT);
 
 }
 
-void Parameter::checkUpperBound (	const IBK::Parameter& parameterUpperBound,
-									bool isGreaterEqual ) const
+void Parameter::checkIfValueIsUpperBound (	const IBK::Parameter& limit,
+											bool isGreaterEqual ) const
 {
 
-	const char * const FUNC_ID = "[Parameter::checkUpperBound]";
+	const char * const FUNC_ID = "[Parameter::checkIfValueIsUpperBound]";
 
 	// check parameter
-	if (name.empty() || name != parameterUpperBound.name ) {
-		std::string msg = parameterUpperBound.name + " is required";
+	if (name.empty() || name != limit.name ) {
+		std::string msg = limit.name + " is required";
 		throw IBK::Exception(msg, FUNC_ID);
 	}
 
 	// check unit
-	if (IO_unit.base_id() != parameterUpperBound.unit().base_id()) {
-		std::string msg = "Invalid or unrecognized unit in parameter '"+parameterUpperBound.name+"' (must be convertible into " + parameterUpperBound.unit().name() + ")";
+	if (IO_unit.base_id() != limit.unit().base_id()) {
+		std::string msg = "Invalid or unrecognized unit in parameter '" + limit.name +
+						  "' (must be convertible into " + limit.unit().name() + ")";
 		throw IBK::Exception(msg, FUNC_ID);
 	}
 
 	// test limits
 	if (isGreaterEqual)
-		test( parameterUpperBound, OP_GE);
+		test( limit, OP_GE);
 	else
-		test( parameterUpperBound, OP_GT);
+		test( limit, OP_GT);
 
 }
 
-void Parameter::test( Parameter val, oper_t op ) const {
+void Parameter::test( const IBK::Parameter& val, oper_t op ) const {
 
 	static const char * const FUNC_ID = "[Parameter::test]";
 

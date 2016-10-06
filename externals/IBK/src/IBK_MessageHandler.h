@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_MessageHandlerH
@@ -105,17 +106,27 @@ public:
 	*/
 	void setConsoleVerbosityLevel(int verbosity);
 
+	/*! Returns current console verbosity level.
+		\sa setConsoleVerbosityLevel()
+	*/
+	int consoleVerbosityLevel() const { return m_requestedConsoleVerbosityLevel; }
+
 	/*! Sets the desired logfile verbosity level.
 		\sa verbosity_levels_t
 	*/
 	void setLogfileVerbosityLevel(int verbosity);
+
+	/*! Returns current console verbosity level.
+		\sa setLogfileVerbosityLevel()
+	*/
+	int logFileVerbosityLevel() const { return m_requestedLogfileVerbosityLevel; }
 
 	/*! Sets up console on Windows for UTF8 string output. */
 	static void setupUtf8Console();
 
 	/*! Create/open log file.
 		\param logfile Full path to logfile (directory must exist). Pass an empty string to close the current
-					   logfile and disable logfile usage.
+					   logfile and disable logfile usage. Logfile path must be UTF8 encoded.
 		\param append If true, the logfile will be opened in append-mode, otherwise
 					  it will be opened in truncation mode.
 		\param errmsg Holds an error message in case of error.

@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_FormatStringH
@@ -45,12 +46,12 @@
 
 #include "IBK_configuration.h"
 #include "IBK_MultiLanguageString.h"
-#include "IBK_Path.h"
 
 
 namespace IBK {
 
 class Unit;
+class Path;
 
 /*! Class FormatString helps assembling error/progress messages without
 	the use of the old fashioned and error prone C function sprintf.
@@ -125,7 +126,7 @@ public:
 		\return		FormatString including the substitution argument.
 	*/
 	FormatString & arg(unsigned int i, int fieldWidth=0);
-#if !defined(_WIN32)
+#if !defined(_WIN32) || defined(_WIN64)
 	/*! Inserts 'i' at the next location of '%' in the current format string.
 		Spezialization for size_t.
 	*/

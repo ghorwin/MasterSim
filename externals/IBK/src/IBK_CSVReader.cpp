@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_CSVReader.h"
@@ -57,11 +58,16 @@ namespace IBK {
 void CSVReader::read(const IBK::Path & filename) {
 	const char * const FUNC_ID = "[CSVReader::read]";
 	try {
-#ifdef _MSC_VER
-	std::ifstream in(filename.wstr().c_str());
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			std::ifstream in(filename.wstr().c_str());
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(filename.wstr(), false);
+			std::ifstream in(filenameAnsi.c_str());
+	#endif
 #else // _WIN32
-		std::ifstream in(filename.str().c_str());
-#endif// _WIN32
+			std::ifstream in(filename.c_str());
+#endif
 		if (!in)
 			throw IBK::Exception( IBK::FormatString("File doesn't exist or cannot open/access file."), FUNC_ID);
 
