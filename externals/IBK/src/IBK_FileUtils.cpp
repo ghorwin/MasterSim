@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_FileUtils.h"
@@ -42,6 +43,11 @@
 	#include <Windows.h>
 	#include <Shlobj.h>
 	#include <direct.h>
+#else
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <pwd.h>
 #endif
 
 #include <fstream>
@@ -94,10 +100,15 @@ std::vector<unsigned char> read_some_bytes(const IBK::Path& filename, unsigned i
 	errmsg.clear();
 	std::ifstream in;
 	in.rdbuf()->pubsetbuf(0, 0);
-#ifdef _MSC_VER
-	in.open(filename.wstr().c_str(), std::ios_base::binary);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			in.open(filename.wstr().c_str(), std::ios_base::binary);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(filename.wstr(), false);
+			in.open(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
 #else // _WIN32
-	in.open(filename.str().c_str(), std::ios_base::binary);
+			in.open(filename.c_str(), std::ios_base::binary);
 #endif
 	std::vector<unsigned char> result;
 	if (!in) {
@@ -123,6 +134,62 @@ std::string file2String(const IBK::Path & fname) {
 	std::stringstream strm;
 	strm << in.rdbuf();
 	return strm.str();
+}
+
+IBK::Path userDirectory() {
+	std::string result;
+
+#if defined(_WIN32)
+
+	// SHGetSpecialFolderLocation generates a PIDL. The memory for the PIDL
+	// is allocated by the shell, and should be freed using the shell
+	// mallocator COM object. Use SHGetMalloc to retrieve the malloc object
+	LPMALLOC pShellMalloc;
+	if(FAILED(SHGetMalloc(&pShellMalloc)))
+		return IBK::Path();
+
+	// if we were able to get the shell malloc object, then
+	// proceed by fetching the pidl
+	LPITEMIDLIST  pidl;
+	HRESULT hdres = SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &pidl);
+	if(hdres == S_OK) {
+		// return is true if success
+		#ifdef IBK_ENABLE_UTF8
+			wchar_t szDir[MAX_PATH];
+			SHGetPathFromIDListW(pidl, szDir);
+			pShellMalloc->Free(pidl);
+			try {
+				result = WstringToUTF8(szDir);
+			}
+			catch(...) {
+				// result string keeps empty
+			}
+		#else
+			char szDir[MAX_PATH];
+			SHGetPathFromIDListA(pidl, szDir);
+			pShellMalloc->Free(pidl);
+			try {
+				result = szDir;
+			}
+			catch(...) {
+				// result string keeps empty
+			}
+		#endif
+	}
+	pShellMalloc->Release();
+#elif __GNUC__
+
+	struct passwd *pw = getpwuid(getuid());
+
+	if (pw != NULL) {
+
+		const char *homedir = pw->pw_dir;
+		result = homedir;
+	}
+#else
+	#error Write this for your compiler
+#endif
+	return IBK::Path(result);
 }
 
 

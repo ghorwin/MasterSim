@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,14 +30,17 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <algorithm>
 
 #include "IBK_Exception.h"
 #include "IBK_FileReader.h"
@@ -328,10 +330,15 @@ long long FileReader::readAll(	const Path &filename,
 	// get filesize
 	long long fsize = filename.fileSize();
 
-#ifdef _MSC_VER
-	inputStream.open(filename.wstr().c_str(), std::ios_base::binary);
-#else
-	inputStream.open(filename.str().c_str(), std::ios_base::binary);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			inputStream.open(filename.wstr().c_str(), std::ios_base::binary);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(filename.wstr(), false);
+			inputStream.open(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
+#else // _WIN32
+			inputStream.open(filename.c_str(), std::ios_base::binary);
 #endif
 	if (!inputStream.is_open()) {
 		throw IBK::Exception( IBK::FormatString("Cannot open input file '%1' for reading").arg(filename), FUNC_ID);
@@ -378,7 +385,7 @@ FileReader::FileReader(const Path &filename, unsigned int chunksize) :
 
 bool FileReader::valid() {
 
-	if (!IBK::Path(m_filename).isFile())
+	if (!m_filename.isFile())
 		return false;
 
 	open();
@@ -499,10 +506,15 @@ FileReader::ReadState FileReader::readNext(unsigned int maxlines, IBK::Notificat
 void FileReader::open() {
 	if( !m_inputStream.is_open()) {
 		m_inputStream.rdbuf()->pubsetbuf(&internalBuffer[0], CHUNKSIZE);
-#if defined(_MSC_VER)
-		m_inputStream.open(m_filename.wstr().c_str(), std::ios_base::binary);
-#else
-		m_inputStream.open(m_filename.str().c_str(), std::ios_base::binary);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			m_inputStream.open(m_filename.wstr().c_str(), std::ios_base::binary);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(m_filename.wstr(), false);
+			m_inputStream.open(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
+#else // _WIN32
+			m_inputStream.open(m_filename.c_str(), std::ios_base::binary);
 #endif
 	}
 	else {

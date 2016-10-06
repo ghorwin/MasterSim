@@ -305,29 +305,37 @@ contains( OPTIONS, gprof ) {
 # by setting 'lib' the TEMPLATE environment variable.
 # It defines DESTDIR, OBJECTS_DIR, DLLDESTDIR and sets shared in CONFIG
 # variable to all libraries. Reset locally in when required.
-eval(TEMPLATE = lib) {
+equals(TEMPLATE,lib) {
 
 	message(Setting up ordinary library support.)
 	QT -=	core gui
-	win32-msvc2010 {
+# using of shared libs only for non MC compiler
+# MS compiler needs explicite export statements in case of shared libs
+	win32-msvc* {
 		CONFIG += static
 		DEFINES += NOMINMAX
 	}
-# using of shared libs only for non MC compiler
-# MS compiler needs explicite export statements in case of shared libs
-	!win32-msvc2010 {
+	else {
 		CONFIG += shared
 	}
 # disable warning for unsafe functions if using MS compiler
 	win32-msvc* {
 		QMAKE_CXXFLAGS += /wd4996
 	}
+	else {
+		QMAKE_CXXFLAGS += -std=c++11
+	}
 
 	DESTDIR = ../../../lib
 	CONFIG(debug, debug|release) {
 		OBJECTS_DIR = debug
 		windows {
-			DLLDESTDIR = ../../../../bin/debug
+			contains( OPTIONS, top_level_libs ) {
+				DLLDESTDIR = ../../../bin/debug
+			}
+			else {
+				DLLDESTDIR = ../../../../bin/debug
+			}
 		}
 		win32-msvc* {
 			QMAKE_CXXFLAGS += /GS /RTC1
@@ -337,7 +345,12 @@ eval(TEMPLATE = lib) {
 		#QMAKE_CFLAGS += -O3 #-fcx-limited-range -fno-math-errno
 		OBJECTS_DIR = release
 		windows {
-			DLLDESTDIR = ../../../../bin/release
+			contains( OPTIONS, top_level_libs ) {
+				DLLDESTDIR = ../../../bin/release
+			}
+			else {
+				DLLDESTDIR = ../../../../bin/release
+			}
 		}
 	}
 

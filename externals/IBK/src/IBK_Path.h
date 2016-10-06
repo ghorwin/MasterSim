@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_PathH
@@ -52,7 +53,7 @@
 #include <iosfwd>
 #include <ctime>
 
-#include "IBK_FileUtils.h"
+#include "IBK_StringUtils.h"
 
 namespace IBK {
 
@@ -166,6 +167,7 @@ public:
 
 	/*! Returns a pointer to the start of the internal string representation.
 		This pointer is valid as long as the path is not modified.
+		The filename is UTF8 encoded.
 	*/
 	const char * c_str() const { return &m_path[0]; }
 
@@ -201,6 +203,8 @@ public:
 			Path("/home/myfiles/data/datfile.txt").relativePath("/home/myfiles/otherfiles") == "../data/datfile.txt";
 			Path("bla/blub.txt").relativePath("bla"); == "blub.txt";
 			Path("").relativePath("/blubb") --> Exception
+			Path(".").relativePath("file.txt") --> ".."
+			Path("file.txt").relativePath(".") --> "file.txt"
 			Path("bla/blubber").relativePath("bla/blub"); == "../blubber";
 		\endcode
 		Throws an IBK::Exception if path or toPath is invalid or relative path cannot be created.
@@ -290,6 +294,8 @@ public:
 			IBK::Path("..").extension() --> "" // where blub.txt is a folder
 			IBK::Path(".").extension() --> "" // where blub.txt is a folder
 		\endcode
+		\sa withoutExtension()
+		\sa addPath()
 	*/
 	std::string extension() const;
 
@@ -301,6 +307,8 @@ public:
 			IBK::Path("C:\\blubb\\bla\\blub").withoutExtension() --> "C:/blubb/bla/blub"
 			IBK::Path("./archive.tar.gz").withoutExtension() --> "archive.tar"
 		\endcode
+		\sa addPath()
+		\sa extension()
 	*/
 	IBK::Path withoutExtension() const;
 
@@ -323,6 +331,8 @@ public:
 		\endcode
 
 		\sa operator/=()(const IBK::Path & subDir)
+		\sa withoutExtension()
+		\sa extension()
 	*/
 	void addPath(const IBK::Path & subDir);
 
@@ -337,8 +347,8 @@ public:
 	*/
 	void operator/=(const std::string& subDir);
 
-	/*! Adds an extension and returns the resulting path.
-		The current path will not be changed, but the appended
+	/*! Adds an extension.
+		The current path will be changed, but the appended
 		extension is trimmed to IBK rules.
 		\code
 			IBK::Path("blub").addExtension("txt"); // --> blub.txt

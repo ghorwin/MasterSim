@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_configuration.h"
@@ -55,8 +56,10 @@
 #include "IBK_math.h"
 #include "IBK_Exception.h"
 #include "IBK_FormatString.h"
+#include "IBK_Path.h"
 
 namespace IBK {
+
 
 /*! The default unit list as encoded string, used by IBK::UnitList::read_default(). */
 extern const char * const DEFAULT_UNITS;
@@ -77,17 +80,23 @@ UnitList & UnitList::instance() {
 
 // Reads the unit list from a file
 bool UnitList::read_file(const std::string& filename, bool overwrite) {
-#ifdef _MSC_VER
-	std::ifstream in(IBK::Path(filename).wstr().c_str());
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			std::ifstream in(IBK::Path(filename).wstr().c_str());
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(IBK::Path(filename).wstr(), false);
+			std::ifstream in(filenameAnsi.c_str());
+	#endif
 #else // _WIN32
-	std::ifstream in(IBK::Path(filename).str().c_str());
-#endif // _WIN32
+			std::ifstream in(IBK::Path(filename).c_str());
+#endif
 	return read(in, overwrite);
 }
 // ---------------------------------------------------------------------------
 
 // Reads the unitlist from default string
 bool UnitList::read_default() {
+	const char * const FUNC_ID = "[UnitList::read_default]";
 #define NO_ATOF
 	std::vector<char> defaultVector;
 	std::copy(DEFAULT_UNITS, DEFAULT_UNITS + std::strlen(DEFAULT_UNITS), std::back_inserter(defaultVector));
@@ -104,12 +113,20 @@ bool UnitList::read_default() {
 		line = strtok(NULL, ";");
 	}
 
+	std::set<std::string> all_units; // temporary set of units, used in duplicate check
+
 	unsigned int base_index=0, current_index=0;
 	for( unsigned int i=0; i<lines.size(); ++i) {
 		char* line = &(lines[i][0]);
 		char* str = std::strtok(line, "\t ");
 		if( str == NULL)
 			continue;
+
+		// sanity check, ensure uniqueness of units
+		if (all_units.find(str) != all_units.end())
+			throw IBK::Exception(FormatString("Duplicate unit '%1' defined.").arg(str), FUNC_ID);
+		all_units.insert(str);
+
 		add(new UnitData(current_index, str, base_index, 1.0, OP_NONE));
 		char* op = strtok(NULL, "\t ");
 		while( op != NULL) {
@@ -125,6 +142,12 @@ bool UnitList::read_default() {
 			str = strtok(NULL, "\t ");
 			if( str == NULL)
 				break;
+
+			// sanity check, ensure uniqueness of units
+			if (all_units.find(str) != all_units.end())
+				throw IBK::Exception(FormatString("Duplicate unit '%1' defined.").arg(str), FUNC_ID);
+			all_units.insert(str);
+
 			current_index++;
 			unsigned int op_id;
 			switch (op[0]) {
@@ -151,11 +174,14 @@ bool UnitList::read_default() {
 
 // Reads the unitlist from an input filestream
 bool UnitList::read(std::istream& stream, bool overwrite) {
+	const char * const FUNC_ID = "[UnitList::read]";
 	if (!overwrite && !empty())  return true; // do not read the list again
 	if (!stream)  return false;
 
 	unsigned int base_index=0, current_index=0;
 	clear();                        // Clear list
+
+	std::set<std::string> all_units; // temporary set of units, used in duplicate check
 
 	while (stream.good()) {
 		std::stringstream ins;           // Input-String-Stream
@@ -169,12 +195,22 @@ bool UnitList::read(std::istream& stream, bool overwrite) {
 		// read first unit in line
 		ins >> str;
 		if (ins.good()) {
-			// add base unit to the list (no operation
+			// sanity check, ensure uniqueness of units
+			if (all_units.find(str) != all_units.end())
+				throw IBK::Exception(FormatString("Duplicate unit '%1' defined.").arg(str), FUNC_ID);
+			all_units.insert(str);
+
+			// add base unit to the list
 			add(new UnitData(current_index, str, base_index, 1.0, OP_NONE));
 
 			// Try reading the next unit
 			ins >> op >> factor >> str;
 			while (!ins.fail()) {
+				// sanity check, ensure uniqueness of units
+				if (all_units.find(str) != all_units.end())
+					throw IBK::Exception(FormatString("Duplicate unit '%1' defined.").arg(str), FUNC_ID);
+				all_units.insert(str);
+
 				current_index++;
 				switch (op) {
 					case '+' : op_id = OP_ADD; break;
@@ -202,7 +238,7 @@ bool UnitList::read(const std::string& str, bool overwrite) {
 	std::replace(tmp.begin(), tmp.end(), ';', '\n');
 	std::istringstream lstrm(tmp);
 	return read(lstrm, overwrite);
-};
+}
 // ---------------------------------------------------------------------------
 
 bool UnitList::write(const std::string& filename) const {
@@ -660,7 +696,6 @@ const char * const DEFAULT_UNITS =
 "s/s          / 60 min/s          / 3600 h/s          / 86400 d/s         / 3.1536e+07 a/s ;"
 "m/s          * 100 cm/s          * 360000 cm/h       * 8.64e+06 cm/d     ;"
 "m2/s         * 10000 cm2/s       * 3600 m2/h         * 3.6e+07 cm2/h     ;"
-"m3/s         ;"
 "m/s2         ;"
 "s/m          ;"
 "s2/m2        ;"
@@ -676,14 +711,13 @@ const char * const DEFAULT_UNITS =
 "J            / 1000 kJ           / 1e+06 MJ          / 3.6e+09 MWh       / 3.6e+06 kWh        / 3600     Wh  ;"
 "J/m2         / 1000 kJ/m2        / 1e+06 MJ/m2       / 1e+09 GJ/m2       / 1e+02 J/dm2        / 1e+04 J/cm2       / 3.6e+06 kWh/m2          ;"
 "J/m3         * 1    Ws/m3        / 1000 kJ/m3        / 1e+06 MJ/m3       / 1e+09 GJ/m3       / 1e+03 J/dm3        / 1e+06 J/cm3       / 3.6e+06 kWh/m3          ;"
-"J/m3s        / 1000 kJ/m3s       / 1e+06 MJ/m3s      / 1000 J/dm3s       / 1e+06 J/cm3s       * 3600  J/m3h          ;"
+"J/m3s        / 1000 kJ/m3s       / 1e+06 MJ/m3s      / 1000 J/dm3s       / 1e+06 J/cm3s       * 3600  J/m3h       * 1    W/m3         / 1000 kW/m3        / 1e+06 MW/m3       / 1000 W/dm3        / 1e+06 W/cm3       / 1e+09 W/mm3       ;"
 "J/m3K        / 1000 kJ/m3K;"
-"J/s          * 3600 J/h          * 86400 J/d         * 86.4 kJ/d         * 1     W            / 1000 kW           / 1e+06 MW          ;"
+"J/s          * 3600 J/h          * 86400 J/d         * 86.4 kJ/d         * 1     W            / 1000 kW           / 1e+06 MW          * 1     Nm/s  ;"
 "J/kg         / 1000 kJ/kg        ;"
 "J/kgK        / 1000 kJ/kgK       * 1     Ws/kgK      ;"
 "J/K          / 1000 kJ/K         ;"
 "J/m2s        * 1    W/m2         / 1000 kW/m2        / 1e+06 MW/m2       / 100 W/dm2         / 10000 W/cm2       ;"
-"J/m3s        * 1    W/m3         / 1000 kW/m3        / 1e+06 MW/m3       / 1000 W/dm3        / 1e+06 W/cm3       / 1e+09 W/mm3       ;"
 "W/mK         / 1000 kW/mK        ;"
 "W/m2K        ;"
 "W/m2K2       ;"
@@ -694,7 +728,7 @@ const char * const DEFAULT_UNITS =
 "m3/s         * 3600 m3/h         * 1000 dm3/s        * 3.6e+06 dm3/h   ;"
 "m3/m3        * 100 Vol%          ;"
 "m3/m3d       * 100 Vol%/d        ;"
-"---          * 100 %        	  * 1 -               * 1 1             ;"
+"---          * 100 %             * 1 1             ;"
 "---/d        * 100 %/d           ;"
 "K            - 273.15 C          ;"
 "1/K          ;"
@@ -719,7 +753,7 @@ const char * const DEFAULT_UNITS =
 "1/logcm      ;"
 "mol/m3       / 1000 mol/ltr      / 1000 mol/dm3      / 1e+06 mol/cm3     ;"
 "mol          * 1e+03 mmol        ;"
-"-            * 1 ---			  ;"
+"-            "
 "mm/mK        ;"
 "mm/m         ;"
 "m3m/m3m      * 1000 m3mm/m3m;"
