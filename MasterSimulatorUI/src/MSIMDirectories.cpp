@@ -79,7 +79,12 @@ QString MSIMDirectories::userDataDir() {
 	// we have different user data directories, based on OS
 #if defined(Q_OS_WIN)
 	// on Windows, we store user data unter %HOME%/AppData/Local
+#if QT_VERSION < 0x050000
+	// Mind that with Qt 4.8.6 the Application name is automatically added to AppData/Local
 	return QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/MasterSim";
+#else // QT_VERSION < 0x050000
+	return QStandardPaths::standardLocations(QStandardPaths::AppLocalDataLocation)[0] + "/MasterSim";
+#endif // QT_VERSION < 0x050000
 #else
 	// on Unix/Mac OS we store user data under home directory
 	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/.MasterSim");

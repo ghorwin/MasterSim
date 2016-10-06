@@ -1,34 +1,62 @@
 # CMakeLists.txt file for MasterSim library and applications
 # Author: Andreas Nicolai (andreas.nicolai -at- tu-dresden.de)
 
-cmake_minimum_required( VERSION 2.6 )
-
 # The project name
 project( MasterSimBundle )
+
+# Require a fairly recent cmake version
+cmake_minimum_required( VERSION 3.0 )
+
+# -------------------------------------------------------------
+# MACRO definitions
+# -------------------------------------------------------------
+
+# Macros to hide/show cached variables.
+# These two macros can be used to "hide" or "show" in the
+# list of cached variables various variables and/or options 
+# that depend on other options.
+# Note that once a variable is modified, it will preserve its
+# value (hidding it merely makes it internal)
+
+MACRO(HIDE_VARIABLE var)
+  IF(DEFINED ${var})
+    SET(${var} "${${var}}" CACHE INTERNAL "")
+  ENDIF(DEFINED ${var})
+ENDMACRO(HIDE_VARIABLE)
+
+MACRO(SHOW_VARIABLE var type doc default)
+  IF(DEFINED ${var})
+    SET(${var} "${${var}}" CACHE "${type}" "${doc}" FORCE)
+  ELSE(DEFINED ${var})
+    SET(${var} "${default}" CACHE "${type}" "${doc}")
+  ENDIF(DEFINED ${var})
+ENDMACRO(SHOW_VARIABLE)
 
 # -------------------------------------------------------------
 # Initial commands
 # -------------------------------------------------------------
 
 # Uncomment this to enable detailed make output
-# set( CMAKE_VERBOSE_MAKEFILE ON )
+#set( CMAKE_VERBOSE_MAKEFILE ON )
 
-# Set release mode as default, except for the Borland Compiler
+# Hide some more cache variables to keep things tidy
+MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
+MARK_AS_ADVANCED(EXECUTABLE_OUTPUT_PATH LIBRARY_OUTPUT_PATH)
+
+# Set default build type
 if (NOT CMAKE_BUILD_TYPE)
-	set( CMAKE_BUILD_TYPE Release CACHE STRING
+	set( CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
 		"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
 # on Unix we want really detailed warnings
 if (UNIX)
-	ADD_DEFINITIONS( -Wall -fPIC)
+	ADD_DEFINITIONS( -Wall -fPIC -static-libgcc -static-libstdc++)
 endif (UNIX)
 
-# for VC compiler, add the flag to disable wchar_t as native type
+# add VC compiler-specific flags (NONMINMAX define and disable "unsafe" warnings)
 if (MSVC)
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:wchar_t-" )
-
-	set( CMAKE_PREFIX_PATH "C:\\Qt\\Qt5.7.0_VC10\\msvc2010\\")
+	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D\"NOMINMAX\" /wd4996" )
 endif (MSVC)
 
 # -------------------------------------------------------------
@@ -48,10 +76,10 @@ if (Qt5Widgets_INCLUDE_DIRS)
 	find_package(Qt5Svg REQUIRED)
 	find_package(Qt5Network REQUIRED)
 
-# on mac we need cxx11
-if( APPLE )
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11" )
-endif( APPLE )
+	# when building with gcc/icc add compile flag
+	if (NOT MSVC)
+		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+	endif (NOT MSVC)
 
 else (Qt5Widgets_INCLUDE_DIRS)
 
@@ -81,22 +109,6 @@ if( APPLE )
 		${SYSTEM_CONFIGURATION}
 	)
 endif( APPLE )
-
-# -------------------------------------------------------------
-# Support for build flags
-# -------------------------------------------------------------
-include( ../../externals/IBK/projects/cmake_local/cmake_pri/CMakeLists.txt )
-
-if (MINGW)
-	# link statically to MinGW libraries
-	#set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_CXX_FLAGS_RELEASE} " -static-libgcc -static-libstdc++" )
-	add_definitions(-static-libgcc -static-libstdc++)
-endif (MINGW)
-
-if (MSVC)
-	add_definitions(/wd"4996")
-
-endif (MSVC)
 
 # -------------------------------------------------------------
 # Subdirectories and subprojects
