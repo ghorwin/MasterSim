@@ -1,10 +1,10 @@
-/*	IBKMK library
+/*	IBK Math Kernel Library
 	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
 
-	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang, J. Grunewald
+	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang
 	All rights reserved.
 
-	This file is part of the MKIBK Library.
+	This file is part of the IBKMK Library.
 
 	Redistribution and use in source and binary forms, with or without modification,
 	are permitted provided that the following conditions are met:
@@ -33,10 +33,11 @@
 
 	This library contains derivative work based on other open-source libraries,
 	see LICENSE and OTHER_LICENSES files.
+
 */
 
-#ifndef IBKMK_COMMON_DEFINES_H
-#define IBKMK_COMMON_DEFINES_H
+#ifndef IBKMK_common_definesH
+#define IBKMK_common_definesH
 
 #ifdef __cplusplus  /* wrapper to enable C++ usage */
 #define IBKMK_CONST const
@@ -57,5 +58,4 @@
 
 
 
-#endif // IBKMK_COMMON_DEFINES_H
-
+#endif // IBKMK_common_definesH

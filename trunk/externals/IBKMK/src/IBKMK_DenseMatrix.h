@@ -1,10 +1,10 @@
-/*	IBKMK library
+/*	IBK Math Kernel Library
 	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
 
-	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang, J. Grunewald
+	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang
 	All rights reserved.
 
-	This file is part of the MKIBK Library.
+	This file is part of the IBKMK Library.
 
 	Redistribution and use in source and binary forms, with or without modification,
 	are permitted provided that the following conditions are met:
@@ -33,6 +33,7 @@
 
 	This library contains derivative work based on other open-source libraries,
 	see LICENSE and OTHER_LICENSES files.
+
 */
 
 #ifndef IBKMK_DenseMatrixH
@@ -774,9 +775,3 @@ private:
 } // namespace IBKMK
 
 #endif // IBKMK_DenseMatrixH
-
-/*! \file IBKMK_DenseMatrix.h
-	\brief Contains the class DenseMatrix for square dense matrices and declarations for
-			dense-matrix computation functions.
-	\example dense_matrix_example.h Illustrates usage of class DenseMatrix.
-*/
