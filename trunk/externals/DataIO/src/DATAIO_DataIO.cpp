@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -310,10 +310,15 @@ const double * DataIO::data(unsigned int time_idx) const {
 		else {
 #ifndef READ_FULL_FILE
 			// open output file
-#if defined(_WIN32) && !defined(__MINGW32__)
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
 			std::ifstream in(m_filename.wstr().c_str(), std::ios_base::binary);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(m_filename.wstr(), false);
+			std::ifstream in(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
 #else // _WIN32
-			std::ifstream in(m_filename.str().c_str(), std::ios_base::binary);
+			std::ifstream in(m_filename.c_str(), std::ios_base::binary);
 #endif
 			if (!in)
 				throw IBK::Exception("Cannot open output file for reading.", FUNC_ID);
@@ -348,6 +353,9 @@ void DataIO::deleteData(unsigned int idxFrom, unsigned int idxTo) {
 
 		if (m_valueStrings[idxFrom].empty()) {
 			std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxFrom;
+			/// \todo Performance hack: removing a vector from within a vector will be done by copying
+			///		  later vectors over earlier vectors. Speedup will be significant if instead of copying
+			///		  later vectors will be swapped (pointer-change) bit-by-bit with earlier vectors.
 			m_values.erase(values_it1);
 		}
 		else {
@@ -362,6 +370,8 @@ void DataIO::deleteData(unsigned int idxFrom, unsigned int idxTo) {
 
 		if (m_valueStrings[idxFrom].empty()) {
 
+			/// \todo Performance improvement, use temperary data structures IO, copy only the values that remain
+			/// (use proper reserve() calls, and afterwards swap the vectors.
 			std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxTo;
 			std::vector< std::vector<double> >::iterator values_it2 = m_values.end();
 			m_values.erase(values_it1,values_it2);
@@ -547,11 +557,18 @@ void DataIO::writeHeader() const {
 	}
 
 	// create output file stream
-#if defined(_WIN32) && !defined(__MINGW32__)
-	m_ofstream = new std::ofstream(m_filename.wstr().c_str(), std::ios_base::binary);
-#else // _WIN32
-	m_ofstream = new std::ofstream(m_filename.str().c_str(), std::ios_base::binary);
-#endif // _WIN32
+
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		m_ofstream = new std::ofstream(m_filename.wstr().c_str(), std::ios_base::binary);
+	#else
+		std::string filenameAnsi = IBK::WstringToANSI(m_filename.wstr(), false);
+		m_ofstream = new std::ofstream(filenameAnsi.c_str(), std::ios_base::binary);
+	#endif
+#else
+	m_ofstream = new std::ofstream(m_filename.c_str(), std::ios_base::binary);
+#endif
+
 
 	// check if successful
 	if (!m_ofstream->good()) {
@@ -708,15 +725,25 @@ void DataIO::reopenForWriting(const IBK::Path &fname) {
 	// reopen file and attempt to read header
 
 	if (m_isBinary) {
-#if defined(_WIN32) && !defined(__MINGW32__)
-		m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::binary | std::ios_base::app);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::binary | std::ios_base::app);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
+			m_ofstream = new std::ofstream(filenameAnsi.c_str(), std::ios_base::binary | std::ios_base::app);
+	#endif
 #else
 		m_ofstream = new std::ofstream(fname.str().c_str(), std::ios_base::binary | std::ios_base::app);
 #endif
 	}
 	else {
-#if defined(_WIN32) && !defined(__MINGW32__)
-		m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::app);
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			m_ofstream = new std::ofstream(fname.wstr().c_str(), std::ios_base::app);
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
+			m_ofstream = new std::ofstream(filenameAnsi.c_str(), std::ios_base::app);
+	#endif
 #else
 		m_ofstream = new std::ofstream(fname.str().c_str(), std::ios_base::app);
 #endif
@@ -952,11 +979,13 @@ void DataIO::openAndReadHeader(const IBK::Path & fname, std::ifstream & in, IBK:
 	if (!fname.exists())
 		throw IBK::Exception( IBK::FormatString("File '%1' doesn't exist.").arg(fname), FUNC_ID);
 
+	// Note: In case of reopening a file for appending outputs, the function will be called with m_filename as
+	//		 argument. If fname were a const reference to this member variable, its content would be cleared
+	//		 during execution of clear(). Therefore create a temporary copy of the file path.
+	IBK::Path fname_tmp = fname;
+
 	// Empty data in object
 	clear();
-
-	// create temporary copy of file (if it is currently written by the solver)
-	IBK::Path fname_tmp = fname;
 
 	// open file in binary mode and determine file size
 #if defined(_WIN32) && !defined(__MINGW32__)
@@ -1007,7 +1036,7 @@ void DataIO::openAndReadHeader(const IBK::Path & fname, std::ifstream & in, IBK:
 				// now read the header of the file
 				try {
 					in.close();
-					readASCIIHeader(fname, notify);
+					readASCIIHeader(fname_tmp, notify);
 				}
 				catch (IBK::Exception &ex) {
 					throw IBK::Exception(ex, "Error on reading ASCII header from file.", FUNC_ID);
@@ -1054,7 +1083,7 @@ void DataIO::openAndReadHeader(const IBK::Path & fname, std::ifstream & in, IBK:
 				// now read the header of the file
 				try {
 					in.close();
-					readASCIIHeader(fname, notify);
+					readASCIIHeader(fname_tmp, notify);
 				}
 				catch (IBK::Exception &ex) {
 					throw IBK::Exception(ex, "Error on reading ASCII header from file.", FUNC_ID);
@@ -1069,7 +1098,7 @@ void DataIO::openAndReadHeader(const IBK::Path & fname, std::ifstream & in, IBK:
 	}
 
 	// file was read successfully, store filename
-	m_filename = fname;
+	m_filename = fname_tmp;
 }
 // ----------------------------------------------------------------------------
 
@@ -1320,6 +1349,8 @@ void DataIO::readBinaryData(std::istream& in, IBK::NotificationHandler * notify)
 
 void DataIO::readASCIIHeader(const IBK::Path & fname, IBK::NotificationHandler * notify) {
 	const char * const FUNC_ID = "[DataIO::readASCIIHeader]";
+
+	// Note: do not call clear() in this function! See note in openAndReadHeader().
 
 	try {
 
