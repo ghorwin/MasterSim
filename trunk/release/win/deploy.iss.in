@@ -1,4 +1,3 @@
-; setup section, needs to be application dependent
 [Setup]
 Compression=lzma
 SolidCompression=true
@@ -7,7 +6,6 @@ UsePreviousAppDir=false
 UsePreviousGroup=false
 InternalCompressLevel=ultra
 
-; application description
 AppName=MasterSimulator
 AppVerName=MasterSimulator ${Version}
 AppVersion=${LongVersion}
@@ -16,13 +14,16 @@ DefaultGroupName=IBK\MasterSimulator ${Version}
 OutputBaseFilename=${OutputFileBasename}
 VersionInfoVersion=${LongVersion}
 VersionInfoDescription=MasterSimulator
+UninstallDisplayIcon={app}\MasterSimulatorUI.exe
 
 AppPublisher=MasterSim Developers
+AppPublisherURL=http://mastersim.sourceforge.net
+AppSupportURL=https://sourceforge.net/p/mastersim/wiki/Home/
+AppUpdatesURL=http://www.bauklimatik-dresden.de/downloads.php
+VersionInfoCompany=Bauklimatik Dresden
 VersionInfoCopyright=${CurrentYear} Andreas Nicolai
 AppCopyright=${CurrentYear} Andreas Nicolai
 LicenseFile=..\..\doc\LICENSE
-AppPublisherURL=http://mastersim.sourceforge.net
-UninstallDisplayIcon={app}\MasterSimulatorUI.exe
 
 
 [Files]
@@ -30,12 +31,13 @@ UninstallDisplayIcon={app}\MasterSimulatorUI.exe
 ; Program files
 Source: ..\..\bin\release\MasterSimulator.exe; DestDir: {app}
 Source: ..\..\bin\release\MasterSimulatorUI.exe; DestDir: {app}
-Source: VC10\msvcp100.dll; DestDir: {app}
-Source: VC10\msvcr100.dll; DestDir: {app}
-Source: VC10\QtCore4.dll; DestDir: {app}
-Source: VC10\QtGui4.dll; DestDir: {app}
-Source: VC10\QtNetwork4.dll; DestDir: {app}
-Source: VC10\QtXml4.dll; DestDir: {app}
+Source: VC14\msvcp140.dll; DestDir: {app}
+Source: VC14\Qt5Core.dll; DestDir: {app}
+Source: VC14\Qt5Gui.dll; DestDir: {app}
+Source: VC14\Qt5Network.dll; DestDir: {app}
+Source: VC14\Qt5Widgets.dll; DestDir: {app}
+Source: VC14\vcruntime140.dll; DestDir: {app}
+Source: VC14\platforms\qwindows.dll; DestDir: {app}\platforms
 
 ; Translation files
 Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
@@ -57,6 +59,11 @@ Name: {group}\MasterSimulator ${Version}; Filename: {app}\MasterSimulatorUI.exe;
 Name: {group}\MasterSimulator ${Version} Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
 
 [Run]
-Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version}
+Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version}; Languages: Deutsch
+Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Run MasterSimulator ${Version}; Languages: English
+
+[Languages]
+Name: English; MessagesFile: compiler:Default.isl
+Name: Deutsch; MessagesFile: compiler:Languages\German.isl
 
 

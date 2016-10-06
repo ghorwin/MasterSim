@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-# IBK Deployment Script System
-# Copyright Andreas Nicolai <andreas.nicolai -at- tu-dresden.de>
-# Released under BSD License.
-#
-#
 # Script for configuring a build and building the application.
 #
 # Script is expected to be called with working directory 
@@ -93,7 +88,7 @@ def adjustDeploymentFlag( pathToFlag ):
 	os.remove(tmpFn)
 
 
-def buildApplication(build_script):
+def buildApplication(build_script, x64):
 	"""
 	This method starts the build.sh or build.bat script to build 
 	the application in dependency of the current OS.
@@ -116,11 +111,19 @@ def buildApplication(build_script):
 			build_script = 'build.sh'
 		# ../../build/cmake/build.sh
 
-		command = './'+build_script+' release 4 skip-test'
+		command = './'+build_script+' skip-test'
+		
+		if currentOS == "mac":
+			command = command + " reldeb 2" # on Mac only 2 CPUs with debug symbols
+		else:
+			command = command + " release 4" # otherwise 4 and release mode
 
 	elif currentOS == "win" :
 		if build_script == None:
-			build_script = 'build_VC.bat'
+			if x64:
+				build_script = 'build_VC_x64.bat'
+			else:
+				build_script = 'build_VC.bat'
 
 		# ../../build/cmake/build.bat
 
