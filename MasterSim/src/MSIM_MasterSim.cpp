@@ -2,6 +2,7 @@
 
 #include <memory> // for auto_ptr
 #include <cmath>
+#include <algorithm> // for min and max
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
