@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -13,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,14 +30,17 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_mathH
 #define IBK_mathH
 
 #include "IBK_configuration.h"
+#include "IBK_assert.h"
 
 #include <string>
 #include <cmath>
@@ -217,6 +219,7 @@ bool nearly_equal(double x, double y) {
 	return (x + eps > y  &&  x < y + eps);
 }
 
+
 /*! Tests if a is less then b including a certain range for potential rounding errors. */
 inline bool near_le(double a, double b)     { return !near_equal(a, b) && a < b; }
 /*! Tests if a is less or equal to b including a certain range for potential rounding errors. */
@@ -247,15 +250,9 @@ struct abs {
 	- d(scale(x=0))/dx = 0
 	- d(scale(x=1))/dx = 0
 
-	\param x Value between 0..1.
+	\param x Value between 0..1 (no check done!).
 */
 double scale(double x);
-
-/*! Same as function above but without the limit on the x value argument.
-	Returns 0 for x < 0, and 1 for x > 1, for 0 < x < 1 returns the same
-	value as scale().
-*/
-double scale2(double x);
 
 /*! This function is a non-linear scaling function.
 	The function has the following defined values:
@@ -266,6 +263,13 @@ double scale2(double x);
 	\param epsilon Thickness of transition area
 */
 double scale2(double x, double epsilon);
+
+/*! Same as function above but without the limit on the x value argument.
+	Returns 0 for x < 0, and 1 for x > 1, for 0 < x < 1 returns the same
+	value as scale().
+*/
+inline double scale2(double x) { return scale2(x, 1.0); }
+
 
 /*! Implementation of the error function, based on an approximation equation
 	with epsilon = 1e-5.

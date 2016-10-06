@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_Version.h"
@@ -40,6 +41,7 @@
 #include <cstdlib>
 
 #include "IBK_InputOutput.h"
+#include "IBK_StringUtils.h"
 #include "IBK_assert.h"
 
 namespace IBK {
@@ -181,6 +183,22 @@ void Version::write(std::ostream & out, unsigned int magicNumberFirstBinary, uns
 		toASCIIEncoding( versionNumberASCII(majorVersion, minorVersion), first, second );
 		IBK::write_uint32_binary( out, first );
 		IBK::write_uint32_binary( out, second );
+	}
+}
+
+
+bool Version::extractMajorMinorVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor) {
+	std::vector<std::string> tokens;
+	IBK::explode(versionString, tokens, ".", IBK::EF_TrimTokens);
+	if (tokens.size() < 2)
+		return false;
+	try {
+		major = IBK::string2val<unsigned int>(tokens[0]);
+		minor = IBK::string2val<unsigned int>(tokens[1]);
+		return true;
+	}
+	catch (...) {
+		return false;
 	}
 }
 

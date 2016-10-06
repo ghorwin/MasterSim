@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -13,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_Path.h"
@@ -216,15 +217,18 @@ Path Path::absolutePath() const {
 	if( m_path.empty())
 		return *this;
 
-	// the path is already absolute
-	if( isAbsolute())
-		return *this;
+	Path result(m_path);
 
 	// path with placeholder cannot be converted into absolut path without resolving the placeholder
 	if( hasPlaceholder())
-		return *this;
+		return result;
 
-	Path result(m_path);
+	result.removeRelativeParts();
+
+	// the path is already absolute
+	if( isAbsolute())
+		return result;
+
 	Path currentPath = current();
 	// in case of './path' remove the './'
 	if( result.m_path.size() > 1 && result.m_path[0] == '.' && result.m_path[1] == '/')
@@ -241,7 +245,6 @@ Path Path::absolutePath() const {
 Path Path::relativePath(const Path& toPath) const {
 	const char * const FUNC_ID = "[Path::relativePath]";
 
-
 	if (!isValid() )
 		throw IBK::Exception("Empty/invalid path.", FUNC_ID);
 
@@ -249,97 +252,85 @@ Path Path::relativePath(const Path& toPath) const {
 		throw IBK::Exception("Other path argument is an empty/invalid path.", FUNC_ID);
 
 	Path absolute = absolutePath();
+	Path absoluteToPath = toPath.absolutePath();
+
+	if ( !absolute.isValid() )
+		throw IBK::Exception("Cannot create absolute path.", FUNC_ID);
+	if ( !absoluteToPath.isValid() )
+		throw IBK::Exception("Cannot create absolute path.", FUNC_ID);
+
+	// pathes are equal, no relative path possible
+	if (absolute == absoluteToPath)
+		return *this;
 
 	std::string driveCurrent = absolute.drive();
-	std::string driveRelPath = toPath.drive();
+	std::string driveRelPath = absoluteToPath.drive();
 
 	// cannot create relative path for windows if drives are different
 	if (driveCurrent != driveRelPath)
 		throw IBK::Exception("Different drives.", FUNC_ID);
 
-	if ( !absolute.isValid() )
-		throw IBK::Exception("Cannot create absolute path.", FUNC_ID);
+	// isLinux is set when the path begins with a leading slash
+	/// \todo check for network paths on windows if entered with slashes
 
-	// final Path to return
-	std::string finalPath;
+	bool isLinux = false;
+	std::vector<std::string> orgBranches;
+	IBK::explode(absolute.m_path, orgBranches, '/');
+	if (absolute.m_path[0] == '/') {
+		isLinux = true;
+		orgBranches.insert( orgBranches.begin(), "/" );
+	}
+
+	std::vector<std::string> toBranches;
+	IBK::explode(absoluteToPath.m_path, toBranches, '/');
+	if (absoluteToPath.m_path[0] == '/') {
+		toBranches.insert( toBranches.begin(), "/" );
+	}
+
+	if (orgBranches.empty()) {
+		throw IBK::Exception( IBK::FormatString("Invalid original path: '%1'").arg(m_path), FUNC_ID );
+	}
+
+	if (toBranches.empty()) {
+		throw IBK::Exception( IBK::FormatString("Invalid to path: '%1'").arg(absoluteToPath.m_path), FUNC_ID );
+	}
+
+	unsigned int equalCount = 0;
+	unsigned int minCount = std::min(orgBranches.size(), toBranches.size());
+	for (unsigned int i=0; i<minCount; ++i, ++equalCount) {
+		if (orgBranches[i] != toBranches[i])
+			break;
+	}
 
 	try {
 
-		// std::string result = IBK::relative_path(absolute.m_path, relPath.m_path);
-		// std::string relative_path(const std::string& filename, const std::string& relpath) {
+		IBK::Path finalPath;
+		int backCount = toBranches.size() - equalCount;
+		IBK_ASSERT(backCount >= 0); // should not possible to get negative backCount
 
-		std::string fname = absolute.m_path;
-		std::string name = absolute.filename().str();
-		std::string fpath = absolute.parentPath().str();
-
-		remove_trailing_slash(fpath);
-
-		std::string path = toPath.str();
-		trim(path);
-		remove_trailing_slash(path);
-
-		// if path is empty or relpath is equal to filename, it must be the root path, so we return the filename
-		if (path.empty() || path == fname)
-			return absolute;
-
-		// make a backup copy of the old string
-		std::string oldfpath = fpath;
-		while (string_nocase_find(path, fpath)==std::string::npos) {
-
-			size_t pos = fpath.rfind('$');
-			if (pos==std::string::npos) {
-
-				size_t pos = fpath.rfind('/');
-				if (pos!=std::string::npos)
-					fpath.erase(pos);
-				else
-					// not possible to find relative path, probably different drives
-					return absolute;
+		if (backCount == 0) {
+			if (isLinux)
+				finalPath = IBK::Path("./"); // we must not have an empty final path, at the end we remove the leading ./ again
+		}
+		else {
+			for (int i=0; i<backCount; ++i) {
+				finalPath /= IBK::Path("..");
 			}
-			else
-				// not possible to find relative path, probably different drives
-				return absolute;
-
-		};
-
-		// compose first part of post string
-		std::string postStr = oldfpath.substr(fpath.size());
-		if (postStr.empty())
-			postStr = name;
-		else
-			postStr += '/'+name;
-
-		// now go back the path until path is equal to fpath
-		std::string preStr;
-		while (!string_nocase_compare(path, fpath)) {
-			size_t pos = path.rfind('/');
-			if (pos!=std::string::npos) {
-				path.erase(pos);
-				preStr+="../";
-			}
-			else
-				// not possible to find relative path, probably different drives
-				return absolute;
 		}
 
-		// strip trailing / from preStr
-		if (!preStr.empty()) {
-			preStr.erase(preStr.size()-1);
-		}
-		finalPath = preStr + postStr;
+		int notEqualCount = orgBranches.size() - equalCount;
+		IBK_ASSERT(notEqualCount >= 0); // should not possible
 
-		// if we have a root path, remove the leading slash
-		if (!finalPath.empty() && finalPath[0] == '/')
-			finalPath = finalPath.substr(1,std::string::npos);
+		if (notEqualCount > 0)
+			finalPath /= absolute.subBranch(equalCount, notEqualCount); // add rest
+		// if resulting path becomes an absolute path (on Linux/Mac), remove leading slash
+		if (!finalPath.m_path.empty() && finalPath.m_path[0] == '/')
+			finalPath.m_path.erase(0,1);
+		return finalPath;
 	}
-
-	/// \todo check which routine emit exceptions here, if non remove this code
-	catch(...) {
-		return *this;
+	catch(IBK::Exception& e) {
+		throw IBK::Exception(e, "Error while creating final path", FUNC_ID);
 	}
-
-	return Path(finalPath);
-
 }
 
 
@@ -530,14 +521,23 @@ Path Path::withoutExtension() const {
 
 void Path::operator/=(const Path& subDir) {
 
-	if (subDir == "/" || subDir == "." || !subDir.isValid()) {
+	if (subDir == ".")
 		return;
+
+	if (subDir == "/" || !subDir.isValid()) {
+		return; /// \bug should this be exceptions?
 	}
 
 	if (subDir.m_path[0] != '/')
 		m_path.push_back('/');
 
 	m_path += subDir.m_path;
+
+	// special linux handling, we do not want ./ in front of path
+	if (m_path.find("./") == 0)  {
+		IBK_ASSERT(m_path.size() > 2);
+		m_path = m_path.substr(2);
+	}
 }
 
 
@@ -594,10 +594,26 @@ bool Path::hasPlaceholder() const {
 }
 
 
+std::pair<char,char> placeholderBrackets(const std::string& pathString) {
+	// check for Delphin5 placeholder type
+	if( pathString.find("$(") != std::string::npos && pathString.find(")") != std::string::npos)
+		return std::make_pair('(',')');
+
+	// check for Delphin6 placeholder type
+	if( pathString.find("{") != std::string::npos && pathString.find("}") != std::string::npos)
+		return std::make_pair('{','}');
+
+	return std::make_pair('\0','\0');
+}
+
 std::string Path::placeholderString() const {
 
-	std::string::size_type pos1 = m_path.find("{");
-	std::string::size_type pos2 = m_path.find("}", pos1);
+	std::pair<char,char> brackets = placeholderBrackets(m_path);
+	std::string bracketBegin(1, brackets.first);
+	std::string bracketEnd(1, brackets.second);
+
+	std::string::size_type pos1 = m_path.find(bracketBegin);
+	std::string::size_type pos2 = m_path.find(bracketEnd, pos1);
 
 	if ( pos1 == std::string::npos || pos2 == std::string::npos )
 	{
@@ -606,7 +622,6 @@ std::string Path::placeholderString() const {
 
 	return m_path.substr(pos1 + 1, pos2 - pos1 - 1);
 }
-
 
 Path Path::withReplacedPlaceholders(const std::map<std::string, Path> & placeHoldersMap) const {
 
@@ -627,10 +642,16 @@ Path Path::withReplacedPlaceholders(const std::map<std::string, Path> & placeHol
 
 	const char * const FUNC_ID = "[Path::withReplacedPlaceholders]";
 
-	std::string bracketBegin= "{";
-	std::string bracketEnd = "}";
-	std::vector<std::string> branches;
 	Path newPath(m_path); // newPath holds current path, including placeholders
+
+	std::pair<char,char> brackets = placeholderBrackets(m_path);
+	// no placeholder brackets found
+	if(brackets.first == '\0')
+		return newPath;
+
+	std::string bracketBegin(1, brackets.first);
+	std::string bracketEnd(1, brackets.second);
+	std::vector<std::string> branches;
 
 	// remember whether our path is a root path
 	bool haveRootPath = false;
@@ -647,9 +668,10 @@ Path Path::withReplacedPlaceholders(const std::map<std::string, Path> & placeHol
 		for (std::vector<std::string>::iterator bit=branches.begin(); bit!=branches.end(); ++bit) {
 			IBK::Path placeholderPath;
 			std::string completePlaceholder;
+			std::string currentBranch = *bit;
 			for (std::map<std::string,IBK::Path>::const_iterator pit = placeHoldersMap.begin(); pit != placeHoldersMap.end(); ++pit) {
 				completePlaceholder = "$" + bracketBegin + pit->first + bracketEnd;
-				if (*bit == completePlaceholder) {
+				if (currentBranch == completePlaceholder) {
 					if (pit->second.str().empty())
 						throw IBK::Exception( IBK::FormatString("Path for placeholder '%1' is empty.").arg(pit->first), FUNC_ID);
 					placeholderPath = pit->second;
@@ -664,12 +686,12 @@ Path Path::withReplacedPlaceholders(const std::map<std::string, Path> & placeHol
 					// check if *bit has a drive letter (in Windows), in this case do not prepend the /
 					// otherwise, we have a root path and need to prepend the slash
 					if (!IBK::Path(*bit).drive().empty() || !haveRootPath)
-						newPath = *bit;
+						newPath = currentBranch;
 					else
-						newPath /= *bit;
+						newPath /= currentBranch;
 				}
 				else
-					newPath /= *bit;
+					newPath /= currentBranch;
 			}
 			else {
 				// if placeHolderPath is an absolut path (on windows contains drive letters, on Unix starts with slash)
@@ -855,18 +877,15 @@ Path Path::subBranch(unsigned int begin, unsigned int count) const {
 	if ( begin > size-1 )
 		throw IBK::Exception( "Illegal index for branch start.", FUNC_ID );
 
-	if( count == 0)
+	// special case, append all branches after begin
+	if (count == 0)
 		count = size - begin;
 
-
 	unsigned int end = begin + count;
-	if( end > size)
-		end = size;
-
+	if (end > size)
+		throw IBK::Exception( "Start index or count too large.", FUNC_ID );
 
 	Path result;
-	if( begin >= end)
-		return result;
 
 	result = branches[begin];
 	for( unsigned int i=begin+1; i<end; ++i) {
@@ -1153,15 +1172,15 @@ Path Path::current() {
 	if(! _wgetcwd(currentDir, FILENAME_MAX)) {
 		switch(errno) {
 			case ENOMEM: {
-				IBK::IBK_Message( FormatString("Out of memory! Can not reserve %1 bytes").arg(FILENAME_MAX), IBK::MSG_ERROR, "[userDirectory()]", IBK::VL_ALL );
+				IBK::IBK_Message( FormatString("Out of memory! Can not reserve %1 bytes").arg(FILENAME_MAX), IBK::MSG_ERROR, "[current()]", IBK::VL_ALL );
 				break;
 			}
 			case ERANGE: {
-				IBK::IBK_Message( FormatString("Path longer than %1 characters").arg(FILENAME_MAX), IBK::MSG_ERROR, "[userDirectory()]", IBK::VL_ALL );
+				IBK::IBK_Message( FormatString("Path longer than %1 characters").arg(FILENAME_MAX), IBK::MSG_ERROR, "[current()]", IBK::VL_ALL );
 				break;
 			}
 			default: {
-				IBK::IBK_Message( "Couldn't deduce user directory. ", IBK::MSG_ERROR, "[userDirectory()]", IBK::VL_ALL );
+				IBK::IBK_Message( "Couldn't deduce user directory. ", IBK::MSG_ERROR, "[current()]", IBK::VL_ALL );
 			}
 		}
 
@@ -1177,7 +1196,7 @@ Path Path::current() {
 	char currentDir[FILENAME_MAX] = {0};
 	if(!getcwd(currentDir, FILENAME_MAX)) {
 		/// \todo some more error handling here
-		IBK::IBK_Message( "Couldn't deduce user directory. ", IBK::MSG_ERROR, "[userDirectory()]", IBK::VL_ALL );
+		IBK::IBK_Message( "Couldn't deduce user directory. ", IBK::MSG_ERROR, "[current()]", IBK::VL_ALL );
 		return Path("");
 	}
 	return Path(currentDir);
@@ -1314,6 +1333,11 @@ bool Path::remove(const IBK::Path & p) {
 #if defined(_WIN32)
 	const char* FUNC_ID = "[Path::remove]";
 
+	if( !p.exists()) {
+		IBK_Message(FormatString("Cannot remove '%1'.\n'File doesn't exist' !").arg(p.str()), MSG_ERROR, FUNC_ID);
+		return false;
+	}
+
 	SHFILEOPSTRUCTW stSHFileOpStruct;
 	std::memset(&stSHFileOpStruct,0,sizeof(stSHFileOpStruct));
 
@@ -1324,20 +1348,23 @@ bool Path::remove(const IBK::Path & p) {
 		wtempstr.push_back(L'\0');
 		stSHFileOpStruct.wFunc = FO_DELETE;
 		stSHFileOpStruct.pFrom = &wtempstr[0];
-		stSHFileOpStruct.fFlags = FOF_NOCONFIRMATION | FOF_SILENT | FOF_ALLOWUNDO;
+		stSHFileOpStruct.fFlags = FOF_NOCONFIRMATION | FOF_SILENT | FOF_NOERRORUI;
 		int nFileDeleteOprnRet = SHFileOperationW( &stSHFileOpStruct );
-		if(nFileDeleteOprnRet != 0) {
-			int abort = stSHFileOpStruct.fAnyOperationsAborted;
-			if(abort) {
-				IBK_Message(FormatString("Copy abort by user!"), MSG_ERROR, FUNC_ID);
-			}
-			else {
-				std:: string errmsg = GetLastErrorMessage(nFileDeleteOprnRet);
-				IBK_Message(FormatString("Error while copy '%1' !").arg(errmsg), MSG_ERROR, FUNC_ID);
-			}
-			return false;
+		if(nFileDeleteOprnRet == 0)
+			return true;
+
+		if(stSHFileOpStruct.fAnyOperationsAborted) {
+			IBK_Message(FormatString("Remove abort by user!"), MSG_ERROR, FUNC_ID);
 		}
-		return true;
+		else {
+			std:: string errmsg = GetLastErrorMessage(nFileDeleteOprnRet);
+			IBK_Message(FormatString("Error while remove '%1'.\n'%2' !").arg(p.str()).arg(errmsg), MSG_ERROR, FUNC_ID);
+		}
+		return false;
+	}
+	catch(std::exception& e) {
+		IBK_Message(FormatString("Error while remove '%1'.\n'%2' !").arg(p.str()).arg(e.what()), MSG_ERROR, FUNC_ID);
+		return false;
 	}
 	catch(...) {
 		return false;
@@ -1347,11 +1374,10 @@ bool Path::remove(const IBK::Path & p) {
 	// delete path
 	std::string str("rm -rf ");
 	str.append(p.str().c_str());
-	if ( std::system( str.c_str() ) ) {
+	if ( std::system( str.c_str() ) )
 		return false;
-	} else {
-		return true;
-	}
+
+	return true;
 #endif
 
 }
@@ -1457,7 +1483,7 @@ bool Path::copy(const IBK::Path & source, const IBK::Path & target){
 					}
 					else {
 						std:: string errmsg = GetLastErrorMessage(res);
-						IBK_Message(FormatString("Error while copy '%1' !").arg(errmsg), MSG_ERROR, FUNC_ID);
+						IBK_Message(FormatString("Error while copy '%1'.\n'%1' !").arg(source.str()).arg(errmsg), MSG_ERROR, FUNC_ID);
 					}
 					return false;
 				}
@@ -1775,14 +1801,14 @@ std::string Path::firstCharToUpperUtf8(const std::string& orig) const {
 			++i;
 		} else {
 			wchar_t wChar;
-			int len = mbrtowc(&wChar, &orig[i], MB_CUR_MAX, &state);
+			int len = std::mbrtowc(&wChar, &orig[i], MB_CUR_MAX, &state);
 			// If this assertion fails, there is an invalid multi-byte character.
 			// However, this usually means that the locale is not utf8.
 			// Note that the default locale is always C. Main classes need to set them
 			// To utf8, even if the system's default is utf8 already.
 			IBK_ASSERT(len > 0 && len <= static_cast<int>(MB_CUR_MAX));
 			i += len;
-			int ret = wcrtomb(&buf[0], towupper(wChar), &state);
+			int ret = std::wcrtomb(&buf[0], towupper(wChar), &state);
 			IBK_ASSERT(ret > 0 && ret <= static_cast<int>(MB_CUR_MAX));
 			buf[ret] = 0;
 			retVal += &buf[0];

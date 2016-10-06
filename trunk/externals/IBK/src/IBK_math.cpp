@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_configuration.h"
@@ -138,13 +139,14 @@ double scale2(double x, double epsilon) {
 	if (x >= epsilon)
 		return 1;
 
+#ifdef USE_COSINE
 	return 0.5 - 0.5 * std::cos(x * 3.141592654 / epsilon);
+#else //USE_COSINE
+	double xinv = 1-x/epsilon;
+	// alternatively, you can also add an exponent to xinv
+	return 1 + xinv*xinv*(-3 + 2*xinv);
+#endif // USE_COSINE
 }
-
-double scale2(double x) {
-	return scale2(x, 1.0);
-}
-// -----------------------------------------------------------------------------
 
 
 double error_function(double x) {

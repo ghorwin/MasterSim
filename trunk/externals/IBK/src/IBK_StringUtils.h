@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -13,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation
+	   this list of conditions and the following disclaimer in the documentation 
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_StringUtilsH
@@ -362,6 +363,16 @@ size_t explode(const std::string& str, std::list<std::string>& tokens,
 */
 size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, char delim = ' ');
 
+/*! Explodes the string 'str' into max 2 substrings (stored in the string list
+	'tokens'), which were separated by 'delim' characters.
+	Works essentially like the function above, but allows specification of several separation characters.
+	\param str The input string.
+	\param tokens A vector, will be resized to 2.
+	\param delim Delimiting characters.
+	\return Returns number of tokens extracted, 1 if the delimiter is missing (in this case the
+			whole string is returned in tokens[0].
+	\deprecated
+*/
 size_t explode_in2(const std::string& str, std::vector<std::string>& tokens, const std::string & delims);
 
 /*! Explodes the CSV (comma-separated-values) string 'str' into substrings stored

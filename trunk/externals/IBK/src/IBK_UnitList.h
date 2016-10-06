@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #ifndef IBK_UnitListH
@@ -59,6 +60,8 @@ class Unit;
 	convertible_units() can be used to create a vector of units that can be converted in
 	or from each other. The member functions relate_units() and convert() are useful
 	if you want to implement a container, such as UnitVector.
+
+	\todo Unify the function implementation of read_default() and read().
 */
 class UnitList : public ptr_list<UnitData> {
 public:
@@ -68,7 +71,7 @@ public:
 
 	/*! Reads the unit list from the file 'filename'.
 		The unit list will be usually read from a file, but can be read from a stream
-		(e.g. stringstream) also. Take a look at the example unit list file for info
+		(e.g. stringstream) too. Take a look at the example unit list file for info
 		about the format.
 		If the second parameter is 'true', the unit list will be erased before new
 		units are read from the file. Otherwise read units are just added to the list.
@@ -76,6 +79,8 @@ public:
 		If the unit list cannot be found or opened, the function simply returns 'false' and
 		does not throw an exception.
 		If the unit list can be read without problems the function returns 'true'.
+		\param filename Valid filename for unit list (must exist and UTF8 encoded).
+		\param overwrite If false readed units will be appended to existing list otherwise existing list will be overwritten.
 	*/
 	bool read_file(const std::string& filename, bool overwrite=false);
 

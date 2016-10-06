@@ -1,5 +1,4 @@
-/*	IBK library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -31,8 +30,10 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-	This library contains derivative work based on other open-source libraries,
-	see LICENSE and OTHER_LICENSES files.
+
+	This library contains derivative work based on other open-source libraries. 
+	See OTHER_LICENCES and source code headers for details.
+
 */
 
 #include "IBK_configuration.h"
@@ -43,6 +44,7 @@
 #include "IBK_FormatString.h"
 #include "IBK_StringUtils.h"
 #include "IBK_Unit.h"
+#include "IBK_Path.h"
 
 using namespace std;
 
@@ -150,7 +152,7 @@ FormatString & FormatString::arg(unsigned int i, int fieldWidth) {
 	return *this;
 }
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) || defined(_WIN64)
 FormatString & FormatString::arg(size_t i, int fieldWidth) {
 	if (fieldWidth==0)
 		m_arguments.push_back(val2string(i));
