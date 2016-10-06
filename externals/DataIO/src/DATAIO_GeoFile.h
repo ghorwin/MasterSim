@@ -203,8 +203,9 @@ public:
 	*/
 	void read(const IBK::Path & fname, IBK::NotificationHandler * notify = NULL);
 
-	/*! Adjusts filename and extension based on binary flag.
-		This function expects a filename to be set already, otherwise it throws an IBK::Exception with an error message.
+	/*! Adjusts filename and extension based on binary flag. ASCII files receive the g6a extension, binary files
+		get g6b as file extension. This function expects a filename to be set already, otherwise it
+		throws an IBK::Exception with an error message.
 	*/
 	void adjustFileName();
 

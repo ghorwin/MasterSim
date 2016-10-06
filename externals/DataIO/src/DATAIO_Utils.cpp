@@ -45,9 +45,14 @@ void listDataIOHeader(const IBK::Path &inputFilePath) {
 
 	// compose path to geofile
 	DATAIO::GeoFile gFile;
-	if (dFile.m_geoFileName.isValid()) {
-		IBK::Path geoFilePath = inputFilePath.parentPath() / dFile.m_geoFileName;
-		gFile.read(geoFilePath);
+	try {
+		if (dFile.m_geoFileName.isValid()) {
+			IBK::Path geoFilePath = inputFilePath.parentPath() / dFile.m_geoFileName;
+			gFile.read(geoFilePath);
+		}
+	}
+	catch(IBK::Exception& e) {
+		IBK::IBK_Message("Cannot read geofile from " + inputFilePath.str(), IBK::MSG_WARNING, "DataIO::listDataIOHeader");
 	}
 
 	listDataIOHeader(dFile, gFile);
@@ -97,8 +102,7 @@ void listDataIOHeader( const DataIO & dFile, GeoFile & gFile) {
 	IBK::IBK_Message("Value unit     : " + dFile.m_valueUnit + "\n",IBK::MSG_PROGRESS);
 	IBK::IBK_Message("Time unit      : " + dFile.m_timeUnit + "\n",IBK::MSG_PROGRESS);
 
-	if ( dFile.majorVersionNumber() >= 6 )
-		IBK::IBK_Message("Start year     : " + IBK::val2string(dFile.m_startYear) + "\n",IBK::MSG_PROGRESS);
+	IBK::IBK_Message("Start year     : " + IBK::val2string(dFile.m_startYear) + "\n",IBK::MSG_PROGRESS);
 
 	// print data format type
 	DATAIO::DataIO::dataFormat_t ot = dFile.dataFormat();
