@@ -1,15 +1,16 @@
 @echo off
 
 :: setup VC environment variables
-set VCVARSALL_PATH="c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat"
+set VCVARSALL_PATH="c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
 call %VCVARSALL_PATH%
 
 :: These environment variables can also be set externally
 if not defined JOM_PATH (
-	set JOM_PATH=c:\Qt\qtcreator-3.2.2\bin
+	set JOM_PATH=c:\Qt\5.7.0_VC14\Tools\QtCreator\bin
 )
-if not defined QMAKE_PATH (
-	set QMAKE_PATH=c:\Qt\4.8.6_VC10\bin\qmake.exe
+
+if not defined CMAKE_PREFIX_PATH (
+	set CMAKE_PREFIX_PATH=c:\Qt\5.7.0_VC14\5.7\msvc2015
 )
 
 :: add search path for jom.exe
@@ -20,12 +21,21 @@ mkdir bb_VC
 pushd bb_VC
 
 :: configure makefiles and build
-cmake -G "NMake Makefiles JOM" .. -DCMAKE_BUILD_TYPE:String="Release" -DQT_QMAKE_EXECUTABLE=%QMAKE_PATH%
+cmake -G "NMake Makefiles JOM" .. -DCMAKE_BUILD_TYPE:String="Release"
 jom
+if ERRORLEVEL 1 GOTO fail
 
 popd
+
 
 :: copy executable to bin/release dir
 xcopy /Y .\bb_VC\MasterSimulator\MasterSimulator.exe ..\..\bin\release
 xcopy /Y .\bb_VC\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release
+
+exit 0
+
+:fail
+pause
+exit 1
+
 

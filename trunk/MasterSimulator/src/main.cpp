@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 
 #include <IBK_WaitOnExit.h>
 #include <IBK_SolverArgsParser.h>
