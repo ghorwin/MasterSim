@@ -6,14 +6,14 @@ UsePreviousAppDir=false
 UsePreviousGroup=false
 InternalCompressLevel=ultra
 
-AppName=MasterSimulator
-AppVerName=MasterSimulator ${Version}
+AppName=MasterSimulator 64-Bit
+AppVerName=MasterSimulator ${Version} 64-Bit
 AppVersion=${LongVersion}
 DefaultDirName={pf}\IBK\MasterSimulator ${Version}
 DefaultGroupName=IBK\MasterSimulator ${Version}
 OutputBaseFilename=${OutputFileBasename}
 VersionInfoVersion=${LongVersion}
-VersionInfoDescription=MasterSimulator
+VersionInfoDescription=MasterSimulator 64-Bit
 UninstallDisplayIcon={app}\MasterSimulatorUI.exe
 
 AppPublisher=MasterSim Developers
@@ -24,20 +24,21 @@ VersionInfoCompany=Bauklimatik Dresden
 VersionInfoCopyright=${CurrentYear} Andreas Nicolai
 AppCopyright=${CurrentYear} Andreas Nicolai
 LicenseFile=..\..\doc\LICENSE
+ArchitecturesInstallIn64BitMode=x64
 
 
 [Files]
 
 ; Program files
-Source: ..\..\bin\release\MasterSimulator.exe; DestDir: {app}
-Source: ..\..\bin\release\MasterSimulatorUI.exe; DestDir: {app}
-Source: VC14\msvcp140.dll; DestDir: {app}
-Source: VC14\Qt5Core.dll; DestDir: {app}
-Source: VC14\Qt5Gui.dll; DestDir: {app}
-Source: VC14\Qt5Network.dll; DestDir: {app}
-Source: VC14\Qt5Widgets.dll; DestDir: {app}
-Source: VC14\vcruntime140.dll; DestDir: {app}
-Source: VC14\platforms\qwindows.dll; DestDir: {app}\platforms
+Source: ..\..\bin\release_x64\MasterSimulator.exe; DestDir: {app}
+Source: ..\..\bin\release_x64\MasterSimulatorUI.exe; DestDir: {app}
+Source: VC14_x64\msvcp140.dll; DestDir: {app}
+Source: VC14_x64\Qt5Core.dll; DestDir: {app}
+Source: VC14_x64\Qt5Gui.dll; DestDir: {app}
+Source: VC14_x64\Qt5Network.dll; DestDir: {app}
+Source: VC14_x64\Qt5Widgets.dll; DestDir: {app}
+Source: VC14_x64\vcruntime140.dll; DestDir: {app}
+Source: VC14_x64\platforms\qwindows.dll; DestDir: {app}\platforms
 
 ; Translation files
 Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
