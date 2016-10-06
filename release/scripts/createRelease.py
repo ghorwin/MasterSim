@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-# IBK Deployment Script System
-# Copyright Andreas Nicolai <andreas.nicolai -at- tu-dresden.de>
-# Released under BSD License.
-#
-#
 # Script for configuring a build and building the application, then configuring deployment and
 # creating installer.
 #
@@ -68,6 +63,9 @@ def configCommandLineArguments():
 	parser.add_argument('--build-script', dest="build_script", required=False, type=str, 
 	                    help='Alternative script file name (if missing,  build.sh or build_VC.bat are assumed, '
 	                    'respective to the current platform).')
+	parser.add_argument('--x64', dest='x64', required=False, action='store_true', default=False,
+	                    help='Only meaningful for Windows builds. If set, the automatically generated build script name is changed from "build_VC.bat" to "build_VC_x64.bat", the '
+						'deployment script name is changed from "deploy.iss" to "deploy64.iss", and "64" is appended to the win-output file name.')
 	parser.add_argument('--constants-path', dest='constantsPath', required=True, type=str, 
 	                    help='Path to directory containing the xxxConstants.cpp file with version and '
 	                    'long version number.')
@@ -130,7 +128,7 @@ try:
 	if not args.skip_build:
 		if not args.silent:
 			raw_input("Configuration done, press any key to start build!");
-		buildApplication(args.build_script)
+		buildApplication(args.build_script, args.x64)
 	
 	if not args.skip_deployment:
 		# Extract Version and Long Version of current Application
@@ -139,8 +137,7 @@ try:
 
 		# Adapting deploy scripts or iss installer scripts of current Application.
 		print "Configuring deployment files"
-		deployScript = configDeployment( productConf, args.nightly )
-
+		deployScript = configDeployment( productConf, args.nightly, args.x64 )
 		# Script is done, calling shell/batch script shall now package the application.
 		if not args.silent:
 			raw_input("Build done, press any key to start packaging!");

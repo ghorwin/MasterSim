@@ -1,10 +1,5 @@
 #!/usr/bin/python
 
-# IBK Deployment Script System
-# Copyright Andreas Nicolai <andreas.nicolai -at- tu-dresden.de>
-# Released under BSD License.
-#
-#
 # This file holds functions that configure deployment/installer scripts.
 # Script is expected to be called with working directory equal to the respective
 # platform release scripts, i.e. ./release/win or ./release/linux.
@@ -30,13 +25,13 @@ def extractVersionNumber( pathToConstants ):
 	The version number is a constant in IBK solvers and apps and will be taken to identify the current status.
 	After extracting the current number it can be used as suffix in folder names, etc.
 	To read the version number the IBK specific notation has to be realized in the *Constants.cpp of solver or app.
-	
+
 	Returns a tuple of (version, longVersion)
 	"""
 	versionNumber        = ""
 	searchExpVersion     = "const char * const VERSION"
 	searchExpLongVersion = "const char * const LONG_VERSION"
-	
+
 	version              = None
 	longVersion         = None
 
@@ -50,28 +45,28 @@ def extractVersionNumber( pathToConstants ):
 				pathToFile = os.path.join( root, currentFile )
 
 				with open(pathToFile, mode='r', buffering=1) as f:
-					
+
 					for line in f.readlines():
-						
+
 						if searchExpVersion in line:
 							versionNumber = line.split("=")[1]
 							version = versionNumber.strip(" \";\n")
-						
+
 						if searchExpLongVersion in line:
 							versionNumber = line.split("=")[1]
 							longVersion = versionNumber.strip(" \";\n")
-							
+
 				f.close()
 
 				if longVersion == None or version == None:
 					raise RuntimeError("Missing or invalid version/long version number in file '{}'"
-					                   .format(pathToFile))
+									   .format(pathToFile))
 
 				return version, longVersion
 
 	if longVersion == None or version == None:
 		raise RuntimeError("Missing xxxConstants.cpp file in directory '{}'.".format(pathToConstants))
-	
+
 	return version, longVersion
 
 
@@ -86,7 +81,7 @@ def replacePlaceholders(fn, keyValues):
 	- *fn*         file path
 	- *keyValues*  dictionary of placeholder-value pairs, keys do not include ${}
 	"""
-	
+
 	# read content of file
 	if not os.path.exists(fn):
 		raise RuntimeError("File '{}' not found.".format(fn))
@@ -107,7 +102,7 @@ def replacePlaceholders(fn, keyValues):
 				pos2 = line.find("}", pos)
 				if pos2 != -1 and pos2 > pos:
 					placeholder = line[pos+2:pos2]
-					
+
 					found = False
 					for key,value in keyValues.iteritems():
 						if placeholder == key:
@@ -133,12 +128,12 @@ def replacePlaceholders(fn, keyValues):
 
 
 
-def configDeployment( product, nightlyBuild):
+def configDeployment( product, nightlyBuild, x64):
 	"""
 	This method replaces variable values in deploy.sh or deploy.iss files.
 	The files are expected relative to this script ../<OS>/deploy.sh or ../<currentOS>/deploy.iss
 	"""
-	
+
 	suffix = ""
 	if nightlyBuild:
 		suffix = datetime.datetime.now().strftime("_%Y-%m-%d")
@@ -153,19 +148,19 @@ def configDeployment( product, nightlyBuild):
 	product.parameters["LongVersion"] = product.longVersion
 	product.parameters["ProductID"] = product.productID
 	product.parameters["CurrentYear"] = currentYear
-	
+
 	currentOS = getCurrentOS()
 	if currentOS   == "linux":
 		# ../linux/deploy.sh
 
 		pathToDeploy = os.path.join( os.getcwd(), '../linux', 'deploy.sh' )
-	
+
 		# create copy of input/template file
 		shutil.copyfile(pathToDeploy+".in", pathToDeploy) 
-		
+
 		product.parameters["OutputDirectoryName"] = product.productID + "-" + product.version
 		product.parameters["OutputFileBasename"] = product.productID + "_" + product.longVersion + "_linux" + suffix
-                product.parameters["CreateArchive"] = """# finally create 7z
+		product.parameters["CreateArchive"] = """# finally create 7z
 7z a -t7z -m0=lzma -mx=9 -mfb=64 -md=32m -ms=on $OUTPUT_FILE_BASENAME.7z $OUTPUT_DIRECTORY_NAME &&
 
 echo "Created '$OUTPUT_FILE_BASENAME.7z'"
@@ -173,15 +168,15 @@ echo "Created '$OUTPUT_FILE_BASENAME.7z'"
 
 	elif currentOS == "mac" :
 		# ../mac/deploy.sh
-	
+
 		pathToDeploy = os.path.join( os.getcwd(), '../mac', 'deploy.sh' )
-	
+
 		# create copy of input/template file
 		shutil.copyfile(pathToDeploy+".in", pathToDeploy)
 
 		product.parameters["OutputDirectoryName"] = product.productID + "-" + product.version
 		product.parameters["OutputFileBasename"] = product.productID + "_" + product.longVersion + "_macosx" + suffix
-		
+
 		# ../mac/plist.info
 		fullPath = os.path.join( os.getcwd(), '../mac', 'Info.plist' )
 		if not os.path.exists(fullPath+".in"):
@@ -192,9 +187,13 @@ echo "Created '$OUTPUT_FILE_BASENAME.7z'"
 	elif currentOS == "win" :
 		# ../win/deploy.iss
 
-		pathToDeploy = os.path.join( os.getcwd(), '..\\win', 'deploy.iss' )
-		product.parameters["OutputFileBasename"] = product.productID + "_" + product.longVersion + "_win" + suffix
-		
+		if x64:
+			pathToDeploy = os.path.join( os.getcwd(), '..\\win', 'deploy64.iss' )
+			product.parameters["OutputFileBasename"] = product.productID + "_" + product.longVersion + "_win64" + suffix
+		else:
+			pathToDeploy = os.path.join( os.getcwd(), '..\\win', 'deploy.iss' )
+			product.parameters["OutputFileBasename"] = product.productID + "_" + product.longVersion + "_win" + suffix
+
 	# create copy of input/template file
 	shutil.copyfile(pathToDeploy+".in", pathToDeploy) 
 
