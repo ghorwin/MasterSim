@@ -21,7 +21,7 @@
      <x>0</x>
      <y>0</y>
      <width>1100</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -77,9 +77,6 @@
    <property name="toolTip">
     <string>Creates a new project</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
-   </property>
   </action>
   <action name="actionFileOpen">
    <property name="icon">
@@ -92,9 +89,6 @@
    <property name="toolTip">
     <string>Opens a project file.</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
   </action>
   <action name="actionFileSave">
    <property name="icon">
@@ -106,9 +100,6 @@
    </property>
    <property name="toolTip">
     <string>Saves current changes.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionFileSaveAs">
@@ -147,9 +138,6 @@
    </property>
    <property name="toolTip">
     <string>Quits the application.</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
    </property>
    <property name="menuRole">
     <enum>QAction::QuitRole</enum>

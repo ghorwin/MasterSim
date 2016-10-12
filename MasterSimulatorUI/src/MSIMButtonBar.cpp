@@ -86,6 +86,8 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 
 	lay->setMargin(4);
 	setLayout(lay);
+
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 
