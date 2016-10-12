@@ -43,7 +43,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 	// download news content (only once per application start)
 	if (m_welcomePageNews.isEmpty()) {
 		// download file
-		QNetworkRequest request; //(QUrl(NEWS_URL));
+		QNetworkRequest request(QUrl("http://www.bauklimatik-dresden.de/downloads/mastersim/news.html"));
 		/*QNetworkReply *reply = */m_networkManager->get(request);
 	}
 	// now create overall page
@@ -241,6 +241,8 @@ void MSIMWelcomeScreen::downloadFinished(QNetworkReply *reply) {
 				}
 			}
 		}
+		news.replace("${VERSION}", MASTER_SIM::LONG_VERSION);
+
 		m_welcomePageNews = QString("<p>&nbsp;<p><hr>") + news;
 	}
 
