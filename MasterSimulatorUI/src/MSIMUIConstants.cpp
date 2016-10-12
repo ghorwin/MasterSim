@@ -9,8 +9,6 @@ const char * const ORG_NAME				= "IBK";
 const char * const PROGRAM_NAME			= "MasterSim %1";
 const char * const DOT_FILE_EXTENSION	= ".msim";
 
-extern const char * const NEWS_URL		= "";
-
 #if defined(Q_OS_MAC) // Q_OS_UNIX
 
 const int TABLE_FONT_SIZE = 10;

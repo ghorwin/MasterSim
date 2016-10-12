@@ -12,9 +12,6 @@ extern const char * const ORG_NAME;
 	defined settings and the MRU list. */
 extern const char * const PROGRAM_NAME;
 
-/*! URL for news content to show on welcome page. */
-extern const char * const NEWS_URL;
-
 /*! Composes program name and version string. */
 inline QString PROGRAM_VERSION_NAME() { return QString(PROGRAM_NAME).arg(MASTER_SIM::VERSION); }
 
