@@ -7,6 +7,7 @@
 #include <IBK_StringUtils.h>
 #include <IBK_FileUtils.h>
 #include <IBK_assert.h>
+#include <IBK_UnitList.h>
 
 #include "MSIM_Constants.h"
 
@@ -192,6 +193,20 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 }
 
 
+void writeParameter(const IBK::Parameter & p, std::ostream& out, unsigned int indent, unsigned int paramWidth) {
+	double v = p.value;
+	IBK::UnitList::instance().convert(IBK::Unit(p.IO_unit.base_id()), p.IO_unit, v);
+	out << std::string(indent, ' ');
+	if (p.name.size()) {
+		if (paramWidth > p.name.size())
+			out << std::setw(paramWidth) << std::left << p.name << " ";
+		else
+			out << p.name << " ";
+	}
+	out << v << " " << p.IO_unit.name() << std::endl;
+}
+
+
 void Project::write(const IBK::Path & prjFile) const {
 	const char * const FUNC_ID = "[Project::write]";
 
@@ -206,13 +221,13 @@ void Project::write(const IBK::Path & prjFile) const {
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
 
 
-	if (!m_tStart.empty())		m_tStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_tEnd.empty())		m_tEnd.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_hMax.empty())		m_hMax.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_hMin.empty())		m_hMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_hFallBackLimit.empty())		m_hFallBackLimit.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_hStart.empty())		m_hStart.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
-	if (!m_hOutputMin.empty())		m_hOutputMin.write(out, KEYWORD_INDENTATION, KEYWORD_WIDTH, true);
+	if (!m_tStart.empty())		writeParameter(m_tStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_tEnd.empty())		writeParameter(m_tEnd, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_hMax.empty())		writeParameter(m_hMax, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_hMin.empty())		writeParameter(m_hMin, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_hFallBackLimit.empty())		writeParameter(m_hFallBackLimit, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_hStart.empty())		writeParameter(m_hStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	if (!m_hOutputMin.empty())		writeParameter(m_hOutputMin, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	out << std::setw(KEYWORD_WIDTH) << std::left << "binaryOutputFiles" << " " << (m_binaryOutputFiles ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "absTol" << " " << m_absTol << std::endl;
