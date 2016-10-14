@@ -1,12 +1,18 @@
-Release Notes for Version 0.3 of MasterSimulator
-================================================
+Release Notes and ChangeLog for MasterSimulator
+===============================================
+
+Changelog for Version 0.4.3
+---------------------------
+
+* 32bit and 64bit Windows platforms supported
+* Bugfix: Main window short cuts work again
+* Bugfix: Project file format correctly written from user interface (parameter format fixed)
 
 Changelog for Version 0.4
 -------------------------
 
 * Bugfix: when adding slaves before project had been saved already, UI got stuck
 * Stability improvement: added Gauss-Jacobi initial value iteration (when FMUs are in initialization mode).
-
 
 Changelog for Version 0.3
 -------------------------
@@ -21,9 +27,6 @@ Things you can do:
 * you can add slaves
 * you can define connections, even with the "same-name" auto-connection feature
 * you can specify simulation parameters and run the simulation
-
- 
-User Manual will be updated for release 0.4.
 
 
 Changelog for Version 0.2
