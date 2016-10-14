@@ -32,10 +32,9 @@ popd
 xcopy /Y .\bb_VC_x64\MasterSimulator\MasterSimulator.exe ..\..\bin\release_x64
 xcopy /Y .\bb_VC_x64\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release_x64
 
-exit 0
+exit /b 0
 
 :fail
-pause
-exit 1
+exit /b 1
 
 

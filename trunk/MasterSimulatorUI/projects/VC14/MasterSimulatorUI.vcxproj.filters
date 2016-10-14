@@ -459,4 +459,9 @@
   <ItemGroup>
     <ResourceCompile Include="..\..\resources\MasterSimulator.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\release\readme.md" />
+    <None Include="..\..\..\release\release_notes.md" />
+    <None Include="..\..\..\third-party\README.md" />
+  </ItemGroup>
 </Project>
