@@ -10,7 +10,7 @@ AppName=MasterSimulator 64-Bit
 AppVerName=MasterSimulator ${Version} 64-Bit
 AppVersion=${LongVersion}
 DefaultDirName={pf}\IBK\MasterSimulator ${Version}
-DefaultGroupName=IBK\MasterSimulator ${Version}
+DefaultGroupName=IBK\MasterSimulator ${Version} 64-Bit
 OutputBaseFilename=${OutputFileBasename}
 VersionInfoVersion=${LongVersion}
 VersionInfoDescription=MasterSimulator 64-Bit
@@ -56,12 +56,12 @@ Name: {app}; Type: filesandordirs
 Name: {app}; Type: filesandordirs
 
 [Icons]
-Name: {group}\MasterSimulator ${Version}; Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; IconIndex: 0
-Name: {group}\MasterSimulator ${Version} Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
+Name: {group}\MasterSimulator ${Version} 64-Bit; Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; IconIndex: 0
+Name: {group}\MasterSimulator ${Version} 64-Bit Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
 
 [Run]
-Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version}; Languages: Deutsch
-Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Run MasterSimulator ${Version}; Languages: English
+Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version} 64-Bit; Languages: Deutsch
+Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Run MasterSimulator ${Version} 64-Bit; Languages: English
 
 [Languages]
 Name: English; MessagesFile: compiler:Default.isl
