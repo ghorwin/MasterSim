@@ -65,12 +65,22 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 	// read file line-by-line
 	std::string line;
 	int lineNr = 0;
+	bool leadingComment = true;
 	while (std::getline(in, line)) {
 		++lineNr;
 		IBK::trim(line);
 		// skip empty lines or comments
-		if (line.find_first_not_of(" \t\r") == std::string::npos || line[0] == '#')
+		if (line.find_first_not_of(" \t\r") == std::string::npos)
 			continue;
+
+		// check for comment
+		if (line[0] == '#') {
+			if (leadingComment)
+				m_comment += line + "\n";
+			continue;
+		}
+
+		leadingComment = false;
 
 		try {
 			std::vector<std::string> tokens;
@@ -220,6 +230,10 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!out)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
 
+	// write leading comment, must hold '\n' separated lines with each line beginning with '#'
+	out << m_comment;
+	if (!m_comment.empty())
+		out << std::endl;
 
 	if (!m_tStart.empty())		writeParameter(m_tStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_tEnd.empty())		writeParameter(m_tEnd, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
