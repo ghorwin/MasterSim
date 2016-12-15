@@ -10,7 +10,7 @@ namespace MASTER_SIM {
 
 void AlgorithmNewton::init() {
 	// resize matrix and variable index mapping vectors
-	unsigned int nCycles = m_master->m_cycles.size();
+	size_t nCycles = m_master->m_cycles.size();
 	m_jacobianMatrix.resize(nCycles);
 	m_variableIdxMapping.resize(nCycles);
 	m_res.resize(m_master->m_realyt.size());
@@ -20,11 +20,11 @@ void AlgorithmNewton::init() {
 	m_rhs.resize(m_master->m_realyt.size());
 
 	// now process each cycle
-	for (unsigned int c=0; c<nCycles; ++c) {
+	for (size_t c=0; c<nCycles; ++c) {
 		const MasterSim::Cycle & cycle = m_master->m_cycles[c];
 		// loop over all variables and collect indexes of all variables
 		// that are both input and output of the slaves in this cycle
-		for (unsigned int varIdx=0; varIdx<m_master->m_realVariableMapping.size(); ++varIdx) {
+		for (size_t varIdx=0; varIdx<m_master->m_realVariableMapping.size(); ++varIdx) {
 			// check if slave is in current cycle
 			bool foundInput = false;
 			bool foundOutput = false;
@@ -39,14 +39,14 @@ void AlgorithmNewton::init() {
 			}
 			if (foundInput && foundOutput) {
 				// remember global variable index
-				m_variableIdxMapping[c].push_back(varIdx);
+				m_variableIdxMapping[c].push_back((unsigned int)varIdx);
 			}
 		}
 
 		// finally resize DenseMatrix
-		unsigned int dim = m_variableIdxMapping[c].size();
+		size_t dim = m_variableIdxMapping[c].size();
 		if (dim != 0)
-			m_jacobianMatrix[c].resize(dim);
+			m_jacobianMatrix[c].resize((unsigned int)dim);
 		// Note: dim == 0 means there are no outputs of the slaves in the current cycle connected
 		//       to any of the inputs. Therefore we do not need to iterate in this cycle and can
 		//       just accept the results from the first doStep() calculations.
@@ -123,7 +123,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 			// m_res now holds Sy and m_realytNext holds y_{t+h}^i (last iteration step)
 
-			unsigned int varCount = m_variableIdxMapping[c].size();
+			size_t varCount = m_variableIdxMapping[c].size();
 			if (varCount == 0) {
 				// if we do not have any variables connected in this cycle, we can move on to the next cycle
 				break;
@@ -234,8 +234,8 @@ void AlgorithmNewton::generateJacobian(unsigned int c) {
 	// restore values in m_realyt
 
 	// loop all variables in this cycle
-	unsigned int varCount = m_variableIdxMapping[c].size();
-	for (unsigned int i=0; i<varCount; ++i) {
+	size_t varCount = m_variableIdxMapping[c].size();
+	for (unsigned int i=0; i<(unsigned int)varCount; ++i) {
 		unsigned int varIdx = m_variableIdxMapping[c][i]; // global index of variable
 		// modify variable
 		double delta = std::fabs(m_master->m_realytNext[varIdx])*m_master->m_project.m_relTol + 0.01*m_master->m_project.m_absTol;
