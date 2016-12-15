@@ -325,6 +325,10 @@ void MasterSim::checkCapabilities() {
 	const char * const FUNC_ID = "[MasterSimulator::checkCapabilities]";
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Checking capabilities of FMUs\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::MessageIndentor indent; (void)indent;
+
 	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
 	if (m_project.m_maxIterations > 1) {
 		IBK::IBK_Message("Iteration enabled because maximum number of iterations > 1.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -334,6 +338,8 @@ void MasterSim::checkCapabilities() {
 		IBK::IBK_Message("Iteration disabled (maximum number of iterations == 1).\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		m_enableIteration = false;
 	}
+
+	m_enableVariableStepSizes = m_project.m_adjustStepSize;
 
 	// override this setting if an error control model is used
 	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
