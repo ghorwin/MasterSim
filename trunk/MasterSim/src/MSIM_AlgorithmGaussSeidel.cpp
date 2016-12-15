@@ -113,6 +113,8 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 					break; // break iteration loop
 			}
 		}
+		// When m_master->m_project.m_maxIterations == 1 the flag m_master->m_enableIteration is false, so our solution is always
+		// assumed to be converged.
 		if (m_master->m_enableIteration &&
 			iteration > m_master->m_project.m_maxIterations)
 			return R_ITERATION_LIMIT_EXCEEDED;
@@ -147,8 +149,8 @@ bool AlgorithmGaussSeidel::doConvergenceTest() {
 
 	// WRMS norm of real values
 	double norm = 0;
-	unsigned int nValues = m_master->m_realyt.size();
-	for (unsigned i=0; i<nValues; ++i) {
+	size_t nValues = m_master->m_realyt.size();
+	for (size_t i=0; i<nValues; ++i) {
 		double diff = m_master->m_realytNextIter[i] - m_master->m_realytNext[i];
 		double absValue = std::fabs(m_master->m_realytNextIter[i]);
 		double weight = absValue*m_master->m_project.m_relTol + m_master->m_project.m_absTol;

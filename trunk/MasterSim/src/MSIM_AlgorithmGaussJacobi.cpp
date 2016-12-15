@@ -6,6 +6,14 @@
 
 namespace MASTER_SIM {
 
+void AlgorithmGaussJacobi::init() {
+	const char * const FUNC_ID = "[AlgorithmGaussJacobi::init]";
+	// check for valid parameters
+	if (m_master->m_project.m_maxIterations > 1)
+		throw IBK::Exception("Gauss-Jacobi-Algorithm is always used without iteration. The maxIterations parameter must be set to 1.", FUNC_ID);
+}
+
+
 AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 	const char * const FUNC_ID = "[AlgorithmGaussJacobi::doStep]";
 

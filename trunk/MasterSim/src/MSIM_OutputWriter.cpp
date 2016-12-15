@@ -342,8 +342,11 @@ void OutputWriter::appendOutputs(double t) {
 		// subtract a little time from last time stamp that outputs were written
 		// in order to get the final progress statistics printed out for sure
 		m_progressFeedback.m_lastElapsedSecondsWithOutput -= 1;
+		m_tLastOutput = 0;
 	}
-	m_tLastOutput = t;
+	// increase m_tLastOutput by selected steps until t is surpassed
+	while (m_tLastOutput < t)
+		m_tLastOutput += m_project->m_hOutputMin.value;
 
 	m_progressFeedback.writeFeedback(t, false);
 

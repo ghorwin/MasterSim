@@ -151,8 +151,8 @@ void MasterSim::doStep() {
 
 	m_h = m_hProposed; // set proposed time step size
 
-	// if we have error control enabled, store current state of all fmu slaves
-	if (m_enableIteration) {
+	// if we have error control enabled or use iteration in the master algorithm, store current state of all fmu slaves
+	if (m_enableIteration || m_useErrorTestWithVariableStepSizes) {
 		// request state from all slaves
 		storeCurrentSlaveStates(m_iterationStates);
 	}
@@ -169,7 +169,7 @@ void MasterSim::doStep() {
 				break;
 
 			default : {
-				if (!m_enableVariableStepSizes || !m_enableIteration) {
+				if (!m_enableVariableStepSizes) {
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reduction of time step is not allowed, stopping here.")
 										 .arg(m_t).arg(m_h), FUNC_ID);
@@ -326,16 +326,29 @@ void MasterSim::checkCapabilities() {
 	// depending on master algorithm, an FMU may be required to have certain capabilities
 
 	// if we have maxIters > 1 and an iterative master algorithm, FMUs must be able to reset states
-	m_enableIteration = (m_project.m_masterMode >= Project::MM_GAUSS_SEIDEL && m_project.m_maxIterations > 1);
+	if (m_project.m_maxIterations > 1) {
+		IBK::IBK_Message("Iteration enabled because maximum number of iterations > 1.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		m_enableIteration = true;
+	}
+	else {
+		IBK::IBK_Message("Iteration disabled (maximum number of iterations == 1).\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		m_enableIteration = false;
+	}
 
-	// for now, iteration also indicates variable time stepping.
-	m_enableVariableStepSizes = m_enableIteration;
 	// override this setting if an error control model is used
-	if (m_project.m_errorControlMode != Project::EM_NONE && !m_enableIteration) {
-		throw IBK::Exception("Using error control requires iterative master algorithm.", FUNC_ID);
+	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
+		// must have time step adjustment enabled
+		if (!m_enableVariableStepSizes) 
+			throw IBK::Exception("Using error control with time step adjustment requires time step adjustment flag to be enabled.", FUNC_ID);
+		// iteration is enabled, so that FMU state is stored and restored 
+		m_useErrorTestWithVariableStepSizes = true;
+	}
+	else {
+		m_useErrorTestWithVariableStepSizes = false;
 	}
 
 	if (m_enableVariableStepSizes) {
+		IBK::IBK_Message("Time step adjustment enabled.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// check each FMU for capability flag
 		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
 			const FMU * fmu = m_fmuManager.fmus()[i];
@@ -346,7 +359,7 @@ void MasterSim::checkCapabilities() {
 		}
 	}
 
-	if (m_enableIteration) {
+	if (m_enableIteration || m_useErrorTestWithVariableStepSizes) {
 		// check each FMU for capability flag
 		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
 			const FMU * fmu = m_fmuManager.fmus()[i];
