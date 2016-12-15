@@ -345,7 +345,7 @@ void MasterSim::checkCapabilities() {
 	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
 		// must have time step adjustment enabled
 		if (!m_enableVariableStepSizes) 
-			throw IBK::Exception("Using error control with time step adjustment requires time step adjustment flag to be enabled.", FUNC_ID);
+			throw IBK::Exception("Using error control with time step adjustment requires time step adjustment flag (adjustStepSize) to be enabled.", FUNC_ID);
 		// iteration is enabled, so that FMU state is stored and restored 
 		m_useErrorTestWithVariableStepSizes = true;
 	}
@@ -354,6 +354,10 @@ void MasterSim::checkCapabilities() {
 	}
 
 	if (m_enableVariableStepSizes) {
+		if (!m_enableIteration && !m_useErrorTestWithVariableStepSizes) {
+			throw IBK::Exception("Using variable step sizes without iteration or error control with time step adjustment "
+				"is not possible (adjustStepSize flag must be off).", FUNC_ID);
+		}
 		IBK::IBK_Message("Time step adjustment enabled.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		// check each FMU for capability flag
 		for (unsigned int i=0; i<m_fmuManager.fmus().size(); ++i) {
