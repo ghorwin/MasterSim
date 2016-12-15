@@ -4,14 +4,20 @@
 # No error test included, time step adjustment disabled.
 # GaussSeidel is run without iteration.
 
-tStart          			0.0 s
-tEnd            			10.0 s
-hStart      				0.001 s
-hOutputMin  				0.01 s
-MasterMode      			GAUSS_SEIDEL
-ErrorControlMode			NONE
-
-maxIterations    			1
+tStart               0 s
+tEnd                 10 s
+hMax                 30 min
+hMin                 1e-05 s
+hFallBackLimit       0.001 s
+hStart               0.001 s
+hOutputMin           0.01 s
+binaryOutputFiles    no
+adjustStepSize       yes
+absTol               1e-06
+relTol               1e-05
+MasterMode           GAUSS_SEIDEL
+ErrorControlMode     ADAPT_STEP
+maxIterations        1
 
 simulator 0 0 Part1 #ff447cb4 "fmus/simx/Part1.fmu"
 simulator 1 1 Part2 #ffc38200 "fmus/simx/Part2.fmu"
