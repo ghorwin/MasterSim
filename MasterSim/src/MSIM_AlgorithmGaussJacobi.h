@@ -15,6 +15,9 @@ public:
 	/*! Default constructor. */
 	AlgorithmGaussJacobi(MasterSim * master) : AbstractAlgorithm(master) {}
 
+	/*! Initialization function, called once all slaves have been set up. */
+	void init();
+
 	/*! Master-algorithm will evaluate all FMUs and advance state in time.
 		Will throw an exception if any of the FMUs fails in unrecoverable manner.
 	*/

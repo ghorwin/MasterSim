@@ -230,6 +230,12 @@ private:
 	*/
 	bool					m_enableVariableStepSizes;
 
+	/*! If true, the error test with adaptive time stepping is selected and prior to calling doStep() 
+		the states of all FMUs are stored.
+		All FMUs must be able to get/set their state. This variable is set in checkCapabilities().
+	*/
+	bool					m_useErrorTestWithVariableStepSizes;
+
 	/*! If true, an iterative master algorithm is used and state need to be stored prior to calling master algorithm.
 		All FMUs must be able to get/set their state. This variable is set in checkCapabilities().
 	*/
