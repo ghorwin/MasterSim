@@ -1,0 +1,14 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Name=MasterSimulator
+Icon=MasterSimulatorUI-0.4/resources/MasterSimulatorUI-64.png
+Path=MasterSimulatorUI-0.4/bin
+Exec=MasterSimulatorUI-0.4/bin/MasterSimulatorUI
+StartupNotify=false
+StartupWMClass=MasterSimulatorUI
+OnlyShowIn=Unity;
+X-UnityGenerated=true
+Name[de_DE]=MasterSimulatorUI 0.4
+
