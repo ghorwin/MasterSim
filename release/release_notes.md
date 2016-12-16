@@ -1,6 +1,22 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.4.4
+---------------------------
+
+* Bugfix: Minimum time step size is now honored by the error test
+* Bugfix: Output time grid is kept fixed even for variable stepping runs
+
+* New features:
+  -  solver and algorithm options are now checked more thoroughly, so that
+     invalid combinations are flagged during initialization
+  -  improved algorithm option selection, so that algorithm variants can be
+     specified more clearly (see also wiki-pages on algorithms and project file)
+  -  the leading comment block in a project file is now preserved, so annotations
+     remain there when project is edited in user interface
+  -  step statistics are now written to the `log/stepstats.txt` file when master
+     is run with verbosity level > 1
+
 Changelog for Version 0.4.3
 ---------------------------
 
