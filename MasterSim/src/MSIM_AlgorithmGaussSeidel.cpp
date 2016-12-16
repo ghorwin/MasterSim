@@ -38,6 +38,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 		unsigned int iteration = 0; // iteration counter in current cycle
 		while (++iteration <= m_master->m_project.m_maxIterations) {
+			++m_nIterations;
 
 			// when iterating
 			if (m_master->m_enableIteration) {
@@ -75,9 +76,12 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				++m_master->m_statSlaveEvalCounters[slave->m_slaveIndex];
 				switch (res) {
 					case fmi2Discard	:
-					case fmi2Error		:
+					case fmi2Error		: {
+						++m_nFMUErrors;
 						return R_RETRY;
-					case fmi2Pending	: throw IBK::Exception("Asynchronous slaves are not supported, yet.", FUNC_ID);
+					}
+					case fmi2Pending	:
+						throw IBK::Exception("Asynchronous slaves are not supported, yet.", FUNC_ID);
 					case fmi2Fatal		:
 						throw IBK::Exception(IBK::FormatString("Error in doStep() call of FMU slave '%1'").arg(slave->m_name), FUNC_ID);
 					case fmi2OK			:
@@ -115,10 +119,12 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 		}
 		// When m_master->m_project.m_maxIterations == 1 the flag m_master->m_enableIteration is false, so our solution is always
 		// assumed to be converged.
-		if (m_master->m_enableIteration &&
-			iteration > m_master->m_project.m_maxIterations)
+		if (m_master->m_enableIteration && iteration > m_master->m_project.m_maxIterations)
+		{
+			++m_nIterationLimitExceeded;
 			return R_ITERATION_LIMIT_EXCEEDED;
-	}
+		}
+	} // cycle loop
 
 	// ** algorithm end **
 

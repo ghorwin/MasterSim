@@ -34,6 +34,8 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 	for (unsigned int c=0; c<m_master->m_cycles.size(); ++c) {
 		const MasterSim::Cycle & cycle = m_master->m_cycles[c];
 
+		++m_nIterations; // add one iteration
+
 		// loop over all slaves
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 			Slave * slave = cycle.m_slaves[s];
@@ -57,7 +59,6 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 	}
 
 	// ** algorithm end **
-
 
 	// m_XXXyt     -> still values at time point t
 	// m_XXXytNext -> values at time point t + h

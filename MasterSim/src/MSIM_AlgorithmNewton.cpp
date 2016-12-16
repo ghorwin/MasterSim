@@ -97,6 +97,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 
 		unsigned int iteration = 0; // iteration counter in current cycle
 		while (++iteration <= m_master->m_project.m_maxIterations) {
+			++m_nIterations;
 
 			// copy current estimates to y_{t+h} to NextIter vectors, they will be used to update ytNext vectors once cycle
 			// is complete
@@ -117,8 +118,10 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
 				Slave * slave = cycle.m_slaves[s];
 				Result res = evaluateSlave(slave, m_master->m_realytNext, m_res);
-				if (res != R_CONVERGED)
+				if (res != R_CONVERGED) {
+					++m_nFMUErrors;
 					return res;
+				}
 			}
 
 			// m_res now holds Sy and m_realytNext holds y_{t+h}^i (last iteration step)
@@ -163,10 +166,12 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 			if (norm < 1)
 				break; // break iteration loop
-		}
+		} // while (++iteration <= m_master->m_project.m_maxIterations)
 
-		if (iteration > m_master->m_project.m_maxIterations)
+		if (iteration > m_master->m_project.m_maxIterations) {
+			++m_nIterationLimitExceeded;
 			return R_ITERATION_LIMIT_EXCEEDED;
+		}
 
 		// cycle done, also sync variables of other types with global variable array ytNext so that the results
 		// of the current cycle are available in the next cycle
