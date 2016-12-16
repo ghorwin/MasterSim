@@ -87,7 +87,7 @@ QString MSIMDirectories::userDataDir() {
 #endif // QT_VERSION < 0x050000
 #else
 	// on Unix/Mac OS we store user data under home directory
-	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/.ibk/MasterSim");
+	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/.config/IBK/MasterSim");
 #endif // Q_OS_WIN
 }
 
