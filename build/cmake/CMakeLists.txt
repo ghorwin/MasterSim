@@ -51,7 +51,12 @@ endif (NOT CMAKE_BUILD_TYPE)
 
 # on Unix we want really detailed warnings
 if (UNIX)
-	ADD_DEFINITIONS( -Wall -fPIC -static-libgcc -static-libstdc++)
+	ADD_DEFINITIONS( -Wall -fPIC )
+	if (CMAKE_COMPILER_IS_GNUCC)
+		ADD_DEFINITIONS( -static-libgcc -static-libstdc++ )
+	else (CMAKE_COMPILER_IS_GNUCC)
+		ADD_DEFINITIONS( -static )
+	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (UNIX)
 
 # add VC compiler-specific flags (NONMINMAX define and disable "unsafe" warnings)
