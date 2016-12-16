@@ -97,6 +97,7 @@ void MasterSim::initialize() {
 	m_statErrorTestFailsCounter = 0;
 	m_statErrorTestTime = 0;
 	m_statStepCounter = 0;
+	m_statAlgorithmCallCounter = 0;
 }
 
 
@@ -171,6 +172,7 @@ void MasterSim::doStep() {
 		// let master do one step
 		m_timer.start();
 		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		++m_statAlgorithmCallCounter;
 		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		switch (res) {
 			case AbstractAlgorithm::R_CONVERGED :
@@ -798,6 +800,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		// now ask master algorithm to do a step
 		m_timer.start();
 		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		++m_statAlgorithmCallCounter;
 		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		if (res != AbstractAlgorithm::R_CONVERGED) {
 			IBK::IBK_Message("First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -821,6 +824,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		if (!failed) {
 			m_timer.start();
 			res = m_masterAlgorithm->doStep();
+			++m_statAlgorithmCallCounter;
 			m_statAlgorithmTime += m_timer.stop()*1e-3;
 			if (res != AbstractAlgorithm::R_CONVERGED) {
 				IBK::IBK_Message("Second half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
@@ -1074,9 +1078,10 @@ void MasterSim::writeStepStatistics() {
 		std::ostream & out = *m_stepStatsOutput;
 		out << std::setw(10) << "Time [s]"
 			   << std::setw(10) << "Steps"
-			   << std::setw(12) << "Iterations"
+			   << std::setw(18) << "AlgorithmCalls"
 			   << std::setw(18) << "ErrorTestFails"
 			   << std::setw(18) << "ConvergenceFails"
+			   << std::setw(12) << "Iterations"
 			   << std::setw(18) << "IterLimitExceeded"
 			   << std::setw(12) << "FMUErrors" << std::endl;
 	}
@@ -1085,9 +1090,10 @@ void MasterSim::writeStepStatistics() {
 	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
 	out << std::setw(10) << m_t
 		   << std::setw(10) << m_statStepCounter
-		   << std::setw(12) << maIters
+		   << std::setw(18) << m_statAlgorithmCallCounter
 		   << std::setw(18) << m_statErrorTestFailsCounter
 		   << std::setw(18) << m_statConvergenceFailsCounter
+		   << std::setw(12) << maIters
 		   << std::setw(18) << maLimitExceeded
 		   << std::setw(12) << maFMUErrs << std::endl;
 }

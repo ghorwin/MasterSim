@@ -362,6 +362,7 @@ private:
 	unsigned int					m_statErrorTestFailsCounter;
 	double							m_statErrorTestTime;
 	unsigned int					m_statStepCounter;
+	unsigned int					m_statAlgorithmCallCounter;
 
 	/*! Utility function to copy one vector to another using memcpy. */
 	template<typename T>
