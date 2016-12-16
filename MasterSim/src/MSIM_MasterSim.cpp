@@ -2,6 +2,7 @@
 
 #include <memory> // for auto_ptr
 #include <cmath>
+#include <fstream>
 #include <algorithm> // for min and max
 
 #include <IBK_Exception.h>
@@ -21,7 +22,8 @@ namespace MASTER_SIM {
 
 MasterSim::MasterSim() :
 	m_masterAlgorithm(NULL),
-	m_t(0)
+	m_t(0),
+	m_stepStatsOutput(NULL)
 {
 }
 
@@ -33,6 +35,8 @@ MasterSim::~MasterSim() {
 	// release allocated memory of slaves
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
 		delete m_slaves[i];
+
+	delete m_stepStatsOutput;
 }
 
 
@@ -129,6 +133,10 @@ void MasterSim::simulate() {
 		// Do an internal step with the selected master algorithm
 		doStep();
 		++m_statStepCounter;
+
+		if (m_args.m_verbosityLevel > 1)
+			writeStepStatistics();
+
 		// Now the master's internal state has moved to the next time point m_t = m_t + m_h
 		// m_h holds the step size used during the last master step
 
@@ -344,9 +352,9 @@ void MasterSim::checkCapabilities() {
 	// override this setting if an error control model is used
 	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
 		// must have time step adjustment enabled
-		if (!m_enableVariableStepSizes) 
+		if (!m_enableVariableStepSizes)
 			throw IBK::Exception("Using error control with time step adjustment requires time step adjustment flag (adjustStepSize) to be enabled.", FUNC_ID);
-		// iteration is enabled, so that FMU state is stored and restored 
+		// iteration is enabled, so that FMU state is stored and restored
 		m_useErrorTestWithVariableStepSizes = true;
 	}
 	else {
@@ -1057,6 +1065,33 @@ void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveSta
 		++m_statRollBackCounters[slave->m_slaveIndex];
 	}
 }
+
+
+void MasterSim::writeStepStatistics() {
+	// if log file hasn't been created yet, initialize log file now
+	if (m_stepStatsOutput == NULL) {
+		m_stepStatsOutput = new std::ofstream( (m_outputWriter.m_logDir / "stepStats.txt").c_str());
+		std::ostream & out = *m_stepStatsOutput;
+		out << std::setw(10) << "Time [s]"
+			   << std::setw(10) << "Steps"
+			   << std::setw(12) << "Iterations"
+			   << std::setw(18) << "ErrorTestFails"
+			   << std::setw(18) << "ConvergenceFails"
+			   << std::setw(18) << "IterLimitExceeded"
+			   << std::setw(12) << "FMUErrors" << std::endl;
+	}
+	std::ostream & out = *m_stepStatsOutput;
+	unsigned int maIters, maFMUErrs, maLimitExceeded;
+	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
+	out << std::setw(10) << m_t
+		   << std::setw(10) << m_statStepCounter
+		   << std::setw(12) << maIters
+		   << std::setw(18) << m_statErrorTestFailsCounter
+		   << std::setw(18) << m_statConvergenceFailsCounter
+		   << std::setw(18) << maLimitExceeded
+		   << std::setw(12) << maFMUErrs << std::endl;
+}
+
 
 } // namespace MASTER_SIM
 

@@ -220,6 +220,11 @@ private:
 	*/
 	void restoreSlaveStates(double t, const std::vector<void*> & slaveStates);
 
+	/*! Creates statistics files and appends statistics.
+		This function is called once after each completed doStep();
+	*/
+	void writeStepStatistics();
+
 	/*! Copy of arg parser. */
 	ArgParser				m_args;
 	/*! Copy of project data. */
@@ -230,7 +235,7 @@ private:
 	*/
 	bool					m_enableVariableStepSizes;
 
-	/*! If true, the error test with adaptive time stepping is selected and prior to calling doStep() 
+	/*! If true, the error test with adaptive time stepping is selected and prior to calling doStep()
 		the states of all FMUs are stored.
 		All FMUs must be able to get/set their state. This variable is set in checkCapabilities().
 	*/
@@ -265,6 +270,8 @@ private:
 	/*! Manager of output files, handles all output file writing. */
 	OutputWriter			m_outputWriter;
 
+	/*! Output file stream for master statistics. */
+	std::ofstream			*m_stepStatsOutput;
 
 	/*! Mapping of all connected variables of type real. */
 	std::vector<VariableMapping>	m_realVariableMapping;
