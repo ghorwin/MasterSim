@@ -14,13 +14,17 @@ public:
 	/*! Return values for the doStep() function. */
 	enum Result {
 		R_CONVERGED,
-		R_DIVERGED,
 		R_ITERATION_LIMIT_EXCEEDED,
 		R_RETRY
 	};
 
 	/*! Default constructor. */
-	AbstractAlgorithm(MasterSim * master) : m_master(master) {}
+	AbstractAlgorithm(MasterSim * master) :
+		m_master(master),
+		m_nIterations(0),
+		m_nIterationLimitExceeded(0),
+		m_nFMUErrors(0)
+	{}
 
 	/*! Virtual d'tor. */
 	virtual ~AbstractAlgorithm() {}
@@ -31,12 +35,26 @@ public:
 	/*! Main stepper function for master algorithm. */
 	virtual Result doStep() = 0;
 
+	/*! Returns collected statistics. */
+	void stats(unsigned int	& nIterations, unsigned int & nIterationLimitExceeded, unsigned int & nFMUErrors) {
+		m_nIterations = nIterations;
+		m_nIterationLimitExceeded = nIterationLimitExceeded;
+		m_nFMUErrors = nFMUErrors;
+	}
+
 protected:
 	/*! Cached pointer to master data structure (not owned). */
 	MasterSim		*m_master;
 
 	/*! Timer to use for instrumenting calls to FMUs. */
 	IBK::StopWatch	m_timer;
+
+	/*! Number of iterations. */
+	unsigned int	m_nIterations;
+	/*! Number of iteration limits exceeded. */
+	unsigned int	m_nIterationLimitExceeded;
+	/*! Number of times the algorithm has to be repeated because of FMU errors. */
+	unsigned int	m_nFMUErrors;
 };
 
 } // namespace MASTER_SIM
