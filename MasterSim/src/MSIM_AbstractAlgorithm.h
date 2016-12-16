@@ -37,9 +37,9 @@ public:
 
 	/*! Returns collected statistics. */
 	void stats(unsigned int	& nIterations, unsigned int & nIterationLimitExceeded, unsigned int & nFMUErrors) {
-		m_nIterations = nIterations;
-		m_nIterationLimitExceeded = nIterationLimitExceeded;
-		m_nFMUErrors = nFMUErrors;
+		nIterations = m_nIterations;
+		nIterationLimitExceeded = m_nIterationLimitExceeded;
+		nFMUErrors = m_nFMUErrors;
 	}
 
 protected:
