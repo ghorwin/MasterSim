@@ -82,7 +82,7 @@ void MasterSim::initialize() {
 	m_outputWriter.m_project = &m_project; // Note: persistant pointer, must be valid for lifetime of output writer
 	m_outputWriter.m_slaves = m_slaves; // copy pointer as persistant pointers, must not modify m_slaves vector from here on
 	m_outputWriter.m_resultsDir = (m_args.m_workingDir / "results").absolutePath();
-	m_outputWriter.m_logDir = (m_args.m_workingDir / "logs").absolutePath();
+	m_outputWriter.m_logDir = (m_args.m_workingDir / "log").absolutePath();
 	m_outputWriter.m_projectFile = m_args.m_projectFile.str();
 	m_outputWriter.setupProgressReport();
 
@@ -130,6 +130,9 @@ void MasterSim::storeState(const IBK::Path & stateDirectory) {
 
 
 void MasterSim::simulate() {
+	// write initial statistics and header
+	if (m_args.m_verbosityLevel > 1)
+		writeStepStatistics();
 	while (m_t < m_project.m_tEnd.value) {
 		// Do an internal step with the selected master algorithm
 		doStep();
@@ -950,11 +953,18 @@ bool MasterSim::doErrorCheckWithoutIteration() {
 
 
 double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
+	const char * const FUNC_ID = "[MasterSim::adaptTimeStepBasedOnErrorEstimate]";
 	double MAX_SCALE = 1.5; // upper limit for scaling up time step
 	double MIN_SCALE = 0.3; // lower limit for scaling down time step
 	double SAFETY = 0.9; // safety factor
 	double scale = std::max(MIN_SCALE, std::min(MAX_SCALE, SAFETY/std::sqrt(errEstimate) ) );
-	return m_h * scale;
+	double hNew = m_h * scale;
+	// check for falling below time step limit
+	if (hNew < m_project.m_hMin.value)
+		throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+			"Reducing step would fall below minimum step size of %3.")
+			.arg(m_t).arg(m_h).arg(m_project.m_hMin.value), FUNC_ID);
+	return hNew;
 }
 
 
@@ -1074,22 +1084,26 @@ void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveSta
 void MasterSim::writeStepStatistics() {
 	// if log file hasn't been created yet, initialize log file now
 	if (m_stepStatsOutput == NULL) {
-		m_stepStatsOutput = new std::ofstream( (m_outputWriter.m_logDir / "stepStats.txt").c_str());
+		std::string statsFile = (m_outputWriter.m_logDir / "stepStats.txt").str();
+		m_stepStatsOutput = new std::ofstream(statsFile.c_str());
 		std::ostream & out = *m_stepStatsOutput;
 		out << std::setw(10) << "Time [s]"
 			   << std::setw(10) << "Steps"
+			   << std::setw(14) << "StepSize [s]"
 			   << std::setw(18) << "AlgorithmCalls"
 			   << std::setw(18) << "ErrorTestFails"
 			   << std::setw(18) << "ConvergenceFails"
 			   << std::setw(12) << "Iterations"
 			   << std::setw(18) << "IterLimitExceeded"
 			   << std::setw(12) << "FMUErrors" << std::endl;
+		return; // first call only writes header
 	}
 	std::ostream & out = *m_stepStatsOutput;
 	unsigned int maIters, maFMUErrs, maLimitExceeded;
 	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
 	out << std::setw(10) << m_t
 		   << std::setw(10) << m_statStepCounter
+		   << std::setw(14) << std::left << m_h
 		   << std::setw(18) << m_statAlgorithmCallCounter
 		   << std::setw(18) << m_statErrorTestFailsCounter
 		   << std::setw(18) << m_statConvergenceFailsCounter
