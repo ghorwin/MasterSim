@@ -8,6 +8,7 @@
 #include <QNetworkAccessManager>
 #include <QPixmap>
 #include <QUrl>
+#include <QDebug>
 
 #include <MSIM_Project.h>
 
@@ -172,13 +173,14 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 
 void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 	// if anchor starts with "project:" we emit the "open project" signal
+	qDebug() << link.toString();
 	if (link.toString().startsWith("project:")) {
 		QString fname = link.toString();
 		fname = fname.right(fname.length()-8);
 		emit openProject(fname);
 		return;
 	}
-	else if (link.toString().startsWith("projectRemove:")) {
+	else if (link.toString().toLower().startsWith("projectremove:")) {
 
 		// extract project index to delete and remove it from list
 		QString index = link.toString();
