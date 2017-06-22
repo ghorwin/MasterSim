@@ -1,8 +1,4 @@
-# Project file example for non-iterating GaussSeidel.
-# All unnecessary project options have been removed.
-#
-# No error test included, time step adjustment disabled.
-# GaussSeidel is run without iteration.
+# Project file example for non-iterating GaussSeidel with error test.
 
 tStart               0 s
 tEnd                 10 s
