@@ -1,8 +1,6 @@
 # Project file example for iterating GaussSeidel with error test.
-# All unnecessary project options have been removed.
 #
 # Step-doubling error test is enabled.
-#
 
 tStart               0 s
 tEnd                 10 s

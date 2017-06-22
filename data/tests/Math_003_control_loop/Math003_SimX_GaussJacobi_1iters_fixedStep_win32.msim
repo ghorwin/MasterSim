@@ -1,4 +1,4 @@
-# Project file example for GaussJacobi.
+# Project file example for non-iterating GaussJacobi.
 #
 # No error test included, time step adjustment disabled.
 # GaussJacobi is run without iteration.
