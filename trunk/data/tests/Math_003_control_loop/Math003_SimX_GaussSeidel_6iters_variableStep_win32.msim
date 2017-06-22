@@ -1,8 +1,6 @@
 # Project file example for iterating GaussSeidel.
-# All unnecessary project options have been removed.
 #
 # No error test included, time step adjustment enabled.
-#
 
 tStart               0 s
 tEnd                 10 s
