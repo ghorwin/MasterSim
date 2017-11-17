@@ -130,7 +130,11 @@ int main(int argc, char *argv[]) {
 
 
 	// *** Create and show splash-screen ***
+#if QT_VERSION >= 0x050000
+	std::unique_ptr<QSplashScreen> splash;
+#else
 	std::auto_ptr<QSplashScreen> splash;
+#endif
 	if (!settings.m_flags[MSIMSettings::NoSplashScreen]) {
 		QPixmap pixmap;
 		pixmap.load(":/gfx/SplashScreen_MasterSim.png","PNG");

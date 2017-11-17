@@ -110,14 +110,20 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			if (line.find("parameter") == 0) {
 				std::string paraString = line.substr(9);
 				IBK::trim(paraString);
-				// general parameters
-				if (IBK::explode(paraString, tokens, " \t", IBK::EF_TrimTokens) != 2)
+				// extract variable name
+				std::string::size_type spacePos = paraString.find_first_of(" \t");
+				if (spacePos == std::string::npos)
 					throw IBK::Exception(IBK::FormatString("Expected format 'parameter <flat name> <value>', got '%1'").arg(line), FUNC_ID);
-				std::string value = tokens[1];
+				std::string value = paraString.substr(spacePos);
+				std::string parameter = paraString.substr(0, spacePos);
+				IBK::trim(value);
+				// special handling for string parameters, replace \\ with \ character
+				value = IBK::replace_string(value, "\\\\", "\\");
+				value = IBK::replace_string(value, "\\n", "\n");
+				IBK::trim(paraString);
 				// extract slave name
-				std::string parameter = tokens[0];
 				if (IBK::explode(parameter, tokens, ".", IBK::EF_TrimTokens) != 2)
-					throw IBK::Exception(IBK::FormatString("Expected parameter name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
+					throw IBK::Exception(IBK::FormatString("Expected parameter variable name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
 				std::string slaveName = tokens[0];
 				parameter = tokens[1];
 				// add paramter to slave
