@@ -52,11 +52,6 @@ endif (NOT CMAKE_BUILD_TYPE)
 # on Unix we want really detailed warnings
 if (UNIX)
 	ADD_DEFINITIONS( -Wall -fPIC )
-	if (CMAKE_COMPILER_IS_GNUCC)
-		ADD_DEFINITIONS( -static-libgcc -static-libstdc++ )
-	else (CMAKE_COMPILER_IS_GNUCC)
-		ADD_DEFINITIONS( -static )
-	endif (CMAKE_COMPILER_IS_GNUCC)
 endif (UNIX)
 
 # add VC compiler-specific flags (NONMINMAX define and disable "unsafe" warnings)
@@ -81,9 +76,13 @@ if (Qt5Widgets_INCLUDE_DIRS)
 	find_package(Qt5Svg REQUIRED)
 	find_package(Qt5Network REQUIRED)
 
-	# when building with gcc/icc add compile flag
+	# when building with gcc/icc add compile flag 
 	if (NOT MSVC)
-		set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
+		if (APPLE)
+			set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
+		else (APPLE)
+			set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=gnu++11" )
+		endif (APPLE)
 	endif (NOT MSVC)
 
 else (Qt5Widgets_INCLUDE_DIRS)

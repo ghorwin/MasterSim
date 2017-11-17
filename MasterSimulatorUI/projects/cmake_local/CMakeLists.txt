@@ -2,6 +2,11 @@
 
 project( MasterSimulatorUI )
 
+if (CMAKE_COMPILER_IS_GNUCC)
+	# link solver statically
+	set( CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++" )
+endif (CMAKE_COMPILER_IS_GNUCC)
+
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../../src			# needed so that ui-generated header files find our own headers
