@@ -1,16 +1,18 @@
-tstart          0.0 s
-tend            2 h
-tstepmax        1 h
-tstepstart      60 s
-MasterMode      GAUSS_JACOBI
-it_max_steps    100
-it_tol_abs      1.0E-6
-it_tol_rel      1.0E-4
-# <simulator-ID> <priority> <name> <path/to/fmu>
-simulator   0 0 Therakles1 					fmus/therakles/case1a_linux64.fmu
-simulator   1 0 ControlledTemperatureCSv1 	fmus/fmi-standard.org/linux64/CS_v1/ControlledTemperature.fmu
-simulator   2 0 ControlledTemperatureCSv2 	fmus/fmi-standard.org/linux64/CS_v2/ControlledTemperature.fmu
-simulator   3 0 Therakles2 					fmus/therakles/SingleWall_linux64.fmu
+tStart              0.0 s
+tEnd                2 h
+hMax                1 h
+hStart              60 s
+MasterMode          GAUSS_JACOBI
+maxIterations       1
+adjustStepSize      false
+absTol              1.0E-6
+relTol              1.0E-4
+# <simulator-ID> <priority> <name> <html-color> "<path/to/fmu>"
+simulator   0 0 Therakles1                   #ff5500    "fmus/case1a_linux64.fmu"
+simulator   1 0 ControlledTemperatureCSv1    #bbaaf0    "fmus/ControlledTemperature.fmu"
+simulator   2 0 ControlledTemperatureCSv2    #ccdd54    "fmus/ControlledTemperature_v2.fmu"
+simulator   3 0 Therakles2                   #ee4400    "fmus/SingleWall_linux64.fmu"
+# Therakles FMUs need ResultsRootDir parameter set
 parameter Therakles1.ResultsRootDir init_test_linux64/slaves/Therakles1
 parameter Therakles2.ResultsRootDir init_test_linux64/slaves/Therakles2
 
