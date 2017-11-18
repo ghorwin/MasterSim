@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de PostProc.xsd" fileVersion="1.0">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#ce4145" Checked="0">Math003_SimX_GaussJacobi_1iters_fixedStep</SubDir>
+			<SubDir Color="#cacc26" Checked="0">Math003_SimX_GaussJacobi_1iters_variableStep_Richardson</SubDir>
+			<SubDir Color="#45ad45" Checked="0">Math003_SimX_GaussSeidel_1iters_fixedStep</SubDir>
+			<SubDir Color="#416fce" Checked="0">Math003_SimX_GaussSeidel_1iters_variableStep_Richardson</SubDir>
+			<SubDir Color="#7141d1" Checked="0">Math003_SimX_GaussSeidel_6iters_variableStep</SubDir>
+			<SubDir Color="#ffffff" Checked="0">Math003_SimX_GaussSeidel_6iters_variableStep_Richardson</SubDir>
+			<SubDir Color="#ce4145" Checked="0">description</SubDir>
+			<SubDir Color="#cacc26" Checked="0">description/ModelicaModels</SubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+			<ExpandedSubDir>description</ExpandedSubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Panel states.-->
+	<Panels>
+		<EastPanel>0</EastPanel>
+		<WestPanel>1</WestPanel>
+		<SouthPanel>0</SouthPanel>
+	</Panels>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--All mappers.-->
+	<Mappers>
+		<Mapper name="Part3.x4">
+			<Quantities>
+				<Quantity>Part3.x4</Quantity>
+			</Quantities>
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>description/ModelicaModels/reference_results_simulationX.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/description/ModelicaModels/reference_results_simulationX.d6o</ExtractorName>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<LineInformationMap>
+					<Line index="0" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#000000</PenColor>
+					</Line>
+					<Line index="1" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#ff0000</PenColor>
+					</Line>
+				</LineInformationMap>
+				<AxisProperties>
+					<Axis index="0" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>2</LabelHAlignment>
+						<LabelVAlignment>1</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>5.65563</Maximum>
+						<Minimum>3.36424</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="1" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Part1.x1 | Part1.x2 | Part2.x3 | Part3.x4 [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>0</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>-1.94662</Maximum>
+						<Minimum>-2.5516</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="2" enabled="1" logarithmic="0" autoscale="1">
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>1</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">undefined</IBK:Unit>
+						<Maximum>923.789</Maximum>
+						<Minimum>921.999</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>Part3.x4</TitleText>
+					<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+					<Proportional>0</Proportional>
+					<FixedChartSize>0</FixedChartSize>
+					<ChartSizeWidth>500</ChartSizeWidth>
+					<ChartSizeHeight>500</ChartSizeHeight>
+					<ChartSizeUnit>pixel</ChartSizeUnit>
+					<Legend visible="1" hasFrame="1">
+						<LegendFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LegendFont>
+						<BackgroundTransparency>1</BackgroundTransparency>
+						<IdentifierWidth>20</IdentifierWidth>
+						<MaxColumns>1</MaxColumns>
+						<BackgroundColor>#ffffff</BackgroundColor>
+						<LegendType>Bottom</LegendType>
+						<Position>100 100 </Position>
+						<Spacing>5</Spacing>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="Part3.x4">
+			<Quantities>
+				<Quantity>Part3.x4</Quantity>
+			</Quantities>
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_1iters_variableStep_Richardson/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_1iters_variableStep_Richardson/results/real.d6o</ExtractorName>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<LineInformationMap>
+					<Line index="0" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>-1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#000000</PenColor>
+					</Line>
+					<Line index="1" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#ff0000</PenColor>
+					</Line>
+				</LineInformationMap>
+				<AxisProperties>
+					<Axis index="0" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>2</LabelHAlignment>
+						<LabelVAlignment>1</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>0</Maximum>
+						<Minimum>0</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="1" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Part1.x2 | Part1.x1 | Part2.x3 | Part3.x4 [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>0</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>0</Maximum>
+						<Minimum>0</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="2" enabled="1" logarithmic="0" autoscale="1">
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>1</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">undefined</IBK:Unit>
+						<Maximum>0</Maximum>
+						<Minimum>0</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>Part3.x4</TitleText>
+					<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+					<Proportional>0</Proportional>
+					<FixedChartSize>0</FixedChartSize>
+					<ChartSizeWidth>500</ChartSizeWidth>
+					<ChartSizeHeight>500</ChartSizeHeight>
+					<ChartSizeUnit>pixel</ChartSizeUnit>
+					<Legend visible="1" hasFrame="1">
+						<LegendFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LegendFont>
+						<BackgroundTransparency>1</BackgroundTransparency>
+						<IdentifierWidth>20</IdentifierWidth>
+						<MaxColumns>1</MaxColumns>
+						<BackgroundColor>#ffffff</BackgroundColor>
+						<LegendType>Bottom</LegendType>
+						<Position>100 100 </Position>
+						<Spacing>5</Spacing>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="Part3.x4">
+			<Quantities>
+				<Quantity>Part3.x4</Quantity>
+			</Quantities>
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_6iters_variableStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_6iters_variableStep/results/real.d6o</ExtractorName>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<LineInformationMap>
+					<Line index="0" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>-1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#000000</PenColor>
+					</Line>
+					<Line index="1" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#ff0000</PenColor>
+					</Line>
+				</LineInformationMap>
+				<AxisProperties>
+					<Axis index="0" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>2</LabelHAlignment>
+						<LabelVAlignment>1</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>5.48344</Maximum>
+						<Minimum>4.51656</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="1" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Part1.x2 | Part1.x1 | Part2.x3 | Part3.x4 [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>0</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>-0.97153</Maximum>
+						<Minimum>-2.73665</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="2" enabled="1" logarithmic="0" autoscale="1">
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>1</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">undefined</IBK:Unit>
+						<Maximum>921.995</Maximum>
+						<Minimum>921.985</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>Part3.x4</TitleText>
+					<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+					<Proportional>0</Proportional>
+					<FixedChartSize>0</FixedChartSize>
+					<ChartSizeWidth>500</ChartSizeWidth>
+					<ChartSizeHeight>500</ChartSizeHeight>
+					<ChartSizeUnit>pixel</ChartSizeUnit>
+					<Legend visible="1" hasFrame="1">
+						<LegendFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LegendFont>
+						<BackgroundTransparency>1</BackgroundTransparency>
+						<IdentifierWidth>20</IdentifierWidth>
+						<MaxColumns>1</MaxColumns>
+						<BackgroundColor>#ffffff</BackgroundColor>
+						<LegendType>Bottom</LegendType>
+						<Position>100 100 </Position>
+						<Spacing>5</Spacing>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="Part3.x4">
+			<Quantities>
+				<Quantity>Part3.x4</Quantity>
+			</Quantities>
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_1iters_fixedStep/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_6iters_variableStep/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_6iters_variableStep/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_6iters_variableStep_Richardson/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_6iters_variableStep_Richardson/results/real.d6o</ExtractorName>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<LineInformationMap>
+					<Line index="0" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>-1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#000000</PenColor>
+					</Line>
+					<Line index="1" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>-1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#ff0000</PenColor>
+					</Line>
+					<Line index="2" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#0000ff</PenColor>
+					</Line>
+				</LineInformationMap>
+				<AxisProperties>
+					<Axis index="0" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>2</LabelHAlignment>
+						<LabelVAlignment>1</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>5.35099</Maximum>
+						<Minimum>2.92715</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="1" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Part1.x2 | Part1.x1 | Part2.x3 | Part3.x4 [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>0</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>-2.10732</Maximum>
+						<Minimum>-2.84634</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="2" enabled="1" logarithmic="0" autoscale="1">
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>1</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">undefined</IBK:Unit>
+						<Maximum>921.986</Maximum>
+						<Minimum>921.985</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>Part3.x4</TitleText>
+					<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+					<Proportional>0</Proportional>
+					<FixedChartSize>0</FixedChartSize>
+					<ChartSizeWidth>500</ChartSizeWidth>
+					<ChartSizeHeight>500</ChartSizeHeight>
+					<ChartSizeUnit>pixel</ChartSizeUnit>
+					<Legend visible="1" hasFrame="1">
+						<LegendFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LegendFont>
+						<BackgroundTransparency>1</BackgroundTransparency>
+						<IdentifierWidth>20</IdentifierWidth>
+						<MaxColumns>1</MaxColumns>
+						<BackgroundColor>#ffffff</BackgroundColor>
+						<LegendType>Bottom</LegendType>
+						<Position>100 100 </Position>
+						<Spacing>5</Spacing>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="Part3.x4">
+			<Quantities>
+				<Quantity>Part3.x4</Quantity>
+			</Quantities>
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_SimX_GaussSeidel_6iters_variableStep_Richardson/results/real.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/Math003_SimX_GaussSeidel_6iters_variableStep_Richardson/results/real.d6o</ExtractorName>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>description/ModelicaModels/reference_results_simulationX.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ExtractorName>C:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/description/ModelicaModels/reference_results_simulationX.d6o</ExtractorName>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<LineInformationMap>
+					<Line index="0" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#000000</PenColor>
+					</Line>
+					<Line index="1" leftAxis="1" inverted="0" fitted="0">
+						<TitleText>$filename</TitleText>
+						<Quantity>Part3.x4</Quantity>
+						<LineStyle>0</LineStyle>
+						<MarkerStyle>-1</MarkerStyle>
+						<PenWidth>1</PenWidth>
+						<PenSytle>1</PenSytle>
+						<PenColor>#ff0000</PenColor>
+					</Line>
+				</LineInformationMap>
+				<AxisProperties>
+					<Axis index="0" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>2</LabelHAlignment>
+						<LabelVAlignment>1</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>3.70861</Maximum>
+						<Minimum>1.16998</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="1" enabled="1" logarithmic="0" autoscale="1">
+						<TitleText>Part1.x1 | Part1.x2 | Part2.x3 | Part3.x4 [$unit]</TitleText>
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>0</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>2.6726</Maximum>
+						<Minimum>2.03915</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+					<Axis index="2" enabled="1" logarithmic="0" autoscale="1">
+						<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LabelFont>
+						<LabelHAlignment>1</LabelHAlignment>
+						<LabelVAlignment>2</LabelVAlignment>
+						<LabelRotation>0</LabelRotation>
+						<IBK:Unit name="AxisUnit">undefined</IBK:Unit>
+						<Maximum>921.985</Maximum>
+						<Minimum>921.985</Minimum>
+						<MaxMinorScale>5</MaxMinorScale>
+						<MaxMajorScale>8</MaxMajorScale>
+						<GridVisible>1</GridVisible>
+						<MinorGridVisible>1</MinorGridVisible>
+						<LabelSpacing>5</LabelSpacing>
+						<TitleSpacing>10</TitleSpacing>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>Part3.x4</TitleText>
+					<TitleFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</TitleFont>
+					<Proportional>0</Proportional>
+					<FixedChartSize>0</FixedChartSize>
+					<ChartSizeWidth>500</ChartSizeWidth>
+					<ChartSizeHeight>500</ChartSizeHeight>
+					<ChartSizeUnit>pixel</ChartSizeUnit>
+					<Legend visible="1" hasFrame="1">
+						<LegendFont>MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0</LegendFont>
+						<BackgroundTransparency>1</BackgroundTransparency>
+						<IdentifierWidth>20</IdentifierWidth>
+						<MaxColumns>1</MaxColumns>
+						<BackgroundColor>#ffffff</BackgroundColor>
+						<LegendType>Bottom</LegendType>
+						<Position>100 100 </Position>
+						<Spacing>5</Spacing>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+	</Mappers>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="1" size2="1" orientation="2" />
+		<FocusedWidget>0</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>
