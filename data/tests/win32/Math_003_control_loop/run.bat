@@ -1,5 +1,5 @@
 @echo off
-set MASTERSIM=..\..\..\bin\release\MasterSimulator.exe
+set MASTERSIM=..\..\..\..\bin\release\MasterSimulator.exe
 
 %MASTERSIM% Math003_SimX_GaussJacobi_1iters_fixedStep_win32.msim -x
 %MASTERSIM% Math003_SimX_GaussJacobi_1iters_variableStep_Richardson_win32.msim -x
