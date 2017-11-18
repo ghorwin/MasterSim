@@ -1,6 +1,13 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.5.0
+---------------------------
+
+* New feature:
+ - added support for whitespaces and linebreaks (encoded) in string parameters when
+   specified in project file
+
 Changelog for Version 0.4.4
 ---------------------------
 
