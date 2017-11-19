@@ -54,7 +54,6 @@ SOURCES += \
 	../../src/IBK_CSVReader.cpp \
 	../../src/IBK_physics.cpp \
 	../../src/IBK_Version.cpp \
-	../../src/IBK_system.cpp \
 	../../src/IBK_IntPara.cpp
 
 OTHER_FILES +=
