@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -55,7 +55,7 @@ extern const double BOLTZMANN;						///< The BOLTZMANN constant (= 5.67e-8 W/m2K
 extern const double FARADAY;						///< Faraday's constant (= 96485.3415 sA/mol).
 extern const double R_IDEAL_GAS;					///< Universal gas constant (= 8.314472 J/molK).
 extern const double DEG2RAD;						///< = 2*Pi/360
-extern const double R_VAPOR;						///< Gas constant for water vapour in [J/kgK]
+extern const double R_VAPOR;						///< Gas constant for water vapour in [J/kgK] or [kgm2/s2kgK] or [m2/s2K]
 extern const double R_AIR;			 				///< Gas constant for dry air in [J/kgK]
 extern const double GRAVITY;						///< Gravitational acceleration in [m/s2]
 
@@ -75,14 +75,43 @@ extern const double KELVIN_FACTOR;					///< = 1.0/(1000*462*T_DEFAULT)
 extern const double GASPRESS_REF;					///< Reference pressure in [Pa]
 extern const double MIN_RH;							///< Minimum relative humidity [-]
 extern const double MIN_PC_T;						///< = f_log(MIN_RH)*RHO_W*R_VAPOR, pc/T at MIN_RH
-extern const double DV_AIR;							///< Water vapor diffusivity in air at reference temperature
+extern const double DV_AIR;							///< Water vapor diffusivity in air [m2/s] at reference temperature
 extern const double SIGMA_W;						///< Surface tension of water (0 degC) in [N/m]
 
-/*! Calculates the saturation pressure in [Pa] for a temperature T in [K]. */
+/*! Calculates the saturation pressure in [Pa] for a temperature T in [K].
+	Formula comes from DIN 4108-3 from 2003. Is identical to f_psat_DIN2().
+*/
 inline double f_psat(double T) {
-	if (T<124.6)	T = 124.6;
-	if (T<273.15)   return 1.17782355e-24*IBK::f_pow(T-124.55, 12.3);
-	else            return 2.632792891e-14*IBK::f_pow(T-163.35, 8.02);
+	if (T<124.6)
+		T = 124.6;
+	if (T<273.1269){
+		if (T<130)
+			return(1.35000E-15);
+		else {
+			T -= 273.15;
+			double ps = 4.838803174E-08 + T * 1.838826904E-10;
+			ps = 0.00000582472028 + T * ps;
+			ps = 0.0004176223716 + T * ps;
+			ps = 0.01886013408 + T * ps;
+			ps = 0.503469897 + T * ps;
+			ps = 6.109177956 + T * ps;
+			return ps * 100.0;
+		}
+	}
+	else {
+		if (T>373)
+			return(1.09347E+05);
+		else {
+			T -= 273.15;
+			double ps = 2.034080948E-08 + T * 6.136820929E-11;
+			ps = 0.000003031240396 + T * ps;
+			ps = 0.0002650648471 + T * ps;
+			ps = 0.01428945805 + T * ps;
+			ps = 0.4436518521 + T * ps;
+			ps = 6.107799961 + T * ps;
+			return ps * 100.0;
+		}
+	}
 }
 
 /*! Calculates the saturation pressure in [Pa] for a temperature T in [K] using the DIN function. */
@@ -104,6 +133,38 @@ inline double f_dew_DIN1(double T, double phi) {
 inline double f_psat_DIN2(double T) {
 	if (T<272.94529){ if (T<130) return(1.35000E-15); else return(  4.689 * IBK::f_pow(T/100-1.2455,12.300)); }
 	else            { if (T>373) return(1.09347E+05); else return(288.680 * IBK::f_pow(T/100-1.6335, 8.020)); }
+}
+
+/*! Calculates the saturation pressure in [Pa] for a temperature T in [K] . */
+inline double f_psat_poly(double T) {
+	if (T<273.1269){
+		if (T<130)
+			return(1.35000E-15);
+		else {
+			T -= 273.15;
+			double ps = 4.838803174E-08 + T * 1.838826904E-10;
+			ps = 0.00000582472028 + T * ps;
+			ps = 0.0004176223716 + T * ps;
+			ps = 0.01886013408 + T * ps;
+			ps = 0.503469897 + T * ps;
+			ps = 6.109177956 + T * ps;
+			return ps * 100.0;
+		}
+	}
+	else            {
+		if (T>373)
+			return(1.09347E+05);
+		else {
+			T -= 273.15;
+			double ps = 2.034080948E-08 + T * 6.136820929E-11;
+			ps = 0.000003031240396 + T * ps;
+			ps = 0.0002650648471 + T * ps;
+			ps = 0.01428945805 + T * ps;
+			ps = 0.4436518521 + T * ps;
+			ps = 6.107799961 + T * ps;
+			return ps * 100.0;
+		}
+	}
 }
 
 /*! Calculates the saturation pressure in [Pa] for a temperature T in [K] using the Clausius-Clapeyron equation. */

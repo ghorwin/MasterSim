@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -96,6 +96,23 @@ public:
 		\return Returns true, if both numbers could be extracted, otherwise returns false.
 	*/
 	static bool extractMajorMinorVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor);
+
+	/*! Extracts the major and minor and patch version number from a string with long version (3 numbers) format.
+		\code
+		unsigned int major, minor, patch;
+		Version::extractMajorMinorPatchVersionNumber("2.4.3", major, minor, patch); // returns true, and 2, 4 and 3 as numbers in major, minor and patch
+		Version::extractMajorMinorPatchVersionNumber("2.4.3.3131", major, minor, patch); // returns true, and 2, 4 and 3 as numbers in major, minor and patch
+		Version::extractMajorMinorPatchVersionNumber("2.4", major, minor, patch); // returns false, values of major and minor are undefined
+		\endcode
+		\return Returns true, if all three numbers could be extracted, otherwise returns false.
+	*/
+	static bool extractMajorMinorPatchVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor, unsigned int & patch);
+
+	/*! Compares two version number strings, so that "4.3.2" is smaller than "4.5.1". */
+	static bool lesserVersionNumber(const std::string & lhs, const std::string & rhs);
+
+	/*! Prints the version number of the currently used compiler as IBK_Message. */
+	static void printCompilerVersion();
 
 private:
 	/*! Decodes a combined single unsigned integer number into two version numbers.

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -47,9 +47,7 @@
 
 namespace IBK {
 
-/*!	The class Quantity describes a quantity, uniquely identified by its ID name.
-	\todo Refactor to have a generic description of a quantity, where type is identified by
-		  a generic string, and not a pre-defined Delphin-specific type string.
+/*!	The class Quantity describes a quantity, uniquely identified by its ID name and type.
 */
 class Quantity {
 public:
@@ -102,10 +100,25 @@ public:
 	static type_t string2type(const std::string & typestr);
 };
 
-/*! Comparison operator for Quantities. */
-inline bool operator<(const Quantity & lhs, const Quantity & rhs) {
-	return (lhs.m_name < rhs.m_name);
+/*! Compares IBK::Quantities by type and name. */
+inline bool operator==(const IBK::Quantity & left, const IBK::Quantity & right) {
+	return left.m_type == right.m_type && left.m_name == right.m_name;
 }
+
+/*! Sort operator, sorts first by name and then by type. */
+inline bool operator<(const IBK::Quantity & left, const IBK::Quantity & right) {
+	if (left.m_name < right.m_name)
+		return true;
+	if (left.m_name > right.m_name)
+		return false;
+	return left.m_type < right.m_type;
+}
+
+/*! Compares IBK::Quantities name and another name. */
+inline bool operator==(const IBK::Quantity & left, const std::string & name) {
+	return left.m_name == name;
+}
+
 
 } // namespace IBK
 

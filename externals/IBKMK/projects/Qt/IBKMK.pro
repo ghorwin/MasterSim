@@ -6,12 +6,6 @@
 TARGET = IBKMK
 TEMPLATE = lib
 
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
-
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
@@ -27,8 +21,7 @@ unix|mac {
 }
 
 
-LIBS += -L../../../lib \
-		-lIBK
+LIBS += -lIBK
 
 
 INCLUDEPATH = \
@@ -45,8 +38,5 @@ HEADERS += \
 	../../src/IBKMKC_dense_matrix.h \
 	../../src/IBKMK_common_defines.h \
 	../../src/IBKMK_DenseMatrix.h
-
-
-OTHER_FILES +=
 
 

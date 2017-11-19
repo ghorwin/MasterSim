@@ -2,19 +2,12 @@
 # Project for TICPP library
 # -------------------------------------------------
 TARGET = TiCPP
-
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
+TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
 
-# This MUST be done after pri is included
-TEMPLATE = lib
 
 unix|mac {
 	VER_MAJ = 1

@@ -2,18 +2,12 @@
 # Project for MasterSim library
 # -------------------------------------------------
 TARGET = MasterSim
+TEMPLATE = lib
 
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../externals/IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
+OPTIONS += top_level_libs
 
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
-
-# This MUST be done after pri is included
-TEMPLATE = lib
 
 unix|mac {
 	VER_MAJ = 0
@@ -30,8 +24,6 @@ INCLUDEPATH = \
 	../../../externals/IBKMK/src \
 	../../../externals/DataIO/src \
 	../../../externals/TiCPP/src
-
-LIBS += -L../../../externals/lib
 
 LIBS += \
 	-lDataIO \

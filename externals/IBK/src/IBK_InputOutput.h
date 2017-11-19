@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -43,6 +43,7 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include <stdexcept>
 #include <fstream>
 
@@ -107,6 +108,21 @@ void dump_vector(std::ostream & out, const char * name, unsigned int n, const do
 	\param width Optional width of numbers.
 */
 void write_vector(std::ostream & out, const char * name, unsigned int n, const double * v, unsigned int width = 4);
+
+/*! Writes the data in the vector into a human readible format.
+	\param out Output stream
+	\param name Some c-string with the name of the vector
+	\param v Vector with data to write
+	\param width Optional field width
+*/
+template <typename T>
+void write_vector(std::ostream & out, const char * name, const std::vector<T> & v, unsigned int width = 4) {
+	out << std::left << name << '\t';
+	for (unsigned int i=0; i<v.size(); ++i)
+		out << std::setw(width) << std::right << v[i];
+	out << std::endl;
+
+}
 
 /*! Reads a string in binary format from the binary input stream 'in'.
 	Corresponds to string format as written by write_string_binary().
@@ -216,6 +232,105 @@ void read_string_vector_binary( std::istream &in,
 							  const std::vector<std::string> & lastLineTokens,
 							  std::vector<std::string> & strList,
 							  IBK::NotificationHandler * notify = NULL );
+
+
+/*! Writes a matrix into a binary file.
+	\param mat The matrix to write, must implement serializationSize() and serialize() functions.
+	\param filename The file path to write file to.
+*/
+template <typename T>
+void write_matrix_binary(const T & mat, const std::string & filename) {
+	std::ofstream binFile(filename.c_str(), std::ios_base::binary);
+	// get size of matrix when stored on file
+	uint64_t matSize = mat.serializationSize();
+	// reserve memory
+	std::string smem(matSize, ' ');
+	// dump to memory
+	void * smem_ptr = (void*)&smem[0];
+	mat.serialize(smem_ptr); // Note: smem_ptr is modified and points now past the memory of smem
+	// first write data length
+	binFile.write((const char*)&matSize, sizeof(uint64_t));
+	// then write data
+	binFile.write(&smem[0], matSize*sizeof(char));
+	binFile.close(); // close file
+}
+
+
+/*! Reads a matrix from a binary file.
+	\param filename The file path to of the binary file.
+	\param mat The matrix to read, must implement recreate() function.
+*/
+template <typename T>
+void read_matrix_binary(const std::string & filename, T & mat) {
+	const char * const FUNC_ID = "[IBK::read_matrix_binary]";
+	std::ifstream binFile(filename.c_str(), std::ios_base::binary);
+	// read size of data storage in file
+	uint64_t matSize;
+	if (!binFile.read((char*)&matSize, sizeof(uint64_t)))
+		throw IBK::Exception("Error reading matrix size from file.", FUNC_ID);
+	// reserve memory
+	std::string smem(matSize, ' ');
+	// read matrix data
+	if (!binFile.read(&smem[0], matSize*sizeof(char)))
+		throw IBK::Exception("Error reading matrix data from file.", FUNC_ID);
+	binFile.close();
+	// recreate matrix from data
+	void * smem_ptr = (void*)&smem[0];
+	mat.recreate(smem_ptr); // Note: smem_ptr is modified and points now past the memory of smem
+}
+
+
+/*! Dumps the matrix to an output stream in human-readible form.
+	\param out Output stream (ASCII).
+	\param mat Matrix to write (must implement n() and value(i,j) functions).
+	\param b Pointer to vector to print alongside matrix, size = n, NULL if no vector to print.
+	\param eulerFormat If true, prints in Euler-Mathtoolbox format
+	\param width Column width for matrix output (precision is expected to be set as stream property)
+	\param matrixLabel The label to be used for defining the matrix in Euler format, defaults to 'A'
+	\param vectorLabel The label to be used for defining the vector b in Euler format, defaults to 'b'
+*/
+template <typename T>
+void write_matrix(std::ostream & out, const T & mat, double * b, bool eulerFormat, unsigned int width,
+				  const char * const matrixLabel, const char * const vectorLabel)
+{
+	unsigned int n = mat.n();
+	if (width < 1)	width = 10;
+	else 			--width; // subtract one for automatically padded " "
+	if (eulerFormat) {
+		out << ">format(" << width << ",0);" << std::endl;
+		out << ">" << matrixLabel << ":=[ ";
+		for (unsigned int i=0; i<n; ++i) {
+			for (unsigned int j=0; j<n; ++j) {
+				out << std::setw(width) << std::right << mat.value(i,j);
+				if (j+1 < n)
+					out << ",";
+			}
+			if (i + 1 != n)		out << ";";
+		}
+		out << "];\n";
+		if (b != NULL) {
+			out << ">" << vectorLabel << ":=[";
+			for (unsigned int i=0; i<n; ++i) {
+				out << std::setw(width) << std::right << b[i];
+				if (i != n-1) out << "; ";
+			}
+			out << "];\n";
+		}
+	}
+	// standard screen output
+	else {
+		for (unsigned int i=0; i<n; ++i) {
+			out << "[ ";
+			for (unsigned int j=0; j<n; ++j) {
+				out << std::setw(width) << std::right << mat.value(i,j) << " ";
+			}
+			out << " ]";
+			if (b != NULL)
+				out << "  [ " << std::setw(width) << std::right << b[i] << " ]";
+			out << std::endl;
+		}
+	}
+}
 
 
 } // namespace IBK

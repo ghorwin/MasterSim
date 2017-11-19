@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -387,13 +387,13 @@ void explode_csv(const std::string& str, std::list<std::string>& tokens);
 */
 void explode_csv(const std::string& str, std::vector<std::string>& tokens);
 
-/*! Explodes a string using the same section title. */
+/*! Explodes a string using the same section title where data is given as block of endline-separated strings.*/
 void explode_section(const std::string& str, const std::string& section_title,
 	std::vector<std::string>& section_data);
 
-/*! Explodes a string using the same section title, each section will be stored in a vector of lines. */
-void explode_section(const std::string& data, std::vector<std::string> & section_data);
-
+/*! Explodes a string using the same section title, where data is given as vector of lines. */
+void explode_section(const std::vector<std::string>& data, const std::string& section_title,
+	std::vector<std::vector<std::string> >& section_data);
 
 /*! Explodes content of an input stream using a list of known section titles.
 	\code
@@ -473,9 +473,14 @@ void explode_sections(const std::string& str, const std::vector<std::string>& se
 	// sections[0] = "some line";
 	// sections[1] = "some other line";
 	// sections[2] = "last line";
+
+	// alternatively call
+	explode(data, section, '\n');
 	\endcode
 */
-void explode_lines(const std::string& data, std::vector<std::string>& section_data);
+inline void explode_lines(const std::string& data, std::vector<std::string>& section_data) {
+	explode(data, section_data, '\n');
+}
 
 /*! Joins a list of strings. */
 template <typename T>

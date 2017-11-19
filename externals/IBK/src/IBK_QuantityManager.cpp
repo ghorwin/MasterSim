@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -84,7 +84,7 @@ void QuantityManager::read(const std::string & data) {
 			// add quantity to list
 			m_quantities.push_back(qd);
 			// add new reference to global index map
-			m_globalIndexMap[qd.m_name]= m_quantities.size()-1;
+			m_globalIndexMap[ std::make_pair(qd.m_type, qd.m_name)]= m_quantities.size()-1;
 		}
 	}
 }
@@ -149,12 +149,18 @@ void QuantityManager::clear() {
 }
 
 
-int QuantityManager::index(const std::string & quantityName) const {
-	std::map<std::string, unsigned int>::const_iterator it = m_globalIndexMap.find(quantityName);
+int QuantityManager::index(const IBK::Quantity & quantity) const {
+	std::map<QuantityIdentifier, unsigned int>::const_iterator it = m_globalIndexMap.find(
+				std::make_pair(quantity.m_type, quantity.m_name));
 	if (it == m_globalIndexMap.end())
 		return -1;
 	else
 		return it->second;
+}
+
+
+const Quantity & QuantityManager::quantity(IBK::Quantity::type_t t, const std::string & quantityName) const {
+	return m_quantities[index( IBK::Quantity(t, quantityName) ) ];
 }
 
 
@@ -167,12 +173,13 @@ const Quantity & QuantityManager::quantity(unsigned int globalIndex) const {
 }
 
 
-const Quantity & QuantityManager::quantity(const std::string & quantityName) const {
-	int qIdx = index(quantityName);
-	if (qIdx == -1)
-		throw IBK::Exception( IBK::FormatString("Unknown or undefined quantity '%1' (check/regenerate quantity list).")
-			.arg(quantityName), "[Quantity::quantity]" );
-	return quantity(qIdx);
+const Quantity & QuantityManager::firstQuantityWithName(const std::string & quantityName) const {
+	for (std::vector<Quantity>::const_iterator it = m_quantities.begin(); it != m_quantities.end(); ++it) {
+		if (it->m_name == quantityName)
+			return *it;
+	}
+	throw IBK::Exception( IBK::FormatString("Unknown or undefined quantity '%1' (check/regenerate quantity list).")
+		.arg(quantityName), "[Quantity::firstQuantityWithName]" );
 }
 
 
@@ -184,6 +191,28 @@ std::set<Quantity> QuantityManager::quantitiesOfType(IBK::Quantity::type_t t) co
 	}
 	return selectedQuantities;
 }
+
+
+std::set<Quantity> QuantityManager::quantitiesWithName(const std::string & name) const {
+	std::set<Quantity> selectedQuantities;
+	for (std::vector<Quantity>::const_iterator it = m_quantities.begin(); it != m_quantities.end(); ++it) {
+		if (it->m_name == name)
+			selectedQuantities.insert(*it);
+	}
+	return selectedQuantities;
+}
+
+
+
+void QuantityManager::addQuantity(const IBK::Quantity & quantity) {
+	int qIdx = index(quantity);
+	if (qIdx != -1)
+		throw IBK::Exception( IBK::FormatString("Quantity with ID name '%1' already exists in list.")
+			.arg(quantity.m_name), "[QuantityManager::addQuantity]" );
+	m_quantities.push_back(quantity);
+	m_globalIndexMap[ std::make_pair(quantity.m_type, quantity.m_name)] = m_quantities.size()-1;
+}
+
 
 //void QuantityManager::setUsedQuantities(const std::vector<unsigned int> & quantityList) {
 //	const char * const FUNC_ID = "[QuantityManager::setUsedQuantities]";

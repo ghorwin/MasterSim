@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -69,7 +69,7 @@ void FileReaderDataProcessorLinesVector::processLine(const std::string& line) {
 }
 
 int FileReaderDataProcessorLinesVector::lineCount() const {
-	return m_lines.size();
+	return (int)m_lines.size();
 }
 
 /*! Helper function to check if a two-character end-of-line marker is found at current stream position. */
@@ -122,7 +122,7 @@ long long readFunct(	std::istream& inputStream,
 		throw IBK::Exception("Invalid input stream state", FUNC_ID);
 	}
 
-	unsigned lastLineTokenSize = lastLineTokens.size();
+	unsigned lastLineTokenSize = (unsigned int)lastLineTokens.size();
 
 	std::vector<char> bufferVect(chunksize + 1, 0);
 	char* buffer = &bufferVect[0];

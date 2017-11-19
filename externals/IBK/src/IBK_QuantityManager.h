@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -97,40 +97,47 @@ public:
 
 	/*! Returns the index of the quantity in the global list of quantities.
 		Indicies are invalidated with each call to read() or clear().
-		\return Returns an index if quantity name was found, otherwise -1.
-	*/
-	int index(const std::string & quantityName) const;
-
-	/*! Returns the index of the quantity in the global list of quantities.
-		Indicies are invalidated with each call to read() or clear().
 		\return Returns an index if quantity was found, otherwise -1.
 	*/
-	int index(const Quantity & quantity) const {
-		return index(quantity.m_name);
-	}
+	int index(const Quantity & quantity) const;
 
 	/*! Returns the quantity definition data for the global index.
 		Throws an exception when quantity index is invalid.
 	*/
 	const Quantity & quantity(unsigned int globalIndex) const;
 
-	/*! Returns the quantity definition data for the unique ID name.
-		Throws an exception when such a quantity is not defined.
+	/*! Looks up the quantity definition by type and name.
+		Throws an exception when quantity is invalid/unknown.
 	*/
-	const Quantity & quantity(const std::string & quantityName) const;
+	const Quantity & quantity(IBK::Quantity::type_t t, const std::string & quantityName) const;
+
+	/*! Returns the first quantity definition for a given name (if any).
+		Throws an exception when quantity name is invalid/unknown.
+	*/
+	const Quantity & firstQuantityWithName(const std::string & quantityName) const;
 
 	/*! Generates set with subset of quantities that all belong to requested type. */
 	std::set<Quantity> quantitiesOfType(IBK::Quantity::type_t t) const;
 
+	/*! Generates set with subset of quantities that all belong to requested name. */
+	std::set<Quantity> quantitiesWithName(const std::string & name) const;
+
 	/*! Gives read-only access to list of quantities. */
 	const std::vector<Quantity> & quantities() const { return m_quantities; }
+
+	/*! Adds a new quantity to the quantity manager.
+		Will throw an IBK::Exception, if quantity exists already.
+	*/
+	void addQuantity(const IBK::Quantity & quantity);
 
 private:
 	/*! Holds all quantities (optimized for index access using global index). */
 	std::vector<Quantity>						m_quantities;
 
+	typedef std::pair<Quantity::type_t, std::string>	QuantityIdentifier;
+
 	/*! Map for connecting unique quantity names to global ids (for reverse lookup). */
-	std::map<std::string, unsigned int>			m_globalIndexMap;
+	std::map<QuantityIdentifier, unsigned int>			m_globalIndexMap;
 };
 
 } // namespace IBK

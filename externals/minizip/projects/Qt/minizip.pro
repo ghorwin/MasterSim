@@ -2,19 +2,11 @@
 # Project for minizip library
 # -------------------------------------------------
 TARGET = minizip
-
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
+TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
-
-# This MUST be done after pri is included
-TEMPLATE = lib
 
 # finally we setup our custom library specific things
 # like version number etc., we also may reset all
@@ -25,8 +17,7 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-LIBS += -L../../../lib \
-	-lz
+LIBS += -lz
 
 INCLUDEPATH += \
 	../../../zlib/src

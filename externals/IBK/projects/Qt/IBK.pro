@@ -6,12 +6,6 @@
 TARGET = IBK
 TEMPLATE = lib
 
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
-
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
@@ -59,7 +53,9 @@ SOURCES += \
 	../../src/IBK_Path.cpp \
 	../../src/IBK_CSVReader.cpp \
 	../../src/IBK_physics.cpp \
-	../../src/IBK_Version.cpp
+	../../src/IBK_Version.cpp \
+	../../src/IBK_system.cpp \
+	../../src/IBK_IntPara.cpp
 
 OTHER_FILES +=
 
@@ -117,5 +113,10 @@ HEADERS += \
 	../../src/IBK_ScalarFunction.h \
 	../../src/IBK_CSVReader.h \
 	../../src/IBK_openMP.h \
-	../../src/IBK_Version.h
+	../../src/IBK_Version.h \
+	../../src/IBK_system.h \
+	../../src/IBK_IntPara.h
+
+DISTFILES += \
+	../../doc/LICENSE
 

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -280,7 +280,13 @@ double LinearSpline::value(double x) const {
 	}
 	// get the index of the lower limit of the current interval
 	unsigned int i = static_cast<unsigned int>(std::distance(m_x.begin(), it) - 1);
+#ifdef USE_SLOPE
 	return m_y[i] + m_slope[i]*(x - m_x[i]);
+#else
+	double alpha = (x - m_x[i])/(m_x[i+1]-m_x[i]); // thus must be always between 0 and 1
+	IBK_ASSERT(alpha >= 0 && alpha <= 1);
+	return m_y[i]*(1-alpha) + m_y[i+1]*alpha;
+#endif
 }
 
 
