@@ -39,6 +39,7 @@
     <ClInclude Include="..\..\src\IBK_Flag.h" />
     <ClInclude Include="..\..\src\IBK_FormatString.h" />
     <ClInclude Include="..\..\src\IBK_InputOutput.h" />
+    <ClInclude Include="..\..\src\IBK_IntPara.h" />
     <ClInclude Include="..\..\src\IBK_Line.h" />
     <ClInclude Include="..\..\src\IBK_LinearSpline.h" />
     <ClInclude Include="..\..\src\IBK_Logfile.h" />
@@ -87,6 +88,7 @@
     <ClCompile Include="..\..\src\IBK_Flag.cpp" />
     <ClCompile Include="..\..\src\IBK_FormatString.cpp" />
     <ClCompile Include="..\..\src\IBK_InputOutput.cpp" />
+    <ClCompile Include="..\..\src\IBK_IntPara.cpp" />
     <ClCompile Include="..\..\src\IBK_Line.cpp" />
     <ClCompile Include="..\..\src\IBK_LinearSpline.cpp" />
     <ClCompile Include="..\..\src\IBK_Logfile.cpp" />
@@ -179,8 +181,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
@@ -190,6 +191,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -210,6 +212,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -226,6 +229,7 @@
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -244,6 +248,7 @@
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

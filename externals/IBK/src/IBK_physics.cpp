@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -53,12 +53,12 @@ const double RHO_AIR = 1.205;
 const double RHO_ICE = 916.7;
 const double T_DEFAULT = 293.15;
 const double T_REF_23 = 296.15;
-const double C_WATER = 4.18e3;
-const double C_ICE = 2.108e3;
-const double C_VAPOR = 2.05e3;
-const double C_AIR = 1.006e3;
+const double C_WATER = 4180;
+const double C_ICE = 2108;
+const double C_VAPOR = 2050;
+const double C_AIR = 1006;
 const double H_EVAP = 3.08e6;
-const double H_FREEZE = -2.46e5;
+const double H_FREEZE = -232417;
 const double KELVIN_FACTOR = 1.0/(1000.0 * 462.0 * T_DEFAULT);
 const double GASPRESS_REF = 101325;
 const double GRAVITY = 9.807;

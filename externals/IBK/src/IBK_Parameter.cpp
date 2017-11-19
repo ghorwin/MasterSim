@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -105,7 +105,12 @@ bool Parameter::set(const std::string& str, const std::string& valstr, std::stri
 
 double Parameter::get_value(Unit unit) const {
 	double v=value; // copy parameter (don't change the actual base value)
-	UnitList::instance().convert(Unit(IO_unit.base_id()), unit, v);
+	try {
+		UnitList::instance().convert(Unit(IO_unit.base_id()), unit, v);
+	}
+	catch (IBK::Exception &  ex) {
+		throw IBK::Exception(ex, IBK::FormatString("Error converting unit in parameter '%1'.").arg(name), "[Parameter::get_value]");
+	}
 	return v;
 }
 

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -196,6 +196,14 @@ public:
 	*/
 	Path absolutePath() const;
 
+	/*! Check basic requierements for creating a relativ path from current one to given path.
+	   Checks:
+	   - current and given path is valid
+	   - absolut paths from current and given path are valid
+	   - drive of current and given path is the same (only Windows)
+	*/
+	bool canCreateRelativePath(const Path& toPath, std::string& errstr) const;
+
 	/*! Tries to transform the currently stored path into a relative path
 		to the path passed as argument.
 		Returns an empty/invalid path if the path itself (this object) is empty.
@@ -290,9 +298,10 @@ public:
 			IBK::Path("../blub.txt").extension() --> "txt"
 			IBK::Path("../archive.tar.gz").extension() --> "gz"
 			IBK::Path("../README").extension() --> ""
-			IBK::Path("../blub.txt").extension() --> "" // where blub.txt is a folder
-			IBK::Path("..").extension() --> "" // where blub.txt is a folder
-			IBK::Path(".").extension() --> "" // where blub.txt is a folder
+			IBK::Path("..").extension() --> "" // no extension on relative paths
+			IBK::Path(".").extension() --> "" // no extension on relative paths
+			IBK::Path("C:").extension() --> "" // no extension on root paths
+			IBK::Path("/").extension() --> "" // no extension on root paths
 		\endcode
 		\sa withoutExtension()
 		\sa addPath()
@@ -554,6 +563,12 @@ public:
 		\code
 			IBK::Path::remove("/home/mypath/Documents"); // -> removes subdirectory Documents and its content
 		\endcode
+		\warning This function is very very very unsafe because on Linux/mac it uses std::system() to
+			evaluate the 'rm -rf' command. Bad things can happen to the user's home directory, if an
+			invalid path is passed.
+				Example: "/home/ghorwin" ->
+				Delphin project file created "/home/ghorwin.d6p"->
+				Run simulation -> and *boom*
 	*/
 	static bool remove(const IBK::Path & p);
 
@@ -644,18 +659,18 @@ public:
 	/*! Adds a string to the path.
 		This is a convenience function and replaces
 		\code
-		path = IBK::Path(path.str() + IBK::trim_copy(str));
+		newpath = IBK::Path(path.str() + IBK::trim_copy(str));
 		\endcode
 	*/
-	Path & operator+(const char * const str);
+	Path operator+(const char * const str) const;
 
 	/*! Adds a string to the path.
 		This is a convenience function and replaces
 		\code
-		path = IBK::Path(path.str() + IBK::trim_copy(str));
+		newpath = IBK::Path(path.str() + IBK::trim_copy(str));
 		\endcode
 	*/
-	Path & operator+(const std::string & str);
+	Path operator+(const std::string & str) const;
 
 protected:
 #if defined(_WIN32)

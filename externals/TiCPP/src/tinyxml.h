@@ -1265,7 +1265,6 @@ public:
 										 std::string & unit,
 										 double & value);
 
-
 	/*! Appends an IBK:UnitVector element.
 		Example:
 		\code

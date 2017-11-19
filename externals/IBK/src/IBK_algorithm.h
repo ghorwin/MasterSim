@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -308,7 +308,7 @@ void read_range_XML(const XMLElementType * element, container& cont) {
 								 .arg(static_cast<unsigned int>(cont.size() + 1)).arg(e->Row()), "[read_range_XML]" );
 		}
 		catch (std::exception & ex2) {
-			throw IBK::Exception(IBK::FormatString("Error reading entry %1: %2. Please check line: %3.")
+			throw IBK::Exception(IBK::FormatString("Error reading entry %1: %2 Please check line: %3.")
 								 .arg(static_cast<unsigned int>(cont.size() + 1)).arg(ex2.what()).arg(e->Row()), "[read_range_XML]" );
 		}
 		cont.push_back(t);        // if successful add to container
@@ -331,17 +331,17 @@ void read_range_XML(const XMLElementType * element, std::map<unsigned int, value
 			t.readXML(e);         // read data from XML element, might throw
 		}
 		catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Error reading entry %1! Please check line: %2.")
+			throw IBK::Exception(ex, IBK::FormatString("Error reading entry %1: Please check line: %2!")
 								 .arg(static_cast<unsigned int>(cont.size() + 1)).arg(e->Row()), "[read_range_XML]" );
 		}
 		catch (std::exception & ex2) {
-			throw IBK::Exception(IBK::FormatString("Error reading entry %1: %2. Please check line: %3.")
+			throw IBK::Exception(IBK::FormatString("Error reading entry %1: %2 Please check line: %3!")
 								 .arg(static_cast<unsigned int>(cont.size() + 1)).arg(ex2.what()).arg(e->Row()), "[read_range_XML]" );
 		}
 		// check if an element with this ID exists already
 		if (map_contains(cont, t.m_id))
 			throw IBK::Exception(IBK::FormatString("Error reading entry %1, an element with ID %2 "
-												   "was already previously defined. Please check line: %3.")
+												   "was already previously defined. Please check line: %3!")
 								 .arg(static_cast<unsigned int>(cont.size() + 1)).arg(t.m_id).arg(e->Row()), "[read_range_XML]" );
 
 		cont[ t.m_id ] = t;        // if successful add to container

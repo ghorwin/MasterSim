@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -67,7 +67,7 @@ namespace IBK {
 
 uint32_t SuperFastHash ( const std::string & myString ) {
 
-	return SuperFastHash( myString.c_str(), myString.length() );
+	return SuperFastHash( myString.c_str(), (int)myString.length() );
 
 }
 
@@ -1331,7 +1331,7 @@ bool base64_encode(const std::vector<unsigned char>& input, std::vector<unsigned
 	int j = 0;
 	unsigned char char_array_3[3];
 	unsigned char char_array_4[4];
-	int inputLength = input.size();
+	int inputLength = (int)input.size();
 	const unsigned char* bytesToEncode = &input[0];
 	while (inputLength--) {
 		char_array_3[i++] = *(bytesToEncode++);
@@ -1437,7 +1437,7 @@ static inline bool is_base64(unsigned char c) {
 }
 
 bool base64_decode(const std::vector<unsigned char>& input, std::vector<unsigned char>& output) {
-	int in_len = input.size();
+	int in_len = (int)input.size();
 	int i = 0;
 	int j = 0;
 	int in_ = 0;

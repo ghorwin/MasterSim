@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -616,6 +616,7 @@ void explode_sections(const std::string& str, const std::vector<std::string>& se
 }
 // ---------------------------------------------------------------------------
 
+
 void explode_section(const std::string& str, const std::string& section_title,
 	std::vector<std::string>& section_data)
 {
@@ -639,13 +640,43 @@ void explode_section(const std::string& str, const std::string& section_title,
 }
 // ---------------------------------------------------------------------------
 
-void explode_section(const std::string& data, std::vector<std::string> & section_data) {
-	std::stringstream in(data);
-	std::string line;
+
+void explode_section(const std::vector<std::string>& data, const std::string& section_title,
+	std::vector<std::vector<std::string> >& section_data)
+{
+	int current_section = -1;
 	section_data.clear();
-	while (std::getline(in, line)) section_data.push_back(line + '\n');
+	std::string keyword;
+	for(unsigned int i=0, size=data.size(); i<size; ++i) {
+
+		// skip empty lines
+		std::string::size_type pos = data[i].find_first_not_of(" \t\r");
+		if (pos == std::string::npos)
+			continue;
+
+		// try to extract the keyword by assuming the line holds a keyword, then
+		// removing the []
+		keyword = data[i];
+		trim(keyword);
+		trim_keyword(keyword);
+
+		// is this our section keyword?
+		if (keyword == section_title) {
+			section_data.push_back(std::vector<std::string>());
+			current_section = section_data.size()-1;
+			continue;
+		}
+
+		// if no list keyword has been found yet, throw exception
+		if (current_section==-1)
+			throw IBK::Exception( IBK::FormatString("Expected section header in first non-empty line:\n'%1'")
+								  .arg(data[i]), "[IBK::explode_section]");
+		// add string line to current part
+		section_data[current_section].push_back(data[i]);
+	}
 }
 // ---------------------------------------------------------------------------
+
 
 std::string format_double(double val, int precision, std::ios_base::fmtflags fmt, int width) {
 	std::stringstream strm;

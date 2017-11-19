@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -38,8 +38,6 @@
 
 #ifndef IBK_MessageHandlerRegistryH
 #define IBK_MessageHandlerRegistryH
-
-#define MessageHandlerRegistry MessageHandlerRegistryMSIM
 
 #include <string>
 #include "IBK_Constants.h"
