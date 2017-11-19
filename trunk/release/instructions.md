@@ -9,3 +9,7 @@ into the subdirectory VC14.
 
 When uploading to SourceForge, rename the `release_notes.md` file to `readme.me` and place it into the `releases` directory.
 
+
+After uploading new releases to SourceForge, also update the news.html on bauklimatik-dresden.de for infos on
+the Welcome Page.
+
