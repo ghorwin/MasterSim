@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -359,7 +359,9 @@ const UnitData* UnitList::retrieve(const std::string &str) const {
 	const_iterator it=begin();
 	while (it!=endit) {
 		const UnitData* unit( *it );
-		if ( unit->name()==str)  return unit;
+		std::string name = unit->name();     
+		if ( name==str)
+			return unit;
 		++it;
 	};
 	return NULL;
@@ -715,7 +717,7 @@ const char * const DEFAULT_UNITS =
 "J/m3K        / 1000 kJ/m3K;"
 "J/s          * 3600 J/h          * 86400 J/d         * 86.4 kJ/d         * 1     W            / 1000 kW           / 1e+06 MW          * 1     Nm/s  ;"
 "J/kg         / 1000 kJ/kg        ;"
-"J/kgK        / 1000 kJ/kgK       * 1     Ws/kgK      ;"
+"J/kgK        / 1000 kJ/kgK       * 1     Ws/kgK      / 1000 J/gK       / 1000 Ws/gK       ;"
 "J/K          / 1000 kJ/K         ;"
 "J/m2s        * 1    W/m2         / 1000 kW/m2        / 1e+06 MW/m2       / 100 W/dm2         / 10000 W/cm2       ;"
 "W/mK         / 1000 kW/mK        ;"

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -92,6 +92,9 @@ public:
 		Otherwise, attempts to read an unsigned int value from string. If that uint is larger
 		than a signed integer, it tries to convert from QRgb, otherwise tries to convert from TColor.
 		Throws an IBK::Exception if string reading/conversion fails.
+
+		\note When reading HTML-color code strings, two formats are supported: #aarrggbb and #rrggbb.
+			  In case of the shorter variant, the color is set to be fully opaque (alpha value set to 255).
 		\param html HTML-color code string.
 	*/
 	static Color fromHtml(const std::string &html);

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -46,6 +46,8 @@
 #include "IBK_FormatString.h"
 #include "IBK_Exception.h"
 #include "IBK_assert.h"
+#include "IBK_messages.h"
+#include "IBK_FormatString.h"
 
 using namespace std;
 
@@ -171,12 +173,18 @@ void ArgParser::parse(int argc, const char* const argv[]) {
 void ArgParser::addOption(const char shortVersion, const std::string & longVersion, const std::string & description,
 						  const std::string & descValue, const std::string & defaultValue)
 {
+	const char * const FUNC_ID = "[ArgParser::addOption]";
 	ArgParser::OptionType ft(shortVersion, longVersion, description, descValue, defaultValue);
 	// is this a flag?
 	if (defaultValue == "true" || defaultValue == "false")
 		ft.m_isFlag = true;
 	// check if option already exists
 	unsigned int idx = findOption(shortVersion, longVersion);
+	if (idx != m_knownOptions.size()) {
+		IBK::IBK_Message( IBK::FormatString("Overwriting existing option '%1' / '%2' not allowed.").arg(shortVersion).arg(longVersion),
+						  IBK::MSG_ERROR, FUNC_ID);
+		exit(0); // kill application, throwing an exception here is useless, since argparser is typically not wrapped by a try-catch-clause.
+	}
 	// we disallow overwriting of existing options because of following problems:
 	// - accidental overwriting of options
 	// - accidental definition of two options:
@@ -184,7 +192,6 @@ void ArgParser::addOption(const char shortVersion, const std::string & longVersi
 	//   and another option "--exclude" is added
 	//   later, someone changes code to have -x also as argument alternative to --exclude -> no the first
 	//   option is overwritten by accident.
-	IBK_ASSERT(idx == m_knownOptions.size());
 	m_knownOptions.push_back(ft);
 }
 

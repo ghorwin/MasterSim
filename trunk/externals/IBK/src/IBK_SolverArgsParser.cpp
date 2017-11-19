@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -44,7 +44,10 @@
 #include <list>
 #include <cstring>
 
-//#include "IBK_FileUtils.h"
+#if defined(_OPENMP)
+#include <omp.h>
+#endif // _OPENMP
+
 #include "IBK_StringUtils.h"
 #include "IBK_UnitList.h"
 #include "IBK_Unit.h"
@@ -116,18 +119,39 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 		}
 	}
 
-	if (findOption('p', "parallel-threads") != m_knownOptions.size()) {
+	// use num parallel threads variable
+	if (hasOption(GO_PARALLEL_THREADS)) {
 		// try to convert argument to integer
 		try {
-			int numP = IBK::string2val<int>(option(GO_PARALLEL_THREADS));
+			int numP = IBK::string2val<int>(option(GO_PARALLEL_THREADS)); // might throw when invalid number is given
 			if (numP < 0)
 				throw IBK::Exception(IBK::FormatString("Invalid value to '--%1' option.").arg(keyword(GO_PARALLEL_THREADS)), FUNC_ID);
+			// store user-defined number of threads value
 			m_numParallelThreads = numP;
+#if defined(_OPENMP)
+			// and set number of threads globally
+			omp_set_num_threads(numP);
+#endif
 		}
 		catch (...) {
 			throw IBK::Exception(IBK::FormatString("Invalid value to '--%1' option.").arg(keyword(GO_PARALLEL_THREADS)), FUNC_ID);
 		}
-	}
+	} // if (hasOption(GO_PARALLEL_THREADS))
+	else {
+
+#if defined(_OPENMP)
+#pragma omp parallel
+{
+
+		// no-user argument, initialize numParallelThreads with environment variable
+#pragma omp master
+		m_numParallelThreads = omp_get_num_threads();
+}
+#else // defined(_OPENMP)
+		m_numParallelThreads = 1; // sequential code
+#endif // defined(_OPENMP)
+
+	} // else (hasOption(GO_PARALLEL_THREADS))
 
 	// special cases les-solver and preconditioner
 	m_lesSolverName.clear();
@@ -263,8 +287,8 @@ bool SolverArgsParser::handleErrors(std::ostream & errstrm) {
 		catch (IBK::Exception & ex) {
 			throw IBK::Exception(ex, IBK::FormatString("Invalid argument for option '--%1'.").arg(keyword(DO_VERBOSITY_LEVEL)), FUNC_ID);
 		}
-		if (v < 0 || v > 3) {
-			throw IBK::Exception(IBK::FormatString("Invalid argument for option '--%1', number must be in the range 0..3.")
+		if (v < 0 || v > 4) {
+			throw IBK::Exception(IBK::FormatString("Invalid argument for option '--%1', number must be in the range 0..4.")
 				.arg(keyword(DO_VERBOSITY_LEVEL)), FUNC_ID);
 		}
 	}
@@ -342,7 +366,7 @@ std::string SolverArgsParser::descriptionValue( int index ) const {
 	switch( index ) {
 		case DO_VERSION						: return "true|false";
 		case DO_STEP_STATS					: return "true|false";
-		case DO_VERBOSITY_LEVEL				: return "0-3";
+		case DO_VERBOSITY_LEVEL				: return "0-4";
 		case DO_DISABLE_PERIODIC_HEADERS	: return "true|false";
 		case DO_CLOSE_ON_EXIT				: return "true|false";
 		case GO_RESTART						: return "true|false";

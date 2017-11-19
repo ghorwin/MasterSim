@@ -4,13 +4,6 @@
 TARGET = DataIO
 TEMPLATE = lib
 
-
-# this is the central configuration file for all IBK dependent libraries
-# we check if this file was created by our build tool helper python what ever
-!include( ../../../IBK/projects/Qt/CONFIG.pri ){
-	message( "No custom build options specified" )
-}
-
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
@@ -22,8 +15,7 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-LIBS += -L../../../lib \
-	-lIBK
+LIBS += -lIBK
 
 INCLUDEPATH += \
 	../../../IBK/src

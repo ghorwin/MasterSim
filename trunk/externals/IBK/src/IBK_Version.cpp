@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2016, Institut für Bauklimatik, TU Dresden, Germany
+/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -12,7 +12,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -31,7 +31,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-	This library contains derivative work based on other open-source libraries. 
+	This library contains derivative work based on other open-source libraries.
 	See OTHER_LICENCES and source code headers for details.
 
 */
@@ -43,6 +43,7 @@
 #include "IBK_InputOutput.h"
 #include "IBK_StringUtils.h"
 #include "IBK_assert.h"
+#include "IBK_messages.h"
 
 namespace IBK {
 
@@ -203,6 +204,41 @@ bool Version::extractMajorMinorVersionNumber(const std::string & versionString, 
 }
 
 
+bool Version::extractMajorMinorPatchVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor, unsigned int & patch) {
+	std::vector<std::string> tokens;
+	IBK::explode(versionString, tokens, ".", IBK::EF_TrimTokens);
+	if (tokens.size() < 3)
+		return false;
+	try {
+		major = IBK::string2val<unsigned int>(tokens[0]);
+		minor = IBK::string2val<unsigned int>(tokens[1]);
+		patch = IBK::string2val<unsigned int>(tokens[2]);
+		return true;
+	}
+	catch (...) {
+		return false;
+	}
+}
+
+
+bool Version::lesserVersionNumber(const std::string & lhs, const std::string & rhs) {
+	// first extract major, minor and patch numbers
+	unsigned int maj1, min1, pat1;
+	unsigned int maj2, min2, pat2;
+	if (!extractMajorMinorPatchVersionNumber(lhs, maj1, min1, pat1) ||
+			!extractMajorMinorPatchVersionNumber(rhs, maj2, min2, pat2))
+	{
+		throw IBK::Exception("Bad version numbers.", "[Version::lesserVersionNumber]");
+	}
+
+	if (maj1 < maj2) return true;
+	if (maj1 > maj2) return false;
+	if (min1 < min2) return true;
+	if (min1 > min2) return false;
+	return pat1<pat2;
+}
+
+
 /*! Helper struct for functions toASCIIEncoding() and fromASCIIEncoding(). */
 union exchangeType {
 	unsigned int	dword;
@@ -303,6 +339,33 @@ unsigned int Version::fromASCIIEncoding( unsigned int first, unsigned int second
 	unsigned int minor = (tmp.byte[1] - '0') * 100 + (tmp.byte[2] - '0') * 10 + (tmp.byte[3] - '0');
 
 	return ((major << 8) | minor);
+}
+
+
+void Version::printCompilerVersion() {
+	const char * const FUNC_ID = "[Version::printCompilerVersion]";
+	// print compiler and version information
+#if defined(__GNUC__)
+
+#if defined(__MINGW32__)
+	IBK::IBK_Message("Compiled with MinGW32-GCC                        " + std::string(__VERSION__) + "\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+#else // defined(__MINGW32__)
+	IBK::IBK_Message("Compiled with GCC                                " + std::string(__VERSION__) + "\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+#endif // defined(__MINGW32__)
+
+#elif defined(_MSC_VER)
+	switch (_MSC_VER) {
+		case 1400 : IBK::IBK_Message("Compiled with Visual Studio 2005\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1500 : IBK::IBK_Message("Compiled with Visual Studio 2008\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1600 : IBK::IBK_Message("Compiled with Visual Studio 2010\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1700 : IBK::IBK_Message("Compiled with Visual Studio 2012\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1800 : IBK::IBK_Message("Compiled with Visual Studio 2013\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1900 : IBK::IBK_Message("Compiled with Visual Studio 2015\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 1910 : IBK::IBK_Message("Compiled with Visual Studio 2017\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		default:
+			IBK::IBK_Message( IBK::FormatString("Compiled with Visual Studio, version ID          %1\n").arg(_MSC_VER), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	}
+#endif
 }
 
 

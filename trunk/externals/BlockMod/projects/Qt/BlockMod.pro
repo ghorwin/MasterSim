@@ -3,25 +3,16 @@
 # ----------------------------------------------------
 
 TARGET = BlockMod
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-QT += network xml
-
 TEMPLATE = lib
 
-CONFIG(debug, debug|release) {
-	OBJECTS_DIR = debug
-}
-else {
-	OBJECTS_DIR = release
-}
+# this pri must be sourced from all our libraries,
+# it contains all functions defined for casual libraries
+include( ../../../IBK/projects/Qt/IBK.pri )
 
-MOC_DIR = moc
-UI_DIR = ui
-DESTDIR = ../../../lib
+QT += core gui network xml
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 INCLUDEPATH = \
-	. \
 	../../src
 
 RESOURCES += ../../resources/BlockMod.qrc
@@ -47,7 +38,4 @@ SOURCES += \
 	../../src/BM_SceneManager.cpp \
 	../../src/BM_BlockItem.cpp
 FORMS +=
-
-OTHER_FILES +=
-
 
