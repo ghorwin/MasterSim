@@ -1,21 +1,21 @@
-# Project file example for iterating GaussSeidel.
+# Project file example for iterating GaussSeidel with error test.
 #
-# No error test included, time step adjustment enabled.
+# Step-doubling error test is enabled.
 
 tStart               0 s
 tEnd                 10 s
-hMax                 0.2 s
-hMin                 1e-05 s
-hFallBackLimit       2e-05 s
+hMax                 1 s
+hMin                 1e-06 s
+hFallBackLimit       0.0002 s
 hStart               0.001 s
 hOutputMin           0.01 s
 binaryOutputFiles    no
 adjustStepSize       yes
-absTol               1e-06
-relTol               1e-05
+absTol               0.0001
+relTol               0.0001
 MasterMode           GAUSS_SEIDEL
-ErrorControlMode     NONE
-maxIterations        6
+ErrorControlMode     ADAPT_STEP
+maxIterations        2
 
 simulator 0 0 Part1 #ff447cb4 "fmus/simx/Part1.fmu"
 simulator 1 1 Part2 #ffc38200 "fmus/simx/Part2.fmu"

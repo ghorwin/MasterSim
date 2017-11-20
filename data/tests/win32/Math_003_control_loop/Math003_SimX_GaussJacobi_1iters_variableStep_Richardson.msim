@@ -1,19 +1,16 @@
-# Project file example for non-iterating GaussSeidel.
-#
-# No error test included, time step adjustment disabled.
-# GaussSeidel is run without iteration.
+# Project file example for non-iterating GaussJacobi with error test.
 
 tStart               0 s
 tEnd                 10 s
-hMax                 30 min
+hMax                 1 s
 hMin                 1e-06 s
-hFallBackLimit       0.001 s
+hFallBackLimit       0.0002 s
 hStart               0.001 s
 hOutputMin           0.01 s
 binaryOutputFiles    no
 adjustStepSize       yes
-absTol               1e-04
-relTol               1e-04
+absTol               0.0001
+relTol               0.0001
 MasterMode           GAUSS_JACOBI
 ErrorControlMode     ADAPT_STEP
 maxIterations        1
