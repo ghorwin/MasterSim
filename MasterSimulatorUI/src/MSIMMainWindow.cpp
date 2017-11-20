@@ -234,31 +234,36 @@ const MASTER_SIM::ModelDescription & MSIMMainWindow::modelDescription(const std:
 
 
 void MSIMMainWindow::changeEvent(QEvent *event) {
+	const char * const FUNC_ID = "[MSIMMainWindow::changeEvent]";
 	if (event->type() == QEvent::ActivationChange && this->isActiveWindow()){
 		if (MSIMProjectHandler::instance().isValid() && !MSIMProjectHandler::instance().projectFile().isEmpty()) {
 			// check for externally modified project file and trigger "reload" action
-			if (QFileInfo(MSIMProjectHandler::instance().projectFile()).lastModified() >
-				MSIMProjectHandler::instance().lastReadTime())
-			{
+			QDateTime lastModified = QFileInfo(MSIMProjectHandler::instance().projectFile()).lastModified();
+			QDateTime lastReadTime = MSIMProjectHandler::instance().lastReadTime();
+			if (lastModified > lastReadTime) {
+				IBK::IBK_Message(IBK::FormatString("Last read time '%1', last modified '%2', asking for update.\n")
+					.arg(QString2trimmedUtf8(lastReadTime.toString()))
+					.arg(QString2trimmedUtf8(lastModified.toString())), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+				// update last read time to avoid duplicate call
+				MSIMProjectHandler::instance().updateLastReadTime();
+
 				int res = QMessageBox::question(this, tr("Reload project file"),
 									  tr("The project file has been modified by an external application. "
 										 "When reloading this project file all unsaved changes will be lost. "
 										 "Reload modified project file? "), QMessageBox::Yes | QMessageBox::No);
 				if (res == QMessageBox::Yes) {
-					QMainWindow::changeEvent(event);
 					// reload project
 					m_projectHandler.reloadProject(this);
+					IBK::IBK_Message(IBK::FormatString("New last read time '%1'.\n")
+						.arg(QString2trimmedUtf8(lastReadTime.toString())), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 
 					if (m_projectHandler.isValid())
 						saveThumbNail();
-					return;
-				}
-				else {
-					MSIMProjectHandler::instance().updateLastReadTime();
 				}
 			}
 		}
 	}
+
 	QMainWindow::changeEvent(event);
 }
 
