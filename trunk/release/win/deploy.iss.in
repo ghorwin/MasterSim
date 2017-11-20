@@ -58,6 +58,11 @@ Name: {app}; Type: filesandordirs
 Name: {group}\MasterSimulator ${Version}; Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; IconIndex: 0
 Name: {group}\MasterSimulator ${Version} Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
 
+[Registry]
+Root: HKCR; Subkey: .msim; ValueType: string; ValueData: MasterSim.Project; Flags: uninsdeletekey deletekey
+Root: HKCR; Subkey: MasterSim.Project; ValueType: string; ValueData: MasterSim Project File; Flags: uninsdeletekey deletekey
+Root: HKCR; Subkey: MasterSim.Project\shell\open\command; ValueType: string; ValueData: """{app}\MasterSimulatorUI.exe"" ""%1"""; Flags: uninsdeletekey deletekey
+
 [Run]
 Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version}; Languages: Deutsch
 Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Run MasterSimulator ${Version}; Languages: English
