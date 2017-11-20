@@ -4,6 +4,8 @@ Release Notes and ChangeLog for MasterSimulator
 Changelog for Version 0.5.0
 ---------------------------
 
+* Bugfix: Ticket [#7] Fixed reloading of project files modified by external applications (editors)
+
 New feature:
 
 * added support for whitespaces and linebreaks (encoded) in string parameters when
