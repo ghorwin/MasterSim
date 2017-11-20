@@ -9,8 +9,8 @@ hStart               0.001 s
 hOutputMin           0.01 s
 binaryOutputFiles    no
 adjustStepSize       yes
-absTol               1e-04
-relTol               1e-04
+absTol               0.0001
+relTol               0.0001
 MasterMode           GAUSS_SEIDEL
 ErrorControlMode     ADAPT_STEP
 maxIterations        1
