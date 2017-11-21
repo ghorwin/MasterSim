@@ -292,6 +292,20 @@ void MasterSim::writeMetrics() const {
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+
+	// create summary.txt file
+	IBK::Path summaryFilePath = m_args.m_workingDir / "log/summary.txt";
+	std::ofstream sumFile(summaryFilePath.c_str());
+	sumFile << "WallClockTime=" << wct << std::endl;
+	sumFile << "FrameworkTimeWriteOutputs=" << m_statOutputTime << std::endl;
+	sumFile << "MasterAlgorithmSteps=" << m_statStepCounter << std::endl;
+	sumFile << "MasterAlgorithmTime=" << m_statAlgorithmTime << std::endl;
+	sumFile << "ConvergenceFails=" << m_statConvergenceFailsCounter << std::endl;
+	sumFile << "ErrorTestFails=" << m_statErrorTestFailsCounter << std::endl;
+	sumFile << "ErrorTestTime=" << m_statErrorTestTime << std::endl;
+	for (unsigned int i=0; i<m_slaves.size(); ++i) {
+		sumFile << "Slave["<<i+1<< "]Time=" << m_statSlaveEvalTimes[i] + m_statStoreStateTimes[i] + m_statRollBackTimes[i] << std::endl;
+	}
 }
 
 
