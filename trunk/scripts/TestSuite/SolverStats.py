@@ -1,11 +1,3 @@
-# Utility functions to compare simulation results.
-#
-# License: 
-#   BSD License
-#
-# Authors: 
-#   Andreas Nicolai <andreas.nicolai@tu-dresden.de>
-
 import os
 import filecmp
 from print_funcs import *
