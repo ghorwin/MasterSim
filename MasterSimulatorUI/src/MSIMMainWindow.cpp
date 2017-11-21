@@ -525,15 +525,20 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 		MASTER_SIM::ModelDescription modelDesc;
 		try {
 			TiXmlDocument doc;
-			if (doc.Parse(fileContent.c_str(), 0, TIXML_ENCODING_UTF8) == 0) {
-				logWidget->addPlainTextMessage(tr("ERROR: Error parsing XML file."));
+			doc.Parse(fileContent.c_str(), 0, TIXML_ENCODING_UTF8);
+			if (doc.Error()) {
+				logWidget->addPlainTextMessage(tr("ERROR: Error parsing XML file. Error message:\n%1")
+											   .arg(QString::fromUtf8(doc.ErrorDesc())));
 				continue;
 			}
 			modelDesc.readXMLDoc(doc);
-			logWidget->addPlainTextMessage(tr("  Model (V1/ME_V2/CS_V2): %1").arg(
-											   QString::fromUtf8(modelDesc.m_modelIdentifier.c_str()) + "/" +
-											   QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str()) + "/" +
-											   QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
+			logWidget->addPlainTextMessage(tr("  Model identifiers:"));
+			if (!modelDesc.m_modelIdentifier.empty())
+				logWidget->addPlainTextMessage(tr("    FMI v1    : %1").arg(QString::fromUtf8(modelDesc.m_modelIdentifier.c_str())));
+			if (!modelDesc.m_meV2ModelIdentifier.empty())
+				logWidget->addPlainTextMessage(tr("    FMI v2 ME : %1").arg(QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str())));
+			if (!modelDesc.m_csV2ModelIdentifier.empty())
+				logWidget->addPlainTextMessage(tr("    FMI v2 CS : %1").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
 			logWidget->addPlainTextMessage(tr("  Variables: %1").arg(modelDesc.m_variables.size()));
 			m_modelDescriptions[*it] = modelDesc;
 		}
