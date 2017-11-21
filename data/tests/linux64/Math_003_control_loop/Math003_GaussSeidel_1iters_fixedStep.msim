@@ -1,0 +1,29 @@
+# Project file example for non-iterating GaussSeidel.
+#
+# No error test included, time step adjustment disabled.
+# GaussSeidel is run without iteration.
+
+tStart               0 s
+tEnd                 10 s
+hMax                 30 min
+hMin                 1e-05 s
+hFallBackLimit       0.01 s
+hStart               0.01 s
+hOutputMin           0.01 s
+binaryOutputFiles    no
+adjustStepSize       no
+absTol               1e-06
+relTol               1e-05
+MasterMode           GAUSS_SEIDEL
+ErrorControlMode     NONE
+maxIterations        1
+
+simulator 0 0 Part1 #ff447cb4 "fmus/OpenModelica/Part1.fmu"
+simulator 1 1 Part2 #ffc38200 "fmus/OpenModelica/Part2.fmu"
+simulator 2 1 Part3 #ffff0000 "fmus/OpenModelica/Part3.fmu"
+
+graph Part1.x2 Part2.x2
+graph Part1.x1 Part2.x1
+graph Part2.x3 Part3.x3
+graph Part3._D_outputStateAlias_x4 Part2.x4
+
