@@ -119,7 +119,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 				case OF_BOOLEAN : {
 					// loop all boolean variables in slave
 					for (unsigned int v=0; v<slave->fmu()->m_boolValueRefsOutput.size(); ++v) {
-						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_boolValueRefsOutput[v]);
+						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_BOOL, slave->fmu()->m_boolValueRefsOutput[v]);
 						std::string flatName = slave->m_name + "." + var.m_name;
 						dataIO->m_quantity += flatName + " | ";
 						dataIO->m_nums.push_back(var.m_valueReference);
@@ -130,7 +130,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 				case OF_INTEGER : {
 					// loop all boolean variables in slave
 					for (unsigned int v=0; v<slave->fmu()->m_intValueRefsOutput.size(); ++v) {
-						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_intValueRefsOutput[v]);
+						const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_INT, slave->fmu()->m_intValueRefsOutput[v]);
 						std::string flatName = slave->m_name + "." + var.m_name;
 						dataIO->m_quantity += flatName + " | ";
 						dataIO->m_nums.push_back(var.m_valueReference);
@@ -142,7 +142,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			} // switch
 		} // for
 		if (varCount == 0) {
-			IBK::IBK_Message( IBK::FormatString("Skipping output file '%1', no outputs of this type are generated\n")
+			IBK::IBK_Message( IBK::FormatString("Skipping output file '%1', no outputs of this type are generated.\n")
 							  .arg(outputFile.filename()), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 			delete m_outputFiles[fileType].m_dataIO;
 			m_outputFiles[fileType].m_dataIO = NULL;
@@ -155,7 +155,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		dataIO->m_filename = outputFile;
 		dataIO->adjustFileName();
 		try {
-			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n").arg(outputFile.filename()).arg(varCount),
+			IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with %2 outputs.\n").arg(outputFile.filename()).arg(varCount),
 							  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 			dataIO->m_quantity = dataIO->m_quantity.substr(0, dataIO->m_quantity.size()-3);
 			dataIO->writeHeader();
@@ -173,7 +173,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		// loop all string variables in slave
 		for (unsigned int v=0; v<slave->fmu()->m_stringValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_stringValueRefsOutput[v]);
+			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_STRING, slave->fmu()->m_stringValueRefsOutput[v]);
 			std::string flatName = slave->m_name + "." + var.m_name;
 			descriptions += flatName + " \t ";
 			m_stringOutputMapping.push_back( std::make_pair(slave, v));
@@ -182,11 +182,11 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	// create output file if at least one output of type string is written
 	IBK::Path stringOutputFilename = m_resultsDir / "strings.csv";
 	if (m_stringOutputMapping.empty()) {
-		IBK::IBK_Message( IBK::FormatString("Skipping output file 'strings.csv', no outputs of this type are generated\n"),
+		IBK::IBK_Message( IBK::FormatString("Skipping output file 'strings.csv', no outputs of this type are generated.\n"),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	else {
-		IBK::IBK_Message( IBK::FormatString("Creating output file 'strings.csv' with '%1' outputs.\n").arg(m_stringOutputMapping.size()),
+		IBK::IBK_Message( IBK::FormatString("Creating output file 'strings.csv' with %1 outputs.\n").arg(m_stringOutputMapping.size()),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 #ifdef _MSC_VER
 		m_stringOutputs = new std::ofstream(stringOutputFilename.wstr().c_str());
@@ -206,7 +206,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		// loop over all real variables in slave
 		for (unsigned int v=0; v<slave->fmu()->m_doubleValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(slave->fmu()->m_doubleValueRefsOutput[v]);
+			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_DOUBLE, slave->fmu()->m_doubleValueRefsOutput[v]);
 			std::string flatName = slave->m_name + "." + var.m_name;
 			// check if variable is in output filter
 			if (!m_project->m_outputFilter.empty() && m_project->m_outputFilter.find(flatName) == m_project->m_outputFilter.end())
@@ -284,14 +284,14 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 	// now that we have collected the mappings, create the files
 	if (m_realOutputFiles.empty()) {
-		IBK::IBK_Message( IBK::FormatString("Skipping output files of type real, no outputs of this type are generated\n"),
+		IBK::IBK_Message( IBK::FormatString("Skipping output files of type real, no outputs of this type are generated.\n"),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	else {
 		for (unsigned int i=0; i<m_realOutputFiles.size(); ++i) {
 			const std::string & outputFile = m_realOutputFiles[i].m_dataIO->m_filename.str();
 			try {
-				IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with '%2' outputs.\n")
+				IBK::IBK_Message( IBK::FormatString("Creating output file '%1' with %2 outputs.\n")
 								  .arg(IBK::Path(outputFile).filename()).arg(m_realOutputFiles[i].m_outputMapping.size()),
 								  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 				// strip trailing | from quantity string
@@ -299,7 +299,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 				m_realOutputFiles[i].m_dataIO->writeHeader();
 			}
 			catch (IBK::Exception & ex) {
-				throw IBK::Exception(ex, IBK::FormatString("Error creating output file '%1' of type real.")
+				throw IBK::Exception(ex, IBK::FormatString("Error creating output file %1 of type real.")
 									 .arg(IBK::Path(outputFile).filename()), FUNC_ID);
 			}
 		}
@@ -355,24 +355,24 @@ void OutputWriter::appendOutputs(double t) {
 	// 1. state of output variables
 
 	// boolean and integer outputs first
-	OutputFileData & outputFileData = m_outputFiles[OF_BOOLEAN];
-	if (outputFileData.m_dataIO != NULL) {
-		for (unsigned int i=0; i<outputFileData.m_outputMapping.size(); ++i) {
-			const std::pair<const Slave*, unsigned int> & outRef = outputFileData.m_outputMapping[i];
+	OutputFileData * outputFileData = &m_outputFiles[OF_BOOLEAN];
+	if (outputFileData->m_dataIO != NULL) {
+		for (unsigned int i=0; i<outputFileData->m_outputMapping.size(); ++i) {
+			const std::pair<const Slave*, unsigned int> & outRef = outputFileData->m_outputMapping[i];
 			// gather all data in output file
 			m_valueVector[i] = outRef.first->m_boolOutputs[outRef.second];
 		}
-		outputFileData.m_dataIO->appendData(t, &m_valueVector[0]);
+		outputFileData->m_dataIO->appendData(t, &m_valueVector[0]);
 	}
 
-	outputFileData = m_outputFiles[OF_INTEGER];
-	if (outputFileData.m_dataIO != NULL) {
-		for (unsigned int i=0; i<outputFileData.m_outputMapping.size(); ++i) {
-			const std::pair<const Slave*, unsigned int> & outRef = outputFileData.m_outputMapping[i];
+	outputFileData = &m_outputFiles[OF_INTEGER];
+	if (outputFileData->m_dataIO != NULL) {
+		for (unsigned int i=0; i<outputFileData->m_outputMapping.size(); ++i) {
+			const std::pair<const Slave*, unsigned int> & outRef = outputFileData->m_outputMapping[i];
 			// gather all data in output file
 			m_valueVector[i] = outRef.first->m_intOutputs[outRef.second];
 		}
-		outputFileData.m_dataIO->appendData(t, &m_valueVector[0]);
+		outputFileData->m_dataIO->appendData(t, &m_valueVector[0]);
 	}
 
 	// now all real outputs
