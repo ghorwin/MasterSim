@@ -1,6 +1,12 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.5.1
+---------------------------
+
+* Bugfix: Ticket #15: Boolean outputs are written to integer output file
+  (also fixes the segfault when having booling and integer outputs)
+
 Changelog for Version 0.5.0
 ---------------------------
 
