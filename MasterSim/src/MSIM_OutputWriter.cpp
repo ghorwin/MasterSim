@@ -98,6 +98,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		// populate header
 		dataIO->m_isBinary = m_project->m_binaryOutputFiles;
+		dataIO->m_asciiPrecision = 14;
 
 		// no geometry file
 		dataIO->m_geoFileHash = 0;
@@ -194,6 +195,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		m_stringOutputs = new std::ofstream(stringOutputFilename.c_str());
 #endif
 		*m_stringOutputs << descriptions << std::endl;
+		m_stringOutputs->precision(14);
 	}
 
 
