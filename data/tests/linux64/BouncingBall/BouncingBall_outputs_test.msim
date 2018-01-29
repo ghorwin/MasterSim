@@ -1,0 +1,18 @@
+tStart               0 a
+tEnd                 4 s
+hMax                 30 min
+hMin                 1e-05 s
+hFallBackLimit       0.001 s
+hStart               1 ms
+hOutputMin           50 ms
+binaryOutputFiles    no
+adjustStepSize       no
+absTol               1e-06
+relTol               1e-05
+MasterMode           GAUSS_JACOBI
+ErrorControlMode     NONE
+maxIterations        1
+
+simulator 0 0 BouncingBall #ff008000 "BouncingBall.fmu"
+
+
