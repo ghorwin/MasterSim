@@ -45,6 +45,7 @@ int main(int argc, char * argv[]) {
 //		parser.m_verbosityLevel = IBK::VL_DETAILED;
 #endif
 		setupLogFile(parser);
+		MASTER_SIM::MasterSim::writeVersionInfo();
 
 		// instantiate project
 		MASTER_SIM::Project project;
