@@ -13,6 +13,6 @@ MasterMode           GAUSS_JACOBI
 ErrorControlMode     NONE
 maxIterations        1
 
-simulator 0 0 BouncingBall #ff008000 "BouncingBall.fmu"
+simulator 0 0 BouncingBall #ff008000 "fmus/BouncingBall.fmu"
 
 
