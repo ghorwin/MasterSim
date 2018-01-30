@@ -2,10 +2,10 @@
 
 First open OMShell, then type:
 
-    >> loadFile("/home/ghorwin/svn/mastersim-code/data/tests/linux64/BouncingBall/BouncingBall.mo")
-    >> translateModelFMU(BouncingBall, fmuType="cs", generatedFileName="/home/ghorwin/svn/mastersim-code/data/tests/linux64/BouncingBall/BouncingBall.fmu")
+    >> loadFile("/home/ghorwin/svn/mastersim-code/data/tests/linux64/BouncingBall/reference_Modelica/BouncingBall.mo")
+    >> translateModelFMU(BouncingBall, fmuType="cs")
     "/tmp/OpenModelica/BouncingBall.fmu"
 
-Now copy /tmp/OpenModelica/BouncingBall.fmu to wherever it is needed.
+Now copy /tmp/OpenModelica/BouncingBall.fmu to BouncingBall/fmus.
 
 
