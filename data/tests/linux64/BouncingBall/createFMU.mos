@@ -3,7 +3,7 @@ loadModel(Modelica_DeviceDrivers); getErrorString();
 
 setLanguageStandard("3.3"); getErrorString();
 
-cd("./fmus")
+cd("./fmus");
 
 loadFile("../reference_Modelica/BouncingBall.mo"); getErrorString();
 
