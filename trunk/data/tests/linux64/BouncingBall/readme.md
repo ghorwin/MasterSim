@@ -1,4 +1,4 @@
-# Steps to generate FMU
+# Steps to generate FMU manually
 
 First open OMShell, then type:
 
@@ -7,5 +7,14 @@ First open OMShell, then type:
     "/tmp/OpenModelica/BouncingBall.fmu"
 
 Now copy /tmp/OpenModelica/BouncingBall.fmu to BouncingBall/fmus.
+
+
+# Steps to generate FMU script-based
+
+See file createFMU.mos
+
+Run file via
+
+    omc createFMU.mos
 
 
