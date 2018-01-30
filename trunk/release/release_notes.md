@@ -6,6 +6,8 @@ Changelog for Version 0.5.1
 
 * Bugfix: Ticket #15: Boolean outputs are written to integer output file
   (also fixes the segfault when having booling and integer outputs)
+* Feature: Ticket #16: Improve simulation log (add solver version for bug reporting)
+* Feature: Ticket #17: Match timesteps in all output files (use same number precision for time points)
 
 Changelog for Version 0.5.0
 ---------------------------
