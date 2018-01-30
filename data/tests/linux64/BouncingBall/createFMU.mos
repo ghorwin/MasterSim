@@ -1,0 +1,14 @@
+loadModel(Modelica, {"3.2.1"}); getErrorString();
+loadModel(Modelica_DeviceDrivers); getErrorString();
+
+setLanguageStandard("3.3"); getErrorString();
+
+cd("./fmus")
+
+loadFile("../reference_Modelica/BouncingBall.mo"); getErrorString();
+
+setDebugFlags("backenddaeinfo");getErrorString();
+
+translateModelFMU(BouncingBall, fmuType="cs"); getErrorString();
+
+
