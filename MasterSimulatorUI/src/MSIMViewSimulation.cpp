@@ -24,7 +24,7 @@
 #include "MSIMMainWindow.h"
 #include "MSIMConversion.h"
 #include "MSIMUndoSimulationSettings.h"
-
+#include "MSIMLogFileDialog.h"
 
 MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	QWidget(parent),
@@ -529,3 +529,12 @@ void MSIMViewSimulation::on_lineEditDtStart_editingFinished() {
 }
 
 
+void MSIMViewSimulation::on_pushButton_clicked() {
+	// compose log file name
+	QString projectFile = MSIMProjectHandler::instance().projectFile();
+	QString logfile = QFileInfo(projectFile).baseName() + "/log/screenlog.txt";
+	logfile = QFileInfo(projectFile).dir().absoluteFilePath(logfile);
+	MSIMLogFileDialog dlg(this);
+	dlg.setLogFile(logfile, projectFile, false);
+	dlg.exec();
+}

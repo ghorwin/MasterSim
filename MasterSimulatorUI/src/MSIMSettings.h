@@ -92,6 +92,10 @@ public:
 					(see QMainWindow::saveState())
 	*/
 	void write(QByteArray geometry, QByteArray state);
+	/*! Convenience function, checks for defined text editor executable, than spawns an external
+		process and shows the file in the text editor.
+	*/
+	bool openFileInTextEditor(QWidget * parent, const QString & filepath) const;
 
 
 	// ****** member variables ************
