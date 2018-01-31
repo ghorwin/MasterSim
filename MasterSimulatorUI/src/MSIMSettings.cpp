@@ -7,6 +7,8 @@
 #include <QLocale>
 #include <QDesktopServices>
 #include <QSettings>
+#include <QProcess>
+#include <QMessageBox>
 
 #include "MSIMConversion.h"
 
@@ -150,6 +152,23 @@ void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 	{
 		settings.setValue(PROPERTY_KEYWORDS[it.key()], it.value());
 	}
+}
+
+
+bool MSIMSettings::openFileInTextEditor(QWidget * parent, const QString & filepath) const {
+	// check if editor has been set in preferences
+	if (m_textEditorExecutable.isEmpty()) {
+		QMessageBox::critical(parent, tr("Missing user preferences"), tr("Please open the preferences dialog and specify "
+																	   "a text editor first!"));
+		return false;
+	}
+
+	bool res = QProcess::startDetached( m_textEditorExecutable, QStringList() << filepath );
+	if (!res) {
+		QMessageBox::critical(parent, tr("Error starting external application"), tr("Text editor '%1' could not be started.")
+							  .arg(m_textEditorExecutable));
+	}
+	return res;
 }
 
 
