@@ -58,7 +58,8 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMUndoSlaves.cpp \
 	../../src/MSIMUndoConnections.cpp \
 	../../src/MSIMAboutDialog.cpp \
-	../../src/MSIMButtonBar.cpp
+	../../src/MSIMButtonBar.cpp \
+    ../../src/MSIMLogFileDialog.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -86,7 +87,8 @@ HEADERS  += \
 	../../src/MSIMUndoSlaves.h \
 	../../src/MSIMUndoConnections.h \
 	../../src/MSIMAboutDialog.h \
-	../../src/MSIMButtonBar.h
+	../../src/MSIMButtonBar.h \
+    ../../src/MSIMLogFileDialog.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
@@ -96,7 +98,8 @@ FORMS    += \
 	../../src/MSIMViewSlaves.ui \
 	../../src/MSIMViewConnections.ui \
 	../../src/MSIMViewSimulation.ui \
-	../../src/MSIMAboutDialog.ui
+	../../src/MSIMAboutDialog.ui \
+    ../../src/MSIMLogFileDialog.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
