@@ -52,7 +52,7 @@ cp -R qt_menu.nib $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resource
 cp -f Info.plist $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/ &&
 
 # deploy Qt framework libraries within app bundle and relink shared libraries
-~/Qt/5.7/clang_64/bin/macdeployqt $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app &&
+~/Qt/5.10/clang_64/bin/macdeployqt $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app &&
 
 echo '*** Creating Symlinks to Applications and Documentation directories' &&
 ln -s /Applications $OUTPUT_DIRECTORY_NAME/Applications && 
