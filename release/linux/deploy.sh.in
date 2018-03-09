@@ -17,7 +17,7 @@ mkdir -p $OUTPUT_DIRECTORY_NAME/doc &&
 # Copy executable
 
 cp ../../bin/release/MasterSimulator $OUTPUT_DIRECTORY_NAME/bin &&
-cp ../../bin/release/MasterSimulatorUI $OUTPUT_DIRECTORY_NAME/bin
+cp ../../bin/release/MasterSimulatorUI $OUTPUT_DIRECTORY_NAME/bin &&
 
 # Copy translations
 
