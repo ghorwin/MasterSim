@@ -104,12 +104,12 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// stability measure: if time step falls below a certain threshhold, we fall back to non-iterating
 				// gauss seidel
 				if (m_master->m_h < m_master->m_project.m_hFallBackLimit.value) {
-					IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_h).arg(m_master->m_project.m_hFallBackLimit.value),
+					IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("t = %1, dt = %2 < %3 (limit), skipping iteration\n").arg(t).arg(m_master->m_h).arg(m_master->m_project.m_hFallBackLimit.value),
 						IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 					break; // no more iterating
 				}
 
-				IBK::IBK_Message(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_h).arg(c).arg(iteration),
+				IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("t = %1, dt = %2, Cycle #%3, Iteration #%4\n").arg(t).arg(m_master->m_h).arg(c).arg(iteration),
 					IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 
 				// convergence test is based on difference between
@@ -165,7 +165,7 @@ bool AlgorithmGaussSeidel::doConvergenceTest() {
 	}
 
 	norm = std::sqrt(norm/nValues);
-	IBK::IBK_Message(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+	IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 	if (norm > 1) {
 		return false;
 	}
