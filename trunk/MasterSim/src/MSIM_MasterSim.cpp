@@ -241,7 +241,7 @@ void MasterSim::doStep() {
 		if ( m_t + m_hProposed > m_project.m_tEnd.value*0.999999)
 			m_hProposed = m_project.m_tEnd.value - m_t;
 	}
-	IBK::IBK_Message(IBK::FormatString("step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
+	IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 }
 
@@ -820,7 +820,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		++m_statAlgorithmCallCounter;
 		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		if (res != AbstractAlgorithm::R_CONVERGED) {
-			IBK::IBK_Message("First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			IBK_FastMessage(IBK::VL_INFO)("First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 			failed = true;
 		}
 		else {
@@ -872,7 +872,7 @@ bool MasterSim::doErrorCheckRichardson() {
 	if (err > 1) {
 		++m_statErrorTestFailsCounter;
 		// failure
-		IBK::IBK_Message(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
+		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
 						 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
 		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {

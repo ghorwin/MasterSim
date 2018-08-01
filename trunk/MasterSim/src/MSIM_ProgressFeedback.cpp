@@ -111,11 +111,11 @@ void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 			<< (betweenOutputs ? " *" : "") << "\n";
 	// write with higher output priority if at least half a second has passed
 	if (elapsedSecondsThisStep > 0.5) {
-		IBK::IBK_Message( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK_FastMessage(IBK::VL_STANDARD)( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		m_lastElapsedSecondsWithOutput = elapsedSeconds;
 	}
 	else
-		IBK::IBK_Message( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		IBK_FastMessage(IBK::VL_INFO)( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
 	// write progress log
 	if (m_progressLog != NULL && !betweenOutputs && elapsedSimTime != 0) {
