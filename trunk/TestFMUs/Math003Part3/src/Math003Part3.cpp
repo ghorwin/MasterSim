@@ -40,6 +40,11 @@ InstanceData * InstanceData::create() {
 Math003Part3::Math003Part3() :
 	InstanceData()
 {
+	// initialize input variables
+	m_realInput[FMI_INPUT_X3] = 0;
+
+	// initialize output variables
+	m_realOutput[FMI_OUTPUT_X4] = 0; // initial value
 }
 
 
@@ -66,12 +71,6 @@ void Math003Part3::init() {
 		// initialize integrator for co-simulation
 		m_currentTimePoint = 0;
 	}
-
-	// initialize input variables
-	m_realInput[FMI_INPUT_X3] = 0;
-
-	// initialize output variables
-	m_realOutput[FMI_OUTPUT_X4] = 0; // initial value
 
 	logger(fmi2OK, "progress", "Initialization complete.");
 }
