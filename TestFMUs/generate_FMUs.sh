@@ -7,6 +7,10 @@ cd fmus
 
 # --- Part 1 ---
 
+if [ -d Part1 ]; then
+  rm -rf Part1
+fi
+
 mkdir -p Part1/binaries/linux64
 cd Part1
 
@@ -17,7 +21,7 @@ if [ -f ../Part1.fmu ]; then
     rm ../Part1.fmu
 fi
 
-7za a ../Part1.zip . > nul && 
+7za a ../Part1.zip . | cat > /dev/null &&
 cd .. && 
 mv Part1.zip Part1.fmu &&
 echo "Created Part1.fmu"
@@ -25,6 +29,9 @@ echo "Created Part1.fmu"
 
 # --- Part 2 ---
 
+if [ -d Part2 ]; then
+  rm -rf Part2
+fi
 
 mkdir -p Part2/binaries/linux64
 cd Part2
@@ -36,7 +43,7 @@ if [ -f ../Part2.fmu ]; then
     rm ../Part2.fmu
 fi
 
-7za a ../Part2.zip . > nul &&
+7za a ../Part2.zip . | cat > /dev/null &&
 cd .. &&
 mv Part2.zip Part2.fmu &&
 echo "Created Part2.fmu"
@@ -44,6 +51,9 @@ echo "Created Part2.fmu"
 
 # --- Part 3 ---
 
+if [ -d Part3 ]; then
+  rm -rf Part3
+fi
 
 mkdir -p Part3/binaries/linux64
 cd Part3
@@ -55,7 +65,7 @@ if [ -f ../Part3.fmu ]; then
     rm ../Part3.fmu
 fi
 
-7za a ../Part3.zip . > nul &&
+7za a ../Part3.zip . | cat > /dev/null &&
 cd .. &&
 mv Part3.zip Part3.fmu &&
 echo "Created Part3.fmu"
