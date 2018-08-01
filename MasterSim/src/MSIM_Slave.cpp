@@ -34,7 +34,7 @@ void fmiLoggerCallback( fmiComponent /* c */, fmiString instanceName, fmiStatus 
 #else
 	std::vsnprintf(buffer, 5000, message, args);
 #endif
-	IBK::IBK_Message( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmiLoggerCallback]", IBK::VL_INFO);
+	IBK_FastMessage(IBK::VL_INFO)( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmiLoggerCallback]", IBK::VL_INFO);
 }
 
 
@@ -60,7 +60,7 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment /* c */, fmi2String instanceNa
 #else
 	std::vsnprintf(buffer, 5000, message, args);
 #endif
-	IBK::IBK_Message( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmi2LoggerCallback]", IBK::VL_INFO);
+	IBK_FastMessage(IBK::VL_INFO)( IBK::FormatString("[%1:%2] %3\n").arg(instanceName).arg(category).arg(buffer), msgType, "[fmi2LoggerCallback]", IBK::VL_INFO);
 }
 
 #if defined(_MSC_VER)
@@ -181,13 +181,15 @@ void Slave::exitInitializationMode() {
 
 
 int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
-	//const char * const FUNC_ID = "[Slave::doStep]";
+	const char * const FUNC_ID = "[Slave::doStep]";
 	fmi2Status res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = (fmi2Status)m_fmu->m_fmi1Functions.doStep(m_component, m_t, stepSize,
 													   noSetFMUStatePriorToCurrentPoint ? fmiTrue : fmiFalse);
 	}
 	else {
+		IBK_MessageFilter(IBK::VL_DEVELOPER)IBK::IBK_Message(IBK::FormatString("Interval [%1 ... %2] with h=%3\n").arg(m_t,22,'e',15).arg(m_t+stepSize,22,'e',15).arg(stepSize,16,'e',12),
+				IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, stepSize,
 													   noSetFMUStatePriorToCurrentPoint ? fmi2True : fmi2False);
 
