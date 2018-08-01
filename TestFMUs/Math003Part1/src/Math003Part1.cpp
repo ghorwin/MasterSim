@@ -80,6 +80,7 @@ void Math003Part1::updateIfModified() {
 // only for Co-simulation
 void Math003Part1::integrateTo(double tCommunicationIntervalEnd) {
 	m_tInput = tCommunicationIntervalEnd;
+	m_externalInputVarsModified = true;
 	updateIfModified();
 }
 
