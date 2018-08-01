@@ -1,6 +1,21 @@
-/*	FMI Interface for Model Exchange and CoSimulation Version 2
+/* FMI Interface for Model Exchange and CoSimulation Version 2
+  Written by Andreas Nicolai (2018), andreas.nicolai@gmx.net
 
-	The details of the actual model in question are encapsulated in InstanceData.
+  The details of the actual model in question are encapsulated in the 
+  class derived from InstanceData.
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <memory>
@@ -569,6 +584,7 @@ fmi2Status fmi2SetTime (void* c, fmi2Real time) {
 	modelInstance->logger(fmi2OK, "progress", strm.str());
 	// cache new time point
 	modelInstance->m_tInput = time;
+	modelInstance->m_externalInputVarsModified = true;
 	return fmi2OK;
 }
 
@@ -586,6 +602,7 @@ fmi2Status fmi2SetContinuousStates(void* c, const fmi2Real x[], size_t nx) {
 
 	// cache input Y vector
 	std::memcpy( &(modelInstance->m_yInput[0]), x, nx*sizeof(double) );
+	modelInstance->m_externalInputVarsModified = true;
 	return fmi2OK;
 }
 
