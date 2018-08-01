@@ -28,6 +28,7 @@ else {
 	}
 }
 
+DEFINES += FMI2_FUNCTION_PREFIX=Math003Part1_
 
 unix|mac {
 	VER_MAJ = 2

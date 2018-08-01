@@ -1,20 +1,20 @@
-# CMakeLists.txt file for Therakles FMU v2
+project( Math003Part1 )
 
-project( FMITestCases )
+cmake_minimum_required(VERSION 3.5)
 
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../../src
 )
 
-add_library( Math_003_Part1 SHARED
-	${PROJECT_SOURCE_DIR}/../../src/InstanceData.cpp
+add_library( ${PROJECT_NAME} SHARED
+	${PROJECT_SOURCE_DIR}/../../src/${PROJECT_NAME}.cpp
 	${PROJECT_SOURCE_DIR}/../../src/fmi2common/fmi2Functions.cpp
-	${PROJECT_SOURCE_DIR}/../../src/fmi2common/InstanceDataCommon.cpp
+	${PROJECT_SOURCE_DIR}/../../src/fmi2common/InstanceData.cpp
 )
 
 # link against the dependent libraries
-target_link_libraries( Math_003_Part1
+target_link_libraries( ${PROJECT_NAME}
 	${APPLE_FRAMEWORKS}
 )
 
