@@ -45,6 +45,17 @@
 
 namespace IBK {
 
+#define IBK_MessageFilter(x) 	if (IBK::MessageHandlerRegistry::instance().messageHandler()->consoleVerbosityLevel() >= (x))
+
+/*! Avoid costly construction of messages that will be disregarded anyway because of too low console verbosity level.
+	Use as drop-in replacement for IBK::IBK_Message, for example:
+	\code
+		// Mind the parantheses...
+		IBK_FastMessage(IBK::VL_DEVELOPER)("message text", ...);
+	\endcode
+*/
+#define IBK_FastMessage(x) 	if (IBK::MessageHandlerRegistry::instance().messageHandler()->consoleVerbosityLevel() >= (x))IBK::IBK_Message
+
 /*! Prototype for the message function.
 	The function will be called from certain IBK classes.
 */
