@@ -207,7 +207,7 @@ public:
 	double							m_tInput;
 
 	/*! Model state vector as received by last call to fmi2SetContinuousStates(). */
-	std::vector<double>				m_y;
+	std::vector<double>				m_yInput;
 
 	/*! Model derivatives vector as updated by last call to updateIfModified(). */
 	std::vector<double>				m_ydot;

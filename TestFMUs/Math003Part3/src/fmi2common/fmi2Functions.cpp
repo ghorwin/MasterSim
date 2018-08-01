@@ -596,12 +596,12 @@ fmi2Status fmi2SetContinuousStates(void* c, const fmi2Real x[], size_t nx) {
 	FMI_ASSERT(modelInstance->m_modelExchange);
 
 	std::stringstream strm;
-	strm << "fmi2SetContinuousStates: Setting continuous states with size " << nx << " with model size " << modelInstance->m_y.size();
+	strm << "fmi2SetContinuousStates: Setting continuous states with size " << nx << " with model size " << modelInstance->m_yInput.size();
 	modelInstance->logger(fmi2OK, "progress", strm.str());
-	FMI_ASSERT(nx == modelInstance->m_y.size());
+	FMI_ASSERT(nx == modelInstance->m_yInput.size());
 
 	// cache input Y vector
-	std::memcpy( &(modelInstance->m_y[0]), x, nx*sizeof(double) );
+	std::memcpy( &(modelInstance->m_yInput[0]), x, nx*sizeof(double) );
 	modelInstance->m_externalInputVarsModified = true;
 	return fmi2OK;
 }
@@ -653,11 +653,11 @@ fmi2Status fmi2GetContinuousStates(void* c, fmi2Real x[], size_t nx) {
 	FMI_ASSERT(modelInstance->m_modelExchange);
 
 	std::stringstream strm;
-	strm << "fmi2GetContinuousStates: Getting continuous states with size " << nx << " with model size " << modelInstance->m_y.size();
+	strm << "fmi2GetContinuousStates: Getting continuous states with size " << nx << " with model size " << modelInstance->m_yInput.size();
 	modelInstance->logger(fmi2OK, "progress", strm.str());
-	FMI_ASSERT(nx == modelInstance->m_y.size());
+	FMI_ASSERT(nx == modelInstance->m_yInput.size());
 
-	std::memcpy( x, &(modelInstance->m_y[0]), nx * sizeof(double) );
+	std::memcpy( x, &(modelInstance->m_yInput[0]), nx * sizeof(double) );
 	return fmi2OK;
 }
 
