@@ -29,9 +29,6 @@ public:
 	/*! Destructor, writes out cached results from Therakles. */
 	~Math003Part2();
 
-	/*! Initializes model */
-	void init();
-
 	/*! This function triggers a state-update of the embedded model whenever our cached input
 		data differs from the input data in the model.
 	*/
