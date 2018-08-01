@@ -129,6 +129,6 @@ void InstanceData::completedIntegratorStep() {
 	if (!m_modelExchange)
 		throw std::runtime_error("Invalid function call; only permitted in ModelExchange mode.");
 	updateIfModified();
-	completedIntegratorStep(m_tInput, &m_y[0]);
+	completedIntegratorStep(m_tInput, &m_yInput[0]);
 }
 

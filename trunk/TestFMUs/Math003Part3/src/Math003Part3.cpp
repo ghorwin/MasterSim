@@ -53,16 +53,16 @@ void Math003Part3::init() {
 
 	if (m_modelExchange) {
 		// initialize states
-		m_y.resize(1);
+		m_yInput.resize(1);
 		m_ydot.resize(1);
 
-		m_y[0] = 0;			// = x4
+		m_yInput[0] = 0;	// = x4
 		m_ydot[0] = 0;		// = \dot{x4}
 	}
 	else {
 		// initialize states, these are used for our internal time integration
-		m_y.resize(1);
-		m_y[0] = 0;			// = x4, initial value
+		m_yInput.resize(1);
+		m_yInput[0] = 0;			// = x4, initial value
 		// initialize integrator for co-simulation
 		m_currentTimePoint = 0;
 	}
@@ -86,7 +86,7 @@ void Math003Part3::updateIfModified() {
 	m_ydot[0] = x3*2;
 
 	// output variable is the same as the conserved quantity
-	m_realOutput[FMI_OUTPUT_X4] = m_y[0];
+	m_realOutput[FMI_OUTPUT_X4] = m_yInput[0];
 
 	// reset externalInputVarsModified flag
 	m_externalInputVarsModified = false;
@@ -106,8 +106,8 @@ void Math003Part3::integrateTo(double tCommunicationIntervalEnd) {
 	double x3 = m_realInput[FMI_INPUT_X3];
 	double deltaX4 = dt*x3*2;
 
-	m_y[0] += deltaX4;
-	m_realOutput[FMI_OUTPUT_X4] = m_y[0];
+	m_yInput[0] += deltaX4;
+	m_realOutput[FMI_OUTPUT_X4] = m_yInput[0];
 	m_currentTimePoint = tCommunicationIntervalEnd;
 
 	// state of FMU after integration:
@@ -135,7 +135,7 @@ void Math003Part3::serializeFMUstate(void * FMUstate) {
 	if (m_modelExchange) {
 		*dataStart = m_tInput;
 		++dataStart;
-		*dataStart = m_y[0];
+		*dataStart = m_yInput[0];
 		++dataStart;
 		*dataStart = m_ydot[0];
 		++dataStart;
@@ -144,7 +144,7 @@ void Math003Part3::serializeFMUstate(void * FMUstate) {
 	else {
 		*dataStart = m_currentTimePoint;
 		++dataStart;
-		*dataStart = m_y[0];
+		*dataStart = m_yInput[0];
 		++dataStart;
 		*dataStart = m_realOutput[FMI_OUTPUT_X4];
 	}
@@ -156,7 +156,7 @@ void Math003Part3::deserializeFMUstate(void * FMUstate) {
 	if (m_modelExchange) {
 		m_tInput = *dataStart;
 		++dataStart;
-		m_y[0] = *dataStart;
+		m_yInput[0] = *dataStart;
 		++dataStart;
 		m_ydot[0] = *dataStart;
 		++dataStart;
@@ -166,7 +166,7 @@ void Math003Part3::deserializeFMUstate(void * FMUstate) {
 	else {
 		m_currentTimePoint = *dataStart;
 		++dataStart;
-		m_y[0] = *dataStart;
+		m_yInput[0] = *dataStart;
 		++dataStart;
 		m_realOutput[FMI_OUTPUT_X4] = *dataStart;
 	}
