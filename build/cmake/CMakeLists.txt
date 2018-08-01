@@ -138,3 +138,11 @@ if (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 	add_subdirectory( ../../MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
 endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 
+# -------------------------------------------------------------
+# Test FMUs
+# -------------------------------------------------------------
+
+add_subdirectory( ../../TestFMUs/Math003Part1/projects/cmake Math003Part1)
+add_subdirectory( ../../TestFMUs/Math003Part2/projects/cmake Math003Part2)
+add_subdirectory( ../../TestFMUs/Math003Part3/projects/cmake Math003Part3)
+

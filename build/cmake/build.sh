@@ -161,6 +161,12 @@ if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
   echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
   cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ../../bin/release/MasterSimulatorUI.app 
 fi &&
+
+echo "*** TestFMUs to bin/release ***" &&
+cp $BUILDDIR/Math003Part1/libMath003Part1.so ../../bin/release/libMath003Part1.so &&
+cp $BUILDDIR/Math003Part2/libMath003Part2.so ../../bin/release/libMath003Part2.so &&
+cp $BUILDDIR/Math003Part3/libMath003Part3.so ../../bin/release/libMath003Part3.so &&
+
 echo "*** Build MasterSimulator ***" &&
 if [[ $SKIP_TESTS = "false"  ]]; 
 then
