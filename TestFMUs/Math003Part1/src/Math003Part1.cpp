@@ -14,9 +14,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/*! Model identifier to construct dll function names. 1 stands for first version of FMI. */
-#define MODEL_IDENTIFIER Math003Part1
-
 #include "fmi2common/fmi2Functions.h"
 #include "fmi2common/fmi2FunctionTypes.h"
 #include "Math003Part1.h"
@@ -52,15 +49,18 @@ Math003Part1::~Math003Part1() {
 void Math003Part1::init() {
 	logger(fmi2OK, "progress", "Starting initialization.");
 
-	// we only need one output variable, with ID 1
-	m_realOutput[FMI_OUTPUT_X1] = 0; // initial value
-	m_realOutput[FMI_OUTPUT_X2] = 0; // initial value
+	// initialize output variables
+	m_realOutput[FMI_OUTPUT_X1] = 0;
+	m_realOutput[FMI_OUTPUT_X2] = 0;
 
 	logger(fmi2OK, "progress", "Initialization complete.");
 }
 
 
 void Math003Part1::updateIfModified() {
+	if (!m_externalInputVarsModified)
+		return;
+
 	if (m_tInput < 1 || (m_tInput >= 2 && m_tInput < 5))
 		m_realOutput[FMI_OUTPUT_X1] = 0;
 	else
@@ -84,19 +84,28 @@ void Math003Part1::integrateTo(double tCommunicationIntervalEnd) {
 
 
 void Math003Part1::computeFMUStateSize() {
-	m_fmuStateSize = sizeof(double); // only time point
+	m_fmuStateSize = 3*sizeof(double); // time point and both output variables
 }
 
 
 void Math003Part1::serializeFMUstate(void * FMUstate) {
 	double * dataStart = (double*)FMUstate;
 	*dataStart = m_tInput;
+	++dataStart;
+	*dataStart = m_realOutput[FMI_OUTPUT_X1];
+	++dataStart;
+	*dataStart = m_realOutput[FMI_OUTPUT_X2];
 }
 
 
 void Math003Part1::deserializeFMUstate(void * FMUstate) {
 	const double * dataStart = (const double*)FMUstate;
 	m_tInput = *dataStart;
+	++dataStart;
+	m_realOutput[FMI_OUTPUT_X1] = *dataStart;
+	++dataStart;
+	m_realOutput[FMI_OUTPUT_X2] = *dataStart;
+	m_externalInputVarsModified = true;
 }
 
 
