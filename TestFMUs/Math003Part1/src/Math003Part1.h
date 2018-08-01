@@ -3,7 +3,7 @@
 
 #include "fmi2common/InstanceData.h"
 
-#include "fmi2common/fmi2FunctionTypes.h"
+//#include "fmi2common/fmi2FunctionTypes.h"
 
 /*! This class wraps all data needed for a single instance of the FMU. */
 class Math003Part1 : public InstanceData {

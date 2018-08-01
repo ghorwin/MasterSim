@@ -2,17 +2,11 @@
 #define InstanceDataH
 
 #include <vector>
+#include <map>
 #include <set>
-
-#include <IBK_Path.h>
-#include <IBK_FormatString.h>
+#include <string>
 
 #include "fmi2FunctionTypes.h"
-
-namespace IBK {
-	class MessageHandler;
-}
-
 
 /*! This class wraps data needed for FMUs and implements common functionality.
 
@@ -32,14 +26,31 @@ namespace IBK {
 	};
 	\endcode
 
-	Also, you must define the symbol with some GUID
+	Also, you must define the constant with some GUID and implement the static function create().
 	\code
 	const char * const InstanceData::GUID = "{471a3b52-4923-44d8-ab4a-fcdb813c7322}";
+
+	InstanceData * InstanceData::create() {
+		return new MyFMIClass;
+	}
 	\endcode
 	in your MyFMIClass.cpp file.
 */
 class InstanceData {
 public:
+	/*! Global unique ID that identifies this FMU.
+		Must match the GUID in the ModelDescription file.
+		\note This GUID is model-specific, so you must define this static symbol
+			  in the cpp file of your derived class.
+	*/
+	static const char * const GUID;
+	/*! Factory function, needs to be implemented in user code.
+		\note Only the model-specific implementation knows the concrete type of the class
+			derived from abstract InterfaceData class, and so this function must be
+			implemented in the model-specific code.
+	*/
+	static InstanceData * create();
+
 
 	/*! Initializes empty instance.
 		\note You should initialize all input and output variables here!
@@ -53,26 +64,30 @@ public:
 	virtual void init() = 0;
 
 	/*! This function triggers a state-update of the embedded model whenever our cached input
-		data differs from the input data in the model (must be implemented in derived classes).
+		data differs from the input data in the model.
+		Re-implement in models that support model exchange.
+		\note You should check the state of m_externalInputVarsModified and only
+			update the results of this flag is true. Afterwards set this flag to false.
 	*/
-	virtual void updateIfModified();
+	virtual void updateIfModified() {}
 
-	/*! Called from fmi2DoStep(). */
-	virtual void integrateTo(double tCommunicationIntervalEnd);
+	/*! Called from fmi2DoStep().
+		Re-implement in models that support co-simulation.
+	*/
+	virtual void integrateTo(double tCommunicationIntervalEnd) { (void)tCommunicationIntervalEnd; }
 
 	/*! Send a logging message to FMU environment if logger is present.*/
-	void logger(fmi2Status, fmi2String, const IBK::FormatString &);
-	/*! Send a logging message to FMU environment if logger is present.*/
-	void logger(fmi2Status state, fmi2String category, fmi2String msg) {
-		logger(state, category, IBK::FormatString(msg));
+	void logger(fmi2Status state, fmi2String category, fmi2String msg);
+
+	/*! Send a logging message to FMU environment if logger is present.
+		This function copies the error message (which may be a temporary string object) into the
+		persistent member variable m_lastError and passes a pointer to this string through the
+		logger function.
+	*/
+	void logger(fmi2Status state, fmi2String category, const std::string & msg) {
+		m_lastError = msg;
+		logger(state, category, m_lastError.c_str());
 	}
-
-	/*! Create message handler object and opens log file.
-		Directory structure is created if not existing yet.
-		Function throws an IBK::Exception when log file cannot be created or
-		if message handler object exists already.
-	*/
-	void setupMessageHandler(const IBK::Path & logfile);
 
 	/*! Sets a new input parameter of type double. */
 	void setRealParameter(int varID, double value);
@@ -133,13 +148,6 @@ public:
 	*/
 	virtual void clearBuffers() {}
 
-	/*! Global unique ID that identifies this FMU.
-		Must match the GUID in the ModelDescription file.
-		\note This GUID is model-specific, so you must define this static symbol
-			  in the cpp file of your derived class.
-	*/
-	static const char * const GUID;
-
 	/*! Stores the FMU callback functions for later use.
 		It is usable between fmi2Instantiate and fmi2Terminate.*/
 	const fmi2CallbackFunctions*	m_callbackFunctions;
@@ -193,10 +201,6 @@ public:
 	*/
 	bool							m_externalInputVarsModified;
 
-	/*! Cached pointer to IBK message handler. */
-	IBK::MessageHandler				*m_messageHandlerPtr;
-
-
 	/*! Holds the size of the FMU when serialized in memory.
 		This value does not change after full initialization of the solver so it can be cached.
 		Initially it will be zero so functions can check if initialization is properly done.
@@ -207,6 +211,11 @@ public:
 		Unreleased memory gets deallocated in destructor.
 	*/
 	std::set<void*>					m_fmuStates;
+
+	/*! Persistent string pointing to last error message.
+		\warning DO not change/resize string manually, only through logger() function.
+	*/
+	std::string						m_lastError;
 
 }; // class InstanceData
 

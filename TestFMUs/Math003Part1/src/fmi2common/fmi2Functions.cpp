@@ -5,11 +5,10 @@
 
 #include <memory>
 #include <iostream>
+#include <sstream>
+#include <cstring> // for memcpy
 
-#include <IBK_assert.h>
-#include <IBK_FormatString.h>
-
-#ifdef IBK_DEBUG
+#ifdef DEBUG
 
 
 #define FMI_ASSERT(p)	if (!(p)) \
@@ -20,7 +19,7 @@
 
 #define FMI_ASSERT(p) (void)0;
 
-#endif //  IBK_DEBUG
+#endif //  DEBUG
 
 #ifdef _WIN32
 
@@ -34,10 +33,6 @@
 
 #include "fmi2Functions.h"
 #include "InstanceData.h"
-
-// *** Prototypes of functions that need to be implemented by the FMI code
-
-InstanceData * createInstanceData();
 
 
 // *** FMI Interface Functions ***
@@ -62,8 +57,7 @@ const char* fmi2GetVersion() {
 fmi2Status fmi2SetDebugLogging(void* c, fmi2Boolean loggingOn, size_t nCategories, const char* const categories[]) {
 	InstanceData * modelInstance = static_cast<InstanceData*>(c);
 	FMI_ASSERT(modelInstance != NULL);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2SetDebugLogging: logging switched %1.")
-						  .arg(loggingOn ? "true" : "false"));
+	modelInstance->logger(fmi2OK, "progress", std::string("fmi2SetDebugLogging: logging switched ") + (loggingOn ? "on." : "off."));
 	modelInstance->m_loggingOn = (loggingOn == fmi2True);
 	if (modelInstance->m_loggingOn) {
 		modelInstance->m_loggingCategories.clear();
@@ -104,7 +98,7 @@ void* fmi2Instantiate(fmi2String instanceName, fmi2Type fmuType, fmi2String guid
 	}
 
 	// instantiate data structure for instance-specific data
-	InstanceData * data = createInstanceData();
+	InstanceData * data = InstanceData::create();
 	// transfer function arguments
 	data->m_callbackFunctions = functions;
 	data->m_instanceName = instanceName;
@@ -158,9 +152,10 @@ fmi2Status fmi2EnterInitializationMode(void* c) {
 		// init successful
 		return fmi2OK;
 	}
-	catch (IBK::Exception & ex) {
-		ex.writeMsgStackToError();
-		modelInstance->logger(fmi2Error, "error", "Model initialization failed.");
+	catch (std::exception & ex) {
+		std::string err = ex.what();
+		err += "\nModel initialization failed.";
+		modelInstance->logger(fmi2Error, "error", err);
 		return fmi2Error;
 	}
 }
@@ -203,11 +198,10 @@ fmi2Status fmi2GetReal(void* c, const fmi2ValueReference vr[], size_t nvr, fmi2R
 		try {
 			modelInstance->getRealParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2GetReal() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2GetReal()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -222,11 +216,10 @@ fmi2Status fmi2GetInteger(void* c, const fmi2ValueReference vr[], size_t nvr, fm
 		try {
 			modelInstance->getIntParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2GetInteger() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2GetInteger()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -243,11 +236,10 @@ fmi2Status fmi2GetBoolean(void* c, const fmi2ValueReference vr[], size_t nvr, fm
 			modelInstance->getBoolParameter(vr[i], val);
 			value[i] = val;
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2GetBoolean() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2GetBoolean()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -262,11 +254,10 @@ fmi2Status fmi2GetString(void* c, const fmi2ValueReference vr[], size_t nvr, fmi
 		try {
 			modelInstance->getStringParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2GetString() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2GetString()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -281,11 +272,10 @@ fmi2Status fmi2SetReal (void* c, const fmi2ValueReference vr[], size_t nvr, cons
 		try {
 			modelInstance->setRealParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2SetReal() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2SetReal()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -300,11 +290,10 @@ fmi2Status fmi2SetInteger(void* c, const fmi2ValueReference vr[], size_t nvr, co
 		try {
 			modelInstance->setIntParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2SetInteger() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2SetInteger()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -319,11 +308,10 @@ fmi2Status fmi2SetBoolean(void* c, const fmi2ValueReference vr[], size_t nvr, co
 		try {
 			modelInstance->setBoolParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2SetBoolean() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2SetBoolean()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -338,11 +326,10 @@ fmi2Status fmi2SetString(void* c, const fmi2ValueReference vr[], size_t nvr, con
 		try {
 			modelInstance->setStringParameter(vr[i], value[i]);
 		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			modelInstance->logger(fmi2Error, "error",
-								  IBK::FormatString("Error in fmi2SetString() for vr=%1 and value=%2.")
-								  .arg(vr[i]).arg(value[i]).str().c_str());
+		catch (std::exception & ex) {
+			std::string err = ex.what();
+			err += "\nError in fmi2SetString()";
+			modelInstance->logger(fmi2Error, "error", err);
 			return fmi2Error;
 		}
 	}
@@ -471,6 +458,7 @@ fmi2Status fmi2SerializeFMUstate(fmi2Component c, fmi2FMUstate FMUstate, fmi2Byt
 
 
 fmi2Status fmi2DeSerializeFMUstate(void* c, const char serializedState[], size_t s, fmi2FMUstate*  FMUstate) {
+	(void)s;
 	InstanceData * modelInstance = static_cast<InstanceData*>(c);
 	FMI_ASSERT(modelInstance != NULL);
 
@@ -523,11 +511,7 @@ fmi2Status fmi2EnterEventMode(void* c){
 
 // Model-Exchange only
 fmi2Status fmi2NewDiscreteStates(void* c, fmi2EventInfo* eventInfo) {
-	InstanceData * modelInstance = static_cast<InstanceData*>(c);
-	FMI_ASSERT(modelInstance != NULL);
-	FMI_ASSERT(modelInstance->m_modelExchange);
 	eventInfo->newDiscreteStatesNeeded = false;
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2NewDiscreteStates: at current time: %1").arg(modelInstance->m_tInput));
 	return fmi2OK;
 }
 
@@ -557,9 +541,10 @@ fmi2Status fmi2CompletedIntegratorStep (void* c, fmi2Boolean,
 	try {
 		modelInstance->completedIntegratorStep();
 	}
-	catch (IBK::Exception & ex) {
-		ex.writeMsgStackToError();
-		modelInstance->logger(fmi2Error, "error", "Error in fmi2CompletedIntegratorStep().");
+	catch (std::exception & ex) {
+		std::string err = ex.what();
+		err += "\nError in fmi2CompletedIntegratorStep()";
+		modelInstance->logger(fmi2Error, "error", err);
 		*terminateSimulation = true;
 		return fmi2Error;
 	}
@@ -579,7 +564,9 @@ fmi2Status fmi2SetTime (void* c, fmi2Real time) {
 	InstanceData * modelInstance = static_cast<InstanceData*>(c);
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2SetTime: Set time point: %1").arg(time));
+	std::stringstream strm;
+	strm << "fmi2SetTime: Set time point: " << time << " s";
+	modelInstance->logger(fmi2OK, "progress", strm.str());
 	// cache new time point
 	modelInstance->m_tInput = time;
 	return fmi2OK;
@@ -592,8 +579,9 @@ fmi2Status fmi2SetContinuousStates(void* c, const fmi2Real x[], size_t nx) {
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(modelInstance->m_modelExchange);
 
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2SetContinuousStates: "
-		"Set continuous states with size %1 with model size %2").arg(nx).arg(modelInstance->m_yInput.size()));
+	std::stringstream strm;
+	strm << "fmi2SetContinuousStates: Setting continuous states with size " << nx << " with model size " << modelInstance->m_yInput.size();
+	modelInstance->logger(fmi2OK, "progress", strm.str());
 	FMI_ASSERT(nx == modelInstance->m_yInput.size());
 
 	// cache input Y vector
@@ -612,8 +600,9 @@ fmi2Status fmi2GetDerivatives(void* c, fmi2Real derivatives[], size_t nx) {
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(modelInstance->m_modelExchange);
 
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetDerivatives: "
-		"Getting derivatives with size %1 with model size %2").arg(nx).arg(modelInstance->m_ydot.size()));
+	std::stringstream strm;
+	strm << "fmi2GetDerivatives: Getting derivatives with size " << nx << " with model size " << modelInstance->m_ydot.size();
+	modelInstance->logger(fmi2OK, "progress", strm.str());
 
 	// Update model state if any of the inputs have been modified.
 	// Does nothing, if the model state is already up-to-date after a previous call
@@ -621,10 +610,10 @@ fmi2Status fmi2GetDerivatives(void* c, fmi2Real derivatives[], size_t nx) {
 	try {
 		modelInstance->updateIfModified();
 	}
-	catch (IBK::Exception & ex) {
-		ex.writeMsgStackToError();
-		modelInstance->logger(fmi2Error, "error", IBK::FormatString("fmi2GetDerivatives: "
-			"Exception while updating model: %1").arg(ex.what()));
+	catch (std::exception & ex) {
+		std::string err = ex.what();
+		err += "\nfmi2GetDerivatives: Exception while updating model";
+		modelInstance->logger(fmi2Error, "error", err);
 		return fmi2Error;
 	}
 
@@ -635,11 +624,7 @@ fmi2Status fmi2GetDerivatives(void* c, fmi2Real derivatives[], size_t nx) {
 
 
 // Model-Exchange only
-fmi2Status fmi2GetEventIndicators (void* c, fmi2Real[], size_t ni){
-	InstanceData * modelInstance = static_cast<InstanceData*>(c);
-	FMI_ASSERT(modelInstance != NULL);
-	FMI_ASSERT(modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetEventIndicators: size %1").arg(ni));
+fmi2Status fmi2GetEventIndicators (void*, fmi2Real[], size_t){
 	return fmi2OK;
 }
 
@@ -650,8 +635,9 @@ fmi2Status fmi2GetContinuousStates(void* c, fmi2Real x[], size_t nx) {
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(modelInstance->m_modelExchange);
 
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetContinuousStates: "
-		"Getting continuous states with size %1 with model size %2").arg(nx).arg(modelInstance->m_yInput.size()));
+	std::stringstream strm;
+	strm << "fmi2GetContinuousStates: Getting continuous states with size " << nx << " with model size " << modelInstance->m_yInput.size();
+	modelInstance->logger(fmi2OK, "progress", strm.str());
 	FMI_ASSERT(nx == modelInstance->m_yInput.size());
 
 	std::memcpy( x, &(modelInstance->m_yInput[0]), nx * sizeof(double) );
@@ -660,40 +646,25 @@ fmi2Status fmi2GetContinuousStates(void* c, fmi2Real x[], size_t nx) {
 
 
 // Model-Exchange only
-fmi2Status fmi2GetNominalsOfContinuousStates(void* c, fmi2Real[], size_t nx) {
-	InstanceData * modelInstance = static_cast<InstanceData*>(c);
-
-	FMI_ASSERT(modelInstance != NULL);
-	FMI_ASSERT(modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetNominalsOfContinuousStates: size: %1").arg(nx));
+fmi2Status fmi2GetNominalsOfContinuousStates(void*, fmi2Real[], size_t) {
 	return fmi2OK;
 }
 
 
 // CoSim only
-fmi2Status fmi2SetRealInputDerivatives(void* c,	const fmi2ValueReference vr[], size_t nvr,
+fmi2Status fmi2SetRealInputDerivatives(void*,	const fmi2ValueReference vr[], size_t nvr,
 										const fmi2Integer order[], const fmi2Real value[])
 {
-	(void)order; (void)value; (void)vr;
-	InstanceData * modelInstance = static_cast<InstanceData*>(c);
-
-	FMI_ASSERT(modelInstance != NULL);
-	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2SetRealInputDerivatives: size: %1").arg(nvr));
+	(void)order; (void)value; (void)vr; (void)nvr;
 	return fmi2OK;
 }
 
 
 // CoSim only
-fmi2Status fmi2GetRealOutputDerivatives(void* c, const fmi2ValueReference vr[], size_t nvr,
+fmi2Status fmi2GetRealOutputDerivatives(void*, const fmi2ValueReference vr[], size_t nvr,
 										const fmi2Integer order[], fmi2Real value[])
 {
-	(void)order; (void)value; (void)vr;
-	InstanceData * modelInstance = static_cast<InstanceData*>(c);
-
-	FMI_ASSERT(modelInstance != NULL);
-	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetRealOutputDerivatives: size: %1").arg(nvr));
+	(void)order; (void)value; (void)vr; (void)nvr;
 	return fmi2OK;
 }
 
@@ -716,10 +687,10 @@ fmi2Status fmi2DoStep(void* c, double currentCommunicationPoint, double communic
 	try {
 		modelInstance->integrateTo(currentCommunicationPoint + communicationStepSize);
 	}
-	catch (IBK::Exception & ex) {
-		ex.writeMsgStackToError();
-		modelInstance->logger(fmi2Error, "error", IBK::FormatString("fmi2DoStep: "
-			"Exception while integrating model: %1").arg(ex.what()));
+	catch (std::exception & ex) {
+		std::string err = ex.what();
+		err += "\fmi2DoStep: Exception while integrating model";
+		modelInstance->logger(fmi2Error, "error", err);
 		return fmi2Error;
 	}
 	return fmi2OK;
@@ -732,7 +703,7 @@ fmi2Status fmi2CancelStep(void* c) {
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2CancelStep: cancel current step."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2CancelStep: cancel current step.");
 	return fmi2OK;
 }
 
@@ -745,7 +716,7 @@ fmi2Status fmi2GetStatus(void* c, const fmi2StatusKind s, fmi2Status* value) {
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetStatus: get current status."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2GetStatus: get current status.");
 	return fmi2OK;
 }
 
@@ -757,7 +728,7 @@ fmi2Status fmi2GetRealStatus(void* c, const fmi2StatusKind s, fmi2Real* value) {
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetRealStatus: get real status."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2GetRealStatus: get real status.");
 	return fmi2OK;
 }
 
@@ -769,7 +740,7 @@ fmi2Status fmi2GetIntegerStatus(void* c, const fmi2StatusKind s, fmi2Integer* va
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetIntegerStatus: get integer status."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2GetIntegerStatus: get integer status.");
 	return fmi2OK;
 }
 
@@ -781,7 +752,7 @@ fmi2Status fmi2GetBooleanStatus(void* c, const fmi2StatusKind s, fmi2Boolean* va
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetBooleanStatus: get boolean status."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2GetBooleanStatus: get boolean status.");
 	return fmi2OK;
 }
 
@@ -793,6 +764,6 @@ fmi2Status fmi2GetStringStatus(void* c, const fmi2StatusKind s, fmi2String* valu
 
 	FMI_ASSERT(modelInstance != NULL);
 	FMI_ASSERT(!modelInstance->m_modelExchange);
-	modelInstance->logger(fmi2OK, "progress", IBK::FormatString("fmi2GetStringStatus: get string status."));
+	modelInstance->logger(fmi2OK, "progress", "fmi2GetStringStatus: get string status.");
 	return fmi2OK;
 }

@@ -1,13 +1,11 @@
 /* Common implementation of the FMI Interface Data Structure.
 */
+#include "InstanceData.h"
+
+#include <stdexcept>
 
 #include "fmi2Functions.h"
 #include "fmi2FunctionTypes.h"
-#include "InstanceData.h"
-
-#include <IBK_assert.h>
-#include <IBK_messages.h>
-
 
 InstanceData::InstanceData() :
 	m_callbackFunctions(0),
@@ -15,67 +13,31 @@ InstanceData::InstanceData() :
 	m_modelExchange(true),
 	m_tInput(0),
 	m_externalInputVarsModified(false),
-	m_messageHandlerPtr(NULL),
 	m_fmuStateSize(0)
 {
 }
 
 
 InstanceData::~InstanceData() {
-	delete m_messageHandlerPtr; // MessageHandler automatically resets DefaultMessageHandler upon deletion
 	for (std::set<void*>::iterator it = m_fmuStates.begin(); it != m_fmuStates.end(); ++it) {
 		free(*it);
 	}
 }
 
 
-// only for ModelExchange
-void InstanceData::updateIfModified() {
-
-}
-
-
-// only for Co-simulation
-void InstanceData::integrateTo(double /*tCommunicationIntervalEnd*/) {
-
-}
-
-
-void InstanceData::logger(fmi2Status state, fmi2String category, const IBK::FormatString & message) {
+void InstanceData::logger(fmi2Status state, fmi2String category, fmi2String message) {
 	if (m_loggingOn) {
 		m_callbackFunctions->logger(m_callbackFunctions->componentEnvironment,
 									m_instanceName.c_str(), state, category,
-									message.str().c_str());
+									message);
 	}
-}
-
-
-void InstanceData::setupMessageHandler(const IBK::Path & logfile) {
-	const char * const FUNC_ID = "[InstanceData::setupMessageHandler]";
-
-	if (m_messageHandlerPtr != NULL)
-		throw IBK::Exception(IBK::FormatString("Message handler must not be created/initialized twice."), FUNC_ID);
-
-	unsigned int verbosityLevel = IBK::VL_STANDARD;
-	m_messageHandlerPtr = new IBK::MessageHandler;
-	m_messageHandlerPtr->setConsoleVerbosityLevel(0); // disable console output
-	m_messageHandlerPtr->setLogfileVerbosityLevel(verbosityLevel);
-	m_messageHandlerPtr->m_contextIndentation = 48;
-	std::string errmsg;
-	if (!IBK::Path::makePath(logfile.parentPath()))
-		throw IBK::Exception(IBK::FormatString("Error creating log directory '%1'.").arg(logfile.parentPath().absolutePath()), FUNC_ID);
-	bool success = m_messageHandlerPtr->openLogFile(logfile.str(), false, errmsg);
-	if (!success)
-		throw IBK::Exception(IBK::FormatString("Error opening logfile '%1': %2").arg(logfile).arg(errmsg), FUNC_ID);
-	IBK::MessageHandlerRegistry::instance().setMessageHandler(m_messageHandlerPtr);
 }
 
 
 template <typename T>
 void checkIfIDExists(const T & m, int varID) {
 	if (m.find(varID) == m.end() )
-		throw IBK::Exception("Invalid or unknown ID.", "[checkIfIDExists]");
-
+		throw std::runtime_error("Invalid or unknown ID.");
 }
 
 void InstanceData::setRealParameter(int varID, double value) {
@@ -149,7 +111,8 @@ void InstanceData::getBoolParameter(int varID, bool & value) {
 
 void InstanceData::completedIntegratorStep() {
 	// this function must only be called in ModelExchange mode!!!
-	IBK_ASSERT(m_modelExchange);
+	if (!m_modelExchange)
+		throw std::runtime_error("Invalid function call; only permitted in ModelExchange mode.");
 	updateIfModified();
 	completedIntegratorStep(m_tInput, &m_yInput[0]);
 }
