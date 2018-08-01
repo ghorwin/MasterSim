@@ -52,4 +52,7 @@ HEADERS += \
 	../../src/fmi2common/InstanceData.h \
 	../../src/Math003Part2.h
 
+DISTFILES += \
+    ../../data/modelDescription.xml
+
 

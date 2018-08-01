@@ -49,7 +49,7 @@ Math003Part2::~Math003Part2() {
 
 // create a model instance
 void Math003Part2::init() {
-	logger(fmi2OK, "progress", "Starting initialization.");
+	logger(fmi2OK, "logAll", "Starting initialization.");
 
 	// initialize input variables
 	m_realInput[FMI_INPUT_X1] = 0;
@@ -59,7 +59,7 @@ void Math003Part2::init() {
 	// initialize output variables
 	m_realOutput[FMI_OUTPUT_X3] = 0;
 
-	logger(fmi2OK, "progress", "Initialization complete.");
+	logger(fmi2OK, "logAll", "Initialization complete.");
 }
 
 
