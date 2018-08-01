@@ -1,9 +1,24 @@
+/*	FMI Interface for the MasterSim Test Cases
+  Written by Andreas Nicolai (2018), andreas.nicolai@gmx.net
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef Math003Part1H
 #define Math003Part1H
 
 #include "fmi2common/InstanceData.h"
-
-//#include "fmi2common/fmi2FunctionTypes.h"
 
 /*! This class wraps all data needed for a single instance of the FMU. */
 class Math003Part1 : public InstanceData {
@@ -14,7 +29,7 @@ public:
 	/*! Destructor, writes out cached results from Therakles. */
 	~Math003Part1();
 
-	/*! Initializes Math003Part1 */
+	/*! Initializes model */
 	void init();
 
 	/*! This function triggers a state-update of the embedded model whenever our cached input
