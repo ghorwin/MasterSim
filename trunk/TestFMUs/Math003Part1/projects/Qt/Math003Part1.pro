@@ -37,8 +37,7 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-INCLUDEPATH = ../../src \
-	../../../../externals/IBK/src
+INCLUDEPATH = ../../src 
 
 SOURCES += \
 	../../src/fmi2common/fmi2Functions.cpp \

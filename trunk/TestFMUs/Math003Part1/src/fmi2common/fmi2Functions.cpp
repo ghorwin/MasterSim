@@ -510,7 +510,7 @@ fmi2Status fmi2EnterEventMode(void* c){
 
 
 // Model-Exchange only
-fmi2Status fmi2NewDiscreteStates(void* c, fmi2EventInfo* eventInfo) {
+fmi2Status fmi2NewDiscreteStates(void*, fmi2EventInfo* eventInfo) {
 	eventInfo->newDiscreteStatesNeeded = false;
 	return fmi2OK;
 }
