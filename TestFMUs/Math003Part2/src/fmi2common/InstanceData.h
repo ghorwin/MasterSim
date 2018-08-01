@@ -70,15 +70,19 @@ public:
 
 
 	/*! Initializes empty instance.
-		\note You should initialize all input and output variables here!
+		\note You must initialize all input and output variables here, since input
+			variable can be set and output variables can be requested, even before
+			entering initialization mode (i.e. before a call to init()).
 	*/
 	InstanceData();
 
 	/*! Destructor, resource cleanup. */
 	virtual ~InstanceData();
 
-	/*! Re-implement this function in derived classes. */
-	virtual void init() = 0;
+	/*! Re-implement this function in derived classes to perform initialization
+		of the model during the initialization phase.
+	*/
+	virtual void init() {}
 
 	/*! This function triggers a state-update of the embedded model whenever our cached input
 		data differs from the input data in the model.

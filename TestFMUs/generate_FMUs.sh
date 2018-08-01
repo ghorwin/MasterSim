@@ -36,7 +36,7 @@ fi
 mkdir -p Part2/binaries/linux64
 cd Part2
 
-cp ../../../bin/release/libMath003Part2.so binaries/linux64/Part1.so
+cp ../../../bin/release/libMath003Part2.so binaries/linux64/Part2.so
 cp ../../Math003Part2/data/modelDescription.xml .
 
 if [ -f ../Part2.fmu ]; then
@@ -58,7 +58,7 @@ fi
 mkdir -p Part3/binaries/linux64
 cd Part3
 
-cp ../../../bin/release/libMath003Part3.so binaries/linux64/Part1.so
+cp ../../../bin/release/libMath003Part3.so binaries/linux64/Part3.so
 cp ../../Math003Part3/data/modelDescription.xml .
 
 if [ -f ../Part3.fmu ]; then
@@ -73,4 +73,9 @@ echo "Created Part3.fmu"
 
 # go back to original directory
 cd ..
+
+# copy generates FMUs to test directory
+cp fmus/Part1.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
+cp fmus/Part2.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
+cp fmus/Part3.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
 

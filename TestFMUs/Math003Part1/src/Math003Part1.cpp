@@ -36,25 +36,17 @@ InstanceData * InstanceData::create() {
 }
 
 
+// create a model instance
 Math003Part1::Math003Part1() :
 	InstanceData()
 {
+	// initialize output variables
+	m_realOutput[FMI_OUTPUT_X1] = 0;
+	m_realOutput[FMI_OUTPUT_X2] = 0;
 }
 
 
 Math003Part1::~Math003Part1() {
-}
-
-
-// create a model instance
-void Math003Part1::init() {
-	logger(fmi2OK, "logAll", "Starting initialization.");
-
-	// initialize output variables
-	m_realOutput[FMI_OUTPUT_X1] = 0;
-	m_realOutput[FMI_OUTPUT_X2] = 0;
-
-	logger(fmi2OK, "logAll", "Initialization complete.");
 }
 
 
