@@ -6,11 +6,11 @@ call %VCVARSALL_PATH%
 
 :: These environment variables can also be set externally
 if not defined JOM_PATH (
-	set JOM_PATH=c:\Qt\5.7.0_VC14\Tools\QtCreator\bin
+	set JOM_PATH=c:\Qt\Qt5.10_VC14\Tools\QtCreator\bin
 )
 
 if not defined CMAKE_PREFIX_PATH (
-	set CMAKE_PREFIX_PATH=c:\Qt\5.7.0_VC14\5.7\msvc2015
+	set CMAKE_PREFIX_PATH=c:\Qt\Qt5.10_VC14\5.10\msvc2015
 )
 
 :: add search path for jom.exe
@@ -35,6 +35,7 @@ xcopy /Y .\bb_VC\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release
 exit /b 0
 
 :fail
+pause
 exit /b 1
 
 
