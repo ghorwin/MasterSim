@@ -38,6 +38,9 @@ popd
 :: copy executable to bin/release dir
 xcopy /Y .\bb_VC_x64\MasterSimulator\MasterSimulator.exe ..\..\bin\release_x64
 xcopy /Y .\bb_VC_x64\MasterSimulatorUI\MasterSimulatorUI.exe ..\..\bin\release_x64
+xcopy /Y .\bb_VC_x64\Math003Part1\Math003Part1.dll ..\..\bin\release_x64
+xcopy /Y .\bb_VC_x64\Math003Part2\Math003Part2.dll ..\..\bin\release_x64
+xcopy /Y .\bb_VC_x64\Math003Part3\Math003Part3.dll ..\..\bin\release_x64
 
 exit /b 0
 
