@@ -181,12 +181,17 @@ void MasterSim::doStep() {
 			case AbstractAlgorithm::R_CONVERGED :
 				break;
 
-			default : {
+			case AbstractAlgorithm::R_ITERATION_LIMIT_EXCEEDED :
 				if (!m_enableVariableStepSizes) {
-					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
-														   "Reduction of time step is not allowed, stopping here.")
-										 .arg(m_t).arg(m_h), FUNC_ID);
+					IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+														"Reduction of time step is not enabled, continuing with "
+														"potentially inaccurate values.")
+														 .arg(m_t).arg(m_h),IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
+					break;
 				}
+				// fall-through
+
+			default : {
 				if (m_h/2 < m_project.m_hMin.value)
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reducing step would fall below minimum step size of %3.")
@@ -241,7 +246,7 @@ void MasterSim::doStep() {
 		if ( m_t + m_hProposed > m_project.m_tEnd.value*0.999999)
 			m_hProposed = m_project.m_tEnd.value - m_t;
 	}
-	IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
+	IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("MASTER: step = %1, t = %2, h_next = %3, errFails = %4\n").arg(m_statStepCounter, 5, 'f', 0).arg(m_t).arg(m_hProposed).arg(m_statErrorTestFailsCounter),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 }
 

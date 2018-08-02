@@ -267,6 +267,11 @@ void Slave::cacheOutputs() {
 		if (!m_fmu->m_doubleValueRefsOutput.empty()) {
 			res = m_fmu->m_fmi2Functions.getReal(m_component, &m_fmu->m_doubleValueRefsOutput[0],
 					m_fmu->m_doubleValueRefsOutput.size(), &m_doubleOutputs[0]);
+			for (unsigned int i=0; i<m_fmu->m_doubleValueRefsOutput.size(); ++i) {
+				IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("MASTER: realOutput from slave %1, idx %2: value=%3\n")
+												   .arg(m_name).arg(m_fmu->m_doubleValueRefsOutput[i]).arg(m_doubleOutputs[i]),
+												   IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+			}
 		}
 		// strings are queried one-by-one
 		for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
