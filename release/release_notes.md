@@ -1,6 +1,14 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.5.2
+---------------------------
+
+* Feature: Ticket #20 - Iterative algorithms without time step adjustment 
+  should continue when max iters have been reached
+* Feature: Ticket #19 - Improve diagnostic messages from iterative algorithms
+* Feature: Ticket #18 - Add button in UI to show simulation log file
+
 Changelog for Version 0.5.1
 ---------------------------
 
