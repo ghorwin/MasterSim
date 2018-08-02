@@ -1,16 +1,23 @@
 @echo off
 
 :: setup VC environment variables
-set VCVARSALL_PATH="c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
-call %VCVARSALL_PATH% x64
+set VCVARSALL_PATH="c:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64
+call %VCVARSALL_PATH%
+
+:: For different Qt installations, please set the environment variables JOM_PATH and CMAKE_PREFIX_PATH
+:: for the current Windows user. Also, make sure cmake is in the PATH variable.
+:: Mind: the dlls in the release/win/VC14_xxx subdirectories must match the Qt version for building.
+::       You must copy the Qt dlls used for building into these directories.
+::
+:: For debugging crashes on Windows, change the CMAKE_BUILD_TYPE to "RelWithDebInfo".
 
 :: These environment variables can also be set externally
 if not defined JOM_PATH (
-	set JOM_PATH=c:\Qt\5.7.0_VC14\Tools\QtCreator\bin
+	set JOM_PATH=c:\Qt\Qt5.10_VC14\Tools\QtCreator\bin
 )
 
 if not defined CMAKE_PREFIX_PATH (
-	set CMAKE_PREFIX_PATH=c:\Qt\5.7.0_VC14\5.7\msvc2015_64
+	set CMAKE_PREFIX_PATH=c:\Qt\Qt5.10_VC14\5.10\msvc2015_64
 )
 
 :: add search path for jom.exe
