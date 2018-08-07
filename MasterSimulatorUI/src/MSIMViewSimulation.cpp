@@ -79,7 +79,7 @@ MSIMViewSimulation::~MSIMViewSimulation() {
 }
 
 
-void MSIMViewSimulation::onModified( int modificationType, void * data ) {
+void MSIMViewSimulation::onModified( int modificationType, void * /*data*/ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SimulationSettingsModified :
@@ -176,7 +176,11 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	}
 #else // Q_OS_WIN
 
+#if __cplusplus >= 199711L
+	std::unique_ptr<QProcess> myProcess (new QProcess(this));
+#else
 	std::auto_ptr<QProcess> myProcess (new QProcess(this));
+#endif
 	commandLineArgs.append(projectFile);
 	/// \todo Bug: startDetached returns true even if solver fails to start due to missing shared libs.
 //	bool success;
