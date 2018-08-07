@@ -139,6 +139,9 @@ protected:
 	friend bool operator!=(const Unit& lhs, const Unit& rhs);
 };
 
+#define IBK_UNIT_ID_METERS 1
+#define IBK_UNIT_ID_SECONDS 13
+
 /*! Comparison operator== tests, whether two units are equal. */
 inline bool operator==(const Unit& lhs, const Unit& rhs) { return lhs.m_id==rhs.m_id; }
 /*! Comparison operator!= tests, whether two units are not equal. */

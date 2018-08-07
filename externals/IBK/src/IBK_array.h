@@ -72,7 +72,7 @@ class array {
 	array() {}
 	/*! Constructor which initialises all elements in the vector with the initial value 'value'. */
 	explicit array(const T& value) { std::fill(begin(), end(), value); }
-	/*! Constructor initialising the array with data from a range 'first' to 'last'. */
+	/*! Constructor initializing the array with data from a range 'first' to 'last'. */
 	array(const_iterator first, const_iterator last) { std::copy(first, last, data_); }
 	/*! Returns a random access iterator to the first element. */
 	iterator        begin()         { return data_; }

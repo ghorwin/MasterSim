@@ -251,6 +251,7 @@ public:
 		// equivalent to
 		bool valid = !m_path.empty();
 		\endcode
+		\todo what about a string only holding whitespaces?
 	*/
 	bool isValid() const;
 
@@ -499,6 +500,15 @@ public:
 	/*! Return the last write time for the given file as time_t struct.*/
 	std::time_t fileTime() const;
 
+	/*! Modifies path name such that it is compatible with FAT32 file systems (Windows).
+		Basically, all occurrances of : & and other special characters are replaced by _.
+	*/
+	void makeFatCompatible();
+
+
+	// ** static functions **
+
+
 	/*! Set the file date to given date and time
 		\param filename Filename with path (must exist).
 		\param hour Hour from 0 to 23
@@ -515,10 +525,6 @@ public:
 								int day,
 								int month,
 								int year);
-
-
-
-	// ** static functions **
 
 	/*! Returns true if the path given by \a src is a root path of the current path.
 		For example:
@@ -560,6 +566,8 @@ public:
 	/*! Removes path and all its subdirectories/files. If current directory is with in the path to be deleted
 		the current directory is set to the parent path of p \sa parentPath(). This behaviour prevents OS warnings.
 		However, p will be deleted if OS access rights are sufficient enough.
+		\param p Path or file to be removed
+		\param quiet If true no error message will come in case of errors
 		\code
 			IBK::Path::remove("/home/mypath/Documents"); // -> removes subdirectory Documents and its content
 		\endcode
@@ -570,7 +578,7 @@ public:
 				Delphin project file created "/home/ghorwin.d6p"->
 				Run simulation -> and *boom*
 	*/
-	static bool remove(const IBK::Path & p);
+	static bool remove(const IBK::Path & p, bool quiet = false);
 
 	/*! Copy file/directory identified by 'source' to 'target', in cases of directories uses recursive copy.
 		If target file exists, it will be overwritten.

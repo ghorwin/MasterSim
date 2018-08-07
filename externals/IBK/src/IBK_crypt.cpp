@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
+﻿/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -1328,7 +1328,6 @@ static const std::string base64_chars =
 bool base64_encode(const std::vector<unsigned char>& input, std::vector<unsigned char>& output) {
 
 	int i = 0;
-	int j = 0;
 	unsigned char char_array_3[3];
 	unsigned char char_array_4[4];
 	int inputLength = (int)input.size();
@@ -1348,7 +1347,7 @@ bool base64_encode(const std::vector<unsigned char>& input, std::vector<unsigned
 	}
 
 	if (i) {
-		for(j = i; j < 3; j++)
+		for(int j = i; j < 3; j++)
 			char_array_3[j] = '\0';
 
 		char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
@@ -1356,7 +1355,7 @@ bool base64_encode(const std::vector<unsigned char>& input, std::vector<unsigned
 		char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
 		char_array_4[3] = char_array_3[2] & 0x3f;
 
-		for (j = 0; (j < i + 1); j++)
+		for (int j = 0; (j < i + 1); j++)
 			output.push_back(base64_chars[char_array_4[j]]);
 
 		while((i++ < 3))
@@ -1439,7 +1438,6 @@ static inline bool is_base64(unsigned char c) {
 bool base64_decode(const std::vector<unsigned char>& input, std::vector<unsigned char>& output) {
 	int in_len = (int)input.size();
 	int i = 0;
-	int j = 0;
 	int in_ = 0;
 	unsigned char char_array_4[4];
 	unsigned char char_array_3[3];
@@ -1461,17 +1459,17 @@ bool base64_decode(const std::vector<unsigned char>& input, std::vector<unsigned
 	}
 
 	if (i) {
-		for (j = i; j <4; j++)
+		for (int j = i; j <4; j++)
 			char_array_4[j] = 0;
 
-		for (j = 0; j <4; j++)
+		for (int j = 0; j <4; j++)
 			char_array_4[j] = base64_chars.find(char_array_4[j]);
 
 		char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
 		char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
 		char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-		for (j = 0; (j < i - 1); j++)
+		for (int j = 0; (j < i - 1); j++)
 			output.push_back(char_array_3[j]);
 	}
 

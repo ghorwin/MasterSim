@@ -275,8 +275,13 @@ void ArgParser::printHelp(std::ostream & out) const {
 }
 
 void ArgParser::printManPage(std::ostream & out) const {
-	// TODO : implement
-	out << "Manpage:" << std::endl;
+	// header line: .TH [name of program] [section number] [center footer] [left footer] [center header]
+	// example:     .TH foo 1 "14 May 1999" "version 1.0"
+	out << ".TH \"" << m_appname << "\" 1 \"" << __DATE__ << "\" \"version " << m_manVersionString << "\"\n";
+	// .SH NAME
+	// foo - my own text editor
+	out << ".SH NAME\n";
+	out << m_appname << " - " << m_manShortDescription << "\n";
 }
 
 

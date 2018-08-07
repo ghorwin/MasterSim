@@ -107,7 +107,6 @@ long long readFunct(	std::istream& inputStream,
 		throw IBK::Exception("Data processor not valid", FUNC_ID);
 	}
 
-	std::streamsize readSize = chunksize;
 	bool notFinished = false;
 
 	char lastChar = '\0';
@@ -133,6 +132,7 @@ long long readFunct(	std::istream& inputStream,
 
 	try {
 		// loop until end of file or last line token has been found
+		std::streamsize readSize;
 		for (;;) {
 			// try to read 'chunksize' bytes
 			if (inputStream.read(buffer, chunksize))

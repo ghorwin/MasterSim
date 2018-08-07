@@ -97,7 +97,10 @@ enum StringReplaceKind {
 // windows specific conversion functions
 #if defined(_WIN32)
 
+/*! Converts a given UTF8 encoded string into a unicode string.*/
 std::wstring UTF8ToWstring(const std::string& utf8str);
+
+/*! Converts a given unicode string into a UTF8 encoded string.*/
 std::string WstringToUTF8(const std::wstring& wide);
 
 /*! Converts the given ANSI string to a wide string (UTF16).
@@ -107,6 +110,15 @@ std::wstring ANSIToWstring(const std::string& ansiString, bool OEMPage);
 /*! Converts the given wide string (UTF16) to a ANSI string.
 	The given ANSI string will be encoded with the standard codepage or the OEM codepage.*/
 std::string WstringToANSI(const std::wstring& wide, bool OEMPage);
+
+/*! Converts a given UTF8 string into a codepage string.*/
+inline std::string UTF8ToANSIString(const std::string& utf8str) {
+	return  WstringToANSI(UTF8ToWstring(utf8str), false);
+}
+
+inline std::string ANSIToUTF8String(const std::string& ansiString) {
+	return WstringToUTF8(ANSIToWstring(ansiString, false));
+}
 
 #endif
 
