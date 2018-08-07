@@ -199,7 +199,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 }
 
 
-void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool checked) {
+void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 	updateSlaveTable();
 }
 

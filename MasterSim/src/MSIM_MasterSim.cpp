@@ -192,11 +192,11 @@ void MasterSim::doStep() {
 				// fall-through
 
 			default : {
-				if (m_h/2 < m_project.m_hMin.value)
+				if (m_h/5 < m_project.m_hMin.value)
 					throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
 														   "Reducing step would fall below minimum step size of %3.")
 										 .arg(m_t).arg(m_h).arg(m_project.m_hMin.value), FUNC_ID);
-				m_h /= 2;
+				m_h /= 5;
 
 				// Reset slaves
 				restoreSlaveStates(m_t, m_iterationStates);
@@ -236,7 +236,7 @@ void MasterSim::doStep() {
 		// This could be made dependend on iteration count...
 		if (m_project.m_errorControlMode == Project::EM_NONE) {
 			// increase time step for next step
-			m_hProposed = std::min(m_project.m_hMax.value, 1.2*m_h);
+			m_hProposed = std::min(m_project.m_hMax.value, 2*m_h);
 		}
 
 		// adjust step size to not exceed end time point

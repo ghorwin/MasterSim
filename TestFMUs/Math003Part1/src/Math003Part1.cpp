@@ -50,6 +50,7 @@ Math003Part1::~Math003Part1() {
 }
 
 
+// for ModelExchange
 void Math003Part1::updateIfModified() {
 	if (!m_externalInputVarsModified)
 		return;

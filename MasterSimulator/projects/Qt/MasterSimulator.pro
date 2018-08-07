@@ -9,6 +9,7 @@ TEMPLATE = app
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
 LIBS += -L../../../lib$${DIR_PREFIX} \
+	-L../../../externals/lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
 	-lz \
