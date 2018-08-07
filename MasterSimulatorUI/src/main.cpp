@@ -9,6 +9,7 @@
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
+#include <IBK_configuration.h>
 
 #include <memory>
 #include <iostream>
@@ -112,14 +113,33 @@ int main(int argc, char *argv[]) {
 	messageHandler.setLogfileVerbosityLevel( settings.m_userLogLevelLogfile );
 
 #if defined(Q_OS_UNIX)
-	// generate .desktop file, if it does not exist yet
 
+	// copy icon files, unless existing already
+//	QString iconFile = QDir::home().absoluteFilePath(".local/share/icons/hicolor/32x32/apps/mastersim.png");
+#ifdef IBK_DEPLOYMENT
+	QString iconLocation = MSIMDirectories::resourcesRootDir();
+#else
+	QString iconLocation = MSIMDirectories::resourcesRootDir() + "/gfx/logo";
+#endif
+	QStringList iconSizes;
+	iconSizes << "16" << "32" << "48" << "64" << "128" << "256" << "512";
+	QString targetPath = QDir::home().absoluteFilePath(".icons/hicolor/%1x%1/apps/mastersim.png");
+//	QString targetPath = QDir::home().absoluteFilePath(".local/share/icons/hicolor/%1x%1/apps/mastersim.png");
+	foreach (QString s, iconSizes) {
+		QString iconFile = iconLocation + "/icon_" + s + ".png";
+		QDir::home().mkpath( QString(".icons/hicolor/%1x%1/apps").arg(s));
+		QString targetFile = targetPath.arg(s);
+		if (!QFile(targetFile).exists())
+			QFile::copy(iconFile, targetFile);
+	}
+
+	// generate .desktop file, if it does not exist yet
 	QString desktopFileContents =
 			"[Desktop Entry]\n"
 			"Name=MasterSim %1\n"
 			"Comment=FMI Co-Simulations Master\n"
 			"Exec=%2/MasterSimulatorUI\n"
-			"Icon=%3//gfx/logo/icon_48.png\n"
+			"Icon=mastersim\n"
 			"Terminal=false\n"
 			"Type=Application\n"
 			"Categories=Science;\n"
