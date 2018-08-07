@@ -1107,31 +1107,31 @@ void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveSta
 void MasterSim::writeStepStatistics() {
 	// if log file hasn't been created yet, initialize log file now
 	if (m_stepStatsOutput == NULL) {
-		std::string statsFile = (m_outputWriter.m_logDir / "stepstats.txt").str();
+		std::string statsFile = (m_outputWriter.m_logDir / "stepstats.tsv").str();
 		m_stepStatsOutput = new std::ofstream(statsFile.c_str());
 		std::ostream & out = *m_stepStatsOutput;
-		out << std::setw(14) << std::left << "Time [s]"
-			   << std::setw(10) << std::left << "Steps"
-			   << std::setw(14) << std::left << "StepSize [s]"
-			   << std::setw(18) << std::left << "AlgorithmCalls"
-			   << std::setw(18) << std::left << "ErrorTestFails"
-			   << std::setw(18) << std::left << "ConvergenceFails"
-			   << std::setw(12) << std::left << "Iterations"
-			   << std::setw(18) << std::left << "IterLimitExceeded"
+		out << std::setw(14) << std::left << "Time [s]" << '\t'
+			   << std::setw(10) << std::left << "Steps" << '\t'
+			   << std::setw(14) << std::left << "StepSize [s]" << '\t'
+			   << std::setw(18) << std::left << "AlgorithmCalls" << '\t'
+			   << std::setw(18) << std::left << "ErrorTestFails" << '\t'
+			   << std::setw(18) << std::left << "ConvergenceFails" << '\t'
+			   << std::setw(12) << std::left << "Iterations" << '\t'
+			   << std::setw(18) << std::left << "IterLimitExceeded" << '\t'
 			   << std::setw(12) << std::left << "FMUErrors" << std::endl;
 		return; // first call only writes header
 	}
 	std::ostream & out = *m_stepStatsOutput;
 	unsigned int maIters, maFMUErrs, maLimitExceeded;
 	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
-	out << std::setw(14) << std::left << m_t
-		   << std::setw(10) << std::left << m_statStepCounter
-		   << std::setw(14) << std::left << m_h
-		   << std::setw(18) << std::left << m_statAlgorithmCallCounter
-		   << std::setw(18) << std::left << m_statErrorTestFailsCounter
-		   << std::setw(18) << std::left << m_statConvergenceFailsCounter
-		   << std::setw(12) << std::left << maIters
-		   << std::setw(18) << std::left << maLimitExceeded
+	out << std::setw(14) << std::left << m_t << '\t'
+		   << std::setw(10) << std::left << m_statStepCounter << '\t'
+		   << std::setw(14) << std::left << m_h << '\t'
+		   << std::setw(18) << std::left << m_statAlgorithmCallCounter << '\t'
+		   << std::setw(18) << std::left << m_statErrorTestFailsCounter << '\t'
+		   << std::setw(18) << std::left << m_statConvergenceFailsCounter << '\t'
+		   << std::setw(12) << std::left << maIters << '\t'
+		   << std::setw(18) << std::left << maLimitExceeded << '\t'
 		   << std::setw(12) << std::left << maFMUErrs << std::endl;
 }
 
