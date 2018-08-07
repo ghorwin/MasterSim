@@ -44,12 +44,12 @@ QString MSIMDirectories::resourcesRootDir() {
 #if defined(Q_OS_WIN)
 	// in development mode, we have the resources in the data directory
 	// executables are build in bin/debug or bin/release
-	return installPath + "/../../data";
+	return installPath + "/../../MasterSimulatorUI/resources";
 #elif defined(Q_OS_MAC)
 	// in development mode, we have the resources outside the bundle
-	return installPath + "/../../../../data";
+	return installPath + "/../../../../MasterSimulatorUI/resources";
 #elif defined(Q_OS_UNIX)
-	return installPath + "/../../data";
+	return installPath + "/../../MasterSimulatorUI/resources";
 #endif
 
 #endif // IBK_DEPLOYMENT

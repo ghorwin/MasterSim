@@ -24,9 +24,9 @@ cp ../../bin/release/MasterSimulatorUI $OUTPUT_DIRECTORY_NAME/bin &&
 cp ../../MasterSimulatorUI/resources/translations/MasterSimulatorUI_de.qm $OUTPUT_DIRECTORY_NAME/resources/translations/ &&
 cp ../../MasterSimulatorUI/resources/translations/qt_de.qm $OUTPUT_DIRECTORY_NAME/resources/translations/ &&
 
-# Copy manual
+# Copy icons
 
-cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/doc/MasterSimulator_Manual.pdf &&
+cp ../../MasterSimulatorUI/resources/gfx/logo/* $OUTPUT_DIRECTORY_NAME/resources/ &&
 
 # Copy desktop icon and auxilliary files
 
