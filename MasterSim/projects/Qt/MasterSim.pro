@@ -25,7 +25,7 @@ INCLUDEPATH = \
 	../../../externals/DataIO/src \
 	../../../externals/TiCPP/src
 
-LIBS += \
+LIBS += -L../../../externals/lib$${DIR_PREFIX} \
 	-lDataIO \
 	-lIBKMK \
 	-lIBK \

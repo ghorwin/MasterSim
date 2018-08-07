@@ -446,7 +446,11 @@ void MasterSim::instatiateSlaves() {
 			// remember that this FMU was instantiated
 			instantiatedFMUs.insert(fmu);
 			// create new simulation slave
+#if __cplusplus >= 199711L
+			std::unique_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
+#else
 			std::auto_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
+#endif
 			try {
 				slave->instantiateSlave();
 			}
