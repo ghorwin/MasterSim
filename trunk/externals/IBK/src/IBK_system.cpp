@@ -36,77 +36,65 @@
 
 */
 
-#include "IBK_configuration.h"
+#include "IBK_system.h"
 
-#include "IBK_Exception.h"
-#include "IBK_messages.h"
+#include "IBK_Path.h"
+
+#if defined(_WIN32)
+	#include <windows.h>
+#else
+	#include <sys/statvfs.h>
+#endif
 
 namespace IBK {
 
-Exception::Exception()
-{
-}
-
-Exception::~Exception() throw() {
-}
-
-Exception::Exception(const std::string& what, const std::string& loc) {
-	msgs_.push_back( IBK::Exception::MsgInfo(what, loc) );
-}
-
-Exception::Exception(const IBK::FormatString& what, const std::string& loc) {
-	msgs_.push_back( IBK::Exception::MsgInfo(what.str(), loc) );
-}
-
-Exception::Exception(const Exception & old, const std::string& what, const std::string& loc) :
-	msgs_(old.msgs_)
-{
-	msgs_.push_back( IBK::Exception::MsgInfo(what, loc) );
-}
-
-Exception::Exception(const Exception & old, const IBK::FormatString& what, const std::string& loc) :
-	msgs_(old.msgs_)
-{
-	msgs_.push_back( IBK::Exception::MsgInfo(what.str(), loc) );
-}
-
-Exception::Exception(const std::exception & old, const IBK::FormatString& what, const std::string& loc){
-	msgs_.push_back( IBK::Exception::MsgInfo( old.what(), loc ) );
-	msgs_.push_back( IBK::Exception::MsgInfo(what.str(), loc) );
-}
 
 
-const char* Exception::what() 	const throw() {
-	if (msgs_.empty()) return "";
-	else return msgs_.back().what.c_str();
-}
+unsigned int getFreeDiskSpace(const IBK::Path& dir) {
 
+#if defined(_WIN32)
+	DWORD sectorsPerCluster;
+	DWORD bytesPerSector;
+	DWORD freeClusters;
+	DWORD totalClusters;
 
-const char* Exception::location() const {
-	if (msgs_.empty()) return "";
-	else return msgs_.back().location.c_str();
-}
+	std::string drive = dir.drive();
+	drive += "\\";
 
-void Exception::writeMsgStackToError() const {
-	for (std::list<MsgInfo>::const_iterator it = msgs_.begin();
-		it != msgs_.end(); ++it)
-	{
-		IBK::IBK_Message(it->what, MSG_ERROR, it->location.c_str(), VL_STANDARD);
+	//get disk space for current drive
+	bool success = (GetDiskFreeSpaceA(
+		drive.c_str(), //current drive
+		&sectorsPerCluster, //sectors per cluster
+		&bytesPerSector, //bytes per sector
+		&freeClusters, //free clusters
+		&totalClusters //total clusters
+	) == 1);
+
+	if(!success) {
+		return 0;
 	}
+
+	unsigned int kBPerCluster = bytesPerSector * sectorsPerCluster / 1024;
+
+	return kBPerCluster * freeClusters / 1024;
+
+#else
+
+
+	struct statvfs	fs;
+	int				returnCode = 0;
+
+	returnCode = statvfs( dir.absolutePath().c_str(), &fs );
+
+	if (returnCode == 0)
+		return fs.f_bsize * fs.f_bfree / 1024;
+
+	/// \todo error code handling
+	return 0;
+
+#endif
 }
 
-std::string Exception::msgStack() const {
-	std::string allMsgs;
-	for (std::list<MsgInfo>::const_iterator it = msgs_.begin();
-		it != msgs_.end(); ++it)
-	{
-		allMsgs += std::string(it->what);
-		std::list<MsgInfo>::const_iterator itNext = it;
-		if (++itNext != msgs_.end())
-			allMsgs +=" \n";
-	}
-	return allMsgs;
-}
 
 } // namespace IBK
 

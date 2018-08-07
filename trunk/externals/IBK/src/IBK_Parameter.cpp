@@ -183,7 +183,7 @@ void Parameter::readBinary(std::istream& in) {
 }
 
 void Parameter::writeBinary(std::ostream& out) const {
-	int size = name.size();
+	int size = (int)name.size();
 	out.write(reinterpret_cast<const char*>(&size), sizeof(size));
 	if (size > 0)
 		out.write(name.c_str(), size);

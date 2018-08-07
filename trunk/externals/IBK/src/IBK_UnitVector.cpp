@@ -204,6 +204,7 @@ void UnitVector::convert(Unit target_unit) {
 		for (std::vector<double>::iterator it=m_data.begin(); it!=endIt; ++it)
 			convert_special(target_unit, *it);
 	}
+	m_unit = target_unit;
 }
 // ---------------------------------------------------------------------------
 

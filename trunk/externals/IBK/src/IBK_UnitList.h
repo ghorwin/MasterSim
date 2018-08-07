@@ -127,6 +127,10 @@ public:
 	/*! Determines the conversion operation and the factor/summand for converting from
 		unit 'src' to 'target'.
 		Throws an exceptions if the unit 'src' cannot be converted to 'target'.
+		Also checks for DIV operation and checks for zero divisor (throws an exception
+		in case of div by zero).
+		When DIV operation is detected, factor is inverted and operation MUL is returned
+		(function will never return operation DIV).
 	*/
 	void relate_units(const UnitData* src, const UnitData* target,
 					  double& fact, unsigned int& op) const;

@@ -206,6 +206,7 @@ public:
 private:
 	/*! Converts the data in the vector from actual unit to unit 'target_unit'.
 		It will be called from convert if necessary.
+		\note m_unit is not modified.
 	*/
 	void convert_special(Unit target_unit, double & val);
 

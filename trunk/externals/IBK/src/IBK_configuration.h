@@ -50,6 +50,18 @@
 	#include <stdint.h>
 #endif
 
+// is C++11 supported?
+
+// We have to test explicitely for VC compiler since they still have the bug
+// of reporting an invalid __cplusplus constant.
+#if (_MSC_VER >= 1900) || (__cplusplus > 199711L)
+	// do not mess with C++11 keywords
+#else
+// C++ 2003 or older
+
+	// define override to nothing - keyword will be removed by preprocessor
+	#define override
+#endif
 
 /// Enables/Disables function argument checking for all math functions.
 #define IBK_ENABLE_SAFE_MATH

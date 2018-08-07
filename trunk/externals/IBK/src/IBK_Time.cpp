@@ -144,15 +144,12 @@ void Time::set(int year, unsigned int month, unsigned int day, double sec) {
 	m_year = year;
 	if (month > 11) {
 		throw IBK::Exception("Invalid month", FUNC_ID);
-//		return;
 	}
 	if (day > 31) {
 		throw IBK::Exception("Invalid day", FUNC_ID);
-//		return;
 	}
 	if (sec >= SECONDS_PER_DAY) {
 		throw IBK::Exception("Invalid seconds", FUNC_ID);
-//		return;
 	}
 	m_sec = sec;
 	for (unsigned int i=0; i<month; ++i) {
@@ -313,6 +310,23 @@ std::string Time::toShortDateFormat() const {
 	strm << std::setw(2) << std::right << m+1 << "/"
 		 << std::setw(2) << std::right << d+1 << "/"
 		 << std::setw(2) << std::right << y << " " << t.toHourFormat();
+	return strm.str();
+}
+// ---------------------------------------------------------------------------
+
+
+std::string Time::toDateTimeFormat() const {
+	int y;
+	unsigned int m, d;
+	double s;
+	decomposeDate(y, m, d, s);
+	IBK::Time t(0, s);
+	std::stringstream strm;
+	strm.fill('0');
+	strm << std::setw(2) << std::right << d+1 << "."
+		 << std::setw(2) << std::right << m+1 << "."
+		 << std::setw(4) << std::right << y << " "
+		 << t.toHourFormat();
 	return strm.str();
 }
 // ---------------------------------------------------------------------------
@@ -487,6 +501,28 @@ IBK::Time Time::fromFullDateFormat(const std::string & formatted_time) {
 	return IBK::Time();
 }
 // ---------------------------------------------------------------------------
+
+
+IBK::Time Time::fromDateTimeFormat(const std::string & formatted_time) {
+	// parse full date format
+	std::string str = formatted_time;
+	std::replace(str.begin(), str.end(), ':', ' ');
+	std::replace(str.begin(), str.end(), '.', ' ');
+	std::stringstream strm(str);
+
+	int day;
+	int month;
+	int year;
+	int hour, min, sec;
+	if (strm >> day >> month >> year >> hour >> min >> sec) {
+		--day;
+		-- month;
+		return IBK::Time(year, month, day, hour*3600 + min*60 + sec);
+	}
+	return IBK::Time();
+}
+// ---------------------------------------------------------------------------
+
 
 IBK::Time Time::fromTOY(const std::string & formatted_time, TOYFormat format) {
 	std::string str = formatted_time;

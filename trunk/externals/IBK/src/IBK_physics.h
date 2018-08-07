@@ -69,50 +69,18 @@ extern const double C_WATER;						///< Specific heat capacity of the liquid wate
 extern const double C_ICE;							///< Specific heat capacity of the ice in [J/kgK]
 extern const double C_VAPOR;						///< Specific heat capacity of the water vapour in [J/kgK]
 extern const double C_AIR;							///< Specific heat capacity of air in [J/kgK]
+extern const double LAMBDA_WATER;					///< Thermal conductivity for liquid water at 20°C
+extern const double LAMBDA_ICE;						///< Thermal conductivity for water ice at -10°C
+extern const double LAMBDA_AIR;						///< Thermal conductivity for air at 20°C and normal pressure
 extern const double H_EVAP;							///< Specific heat of evaporation of the water vapour in [J/kg] with respect to reference temperature of 0K
 extern const double H_FREEZE;						///< Specific heat of crystallization of the ice in [J/kg] with respect to reference temperature of 0K
+extern const double H_FREEZE_0C;					///< Specific heat of crystallization of the ice in [J/kg] with respect to reference temperature of 273.15K
 extern const double KELVIN_FACTOR;					///< = 1.0/(1000*462*T_DEFAULT)
 extern const double GASPRESS_REF;					///< Reference pressure in [Pa]
 extern const double MIN_RH;							///< Minimum relative humidity [-]
 extern const double MIN_PC_T;						///< = f_log(MIN_RH)*RHO_W*R_VAPOR, pc/T at MIN_RH
 extern const double DV_AIR;							///< Water vapor diffusivity in air [m2/s] at reference temperature
 extern const double SIGMA_W;						///< Surface tension of water (0 degC) in [N/m]
-
-/*! Calculates the saturation pressure in [Pa] for a temperature T in [K].
-	Formula comes from DIN 4108-3 from 2003. Is identical to f_psat_DIN2().
-*/
-inline double f_psat(double T) {
-	if (T<124.6)
-		T = 124.6;
-	if (T<273.1269){
-		if (T<130)
-			return(1.35000E-15);
-		else {
-			T -= 273.15;
-			double ps = 4.838803174E-08 + T * 1.838826904E-10;
-			ps = 0.00000582472028 + T * ps;
-			ps = 0.0004176223716 + T * ps;
-			ps = 0.01886013408 + T * ps;
-			ps = 0.503469897 + T * ps;
-			ps = 6.109177956 + T * ps;
-			return ps * 100.0;
-		}
-	}
-	else {
-		if (T>373)
-			return(1.09347E+05);
-		else {
-			T -= 273.15;
-			double ps = 2.034080948E-08 + T * 6.136820929E-11;
-			ps = 0.000003031240396 + T * ps;
-			ps = 0.0002650648471 + T * ps;
-			ps = 0.01428945805 + T * ps;
-			ps = 0.4436518521 + T * ps;
-			ps = 6.107799961 + T * ps;
-			return ps * 100.0;
-		}
-	}
-}
 
 /*! Calculates the saturation pressure in [Pa] for a temperature T in [K] using the DIN function. */
 inline double f_psat_DIN1(double T) {
@@ -178,6 +146,42 @@ inline double f_psat_CLAUSIUS(double T) {
 inline double f_psat_MAGNUS(double T) {
 	double TC=T-273.15;
 	return 611.213*std::exp(17.5043*TC/(241.2 + TC));
+}
+
+/*! Calculates the saturation pressure in [Pa] for a temperature T in [K].
+*/
+inline double f_psat(double T) {
+//	return f_psat_DIN2(T);
+	if (T<124.6)
+		T = 124.6;
+	if (T<273.1269){
+		if (T<130)
+			return(1.35000E-15);
+		else {
+			T -= 273.15;
+			double ps = 4.838803174E-08 + T * 1.838826904E-10;
+			ps = 0.00000582472028 + T * ps;
+			ps = 0.0004176223716 + T * ps;
+			ps = 0.01886013408 + T * ps;
+			ps = 0.503469897 + T * ps;
+			ps = 6.109177956 + T * ps;
+			return ps * 100.0;
+		}
+	}
+	else {
+		if (T>373)
+			return(1.09347E+05);
+		else {
+			T -= 273.15;
+			double ps = 2.034080948E-08 + T * 6.136820929E-11;
+			ps = 0.000003031240396 + T * ps;
+			ps = 0.0002650648471 + T * ps;
+			ps = 0.01428945805 + T * ps;
+			ps = 0.4436518521 + T * ps;
+			ps = 6.107799961 + T * ps;
+			return ps * 100.0;
+		}
+	}
 }
 
 /*! Calculates the relative humidity (unitless) from a given capillary pressure in Pa and temperature T in [K]. */

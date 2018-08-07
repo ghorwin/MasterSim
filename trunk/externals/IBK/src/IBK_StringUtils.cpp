@@ -391,8 +391,11 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, char de
 			tmp.clear();
 		}
 	}
-	if (tmp.size())
+	if (!tmp.empty()) {
+		if (trimTokens)
+			IBK::trim(tmp);
 		tokens.push_back(tmp);
+	}
 	return tokens.size();
 }
 // ---------------------------------------------------------------------------
@@ -569,7 +572,7 @@ void explode_sections(const std::vector<std::string>& data,
 	section_data.clear();
 	section_data.resize(section_titles.size());
 	std::string keyword;
-	for(unsigned int i=0, size=data.size(); i<size; ++i) {
+	for(unsigned int i=0, size=(unsigned int)data.size(); i<size; ++i) {
 
 		// skip empty lines
 		std::string::size_type pos = data[i].find_first_not_of(" \t\r");
@@ -647,7 +650,7 @@ void explode_section(const std::vector<std::string>& data, const std::string& se
 	int current_section = -1;
 	section_data.clear();
 	std::string keyword;
-	for(unsigned int i=0, size=data.size(); i<size; ++i) {
+	for(unsigned int i=0, size=(unsigned int)data.size(); i<size; ++i) {
 
 		// skip empty lines
 		std::string::size_type pos = data[i].find_first_not_of(" \t\r");
@@ -663,7 +666,7 @@ void explode_section(const std::vector<std::string>& data, const std::string& se
 		// is this our section keyword?
 		if (keyword == section_title) {
 			section_data.push_back(std::vector<std::string>());
-			current_section = section_data.size()-1;
+			current_section = (int)section_data.size()-1;
 			continue;
 		}
 
@@ -849,39 +852,39 @@ std::string read_until_char_cut( std::string &src, const char ch)
 std::string replace_string(const std::string& src, const std::string& old_pattern,
 		const std::string& new_pattern, StringReplaceKind flag)
 {
-	 if( old_pattern == new_pattern ) return src;
-	 switch(flag)
-	 {
-		case ReplaceNone: return src;
-		case ReplaceAll:
-		{
+	if (old_pattern == new_pattern)
+		return src;
+	std::string resstr(src);
+	switch (flag) {
+		case ReplaceNone:
+			return src;
+		case ReplaceAll: {
 			std::string::size_type pos = 0;
-			std::string resstr(src);
-			while((pos = resstr.find(old_pattern, pos)) != std::string::npos ) {
+			while ((pos = resstr.find(old_pattern, pos)) != std::string::npos ) {
 				resstr = resstr.replace(pos, old_pattern.size(), new_pattern);
 				pos += new_pattern.size();
 			}
-			return resstr;
+			break;
 		}
-		case ReplaceFirst:
-		{
+		case ReplaceFirst: {
 			std::string resstr(src);
 			std::string::size_type pos(resstr.find(old_pattern));
 			if (pos != std::string::npos )
 				return resstr.replace(pos, old_pattern.size(), new_pattern);
+			break;
 		}
-		case ReplaceLast:
-		{
+		case ReplaceLast: {
 			std::string::size_type pos, lpos(std::string::npos);
 			std::string resstr(src);
-			while((pos = resstr.find(old_pattern)) != std::string::npos )
+			while ((pos = resstr.find(old_pattern)) != std::string::npos )
 				if( pos != std::string::npos ) lpos = pos;
-			if( lpos != std::string::npos )
+			if ( lpos != std::string::npos )
 				resstr = resstr.replace(lpos, old_pattern.size(), new_pattern);
-			return resstr;
+			break;
 		}
-		default: return src;
-	 }
+		default: ;
+	}
+	return resstr;
 }
 
 

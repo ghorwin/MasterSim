@@ -64,6 +64,12 @@ void Flag::set(const std::string& n, const std::string& s) {
 }
 
 
+void Flag::setOrClear(const std::string& n, bool s) {
+	m_state = s;
+	if (s)	m_name = n;
+	else 	m_name.clear();
+}
+
 
 void Flag::read(std::istream& in) {
 	std::string name_;

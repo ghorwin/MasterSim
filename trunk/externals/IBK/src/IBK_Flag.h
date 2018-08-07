@@ -70,6 +70,11 @@ public:
 	*/
 	void set(const std::string& n, const std::string& s);
 
+	/*! Convenience function around regular set function. If s is false, the flag
+		is cleared.
+	*/
+	void setOrClear(const std::string& n, bool s);
+
 	/*! Reads a flag from the stream 'in'.
 		The format for reading is: name state<br>
 		\param in       The input stream.

@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
+﻿/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -262,7 +262,6 @@ void Version::toASCIIEncoding( unsigned int version, unsigned int &first, unsign
 
 	// create hex array to base 10
 	unsigned int counter = major;
-	unsigned int rest = 0;
 	unsigned int position = 0;
 	unsigned int spacer = 3;
 	while ( counter ) {
@@ -271,7 +270,7 @@ void Version::toASCIIEncoding( unsigned int version, unsigned int &first, unsign
 		// a div a
 		std::div_t divresult = std::div (counter,10);
 		counter = divresult.quot;
-		rest = divresult.rem;
+		unsigned int rest = divresult.rem;
 
 		versionArray[ position ] = '0' + rest;
 		++position;
@@ -294,7 +293,7 @@ void Version::toASCIIEncoding( unsigned int version, unsigned int &first, unsign
 		// a div a
 		std::div_t divresult = std::div (counter,10);
 		counter = divresult.quot;
-		rest = divresult.rem;
+		unsigned int rest = divresult.rem;
 
 		versionArray[ position ] = '0' + rest;
 		++position;
@@ -341,7 +340,6 @@ unsigned int Version::fromASCIIEncoding( unsigned int first, unsigned int second
 	return ((major << 8) | minor);
 }
 
-
 void Version::printCompilerVersion() {
 	const char * const FUNC_ID = "[Version::printCompilerVersion]";
 	// print compiler and version information
@@ -365,6 +363,32 @@ void Version::printCompilerVersion() {
 		default:
 			IBK::IBK_Message( IBK::FormatString("Compiled with Visual Studio, version ID          %1\n").arg(_MSC_VER), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
+#elif defined(__BORLANDC__)
+	switch (__BORLANDC__) {
+		case 0x200 : IBK::IBK_Message("Compiled with Borland C++ 2.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x400 : IBK::IBK_Message("Compiled with Borland C++ 3.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x410 : IBK::IBK_Message("Compiled with Borland C++ 3.1\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x452 : IBK::IBK_Message("Compiled with Borland C++ 4.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x500 : IBK::IBK_Message("Compiled with Borland C++ 5.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x520 : IBK::IBK_Message("Compiled with Borland C++ Builder 1.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x530 : IBK::IBK_Message("Compiled with Borland C++ Builder 3.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x540 : IBK::IBK_Message("Compiled with Borland C++ Builder 4.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x550 : IBK::IBK_Message("Compiled with Borland C++ Builder 5.0\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x551 : IBK::IBK_Message("Compiled with Borland C++ 5.51\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x562 : IBK::IBK_Message("Compiled with Borland C++ 5.6.4\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x570 : IBK::IBK_Message("Compiled with Borland C++ Builder 2006\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x590 : IBK::IBK_Message("Compiled with Borland C++ Builder 2007\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x613 : IBK::IBK_Message("Compiled with Borland C++ Builder 2009\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x621 : IBK::IBK_Message("Compiled with Borland C++ Builder 2010\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x630 : IBK::IBK_Message("Compiled with Borland C++ Builder XE\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x640 : IBK::IBK_Message("Compiled with Borland C++ Builder XE2\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x650 : IBK::IBK_Message("Compiled with Borland C++ Builder XE3\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		case 0x660 : IBK::IBK_Message("Compiled with Borland C++ Builder XE4\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD); break;
+		default:
+			IBK::IBK_Message( IBK::FormatString("Compiled with Borland C++, version ID          %1\n").arg(__BORLANDC__), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	}
+#else
+	#error "Add your compiler info here!"
 #endif
 }
 

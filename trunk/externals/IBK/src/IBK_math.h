@@ -247,8 +247,8 @@ struct abs {
 	- scale(x=0) = 0
 	- scale(x=1) = 1
 	- scale(x=-1) = 1
-	- d(scale(x=0))/dx = 0
-	- d(scale(x=1))/dx = 0
+	- dscale/dx(x=0) = 0
+	- dscale/dx(x=1) = 0
 
 	\param x Value between 0..1 (no check done!).
 */
@@ -258,6 +258,8 @@ double scale(double x);
 	The function has the following defined values:
 	- scale(x<=0) = 0
 	- scale(x>=epsilon) = 1
+	- dscale/dx(x<=0) = 0
+	- dscale/dx(x>=epsilon) = 0
 
 	\param x Value between 0..1.
 	\param epsilon Thickness of transition area
