@@ -50,7 +50,7 @@ void FMUManager::importFMUAt(const IBK::Path & fmuFilePath, const IBK::Path & un
 	}
 
 	// create FMU instance
-#if QT_VERSION >= 0x050000
+#if __cplusplus >= 199711L
 	std::unique_ptr<FMU> fmu(new FMU(fmuFilePath, unzipPath));
 #else
 	std::auto_ptr<FMU> fmu(new FMU(fmuFilePath, unzipPath));
