@@ -1,10 +1,11 @@
-#include "MSIMMainWindow.h"
 #include <QApplication>
 #include <QFont>
 #include <QSplashScreen>
 #include <QTimer>
 #include <QLocale>
 #include <QPalette>
+#include <QStandardPaths>
+#include <QTextStream>
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
@@ -12,6 +13,7 @@
 #include <memory>
 #include <iostream>
 
+#include "MSIMMainWindow.h"
 #include "MSIMSettings.h"
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
@@ -20,6 +22,8 @@
 #include "MSIMMessageHandler.h"
 #include "MSIMDebugApplication.h"
 #include "MSIMConversion.h"
+
+#include "MSIM_Constants.h"
 
 #if QT_VERSION >= 0x050000
 void qDebugMsgHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
@@ -65,18 +69,13 @@ int main(int argc, char *argv[]) {
 //	qApp->setDesktopSettingsAware(false);
 #elif defined(Q_OS_UNIX)
 	QFont f = qApp->font();
-//	qDebug() << f;
 	f.setPointSize(9);
 	qApp->setFont(f);
-	qApp->setDesktopSettingsAware(false);
 	qApp->setWindowIcon(QIcon(":/gfx/MasterSimulator_48x48.png"));
-
 #elif defined(Q_OS_WIN)
 	QFont f = qApp->font();
-//	qDebug() << f;
 	f.setPointSize(8);
 	qApp->setFont(f);
-//	qApp->setDesktopSettingsAware(false);
 #endif
 
 
@@ -112,6 +111,34 @@ int main(int argc, char *argv[]) {
 	messageHandler.setConsoleVerbosityLevel( settings.m_userLogLevelConsole );
 	messageHandler.setLogfileVerbosityLevel( settings.m_userLogLevelLogfile );
 
+#if defined(Q_OS_UNIX)
+	// generate .desktop file, if it does not exist yet
+
+	QString desktopFileContents =
+			"[Desktop Entry]\n"
+			"Name=MasterSim %1\n"
+			"Comment=FMI Co-Simulations Master\n"
+			"Exec=%2/MasterSimulatorUI\n"
+			"Icon=%3//gfx/logo/icon_48.png\n"
+			"Terminal=false\n"
+			"Type=Application\n"
+			"Categories=Science;\n"
+			"StartupNotify=true\n";
+	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(settings.m_installDir)
+			.arg(MSIMDirectories::resourcesRootDir());
+	QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+	if (!dirs.empty()) {
+		QString desktopFile = dirs[0] + "/mastersimulatorui.desktop";
+		if (!QFile(desktopFile).exists()) {
+			QFile deskFile(desktopFile);
+			deskFile.open(QFile::WriteOnly);
+			QTextStream strm(&deskFile);
+			strm << desktopFileContents;
+			deskFile.setPermissions((QFile::Permission)0x755);
+			deskFile.close();
+		}
+	}
+#endif
 
 	// *** Install translator ***
 	if (argParser.hasOption("lang")) {
