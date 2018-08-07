@@ -94,7 +94,7 @@ double f_pow10(double e) {
 #if defined(__MINGW32__) || defined(__APPLE__) || !defined(__GNUC__)
 	return std::pow(10,e);
 #else
-	return pow10(e);
+	return exp10(e);
 #endif
 }
 

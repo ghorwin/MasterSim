@@ -131,7 +131,9 @@ public:
 	*/
 	void writeBinary( std::ostream& out ) const;
 
-	/*! Empties the spline. */
+	/*! Empties the spline.
+		\deprecated Do not use this function anylonger, rather copy a newly created spline over the old one.
+	*/
 	void clear();
 
 	/*! This generates the slopes-vector and updates the cached value. */

@@ -221,10 +221,7 @@ void LinearSpline::writeBinary( std::ostream& out ) const {
 
 
 void LinearSpline::clear() {
-	m_x.clear();
-	m_y.clear();
-	m_slope.clear();
-	m_valid = false;
+	*this = IBK::LinearSpline();
 }
 
 
@@ -233,6 +230,11 @@ void LinearSpline::swap(LinearSpline& spl) {
 	m_y.swap(spl.m_y);
 	m_slope.swap(spl.m_slope);
 	std::swap(m_valid, spl.m_valid);
+	std::swap(m_extrapolationMethod, spl.m_extrapolationMethod);
+	std::swap(m_xMin, spl.m_xMin);
+	std::swap(m_xMax, spl.m_xMax);
+	std::swap(m_xStep, spl.m_xStep);
+	std::swap(m_xOffset, spl.m_xOffset);
 }
 
 
@@ -241,7 +243,9 @@ double LinearSpline::value(double x) const {
 	// this does not to be tested in m_valid, since m_extrapolationMethod is public, and of type ExtrapolationMethod
 	// thus testing this is not sufficient in make spline, and we need to fix the implementation right here if
 	// new types are added to ExtrapolationMethod enum
+//	if (m_extrapolationMethod > EM_Constant) {
 	IBK_ASSERT_X( (m_extrapolationMethod <= EM_Constant), "Invalid or unknown extrapolation method!" )
+//	}
 	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" )
 
 	if (m_xStep != 0) {

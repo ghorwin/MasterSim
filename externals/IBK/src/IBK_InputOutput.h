@@ -159,6 +159,8 @@ template<typename T>
 void read_vector_binary(std::istream& in, std::vector<T>& vec, uint32_t max_len) {
 	uint32_t len;
 	in.read(reinterpret_cast<char *>(&len), sizeof(uint32_t));
+	if (!in)
+		throw IBK::Exception("Error reading from input stream!", "[read_vector_binary]");
 	if (len > max_len)
 		throw IBK::Exception("Vector length exceeds given maximum!", "[read_vector_binary]");
 	if (len > 0) {

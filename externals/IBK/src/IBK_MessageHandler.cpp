@@ -74,7 +74,7 @@ MessageHandler::MessageHandler() :
 	m_contextIndentation(40),
 	// by default, print all messages within IBK library to console
 	m_requestedConsoleVerbosityLevel(VL_DEVELOPER),
-	// by default, write only messages up to VL_INFO and including to logfile
+	// by default, write only messages up to VL_INFO to logfile
 	m_requestedLogfileVerbosityLevel(VL_INFO),
 	m_logfile(NULL),
 	m_timeStampFormat("%Y-%m-%d %H:%M:%S"),
@@ -128,6 +128,7 @@ bool MessageHandler::openLogFile(const std::string& logfile, bool append, std::s
 	closeLogFile();
 	if (logfile.empty())
 		return true;
+
 	if (append) {
 
 #if defined(_WIN32) && !defined(__MINGW32__)
@@ -160,7 +161,8 @@ void MessageHandler::setTimeStampFormat(const std::string & timeStampFormat) {
 
 void MessageHandler::closeLogFile() {
 	if (m_logfile) {
-		m_logfile->close();
+		if(m_logfile->is_open())
+			m_logfile->close();
 		delete m_logfile;
 		m_logfile = NULL;
 	}
@@ -170,6 +172,17 @@ void MessageHandler::closeLogFile() {
 // implementation of default message handler function
 // in this function we don't care about verbosity levels
 void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func_id, int verbose_level) {
+
+#if 1
+	// do nothing if verbosity level is not high enough
+	if (t != MSG_DEBUG &&
+			verbose_level > m_requestedLogfileVerbosityLevel &&
+			verbose_level > m_requestedConsoleVerbosityLevel)
+	{
+		return; // do nothing, saves much time during simulation
+	}
+#endif
+
 	std::string vbStr;
 //#define PRINT_VERBOSITY_LEVEL
 #ifdef PRINT_VERBOSITY_LEVEL

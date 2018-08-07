@@ -1,4 +1,4 @@
-/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
+﻿/*	Copyright (c) 2001-2017, Institut für Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, H. Fechner, St. Vogelsang, A. Paepcke, J. Grunewald
 	All rights reserved.
@@ -202,7 +202,7 @@ std::string md5_str(const std::string& val);
 /*! Creates a shortened MD5 hash from the given string with a given length beginning at random position.
 	The resulting string contains begin position in first 2 chars.
 	\param val Input string
-	\param length Lenght of the md5 hash segment.
+	\param length Length of the md5 hash segment.
 	\return resulting the hash as string
 */
 std::string md5_str(const std::string& val, unsigned int length);

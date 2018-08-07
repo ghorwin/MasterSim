@@ -326,7 +326,7 @@ Path Path::relativePath(const Path& toPath) const {
 	try {
 
 		IBK::Path finalPath;
-		int backCount = (int)toBranches.size() - equalCount;
+		int backCount = (int)toBranches.size() - (int)equalCount;
 		IBK_ASSERT(backCount >= 0); // should not possible to get negative backCount
 
 		if (backCount == 0) {
@@ -339,7 +339,7 @@ Path Path::relativePath(const Path& toPath) const {
 			}
 		}
 
-		int notEqualCount = orgBranches.size() - equalCount;
+		int notEqualCount = (int)orgBranches.size() - (int)equalCount;
 		IBK_ASSERT(notEqualCount >= 0); // should not possible
 
 		if (notEqualCount > 0)
@@ -1017,6 +1017,14 @@ std::time_t Path::fileTime() const{
 }
 
 
+void Path::makeFatCompatible() {
+	IBK::replace_string(m_path, ":", "_");
+	IBK::replace_string(m_path, "&", "_");
+	IBK::replace_string(m_path, "?", "_");
+	IBK::replace_string(m_path, "*", "_");
+}
+
+
 bool Path::setFileTime(	const IBK::Path& filename,
 						int hour,
 						int minute,
@@ -1315,7 +1323,8 @@ bool Path::makePath( const IBK::Path & p ) {
 }
 
 
-bool Path::remove(const IBK::Path & p) {
+bool Path::remove(const IBK::Path & p, bool quiet) {
+	(void)quiet;
 
 	// change current path to higher level before executing delete
 	if ( isRootPath( current(), p ) ) {
@@ -1326,7 +1335,8 @@ bool Path::remove(const IBK::Path & p) {
 	const char* FUNC_ID = "[Path::remove]";
 
 	if( !p.exists()) {
-		IBK_Message(FormatString("Cannot remove '%1'.\n'File doesn't exist' !").arg(p.str()), MSG_ERROR, FUNC_ID);
+		if( !quiet)
+			IBK_Message(FormatString("Cannot remove '%1'.\n'File doesn't exist' !").arg(p.str()), MSG_ERROR, FUNC_ID);
 		return false;
 	}
 
@@ -1346,16 +1356,20 @@ bool Path::remove(const IBK::Path & p) {
 			return true;
 
 		if(stSHFileOpStruct.fAnyOperationsAborted) {
-			IBK_Message(FormatString("Remove abort by user!"), MSG_ERROR, FUNC_ID);
+			if( !quiet)
+				IBK_Message(FormatString("Remove abort by user!"), MSG_ERROR, FUNC_ID);
 		}
 		else {
-			std:: string errmsg = GetLastErrorMessage(nFileDeleteOprnRet);
-			IBK_Message(FormatString("Error while removing '%1'.\n'%2' !").arg(p.str()).arg(errmsg), MSG_ERROR, FUNC_ID);
+			if( !quiet) {
+				std::string errmsg = GetLastErrorMessage(nFileDeleteOprnRet);
+				IBK_Message(FormatString("Error while removing '%1'.\n'%2' !").arg(p.str()).arg(errmsg), MSG_ERROR, FUNC_ID);
+			}
 		}
 		return false;
 	}
 	catch(std::exception& e) {
-		IBK_Message(FormatString("Error while removing '%1'.\n'%2' !").arg(p.str()).arg(e.what()), MSG_ERROR, FUNC_ID);
+		if( !quiet)
+			IBK_Message(FormatString("Error while removing '%1'.\n'%2' !").arg(p.str()).arg(e.what()), MSG_ERROR, FUNC_ID);
 		return false;
 	}
 	catch(...) {
@@ -1583,7 +1597,8 @@ bool Path::move(const IBK::Path & source, const IBK::Path & target){
 	int result = std::rename(source.str().c_str(), target.str().c_str());
 	if ( result == 0 ) {
 		return true;
-	} else {
+	}
+	else {
 		switch (errno) {
 			case EACCES			: IBK_Message(FormatString("Cannot move to %1, access denied!").arg(target), MSG_ERROR, FUNC_ID); break;
 			case ENOENT			: IBK_Message(FormatString("Cannot move to %1, some component of the path doesn't exist!").arg(target), MSG_ERROR, FUNC_ID); ;break;
@@ -1591,12 +1606,12 @@ bool Path::move(const IBK::Path & source, const IBK::Path & target){
 			case EROFS			: IBK_Message(FormatString("Cannot move to %1, read only file system!").arg(target), MSG_ERROR, FUNC_ID); break;
 		}
 	}
+	return false;
 
 #else
 	#error Write this for your compiler
-#endif
-
 	return false;
+#endif
 
 }
 
@@ -1737,28 +1752,25 @@ void Path::set(const std::string& path) {
 
 Path::DirExistsResult Path::directoryExists(const std::string& dirname) const {
 
-	std::string cleanPath = remove_trailing_slash_copy(dirname);
-
 #ifdef _WIN32
-	// implementation for MS VC
-	struct _stat buf;
-	try {
-		std::wstring wfilename = UTF8ToWstring(cleanPath);
-		int res = _wstat(wfilename.c_str(), &buf);
-		if (res == -1)
-			return NoSuchDirectory;
+	// create wstring from utf8-encoded string
+	std::wstring direnameWStr = UTF8ToWstring(dirname);
+	DWORD dwAttrib = GetFileAttributesW(direnameWStr.c_str());
 
-		// check if it is a directory
-		if (buf.st_mode & _S_IFDIR)
-			return DirectoryExists;
-
-		return IsFile;
-	}
-	catch(...) {
+	// neither directory nor file
+	if(dwAttrib == INVALID_FILE_ATTRIBUTES) // INVALID_FILE_ATTRIBUTES is -1
 		return NoSuchDirectory;
-	}
+
+	// is directory
+	if (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)
+		return DirectoryExists;
+
+	// must be a file
+	return IsFile;
+
 #elif __GNUC__
 	struct stat buf;
+	std::string cleanPath = remove_trailing_slash_copy(dirname);
 	int res = stat(cleanPath.c_str(), &buf);
 	if (res == -1) {
 		switch (errno) {
@@ -1791,15 +1803,15 @@ std::string Path::firstCharToUpperUtf8(const std::string& orig) const {
 			++i;
 		} else {
 			wchar_t wChar;
-			int len = std::mbrtowc(&wChar, &orig[i], MB_CUR_MAX, &state);
+			size_t len = std::mbrtowc(&wChar, &orig[i], MB_CUR_MAX, &state);
 			// If this assertion fails, there is an invalid multi-byte character.
 			// However, this usually means that the locale is not utf8.
 			// Note that the default locale is always C. Main classes need to set them
 			// To utf8, even if the system's default is utf8 already.
-			IBK_ASSERT(len > 0 && len <= static_cast<int>(MB_CUR_MAX));
+			IBK_ASSERT(len > 0 && len <= static_cast<size_t>(MB_CUR_MAX));
 			i += len;
-			int ret = std::wcrtomb(&buf[0], towupper(wChar), &state);
-			IBK_ASSERT(ret > 0 && ret <= static_cast<int>(MB_CUR_MAX));
+			size_t ret = std::wcrtomb(&buf[0], towupper(wChar), &state);
+			IBK_ASSERT(ret > 0 && ret <= static_cast<size_t>(MB_CUR_MAX));
 			buf[ret] = 0;
 			retVal += &buf[0];
 		}

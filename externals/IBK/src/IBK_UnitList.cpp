@@ -359,7 +359,7 @@ const UnitData* UnitList::retrieve(const std::string &str) const {
 	const_iterator it=begin();
 	while (it!=endit) {
 		const UnitData* unit( *it );
-		std::string name = unit->name();     
+		std::string name = unit->name();
 		if ( name==str)
 			return unit;
 		++it;
@@ -688,6 +688,12 @@ std::string UnitList::replaceUnitWithIntegralUnit(const std::string & original) 
 // ---------------------------------------------------------------------------
 
 
+/// !!!! **** WARNING **** !!!!
+///
+/// When you modify units before "m" or "s", make sure to update the defines in IBK_Unit.h  !!!!!
+///
+
+
 // The units defined per default in the unitlist
 const char * const DEFAULT_UNITS =
 "undefined    ;"
@@ -703,7 +709,7 @@ const char * const DEFAULT_UNITS =
 "s2/m2        ;"
 "kg           * 1000 g            * 1e+06 mg          ;"
 "kg/ms        ;"
-"kg/s         * 3600 kg/h         * 86400 kg/d        * 8.64e+07 g/d      * 1e6 mg/s      * 1e9 µg/s    ;"
+"kg/s         * 3600 kg/h         * 86400 kg/d        * 8.64e+07 g/d      * 31536e6 g/a   * 1e6 mg/s      * 1e9 µg/s    ;"
 "kg/m2        / 100 kg/dm2        * 10 g/dm2          / 10 g/cm2          * 1e6 mg/m2     ;"
 "kg/m2s       * 1000 g/m2s        * 3.6e+06 g/m2h     * 3600 kg/m2h       * 1e6 mg/m2s    * 1e9 µg/m2s  * 3.6e9 mg/m2h    * 3.6e12 µg/m2h ;"
 "kg/m3        / 1000 kg/dm3       * 1 g/dm3           / 1000 g/cm3        * 1000 g/m3     * 1e6 mg/m3   * 1e9 µg/m3       % 0      log(kg/m3)    % 0    log(g/m3)    % 0    log(mg/m3)    % 0    log(µg/m3);"
@@ -736,7 +742,7 @@ const char * const DEFAULT_UNITS =
 "1/K          ;"
 "K/m          ;"
 "m2s/kg       ;"
-"Pa           / 100 hPa           / 1000 kPa          ;"
+"Pa           / 100 hPa           / 1000 kPa          * 1e-05 Bar        * 0.000145038 PSI         * 0.00750062 Torr          ;"
 "1/Pa         ;"
 "Pa/m         / 1000 kPa/m        ;"
 "Lux          / 1000 kLux         ;"

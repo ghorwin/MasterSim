@@ -61,6 +61,7 @@ public:
 		DO_STEP_STATS,
 		DO_CLOSE_ON_EXIT,
 		DO_VERBOSITY_LEVEL,
+		DO_RESTART_INFO, // shows information about restart file
 		NUM_DebugOptions
 	};
 
