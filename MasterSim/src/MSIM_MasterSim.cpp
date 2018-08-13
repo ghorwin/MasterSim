@@ -175,6 +175,9 @@ void MasterSim::doStep() {
 		// let master do one step
 		m_timer.start();
 		AbstractAlgorithm::Result res = m_masterAlgorithm->doStep();
+		// states:
+		//   m_XXXyt     -> still values at time point t
+		//   m_XXXytNext -> values at time point t + h
 		++m_statAlgorithmCallCounter;
 		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		switch (res) {
@@ -209,15 +212,24 @@ void MasterSim::doStep() {
 		if (m_project.m_errorControlMode == Project::EM_NONE)
 			break; // done with step
 
-		// this handles the step-doubling and error estimation
-		// when this function returns with true, m_realytNext (and the other xxxNext) quantities hold the results
-		// after the completed half-step which should be aquivalent to not calling doErrorCheck() at all
-		m_timer.start();
-		bool success = doErrorCheckRichardson();
-		m_statErrorTestTime += m_timer.stop()*1e-3;
-		if (success)
-			break;
+		if (m_project.m_errorControlMode == Project::EM_CHECK) {
+			m_timer.start();
+			bool success = doErrorCheckWithoutIteration();
+			m_statErrorTestTime += m_timer.stop()*1e-3;
+			if (success)
+				break;
+		}
+		else {
 
+			// this handles the step-doubling and error estimation
+			// when this function returns with true, m_realytNext (and the other xxxNext) quantities hold the results
+			// after the completed half-step which should be aquivalent to not calling doErrorCheck() at all
+			m_timer.start();
+			bool success = doErrorCheckRichardson();
+			m_statErrorTestTime += m_timer.stop()*1e-3;
+			if (success)
+				break;
+		}
 	}
 
 
@@ -769,6 +781,14 @@ void MasterSim::composeVariableVector() {
 	m_stringyt.resize(m_stringVariableMapping.size());
 	m_stringytNext.resize(m_stringVariableMapping.size());
 	m_stringytNextIter.resize(m_stringVariableMapping.size());
+
+	// for the error test we resize vectors - for the 3-step history test m_errXXXXyt hold the values t - h_last
+	// for the Richardson/Step-Doubling test the values hold the temporary values during evaluation of the half-steps
+	m_errRealytFirst.resize(m_realyt.size());
+	m_errRealyt.resize(m_realyt.size());
+	m_errIntyt.resize(m_intyt.size());
+	m_errBoolyt.resize(m_boolyt.size());
+	m_errStringyt.resize(m_stringyt.size());
 }
 
 
@@ -784,29 +804,19 @@ bool MasterSim::doErrorCheckRichardson() {
 	//   (same for all other data types)
 
 	// we now copy the real vectors to our temporary location
-	unsigned int nValues = m_realyt.size();
-	if (m_errRealyt.size() != nValues) {
-		// resize required memory on first use
-		m_errRealytFirst.resize(nValues);
-
-		m_errRealyt.resize(nValues);
-		m_errIntyt.resize(m_intyt.size());
-		m_errBoolyt.resize(m_boolyt.size());
-		m_errStringyt.resize(m_stringyt.size());
-	}
 	MasterSim::copyVector(m_realytNext, m_errRealytFirst);
 
 	MasterSim::copyVector(m_realyt, m_errRealyt);
 	MasterSim::copyVector(m_intyt, m_errIntyt);
 	MasterSim::copyVector(m_boolyt, m_errBoolyt);
 	std::copy(m_stringyt.begin(), m_stringyt.end(), m_errStringyt.begin());
+	// m_errXXXyt variables now hold copy of y(t) values which will be restored when error test is done
 
 	// we will now reset the state of all slaves to be back at time t
 	restoreSlaveStates(m_t, m_iterationStates);
 
 	// Note: we do not need to sync states with vectors m_realyt and other m_xxxyt since they are still at
 	// time level t.
-
 
 	// set half step size
 	m_h /= 2;
@@ -866,12 +876,28 @@ bool MasterSim::doErrorCheckRichardson() {
 	if (!failed) {
 		err = 0;
 		// compare computed solutions via WRMS Norm of differences
+		unsigned int nValues = m_realytNext.size();
 		for (unsigned int i=0; i<nValues; ++i) {
+#if 0
 			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/2; // Note: mind the division of 2
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
 			err += scaledDiff*scaledDiff;
+#else
+			// error = h/2 * (slope(t...t+h) - slope(t...t+h/2))
+
+			// y(t)     = m_errRealyt
+			// y(t+h/2) = m_realytNext[i]
+			// y(t+h)   = m_errRealytFirst[i]
+
+			double errEstimate = m_errRealytFirst[i] - 0.5*(m_realytNext[i] + m_errRealyt[i]);
+
+			// scale the error by tolerances
+			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			// sum up error squared
+			err += scaledDiff*scaledDiff;
+#endif
 		}
 		err = std::sqrt(err/nValues);
 	}
@@ -905,12 +931,14 @@ bool MasterSim::doErrorCheckRichardson() {
 			return false;
 		}
 	}
+	else {
+		// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
+		m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax.value);
+	}
 
 
 	// slaves are now positioned at t + 2 * h2
 
-	// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
-	m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax.value);
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
 	// t is at start of the last half-step,
@@ -983,10 +1011,12 @@ double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 	double scale = std::max(MIN_SCALE, std::min(MAX_SCALE, SAFETY/std::sqrt(errEstimate) ) );
 	double hNew = m_h * scale;
 	// check for falling below time step limit
-	if (hNew < m_project.m_hMin.value)
-		throw IBK::Exception(IBK::FormatString("Step failure at t=%1, taking step size %2. "
-			"Reducing step would fall below minimum step size of %3.")
-			.arg(m_t).arg(m_h).arg(m_project.m_hMin.value), FUNC_ID);
+	if (hNew < m_project.m_hMin.value) {
+		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+			"Reducing step would fall below minimum step size of %3, continuing with minimum time step size.\n")
+			.arg(m_t).arg(m_h).arg(m_project.m_hMin.value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		hNew = m_project.m_hMin.value;
+	}
 	return hNew;
 }
 
