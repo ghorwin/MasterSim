@@ -1,25 +1,28 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass article
-\options fleqn
 \use_default_options true
 \maintain_unincluded_children false
 \language english
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter default
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
 \font_default_family default
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -49,6 +52,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -61,7 +65,11 @@
 \tocdepth 3
 \paragraph_separation indent
 \paragraph_indentation default
-\quotes_language english
+\is_math_indent 1
+\math_indentation default
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
@@ -241,6 +249,71 @@ Error in the approximation
 \epsilon\left(h/2\right) & =A-A\left(h/2\right)=K\left(h/2\right)+\mathcal{O}\left(h^{2}\right)\\
  & =\left[\frac{A\left(h/2\right)-A\left(h\right)}{h-\left(h/2\right)}\right]\left(h/2\right)\\
  & =\frac{A\left(h/2\right)-A\left(h\right)}{2-1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Error estimate based on slopes
+\end_layout
+
+\begin_layout Standard
+Given: 
+\begin_inset Formula $y\left(t\right)$
+\end_inset
+
+ and 
+\begin_inset Formula $y\left(t+h\right)$
+\end_inset
+
+, computed 
+\begin_inset Formula $y\left(t+h/2\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Error 
+\begin_inset Formula 
+\begin{align*}
+\epsilon & =2\frac{h}{2}\left(\left|\dot{y}\left(t+h\right)-\dot{y}\left(t+h/2\right)\right|\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Approximation of slopes using states:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\dot{y}\left(t+h\right) & \simeq\frac{y\left(t+h\right)-y\left(t\right)}{h}\\
+\dot{y}\left(t+h/2\right) & \simeq\frac{y\left(t+h/2\right)-y\left(t\right)}{h/2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Error:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\epsilon & =h\left(\frac{y\left(t+h\right)-y\left(t\right)}{h}-\frac{y\left(t+h/2\right)-y\left(t\right)}{h/2}\right)\\
+ & =y\left(t+h\right)-y\left(t\right)-\frac{y\left(t+h/2\right)}{2}+\frac{y\left(t\right)}{2}\\
+ & =y\left(t+h\right)-\frac{y\left(t+h/2\right)}{2}-\frac{y\left(t\right)}{2}
 \end{align*}
 
 \end_inset

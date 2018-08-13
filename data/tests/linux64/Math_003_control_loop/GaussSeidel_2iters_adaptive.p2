@@ -389,7 +389,7 @@
 			<ChartModel chartType="2D">
 				<SeriesProperties>
 					<Series>
-						<TitleText>x3 [ref]</TitleText>
+						<TitleText>x1 [ref]</TitleText>
 						<LineStyle>0</LineStyle>
 					</Series>
 					<Series>
@@ -468,11 +468,11 @@
 			<ChartModel chartType="2D">
 				<SeriesProperties>
 					<Series>
-						<TitleText>x4 [ref]</TitleText>
+						<TitleText>x2 [ref]</TitleText>
 						<LineStyle>0</LineStyle>
 					</Series>
 					<Series>
-						<TitleText>Part3.x4</TitleText>
+						<TitleText>$quantity</TitleText>
 						<LineStyle>0</LineStyle>
 						<MarkerStyle>0</MarkerStyle>
 						<PenColor>#00aaff</PenColor>
@@ -677,76 +677,17 @@
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
-		<Mapper name="StepSize [$filename]">
-			<Extractors>
-				<Extractor>
-					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive/log/stepstats.tsv#2</DataIOFileName>
-					<CutType>NoCut</CutType>
-					<DataFormat>DF_2D</DataFormat>
-					<DataType>T_REFERENCE</DataType>
-					<ColumnIndex>0</ColumnIndex>
-					<CutLockXDir>0</CutLockXDir>
-					<CutLockYDir>0</CutLockYDir>
-					<CutLockZDir>0</CutLockZDir>
-					<CutLockTDir>0</CutLockTDir>
-				</Extractor>
-			</Extractors>
-			<ChartModel chartType="2D">
-				<SeriesProperties>
-					<Series>
-						<TitleText>$quantity</TitleText>
-						<LineStyle>0</LineStyle>
-						<PenColor>#606090</PenColor>
-					</Series>
-				</SeriesProperties>
-				<AxisProperties>
-					<Axis index="0">
-						<TitleText>Zeit [$unit]</TitleText>
-						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
-						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
-						<IBK:Unit name="AxisUnit">s</IBK:Unit>
-						<Maximum>10</Maximum>
-						<GridPenStyle>1</GridPenStyle>
-						<MinorGridVisible>0</MinorGridVisible>
-					</Axis>
-					<Axis index="1" autoscale="0">
-						<TitleText>$quantity [$unit]</TitleText>
-						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
-						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
-						<IBK:Unit name="AxisUnit">s</IBK:Unit>
-						<Maximum>0.15</Maximum>
-						<MinorGridVisible>0</MinorGridVisible>
-					</Axis>
-					<Axis index="2">
-						<TitleText>$quantity [$unit]</TitleText>
-						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
-						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
-					</Axis>
-				</AxisProperties>
-				<ChartProperties>
-					<TitleText />
-					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
-					<AxisScalesInside>1</AxisScalesInside>
-					<Legend>
-						<Position>Inside</Position>
-						<Alignment>5</Alignment>
-						<MaxColumns>1</MaxColumns>
-						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
-					</Legend>
-				</ChartProperties>
-			</ChartModel>
-		</Mapper>
 	</Mappers>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 	<!--Split window state.-->
 	<Splitting>
-		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="577" size2="576" orientation="2" />
-		<Widget id="2" parent="1" viewTable="0" mapperIndex="6" size1="577" size2="576" orientation="2" />
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="517" size2="516" orientation="2" />
+		<Widget id="2" parent="1" viewTable="0" mapperIndex="6" size1="517" size2="516" orientation="2" />
 		<Widget id="3" parent="1" viewTable="0" mapperIndex="5" size1="435" size2="497" orientation="1" />
 		<Widget id="4" parent="2" viewTable="0" mapperIndex="7" size1="466" size2="466" orientation="1" />
-		<FocusedWidget>1</FocusedWidget>
+		<FocusedWidget>3</FocusedWidget>
 	</Splitting>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
