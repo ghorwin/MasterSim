@@ -34,8 +34,7 @@ public:
 	enum ErrorControlMode {
 		/*! Error test disabled, does not execute step-doubling, use for non-iterative methods. */
 		EM_NONE,
-		/*! Does error test including step-doubling (requires FMUs to support variable steps and roll back) but
-			only informs about missed checks, does not reduce time step.
+		/*! Does error test but only informs about missed checks, does not reduce time step.
 		*/
 		EM_CHECK,
 		/*! Does error test including step-doubling (requires FMUs to support variable steps and roll back).
