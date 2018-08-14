@@ -84,10 +84,15 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 						lastModified = "---";
 					else
 						lastModified = utf82QString(pro.m_lastEdited);
-					description = tr("<i>Created: %1, Last modified: %2</i><br>%3")
+					QString comment = utf82QString(pro.m_comment);
+					comment.replace("\r\n", "<br>");
+					comment.replace("\n", "<br>");
+					comment.replace("# ", "");
+					comment.replace("<br>#", "<br>");
+					description = tr("<i>Created: %1, Last modified: %2</i><p><br><span style=\"font-family:monospace;font-size:small;\">%3</span>")
 										  .arg(created)
 										  .arg(lastModified)
-										  .arg(utf82QString(pro.m_comment));
+										  .arg(comment);
 				}
 				catch (IBK::Exception &) {
 					// error reading project file, missing permissions?

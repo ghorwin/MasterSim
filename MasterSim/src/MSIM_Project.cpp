@@ -75,8 +75,20 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 
 		// check for comment
 		if (line[0] == '#') {
-			if (leadingComment)
-				m_comment += line + "\n";
+			if (leadingComment) {
+				// special treatment of Created and LastModified lines
+				std::string::size_type pos;
+				if ((pos = line.find("Created")) != std::string::npos) {
+					m_created = line.substr(pos  + 8);
+					IBK::trim(m_created);
+				}
+				else if ((pos = line.find("LastModified")) != std::string::npos) {
+					m_lastEdited = line.substr(pos  + 13);
+					IBK::trim(m_lastEdited);
+				}
+				else
+					m_comment += line + "\n";
+			}
 			continue;
 		}
 
@@ -236,6 +248,9 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!out)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
 
+	// write created and last-modified strings
+	out << "# Created:\t" << m_created << std::endl;
+	out << "# LastModified:\t" << m_lastEdited << std::endl << std::endl;
 	// write leading comment, must hold '\n' separated lines with each line beginning with '#'
 	out << m_comment;
 	if (!m_comment.empty())
