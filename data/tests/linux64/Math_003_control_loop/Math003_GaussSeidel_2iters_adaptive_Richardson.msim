@@ -1,0 +1,28 @@
+# Project file example for iterating GaussSeidel with time step adjustment
+#
+# No error test included, time step adjustment based on convergence failures.
+
+tStart               0 s
+tEnd                 10 s
+hMax                 0.14 s
+hMin                 1e-05 s
+hFallBackLimit       0.0001 s
+hStart               0.14 s
+hOutputMin           1e-05 s
+binaryOutputFiles    no
+adjustStepSize       yes
+absTol               1e-05
+relTol               0.0001
+MasterMode           GAUSS_SEIDEL
+ErrorControlMode     ADAPT_STEP
+maxIterations        2
+
+simulator 0 0 Part1 #ff447cb4 "fmus/IBK/Part1.fmu"
+simulator 1 1 Part2 #ffc38200 "fmus/IBK/Part2.fmu"
+simulator 2 1 Part3 #ffff0000 "fmus/IBK/Part3.fmu"
+
+graph Part1.x2 Part2.x2
+graph Part1.x1 Part2.x1
+graph Part2.x3 Part3.x3
+graph Part3.x4 Part2.x4
+

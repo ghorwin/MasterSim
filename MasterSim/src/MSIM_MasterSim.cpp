@@ -818,12 +818,13 @@ bool MasterSim::doErrorCheckRichardson() {
 	// Note: we do not need to sync states with vectors m_realyt and other m_xxxyt since they are still at
 	// time level t.
 
-	// set half step size
-	m_h /= 2;
-
 	// save iteration states in vector for error states for later roll-back to time t
+	double hOriginal = m_h;
 	m_errTOriginal = m_t;
 	m_errorCheckStates.swap(m_iterationStates);  // no copy here, need a swap because we swap back later
+
+	// set half step size
+	m_h /= 2;
 
 	bool failed = false;
 	try {
@@ -891,7 +892,10 @@ bool MasterSim::doErrorCheckRichardson() {
 			// y(t+h/2) = m_realytNext[i]
 			// y(t+h)   = m_errRealytFirst[i]
 
-			double errEstimate = m_errRealytFirst[i] - 0.5*(m_realytNext[i] + m_errRealyt[i]);
+			double slope_full = (m_errRealytFirst[i] - m_errRealyt[i])/hOriginal;
+			double slope_lastHalf = (m_errRealytFirst[i] - m_realyt[i])/m_h;
+
+			double errEstimate = slope_full - slope_lastHalf;
 
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
@@ -910,32 +914,37 @@ bool MasterSim::doErrorCheckRichardson() {
 		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
 						 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
+		// reduce step size, but only, if we are not yet at the minimum allowed step size
 		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
-			// restore state to time t
+			if (hOriginal > m_project.m_hMin.value) {
+				// restore state to time t
 
-			// roll back slaves
-			restoreSlaveStates(m_t, m_errorCheckStates);
-			// restore variables from time t
-			MasterSim::copyVector(m_errRealyt, m_realyt);
-			MasterSim::copyVector(m_errIntyt, m_intyt);
-			MasterSim::copyVector(m_errBoolyt, m_boolyt);
-			std::copy(m_errStringyt.begin(), m_errStringyt.end(), m_stringyt.begin());
+				// roll back slaves
+				restoreSlaveStates(m_t, m_errorCheckStates);
+				// restore variables from time t
+				MasterSim::copyVector(m_errRealyt, m_realyt);
+				MasterSim::copyVector(m_errIntyt, m_intyt);
+				MasterSim::copyVector(m_errBoolyt, m_boolyt);
+				std::copy(m_errStringyt.begin(), m_errStringyt.end(), m_stringyt.begin());
 
-			// reduce step size, but mind factor two, because error step adaptation is based on current m_h = h/2
-			m_h = adaptTimeStepBasedOnErrorEstimate(err)*2;
+				// reduce step size; factor two is already applied within function, because error step adaptation is based on current m_h = h/2
+				m_h = adaptTimeStepBasedOnErrorEstimate(err);
 
-			m_t = m_errTOriginal;
-			// swap back iteration and error states
-			m_errorCheckStates.swap(m_iterationStates);  // no copy here!
+				m_t = m_errTOriginal;
+				// swap back iteration and error states
+				m_errorCheckStates.swap(m_iterationStates);  // no copy here!
 
-			return false;
+				return false; // redo step with smaller step size
+			}
+			else {
+				m_hProposed = hOriginal; // continue with minimum step size
+			}
 		}
 	}
 	else {
-		// compute new increased time step proposal, but mind factor two, because error step adaptation is based on current m_h = h/2
-		m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err)*2, m_project.m_hMax.value);
+		// compute new increased time step proposal; factor two is already applied within function, because error step adaptation is based on current m_h = h/2
+		m_hProposed = std::min(adaptTimeStepBasedOnErrorEstimate(err), m_project.m_hMax.value);
 	}
-
 
 	// slaves are now positioned at t + 2 * h2
 
@@ -943,8 +952,11 @@ bool MasterSim::doErrorCheckRichardson() {
 
 	// t is at start of the last half-step,
 	// and m_h has the half-step size, so that when we complete the
-	// step in the calling routined, it appears as if we just had
+	// step in the calling routine, it appears as if we just had
 	// taken a step from t + h/2 to t + h
+
+	// Mind: for the step statistics we have to double m_h again, otherwise the
+	//       output will show only half-step sizes even though we always completed the full interval
 
 	return true;
 }
@@ -1005,11 +1017,11 @@ bool MasterSim::doErrorCheckWithoutIteration() {
 
 double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 	const char * const FUNC_ID = "[MasterSim::adaptTimeStepBasedOnErrorEstimate]";
-	double MAX_SCALE = 1.5; // upper limit for scaling up time step
-	double MIN_SCALE = 0.3; // lower limit for scaling down time step
+	double MAX_SCALE = 2; // upper limit for scaling up time step
+	double MIN_SCALE = 0.2; // lower limit for scaling down time step
 	double SAFETY = 0.9; // safety factor
 	double scale = std::max(MIN_SCALE, std::min(MAX_SCALE, SAFETY/std::sqrt(errEstimate) ) );
-	double hNew = m_h * scale;
+	double hNew = m_h * scale * 2; // use factor two because errEstimate is based on half steps
 	// check for falling below time step limit
 	if (hNew < m_project.m_hMin.value) {
 		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Step failure at t=%1, taking step size %2. "
