@@ -1,3 +1,6 @@
+# Created:	Di. Aug. 14 17:02:20 2018
+# LastModified:	Di. Aug. 14 17:02:20 2018
+
 # Project file example for iterating GaussSeidel with time step adjustment
 #
 # No error test included, time step adjustment based on convergence failures.
@@ -6,9 +9,9 @@ tStart               0 s
 tEnd                 10 s
 hMax                 0.14 s
 hMin                 1e-06 s
-hFallBackLimit       1e-04 s
+hFallBackLimit       0.0001 s
 hStart               0.14 s
-hOutputMin           1e-4 s
+hOutputMin           0.0001 s
 binaryOutputFiles    no
 adjustStepSize       yes
 absTol               1e-06

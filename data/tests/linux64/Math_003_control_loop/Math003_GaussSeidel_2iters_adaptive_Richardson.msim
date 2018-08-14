@@ -1,3 +1,6 @@
+# Created:	Di. Aug. 14 17:01:42 2018
+# LastModified:	Di. Aug. 14 17:02:02 2018
+
 # Project file example for iterating GaussSeidel with time step adjustment
 #
 # No error test included, time step adjustment based on convergence failures.
