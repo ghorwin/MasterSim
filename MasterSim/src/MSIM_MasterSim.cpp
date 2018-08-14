@@ -1166,9 +1166,12 @@ void MasterSim::writeStepStatistics() {
 	std::ostream & out = *m_stepStatsOutput;
 	unsigned int maIters, maFMUErrs, maLimitExceeded;
 	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
+	double h = m_h;
+	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP)
+		h *= 2;
 	out << std::setw(14) << std::left << m_t << '\t'
 		   << std::setw(10) << std::left << m_statStepCounter << '\t'
-		   << std::setw(14) << std::left << m_h << '\t'
+		   << std::setw(14) << std::left << h << '\t'
 		   << std::setw(18) << std::left << m_statAlgorithmCallCounter << '\t'
 		   << std::setw(18) << std::left << m_statErrorTestFailsCounter << '\t'
 		   << std::setw(18) << std::left << m_statConvergenceFailsCounter << '\t'
