@@ -840,7 +840,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		++m_statAlgorithmCallCounter;
 		m_statAlgorithmTime += m_timer.stop()*1e-3;
 		if (res != AbstractAlgorithm::R_CONVERGED) {
-			IBK_FastMessage(IBK::VL_INFO)("First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			IBK_FastMessage(IBK::VL_INFO)("ERROR_TEST: First half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 			failed = true;
 		}
 		else {
@@ -864,13 +864,13 @@ bool MasterSim::doErrorCheckRichardson() {
 			++m_statAlgorithmCallCounter;
 			m_statAlgorithmTime += m_timer.stop()*1e-3;
 			if (res != AbstractAlgorithm::R_CONVERGED) {
-				IBK::IBK_Message("Second half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+				IBK_FastMessage(IBK::VL_INFO)("ERROR_TEST: Second half-step of error test did not converge.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 				failed = true;
 			}
 		}
 	}
 	catch (IBK::Exception & ex) {
-		throw IBK::Exception(ex, "Error taking half-steps of error test.", FUNC_ID);
+		throw IBK::Exception(ex, "ERROR_TEST: Error taking half-steps of error test.", FUNC_ID);
 	}
 
 	// initialized with failure
@@ -1037,7 +1037,7 @@ double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 	double hNew = m_h * scale * 2; // use factor two because errEstimate is based on half steps
 	// check for falling below time step limit
 	if (hNew < m_project.m_hMin.value) {
-		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Step failure at t=%1, taking step size %2. "
+		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("MASTER: Step failure at t=%1, taking step size %2. "
 			"Reducing step would fall below minimum step size of %3, continuing with minimum time step size.\n")
 			.arg(m_t).arg(m_h).arg(m_project.m_hMin.value), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		hNew = m_project.m_hMin.value;
