@@ -45,7 +45,7 @@ public:
 				of the original step assuming linear growth of error in time, then a full step has to be taken again
 				with the proposed time step (current implementation).
 		*/
-		EM_ADAPT_STEP
+		EM_STEP_DOUBLING
 	};
 
 	/*! Holds all information that define a simulator. */

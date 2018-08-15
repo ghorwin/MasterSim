@@ -386,7 +386,7 @@ void MasterSim::checkCapabilities() {
 	m_enableVariableStepSizes = m_project.m_adjustStepSize;
 
 	// override this setting if an error control model is used
-	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
+	if (m_project.m_errorControlMode == Project::EM_STEP_DOUBLING) {
 		// must have time step adjustment enabled
 		if (!m_enableVariableStepSizes)
 			throw IBK::Exception("Using error control with time step adjustment requires time step adjustment flag (adjustStepSize) to be enabled.", FUNC_ID);
@@ -873,20 +873,24 @@ bool MasterSim::doErrorCheckRichardson() {
 		throw IBK::Exception(ex, "Error taking half-steps of error test.", FUNC_ID);
 	}
 
-	double err = 2; // initialized with failure
+	// initialized with failure
+	double err = 25; // 0.9/sqrt(25) < 0.2 which is the current minimum for time step reduction
+	double errSlopes = 0;
+
 	if (!failed) {
 		err = 0;
+		errSlopes = 0;
 		// compare computed solutions via WRMS Norm of differences
 		unsigned int nValues = m_realytNext.size();
 		for (unsigned int i=0; i<nValues; ++i) {
-#if 0
+
 			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/2; // Note: mind the division of 2
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
 			err += scaledDiff*scaledDiff;
-#else
-			// error = h/2 * (slope(t...t+h) - slope(t...t+h/2))
+
+			// errorSlope = h/2 * (slope(t...t+h) - slope(t...t+h/2))
 
 			// y(t)     = m_errRealyt
 			// y(t+h/2) = m_realytNext[i]
@@ -895,27 +899,36 @@ bool MasterSim::doErrorCheckRichardson() {
 			double slope_full = (m_errRealytFirst[i] - m_errRealyt[i])/hOriginal;
 			double slope_lastHalf = (m_errRealytFirst[i] - m_realyt[i])/m_h;
 
-			double errEstimate = slope_full - slope_lastHalf;
+			double errSlope = slope_full - slope_lastHalf;
 
 			// scale the error by tolerances
-			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			scaledDiff = errSlope/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
-			err += scaledDiff*scaledDiff;
-#endif
+			errSlopes += scaledDiff*scaledDiff;
+
 		}
 		err = std::sqrt(err/nValues);
+		errSlopes = std::sqrt(errSlopes/nValues);
 	}
 
 	// if error limit has been exceeded, restore master and slave states to last time point
-	IBK::IBK_Message(IBK::FormatString("ERR norm  = %1\n").arg(err, 16, 'f', 3), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+	IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("ERROR_TEST: ERR norm  = %1, ERR_slope norm  = %2\n")
+									   .arg(err, 16, 'f', 3).arg(errSlopes, 16, 'f', 3), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+
+	err = std::max(err, errSlopes);
 	if (err > 1) {
 		++m_statErrorTestFailsCounter;
-		// failure
-		IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
-						 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-
+		if (failed) {
+			IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("ERROR_TEST: Error test failed at t=%1 with h=%2 due to convergence error.\n")
+							 .arg(m_errTOriginal).arg(2*m_h), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		}
+		else {
+			// failure by error test
+			IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("ERROR_TEST: Error test failed at t=%1 with h=%2, WRMS=%3.\n")
+							 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		}
 		// reduce step size, but only, if we are not yet at the minimum allowed step size
-		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
+		if (m_project.m_errorControlMode == Project::EM_STEP_DOUBLING) {
 			if (hOriginal > m_project.m_hMin.value) {
 				// restore state to time t
 
@@ -1167,7 +1180,7 @@ void MasterSim::writeStepStatistics() {
 	unsigned int maIters, maFMUErrs, maLimitExceeded;
 	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
 	double h = m_h;
-	if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP)
+	if (m_project.m_errorControlMode == Project::EM_STEP_DOUBLING)
 		h *= 2;
 	out << std::setw(14) << std::left << m_t << '\t'
 		   << std::setw(10) << std::left << m_statStepCounter << '\t'
