@@ -204,8 +204,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 					m_errorControlMode = EM_NONE;
 				else if (value == "CHECK")
 					m_errorControlMode = EM_CHECK;
-				else if (value == "ADAPT_STEP")
-					m_errorControlMode = EM_ADAPT_STEP;
+				else if (value == "ADAPT_STEP" || value == "STEP_DOUBLING")
+					m_errorControlMode = EM_STEP_DOUBLING;
 				else
 					throw IBK::Exception(IBK::FormatString("Unknown/undefined master mode '%1'.").arg(value), FUNC_ID);
 			}
@@ -278,7 +278,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	switch (m_errorControlMode) {
 		case EM_NONE : out << "NONE"; break;
 		case EM_CHECK : out << "CHECK"; break;
-		case EM_ADAPT_STEP : out << "ADAPT_STEP"; break;
+		case EM_STEP_DOUBLING : out << "STEP_DOUBLING"; break;
 	}
 	out << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "maxIterations" << " " << m_maxIterations << std::endl;
