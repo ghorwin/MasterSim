@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+	fmiVersion="2.0"
+	modelName="Part1"
+	guid="{471a3b52-4923-44d8-ab4a-fcdb813c7353}"
+	description="Predator model of Lotka-Volterra Test Case"
+	generationTool="C++ Code using FMI support functions from IBK@TU Dresden"
+	generationDateAndTime="2018-08-20T12:49:19Z"
+	variableNamingConvention="structured"
+	numberOfEventIndicators="0">
+
+	<!-- The following properties are the defaults and can be omitted
+		needsExecutionTool="false"
+		canBeInstantiatedOnlyOncePerProcess="false"
+		providesDirectionalDerivative="false"
+
+		CoSim only:
+		canRunAsynchronuously = "false"
+
+	-->
+
+	<ModelExchange
+		modelIdentifier="LotkaVolterraPredator"
+		completedlntegratorStepNotNeeded="true"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<CoSimulation
+		modelIdentifier="LotkaVolterraPredator"
+		canHandleVariableCommunicationStepSize="true"
+		canInterpolateInputs="false"
+		maxOutputDerivativeOrder="0"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<LogCategories>
+		<Category name="logStatusWarning" />
+		<Category name="logStatusError" />
+		<Category name="logAll" />
+		<Category name="logFmi2Call" />
+	</LogCategories>
+
+	<DefaultExperiment startTime="0.0" stopTime="150.0" tolerance="1e-06"/>
+
+	<ModelVariables>
+
+		<!-- For input variables we need to give a 'start' attribute -->
+		<!-- For output variables with initial="exact" we need to give a 'start' attribute -->
+
+		<!-- Index of variable = "1" -->
+		<ScalarVariable
+			name="y"
+			valueReference="1"
+			variability="continuous"
+			causality="output"
+			initial="exact">
+			<Real start="10.0"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "2" -->
+		<ScalarVariable
+			name="x"
+			valueReference="2"
+			variability="continuous"
+			causality="input">
+		</ScalarVariable>
+
+	</ModelVariables>
+
+	<ModelStructure>
+		<Outputs>
+			<Unknown index="1"/>
+		</Outputs>
+	</ModelStructure>
+
+</fmiModelDescription>
+
