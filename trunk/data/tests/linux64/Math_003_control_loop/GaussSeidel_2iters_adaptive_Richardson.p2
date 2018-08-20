@@ -11,7 +11,6 @@
 			<SubDir Color="#416fce" Checked="0">Math003_GaussSeidel_2iters_adaptive</SubDir>
 			<SubDir Color="#7141d1" Checked="0">Math003_GaussSeidel_2iters_adaptive.gcc_linux</SubDir>
 			<SubDir Color="#005500" Checked="1">Math003_GaussSeidel_2iters_adaptive_Richardson</SubDir>
-			<SubDir Color="#55aaff" Checked="0">Math003_GaussSeidel_2iters_adaptive_Richardson_modified_hmax</SubDir>
 			<SubDir Color="#ffffff" Checked="0">Math003_GaussSeidel_2iters_fixedStep</SubDir>
 			<SubDir Color="#ce4145" Checked="0">Math003_GaussSeidel_2iters_fixedStep.gcc_linux</SubDir>
 			<SubDir Color="#cacc26" Checked="0">description</SubDir>
@@ -23,7 +22,7 @@
 
 	<!--Panel states.-->
 	<Panels>
-		<EastPanel>0</EastPanel>
+		<EastPanel>1</EastPanel>
 		<WestPanel>1</WestPanel>
 		<SouthPanel>0</SouthPanel>
 	</Panels>
@@ -675,24 +674,48 @@
 					<Series>
 						<TitleText>$quantity</TitleText>
 						<LineStyle>0</LineStyle>
+						<MarkerStyle>0</MarkerStyle>
 					</Series>
 				</SeriesProperties>
 				<AxisProperties>
-					<Axis index="0">
+					<Axis index="0" autoscale="0">
 						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.7</Maximum>
+						<Minimum>0.8</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
 					<Axis index="1">
 						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.001</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
 					<Axis index="2">
 						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
 					</Axis>
 				</AxisProperties>
 				<ChartProperties>
-					<TitleText>StepSize [$filename]</TitleText>
-					<Legend />
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
@@ -704,8 +727,8 @@
 	<Splitting>
 		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="577" size2="576" orientation="2" />
 		<Widget id="2" parent="1" viewTable="0" mapperIndex="6" size1="577" size2="576" orientation="2" />
-		<Widget id="3" parent="1" viewTable="0" mapperIndex="5" size1="631" size2="722" orientation="1" />
-		<Widget id="4" parent="2" viewTable="0" mapperIndex="7" size1="677" size2="676" orientation="1" />
+		<Widget id="3" parent="1" viewTable="0" mapperIndex="5" size1="435" size2="497" orientation="1" />
+		<Widget id="4" parent="2" viewTable="0" mapperIndex="8" size1="466" size2="466" orientation="1" />
 		<FocusedWidget>4</FocusedWidget>
 	</Splitting>
 
