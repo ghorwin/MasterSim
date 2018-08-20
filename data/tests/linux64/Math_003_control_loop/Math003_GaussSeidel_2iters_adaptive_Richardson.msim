@@ -2,8 +2,8 @@
 # LastModified:	Di. Aug. 14 17:02:02 2018
 
 # Project file example for iterating GaussSeidel with time step adjustment
-#
-# No error test included, time step adjustment based on convergence failures.
+# based on Richardson-Extrapolation error test.
+# Time step adjustment is done based on convergence failures and error test.
 
 tStart               0 s
 tEnd                 10 s
