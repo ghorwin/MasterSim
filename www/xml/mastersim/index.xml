@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+<titelde>MASTERSIM</titelde>
+<titelen>MASTERSIM</titelen>
+<headerde><table height=100% cellpadding="0" cellspacing="0"><tr><td valign="bottom"><span class="h1-delphinlogo"><img src="2nd/images/icon.png" style="padding-right:4px;">MasterSim</span></td><td valign="bottom" style="padding-bottom:8px;padding-left:25px"><span style="color:white;font-size:10pt">Co-Simulations-Master</span></td></tr></table></headerde>
+<headeren><table height=100% cellpadding="0" cellspacing="0"><tr><td valign="bottom"><span class="h1-delphinlogo"><img src="2nd/images/icon.png" style="padding-right:4px;">MasterSim</span></td><td valign="bottom" style="padding-bottom:8px;padding-left:25px"><span style="color:white;font-size:10pt">Co-Simulation Master</span></td></tr></table></headeren>
+</seite>
+<content>
+	<artikel>
+		<titel>Über MasterSim ...</titel>
+		<lang>de</lang>
+		<position>beide</position>
+		<inhalt>
+<p>
+MasterSim ist ein FMI Co-Simulation Master und eine <i>Programmierbibliothek</i>. Es wird das
+Functional Mockup Interface für Co-Simulation in Version 1.0 und 2.0 unterstützt. Unter Verwendung
+der Funktionalität von Version 2.0-Funktionalität sind verschiede Iterationsalgorithmen implementiert, welche
+die Fähigkeit einer FMU zum Zurücksetzen des Zustands nutzt und dadurch die Stabilität der Simulation verbessert.
+</p>
+<p>MasterSim wird aktiv am Institut für Bauklimatik der Technischen Universität Dresden (siehe Kontaktseite) entwickelt.</p>
+<h2>Teile von MasterSim</h2>
+<p>MasterSim besteht aus drei Teilen:</p>
+<ul>
+<li>MasterSimulator Kommandozeilenprogramm</li>
+<li>MasterSimulator Programmoberfläche</li>
+<li>MasterSim Programmierbibliothek</li>
+</ul>
+
+<h2>Warum MasterSim?</h2>
+<p>
+Zuerst einmal, es ist <b>frei</b>! Der komplette Quelltext ist auf der <a target="_blank" href="https://sourceforge.net/projects/mastersim">SourceForge-Projektseite</a> unter einer
+Open-Source Lizenz verfügbar.</p>
+<p>
+Aber es gibt viele andere Gründe, MasterSim zu verwenden:
+<ul>
+<li>MasterSim ist plattformübergreifend entwickelt und verfügbar für Windows, Linux und MacOS</li>
+<li>unterstützt <i>geskriptete Ausführung</i></li>
+<li>unterstützt <i>mehrere FMU-Instanzen</i> innerhalb eines Co-Simulationsszenarios</li>
+<li>Detailliert <i>konfigurierbare Mater-Algorithmen</i></li>
+<li><i>Auto-Verbindungs-Funktion</i> in der Programmoberfläche (sehr nützlich, wenn FMUs mit vielen passenden Ein- und Ausgängen verknüpft werden sollen)</li>
+<li><i>Detaillierte Simulationsstatistiken</i> informieren über die zeitkritischen Teile der Co-Simulation; Das ist sehr hilfreich bei der Geschwindigkeitsoptimierung und bei der
+Auswahl geeigneter Algorithmen</li>
+<li>Unterstützung von parallel ausgeführten Variationsstudien (mehrere MasterSimulator-Prozesse), wo die gleiche FMU gleichzeitig in mehreren parallel laufenden Simulationen verwendet wird</li>
+<li>Diagnoseoptionen assistieren FMU Entwicklern beim <i>Debugging von FMUs</i></li>
+<li>Quelltext hat nur wenige Abhängigkeiten zu Dritt-Bibliotheken (nur C/C++ Standardbibliothek und Qt für die Programmoberfläche), welches eine lange Lebenszeit und Kompatibilität mit vielen Plattformen sichert.</li>
+<li>Software und Quelltext wird <i>aktiv entwickelt, verwendet und gepflegt</i> am Institut für Bauklimatik, TU Dresden</li>
+</ul>
+</p>
+<p>
+Details über diese Eigenschaften sind auf der <a href="documentation.php">Dokumentationsseite</a> oder den <a href="https://sourceforge.net/p/mastersim/wiki/" target=_blank>WIKI-Seiten</a> des SourceForge-Projekts zu finden.
+</p>
+
+<sbr>
+<p>
+
+			<img src="2nd/images/splash_screen_428.png" title="MASTERSIM Splashscreen"></img>
+</p>
+
+<h1>MasterSim Software Library</h1>
+<h2>Library Functionality</h2>
+<p>
+With the library you can implement co-simulation functionality into your own simulation
+programs with little effort. 
+<h3>FMU Import functionality</h3>
+<p>
+The library supports extraction of FMU archives, reading 
+of <span style="font-family:monospace">modelDescription.xml</span> files, importing shared
+library symbols into memory. This is all neatly encapsulated in corresponding classes.
+<h3>Master-Algorithms</h3>
+<p>
+Included in the library source code are standard master algorithms, such 
+as <i>Gauss-Jacobi</i>, <i>Gauss-Seidel</i> and <i>Newton</i>. They can be readily
+used in own code without any work necessary (except for tuning of some numerical parameters, perhaps).
+
+<h3>Best-practice guide and example code</h3>
+<p>
+The command line co-simulation solver <i>MasterSimulator</i> and the user interface code
+can be used as guide and tutorial on how to write such code yourself.
+
+<h2>Co-Simulation Standard Support</h2>
+<p>The library supports currently the FMI Co-Simulation Standard 1.0 and 2.0. Some
+of the algorithms (i.e. all algorithms that need setting back of FMU states) require
+FMI v2.0, but <i>Gauss-Jacobi</i> and <i>Gauss-Seidel</i> work with FMU 1.0 as well.
+</p>
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>About MasterSim ...</titel>
+		<lang>en</lang>
+		<position>beide</position>
+		<inhalt>
+<p>
+MasterSim is an FMI Co-Simulation master and <i>programming library</i>. It supports the
+Functional Mockup Interface for Co-Simulation in Version 1.0 and 2.0. Using the functionality
+of Version 2.0, it implements various iteration algorithms that rollback FMU slaves and
+increase stablity of coupled simulation.
+</p>
+<p>
+MasterSim is actively developed at the Technische Universität Dresden, Institut für Bauklimatik (see contact page).
+</p>
+<h2>Parts of MasterSim</h2>
+<p>
+MasterSim consists of three parts:
+<ul>
+<li>MasterSimulator command line executable</li>
+<li>MasterSimulator user interface</li>
+<li>MasterSim programming library</li>
+</ul>
+
+<h2>Why use MasterSim?</h2>
+<p>
+First of all, it is <b>free</b>! The complete source code is available on its <a target="_blank" href="https://sourceforge.net/projects/mastersim">SourceForge-project page</a> under
+an open source license.</p>
+<p>
+But there are many other reasons for using MasterSim:
+<ul>
+<li>MasterSim is a cross-platform development, available for Windows, Linux and MacOS</li>
+<li>Support for <i>scripted execution</i></li>
+<li>Support for <i>several FMU instances</i> within the same co-simulation scenario</li>
+<li>Highly <i>configurable master algorithms</i></li>
+<li><i>Auto-connection feature</i> in user interface (very useful when connecting FMUs with many matching inputs and outputs)</li>
+<li><i>Detailed simulation statistics</i> inform about where in your co-simulation is most of the simulation time spend; This is very helpful for performance tuning and selection of the optimal algorithm</li>
+<li>Support for parallel executed variation studies (several MasterSimulator processes), where the same FMU file is used concurrently in several simulations running in parallel</li>
+<li>Diagnostic options that assist FMU developers when <i>debugging their FMU code</i></li>
+<li>Source code comes with few dependencies on other libraries (only C/C++ standard library and Qt for the user interface), which ensures long lifetime and compatibility for many platforms.</li>
+<li>Software and code is <i>actively developed, used and maintained</i> at the Institut für Bauklimatik, TU Dresden</li>
+</ul>
+<p>Details about these features can be found on the <a href="documentation.php">documentation page</a> or on the SourceForge-project <a href="https://sourceforge.net/p/mastersim/wiki/" target=_blank>WIKI-pages</a>.
+</p>
+
+<sbr>
+<p>
+
+			<img src="2nd/images/splash_screen_428.png" title="MASTERSIM Splashscreen"></img>
+<p>
+
+<h1>MasterSim Software Library</h1>
+<h2>Library Functionality</h2>
+<p>
+With the library you can implement co-simulation functionality into your own simulation
+programs with little effort. 
+<h3>FMU Import functionality</h3>
+<p>
+The library supports extraction of FMU archives, reading 
+of <span style="font-family:monospace">modelDescription.xml</span> files, importing shared
+library symbols into memory. This is all neatly encapsulated in corresponding classes.
+<h3>Master-Algorithms</h3>
+<p>
+Included in the library source code are standard master algorithms, such 
+as <i>Gauss-Jacobi</i>, <i>Gauss-Seidel</i> and <i>Newton</i>. They can be readily
+used in own code without any work necessary (except for tuning of some numerical parameters, perhaps).
+
+<h3>Best-practice guide and example code</h3>
+<p>
+The command line co-simulation solver <i>MasterSimulator</i> and the user interface code
+can be used as guide and tutorial on how to write such code yourself.
+
+<h2>Co-Simulation Standard Support</h2>
+<p>The library supports currently the FMI Co-Simulation Standard 1.0 and 2.0. Some
+of the algorithms (i.e. all algorithms that need setting back of FMU states) require
+FMI v2.0, but <i>Gauss-Jacobi</i> and <i>Gauss-Seidel</i> work with FMU 1.0 as well.
+
+		</inhalt>
+	</artikel>
+
+
+</content>
+</alles>

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+	<titelde>Dokumentation &amp; Hilfe</titelde>
+	<titelen>Documentation &amp; Help</titelen>
+	<prio>20</prio>
+</seite>
+<content>
+	<artikel>
+		<titel>Publikationen</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt><p>
+<p>Folgende wissenschaftliche Publikationen, Präsentationen und Forschungsberichte über MASTERSIM sind verfügbar:</p>
+<p>
+Nicolai, A.; <i>Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM</i>, 2018, Qucosa, doi:XXX (wird hinzugefügt, sobald verfügbar).<br>[<a href="2nd/doc/Nicolai_MasterSim_Algorithmus.pdf" target="_blank">Nicolai_MasterSim_Algorithmus.pdf</a>]
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>Publications</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt><p>
+<p>The following scientific publications, presentations and research reports are available about MASTERSIM:</p>
+<p>
+Nicolai, A.; <i>Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM</i>, 2018, Qucosa, doi:XXX (added when available).<br>[<a href="2nd/doc/Nicolai_MasterSim_Algorithmus.pdf" target="_blank">Nicolai_MasterSim_Algorithmus.pdf</a> (in german)]
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>Funktionalität</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt><p>
+<h3>Script-Funktionalität</h3>
+<p>MasterSim kann durch Skripte gesteuert werden, zum Beispiel für Variationsstudien. Zu diesem Zweck sind Projektdateien als einfache <b>Textdateien</b> gespeichert und können mit Scripten leicht erstellt/bearbeitet werden.
+Der eigentliche Simulator steht als Kommandozeilentool <i>MasterSimulator</i> zur Verfügung, welches von Skripten aufgerufen werden kann.</p>
+</p>
+
+<h3>Unterstützung bei der FMU Entwicklung</h3>
+<p>MasterSim kann mittels Kommandozeilenargumenten so konfiguriert werden, dass FMUs autmatisch entpackt werden, oder aber bereits entpackte FMUs verwendet werden. Dadurch können Shared Libraries/DLLs 
+im Debug-Modus übersetzt werden, welche MasterSim dann anstelle der in der FMU gepackten DLL lädt. Dadurch können externe Debugger verwendet werden, um das Verhalten der FMUs 
+im Co-Simulationsszenario zu testen. Außerdem kann man so direkt Fehler in der modelDescription-Datei beheben, ohne jeweils die FMU neu packen zu müssen.</p>
+
+<h3>Simulation-Szenarien mit mehreren FMU Instanzen</h3>
+<p>MasterSim unterstützt das mehrfache Instanziieren der gleichen FMU innerhalb eines Simulationsszenarios. Damit FMU Instanzen beim schreiben eigenen Ausgaben sich nicht gegenseitig überschreiben,
+gibt es eine definierte Verzeichnisstruktur und FMU-spezifische Wurzelverzeichnisse werden an jeden FMU-Slave übergeben. Diese ermöglicht auch die gleichzeitige Ausführung mehrerer 
+Simulationszenarios (MasterSimulation Ausführungen), wobei die gleiche FMU verwendet wird.</p>
+
+<h3>All die anderen netten Funktionen...</h3>
+<p>... sind auf der <a href="https://sourceforge.net/p/mastersim/wiki/" target=_blank>Wiki-Seite</a> beschrieben.
+
+	<h2>API Dokumentation</h2>
+		<p>
+		Die aktuellste Dokumentation kann aus den SVN-Quellen generiert werden, unter Verwendung des <a href="http://www.doxygen.org" target=_blank>Doxygen</a> Programms. Siehe doc Verzeichnis im Quelltext.
+		</p>
+
+		</inhalt>
+	</artikel>
+	
+	<artikel>
+		<titel>Feature description</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt><p>
+<h3>Scripting possibilities</h3>
+<p>MasterSim can be used from scripts, for example when variation studies are done. For that purpose, project files are <b>plain-text</b> and can created/edited with scripts easily. 
+The actual simulator is provided as command line executable <i>MasterSimulator</i>, which can be called from scripts.
+</p>
+<h3>Assisting FMU Development</h3>
+<p>MasterSim can be configured via command line arguments to extract FMUs automatically, or use already extracted FMUs. This allows compilation of the shared libraries/DLLs in debug mode and 
+let MasterSim load these librares, instead of those packaged in the FMU, which allows external debugger use. Also, you can directly fix errors in the modelDescription file without unpacking/repacking the FMU archive.
+<h3>Simulation Scenarios with several FMU instances</h3>
+<p>MasterSim supports multiple instances of the same FMU within one simulation scenario. In order to avoid FMU instances overwriting each others results, a directory structure layout is defined and FMU-specific base paths are communicated to each FMU slave. This allows batch processing/parallel execution of several simulation scenarios (runs of MasterSimulator) where the same FMU is instantiated many times.
+<h3>All the other nice features...</h3>
+<p>... are documented in the <a href="https://sourceforge.net/p/mastersim/wiki/" target=_blank>WIKI-pages</a>.
+
+	<h2>API documentation</h2>
+		<p>
+		The most up-to-date documentation can be generated from the SVN sources using the <a href="http://www.doxygen.org" target=_blank>Doxygen</a> tool. See doc directory in source code.
+		</p>
+
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Fehler, Funktionswünsche, Danksagungen und Beschwerden</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt><p>
+		Das Sourceforge Projekt verfügt auch über ein <a href="https://sourceforge.net/p/mastersim/tickets/" target="_blank">Fehlerreport/Anfrage-System</a>, wo man Fehler melden kann und
+		neue Funktionen beschreiben kann.
+<p>
+<h3>Diskussionsforum/FAQ</h3>
+... siehe <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">Forum</a> des SourceForge-Projekts.
+
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Bugs, feature wishes, thanks and complains</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt><p>
+		The sourceforge project also hosts a bug/request <a href="https://sourceforge.net/p/mastersim/tickets/" target="_blank">tracker</a> where you can report bugs 
+		and problems or describe features that you might miss.
+<p>
+<h3>Discussion forum/FAQ</h3>
+... see <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">forum</a> of the SourceForge project.
+
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Tutorials</titel>
+		<lang>de</lang>
+		<position>rechts</position>
+		<inhalt><p>
+		<h2>Getting Started Tutorial of the MasterSim User Interface</h2>
+<p>
+This tutorial illustrates usage of the MasterSimulator user interface
+to setup a co-simulation scenario.
+<p>
+First step is to <b>create a new project</b>. From the welcome page 
+choose <i>Create project...</i> or from the file menu <i>New...</i>.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_01.png" width="428">
+
+<h3>Defining Simulators/Importing FMUs</h3>
+<p>
+Once the project has been created it should be saved to 
+some location. For this tutorial simply use the directory
+from the examples with the Math003 files and create a new
+project file inside this directory.
+<p>
+Now add simulators by selecting FMU files. The slave name 
+is automatically generated from the FMU file name, but can
+be later edited in the table.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_02.png" width="428">
+
+<p>
+You may even add an FMU file several times, in which case
+the FMU is instantiated once for each slave.
+
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_03.png" width="428">
+
+<p>
+Once all FMUs have been imported, the connections between
+the slaves can be made. Before setting connections you may want
+to set the cycle index for each FMU. FMUs with the same cycle index
+are solved iteratively, if an iteration method is selected.
+
+<h3>Analyzing FMUs</h3>
+<p>
+<b>Note:</b> This step is important for the input/output variable tables to 
+be filled.<br>&nbsp;<p>
+Click on "Analyze FMUs" to parse model description.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_04.png" width="428">
+
+<p>
+A window will show basic information (to be extended in future) about
+all analyzed FMUs.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_05.png" width="428">
+
+<p>Now all input and output variables appear in the "create connection"
+tables.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_06.png" width="428">
+
+<h3>Connecting Simulation Slaves</h3>
+
+<p>To connect slaves select input and corresponding output in both tables.
+You can double-click on a variable to create a connection or use the
++ button.
+
+<img src="2nd/images/screenshots/tutorial/Tutorial_07.png" width="428">
+
+<p>Slave inputs that are connected disappear from the list of 
+available inputs.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_08.png" width="428">
+
+<p>Once all connections are made, the input variable table should be empty.
+However, you can always choose to leave some variables unconnected,
+in which case only the start/default value will be set at these inputs.
+
+<h3>Specifying Simulation Parameters</h3>
+<p>
+Finally, you need to set the master algorithm parameters and start
+the simulation (with the racing flag button).
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_09.png" width="428">
+
+<h2>Post-Processing Tutorial</h2>
+<p>
+Simulation output files are stored by the FMUs themselves (see documentation
+of directory structure) and the master. MasterSim stores all output 
+variables from all FMUs (unless filtered out, see doc) grouped according
+to type and scientific unit in DataIO file format (see <a href="http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa-70337" target="_blank">file format specs</a>).
+<p>
+You can use the IBK/TU Dresden <a href="http://www.bauklimatik-dresden.de/postproc" target="_blank">PostProcessing tool</a> for 
+detailed analysis (see documentation on PostProc webpage for details). Alternatively, you can extract columns/data sets from the
+data files with the command line tool and generate CSV files (for use in spreadsheet calculation tools or other postprocessing software).
+
+
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>Tutorials</titel>
+		<lang>en</lang>
+		<position>rechts</position>
+		<inhalt><p>
+		<h2>Getting Started Tutorial of the MasterSim User Interface</h2>
+<p>
+This tutorial illustrates usage of the MasterSimulator user interface
+to setup a co-simulation scenario.
+<p>
+First step is to <b>create a new project</b>. From the welcome page 
+choose <i>Create project...</i> or from the file menu <i>New...</i>.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_01.png" width="428">
+
+<h3>Defining Simulators/Importing FMUs</h3>
+<p>
+Once the project has been created it should be saved to 
+some location. For this tutorial simply use the directory
+from the examples with the Math003 files and create a new
+project file inside this directory.
+<p>
+Now add simulators by selecting FMU files. The slave name 
+is automatically generated from the FMU file name, but can
+be later edited in the table.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_02.png" width="428">
+
+<p>
+You may even add an FMU file several times, in which case
+the FMU is instantiated once for each slave.
+
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_03.png" width="428">
+
+<p>
+Once all FMUs have been imported, the connections between
+the slaves can be made. Before setting connections you may want
+to set the cycle index for each FMU. FMUs with the same cycle index
+are solved iteratively, if an iteration method is selected.
+
+<h3>Analyzing FMUs</h3>
+<p>
+<b>Note:</b> This step is important for the input/output variable tables to 
+be filled.<br>&nbsp;<p>
+Click on "Analyze FMUs" to parse model description.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_04.png" width="428">
+
+<p>
+A window will show basic information (to be extended in future) about
+all analyzed FMUs.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_05.png" width="428">
+
+<p>Now all input and output variables appear in the "create connection"
+tables.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_06.png" width="428">
+
+<h3>Connecting Simulation Slaves</h3>
+
+<p>To connect slaves select input and corresponding output in both tables.
+You can double-click on a variable to create a connection or use the
++ button.
+
+<img src="2nd/images/screenshots/tutorial/Tutorial_07.png" width="428">
+
+<p>Slave inputs that are connected disappear from the list of 
+available inputs.
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_08.png" width="428">
+
+<p>Once all connections are made, the input variable table should be empty.
+However, you can always choose to leave some variables unconnected,
+in which case only the start/default value will be set at these inputs.
+
+<h3>Specifying Simulation Parameters</h3>
+<p>
+Finally, you need to set the master algorithm parameters and start
+the simulation (with the racing flag button).
+<p>
+<img src="2nd/images/screenshots/tutorial/Tutorial_09.png" width="428">
+
+<h2>Post-Processing Tutorial</h2>
+<p>
+Simulation output files are stored by the FMUs themselves (see documentation
+of directory structure) and the master. MasterSim stores all output 
+variables from all FMUs (unless filtered out, see doc) grouped according
+to type and scientific unit in DataIO file format (see <a href="http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa-70337" target="_blank">file format specs</a>).
+<p>
+You can use the IBK/TU Dresden <a href="http://www.bauklimatik-dresden.de/postproc" target="_blank">PostProcessing tool</a> for 
+detailed analysis (see documentation on PostProc webpage for details). Alternatively, you can extract columns/data sets from the
+data files with the command line tool and generate CSV files (for use in spreadsheet calculation tools or other postprocessing software).
+
+
+		</inhalt>
+	</artikel>
+
+</content>
+</alles>
