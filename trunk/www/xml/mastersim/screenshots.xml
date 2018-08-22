@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+<titelde>Screenshots</titelde>
+<titelen>Screenshots</titelen>
+<prio>40</prio>
+</seite>
+<content>
+
+	<artikel>
+		<titel>Screenshots der Programmoberfläche</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt>
+<p>
+Siehe Tutorial auf der <a href="documentation.php">Dokumentationsseite</a>...
+</p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Screenshots of the User Interface</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt>
+<p>
+See the tutorial on the <a href="documentation.php">documentation page</a>...
+</p>
+		</inhalt>
+	</artikel>
+
+
+</content>
+</alles>

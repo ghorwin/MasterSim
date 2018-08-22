@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+	<titelde>Lizenz</titelde>
+	<titelen>License</titelen>
+	<prio>90</prio>
+</seite>
+<content>
+	<artikel>
+		<titel>MASTERSIM Lizenz-Informationen</titel>
+		<lang>de</lang>
+		<position>beide</position>
+		<inhalt><p>
+			MasterSim ist als kostenfreie (open-source) Software unter der GNU Public License frei verfügbar. Falls Sie die MASTERSIM-Programmbibliothek oder Teile des Quelltextes in kommerziellen Anwendungen verwenden möchten, kontaktieren sie bitte Dr. Andreas Nicolai (andreas.nicolai [at] tu-dresden.de).
+			<p>
+		<b>HINWEIS:</b> Um Spam vorzubeugen, sind die E-Mail-Adressen verändert. Bitte ersetzen Sie [at] mit dem @ Zeichen.</p>
+			<sbr>
+Die freie Programmversion und MasterSim Bibliothekt kann von der SourceForge <a href="https://sourceforge.net/projects/mastersim/files" target="_blank"> Projekt-Seite</a> heruntergeladen werden.
+			<p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>MASTERSIM License Information</titel>
+		<lang>en</lang>
+		<position>beide</position>
+		<inhalt><p>
+			MASTERSIM is freely available (open-source) under the GNU public license. If you would like to use the MASTERSIM software library or parts of the source code in your own commercial application, please contact Dr. Andreas Nicolai (andreas.nicolai [at] tu-dresden.de).
+<p>
+			<b>NOTE:</b> To avoid spam the E-mail address has been modified. Please replace [at] with @.</p> 
+
+			<p>
+				<sbr>
+				The free program version and software library can be downloaded from the SourceForge <a href="https://sourceforge.net/projects/mastersim/files" target="_blank"> project page</a>.
+		</inhalt>
+	</artikel>
+
+</content>
+</alles>
+
