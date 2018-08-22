@@ -19,10 +19,12 @@
 #include "fmi2common/fmi2FunctionTypes.h"
 #include "LotkaVolterraPredator.h"
 
+#include <cmath>
+
 // FMI interface variables
 
-#define FMI_INPUT_X 1
-#define FMI_OUTPUT_Y 2
+#define FMI_OUTPUT_Y 1
+#define FMI_INPUT_X 2
 
 
 // *** Variables and functions to be implemented in user code. ***
@@ -40,9 +42,10 @@ InstanceData * InstanceData::create() {
 LotkaVolterraPredator::LotkaVolterraPredator() :
 	InstanceData()
 {
+	// initialize input variables
+	m_realInput[FMI_INPUT_X] = 0;
 	// initialize output variables
-	m_realOutput[FMI_OUTPUT_X1] = 0;
-	m_realOutput[FMI_OUTPUT_X2] = 0;
+	m_realOutput[FMI_OUTPUT_Y] = 0;
 }
 
 
@@ -50,36 +53,73 @@ LotkaVolterraPredator::~LotkaVolterraPredator() {
 }
 
 
+// create a model instance
+void LotkaVolterraPredator::init() {
+	logger(fmi2OK, "progress", "Starting initialization.");
+
+	if (m_modelExchange) {
+		// initialize states
+		m_yInput.resize(1);
+		m_ydot.resize(1);
+
+		m_yInput[0]	= 10;	// = y
+		m_ydot[0]	= 0;	// = \dot{y}
+	}
+	else {
+		// initialize states, these are used for our internal time integration
+		m_yInput.resize(1);
+		m_yInput[0] = 10;			// = x, initial value
+		// initialize integrator for co-simulation
+		m_currentTimePoint = 0;
+	}
+
+	logger(fmi2OK, "progress", "Initialization complete.");
+}
+
+#define C 0.4
+#define D 0.02
+
+
 // for ModelExchange
 void LotkaVolterraPredator::updateIfModified() {
 	if (!m_externalInputVarsModified)
 		return;
+	double x = m_realInput[FMI_INPUT_X];
+	double y = m_yInput[0];
 
-	if (m_tInput < 1 || (m_tInput >= 2 && m_tInput < 5))
-		m_realOutput[FMI_OUTPUT_X1] = 0;
-	else
-		m_realOutput[FMI_OUTPUT_X1] = 1;
+	// compute time derivative
+	m_ydot[0] = y*(D*x - C);
 
-	if (m_tInput < 3 || (m_tInput >= 4 && m_tInput < 6))
-		m_realOutput[FMI_OUTPUT_X2] = 0;
-	else
-		m_realOutput[FMI_OUTPUT_X2] = 1;
+	// output variable is the same as the conserved quantity
+	m_realOutput[FMI_OUTPUT_Y] = m_yInput[0];
 
-	// mark variables as updated
+	// reset externalInputVarsModified flag
 	m_externalInputVarsModified = false;
 }
 
 
 // only for Co-simulation
 void LotkaVolterraPredator::integrateTo(double tCommunicationIntervalEnd) {
+	// state of FMU before integration:
+	//   m_currentTimePoint = t_IntervalStart;
+	//   m_y[0] = y(t_IntervalStart)
+	//   m_realInput[FMI_INPUT_X] = x(t_IntervalStart...tCommunicationIntervalEnd) = const
+
+	// compute time step size
+	double dt = tCommunicationIntervalEnd - m_currentTimePoint;
+	double x = m_realInput[FMI_INPUT_X];
+	double y = m_yInput[0];
+	double y_end = y*std::exp( (D*x - C)*dt);
+
 	m_tInput = tCommunicationIntervalEnd;
-	m_externalInputVarsModified = true;
-	updateIfModified();
+	m_realOutput[FMI_OUTPUT_Y] = y_end;
 }
 
+#undef C
+#undef B
 
 void LotkaVolterraPredator::computeFMUStateSize() {
-	m_fmuStateSize = 3*sizeof(double); // time point and both output variables
+	m_fmuStateSize = 2*sizeof(double); // time point and one output variable
 }
 
 
@@ -87,9 +127,7 @@ void LotkaVolterraPredator::serializeFMUstate(void * FMUstate) {
 	double * dataStart = (double*)FMUstate;
 	*dataStart = m_tInput;
 	++dataStart;
-	*dataStart = m_realOutput[FMI_OUTPUT_X1];
-	++dataStart;
-	*dataStart = m_realOutput[FMI_OUTPUT_X2];
+	*dataStart = m_realOutput[FMI_OUTPUT_Y];
 }
 
 
@@ -97,9 +135,8 @@ void LotkaVolterraPredator::deserializeFMUstate(void * FMUstate) {
 	const double * dataStart = (const double*)FMUstate;
 	m_tInput = *dataStart;
 	++dataStart;
-	m_realOutput[FMI_OUTPUT_X1] = *dataStart;
+	m_realOutput[FMI_OUTPUT_Y] = *dataStart;
 	++dataStart;
-	m_realOutput[FMI_OUTPUT_X2] = *dataStart;
 	m_externalInputVarsModified = true;
 }
 
