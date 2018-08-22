@@ -13,7 +13,7 @@ extern const char * const ORG_NAME;
 extern const char * const PROGRAM_NAME;
 
 /*! Composes program name and version string. */
-inline QString PROGRAM_VERSION_NAME() { return QString(PROGRAM_NAME).arg(MASTER_SIM::VERSION); }
+inline QString PROGRAM_VERSION_NAME() { return QString(PROGRAM_NAME).arg(MASTER_SIM::LONG_VERSION); }
 
 /*! File extension including the dot (".msim"). */
 extern const char * const DOT_FILE_EXTENSION;

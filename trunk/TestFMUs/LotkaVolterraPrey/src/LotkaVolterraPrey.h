@@ -29,6 +29,9 @@ public:
 	/*! Destructor, writes out cached results from Therakles. */
 	~LotkaVolterraPrey();
 
+	/*! Initializes model */
+	void init();
+
 	/*! This function triggers a state-update of the embedded model whenever our cached input
 		data differs from the input data in the model.
 	*/
@@ -56,6 +59,8 @@ public:
 	*/
 	virtual void deserializeFMUstate(void * FMUstate);
 
+	/*! Cached current time point of the FMU, defines starting point for time integration in co-simulation mode. */
+	double m_currentTimePoint;
 }; // class LotkaVolterraPrey
 
 #endif // LotkaVolterraPreyH

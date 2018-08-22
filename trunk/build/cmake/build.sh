@@ -162,15 +162,19 @@ if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
   cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ../../bin/release/MasterSimulatorUI.app
 fi &&
 
-echo "*** TestFMUs to bin/release ***" &&
+echo "*** Copying TestFMUs to bin/release ***" &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
-	cp $BUILDDIR/Math003Part1/libMath003Part1.dylib ../../bin/release/libMath003Part1.dylib &&
+  cp $BUILDDIR/Math003Part1/libMath003Part1.dylib ../../bin/release/libMath003Part1.dylib &&
   cp $BUILDDIR/Math003Part2/libMath003Part2.dylib ../../bin/release/libMath003Part2.dylib &&
-  cp $BUILDDIR/Math003Part3/libMath003Part3.dylib ../../bin/release/libMath003Part3.dylib
+  cp $BUILDDIR/Math003Part3/libMath003Part3.dylib ../../bin/release/libMath003Part3.dylib &&
+  cp $BUILDDIR/LotkaVolterraPrey/libLotkaVolterraPrey.dylib ../../bin/release/libLotkaVolterraPrey.dylib &&
+  cp $BUILDDIR/LotkaVolterraPredator/libLotkaVolterraPredator.dylib ../../bin/release/libLotkaVolterraPredator.dylib
 else
   cp $BUILDDIR/Math003Part1/libMath003Part1.so ../../bin/release/libMath003Part1.so &&
   cp $BUILDDIR/Math003Part2/libMath003Part2.so ../../bin/release/libMath003Part2.so &&
-  cp $BUILDDIR/Math003Part3/libMath003Part3.so ../../bin/release/libMath003Part3.so
+  cp $BUILDDIR/Math003Part3/libMath003Part3.so ../../bin/release/libMath003Part3.so &&
+  cp $BUILDDIR/LotkaVolterraPrey/libLotkaVolterraPrey.so ../../bin/release/libLotkaVolterraPrey.so &&
+  cp $BUILDDIR/LotkaVolterraPredator/libLotkaVolterraPredator.so ../../bin/release/libLotkaVolterraPredator.so
 fi &&
 
 echo "*** Build MasterSimulator ***" &&

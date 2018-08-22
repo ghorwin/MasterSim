@@ -15,7 +15,9 @@ SUBDIRS += MasterSim \
 	zlib \
 	FMUTestMath003Part1 \
 	FMUTestMath003Part2 \
-	FMUTestMath003Part3
+	FMUTestMath003Part3 \
+	FMUTestLotkaVolterraPrey \
+	FMUTestLotkaVolterraPredator
 
 # where to find the sub projects
 MasterSimulator.file = ../../MasterSimulator/projects/Qt/MasterSimulator.pro
@@ -33,6 +35,8 @@ zlib.file = ../../externals/zlib/projects/Qt/zlib.pro
 FMUTestMath003Part1.file = ../../TestFMUs/Math003Part1/projects/Qt/Math003Part1.pro
 FMUTestMath003Part2.file = ../../TestFMUs/Math003Part2/projects/Qt/Math003Part2.pro
 FMUTestMath003Part3.file = ../../TestFMUs/Math003Part3/projects/Qt/Math003Part3.pro
+FMUTestLotkaVolterraPrey.file = ../../TestFMUs/LotkaVolterraPrey/projects/Qt/LotkaVolterraPrey.pro
+FMUTestLotkaVolterraPredator.file = ../../TestFMUs/LotkaVolterraPredator/projects/Qt/LotkaVolterraPredator.pro
 
 # dependencies
 MasterSim.depends = IBK IBKMK TiCPP DataIO minizip zlib
@@ -47,6 +51,8 @@ MasterSimulatorUI.depends = MasterSim BlockMod
 FMUTestMath003Part1.depends = MasterSimulator
 FMUTestMath003Part2.depends = MasterSimulator
 FMUTestMath003Part3.depends = MasterSimulator
+FMUTestLotkaVolterraPrey.depends = MasterSimulator
+FMUTestLotkaVolterraPredator.depends = MasterSimulator
 
 win32 {
 #	SUBDIRS += EmfEngine
