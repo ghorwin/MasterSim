@@ -67,13 +67,14 @@
 			valueReference="2"
 			variability="continuous"
 			causality="input">
+			<Real start="10.0"/>
 		</ScalarVariable>
 
 	</ModelVariables>
 
 	<ModelStructure>
 		<Outputs>
-			<Unknown index="1"/>
+			<Unknown index="1" dependencies="2"/>
 		</Outputs>
 	</ModelStructure>
 

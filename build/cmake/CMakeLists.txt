@@ -145,4 +145,6 @@ endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 add_subdirectory( ../../TestFMUs/Math003Part1/projects/cmake Math003Part1)
 add_subdirectory( ../../TestFMUs/Math003Part2/projects/cmake Math003Part2)
 add_subdirectory( ../../TestFMUs/Math003Part3/projects/cmake Math003Part3)
+add_subdirectory( ../../TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
+add_subdirectory( ../../TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
 

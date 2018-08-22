@@ -71,6 +71,50 @@ mv Part3.zip Part3.fmu &&
 echo "Created Part3.fmu"
 
 
+# --- Prey ---
+
+if [ -d Prey ]; then
+  rm -rf Prey
+fi
+
+mkdir -p Prey/binaries/linux64
+cd Prey
+
+cp ../../../bin/release/libLotkaVolterraPrey.so binaries/linux64/Prey.so
+cp ../../LotkaVolterraPrey/data/modelDescription.xml .
+
+if [ -f ../Prey.fmu ]; then
+    rm ../Prey.fmu
+fi
+
+7za a ../Prey.zip . | cat > /dev/null &&
+cd .. &&
+mv Prey.zip Prey.fmu &&
+echo "Created Prey.fmu"
+
+
+# --- Predator ---
+
+if [ -d Predator ]; then
+  rm -rf Predator
+fi
+
+mkdir -p Predator/binaries/linux64
+cd Predator
+
+cp ../../../bin/release/libLotkaVolterraPredator.so binaries/linux64/Predator.so
+cp ../../LotkaVolterraPredator/data/modelDescription.xml .
+
+if [ -f ../Predator.fmu ]; then
+    rm ../Predator.fmu
+fi
+
+7za a ../Predator.zip . | cat > /dev/null &&
+cd .. &&
+mv Predator.zip Predator.fmu &&
+echo "Created Predator.fmu"
+
+
 # go back to original directory
 cd ..
 
