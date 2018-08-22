@@ -45,7 +45,7 @@ LotkaVolterraPredator::LotkaVolterraPredator() :
 	// initialize input variables
 	m_realInput[FMI_INPUT_X] = 0;
 	// initialize output variables
-	m_realOutput[FMI_OUTPUT_Y] = 0;
+	m_realOutput[FMI_OUTPUT_Y] = 10;
 }
 
 
@@ -110,6 +110,7 @@ void LotkaVolterraPredator::integrateTo(double tCommunicationIntervalEnd) {
 	double x = m_realInput[FMI_INPUT_X];
 	double y = m_yInput[0];
 	double y_end = y*std::exp( (D*x - C)*dt);
+	m_yInput[0] = y_end;
 
 	m_tInput = tCommunicationIntervalEnd;
 	m_realOutput[FMI_OUTPUT_Y] = y_end;
@@ -119,25 +120,58 @@ void LotkaVolterraPredator::integrateTo(double tCommunicationIntervalEnd) {
 #undef B
 
 void LotkaVolterraPredator::computeFMUStateSize() {
-	m_fmuStateSize = 2*sizeof(double); // time point and one output variable
+	// distinguish between ModelExchange and CoSimulation
+	if (m_modelExchange) {
+		// store time, y and ydot, and output
+		m_fmuStateSize = sizeof(double)*4;
+	}
+	else {
+		// store time, y and output
+		m_fmuStateSize = 3*sizeof(double);
+	}
 }
 
 
 void LotkaVolterraPredator::serializeFMUstate(void * FMUstate) {
 	double * dataStart = (double*)FMUstate;
-	*dataStart = m_tInput;
-	++dataStart;
-	*dataStart = m_realOutput[FMI_OUTPUT_Y];
+	if (m_modelExchange) {
+		*dataStart = m_tInput;
+		++dataStart;
+		*dataStart = m_yInput[0];
+		++dataStart;
+		*dataStart = m_ydot[0];
+		++dataStart;
+		*dataStart = m_realOutput[FMI_OUTPUT_Y];
+	}
+	else {
+		*dataStart = m_currentTimePoint;
+		++dataStart;
+		*dataStart = m_yInput[0];
+		++dataStart;
+		*dataStart = m_realOutput[FMI_OUTPUT_Y];
+	}
 }
 
 
 void LotkaVolterraPredator::deserializeFMUstate(void * FMUstate) {
 	const double * dataStart = (const double*)FMUstate;
-	m_tInput = *dataStart;
-	++dataStart;
-	m_realOutput[FMI_OUTPUT_Y] = *dataStart;
-	++dataStart;
-	m_externalInputVarsModified = true;
+	if (m_modelExchange) {
+		m_tInput = *dataStart;
+		++dataStart;
+		m_yInput[0] = *dataStart;
+		++dataStart;
+		m_ydot[0] = *dataStart;
+		++dataStart;
+		m_realOutput[FMI_OUTPUT_Y] = *dataStart;
+		m_externalInputVarsModified = true;
+	}
+	else {
+		m_currentTimePoint = *dataStart;
+		++dataStart;
+		m_yInput[0] = *dataStart;
+		++dataStart;
+		m_realOutput[FMI_OUTPUT_Y] = *dataStart;
+	}
 }
 
 
