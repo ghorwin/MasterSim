@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+<titelde>Kontakt</titelde>
+<titelen>Contact</titelen>
+<prio>95</prio>
+</seite>
+<content>
+	<artikel>
+	<titel>Kontakt und Support</titel>
+	<lang>de</lang>
+	<position>rechts</position>
+	<inhalt>
+		Bei Fragen bezüglich des Programmes helfen wir Ihnen gerne weiter, sofern sie eine kommerzielle Lizenz erworben haben. Bitte richten Sie Ihre Anfragen (auch bezüglich der Bestellung), Kommentare, Anregungen und Fehlerberichte an</p>
+	<p>
+		<b>info [at] bauklimatik-dresden.de</b>
+		<p>
+		<b>HINWEIS:</b> Um Spam vorzubeugen, sind die E-Mail-Adressen verändert. Bitte ersetzen Sie [at] mit dem @ Zeichen.</p>
+		<p>Support für die freie open-source Version kann im <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">Forum</a> des Sourceforge-Projekts.
+	</inhalt>
+	</artikel>
+		
+	<artikel>
+		<titel>Contact and Support</titel>
+		<lang>en</lang>
+		<position>rechts</position>
+		<inhalt>
+			We gladly answer your questions related to the program and the calculation method. Please direct your inquiries, comments, ideas and bug reports to:</p>
+		<p>
+			<b>info [at] bauklimatik-dresden.de</b>
+			<p>
+			<b>Note:</b> To avoid spam the E-mail address has been modified. Please replace [at] with @.</p> 
+		<p>Support for the free open-source version can be found in the discussion <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">forum</a> of the Sourceforge project.
+	</inhalt>
+	</artikel>
+	
+	<artikel>
+		<titel>Das Entwicklungs- und Supportteam</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt>
+			<h4>Dr. Andreas Nicolai</h4>
+			<p>
+				Andreas ist der Projektleiter und Hauptentwickler der MASTERSIM Software und Ansprechpartner für Details zur Algorithmen und der Programmierschnittstelle.
+			</p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>The Development and Support Team</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt>
+			<h4>Dr. Andreas Nicolai</h4>
+			<p>
+				Andreas is the project manager and main developer of the MASTERSIM software and primary contact person for questions about algorithms and the programming interface.
+			</p>
+		</inhalt>
+	</artikel>
+
+</content>
+</alles>
