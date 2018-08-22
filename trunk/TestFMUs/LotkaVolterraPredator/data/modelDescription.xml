@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fmiModelDescription
 	fmiVersion="2.0"
-	modelName="Part1"
+	modelName="Predator"
 	guid="{471a3b52-4923-44d8-ab4a-fcdb813c7353}"
 	description="Predator model of Lotka-Volterra Test Case"
 	generationTool="C++ Code using FMI support functions from IBK@TU Dresden"
@@ -20,7 +20,7 @@
 	-->
 
 	<ModelExchange
-		modelIdentifier="LotkaVolterraPredator"
+		modelIdentifier="Predator"
 		completedlntegratorStepNotNeeded="true"
 		canNotUseMemoryManagementFunctions="true"
 		canGetAndSetFMUstate="true"
@@ -28,7 +28,7 @@
 	/>
 
 	<CoSimulation
-		modelIdentifier="LotkaVolterraPredator"
+		modelIdentifier="Predator"
 		canHandleVariableCommunicationStepSize="true"
 		canInterpolateInputs="false"
 		maxOutputDerivativeOrder="0"
