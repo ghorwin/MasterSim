@@ -28,7 +28,7 @@ else {
 	}
 }
 
-DEFINES += FMI2_FUNCTION_PREFIX=Math003Part1_
+#DEFINES += FMI2_FUNCTION_PREFIX=Math003Part1_
 
 unix|mac {
 	VER_MAJ = 2
@@ -37,7 +37,7 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-INCLUDEPATH = ../../src 
+INCLUDEPATH = ../../src
 
 SOURCES += \
 	../../src/fmi2common/fmi2Functions.cpp \
@@ -53,6 +53,6 @@ HEADERS += \
 	../../src/Math003Part1.h
 
 DISTFILES += \
-    ../../data/modelDescription.xml
+	../../data/modelDescription.xml
 
 
