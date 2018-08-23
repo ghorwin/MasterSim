@@ -115,6 +115,7 @@ void LotkaVolterraPrey::integrateTo(double tCommunicationIntervalEnd) {
 
 	m_tInput = tCommunicationIntervalEnd;
 	m_realOutput[FMI_OUTPUT_X] = x_end;
+	m_currentTimePoint = tCommunicationIntervalEnd;
 }
 
 #undef A
