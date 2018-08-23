@@ -182,3 +182,7 @@ if [[ $SKIP_TESTS = "false"  ]];
 then
 ./run_tests.sh
 fi
+
+echo "*** Generating TEST FMUs ***" &&
+(cd ../../TestFMUs;./generate_FMUs.sh)
+
