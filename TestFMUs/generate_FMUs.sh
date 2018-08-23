@@ -122,4 +122,6 @@ cd ..
 cp fmus/Part1.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
 cp fmus/Part2.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
 cp fmus/Part3.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK
+cp fmus/Prey.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK
+cp fmus/Predator.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK
 
