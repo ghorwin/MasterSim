@@ -114,6 +114,7 @@ void LotkaVolterraPredator::integrateTo(double tCommunicationIntervalEnd) {
 
 	m_tInput = tCommunicationIntervalEnd;
 	m_realOutput[FMI_OUTPUT_Y] = y_end;
+	m_currentTimePoint = tCommunicationIntervalEnd;
 }
 
 #undef C
