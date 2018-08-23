@@ -1,5 +1,5 @@
 # Created:	Mi. Aug. 22 13:03:50 2018
-# LastModified:	Do. Aug. 23 15:06:26 2018
+# LastModified:	Do. Aug. 23 15:07:10 2018
 
 tStart               0 a
 tEnd                 100 s
@@ -9,11 +9,11 @@ hFallBackLimit       1e-10 s
 hStart               0.0001 s
 hOutputMin           0.01 s
 binaryOutputFiles    no
-adjustStepSize       yes
+adjustStepSize       no
 absTol               1e-05
 relTol               1e-05
 MasterMode           GAUSS_SEIDEL
-ErrorControlMode     STEP_DOUBLING
+ErrorControlMode     NONE
 maxIterations        1
 
 simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"
