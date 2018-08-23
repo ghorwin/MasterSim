@@ -6,7 +6,7 @@ tEnd                 100 s
 hMax                 10 s
 hMin                 1e-07 s
 hFallBackLimit       0.0001 s
-hStart               0.0001 s
+hStart               3.478505426185217e-06 s
 hOutputMin           1e-05 s
 binaryOutputFiles    no
 adjustStepSize       yes

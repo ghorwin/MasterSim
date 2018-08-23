@@ -166,19 +166,27 @@ FormatString & FormatString::arg(size_t i, int fieldWidth) {
 #endif
 
 FormatString & FormatString::arg(double d, int fieldWidth, char format, int precision, const char & fillChar) {
-	if (format == 'g')
-		m_arguments.push_back(val2string(d));
+	std::stringstream strm;
+	if (fieldWidth != 0)
+		strm << std::setw(fieldWidth);
+	if (precision != 0)
+		strm << std::setprecision(precision);
+	strm << std::setfill(fillChar);
+	if (format == 'g') {
+		strm << d;
+	}
 	else {
-		std::stringstream strm;
 		if (format=='f')
 			strm << std::fixed;
 		else if (format=='e' || format=='E') {
 			strm << std::scientific;
 		}
-		strm << std::setw(fieldWidth) << std::setprecision(precision) << std::setfill(fillChar);
+		else {
+			strm << "Invalid format specifier: " << format;
+		}
 		strm << d;
-		m_arguments.push_back(strm.str());
 	}
+	m_arguments.push_back(strm.str());
 	return *this;
 }
 
