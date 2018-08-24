@@ -307,6 +307,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename reference_results.pdf
+	width 12cm
 
 \end_inset
 
@@ -787,11 +788,10 @@ Gauss-Seidel without iteration and with constant step sizes
 
 \begin_layout Standard
 Running the integration with constant step size of 
-\begin_inset Formula $h=0.01s$
+\begin_inset Formula $h=0.1s$
 \end_inset
 
- and Gauss-Seidel iteration the solution blows up shortly after 9 seconds
- due to instability (see Figure
+ and without iteration already gives pretty good results (see Figure
 \begin_inset space ~
 \end_inset
 
@@ -805,11 +805,12 @@ noprefix "false"
 
 \end_inset
 
-
+).
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float figure
+placement H
 wide false
 sideways false
 status open
@@ -818,7 +819,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/constant_noiter_1e-2.pdf
+	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/LV_constant_1e-1s.pdf
 	width 8cm
 
 \end_inset
@@ -836,7 +837,7 @@ name "fig:No-iteration,-constant-steps"
 
 \end_inset
 
-No iteration, constant steps (0.01 s)
+No iteration, constant steps (0.1 s)
 \end_layout
 
 \end_inset
@@ -845,6 +846,149 @@ No iteration, constant steps (0.01 s)
 \end_layout
 
 \begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Gauss-Seidel with iteration and constant step sizes
+\end_layout
+
+\begin_layout Standard
+Using larger step sizes (for example 
+\begin_inset Formula $h=0.5s$
+\end_inset
+
+) we expect larger errors.
+ When using iterative Gauss-Seidel we obtain an implicit solution of same
+ order, yet more stable.
+ Indeed, the correct solution lies between these two extremes (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Constant-steps, comparison between iterating and non-iterating method"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/comparison_0.5s_constant.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Constant-steps, comparison between iterating and non-iterating method"
+
+\end_inset
+
+Comparison between non-iterating and iterating Gauss-Seidel, constant steps
+ (0.5 s); iteration limit is fairly strict with reltol = 
+\begin_inset Formula $10^{-7}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Interestingly, the deviation between the iterative solution and the correct
+ solution is much larger compared to the non-iterating variant.
+ This can be observed already in the first step, for example, when using
+ a fairly large step of 2 seconds (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Constant-step 2s, detail"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/constant_2s.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Constant-step 2s, detail"
+
+\end_inset
+
+Comparison of iterating and non-iterating GAUSS-SEIDEL, for 
+\begin_inset Formula $h=2s$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
 
 \end_layout
 

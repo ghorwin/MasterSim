@@ -4,9 +4,9 @@
 	<Directories>
 		<Directory>
 			<Path>.</Path>
-			<SubDir Color="#ce4145" Checked="0">LV_Richardson</SubDir>
+			<SubDir Color="#ce4145" Checked="1">LV_Richardson</SubDir>
 			<SubDir Color="#416fce" Checked="0">LV_constant_1e-1s</SubDir>
-			<SubDir Color="#cacc26" Checked="1">LV_constant_1e-2s</SubDir>
+			<SubDir Color="#cacc26" Checked="0">LV_constant_1e-2s</SubDir>
 			<SubDir Color="#ffffff" Checked="0">LV_constant_1e-3s</SubDir>
 			<SubDir Color="#55aaff" Checked="0">LV_constant_1e-4s</SubDir>
 			<SubDir Color="#005500" Checked="0">description</SubDir>
@@ -18,7 +18,7 @@
 
 	<!--Panel states.-->
 	<Panels>
-		<EastPanel>1</EastPanel>
+		<EastPanel>0</EastPanel>
 		<WestPanel>1</WestPanel>
 		<SouthPanel>1</SouthPanel>
 	</Panels>
@@ -170,12 +170,12 @@
 					</Series>
 				</SeriesProperties>
 				<AxisProperties>
-					<Axis index="0">
+					<Axis index="0" autoscale="0">
 						<TitleText>Time [$unit]</TitleText>
 						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
 						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
-						<Maximum>40</Maximum>
+						<Maximum>100</Maximum>
 						<GridPenStyle>1</GridPenStyle>
 						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
@@ -644,13 +644,54 @@
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
+		<Mapper name="StepSize [$filename]">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>LV_Richardson/log/stepstats.tsv#2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>40</Maximum>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+					</Axis>
+					<Axis index="2">
+						<TitleText>$quantity [$unit]</TitleText>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>StepSize [$filename]</TitleText>
+					<Legend />
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
 	</Mappers>
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
 	<!--Split window state.-->
 	<Splitting>
-		<Widget id="1" parent="0" viewTable="0" mapperIndex="2" size1="1" size2="1" orientation="2" />
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="1" size1="1" size2="1" orientation="2" />
 		<FocusedWidget>0</FocusedWidget>
 	</Splitting>
 
