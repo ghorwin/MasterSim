@@ -1,0 +1,24 @@
+# Created:	Mi. Aug. 22 13:03:50 2018
+# LastModified:	Do. Aug. 23 15:20:26 2018
+
+tStart               0 a
+tEnd                 100 s
+hMax                 10 s
+hMin                 1e-08 s
+hFallBackLimit       1e-10 s
+hStart               0.1 s
+hOutputMin           0.01 s
+binaryOutputFiles    no
+adjustStepSize       no
+absTol               1e-05
+relTol               1e-05
+MasterMode           GAUSS_SEIDEL
+ErrorControlMode     NONE
+maxIterations        4
+
+simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"
+simulator 1 0 Predator #ff008000 "fmus/IBK/Predator.fmu"
+
+graph Predator.y Prey.y
+graph Prey.x Predator.x
+
