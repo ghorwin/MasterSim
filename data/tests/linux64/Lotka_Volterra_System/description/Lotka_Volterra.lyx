@@ -766,7 +766,11 @@ noprefix "false"
 
 .
  Since 
-\begin_inset Formula $y$
+\begin_inset Formula $y\left(t\right)$
+\end_inset
+
+ and hence also 
+\begin_inset Formula $G\left(t\right)=A-By\left(t\right)$
 \end_inset
 
  is changing within the integration interval, the solution 
@@ -779,7 +783,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Section
-Master-Algorithms
+Evaluation of suitable Master-Algorithms
 \end_layout
 
 \begin_layout Subsection
@@ -855,7 +859,7 @@ No iteration, constant steps (0.1 s)
 \end_layout
 
 \begin_layout Subsection
-Gauss-Seidel with iteration and constant step sizes
+Gauss-Seidel with larger, constant step sizes and with/without iteration
 \end_layout
 
 \begin_layout Standard
@@ -864,9 +868,11 @@ Using larger step sizes (for example
 \end_inset
 
 ) we expect larger errors.
- When using iterative Gauss-Seidel we obtain an implicit solution of same
- order, yet more stable.
- Indeed, the correct solution lies between these two extremes (Figure
+ In the variant without iteration, the information about the opposing species
+ concentration arrives delayed in the FMU, because the integration in each
+ interval is done using the values at the begin of the interval.
+ Hence, the curves have a slight delay behind the correct solution, see
+ Figure
 \begin_inset space ~
 \end_inset
 
@@ -880,7 +886,72 @@ noprefix "false"
 
 \end_inset
 
-).
+ (
+\shape italic
+no iteration
+\shape default
+-curves).
+\end_layout
+
+\begin_layout Standard
+Alternatively, an iterative Gauss-Seidel-method could be used.
+ When the solution has converged (which corresponds somewhat to an implicit
+ integration scheme), the species concentrations are computed using the
+ opposite species concentration at the end of each integration interval.
+ This leads to a much dampened solution where the curves react faster compared
+ to the reference solution (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Constant-steps, comparison between iterating and non-iterating method"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\shape italic
+GS
+\shape default
+ curves).
+\end_layout
+
+\begin_layout Standard
+Consider, for example, the interval 25..25,5 s.
+ The concentration of the predator species is strongly increasing in this
+ interval, from 
+\begin_inset Formula $y\left(25\right)=3.52$
+\end_inset
+
+ to 
+\begin_inset Formula $y\left(25.5\right)=4.22$
+\end_inset
+
+.
+ If the integration of the prey species is done over this interval using
+ the input value 
+\begin_inset Formula $y\left(25\right)$
+\end_inset
+
+ the concentration 
+\begin_inset Formula $x\left(25.5\right)$
+\end_inset
+
+ will be larger than that obtained when integrating with a larger predator
+ concentration 
+\begin_inset Formula $y\left(25.5\right)$
+\end_inset
+
+.
+ As a result, the prey concentration will not reach the same concentration
+ as the correct solution, and subsequently, also the predator concentration
+ will be affected leading to an overall dampened solution.
+ With this time step size, effectively a different problem appears to be
+ solved.
 \end_layout
 
 \begin_layout Standard
@@ -931,10 +1002,9 @@ Comparison between non-iterating and iterating Gauss-Seidel, constant steps
 \end_layout
 
 \begin_layout Standard
-Interestingly, the deviation between the iterative solution and the correct
- solution is much larger compared to the non-iterating variant.
- This can be observed already in the first step, for example, when using
- a fairly large step of 2 seconds (Figure
+Deviation between the iterative solution and the correct solution can be
+ observed already in the first step, for example, when using a fairly large
+ step of 2 seconds (Figure
 \begin_inset space ~
 \end_inset
 
@@ -995,6 +1065,12 @@ Comparison of iterating and non-iterating GAUSS-SEIDEL, for
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+From this example it can be concluded, that using an iterative method does
+ not necessarily improve the accuracy of the result, though, it may increase
+ stability.
 \end_layout
 
 \end_body
