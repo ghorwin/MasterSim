@@ -48,6 +48,6 @@ endif(WIN32)
 
 add_library(minizip ${SOURCE})
 
-target_link_libraries(minizip zlib)
+#target_link_libraries(minizip zlib)
 
 
