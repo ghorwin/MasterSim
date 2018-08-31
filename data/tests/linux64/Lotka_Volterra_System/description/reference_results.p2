@@ -4,8 +4,7 @@
 	<Directories>
 		<Directory>
 			<Path>.</Path>
-			<SubDir Color="#005500" Checked="1">description</SubDir>
-			<SubDir Color="#55aaff" Checked="0">description/reference</SubDir>
+			<SubDir Color="#ffffff" Checked="0">.</SubDir>
 			<ExpandedSubDir>.</ExpandedSubDir>
 		</Directory>
 	</Directories>
@@ -23,10 +22,10 @@
 
 	<!--All mappers.-->
 	<Mappers>
-		<Mapper name="x (prey) | y (predator) | der(x) | der(y) [$filename]">
+		<Mapper name="Reference Solution">
 			<Extractors>
 				<Extractor>
-					<DataIOFileName>description/reference_results.d6o</DataIOFileName>
+					<DataIOFileName>reference_results.d6o</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -37,7 +36,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/reference_results.d6o</DataIOFileName>
+					<DataIOFileName>reference_results.d6o</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -78,7 +77,7 @@
 						<IBK:Unit name="AxisUnit">---</IBK:Unit>
 						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
-					<Axis index="2">
+					<Axis index="2" enabled="0">
 						<TitleText>$quantity [$unit]</TitleText>
 						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
 						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
