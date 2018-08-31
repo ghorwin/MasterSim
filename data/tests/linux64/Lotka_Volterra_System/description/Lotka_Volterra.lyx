@@ -823,7 +823,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/LV_constant_1e-1s.pdf
+	filename sim/LV_constant_1e-1s.pdf
 	width 8cm
 
 \end_inset
@@ -965,7 +965,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/comparison_0.5s_constant.pdf
+	filename sim/comparison_0.5s_constant.pdf
 	width 8cm
 
 \end_inset
@@ -1032,7 +1032,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /home/ghorwin/svn/mastersim-code/data/tests/linux64/Lotka_Volterra_System/constant_2s.pdf
+	filename sim/constant_2s.pdf
 	width 8cm
 
 \end_inset
