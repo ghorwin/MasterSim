@@ -2,11 +2,6 @@
 
 project( MasterSimulator )
 
-if (CMAKE_COMPILER_IS_GNUCC)
-	# link solver statically
-	set( CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++" )
-endif (CMAKE_COMPILER_IS_GNUCC)
-
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
@@ -17,21 +12,12 @@ include_directories(
 # collect a list of all source files
 file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 
-# set variable for dependent libraries
-set( LINK_LIBS
-	MasterSim
-	DataIO
-	IBKMK
-	IBK
-	TiCPP
-	minizip
-)
-
 if( WIN32 )
-	set (LINK_LIBS ${LINK_LIBS} zlibstatic)
+	set (LINK_Z_LIBS zlibstatic)
 else( WIN32 )
-	set (LINK_LIBS ${LINK_LIBS} z dl)
+	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
+
 
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}
@@ -39,6 +25,12 @@ add_executable( ${PROJECT_NAME}
 
 # link against the dependent libraries
 target_link_libraries( ${PROJECT_NAME} 
-	${LINK_LIBS} 
+	MasterSim
+	DataIO
+	IBKMK
+	IBK
+	TiCPP
+	minizip
+	${LINK_Z_LIBS}
 )
 
