@@ -144,8 +144,7 @@ int main(int argc, char *argv[]) {
 			"Type=Application\n"
 			"Categories=Science;\n"
 			"StartupNotify=true\n";
-	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(settings.m_installDir)
-			.arg(MSIMDirectories::resourcesRootDir());
+	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(settings.m_installDir);
 	QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
 	if (!dirs.empty()) {
 		QString desktopFile = dirs[0] + "/mastersimulatorui.desktop";

@@ -6,6 +6,7 @@
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QDialogButtonBox>
+#include <QTimer>
 
 #include <memory>
 #include <cstring>
@@ -207,6 +208,8 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	myProcess.release();
 
 #endif // Q_OS_WIN
+
+	QTimer::singleShot(1000, this, SLOT(on_pushButton_clicked()));
 }
 
 

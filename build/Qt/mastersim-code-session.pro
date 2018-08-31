@@ -12,12 +12,16 @@ SUBDIRS += MasterSim \
 	IBKMK \
 	minizip \
 	TiCPP \
-	zlib \
 	FMUTestMath003Part1 \
 	FMUTestMath003Part2 \
 	FMUTestMath003Part3 \
 	FMUTestLotkaVolterraPrey \
 	FMUTestLotkaVolterraPredator
+
+WIN32 {
+	SUBDIRS += zlib
+	zlib.file = ../../externals/zlib/projects/Qt/zlib.pro
+}
 
 # where to find the sub projects
 MasterSimulator.file = ../../MasterSimulator/projects/Qt/MasterSimulator.pro
@@ -30,7 +34,6 @@ IBK.file = ../../externals/IBK/projects/Qt/IBK.pro
 IBKMK.file = ../../externals/IBKMK/projects/Qt/IBKMK.pro
 minizip.file = ../../externals/minizip/projects/Qt/minizip.pro
 TiCPP.file = ../../externals/TiCPP/projects/Qt/TiCPP.pro
-zlib.file = ../../externals/zlib/projects/Qt/zlib.pro
 
 FMUTestMath003Part1.file = ../../TestFMUs/Math003Part1/projects/Qt/Math003Part1.pro
 FMUTestMath003Part2.file = ../../TestFMUs/Math003Part2/projects/Qt/Math003Part2.pro
@@ -39,7 +42,10 @@ FMUTestLotkaVolterraPrey.file = ../../TestFMUs/LotkaVolterraPrey/projects/Qt/Lot
 FMUTestLotkaVolterraPredator.file = ../../TestFMUs/LotkaVolterraPredator/projects/Qt/LotkaVolterraPredator.pro
 
 # dependencies
-MasterSim.depends = IBK IBKMK TiCPP DataIO minizip zlib
+MasterSim.depends = IBK IBKMK TiCPP DataIO minizip
+WIN32 {
+	MasterSim.depends += zlib
+}
 
 DataIO.depends = IBK
 IBKMK.depends = IBK
@@ -54,10 +60,4 @@ FMUTestMath003Part3.depends = MasterSimulator
 FMUTestLotkaVolterraPrey.depends = MasterSimulator
 FMUTestLotkaVolterraPredator.depends = MasterSimulator
 
-win32 {
-#	SUBDIRS += EmfEngine
-	# where to find the sub projects
-#	EmfEngine.file = ../../externals/EmfEngine/projects/Qt/EmfEngine.pro
-#	PostProcApp.depends += EmfEngine
-}
 
