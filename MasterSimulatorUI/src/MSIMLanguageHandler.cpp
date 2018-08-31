@@ -8,6 +8,8 @@
 #include <IBK_messages.h>
 #include <IBK_FormatString.h>
 
+#include <MSIM_Constants.h>
+
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
 
@@ -35,7 +37,7 @@ MSIMLanguageHandler::~MSIMLanguageHandler() {
 QString MSIMLanguageHandler::langId() {
 	const char * const FUNC_ID = "[MSIMLanguageHandler::langId]";
 
-	QSettings config(ORG_NAME, PROGRAM_NAME);
+	QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
 	QString langid = config.value("LangID", QString() ).toString();
 	if (langid.isEmpty()) {
 		// try to determine language id from OS
@@ -52,7 +54,7 @@ QString MSIMLanguageHandler::langId() {
 
 
 void MSIMLanguageHandler::setLangId(QString id) {
-	QSettings config(ORG_NAME, PROGRAM_NAME);
+	QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
 	config.setValue("LangID", id );
 }
 
@@ -73,7 +75,7 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 
 	// create new translators, unless we are using english
 	if (langId == "en") {
-		QSettings config(ORG_NAME, PROGRAM_NAME);
+		QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
 		config.setValue("LangID", langId);
 		QLocale loc(QLocale::English);
 		loc.setNumberOptions(QLocale::OmitGroupSeparator | QLocale::RejectGroupSeparator);
@@ -109,7 +111,7 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		qApp->installTranslator(applicationTranslator);
 		// remember translator in settings
-		QSettings config(ORG_NAME, PROGRAM_NAME);
+		QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
 		config.setValue("LangID", langId);
 	}
 	else {

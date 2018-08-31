@@ -9,6 +9,10 @@ extern const char * const VERSION;
 /*! Long Version number. */
 extern const char * const LONG_VERSION;
 
+/*! Program name, also used as registry/settings key for saving the user
+	defined settings and the MRU list. */
+extern const char * const PROGRAM_NAME;
+
 /*! Indentation of keyword */
 extern const unsigned int KEYWORD_INDENTATION;
 /*! Width of parameter value */
