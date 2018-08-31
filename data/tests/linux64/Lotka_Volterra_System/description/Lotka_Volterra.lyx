@@ -1073,5 +1073,16 @@ From this example it can be concluded, that using an iterative method does
  stability.
 \end_layout
 
+\begin_layout Section
+Error control
+\end_layout
+
+\begin_layout Standard
+When running the test case with error control enabled (Richardson/step-doubling
+ error test), we expect the master algorithm to choose the time steps such,
+ that the results are accurate within the requested tolerance band, and
+ regardless of master algorithm selected.
+\end_layout
+
 \end_body
 \end_document
