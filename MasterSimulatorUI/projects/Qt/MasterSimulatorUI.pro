@@ -14,12 +14,15 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
-#	-lz \
 	-lBlockMod \
 	-lDataIO \
 	-lIBKMK \
 	-lIBK \
 	-lTiCPP
+
+WIN32 {
+	LIBS += -lz
+}
 
 INCLUDEPATH = \
 	../../src \
