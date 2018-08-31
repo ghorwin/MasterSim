@@ -119,7 +119,9 @@ endif( APPLE )
 # -------------------------------------------------------------
 
 # add subdirectories for all builds
-add_subdirectory( ../../externals/zlib/src libz)
+if (NOT UNIX)
+    add_subdirectory( ../../externals/zlib/src libz)
+endif (NOT UNIX)
 add_subdirectory( ../../externals/minizip/projects/cmake_local minizip)
 add_subdirectory( ../../externals/IBK/projects/cmake_local IBK )
 add_subdirectory( ../../externals/IBKMK/projects/cmake_local IBKMK )

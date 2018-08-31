@@ -14,7 +14,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
-	-lz \
+#	-lz \
 	-lBlockMod \
 	-lDataIO \
 	-lIBKMK \
@@ -59,7 +59,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMUndoConnections.cpp \
 	../../src/MSIMAboutDialog.cpp \
 	../../src/MSIMButtonBar.cpp \
-    ../../src/MSIMLogFileDialog.cpp
+	../../src/MSIMLogFileDialog.cpp
 
 HEADERS  += \
 	../../src/MSIMUIConstants.h \
@@ -88,7 +88,7 @@ HEADERS  += \
 	../../src/MSIMUndoConnections.h \
 	../../src/MSIMAboutDialog.h \
 	../../src/MSIMButtonBar.h \
-    ../../src/MSIMLogFileDialog.h
+	../../src/MSIMLogFileDialog.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
@@ -99,7 +99,7 @@ FORMS    += \
 	../../src/MSIMViewConnections.ui \
 	../../src/MSIMViewSimulation.ui \
 	../../src/MSIMAboutDialog.ui \
-    ../../src/MSIMLogFileDialog.ui
+	../../src/MSIMLogFileDialog.ui
 
 TRANSLATIONS += ../../resources/translations/MasterSimulatorUI_de.ts
 CODECFORSRC = UTF-8
