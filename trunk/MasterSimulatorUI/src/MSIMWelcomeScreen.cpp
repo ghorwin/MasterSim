@@ -178,7 +178,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 
 void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 	// if anchor starts with "project:" we emit the "open project" signal
-	qDebug() << link.toString();
+//	qDebug() << link.toString();
 	if (link.toString().startsWith("project:")) {
 		QString fname = link.toString();
 		fname = fname.right(fname.length()-8);
@@ -303,6 +303,7 @@ const char * const HTML_TEMPLATE =
 		"\n";
 
 
+// Mind: image cell of table header spans three rows
 const char * const RECENT_PROJECT_TABLE_TEMPLATE =
 		"<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n"
 		"<tr valign=center><th width=\"${THUMBNAILSIZE}\" rowspan=\"3\">${IMG_FILENAME}</th><th align=left>${PROJECT_FILENAME}</th></tr>\n"

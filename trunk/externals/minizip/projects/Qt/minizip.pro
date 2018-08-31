@@ -17,7 +17,9 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-LIBS += -lz
+WIN32 {
+	LIBS += -lz
+}
 
 INCLUDEPATH += \
 	../../../zlib/src
