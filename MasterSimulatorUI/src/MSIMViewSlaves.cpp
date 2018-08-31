@@ -79,7 +79,7 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 
 void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// open file dialog and let user select FMU file
-	QSettings settings(ORG_NAME, PROGRAM_NAME);
+	QSettings settings(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
 	QString fmuSearchPath = settings.value("FMUSearchPath", QString()).toString();
 	if (fmuSearchPath.isEmpty()) {
 		fmuSearchPath = QFileInfo(MSIMProjectHandler::instance().projectFile()).dir().absolutePath();
