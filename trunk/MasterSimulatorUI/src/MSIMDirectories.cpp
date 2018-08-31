@@ -78,16 +78,10 @@ QString MSIMDirectories::translationsDir() {
 QString MSIMDirectories::userDataDir() {
 	// we have different user data directories, based on OS
 #if defined(Q_OS_WIN)
-	// on Windows, we store user data unter %HOME%/AppData/Local
-#if QT_VERSION < 0x050000
-	// Mind that with Qt 4.8.6 the Application name is automatically added to AppData/Local
-	return QDesktopServices::storageLocation(QDesktopServices::DataLocation) + "/../IBK/MasterSim";
-#else // QT_VERSION < 0x050000
-	return QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/../IBK/MasterSim";
-#endif // QT_VERSION < 0x050000
+	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/AppData/Roaming/MasterSim");
 #else
 	// on Unix/Mac OS we store user data under home directory
-	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/.config/IBK/MasterSim");
+	return QDir::toNativeSeparators(QDir::home().absolutePath() + "/.local/share/MasterSim");
 #endif // Q_OS_WIN
 }
 
