@@ -631,7 +631,7 @@ void MSIMMainWindow::onUpdateActions() {
 		updateWindowTitle();
 	}
 	else {
-		setWindowTitle(MASTER_SIM::PROGRAM_NAME);
+		setWindowTitle(QString("MasterSim %1").arg(MASTER_SIM::LONG_VERSION));
 		m_welcomeScreen->updateWelcomePage();
 	}
 }
@@ -705,7 +705,7 @@ void MSIMMainWindow::updateWindowTitle() {
 	}
 	if (m_projectHandler.isModified())
 		shortFileName += "*";
-	setWindowTitle(QString("%1 - %2").arg(MASTER_SIM::PROGRAM_NAME).arg(shortFileName));
+	setWindowTitle(QString("MasterSim %1 - %2").arg(MASTER_SIM::LONG_VERSION).arg(shortFileName));
 }
 
 
