@@ -52,37 +52,55 @@
 			<ChartModel chartType="2D">
 				<SeriesProperties>
 					<Series>
-						<TitleText>$filepath</TitleText>
+						<TitleText>Gauss-Seidel</TitleText>
 						<LineStyle>0</LineStyle>
+						<PenColor>#aa007f</PenColor>
 					</Series>
 					<Series>
-						<TitleText>$filepath</TitleText>
+						<TitleText>No iteration</TitleText>
 						<LineStyle>0</LineStyle>
-						<PenColor>#ff420e</PenColor>
+						<PenColor>#00aa00</PenColor>
 					</Series>
 				</SeriesProperties>
 				<AxisProperties>
-					<Axis index="0">
-						<TitleText>Zeit [$unit]</TitleText>
+					<Axis index="0" autoscale="0">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>40</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
-					<Axis index="1">
+					<Axis index="1" autoscale="0">
 						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>0.03</Maximum>
+						<Minimum>0.005</Minimum>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
 					<Axis index="2" enabled="0">
 						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 					</Axis>
 				</AxisProperties>
 				<ChartProperties>
-					<TitleText>Accepted step sizes</TitleText>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
 					<Legend>
-						<MaxColumns>1</MaxColumns>
+						<Position>Inside</Position>
+						<Alignment>7</Alignment>
+						<MaxColumns>2</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
 					</Legend>
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
-		<Mapper name="x (prey) | y (predator) | der(x) | der(y) [$filename]">
+		<Mapper name="Result comparison">
 			<Extractors>
 				<Extractor>
 					<DataIOFileName>description/reference_results.d6o</DataIOFileName>
@@ -218,7 +236,7 @@
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
-		<Mapper name="Steps|AlgorithmCalls|ErrorTestFails|ConvergenceFails|Iterations|IterLimitExceeded|FMUErrors|ErrorNormRichardson|ErrorNormSlopeCheck [$filename]">
+		<Mapper name="error norms">
 			<Extractors>
 				<Extractor>
 					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv#1|3|4|5|6|7|8|9|10</DataIOFileName>
@@ -248,29 +266,155 @@
 					<Series>
 						<TitleText>$quantity</TitleText>
 						<LineStyle>0</LineStyle>
+						<PenColor>#00aaff</PenColor>
 					</Series>
 					<Series>
 						<TitleText>$quantity</TitleText>
 						<LineStyle>0</LineStyle>
-						<PenColor>#ff420e</PenColor>
+						<PenColor>#ff8534</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>40</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleText>Error norm</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>0.9</Maximum>
+						<Minimum>0.3</Minimum>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<MaxColumns>2</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="Prey (no iteration)|Predator (no iteration)|Prey (GS)|Predator (GS) [$filename]">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#00007f</PenColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#aa0000</PenColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#ff8000</PenColor>
 					</Series>
 				</SeriesProperties>
 				<AxisProperties>
 					<Axis index="0">
-						<TitleText>Zeit [$unit]</TitleText>
+						<TitleText>Time [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>40</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
 					<Axis index="1">
-						<TitleText>$quantity [$unit]</TitleText>
+						<TitleText>Global error</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>0.06</Maximum>
+						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
 					<Axis index="2" enabled="0">
 						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 					</Axis>
 				</AxisProperties>
 				<ChartProperties>
-					<TitleText>Steps|AlgorithmCalls|ErrorTestFails|ConvergenceFails|Iterations|IterLimitExceeded|FMUErrors|ErrorNormRichardson|ErrorNormSlopeCheck [$filename]</TitleText>
-					<Legend />
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>1</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
 				</ChartProperties>
 			</ChartModel>
 		</Mapper>
@@ -280,7 +424,7 @@
 
 	<!--Split window state.-->
 	<Splitting>
-		<Widget id="1" parent="0" viewTable="0" mapperIndex="1" size1="1" size2="1" orientation="2" />
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="3" size1="1" size2="1" orientation="2" />
 		<FocusedWidget>0</FocusedWidget>
 	</Splitting>
 

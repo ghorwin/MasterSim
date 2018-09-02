@@ -1,12 +1,12 @@
 # Created:	Mi. Aug. 22 13:03:50 2018
-# LastModified:	So. Sep. 2 08:17:02 2018
+# LastModified:	So. Sep. 2 19:03:13 2018
 
 tStart               0 a
 tEnd                 100 s
 hMax                 10 s
 hMin                 1e-08 s
 hFallBackLimit       1e-10 s
-hStart               0.0001 s
+hStart               0.01 s
 hOutputMin           0.01 s
 binaryOutputFiles    no
 adjustStepSize       yes
