@@ -35,6 +35,8 @@ position=bottom]{caption}
 
 \usepackage{listings}
 \input{listings-modelica.cfg}
+
+\usepackage{booktabs}
 \end_preamble
 \use_default_options false
 \maintain_unincluded_children false
@@ -521,14 +523,14 @@ For the purpose of testing Co-Simulation masters the test case is split
 \begin_layout Standard
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features tabularvalignment="middle">
+<features booktabs="true" tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="left" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -617,14 +619,10 @@ Prey
 \begin_inset Text
 
 \begin_layout Plain Layout
-Equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:x_prey"
-
+\begin_inset Formula $\dot{x}=x\left(a-by\right)$
 \end_inset
 
- 
+
 \end_layout
 
 \end_inset
@@ -643,7 +641,7 @@ reference "eq:x_prey"
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -652,7 +650,7 @@ Predator
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -661,7 +659,7 @@ Predator
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -673,18 +671,11 @@ Predator
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="left" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Equation 
-\begin_inset CommandInset ref
-LatexCommand eqref
-reference "eq:y_predator"
-plural "false"
-caps "false"
-noprefix "false"
-
+\begin_inset Formula $\dot{y}=y\left(dx-c\right)$
 \end_inset
 
 
@@ -692,7 +683,7 @@ noprefix "false"
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -780,6 +771,141 @@ noprefix "false"
  holds an integration error, they may become, due to the exponential nature
  of the equation, very large and cause instability in the outer solution
  method, especially when using a non-iterative master algorithm.
+\end_layout
+
+\begin_layout Standard
+The code example 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{fmu-code}
+\end_layout
+
+\end_inset
+
+ below shows the relevant portion of the 
+\family typewriter
+doStep()
+\family default
+ function:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "language={C++},label={fmu-code},caption={FMU Listing, doStep-function},texcl=false"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+// state of FMU before integration:
+\end_layout
+
+\begin_layout Plain Layout
+
+//   m_currentTimePoint = tIntervalStart;
+\end_layout
+
+\begin_layout Plain Layout
+
+//   m_y[0] = x(tIntervalStart)
+\end_layout
+
+\begin_layout Plain Layout
+
+//   m_realInput[FMI_INPUT_Y] = y(tIntervalStart...tCommunicationIntervalEnd)
+ = const
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// compute time step size
+\end_layout
+
+\begin_layout Plain Layout
+
+double dt = tCommunicationIntervalEnd - m_currentTimePoint;
+\end_layout
+
+\begin_layout Plain Layout
+
+double y = m_realInput[FMI_INPUT_Y];
+\end_layout
+
+\begin_layout Plain Layout
+
+double x = m_y[0];
+\end_layout
+
+\begin_layout Plain Layout
+
+double x_end = x*std::exp( (A - B*y)*dt);
+\end_layout
+
+\begin_layout Plain Layout
+
+m_y[0] = x_end;
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+// update state of FMU to tCommunicationIntervalEnd
+\end_layout
+
+\begin_layout Plain Layout
+
+m_tInput = tCommunicationIntervalEnd;
+\end_layout
+
+\begin_layout Plain Layout
+
+m_realOutput[FMI_OUTPUT_X] = x_end;
+\end_layout
+
+\begin_layout Plain Layout
+
+m_currentTimePoint = tCommunicationIntervalEnd;
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -1081,7 +1207,64 @@ Error control
 When running the test case with error control enabled (Richardson/step-doubling
  error test), we expect the master algorithm to choose the time steps such,
  that the results are accurate within the requested tolerance band, and
- regardless of master algorithm selected.
+ regardless of master algorithm selected (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Error control enabled"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Richardson_comparison_with_without_iters.pdf
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Error control enabled"
+
+\end_inset
+
+Comparison of iterating and non-iterating GAUSS-SEIDEL when using dynamic
+ step adjustment based on step-doubling/Richardson error control
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_body
