@@ -335,6 +335,10 @@ private:
 	/*! Slave variables (input and output) at current master time, type string, stored as backup for resetting state when error test fails. */
 	std::vector<std::string>		m_errStringyt;
 
+	/*! Error norm that was determined by step-doubling test to confirm the step. */
+	double							m_acceptedErrRichardson;
+	/*! Error norm that was determined by slope-check to confirm the step. */
+	double							m_acceptedErrSlopeCheck;
 
 	/*! Vector for holding states of FMU slaves at begin of master algorithm to roll back during iterations. */
 	std::vector<void*>				m_iterationStates;
@@ -363,6 +367,7 @@ private:
 	double							m_statErrorTestTime;
 	unsigned int					m_statStepCounter;
 	unsigned int					m_statAlgorithmCallCounter;
+
 
 	/*! Utility function to copy one vector to another using memcpy. */
 	template<typename T>
