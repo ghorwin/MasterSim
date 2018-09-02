@@ -40,7 +40,7 @@ position=bottom]{caption}
 \end_preamble
 \use_default_options false
 \maintain_unincluded_children false
-\language ngerman
+\language english
 \language_package default
 \inputencoding utf8
 \fontencoding global
@@ -114,7 +114,7 @@ position=bottom]{caption}
 \defskip smallskip
 \is_math_indent 0
 \math_numbering_side default
-\quotes_style german
+\quotes_style english
 \dynamic_quotes 0
 \papercolumns 1
 \papersides 1
@@ -1206,8 +1206,8 @@ Error control
 \begin_layout Standard
 When running the test case with error control enabled (Richardson/step-doubling
  error test), we expect the master algorithm to choose the time steps such,
- that the results are accurate within the requested tolerance band, and
- regardless of master algorithm selected (Fig.
+ that regardless of the selected master algorithm the results are accurate
+ within the requested tolerance band (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -1254,7 +1254,223 @@ name "fig:Error control enabled"
 \end_inset
 
 Comparison of iterating and non-iterating GAUSS-SEIDEL when using dynamic
- step adjustment based on step-doubling/Richardson error control
+ step adjustment based on step-doubling/Richardson error control (reltol
+ = abstol = 
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Comparison of time step sizes
+\end_layout
+
+\begin_layout Standard
+The Gauss-Seidel variant takes almost always 3 iterations per step to converge.
+ The comparison of the time step sizes (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:AcceptedTimeStepSizes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) shows that the time step sizes are actually very similar, though the variant
+ without iteration permits generally slightly larger time steps.
+ The error norm test gives, as expected, similar error norms for both iterative
+ and non-iterative solutions.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Richardson_comparison_time_steps.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:AcceptedTimeStepSizes"
+
+\end_inset
+
+Comparison of accepted time step sizes for iterating and non-iterating variant
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Comparison of error norms
+\end_layout
+
+\begin_layout Standard
+Mind, that in MASTERSIM the step-doubling technique is used to estimate
+ the integration error.
+ Two methods are implemented, one using the differences of results and one
+ using the difference of the slopes, which are approximated from the values
+ (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ErrorNormComparison"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Both estimates yield approximately in the same norm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename Richardson_comparison_error_norms.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ErrorNormComparison"
+
+\end_inset
+
+Comparison of error norms that were obtained when accepting a step, for
+ the iterative Gauss-Seidel variant
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Evaluation of the true/global error
+\end_layout
+
+\begin_layout Standard
+By computing the normalized difference between the co-simulation variants
+ and the reference solution, the global error can be obtained (Fig.
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:GlobalError"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ It is clear that despite the time step adjustment based on local error
+ estimates the dampening of the model equations cannot be fully prevented.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename global_error.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:GlobalError"
+
+\end_inset
+
+Global error of computed prey and predator species population with iterative
+ and non-iterative variants and time step adjustment based on error control
+ with reltol = abstol = 
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+
 \end_layout
 
 \end_inset
