@@ -98,6 +98,9 @@ void MasterSim::initialize() {
 	m_statErrorTestTime = 0;
 	m_statStepCounter = 0;
 	m_statAlgorithmCallCounter = 0;
+
+	m_acceptedErrRichardson = 1;
+	m_acceptedErrSlopeCheck = 1;
 }
 
 
@@ -277,6 +280,10 @@ void MasterSim::writeMetrics() const {
 	double wct = m_outputWriter.m_progressFeedback.m_stopWatch.difference()*1e-3; // in seconds
 	// determine suitable unit
 	std::string ustr = IBK::Time::suitableTimeUnit(wct);
+
+	unsigned int maIters, maFMUErrs, maLimitExceeded;
+	m_masterAlgorithm->stats(maIters, maLimitExceeded, maFMUErrs);
+
 	IBK::IBK_Message( IBK::FormatString("Wall clock time                            = %1\n").arg(IBK::Time::format_time_difference(wct, ustr, true),13),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("------------------------------------------------------------------------------\n"), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -286,6 +293,8 @@ void MasterSim::writeMetrics() const {
 		.arg(IBK::Time::format_time_difference(m_statAlgorithmTime, ustr, true),13).arg(m_statStepCounter,6),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("Convergence failures                       =                  %1\n").arg(m_statConvergenceFailsCounter, 6),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Convergence iteration limit exceeded       =                  %1\n").arg(maLimitExceeded, 6),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("Error test time and failure count          = %1    %2\n")
 		.arg(IBK::Time::format_time_difference(m_statErrorTestTime, ustr, true),13).arg(m_statErrorTestFailsCounter,6),
@@ -318,6 +327,7 @@ void MasterSim::writeMetrics() const {
 	sumFile << "MasterAlgorithmSteps=" << m_statStepCounter << std::endl;
 	sumFile << "MasterAlgorithmTime=" << m_statAlgorithmTime << std::endl;
 	sumFile << "ConvergenceFails=" << m_statConvergenceFailsCounter << std::endl;
+	sumFile << "ConvergenceIterLimitExceeded=" << maLimitExceeded << std::endl;
 	sumFile << "ErrorTestFails=" << m_statErrorTestFailsCounter << std::endl;
 	sumFile << "ErrorTestTime=" << m_statErrorTestTime << std::endl;
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
@@ -890,8 +900,6 @@ bool MasterSim::doErrorCheckRichardson() {
 			// sum up error squared
 			err += scaledDiff*scaledDiff;
 
-			// errorSlope = h/2 * (slope(t...t+h) - slope(t...t+h/2))
-
 			// y(t)     = m_errRealyt
 			// y(t+h/2) = m_realytNext[i]
 			// y(t+h)   = m_errRealytFirst[i]
@@ -899,7 +907,8 @@ bool MasterSim::doErrorCheckRichardson() {
 			double slope_full = (m_errRealytFirst[i] - m_errRealyt[i])/hOriginal;
 			double slope_lastHalf = (m_errRealytFirst[i] - m_realyt[i])/m_h;
 
-			double errSlope = (slope_full - slope_lastHalf)*m_h; // h or h/2 ??
+			// errorSlope = h/2 * (slope(t...t+h) - slope(t...t+h/2))
+			double errSlope = m_h*0.5 * (slope_full - slope_lastHalf);
 
 			// scale the error by tolerances
 			scaledDiff = errSlope/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
@@ -909,6 +918,8 @@ bool MasterSim::doErrorCheckRichardson() {
 		}
 		err = std::sqrt(err/nValues);
 		errSlopes = std::sqrt(errSlopes/nValues);
+		m_acceptedErrRichardson = err;
+		m_acceptedErrSlopeCheck = errSlopes;
 	}
 
 	// if error limit has been exceeded, restore master and slave states to last time point
@@ -1173,7 +1184,10 @@ void MasterSim::writeStepStatistics() {
 			   << std::setw(18) << std::left << "ConvergenceFails" << '\t'
 			   << std::setw(12) << std::left << "Iterations" << '\t'
 			   << std::setw(18) << std::left << "IterLimitExceeded" << '\t'
-			   << std::setw(12) << std::left << "FMUErrors" << std::endl;
+			   << std::setw(12) << std::left << "FMUErrors" << '\t'
+			   << std::setw(18) << std::left << "ErrorNormRichardson" << '\t'
+			   << std::setw(18) << std::left << "ErrorNormSlopeCheck"
+			   << std::endl;
 		return; // first call only writes header
 	}
 	std::ostream & out = *m_stepStatsOutput;
@@ -1190,7 +1204,10 @@ void MasterSim::writeStepStatistics() {
 		   << std::setw(18) << std::left << m_statConvergenceFailsCounter << '\t'
 		   << std::setw(12) << std::left << maIters << '\t'
 		   << std::setw(18) << std::left << maLimitExceeded << '\t'
-		   << std::setw(12) << std::left << maFMUErrs << std::endl;
+		   << std::setw(12) << std::left << maFMUErrs << '\t'
+		   << std::setw(18) << std::left << m_acceptedErrRichardson << '\t'
+		   << std::setw(18) << std::left << m_acceptedErrSlopeCheck << '\t'
+		   << std::endl;
 }
 
 
