@@ -84,7 +84,7 @@
 						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
 						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">s</IBK:Unit>
-						<Maximum>0.03</Maximum>
+						<Maximum>0.02</Maximum>
 						<Minimum>0.005</Minimum>
 						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
@@ -237,6 +237,7 @@
 					<AxisScalesInside>1</AxisScalesInside>
 					<Legend>
 						<Position>Inside</Position>
+						<Alignment>1</Alignment>
 						<MaxColumns>2</MaxColumns>
 						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
 					</Legend>
@@ -296,7 +297,7 @@
 						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
 						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
 						<IBK:Unit name="AxisUnit">-</IBK:Unit>
-						<Maximum>0.9</Maximum>
+						<Maximum>1</Maximum>
 						<Minimum>0.3</Minimum>
 						<MinorGridVisible>0</MinorGridVisible>
 					</Axis>
@@ -405,6 +406,7 @@
 						<IBK:Unit name="AxisUnit">-</IBK:Unit>
 						<Maximum>0.06</Maximum>
 						<MinorGridVisible>0</MinorGridVisible>
+						<TitleSpacing>45</TitleSpacing>
 					</Axis>
 					<Axis index="2" enabled="0">
 						<TitleText>$quantity [$unit]</TitleText>
@@ -512,6 +514,7 @@
 						<IBK:Unit name="AxisUnit">-</IBK:Unit>
 						<Maximum>0.06</Maximum>
 						<MinorGridVisible>0</MinorGridVisible>
+						<TitleSpacing>45</TitleSpacing>
 					</Axis>
 					<Axis index="2" enabled="0">
 						<TitleText>$quantity [$unit]</TitleText>
@@ -538,7 +541,7 @@
 
 	<!--Split window state.-->
 	<Splitting>
-		<Widget id="1" parent="0" viewTable="0" mapperIndex="3" size1="1" size2="1" orientation="2" />
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="1" size2="1" orientation="2" />
 		<FocusedWidget>0</FocusedWidget>
 	</Splitting>
 

@@ -64,10 +64,10 @@ position=bottom]{caption}
 \paperfontsize 10
 \spacing single
 \use_hyperref true
-\pdf_title "Test"
+\pdf_title "Lotka-Volterra CoSimulation test case"
 \pdf_author "Andreas Nicolai"
-\pdf_subject "Testtest"
-\pdf_keywords "Test, und, Test"
+\pdf_subject "A Co-Simulation test case focussing on error control."
+\pdf_keywords "Error control, Co-Simulation, FMI"
 \pdf_bookmarks true
 \pdf_bookmarksnumbered false
 \pdf_bookmarksopen false
@@ -77,7 +77,7 @@ position=bottom]{caption}
 \pdf_colorlinks true
 \pdf_backref false
 \pdf_pdfusetitle true
-\pdf_quoted_options "linkcolor=linkblue, citecolor=linkblue"
+\pdf_quoted_options "linkcolor=linkblue, citecolor=linkblue, urlcolor=linkblue, bookmarksnumbered=true"
 \papersize a4paper
 \use_geometry true
 \use_package amsmath 2
@@ -341,7 +341,6 @@ Exact solution
 
 \begin_layout Standard
 The solution is completely continuous without any state events.
- However, 
 \end_layout
 
 \begin_layout Subsection
@@ -350,28 +349,8 @@ Reference Modelica Model
 
 \begin_layout Standard
 The equations can be solved directly in a coupled manner with Modelica.
- The source code for a fully coupled solution in Modelica
-\begin_inset Foot
-status collapsed
-
-\begin_layout Plain Layout
-Note, the 
-\family typewriter
-noEvent()
-\family default
- clause around the condition for variable 
-\begin_inset Formula $x_{3}$
-\end_inset
-
- is needed for OpenModelica, which otherwise gets stuck in resolving the
- state events.
- For other simulators (e.g.
- SimulationX 3.6 or newer) this is not needed.
-\end_layout
-
-\end_inset
-
- is given below in Listing
+ The source code for a fully coupled solution in Modelica is given below
+ in Listing
 \begin_inset space ~
 \end_inset
 
@@ -950,7 +929,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename LV_constant_1e-1s.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1092,7 +1071,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename comparison_0.5s_constant.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1159,7 +1138,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename constant_2s.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1294,8 +1273,6 @@ noprefix "false"
 
 ) shows that the time step sizes are actually very similar, though the variant
  without iteration permits generally slightly larger time steps.
- The error norm test gives, as expected, similar error norms for both iterative
- and non-iterative solutions.
 \end_layout
 
 \begin_layout Standard
@@ -1310,7 +1287,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename Richardson_comparison_time_steps.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1345,11 +1322,75 @@ Comparison of error norms
 \end_layout
 
 \begin_layout Standard
-Mind, that in MASTERSIM the step-doubling technique is used to estimate
- the integration error.
- Two methods are implemented, one using the differences of results and one
- using the difference of the slopes, which are approximated from the values
- (Fig.
+The step-doubling technique is used in MASTERSIM to estimate the integration
+ error.
+ Hereby, two methods are implemented, one using the differences of results
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:errorRichardson"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ and one using the difference of the slopes
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand eqref
+reference "eq:errorSlope"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, which are approximated from the values.
+ Note, constant extrapolation of input signals is used.
+\begin_inset Formula 
+\begin{align}
+\epsilon_{Richardson} & =\left|y\left(t+2\cdot\frac{h}{2}\right)-y\left(t+h\right)\right|\label{eq:errorRichardson}\\
+\epsilon_{slope} & =h\left(\dot{y}\left(t+h\right)_{h}-\dot{y}\left(t+h\right)_{h/2}\right)\nonumber \\
+ & =h\left(\frac{y\left(t+h\right)-y\left(t\right)}{h}-\frac{y\left(t+h\right)-y\left(t+\frac{h}{2}\right)}{h/2}\right)\label{eq:errorSlope}
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The value 
+\begin_inset Formula $y\left(t+2\cdot\frac{h}{2}\right)$
+\end_inset
+
+ is obtained after executing two half-steps and 
+\begin_inset Formula $y\left(t+h\right)$
+\end_inset
+
+ is the value obtained with the one full step.
+ The derivatives 
+\begin_inset Formula $\dot{y}\left(t+h\right)_{h}$
+\end_inset
+
+ and 
+\begin_inset Formula $\dot{y}\left(t+h\right)_{h/2}$
+\end_inset
+
+ at 
+\begin_inset Formula $t+h$
+\end_inset
+
+ are approximated by backward finite differences using the full step and
+ the second half-step, respectively.
+ Both estimates yield approximately in the same norms (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -1364,19 +1405,8 @@ noprefix "false"
 \end_inset
 
 ).
-\begin_inset Formula 
-\begin{align}
-\epsilon_{Richardson} & =\frac{\left|y\left(t+2\cdot\frac{h}{2}\right)-y\left(t+h\right)\right|}{2}\\
-\epsilon_{slope} & =\frac{h}{2}\left(y\left(t+2\cdot\frac{h}{2}\right)\right)
-\end{align}
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Both estimates yield approximately in the same norm.
+ For the calculation of the step size always the larger of the two was used,
+ thus resulting in smaller time steps on average.
 \end_layout
 
 \begin_layout Standard
@@ -1391,7 +1421,7 @@ status open
 \align center
 \begin_inset Graphics
 	filename Richardson_comparison_error_norms.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1428,7 +1458,7 @@ Evaluation of the true/global error
 
 \begin_layout Standard
 By computing the normalized difference between the co-simulation variants
- and the reference solution, the global error can be obtained (Fig.
+ and the reference solution the global error can be obtained (Fig.
 \begin_inset space ~
 \end_inset
 
@@ -1443,11 +1473,23 @@ noprefix "false"
 \end_inset
 
 ).
- The differences and global error is computed with
+ The absolute differences 
+\begin_inset Formula $\Delta_{i}$
+\end_inset
+
+and global errors 
+\begin_inset Formula $\epsilon_{i}$
+\end_inset
+
+ are computed for each data point 
+\begin_inset Formula $i$
+\end_inset
+
+ with
 \begin_inset Formula 
 \begin{align*}
-\Delta & =y_{FMI}-y_{ref}\\
-\epsilon & =\left|\frac{y_{FMI}-y_{ref}}{y_{ref}}\right|
+\Delta_{i} & =y_{FMI,i}-y_{ref,i}\\
+\epsilon_{i} & =\left|\frac{y_{FMI,i}-y_{ref,i}}{y_{ref,i}}\right|
 \end{align*}
 
 \end_inset
@@ -1528,8 +1570,8 @@ ve variants and time step adjustment based on error control with reltol
 It is clear that despite the time step adjustment based on local error estimates
  the dampening of the model equations cannot be fully prevented.
  And it appears that, at least for this test case, the iterative variant
- tends to generate larger errors.
- Furthermore it is interesting to note, that the control of the local error
+ tends to generate larger global errors.
+ Furthermore, it is interesting to note that controling the local error
  to be below 
 \begin_inset Formula $10^{-6}$
 \end_inset
