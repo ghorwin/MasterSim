@@ -1,10 +1,11 @@
-WallClockTime=0.039108
-FrameworkTimeWriteOutputs=0.036522
+WallClockTime=0.022494
+FrameworkTimeWriteOutputs=0.020924
 MasterAlgorithmSteps=1001
-MasterAlgorithmTime=0.00152
+MasterAlgorithmTime=0.00087
 ConvergenceFails=0
+ConvergenceIterLimitExceeded=95
 ErrorTestFails=0
 ErrorTestTime=0
-Slave[1]Time=0.000408
-Slave[2]Time=0.000337
-Slave[3]Time=0.000292
+Slave[1]Time=0.000209
+Slave[2]Time=0.000229
+Slave[3]Time=0.000197
