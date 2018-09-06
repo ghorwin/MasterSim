@@ -1364,7 +1364,19 @@ noprefix "false"
 \end_inset
 
 ).
- Both estimates yield approximately in the same norm.
+\begin_inset Formula 
+\begin{align}
+\epsilon_{Richardson} & =\frac{\left|y\left(t+2\cdot\frac{h}{2}\right)-y\left(t+h\right)\right|}{2}\\
+\epsilon_{slope} & =\frac{h}{2}\left(y\left(t+2\cdot\frac{h}{2}\right)\right)
+\end{align}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Both estimates yield approximately in the same norm.
 \end_layout
 
 \begin_layout Standard
@@ -1431,8 +1443,24 @@ noprefix "false"
 \end_inset
 
 ).
- It is clear that despite the time step adjustment based on local error
- estimates the dampening of the model equations cannot be fully prevented.
+ The differences and global error is computed with
+\begin_inset Formula 
+\begin{align*}
+\Delta & =y_{FMI}-y_{ref}\\
+\epsilon & =\left|\frac{y_{FMI}-y_{ref}}{y_{ref}}\right|
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $y_{FMI}$
+\end_inset
+
+ is one of the FMI solutions (iterative or non-iterative).
 \end_layout
 
 \begin_layout Standard
@@ -1446,8 +1474,20 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
+	filename differences_to_global.pdf
+	width 9cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
 	filename global_error.pdf
-	width 8cm
+	width 9cm
 
 \end_inset
 
@@ -1464,9 +1504,10 @@ name "fig:GlobalError"
 
 \end_inset
 
-Global error of computed prey and predator species population with iterative
- and non-iterative variants and time step adjustment based on error control
- with reltol = abstol = 
+Absolute differences between computed prey and predator species population
+ and reference solution (top) and global error for the iterative and non-iterati
+ve variants and time step adjustment based on error control with reltol
+ = abstol = 
 \begin_inset Formula $10^{-6}$
 \end_inset
 
@@ -1481,6 +1522,23 @@ Global error of computed prey and predator species population with iterative
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+It is clear that despite the time step adjustment based on local error estimates
+ the dampening of the model equations cannot be fully prevented.
+ And it appears that, at least for this test case, the iterative variant
+ tends to generate larger errors.
+ Furthermore it is interesting to note, that the control of the local error
+ to be below 
+\begin_inset Formula $10^{-6}$
+\end_inset
+
+ will still yield a global error of 4 orders of magnitude larger (
+\begin_inset Formula $10^{-2})$
+\end_inset
+
+!
 \end_layout
 
 \end_body
