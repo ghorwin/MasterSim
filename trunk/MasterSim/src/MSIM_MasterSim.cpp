@@ -894,21 +894,21 @@ bool MasterSim::doErrorCheckRichardson() {
 		unsigned int nValues = m_realytNext.size();
 		for (unsigned int i=0; i<nValues; ++i) {
 
-			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/2; // Note: mind the division of 2
+			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i]);
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
 			err += scaledDiff*scaledDiff;
 
 			// y(t)     = m_errRealyt
-			// y(t+h/2) = m_realytNext[i]
+			// y(t+h/2) = m_realyt[i]
 			// y(t+h)   = m_errRealytFirst[i]
 
 			double slope_full = (m_errRealytFirst[i] - m_errRealyt[i])/hOriginal;
 			double slope_lastHalf = (m_errRealytFirst[i] - m_realyt[i])/m_h;
 
-			// errorSlope = h/2 * (slope(t...t+h) - slope(t...t+h/2))
-			double errSlope = m_h*0.5 * (slope_full - slope_lastHalf);
+			// errorSlope = h * (slope(t...t+h) - slope(t...t+h/2))
+			double errSlope = m_h * (slope_full - slope_lastHalf);
 
 			// scale the error by tolerances
 			scaledDiff = errSlope/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
