@@ -131,6 +131,9 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 				m_project->m_simulators[i].m_pathToFMU = absoluteProjectFilePath / p;
 			}
 		}
+
+		// now silently parse the FMUs
+
 	}
 	catch (IBK::Exception & ex) {
 		ex.writeMsgStackToError();

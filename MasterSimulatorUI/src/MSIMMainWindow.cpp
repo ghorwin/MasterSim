@@ -42,10 +42,10 @@
 #include "MSIMAboutDialog.h"
 #include "MSIMButtonBar.h"
 
-MSIMMainWindow * MSIMMainWindow::m_self = NULL;
+MSIMMainWindow * MSIMMainWindow::m_self = nullptr;
 
 MSIMMainWindow & MSIMMainWindow::instance() {
-	Q_ASSERT_X(m_self != NULL, "[MSIMMainWindow::instance]",
+	Q_ASSERT_X(m_self != nullptr, "[MSIMMainWindow::instance]",
 		"You must not access MSIMMainWindow::instance() when the is no MSIMMainWindow "
 		"instance (anylonger).");
 	return *m_self;
@@ -59,22 +59,16 @@ void MSIMMainWindow::addUndoCommand(QUndoCommand * command) {
 }
 
 
-#if QT_VERSION >= 0x050000
-// Qt5 code
 MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) :
-#else
-// Qt4 code
-MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WFlags /*flags*/) :
-#endif
 	m_ui(new Ui::MSIMMainWindow),
 	m_undoStack(new QUndoStack(this)),
-	m_recentProjectsMenu(NULL),
-	m_preferencesDialog(NULL),
-	m_stackedWidget(NULL),
-	m_viewSlaves(NULL),
-	m_viewConnections(NULL),
-	m_viewSimulation(NULL),
-	m_aboutDialog(NULL)
+	m_recentProjectsMenu(nullptr),
+	m_preferencesDialog(nullptr),
+	m_stackedWidget(nullptr),
+	m_viewSlaves(nullptr),
+	m_viewConnections(nullptr),
+	m_viewSimulation(nullptr),
+	m_aboutDialog(nullptr)
 {
 //	const char * const FUNC_ID = "[MSIMMainWindow::MSIMMainWindow]";
 
@@ -208,7 +202,7 @@ MSIMMainWindow::~MSIMMainWindow() {
 
 	// kill any thread that still runs
 
-	m_self = NULL;
+	m_self = nullptr;
 }
 
 
@@ -337,6 +331,11 @@ void MSIMMainWindow::on_actionFileOpen_triggered() {
 	if (m_projectHandler.isValid()) {
 		saveThumbNail();
 		MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory] = QFileInfo(filename).absoluteDir().absolutePath();
+		QString msg;
+		extractFMUsAndParseModelDesc(msg);
+		// signal modified to all views
+		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
 	}
 }
 
@@ -383,8 +382,14 @@ void MSIMMainWindow::on_actionFileReload_triggered() {
 	// reload project
 	m_projectHandler.reloadProject(this);
 
-	if (m_projectHandler.isValid())
+	if (m_projectHandler.isValid()) {
 		saveThumbNail();
+		QString msg;
+		extractFMUsAndParseModelDesc(msg);
+		// signal modified to all views
+		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+	}
 }
 
 
@@ -564,7 +569,7 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 
 void MSIMMainWindow::on_actionEditPreferences_triggered() {
 	// spawn preferences dialog
-	if (m_preferencesDialog == NULL)
+	if (m_preferencesDialog == nullptr)
 		m_preferencesDialog = new MSIMPreferencesDialog(this);
 
 	if (m_preferencesDialog->edit()) {
@@ -579,7 +584,7 @@ void MSIMMainWindow::on_actionHelpAboutQt_triggered() {
 
 
 void MSIMMainWindow::on_actionHelpAboutMasterSim_triggered() {
-	if (m_aboutDialog == NULL)
+	if (m_aboutDialog == nullptr)
 		m_aboutDialog = new MSIMAboutDialog(this);
 	m_aboutDialog->exec();
 }
@@ -691,8 +696,14 @@ void MSIMMainWindow::onOpenProjectByFilename(const QString & filename) {
 	if (!m_projectHandler.closeProject(this)) return;
 	// then create a new project and try to load the file
 	m_projectHandler.loadProject(this, filename, false);
-	if (m_projectHandler.isValid())
+	if (m_projectHandler.isValid()) {
 		saveThumbNail();
+		QString msg;
+		extractFMUsAndParseModelDesc(msg);
+		// signal modified to all views
+		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+	}
 	// if failed, no view state change needed
 }
 
@@ -773,7 +784,7 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 		a->setIcon( QIcon( QString(":/gfx/icons/%1.png").arg(langId)) );
 		connect(a, SIGNAL(triggered()),
 				this, SLOT(onActionSwitchLanguage()));
-		m_ui->menuLanguage->insertAction(NULL, a);
+		m_ui->menuLanguage->insertAction(nullptr, a);
 	}
 	else {
 		IBK::IBK_Message( IBK::FormatString("Language file '%1' missing.").arg(languageFilename.toUtf8().data()),
