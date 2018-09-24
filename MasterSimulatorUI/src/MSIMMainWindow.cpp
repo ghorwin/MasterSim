@@ -456,6 +456,85 @@ void MSIMMainWindow::on_actionEditTextEditProject_triggered() {
 }
 
 
+void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
+	std::set<IBK::Path> fmus;
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		IBK::Path p = project().m_simulators[i].m_pathToFMU;
+		fmus.insert(p.absolutePath());
+	}
+
+	// now process all FMUs
+	m_modelDescriptions.clear();
+	for (std::set<IBK::Path>::const_iterator it = fmus.begin(); it != fmus.end(); ++it) {
+		// attempt to unzip FMU
+		msg.append( tr("Extracting '%1'\n").arg(QString::fromUtf8(it->c_str())));
+
+		std::string fileContent;
+		unzFile zip = unzOpen(it->c_str());
+		if (zip) {
+			if (unzLocateFile(zip, "modelDescription.xml", 1) != UNZ_OK) {
+				msg.append( tr("ERROR: FMU does not contain the file modelDescription.xml.\n"));
+				unzClose( zip );
+				continue;
+			}
+
+			if (unzOpenCurrentFile( zip ) != UNZ_OK) {
+				msg.append( tr("ERROR: Could not open modelDescription.xml.\n"));
+				unzClose( zip );
+				continue;
+			}
+
+			unsigned char buffer[4096];
+			int readBytes;
+			do {
+				readBytes = unzReadCurrentFile(zip, buffer, 4096);
+				if (readBytes < 0) {
+					msg.append( tr("ERROR: Error while extracting modelDescription.xml.\n"));
+					unzCloseCurrentFile(zip);
+					unzClose( zip );
+					continue;
+				}
+				if (readBytes > 0) {
+					fileContent += std::string(buffer, buffer+readBytes);
+				}
+			}
+			while (readBytes > 0);
+
+			unzCloseCurrentFile(zip);
+			unzClose(zip);
+		}
+		else {
+			msg.append( tr("ERROR: Could not open FMU file (not a zip archive?).\n"));
+			continue;
+		}
+		MASTER_SIM::ModelDescription modelDesc;
+		try {
+			TiXmlDocument doc;
+			doc.Parse(fileContent.c_str(), nullptr, TIXML_ENCODING_UTF8);
+			if (doc.Error()) {
+				msg.append( tr("ERROR: Error parsing XML file. Error message:\n%1\n")
+											   .arg(QString::fromUtf8(doc.ErrorDesc())));
+				continue;
+			}
+			modelDesc.readXMLDoc(doc);
+			msg.append( tr("  Model identifiers:\n"));
+			if (!modelDesc.m_modelIdentifier.empty())
+				msg.append( tr("    FMI v1    : %1\n").arg(QString::fromUtf8(modelDesc.m_modelIdentifier.c_str())));
+			if (!modelDesc.m_meV2ModelIdentifier.empty())
+				msg.append( tr("    FMI v2 ME : %1\n").arg(QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str())));
+			if (!modelDesc.m_csV2ModelIdentifier.empty())
+				msg.append( tr("    FMI v2 CS : %1\n").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
+			msg.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+			m_modelDescriptions[*it] = modelDesc;
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			msg.append( tr("ERROR: Error parsing model description.\n"));
+			continue;
+		}
+	}
+}
+
 void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	// open log window
 	// start reading FMUs
@@ -471,88 +550,15 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	dlg.resize(1200,800);
 	dlg.show();
 
-	std::set<IBK::Path> fmus;
-	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
-		IBK::Path p = project().m_simulators[i].m_pathToFMU;
-		fmus.insert(p.absolutePath());
-	}
+	QString msg;
+	extractFMUsAndParseModelDesc(msg);
+	logWidget->addPlainTextMessage(msg);
 
-	// now process all FMUs
-	m_modelDescriptions.clear();
-	for (std::set<IBK::Path>::const_iterator it = fmus.begin(); it != fmus.end(); ++it) {
-		// attempt to unzip FMU
-		logWidget->addPlainTextMessage(tr("Extracting '%1'").arg(QString::fromUtf8(it->c_str())));
-		qApp->processEvents();
-
-		std::string fileContent;
-		unzFile zip = unzOpen(it->c_str());
-		if (zip) {
-			if (unzLocateFile(zip, "modelDescription.xml", 1) != UNZ_OK) {
-				logWidget->addPlainTextMessage(tr("ERROR: FMU does not contain the file modelDescription.xml."));
-				unzClose( zip );
-				continue;
-			}
-
-			if (unzOpenCurrentFile( zip ) != UNZ_OK) {
-				logWidget->addPlainTextMessage(tr("ERROR: Could not open modelDescription.xml."));
-				unzClose( zip );
-				continue;
-			}
-
-			unsigned char buffer[4096];
-			int readBytes;
-			do {
-				readBytes = unzReadCurrentFile(zip, buffer, 4096);
-				if (readBytes < 0) {
-					logWidget->addPlainTextMessage(tr("ERROR: Error while extracting modelDescription.xml."));
-					unzCloseCurrentFile(zip);
-					unzClose( zip );
-					continue;
-				}
-				if (readBytes > 0) {
-					fileContent += std::string(buffer, buffer+readBytes);
-				}
-			}
-			while (readBytes > 0);
-
-			unzCloseCurrentFile(zip);
-			unzClose(zip);
-		}
-		else {
-			logWidget->addPlainTextMessage(tr("ERROR: Could not open FMU file (not a zip archive?)."));
-			continue;
-		}
-		MASTER_SIM::ModelDescription modelDesc;
-		try {
-			TiXmlDocument doc;
-			doc.Parse(fileContent.c_str(), 0, TIXML_ENCODING_UTF8);
-			if (doc.Error()) {
-				logWidget->addPlainTextMessage(tr("ERROR: Error parsing XML file. Error message:\n%1")
-											   .arg(QString::fromUtf8(doc.ErrorDesc())));
-				continue;
-			}
-			modelDesc.readXMLDoc(doc);
-			logWidget->addPlainTextMessage(tr("  Model identifiers:"));
-			if (!modelDesc.m_modelIdentifier.empty())
-				logWidget->addPlainTextMessage(tr("    FMI v1    : %1").arg(QString::fromUtf8(modelDesc.m_modelIdentifier.c_str())));
-			if (!modelDesc.m_meV2ModelIdentifier.empty())
-				logWidget->addPlainTextMessage(tr("    FMI v2 ME : %1").arg(QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str())));
-			if (!modelDesc.m_csV2ModelIdentifier.empty())
-				logWidget->addPlainTextMessage(tr("    FMI v2 CS : %1").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
-			logWidget->addPlainTextMessage(tr("  Variables: %1").arg(modelDesc.m_variables.size()));
-			m_modelDescriptions[*it] = modelDesc;
-		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			logWidget->addPlainTextMessage(tr("ERROR: Error parsing model description."));
-			continue;
-		}
-	}
 	dlg.exec();
 
 	// signal modified to all views
-	m_viewConnections->onModified(MSIMProjectHandler::AllModified, NULL);
-	m_viewSlaves->onModified(MSIMProjectHandler::AllModified, NULL);
+	m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+	m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
 }
 
 

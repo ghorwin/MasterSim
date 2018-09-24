@@ -44,13 +44,7 @@ public:
 	static void addUndoCommand(QUndoCommand * command);
 
 	/*! Default MSIMMainWindow constructor. */
-#if QT_VERSION >= 0x050000
-// Qt5 code
-	explicit MSIMMainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-#else
-// Qt4 code
-	explicit MSIMMainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
-#endif
+	explicit MSIMMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = nullptr);
 
 	/*! Default destructor. */
 	~MSIMMainWindow();
@@ -130,6 +124,10 @@ private:
 
 	/*! Updates the window title. */
 	void updateWindowTitle();
+
+	/*! Extracts all FMUs currently being referenced by the project and attempts to read their model description files.
+	*/
+	void extractFMUsAndParseModelDesc(QString & msg);
 
 	/*! Exports the current project to the selected exportFilePath path.
 		Opens an (internationalized) message box on the first error encountered.
