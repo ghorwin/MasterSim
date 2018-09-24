@@ -166,6 +166,10 @@ void MasterSim::doStep() {
 
 	m_h = m_hProposed; // set proposed time step size
 
+	// ensure that we do not exceed simulation end time point
+	if (m_t + m_h > m_project.m_tEnd.value)
+		m_h = m_project.m_tEnd.value - m_t;
+
 	// if we have error control enabled or use iteration in the master algorithm, store current state of all fmu slaves
 	if (m_enableIteration || m_useErrorTestWithVariableStepSizes) {
 		// request state from all slaves
@@ -480,7 +484,7 @@ void MasterSim::instatiateSlaves() {
 				throw IBK::Exception(ex, IBK::FormatString("Error setting up slave '%1'").arg(slaveDef.m_name), FUNC_ID);
 			}
 			// store index of slave in global slaves vector
-			slave->m_slaveIndex = m_slaves.size();
+			slave->m_slaveIndex = (unsigned int)m_slaves.size();
 			// add slave to vector with slaves
 			Slave * s = slave.get();
 			m_slaves.push_back(slave.release());
@@ -507,7 +511,7 @@ void MasterSim::instatiateSlaves() {
 	}
 
 
-	unsigned int nSlaves = m_slaves.size();
+	unsigned int nSlaves = (unsigned int)m_slaves.size();
 
 	// resize vector for iterative states
 	m_iterationStates.resize(nSlaves);
@@ -891,7 +895,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		err = 0;
 		errSlopes = 0;
 		// compare computed solutions via WRMS Norm of differences
-		unsigned int nValues = m_realytNext.size();
+		unsigned int nValues = (unsigned int)m_realytNext.size();
 		for (unsigned int i=0; i<nValues; ++i) {
 
 			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i]);
