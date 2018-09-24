@@ -148,6 +148,15 @@ TU Dresden
 andreas.nicolai@tu-dresden.de
 \end_layout
 
+\begin_layout Abstract
+The test case discussed in this article is a coupled initial value problem,
+ very well suited to investigate the effect of error propagation and the
+ accuracy differences between non-iterating and iterating master algorithms.
+ It also discusses the error test methods implemented in MASTERSIM and illustrat
+es, that the use of iterating GAUSS-SEIDEL with error control generates
+ a solution of slightly less accuracy and uses many more model evaluations.
+\end_layout
+
 \begin_layout Section
 Test Description
 \end_layout
@@ -391,7 +400,7 @@ status open
 
 \begin_layout Plain Layout
 \begin_inset listings
-lstparams "language=modelica,label={mo-code},caption={Modelica Code Listing}"
+lstparams "language=modelica,label={mo-code},caption={Modelica Code Listing, adapted from M. Tiller \textit{Modelica by Example}}"
 inline false
 status open
 
@@ -688,6 +697,22 @@ Evaluation Order
 
 \begin_layout Standard
 Prey FMU shall be evaluated first.
+\end_layout
+
+\begin_layout Subsection
+Initial Conditions and Integration Interval
+\end_layout
+
+\begin_layout Standard
+The solution shall be obtained for the time interval 
+\begin_inset Formula $T=\left[0,100\right]$
+\end_inset
+
+ with 
+\begin_inset Formula $x\left(0\right)=y\left(0\right)=10$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -1576,11 +1601,294 @@ It is clear that despite the time step adjustment based on local error estimates
 \begin_inset Formula $10^{-6}$
 \end_inset
 
- will still yield a global error of 4 orders of magnitude larger (
-\begin_inset Formula $10^{-2})$
+ will still yield a global error of 3 orders of magnitude larger (
+\begin_inset Formula $10^{-3})$
 \end_inset
 
-!
+.
+\end_layout
+
+\begin_layout Standard
+This can be explained by the error propagation in this model.
+ Consider the solver statistics from the two variants:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "caption={Non-iterating GAUSS-SEIDEL algorithm},label={gs_noiter}"
+inline false
+status open
+
+\begin_layout Plain Layout
+
+Solver statistics
+\end_layout
+
+\begin_layout Plain Layout
+
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+Wall clock time                            =  220.991 ms  
+\end_layout
+
+\begin_layout Plain Layout
+
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+Output writing                             =  195.781 ms  
+\end_layout
+
+\begin_layout Plain Layout
+
+Master-Algorithm                           =   16.093 ms        8653
+\end_layout
+
+\begin_layout Plain Layout
+
+Convergence failures                       =                       0
+\end_layout
+
+\begin_layout Plain Layout
+
+Convergence iteration limit exceeded       =                       0
+\end_layout
+
+\begin_layout Plain Layout
+
+Error test time and failure count          =    5.276 ms           7
+\end_layout
+
+\begin_layout Plain Layout
+
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+
+Prey                                doStep =    5.132 ms       25980
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  getState =    0.656 ms        8653
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  setState =    0.673 ms        8667
+\end_layout
+
+\begin_layout Plain Layout
+
+Predator                            doStep =    4.351 ms       25980
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  getState =    0.607 ms        8653
+\end_layout
+
+\begin_layout Plain Layout
+
+                                  setState =    0.494 ms        8667
+\end_layout
+
+\begin_layout Plain Layout
+
+------------------------------------------------------------------------------
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
+status open
+
+\begin_layout Plain Layout
+\begin_inset listings
+lstparams "caption={Iteration GAUSS-SEIDEL algorithm; on average 3 iterations per step},label={gs_iter}"
+inline false
+status open
+
+\begin_layout Plain Layout
+Solver statistics
+\end_layout
+
+\begin_layout Plain Layout
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+Wall clock time                            =  257.438 ms  
+\end_layout
+
+\begin_layout Plain Layout
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+Output writing                             =  204.746 ms  
+\end_layout
+
+\begin_layout Plain Layout
+Master-Algorithm                           =   39.133 ms        8872
+\end_layout
+
+\begin_layout Plain Layout
+Convergence failures                       =                       0
+\end_layout
+
+\begin_layout Plain Layout
+Convergence iteration limit exceeded       =                       0
+\end_layout
+
+\begin_layout Plain Layout
+Error test time and failure count          =   11.838 ms           0
+\end_layout
+
+\begin_layout Plain Layout
+------------------------------------------------------------------------------
+\end_layout
+
+\begin_layout Plain Layout
+Prey                                doStep =   10.061 ms       57775
+\end_layout
+
+\begin_layout Plain Layout
+                                  getState =    1.611 ms       26616
+\end_layout
+
+\begin_layout Plain Layout
+                                  setState =    2.191 ms       40031
+\end_layout
+
+\begin_layout Plain Layout
+Predator                            doStep =    9.331 ms       57775
+\end_layout
+
+\begin_layout Plain Layout
+                                  getState =    1.373 ms       26616
+\end_layout
+
+\begin_layout Plain Layout
+                                  setState =    1.947 ms       40031
+\end_layout
+
+\begin_layout Plain Layout
+------------------------------------------------------------------------------
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In both variants, more than 8000 steps are taken.
+ Assuming a relative error in each step and no error cancellation, this
+ would indeed yield a large global error.
+ This effect is, however, strongly depending on the problem.
+\end_layout
+
+\begin_layout Standard
+Also, it can be noted that even the non-iterating variant (listing
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{gs_noiter}
+\end_layout
+
+\end_inset
+
+) requires approximately 3 
+\family typewriter
+doStep()
+\family default
+ evaluations per accepted step.
+ For the iterating variant (listing
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{gs_iter}
+\end_layout
+
+\end_inset
+
+) these are more than 6 evaluations per accepted step.
+ Thus, for this example, the application of iterating GAUSS-SEIDEL is not
+ recommended.
+ Further tests may show that this is conclusion can be generalized: when
+ employing time step adjustment based on error estimates, non-iterating
+ GAUSS-SEIDEL is to be preferred.
 \end_layout
 
 \end_body
