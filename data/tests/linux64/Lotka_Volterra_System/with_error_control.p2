@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<PostProc xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de PostProc.xsd" fileVersion="1.0">
+<PostProc version="2.0.15" xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de PostProc.xsd">
 	<!--List of all directories-->
 	<Directories>
 		<Directory>
@@ -20,21 +20,12 @@
 
 	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-	<!--Panel states.-->
-	<Panels>
-		<EastPanel>1</EastPanel>
-		<WestPanel>1</WestPanel>
-		<SouthPanel>0</SouthPanel>
-	</Panels>
-
-	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-
 	<!--All mappers.-->
 	<Mappers>
 		<Mapper name="Accepted step sizes">
 			<Extractors>
 				<Extractor>
-					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv#2</DataIOFileName>
+					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv?2</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -45,7 +36,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>LV_Richardson_noiter/log/stepstats.tsv#2</DataIOFileName>
+					<DataIOFileName>LV_Richardson_noiter/log/stepstats.tsv?2</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -247,7 +238,7 @@
 		<Mapper name="error norms">
 			<Extractors>
 				<Extractor>
-					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv#1|3|4|5|6|7|8|9|10</DataIOFileName>
+					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv?1|3|4|5|6|7|8|9|10</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -258,7 +249,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv#1|3|4|5|6|7|8|9|10</DataIOFileName>
+					<DataIOFileName>LV_Richardson_5iter/log/stepstats.tsv?1|3|4|5|6|7|8|9|10</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -322,7 +313,7 @@
 		<Mapper name="Differences to reference">
 			<Extractors>
 				<Extractor>
-					<DataIOFileName>description/differences_to_global.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/differences_to_global.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -333,7 +324,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/differences_to_global.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/differences_to_global.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -344,7 +335,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/differences_to_global.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/differences_to_global.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -355,7 +346,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/differences_to_global.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/differences_to_global.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -430,7 +421,7 @@
 		<Mapper name="Global error">
 			<Extractors>
 				<Extractor>
-					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/global_error.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -441,7 +432,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/global_error.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -452,7 +443,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/global_error.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>
@@ -463,7 +454,7 @@
 					<CutLockTDir>0</CutLockTDir>
 				</Extractor>
 				<Extractor>
-					<DataIOFileName>description/global_error.tsv#1|2|3|4</DataIOFileName>
+					<DataIOFileName>description/global_error.tsv?1|2|3|4</DataIOFileName>
 					<CutType>NoCut</CutType>
 					<DataFormat>DF_2D</DataFormat>
 					<DataType>T_REFERENCE</DataType>

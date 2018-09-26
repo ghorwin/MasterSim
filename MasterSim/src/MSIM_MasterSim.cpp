@@ -90,6 +90,9 @@ void MasterSim::initialize() {
 	m_h = m_project.m_hStart.value;
 	m_hProposed = m_h;
 
+	// initialize t_errTOrig = t - hLast
+	m_errTOriginal = m_t;
+
 	// setup statistics
 	m_statOutputTime = 0;
 	m_statAlgorithmTime = 0;
@@ -137,6 +140,9 @@ void MasterSim::simulate() {
 	if (m_args.m_verbosityLevel > 1)
 		writeStepStatistics();
 	while (m_t < m_project.m_tEnd.value) {
+		if (!m_enableVariableStepSizes && m_t + m_hProposed > m_project.m_tEnd.value)
+			break; // do not exceed end time point, can happen due to rounding errors
+
 		// Do an internal step with the selected master algorithm
 		doStep();
 		++m_statStepCounter;
@@ -167,8 +173,14 @@ void MasterSim::doStep() {
 	m_h = m_hProposed; // set proposed time step size
 
 	// ensure that we do not exceed simulation end time point
-	if (m_t + m_h > m_project.m_tEnd.value)
-		m_h = m_project.m_tEnd.value - m_t;
+	if (m_enableVariableStepSizes) {
+		// slightly enlarge step if we miss end time only by a fraction
+		if (m_t + m_h + 1e-12 > m_project.m_tEnd.value) {
+			m_h = m_project.m_tEnd.value - m_t;
+			IBK::IBK_Message(IBK::FormatString("Adjusting h='%1' to hit the end time point exactly.\n").arg(m_h),
+							 IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		}
+	}
 
 	// if we have error control enabled or use iteration in the master algorithm, store current state of all fmu slaves
 	if (m_enableIteration || m_useErrorTestWithVariableStepSizes) {
@@ -220,11 +232,8 @@ void MasterSim::doStep() {
 			break; // done with step
 
 		if (m_project.m_errorControlMode == Project::EM_CHECK) {
-			m_timer.start();
-			bool success = doErrorCheckWithoutIteration();
-			m_statErrorTestTime += m_timer.stop()*1e-3;
-			if (success)
-				break;
+			doErrorCheckWithoutIteration(); // no time step adjustment yet
+			break; // done with step
 		}
 		else {
 
@@ -991,55 +1000,68 @@ bool MasterSim::doErrorCheckRichardson() {
 
 
 bool MasterSim::doErrorCheckWithoutIteration() {
+	const char * const FUNC_ID = "[MasterSim::doErrorCheckWithoutIteration]";
 
-#if 0
-	double diffNorm = 2; // initialized with failure
-	if (!failed) {
-		diffNorm = 0;
+	// when this function is called, we excpect a converged solution
+	//
+	// - m_h -> holds size of current step
+	// - m_realyt -> holds old states at time t
+	// - m_realytNext -> holds states at t + h computed by master algorithm
+	// - m_errRealyt -> holds states at t + h_last computed by master algorithm
+	//
+	//   (same for all other data types)
+
+	// first step? do nothing
+	bool res = true;
+	if (m_errTOriginal != m_t) {
+		// determine difference in slopes between t + h, t - h_last, t + h and t
+
+		double err = 0;
+		double errSlopes = 0;
+
 		// compare computed solutions via WRMS Norm of differences
+		unsigned int nValues = (unsigned int)m_realytNext.size();
 		for (unsigned int i=0; i<nValues; ++i) {
-			double errEstimate = (m_realytNext[i] - m_errRealytFirst[i])/(1-2);
+
+			double errEstimate = (m_realytNext[i] - m_errRealyt[i]);
 			// scale the error by tolerances
 			double scaledDiff = errEstimate/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
 			// sum up error squared
-			diffNorm += scaledDiff*scaledDiff;
+			err += scaledDiff*scaledDiff;
+
+			// y(t)     = m_errRealyt
+			// y(t+h/2) = m_realyt[i]
+			// y(t+h)   = m_realytNext[i]
+
+			double slope_full = (m_realytNext[i] - m_errRealyt[i])/(m_t + m_h - m_errTOriginal);
+			double slope_lastHalf = (m_realytNext[i] - m_realyt[i])/m_h;
+
+			// errorSlope = h * (slope(t...t+h) - slope(t...t+h/2))
+			double errSlope = m_h * (slope_full - slope_lastHalf);
+
+			// scale the error by tolerances
+			scaledDiff = errSlope/(std::fabs(m_realytNext[i])*m_project.m_relTol + m_project.m_absTol);
+			// sum up error squared
+			errSlopes += scaledDiff*scaledDiff;
 		}
-		diffNorm = std::sqrt(diffNorm/nValues);
+		err = std::sqrt(err/nValues);
+		errSlopes = std::sqrt(errSlopes/nValues);
+
+		err = std::max(err, errSlopes);
+		if (err > 1) {
+			++m_statErrorTestFailsCounter;
+			// failure by error test
+			IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("ERROR_TEST: Error test failed at t=%1 with h=%2, WRMS=%3.\n")
+							 .arg(m_errTOriginal).arg(2*m_h).arg(err), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			res = false;
+		}
+		m_acceptedErrRichardson = err;
+		m_acceptedErrSlopeCheck = errSlopes;
 	}
 
-	// if error limit has been exceeded, restore master and slave states to last time point
-	if (diffNorm > 1) {
-		++m_statErrorTestFailsCounter;
-		// failure
-		IBK::IBK_Message(IBK::FormatString("Error test failed at t=%1 with h=%2, WRMS=%3.\n")
-						 .arg(m_errTOriginal).arg(2*m_h).arg(diffNorm), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
-
-		if (m_project.m_errorControlMode == Project::EM_ADAPT_STEP) {
-			// restore state to time t
-
-			// roll back slaves
-			restoreSlaveStates(m_t, m_errorCheckStates);
-			// sync slave output caches and variables with m_XXXyt variables
-			for (unsigned int s=0; s<m_slaves.size(); ++s) {
-				Slave * slave = m_slaves[s];
-				slave->cacheOutputs();
-				syncSlaveOutputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt);
-			}
-
-			// estimate step size:
-			// if step size of m_h lead to an error of diffNorm, we want to know the step size that
-			// gives a little less than 1 as diffNorm -> assuming linear relation
-			// m_hProposed/1 = m_h/diffNorm;
-
-			diffNorm = std::min(diffNorm, 3.0); // limit reduction factor to 3
-
-			m_h /= std::sqrt(diffNorm);
-
-			return false;
-		}
-	}
-#endif
-	return true;
+	// update state
+	copyVector(m_realyt, m_errRealyt);
+	return res;
 }
 
 

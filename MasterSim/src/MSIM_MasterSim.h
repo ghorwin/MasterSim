@@ -326,7 +326,11 @@ private:
 	/*! Slave variables (input and output) at time t+h, computed by long step. */
 	std::vector<double>				m_errRealytFirst;
 
-	/*! Slave variables (input and output) at current master time, type real, stored as backup for resetting state when error test fails. */
+	/*! Slave variables (input and output) at current master time, type real, stored as backup for resetting state
+		when error test fails.
+		When error test is using the monitoring variant only, this holds the state at m_errTOriginal.
+		It is initialized with an empty vector, so error checking is only possible after the second step.
+	*/
 	std::vector<double>				m_errRealyt;
 	/*! Slave variables (input and output) at current master time, type int, stored as backup for resetting state when error test fails. */
 	std::vector<int>				m_errIntyt;
