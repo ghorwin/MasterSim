@@ -183,6 +183,9 @@ then
 ./run_tests.sh
 fi
 
+# only on Linux auto-build test FMUs
+if [ ! -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
 echo "*** Generating TEST FMUs ***" &&
 (cd ../../TestFMUs;./generate_FMUs.sh)
+fi
 
