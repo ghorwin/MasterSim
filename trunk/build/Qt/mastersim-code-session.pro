@@ -51,8 +51,8 @@ DataIO.depends = IBK
 IBKMK.depends = IBK
 BlockMod.depends = IBK
 
-MasterSimulator.depends = MasterSim
-MasterSimulatorUI.depends = MasterSim BlockMod
+MasterSimulator.depends = MasterSim IBK IBKMK TiCPP DataIO minizip
+MasterSimulatorUI.depends = MasterSim BlockMod IBK IBKMK TiCPP DataIO minizip
 
 FMUTestMath003Part1.depends = MasterSimulator
 FMUTestMath003Part2.depends = MasterSimulator
