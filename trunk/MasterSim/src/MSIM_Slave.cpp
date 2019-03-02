@@ -188,7 +188,8 @@ int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 													   noSetFMUStatePriorToCurrentPoint ? fmiTrue : fmiFalse);
 	}
 	else {
-		IBK_MessageFilter(IBK::VL_DEVELOPER)IBK::IBK_Message(IBK::FormatString("Interval [%1 ... %2] with h=%3\n").arg(m_t,22,'e',15).arg(m_t+stepSize,22,'e',15).arg(stepSize,16,'e',12),
+		IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("Interval [%1 ... %2] with h=%3\n")
+										   .arg(m_t,22,'e',15).arg(m_t+stepSize,22,'e',15).arg(stepSize,16,'e',12),
 				IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		res = m_fmu->m_fmi2Functions.doStep(m_component, m_t, stepSize,
 													   noSetFMUStatePriorToCurrentPoint ? fmi2True : fmi2False);
