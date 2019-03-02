@@ -390,7 +390,7 @@ void UnitList::relate_units(const UnitData* src, const UnitData* target,
 	// check if src unit is already a base unit (no conversion necessary)
 	if (src->operation()==OP_NONE) {
 		// return only + or -
-		// NOTE: if we convert backward, we need to get the opposite conversion operation
+		// If we convert backward, we need to get the opposite conversion operation.
 		switch (target->operation()) {
 			case OP_ADD :
 				op=OP_ADD;
@@ -705,7 +705,7 @@ const char * const DEFAULT_UNITS =
 "m/s          * 100 cm/s          * 360000 cm/h       * 8.64e+06 cm/d     ;"
 "m2/s         * 10000 cm2/s       * 3600 m2/h         * 3.6e+07 cm2/h     ;"
 "m/s2         ;"
-"s/m          ;"
+"s/m          * 1 kg/m2sPa        ;"
 "s2/m2        ;"
 "kg           * 1000 g            * 1e+06 mg          ;"
 "kg/ms        ;"
@@ -733,6 +733,7 @@ const char * const DEFAULT_UNITS =
 "l/m2s        * 3600 l/m2h        * 86400 l/m2d       * 86400 mm/d        * 3600 mm/h         ;"
 "l/m3s        * 3600 l/m3h        ;"
 "m3/m2s       * 3600 m3/m2h       * 1000 dm3/m2s      * 3.6e+06 dm3/m2h   ;"
+"m3/m2sPa     * 3600 m3/m2hPa     ;"
 "m3/s         * 3600 m3/h         * 1000 dm3/s        * 3.6e+06 dm3/h   ;"
 "m3/m3        * 100 Vol%          ;"
 "m3/m3d       * 100 Vol%/d        ;"

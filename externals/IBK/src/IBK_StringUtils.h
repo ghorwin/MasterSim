@@ -134,6 +134,18 @@ std::string val2string(const T val) {
 	return strm.str();
 }
 
+/*! Converts the value 'val' to a string with given precision. */
+template <class T>
+std::string val2string(const T val, const int precision) {
+	if (!(val == val)) { //-V501
+		return "1.#QNAN";
+	}
+	std::stringstream strm;
+	strm.precision(precision);
+	strm << val;
+	return strm.str();
+}
+
 /*! Converts the value 'val' to a string using special format qualifiers (total string width and fill chars). */
 template <class T>
 std::string val2string(const T val, const std::size_t width, const char fillchar) {
@@ -247,7 +259,29 @@ unsigned int extractFromParenthesis(const std::string & src, unsigned int defaul
 	\return Returns ERT_Success, if () was part of the string and a value could be extracted.
 	\sa ExtractResultType
 */
-ExtractResultType extractFromParenthesis(const std::string & src, std::string & str, unsigned int & val);
+template <typename T>
+ExtractResultType extractFromParenthesis(const std::string & src, std::string & str, T & val) {
+	std::string::size_type pos = src.find("(");
+	std::string::size_type pos2 = src.find(")");
+	if (pos != std::string::npos && pos2 != std::string::npos) {
+		str = src.substr(0,pos);
+		if (pos2 > pos) {
+			std::string substr = src.substr(pos+1, pos2-pos-1);
+			try {
+				val = IBK::string2val<T>(substr);
+				return ERT_Success;
+			}
+			catch (...) {
+				return ERT_BadNumber;
+			}
+		}
+		else
+			return ERT_NoNumber;
+	}
+	str = src;
+	return ERT_NoParenthesis;
+}
+
 
 /*! Extracts a value from paranthesis within a string, "blabla(0.01)". */
 std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,

@@ -259,29 +259,6 @@ unsigned int extractFromParenthesis(const std::string & src, unsigned int defaul
 }
 // ---------------------------------------------------------------------------
 
-ExtractResultType extractFromParenthesis(const std::string & src, std::string & str, unsigned int & val) {
-	std::string::size_type pos = src.find("(");
-	std::string::size_type pos2 = src.find(")");
-	if (pos != std::string::npos && pos2 != std::string::npos) {
-		str = src.substr(0,pos);
-		if (pos2 > pos) {
-			std::string substr = src.substr(pos+1, pos2-pos-1);
-			try {
-				val = IBK::string2val<unsigned int>(substr);
-				return ERT_Success;
-			}
-			catch (...) {
-				return ERT_BadNumber;
-			}
-		}
-		else
-			return ERT_NoNumber;
-	}
-	str = src;
-	return ERT_NoParenthesis;
-}
-// ---------------------------------------------------------------------------
-
 std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 													std::pair<unsigned int, double> defaultValue) {
 	std::string::size_type pos = src.find("(");

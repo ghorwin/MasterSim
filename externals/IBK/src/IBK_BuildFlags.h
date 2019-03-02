@@ -41,7 +41,7 @@
 
 #if defined(_MSC_VER)
 
-#if defined(_DEBUG)
+	#if defined(_DEBUG)
 		#define IBK_DEBUG
 	#else
 		#undef IBK_DEBUG
@@ -57,11 +57,13 @@
 
 #elif defined(__GNUC__)
 
+	// On Linux/Mac, the NDEBUG define is set when gcc runs in release or releaseWithDebInfo mode.
+	// For Qt-creator builds, we set this in IBK.pri, so standard projects should be fine.
 	#if !defined(NDEBUG)
 		#define IBK_DEBUG
 	#else
 		#undef IBK_DEBUG
-	#endif // DEBUG
+	#endif // _DEBUG
 
 #else
 	#error Define this for your compiler

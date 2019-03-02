@@ -64,7 +64,7 @@ SolverArgsParser::SolverArgsParser() :
 	m_numParallelThreads(1)
 {
 	// automatically add flags and options based on defined keywords
-	for (unsigned int i=0; i<NUM_OverrideOptions; ++i) {
+	for (int i=0; i<NUM_OverrideOptions; ++i) {
 		addOption(keywordChar(i),
 			keyword(i),
 			description(i),
@@ -162,9 +162,9 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 	if (hasOption(OO_LES_SOLVER)) {
 		std::string lesOption = option(OO_LES_SOLVER);
 		// we may have a parenthesis option
-		unsigned int val;
+		int val;
 		std::string solverName;
-		IBK::ExtractResultType ertRes = IBK::extractFromParenthesis(lesOption, solverName, val);
+		IBK::ExtractResultType ertRes = IBK::extractFromParenthesis<int>(lesOption, solverName, val);
 		switch (ertRes) {
 			case IBK::ERT_BadNumber :
 			case IBK::ERT_NoNumber :
@@ -174,7 +174,7 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 		m_lesSolverName = solverName;
 		if (ertRes == IBK::ERT_Success) {
 			if (val <= 0)
-				throw IBK::Exception( IBK::FormatString("Invalid integer value used in --les-solver option (must not be negative), argument was '%1'.").arg(lesOption), FUNC_ID);
+				throw IBK::Exception( IBK::FormatString("Invalid integer value used in --les-solver option (value in parenthesis must be a positive integer), argument was '%1'.").arg(lesOption), FUNC_ID);
 			m_lesSolverOption = val;
 		}
 	}
@@ -182,9 +182,9 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 	if (hasOption(OO_PRECONDITIONER)) {
 		std::string preOption = option(OO_PRECONDITIONER);
 		// we may have a parenthesis option
-		unsigned int val;
+		int val;
 		std::string solverName;
-		IBK::ExtractResultType ertRes = IBK::extractFromParenthesis(preOption, solverName, val);
+		IBK::ExtractResultType ertRes = IBK::extractFromParenthesis<int>(preOption, solverName, val);
 		switch (ertRes) {
 			case IBK::ERT_BadNumber :
 			case IBK::ERT_NoNumber :
@@ -193,8 +193,8 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 		}
 		m_preconditionerName = solverName;
 		if (ertRes == IBK::ERT_Success) {
-			if (val <= 0)
-				throw IBK::Exception( IBK::FormatString("Invalid integer value used in --precond option (must not be negative), argument was '%1'.").arg(preOption), FUNC_ID);
+			if (val < 0)
+				throw IBK::Exception( IBK::FormatString("Invalid integer value used in --precond option (value in parenthesis must not be negative), argument was '%1'.").arg(preOption), FUNC_ID);
 			m_preconditionerOption = val;
 		}
 	}
@@ -224,7 +224,7 @@ void SolverArgsParser::printHelp(std::ostream & out) const {
 	const unsigned int TEXT_WIDTH = 79;
 	const unsigned int TAB_WIDTH = 26;
 	printFlags(out,TEXT_WIDTH,TAB_WIDTH);
-	printOptions(out,TEXT_WIDTH,TAB_WIDTH+15);
+	printOptions(out,TEXT_WIDTH,TAB_WIDTH);
 	// write examples
 	out << "\nExamples:\n\n"
 		"Starting solver\n"
@@ -340,6 +340,7 @@ std::string SolverArgsParser::keyword( int index ) const {
 		case DO_RESTART_INFO				: return "restart-info";
 		case GO_RESTART						: return "restart";
 		case GO_RESTART_FROM				: return "restart-from";
+		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "disable-periodic-restart-file-writing";
 		case GO_TEST_INIT					: return "test-init";
 		case GO_OUTPUT_DIR					: return "output-dir";
 		case GO_PARALLEL_THREADS			: return "parallel-threads";
@@ -360,7 +361,8 @@ std::string SolverArgsParser::description( int index ) const {
 		case DO_CLOSE_ON_EXIT				: return "Close console window after finishing simulation.";
 		case DO_RESTART_INFO				: return "Prints information about the restart file (if available).";
 		case GO_RESTART						: return "Continue stopped simulation from last restart check-point.";
-		case GO_RESTART_FROM				: return "Continue stopped simulation from the given restart time. ";
+		case GO_RESTART_FROM				: return "Continue stopped simulation from the given restart time.";
+		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "Disable periodic restart file writing (do not write restart file during simulation, only at end of simulation).";
 		case GO_TEST_INIT					: return "Run the solver initialization and stop.";
 		case GO_OUTPUT_DIR					: return "Writes solver output to different base directory.";
 		case GO_PARALLEL_THREADS			: return "Number of threads to use by the solver, 0 means use of OMP_NUM_THREADS environment variable.";
@@ -385,6 +387,7 @@ std::string SolverArgsParser::descriptionValue( int index ) const {
 		case DO_RESTART_INFO				: return "true|false";
 		case GO_RESTART						: return "true|false";
 		case GO_RESTART_FROM				: return "value unit";
+		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "true|false";
 		case GO_TEST_INIT					: return "true|false";
 		case GO_OUTPUT_DIR					: return "directory";
 		case GO_PARALLEL_THREADS			: return "0...MaxNumThreads";
@@ -408,6 +411,7 @@ std::string SolverArgsParser::defaultValue( int index ) const {
 		case DO_RESTART_INFO				: return "false";
 		case GO_RESTART						: return "false";
 		case GO_RESTART_FROM				: return "";
+		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "false";
 		case GO_TEST_INIT					: return "false";
 		case GO_OUTPUT_DIR					: return "";
 		case GO_PARALLEL_THREADS			: return "1"; // by default sequential run
@@ -430,6 +434,7 @@ std::vector< std::string > SolverArgsParser::options( int index ) const {
 		case GO_TEST_INIT :
 		case DO_STEP_STATS :
 		case DO_RESTART_INFO :
+		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING :
 		case DO_VERSION  :
 				vec.push_back( "true");
 				vec.push_back( "false");
