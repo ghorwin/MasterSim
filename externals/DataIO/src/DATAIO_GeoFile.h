@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -40,9 +40,13 @@
 #include <istream>
 #include <ostream>
 
+#include "DATAIO_ConstructionLines2D.h"
+
 #include <IBK_Color.h>
 #include <IBK_NotificationHandler.h>
 #include <IBK_Path.h>
+#include <IBK_matrix.h>
+#include <IBK_matrix_3d.h>
 
 
 /*! The namespace DATAIO holds all classes and functions related to reading/writing
@@ -188,6 +192,63 @@ public:
 		unsigned int		orientation;	///< Indicates whether the side is oriented in x=0, y=1 or z=2 axis direction. \sa Direction
 	};
 
+	/*! Contains data for construction lines in 3D. Lines can be vertical, horizontal or depth (stacked, diagonal etc.).
+		horizontal lines:	position is y and z, begin and end are x-coordinates, kind is LK_Vertical_XZ
+		vertical lines:		position is x and z, begin and end are y-coordinates, kind is LK_Horizontal_YZ
+		depth lines:		position is x and y, begin and end are z-coordinates, kind is LK_Depth_XY
+		Ther exist convinience functions for creating specific line types.
+	*/
+	struct ConstructionLine3D {
+		enum LineKind3D {
+			LK_Vertical_XZ,		///< Vertical line. Positions are x and z.
+			LK_Horizontal_YZ,	///< Horizontal line. Positions are y and z.
+			LK_Depth_XY			///< Depth line. Positions are x and y.
+		};
+
+		/*! Constructor for a construction line object.
+			\param pos1 Postion of the line (x for vertical and depth and y for horizontal line.
+			\param pos2 Postion of the line (z for vertical and horizontal and y for depth line.
+			\param begin Start of the line (y-coordinate for vertical, x-coordinate for horizontal line and z-coordinate for depth line).
+			\param end End of the line (y-coordinate for vertical, x-coordinate for horizontal line and z-coordinate for depth line).
+			\param kind Flag for line kind (\sa LineKind3D).
+		*/
+		ConstructionLine3D(double pos1, double pos2, double begin, double end, LineKind3D kind) :
+			m_pos1(pos1),
+			m_pos2(pos2),
+			m_begin(begin),
+			m_end(end),
+			m_kind(kind)
+		{}
+
+		/*! Convinience function for creating a vertical 3D construction line.*/
+		static ConstructionLine3D constructionLine3DVertical(double xpos, double zpos, double ybegin, double yend) {
+			return ConstructionLine3D(xpos, zpos, ybegin, yend, LK_Vertical_XZ);
+		}
+
+		/*! Convinience function for creating a horizontal 3D construction line.*/
+		static ConstructionLine3D constructionLine3DHorizontal(double ypos, double zpos, double xbegin, double xend) {
+			return ConstructionLine3D(ypos, zpos, xbegin, xend, LK_Horizontal_YZ);
+		}
+
+		/*! Convinience function for creating a depth 3D construction line.*/
+		static ConstructionLine3D constructionLine3DDepth(double xpos, double ypos, double zbegin, double zend) {
+			return ConstructionLine3D(xpos, ypos, zbegin, zend, LK_Depth_XY);
+		}
+
+		double		m_pos1;		///< First line position
+		double		m_pos2;		///< Second line position
+		double		m_begin;	///< Start coordinate of the line
+		double		m_end;		///< End coordinate of the line
+		LineKind3D	m_kind;		///< Line kind.
+	};
+
+	/*! Contains vectors for vertical, horizontal and depth construction lines. Can be created by using generateConstructionLines3D().*/
+	struct ConstructionLines3D {
+		std::vector<ConstructionLine3D> m_verticalLines;
+		std::vector<ConstructionLine3D> m_horizontalLines;
+		std::vector<ConstructionLine3D> m_depthLines;
+	};
+
 
 
 	// *** PUBLIC MEMBER FUNCTIONS ***
@@ -238,6 +299,7 @@ public:
 	Grid 								m_grid;	 				///< Grid information.
 	std::vector< Element > 				m_elementsVec;			///< Element geometry data.
 	std::vector< Side >					m_sidesVec;	 			///< Sides geometry data.
+	ConstructionLines2D					m_constructionLines;	///< Construction lines.
 
 	/*! True if the file was read/is to be written in binary mode. */
 	bool								m_isBinary;
@@ -264,7 +326,7 @@ private:
 	void writeBinaryGeometryData(std::ostream& out) const;
 
 	/*! Extracts the geometry data out of a list with lines.
-		Throws an
+		Throws an IBK::Exception in case of error.
 		\param lines The list with lines containing the header and geometry section of the file
 	*/
 	void parseGeometryData(const std::vector<std::string> & lines);
@@ -276,13 +338,19 @@ private:
 	*/
 	void readBinaryGeometryData(std::istream& in);
 
+	/*! This function is called for DataIO files with version number less than 7, which used
+		a column indexes running from top to bottom, yet element.m_y coordinates that goes from bottom to top.
+		Also, to increase confusion, in files of this version number, the y-element/row heights are given also
+		from top to bottom.
+		This function fixes this.
+	*/
+	void fixYCoordinates();
 
 	/*! Major version number of geometry file.
 		The version number is read in read().
 		The version number must be set explicitely when readBinaryGeometryData() is directly called.
 	*/
 	unsigned int m_majorFileVersion;
-
 
 	// DataIO is a friend so that is can access readBinaryGeometryData
 	friend class DataIO;

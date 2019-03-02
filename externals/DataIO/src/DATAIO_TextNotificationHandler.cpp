@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -37,6 +37,8 @@
 #include <iostream>
 #include <sstream>
 
+#include <IBK_messages.h>
+
 namespace DATAIO {
 
 /*! Characters shown as part of the animation for notification calls without percentage argument. */
@@ -45,15 +47,19 @@ char CHARS[4] = { '/', '-', '\\', '|' };
 void TextNotificationHandler::notify() {
 	if (m_quiet) return;
 	m_counter = (m_counter + 1) % 4;
-	std::cout << "\r" << m_process << CHARS[m_counter];
-	std::cout.flush();
+	std::stringstream strm;
+	strm << '\r' << m_process << CHARS[m_counter];
+	IBK::IBK_Message(strm.str(), IBK::MSG_CONTINUED, "[TextNotificationHandler::notify]", IBK::VL_STANDARD);
 }
 
 
 void TextNotificationHandler::notify(double percentage) {
 	if (m_quiet) return;
+	if (m_watch.difference() < 50)
+		return;
+	m_watch.start();
 	std::stringstream strm;
-	strm << m_process;
+	strm << '\r' << m_process;
 	int percent = (int)(100*percentage);
 	int barLength = (int)(70 - m_process.size()); // might be negative
 	int completed = (int)((70 - m_process.size())*percentage); // might be negative
@@ -69,8 +75,7 @@ void TextNotificationHandler::notify(double percentage) {
 		msg += ']';
 		strm << msg;
 	}
-	std::cout << '\r' << strm.str();
-	std::cout.flush();
+	IBK::IBK_Message(strm.str(), IBK::MSG_CONTINUED, "[TextNotificationHandler::notify]", IBK::VL_STANDARD);
 }
 
 

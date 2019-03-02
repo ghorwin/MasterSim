@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -51,8 +51,10 @@
 #include <IBK_Version.h>
 #include <IBK_UnitList.h>
 #include <IBK_assert.h>
+#include <IBK_UnitVector.h>
 
 #include "DATAIO_Constants.h"
+#include "DATAIO_GeoFile.h"
 
 #if (defined(_MSC_VER) || defined(__BORLANDC__) || defined(__MINGW32__))
   #include <windows.h>
@@ -90,7 +92,6 @@ private:
 	DataIO* m_dataio;	///< DataIO object.
 };
 
-
 FileReaderDataProcessorAddData::FileReaderDataProcessorAddData(DataIO* dataio) :
 	m_dataio(dataio)
 {
@@ -109,7 +110,7 @@ void FileReaderDataProcessorAddData::processLine(const std::string& line) {
 
 
 int FileReaderDataProcessorAddData::lineCount() const {
-	return m_dataio->m_timepoints.size();
+	return (int)m_dataio->m_timepoints.size();
 }
 // ----------------------------------------------------------------------------
 
@@ -119,6 +120,8 @@ DataIO::DataIO() :
 	m_geometryData(NULL)
 {
 	clear();
+	// confirm correct seconds unit
+	IBK_ASSERT(IBK::Unit("s").id() == IBK_UNIT_ID_SECONDS);
 }
 // ----------------------------------------------------------------------------
 
@@ -346,19 +349,23 @@ void DataIO::deleteData(unsigned int idxFrom, unsigned int idxTo) {
 	if (idxTo >= m_timepoints.size())
 		throw IBK::Exception("Second time index 'idxTo' out of range.", FUNC_ID);
 
-	IBK_ASSERT(idxTo < m_valueStrings.size());
-	IBK_ASSERT(idxFrom < m_valueStrings.size());
+	IBK_ASSERT(idxTo < m_values.size());
+	IBK_ASSERT(idxFrom < m_values.size());
 
 	if (idxFrom == idxTo) {
 
-		if (m_valueStrings[idxFrom].empty()) {
-			std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxFrom;
-			/// \todo Performance hack: removing a vector from within a vector will be done by copying
-			///		  later vectors over earlier vectors. Speedup will be significant if instead of copying
-			///		  later vectors will be swapped (pointer-change) bit-by-bit with earlier vectors.
-			m_values.erase(values_it1);
-		}
-		else {
+		std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxFrom;
+		/// \todo Performance hack: removing a vector from within a vector will be done by copying
+		///		  later vectors over earlier vectors. Speedup will be significant if instead of copying
+		///		  later vectors will be swapped (pointer-change) bit-by-bit with earlier vectors.
+		m_values.erase(values_it1);
+
+		// for ASCII format we need to erase m_valueStrings as well
+		if (!m_valueStrings.empty()) {
+			// ASCII format sanity checks
+			IBK_ASSERT(idxTo < m_valueStrings.size());
+			IBK_ASSERT(idxFrom < m_valueStrings.size());
+
 			std::vector< std::string >::iterator values_it1 = m_valueStrings.begin() + idxFrom;
 			m_valueStrings.erase(values_it1);
 		}
@@ -368,36 +375,26 @@ void DataIO::deleteData(unsigned int idxFrom, unsigned int idxTo) {
 	}
 	else {
 
-		if (m_valueStrings[idxFrom].empty()) {
+		/// \todo Performance improvement, use temperary data structures IO, copy only the values that remain
+		/// (use proper reserve() calls, and afterwards swap the vectors.
+		std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxFrom;
+		std::vector< std::vector<double> >::iterator values_it2 = m_values.begin() + idxTo+1;
+		m_values.erase(values_it1,values_it2);
 
-			/// \todo Performance improvement, use temperary data structures IO, copy only the values that remain
-			/// (use proper reserve() calls, and afterwards swap the vectors.
-			std::vector< std::vector<double> >::iterator values_it1 = m_values.begin() + idxTo;
-			std::vector< std::vector<double> >::iterator values_it2 = m_values.end();
-			m_values.erase(values_it1,values_it2);
-			values_it1 = m_values.begin();
-			values_it2 = m_values.begin() + idxFrom;
-			m_values.erase(values_it1,values_it2);
-		}
-		else {
+		if (!m_valueStrings.empty()) {
+			// ASCII format sanity checks
+			IBK_ASSERT(idxTo < m_valueStrings.size());
+			IBK_ASSERT(idxFrom < m_valueStrings.size());
 
-			std::vector< std::string >::iterator values_it1 = m_valueStrings.begin() + idxTo;
-			std::vector< std::string >::iterator values_it2 = m_valueStrings.end();
-			m_valueStrings.erase(values_it1,values_it2);
-			values_it1 = m_valueStrings.begin();
-			values_it2 = m_valueStrings.begin() + idxFrom;
+			std::vector< std::string >::iterator values_it1 = m_valueStrings.begin() + idxFrom;
+			std::vector< std::string >::iterator values_it2 = m_valueStrings.begin() + idxTo+1;
 			m_valueStrings.erase(values_it1,values_it2);
 		}
 
-		std::vector<double>::iterator timepoints_it1 = m_timepoints.begin() + idxTo;
-		std::vector<double>::iterator timepoints_it2 = m_timepoints.end();
-		m_timepoints.erase(timepoints_it1,timepoints_it2);
-		timepoints_it1 = m_timepoints.begin();
-		timepoints_it2 = m_timepoints.begin() + idxFrom;
+		std::vector<double>::iterator timepoints_it1 = m_timepoints.begin() + idxFrom;
+		std::vector<double>::iterator timepoints_it2 = m_timepoints.begin() + idxTo+1;
 		m_timepoints.erase(timepoints_it1,timepoints_it2);
 	}
-
-	m_values.resize(m_valueStrings.size());
 
 }
 // ----------------------------------------------------------------------------
@@ -410,8 +407,8 @@ void DataIO::setData(const std::vector<double> & timePoints,
 	if (values.size() != timePoints.size())
 		throw IBK::Exception("Size mismatch between values and timePoints vectors.", FUNC_ID);
 
-	if (values.empty()) {
-		m_nValues = values[0].size();
+	if (!values.empty()) {
+		m_nValues = (unsigned int)values[0].size();
 		for (unsigned int i=1; i<values.size(); ++i)
 			if (values[i].size() != m_nValues)
 				throw IBK::Exception("Size mismatch between individual vectors in values vector.", FUNC_ID);
@@ -436,7 +433,7 @@ void DataIO::swapData(std::vector<double> & timePoints,
 		throw IBK::Exception("Size mismatch between values and timePoints vectors.", FUNC_ID);
 
 	if (values.empty()) {
-		m_nValues = values[0].size();
+		m_nValues = (unsigned int)values[0].size();
 		for (unsigned int i=1; i<values.size(); ++i)
 			if (values[i].size() != m_nValues)
 				throw IBK::Exception("Size mismatch between individual vectors in values vector.", FUNC_ID);
@@ -528,7 +525,7 @@ void DataIO::write(IBK::NotificationHandler * notify) const {
 	}
 	if (notify != 0)
 		notify->notify(1);
-	((DataIO*)this)->close();
+	const_cast<DataIO*>(this)->close();
 }
 // ----------------------------------------------------------------------------
 
@@ -584,7 +581,7 @@ void DataIO::writeHeader() const {
 
 	// set number of values per output time based on space type setting and nums vector
 	if (m_spaceType == ST_SINGLE)
-		m_nValues = m_nums.size();
+		m_nValues = (unsigned int)m_nums.size();
 	else
 		m_nValues = 1;
 
@@ -664,7 +661,7 @@ void DataIO::writeHeader() const {
 		// done writing ASCII header
 
 		// prepare ASCII output format
-		if (m_asciiPrecision != -1)
+		if (m_asciiPrecision > -1)
 			out.precision(m_asciiPrecision);
 		if (m_asciiFmtFlags & std::ios_base::floatfield) {
 			out.setf(m_asciiFmtFlags);
@@ -686,14 +683,14 @@ void DataIO::appendData(double t, const double * values) const {
 	std::ostream & out = *m_ofstream; // readability improvement
 	// convert output time into correct output unit
 	try {
-		IBK::UnitList::instance().convert( IBK::Unit("s"), IBK::Unit(m_timeUnit), t);
+		IBK::UnitList::instance().convert( IBK::Unit(IBK_UNIT_ID_SECONDS), IBK::Unit(m_timeUnit), t);
 	}
-	catch (IBK::Exception &) {
-		throw IBK::Exception("Invalid time unit in DataIO container.", FUNC_ID);
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, "Invalid time unit in DataIO container.", FUNC_ID);
 	}
 	if (m_isBinary) {
 		out.write(reinterpret_cast<char *>(&t), sizeof(double));
-		out.write((char*)values, sizeof(double)*m_nValues);
+		out.write((const char*)values, sizeof(double)*m_nValues);
 	}
 	else {
 		out << std::setw(12) << std::left << t << " \t";
@@ -758,7 +755,7 @@ void DataIO::reopenForWriting(const IBK::Path &fname) {
 
 	// set number of values per output time based on space type setting and nums vector
 	if (m_spaceType == ST_SINGLE)
-		m_nValues = m_nums.size();
+		m_nValues = (unsigned int)m_nums.size();
 	else
 		m_nValues = 1;
 }
@@ -806,7 +803,7 @@ DataIO::dataFormat_t DataIO::determineDataFormat(const GeoFile & geoFile) {
 		if (m_type == T_FLUX) {
 
 			// missing data in GeoFile -> invalid dataFormat
-			unsigned int sidesCount = geoFile.m_sidesVec.size();
+			unsigned int sidesCount = (unsigned int)geoFile.m_sidesVec.size();
 			if (sidesCount == 0) {
 				IBK::IBK_Message( "Missing/empty sides vector in Geometry file.", IBK::MSG_ERROR, FUNC_ID);
 				m_dataFormat = NUM_DF;
@@ -835,7 +832,7 @@ DataIO::dataFormat_t DataIO::determineDataFormat(const GeoFile & geoFile) {
 		else {
 
 			// missing data in GeoFile -> invalid dataFormat
-			unsigned int elementCount = geoFile.m_elementsVec.size();
+			unsigned int elementCount = (unsigned int)geoFile.m_elementsVec.size();
 			if (elementCount == 0) {
 				IBK::IBK_Message( "Missing/empty elements vector in Geometry file.", IBK::MSG_ERROR, FUNC_ID);
 				m_dataFormat = NUM_DF;
@@ -1139,12 +1136,12 @@ void DataIO::readBinaryHeader(std::istream& in) {
 		in.read(reinterpret_cast<char *>(&m_createdTime), sizeof(int64_t));
 
 		// read quantity
-		try { IBK::read_string_binary(in, m_quantity, 1000); }
+		try { IBK::read_string_binary(in, m_quantity, 500000); }
 		catch (std::exception & ex) {
 			throw IBK::Exception("Error reading QUANTITY property in header: "+ std::string(ex.what()), FUNC_ID);
 		}
 		// Read quantity keyword
-		try { IBK::read_string_binary(in, m_quantityKeyword, 1000); }
+		try { IBK::read_string_binary(in, m_quantityKeyword, 500000); }
 		catch (std::exception & ex) {
 			throw IBK::Exception("Error reading QUANTITY_KW property in header: "+ std::string(ex.what()), FUNC_ID);
 		}
@@ -1169,7 +1166,7 @@ void DataIO::readBinaryHeader(std::istream& in) {
 
 		// compute number of values stored per time point
 		if (m_spaceType == ST_SINGLE)
-			m_nValues = m_nums.size();
+			m_nValues = (unsigned int)m_nums.size();
 		else
 			m_nValues = 1;
 
@@ -1247,6 +1244,7 @@ void DataIO::readBinaryHeaderPreV6(std::istream& in) {
 			// set major file version number in geometry data
 			m_geometryData->m_majorFileVersion = 5;
 			m_geometryData->readBinaryGeometryData(in);
+			m_geometryData->m_constructionLines.generate(*m_geometryData);
 		}
 		catch (IBK::Exception &ex) {
 			throw IBK::Exception(ex, "Error reading geometry data:\n", FUNC_ID);
@@ -1275,7 +1273,7 @@ void DataIO::readBinaryHeaderPreV6(std::istream& in) {
 
 		// compute number of values stored per time point
 		if (m_spaceType == ST_SINGLE)
-			m_nValues = m_nums.size();
+			m_nValues = (unsigned int)m_nums.size();
 		else
 			m_nValues = 1;
 
@@ -1321,6 +1319,10 @@ void DataIO::readBinaryData(std::istream& in, IBK::NotificationHandler * notify)
 		m_values.clear();
 		/// \todo add performance tweak: keep already read values in m_values and avoid re-reading after update
 
+		// cache time unit
+		m_cachedTimeUnit.set(m_timeUnit); // this may throw an exception, if m_timeUnit is invalid
+
+		IBK::UnitVector tpVec;
 		// check stream flags in addition to isBinary flag
 		while (in) {
 			unsigned int pos = (unsigned int)in.tellg();
@@ -1332,13 +1334,17 @@ void DataIO::readBinaryData(std::istream& in, IBK::NotificationHandler * notify)
 			/// \todo handle incomplete reads (when file is concurrently written)
 			if (in.eof()) break; // nothing more to read, abort
 			// convert output time into correct output unit
-			IBK::UnitList::instance().convert( IBK::Unit(m_timeUnit), IBK::Unit("s"), tmp);
-			m_timepoints.push_back(tmp);
+			tpVec.m_data.push_back(tmp);
 			// add empty vector
 			m_values.push_back(std::vector<double>());
 			// seek to next record
 			in.seekg(sizeof(double) * m_nValues, std::ios_base::cur);
 		}
+		// convert time points into seconds
+		tpVec.m_unit = m_cachedTimeUnit;
+		tpVec.convert( IBK::Unit(IBK_UNIT_ID_SECONDS) ); // may throw an exception if m_timeUnit is not a time unit
+		// now swap values with timepoints vector
+		m_timepoints.swap(tpVec.m_data);
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, "Error on read binary data.", FUNC_ID);
@@ -1499,6 +1505,7 @@ void DataIO::readASCIIHeader(const IBK::Path & fname, IBK::NotificationHandler *
 
 			try {
 				m_geometryData->parseGeometryData(headerLines);
+				m_geometryData->m_constructionLines.generate(*m_geometryData);
 			}
 			catch (IBK::Exception &ex) {
 				if (notify) notify->notify(1);
@@ -1512,7 +1519,7 @@ void DataIO::readASCIIHeader(const IBK::Path & fname, IBK::NotificationHandler *
 
 		// done reading header, compute m_nValues
 		if (m_spaceType == ST_SINGLE)
-			m_nValues = m_nums.size();
+			m_nValues = (unsigned int)m_nums.size();
 		else
 			m_nValues = 1;
 
@@ -1542,6 +1549,8 @@ void DataIO::readASCIIData(const IBK::Path & fname, IBK::NotificationHandler * n
 	const char * const FUNC_ID = "[DataIO::readASCIIData]";
 
 	try {
+		// cache time unit
+		m_cachedTimeUnit.set(m_timeUnit); // this may throw an exception, if m_timeUnit is invalid
 
 #ifdef SPEED_RATING_MESSAGES
 		IBK::StopWatch w;
@@ -1589,7 +1598,7 @@ void DataIO::addValueLine(const std::string & line) {
 	if (!(tp_strm >> tp))
 		throw IBK::Exception( IBK::FormatString("Error parsing time point from line '%1', using substr '%2'.").arg(line).arg(line.substr(0,j)), FUNC_ID);
 	// convert output time into correct output unit
-	IBK::UnitList::instance().convert( IBK::Unit(m_timeUnit), IBK::Unit("s"), tp);
+	IBK::UnitList::instance().convert( m_cachedTimeUnit, IBK::Unit(IBK_UNIT_ID_SECONDS), tp);
 
 	m_timepoints.push_back(tp);
 

@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -35,6 +35,8 @@
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
 
+#include "DATAIO_GeoFile.h"
+
 namespace DATAIO {
 
 
@@ -51,7 +53,7 @@ void listDataIOHeader(const IBK::Path &inputFilePath) {
 			gFile.read(geoFilePath);
 		}
 	}
-	catch(IBK::Exception& e) {
+	catch(IBK::Exception&) {
 		IBK::IBK_Message("Cannot read geofile from " + inputFilePath.str(), IBK::MSG_WARNING, "DataIO::listDataIOHeader");
 	}
 
