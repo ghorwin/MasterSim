@@ -92,6 +92,7 @@ int main(int argc, char * argv[]) {
 		masterSim.writeMetrics();
 
 		// unload shared libraries
+		masterSim.unloadLibraries();
 
 	}
 	catch (IBK::Exception & ex) {

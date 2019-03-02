@@ -58,6 +58,10 @@ public:
 	*/
 	void loadLibrary(const IBK::Path & sharedLibraryDir);
 
+	/*! Unload library.
+		\param sharedLibraryPath Path to directory containing the shared libraries (not the path to an individual dll/so file).
+	*/
+	void unloadLibrary();
 
 #if defined(_WIN32)
 	HMODULE				m_dllHandle; // fmu.dll handle
@@ -272,6 +276,12 @@ void FMU::importFMIv2Functions() {
 }
 
 
+void FMU::unloadLibrary() {
+	m_impl->unloadLibrary();
+}
+
+
+
 
 // **** STATIC FUNCTIONS ****
 
@@ -388,6 +398,11 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 							 .arg(GetLastErrorStdStr()).arg(sharedLibraryPath), FUNC_ID);
 }
 
+
+void FMUPrivate::unloadLibrary() {
+	// \todo implement for Windows
+}
+
 #else // _WIN32
 
 // Linux/Mac implementation
@@ -428,6 +443,15 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	if (m_soHandle == NULL)
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
 							 .arg(dlerror()).arg(sharedLibraryPath), FUNC_ID);
+}
+
+
+void FMUPrivate::unloadLibrary() {
+	const char * const FUNC_ID = "[FMUPrivate::unloadLibrary]";
+	int res = dlclose(m_soHandle);
+	if (res != 0) {
+		IBK::IBK_Message(IBK::FormatString("Error unloading shared library."), IBK::MSG_ERROR, FUNC_ID);
+	}
 }
 
 #endif // _WIN32
