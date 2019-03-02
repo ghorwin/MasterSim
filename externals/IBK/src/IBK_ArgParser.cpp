@@ -238,6 +238,17 @@ bool ArgParser::hasOption(const std::string & longVersion) const {
 	return !m_knownOptions[idx].m_givenValue.empty();
 }
 
+void ArgParser::removeOption(const std::string & longVersion) {
+	// try to find the index of the flag in the vector with known flags
+	unsigned int idx = findOption(0, longVersion);
+	if (idx == m_knownOptions.size()) {
+		throw IBK::Exception(IBK::FormatString("Option '%1' has not been defined with addOption().")
+			.arg(longVersion), "[ArgParser::removeOption]");
+	}
+	// remove entry
+	m_knownOptions.erase(m_knownOptions.begin()+idx);
+}
+
 const std::string & ArgParser::option(const char shortVersion) const {
 	// try to find the index of the flag in the vector with known flags
 	unsigned int idx = findOption(shortVersion, "");

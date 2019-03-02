@@ -77,7 +77,10 @@ void CSVReader::read(const IBK::Path & filename) {
 		m_nColumns = (unsigned int)m_captions.size();
 		m_nRows = 0;
 		while (std::getline(in, line)) {
-			++m_nRows;
+			++m_nRows; // also count empty rows, to get correct line numbers in error messages
+			// skip empty rows
+			if (line.empty() || line.find_first_not_of("\n\r\t ") == std::string::npos)
+				continue;
 			std::vector<std::string> tokens;
 			IBK::explode(line, tokens, m_separationCharacter);
 			// error: wrong column size
@@ -101,6 +104,8 @@ void CSVReader::read(const IBK::Path & filename) {
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception( ex, IBK::FormatString("Error reading file '%1'.").arg(filename), FUNC_ID);
 	}
+	// store final number of rows
+	m_nRows = m_values.size();
 }
 // ----------------------------------------------------------------------------
 

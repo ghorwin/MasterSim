@@ -7,7 +7,7 @@
 ############################################
 
 # This option enables extensive runtime checks.
-#OPTIONS += sanitize_checks
+OPTIONS += sanitize_checks
 
 #
 # This option enables (default) mpi support and switches to MPICC compiler

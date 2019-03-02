@@ -261,29 +261,29 @@ void Parameter::test( const IBK::Parameter& val, oper_t op ) const {
 	switch (op) {
 		case OP_GE :
 			if ( !( value >= val.value ) ) {
-				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be >= %2 %3)")
-					.arg(name) .arg( val.get_value( val.unit() ) ) .arg( val.unit() ), FUNC_ID);
+				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be >= %2 %3).")
+									 .arg(name) .arg( val.get_value() ) .arg( val.IO_unit ), FUNC_ID);
 			}
 			break;
 
 		case OP_GT :
 			if (!(value > val.value)) {
-				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be > %2 %3)")
-					.arg(name) .arg(val.get_value( val.unit())) .arg(val.unit()), FUNC_ID);
+				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be > %2 %3).")
+									 .arg(name) .arg( val.get_value() ) .arg( val.IO_unit ), FUNC_ID);
 			}
 			break;
 
 		case OP_LE :
 			if (!(value <= val.value)) {
-				throw IBK::Exception( FormatString("Parameter '%1' out of range (must be <= %2 %3)")
-					.arg(name) .arg(val.get_value( val.unit())) .arg(val.unit()), FUNC_ID);
+				throw IBK::Exception( FormatString("Parameter '%1' out of range (must be <= %2 %3).")
+									  .arg(name) .arg( val.get_value() ) .arg( val.IO_unit ), FUNC_ID);
 			}
 			break;
 
 		case OP_LT :
 			if (!(value < val.value)) {
-				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be < %2 %3)")
-					.arg(name) .arg(val.get_value( val.unit())) .arg(val.unit()), FUNC_ID);
+				throw IBK::Exception(FormatString("Parameter '%1' out of range (must be < %2 %3).")
+									 .arg(name) .arg( val.get_value() ) .arg( val.IO_unit ), FUNC_ID);
 			}
 			break;
 	}
