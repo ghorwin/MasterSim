@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -37,6 +37,7 @@
 #include <fstream>
 #include <iterator>
 #include <sstream>
+#include <algorithm>
 
 #include <IBK_InputOutput.h>
 #include <IBK_NotificationHandler.h>
@@ -44,6 +45,8 @@
 #include <IBK_crypt.h>
 #include <IBK_Version.h>
 #include <IBK_assert.h>
+#include <IBK_messages.h>
+#include <IBK_Constants.h>
 
 #include "DATAIO_DataIO.h"
 #include "DATAIO_Constants.h"
@@ -102,6 +105,9 @@ void GeoFile::read(const IBK::Path &fname, IBK::NotificationHandler * notify){
 					// call read binary method
 					try {
 						readBinaryGeometryData( in );
+						m_constructionLines.generate(*this);
+						// close stream
+						in.close();
 					}
 					catch (IBK::Exception &ex) {
 						throw IBK::Exception(ex, "Error reading binary geometry data.", FUNC_ID);
@@ -121,8 +127,8 @@ void GeoFile::read(const IBK::Path &fname, IBK::NotificationHandler * notify){
 				case 0x07 :
 				case 0x06 : {
 
+					in.close(); // close stream, FileReader opens the file for reading again
 					std::vector< std::string > geoLines;
-					in.close();
 
 					if (IBK::FileReader::readAll(fname, geoLines, std::vector<std::string>(),
 												 4*sizeof(unsigned int), notify) == -1)
@@ -133,13 +139,13 @@ void GeoFile::read(const IBK::Path &fname, IBK::NotificationHandler * notify){
 					// call text read method
 					try {
 						parseGeometryData( geoLines );
+						m_constructionLines.generate(*this);
 					}
 					catch (IBK::Exception &ex) {
 						throw IBK::Exception(ex, "", FUNC_ID);
 					}
 					return;
-
-				} break;
+				}
 
 				default:
 					throw IBK::Exception("Unknown file version, not able to read this format!", FUNC_ID);
@@ -147,12 +153,11 @@ void GeoFile::read(const IBK::Path &fname, IBK::NotificationHandler * notify){
 
 		}
 
-		// close stream
-		in.close();
 	}
 	catch (IBK::Exception &ex ) {
 		throw IBK::Exception(ex, IBK::FormatString("Error reading geometry file '%1'.").arg(fname), FUNC_ID);
 	}
+
 }
 // ----------------------------------------------------------------------------
 
@@ -343,7 +348,7 @@ void GeoFile::parseGeometryData(const std::vector<std::string> & geoLines) {
 							// read z widths
 							double z_total = 0;
 							while (lstrm >> tmp) {
-								if (tmp == 0.0) {
+								if ( (tmp == 0.0) && !m_grid.zwidths.empty() ) {
 									throw IBK::Exception("Zero element width in z direction!", FUNC_ID);
 								}
 								m_grid.zwidths.push_back(tmp);
@@ -412,6 +417,8 @@ void GeoFile::parseGeometryData(const std::vector<std::string> & geoLines) {
 			}
 		}
 
+		// for file versions < 7, fix column index
+		fixYCoordinates();
 	}
 	catch (IBK::Exception &ex) {
 		throw IBK::Exception(ex, "Error on parse geometry data.", FUNC_ID);
@@ -503,49 +510,53 @@ void GeoFile::writeGeometryData(std::ostream& out, IBK::NotificationHandler * no
 	}
 
 	// write sides geometry table
-	if (m_sidesVec.empty())
-		throw IBK::Exception("Missing side geometry data.", FUNC_ID);
-
-	out << "\nTABLE  SIDES_GEOMETRY" << '\n';
-	for (unsigned int i=0; i<m_sidesVec.size(); ++i) {
-		unsigned int perc = 60 + (unsigned int)(i*40.0/m_sidesVec.size());
-		if (notify && perc != percentage) {
-			notify->notify((percentage+1)/100.0);
-			percentage = perc;
-		}
-		const Side & S = m_sidesVec[i];
-
-		/// \todo Remove redudant output of element/side number
-		out << std::setw(8)  << std::left << S.n << ' ';
-		std::stringstream nicestrm;
-		nicestrm.precision(12);
-
-		// do we have 3D grid here?
-		if ( m_grid.zwidths.size() > 1 ) {
-
-			nicestrm	<< std::setw(9) << std::left << S.x << " "
-						<< std::setw(9) << std::left << S.y << " "
-						<< std::setw(9) << std::left << S.z;
-			out << std::setw(20) << std::left << nicestrm.str() << "\t "
-				<< std::setw(6) << std::left << S.i << " "
-				<< std::setw(6) << std::left << S.j << " "
-				<< std::setw(6) << std::left << S.k << " "
-				<< std::setw(5) << std::left << S.orientation << '\n';
-
-		} else {
-
-			nicestrm << std::setw(9) << std::left << S.x << " "
-					 << std::setw(9) << std::left << S.y;
-			out << std::setw(20) << std::left << nicestrm.str() << "\t "
-				<< std::setw(6) << std::left << S.i << " "
-				<< std::setw(6) << std::left << S.j << " "
-				<< std::setw(5) << std::left << S.orientation << '\n';
-
-		} // else if 3D
-
+	if (m_sidesVec.empty()) {
+		IBK::IBK_Message("Missing side geometry data (no sides specified, flux outputs won't be possible).",
+						 IBK::MSG_WARNING, FUNC_ID);
 	}
+	else {
 
-	out << std::endl;
+		out << "\nTABLE  SIDES_GEOMETRY" << '\n';
+		for (unsigned int i=0; i<m_sidesVec.size(); ++i) {
+			unsigned int perc = 60 + (unsigned int)(i*40.0/m_sidesVec.size());
+			if (notify && perc != percentage) {
+				notify->notify((percentage+1)/100.0);
+				percentage = perc;
+			}
+			const Side & S = m_sidesVec[i];
+
+			/// \todo Remove redudant output of element/side number
+			out << std::setw(8)  << std::left << S.n << ' ';
+			std::stringstream nicestrm;
+			nicestrm.precision(12);
+
+			// do we have 3D grid here?
+			if ( m_grid.zwidths.size() > 1 ) {
+
+				nicestrm	<< std::setw(9) << std::left << S.x << " "
+							<< std::setw(9) << std::left << S.y << " "
+							<< std::setw(9) << std::left << S.z;
+				out << std::setw(20) << std::left << nicestrm.str() << "\t "
+					<< std::setw(6) << std::left << S.i << " "
+					<< std::setw(6) << std::left << S.j << " "
+					<< std::setw(6) << std::left << S.k << " "
+					<< std::setw(5) << std::left << S.orientation << '\n';
+
+			} else {
+
+				nicestrm << std::setw(9) << std::left << S.x << " "
+						 << std::setw(9) << std::left << S.y;
+				out << std::setw(20) << std::left << nicestrm.str() << "\t "
+					<< std::setw(6) << std::left << S.i << " "
+					<< std::setw(6) << std::left << S.j << " "
+					<< std::setw(5) << std::left << S.orientation << '\n';
+
+			} // else if 3D
+
+		}
+
+		out << std::endl;
+	}
 
 	if (!out.good())
 		throw IBK::Exception("Error writing geometry data to file.", FUNC_ID);
@@ -581,36 +592,34 @@ void GeoFile::readBinaryGeometryData(std::istream& in) {
 		IBK::read_vector_binary(in, m_grid.ywidths, 10000);
 		IBK::read_vector_binary(in, m_grid.zwidths, 10000);
 
+
 		// calculate x-grid coordinates
 		m_grid.x_gridCoords.resize(m_grid.xwidths.size()+1);
 		m_grid.x_gridCoords[0] = 0;
 		m_grid.x_coords.resize(m_grid.xwidths.size());
 
 		for (unsigned int i=0; i<m_grid.xwidths.size(); ++i) {
-
-			if (m_grid.xwidths[i] <= 0.0) {
+			if (m_grid.xwidths[i] <= 0.0)
 				throw IBK::Exception("Zero or negative element width in x direction", FUNC_ID);
-			}
+
 			m_grid.x_coords[i] = m_grid.x_gridCoords[i] + m_grid.xwidths[i]*0.5;
 			m_grid.x_gridCoords[i+1] = m_grid.x_gridCoords[i] + m_grid.xwidths[i];
-
 		}
+
 
 		// calculate y-grid coordinates
 		m_grid.y_gridCoords.resize(m_grid.ywidths.size()+1);
-		m_grid.y_gridCoords[0] = std::accumulate(m_grid.ywidths.begin(), m_grid.ywidths.end(), 0.0);
+		m_grid.y_gridCoords[0] = 0;
 		m_grid.y_coords.resize(m_grid.ywidths.size());
 
 		for (unsigned int i=0; i<m_grid.ywidths.size(); ++i) {
-			if (m_grid.ywidths[i] <= 0.0) {
+			if (m_grid.ywidths[i] <= 0.0)
 				throw IBK::Exception("Zero or negative element width in y direction",FUNC_ID);
-			}
-			m_grid.y_coords[i] = m_grid.y_gridCoords[i] - m_grid.ywidths[i]*0.5;
-			m_grid.y_gridCoords[i+1] = m_grid.y_gridCoords[i] - m_grid.ywidths[i];
+
+			m_grid.y_coords[i] = m_grid.y_gridCoords[i] + m_grid.ywidths[i]*0.5;
+			m_grid.y_gridCoords[i+1] = m_grid.y_gridCoords[i] + m_grid.ywidths[i];
 		}
 
-		// correct the  last grid coordinate to zero
-		m_grid.y_gridCoords.back() = 0.0;
 
 		// calculate z-grid coordinates
 		m_grid.z_gridCoords.resize(m_grid.zwidths.size()+1);
@@ -618,13 +627,11 @@ void GeoFile::readBinaryGeometryData(std::istream& in) {
 		m_grid.z_coords.resize(m_grid.zwidths.size());
 
 		for (unsigned int i=0; i<m_grid.zwidths.size(); ++i) {
-
-			if (m_grid.zwidths[i] <= 0.0) {
+			if (m_grid.zwidths[i] <= 0.0)
 				throw IBK::Exception("Zero or negative element width in z direction", FUNC_ID);
-			}
+
 			m_grid.z_coords[i] = m_grid.z_gridCoords[i] + m_grid.zwidths[i]*0.5;
 			m_grid.z_gridCoords[i+1] = m_grid.z_gridCoords[i] + m_grid.zwidths[i];
-
 		}
 
 
@@ -642,10 +649,10 @@ void GeoFile::readBinaryGeometryData(std::istream& in) {
 			if (m_grid.zwidths.empty())
 				z2 = 0;
 			else
-				z2 = m_grid.zwidths[0]/2.0;
+				z2 = m_grid.zwidths[0] / 2.0;
 			m_elementsVec.resize(elementsVec.size());
 			m_sidesVec.resize(sidesVec.size());
-			for (unsigned int i=0; i<sidesVec.size(); ++i) {
+			for (unsigned int i = 0; i < sidesVec.size(); ++i) {
 				Side & S = m_sidesVec[i];
 				Side2D & Sold = sidesVec[i];
 				S.n = Sold.n;
@@ -657,7 +664,7 @@ void GeoFile::readBinaryGeometryData(std::istream& in) {
 				S.k = 0;
 				S.orientation = Sold.vertical ? 1 : 0;
 			}
-			for (unsigned int i=0; i<elementsVec.size(); ++i) {
+			for (unsigned int i = 0; i < elementsVec.size(); ++i) {
 				Element & E = m_elementsVec[i];
 				Element2D & Eold = elementsVec[i];
 				E.n = Eold.n;
@@ -678,6 +685,8 @@ void GeoFile::readBinaryGeometryData(std::istream& in) {
 		// determine construction type based in data in m_grid
 		m_grid.updateConstructionType();
 
+		// for file versions < 7, fix column index
+		fixYCoordinates();
 	}
 	catch (IBK::Exception &ex) {
 
@@ -806,6 +815,34 @@ void GeoFile::Grid::updateConstructionType() {
 		constructionType = 0;
 	}
 }
+
+
+void GeoFile::fixYCoordinates() {
+	// fix y-grid coordinates and element indexes for files with version less than 7
+	if (m_majorFileVersion < 7 && !m_grid.ywidths.empty()) {
+		// maximum row index corresponds to maximum y grid cell count - 1
+		unsigned int maxJ = (unsigned int)m_grid.ywidths.size() - 1;
+		// adjust j row index
+		for (unsigned int i = 0; i < (unsigned int)m_elementsVec.size(); ++i) {
+			Element & E = m_elementsVec[i];
+			E.j = maxJ - E.j;
+		}
+
+		// also reverse y-grid coordinates
+		std::reverse(m_grid.ywidths.begin(), m_grid.ywidths.end());
+		m_grid.y_gridCoords.resize(m_grid.ywidths.size()+1);
+		m_grid.y_coords.resize(m_grid.ywidths.size());
+		m_grid.y_gridCoords[0] = 0;
+		for (unsigned int i=0; i<m_grid.ywidths.size(); ++i) {
+			m_grid.y_gridCoords[i+1] = m_grid.y_gridCoords[i] + m_grid.ywidths[i];
+			m_grid.y_coords[i] = m_grid.y_gridCoords[i] + m_grid.ywidths[i]*0.5;
+		}
+	}
+}
+
+
+
+
 
 
 } // namespace DATAIO
