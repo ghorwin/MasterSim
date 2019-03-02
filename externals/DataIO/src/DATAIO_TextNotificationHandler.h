@@ -36,6 +36,7 @@
 #include <string>
 
 #include <IBK_NotificationHandler.h>
+#include <IBK_StopWatch.h>
 
 namespace DATAIO {
 
@@ -58,7 +59,9 @@ namespace DATAIO {
 class TextNotificationHandler : public IBK::NotificationHandler {
 public:
 	/*! Constructor, initializes counter to zero. */
-	TextNotificationHandler() : m_quiet(false), m_counter(0) {}
+	TextNotificationHandler() : m_quiet(false), m_counter(0) {
+		m_watch.start();
+	}
 	/*! Prints general progress info. */
 	virtual void notify();
 	/*! Prints progress bar.
@@ -75,6 +78,8 @@ public:
 private:
 	/*! Counter used to draw rotating dash. */
 	unsigned int m_counter;
+	/*! Used to skip messages that are sent to frequently. */
+	IBK::StopWatch m_watch;
 };
 
 } // namespace DATAIO

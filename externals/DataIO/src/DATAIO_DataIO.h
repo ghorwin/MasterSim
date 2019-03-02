@@ -11,7 +11,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -46,8 +46,6 @@
 #include <IBK_NotificationHandler.h>
 #include <IBK_Path.h>
 
-#include "DATAIO_GeoFile.h"
-
 
 /*! The namespace DATAIO holds all classes and functions related to reading/writing
 	and converting DELPHIN simulation output data.
@@ -56,6 +54,8 @@
 	to read the API documentation.
 */
 namespace DATAIO {
+
+class GeoFile;
 
 /*! \brief This class stores all output data from a Delphin output file.
 
@@ -385,6 +385,15 @@ public:
 	*/
 	dataFormat_t dataFormat() const { return m_dataFormat; }
 
+	/*! Returns a read-only vector with values.
+		The vector has the same size as m_timepoints.
+
+		\warning The elements of the vector (which are vectors of values themselves) may
+			be empty. Use data() to access values still need to be parsed. Accessing all values with
+			this function may be done savely, when data() had been called for all time indexes already.
+	*/
+	const std::vector< std::vector<double> > & values() const { return m_values; }
+
 
 	// *** PUBLIC MEMBER VARIABLES ***
 
@@ -666,6 +675,11 @@ private:
 		*/
 	mutable std::ofstream				*m_ofstream;
 
+
+	/*! Cached time unit to avoid repeatitive lookup of time unit from m_timeUnit string in read functions.
+		\warning DO NOT ACCESS this variable, since it will only be synchronized with m_timeUnit during read() calls.
+	*/
+	IBK::Unit							m_cachedTimeUnit;
 
 	// *** COMPATIBILITY MEMBERS FOR DELPHIN 5 FORMAT ***
 
