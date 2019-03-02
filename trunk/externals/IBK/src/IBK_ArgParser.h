@@ -194,6 +194,11 @@ public:
 	*/
 	bool hasOption(const std::string & longVersion) const;
 
+	/*! Removes an option again, useful for customizing predefined argument lists.
+		Throws an exception if the requested option does not exist.
+	*/
+	void removeOption(const std::string & longVersion);
+
 	/*!  Gives access to a command line option by the short version string identifier.
 		\param shortVersion	The shortversion identifier of an option.
 		\return			Value of the option, either the default passed to addOption() or the

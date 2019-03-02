@@ -182,8 +182,10 @@ public:
 	std::string toHourFormat() const;
 	/*! Returns the simulation time in the 21-character format '27 Feb 2005  22:10:40'. */
 	std::string toFullDateFormat() const;
-	/*! Returns the simulation time in the 17-character short english format '02/27/05 22:10:40'. */
+	/*! Returns the simulation time in the 17-character short international format '27.02.05 22:10:40'. */
 	std::string toShortDateFormat() const;
+	/*! Returns the simulation time in the 17-character short english format '02/27/05 22:10:40'. */
+	std::string toShortDateFormatUS() const;
 	/*! Returns regular date/time format 'dd.mm.yyyy hh:mm:ss'. */
 	std::string toDateTimeFormat() const;
 

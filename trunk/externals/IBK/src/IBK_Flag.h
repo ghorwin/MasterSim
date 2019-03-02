@@ -95,7 +95,7 @@ public:
 	void clear() { m_name.clear(); m_state = false; }
 
 	/*! Returns true, if the flag is set, and the state is true. */
-	bool isEnabled() const { return !m_name.empty() && m_state; }
+	bool isEnabled() const { return m_state && !m_name.empty(); }
 
 	/*! Returns the name of a flag. If name is empty flag is not defined and thus invalid. */
 	const std::string & name() const { return m_name; }

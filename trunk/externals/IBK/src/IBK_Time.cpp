@@ -307,6 +307,23 @@ std::string Time::toShortDateFormat() const {
 	std::stringstream strm;
 	y %= 100;
 	strm.fill('0');
+	strm << std::setw(2) << std::right << d+1 << "."
+		 << std::setw(2) << std::right << m+1 << "."
+		 << std::setw(2) << std::right << y << " " << t.toHourFormat();
+	return strm.str();
+}
+// ---------------------------------------------------------------------------
+
+
+std::string Time::toShortDateFormatUS() const {
+	int y;
+	unsigned int m, d;
+	double s;
+	decomposeDate(y, m, d, s);
+	IBK::Time t(0, s);
+	std::stringstream strm;
+	y %= 100;
+	strm.fill('0');
 	strm << std::setw(2) << std::right << m+1 << "/"
 		 << std::setw(2) << std::right << d+1 << "/"
 		 << std::setw(2) << std::right << y << " " << t.toHourFormat();
