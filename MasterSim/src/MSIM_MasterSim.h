@@ -90,6 +90,9 @@ public:
 	/*! Writes final statistics. */
 	void writeMetrics() const;
 
+	/*! Unloads libraries and releases handles. */
+	void unloadLibraries();
+
 private:
 	/*! Defines a group of FMUs that belong to a cycle.
 		A cycle may only contain a single slave.
