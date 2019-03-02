@@ -82,6 +82,7 @@ int main(int argc, char * argv[]) {
 		}
 
 		// adjust log-file message handler to log only standard level outputs (unless user specified higher level)
+		IBK::MessageHandlerRegistry::instance().messageHandler()->setConsoleVerbosityLevel( std::max<unsigned int>(IBK::VL_STANDARD, parser.m_verbosityLevel));
 		IBK::MessageHandlerRegistry::instance().messageHandler()->setLogfileVerbosityLevel( std::max<unsigned int>(IBK::VL_STANDARD, parser.m_verbosityLevel));
 
 		// let master run the simulation until end
@@ -89,6 +90,8 @@ int main(int argc, char * argv[]) {
 
 		// print final statistics
 		masterSim.writeMetrics();
+
+		// unload shared libraries
 
 	}
 	catch (IBK::Exception & ex) {
