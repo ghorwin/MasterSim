@@ -400,7 +400,9 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 
 
 void FMUPrivate::unloadLibrary() {
-	// \todo implement for Windows
+	if (m_dllHandle != 0)
+		FreeLibrary( m_dllHandle );
+	m_dllHandle = 0;
 }
 
 #else // _WIN32
@@ -452,6 +454,7 @@ void FMUPrivate::unloadLibrary() {
 	if (res != 0) {
 		IBK::IBK_Message(IBK::FormatString("Error unloading shared library."), IBK::MSG_ERROR, FUNC_ID);
 	}
+	m_soHandle = NULL;
 }
 
 #endif // _WIN32
