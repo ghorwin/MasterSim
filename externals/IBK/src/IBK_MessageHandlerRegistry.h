@@ -45,6 +45,7 @@
 
 namespace IBK {
 
+#define MessageHandlerRegistry MessageHandlerRegistryMSIM
 
 /*! This class relays messages (error, debug or progress messages)
 	from the IBK library towards the current message handling class.
