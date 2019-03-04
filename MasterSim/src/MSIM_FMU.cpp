@@ -276,12 +276,6 @@ void FMU::importFMIv2Functions() {
 }
 
 
-void FMU::unloadLibrary() {
-	m_impl->unloadLibrary();
-}
-
-
-
 
 // **** STATIC FUNCTIONS ****
 
@@ -371,6 +365,7 @@ std::string GetLastErrorStdStr() {
 
 
 FMUPrivate::~FMUPrivate() {
+	/// \todo  check, if FreeLibrary() causes an access violation when the library contains OpenMP code
 	if (m_dllHandle != 0)
 		FreeLibrary( m_dllHandle );
 }
@@ -399,20 +394,18 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 }
 
 
-void FMUPrivate::unloadLibrary() {
-	if (m_dllHandle != 0)
-		FreeLibrary( m_dllHandle );
-	m_dllHandle = 0;
-}
-
 #else // _WIN32
 
 // Linux/Mac implementation
 
 FMUPrivate::~FMUPrivate() {
+	// we do not unload the dynamic library here, since it may contain OpenMP code that
+	// would cause a segfault (other thread team members are not stopped/unloaded with dlclose())
+#if 0
 	if (m_soHandle != NULL) {
 		dlclose( m_soHandle );
 	}
+#endif
 }
 
 
@@ -447,15 +440,6 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 							 .arg(dlerror()).arg(sharedLibraryPath), FUNC_ID);
 }
 
-
-void FMUPrivate::unloadLibrary() {
-	const char * const FUNC_ID = "[FMUPrivate::unloadLibrary]";
-	int res = dlclose(m_soHandle);
-	if (res != 0) {
-		IBK::IBK_Message(IBK::FormatString("Error unloading shared library."), IBK::MSG_ERROR, FUNC_ID);
-	}
-	m_soHandle = NULL;
-}
 
 #endif // _WIN32
 
