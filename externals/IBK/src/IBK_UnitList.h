@@ -51,7 +51,9 @@
 
 namespace IBK {
 
+#ifndef QT_DEBUG_BUILD
 #define UnitList UnitListMSIM
+#endif
 
 class Unit;
 
