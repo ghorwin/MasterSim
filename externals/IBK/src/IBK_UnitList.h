@@ -51,6 +51,8 @@
 
 namespace IBK {
 
+#define UnitList UnitListMSIM
+
 class Unit;
 
 /*! The class UnitList is the central class of the unit system.
