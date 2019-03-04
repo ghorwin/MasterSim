@@ -15,7 +15,6 @@ namespace MASTER_SIM {
 
 FMUManager::~FMUManager() {
 	for (std::vector<FMU*>::iterator it = m_fmus.begin(); it != m_fmus.end(); ++it) {
-		(*it)->unloadLibrary();
 		delete *it;
 	}
 	m_fmus.clear();
@@ -91,15 +90,6 @@ FMU * FMUManager::fmuByPath(const IBK::Path & fmuFilePath) {
 		}
 	}
 	throw IBK::Exception(IBK::FormatString("FMU with file path '%1' has not been imported, yet.").arg(fmuFilePath), FUNC_ID);
-}
-
-
-void FMUManager::unloadLibraries() {
-	for (size_t i=0; i<m_fmus.size(); ++i) {
-		m_fmus[i]->unloadLibrary();
-		delete m_fmus[i];
-	}
-	m_fmus.clear();
 }
 
 

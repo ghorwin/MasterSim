@@ -128,9 +128,6 @@ public:
 	/*! Returns the index of the references output variable in the corresponding vector with output quantities. */
 	unsigned int localOutputIndex(FMIVariable::VarType t, unsigned int valueReference) const;
 
-	/*! Unloads shared library from memory. */
-	void unloadLibrary();
-
 	/*! Content of model description. */
 	ModelDescription	m_modelDescription;
 

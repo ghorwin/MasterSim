@@ -90,8 +90,8 @@ public:
 	/*! Writes final statistics. */
 	void writeMetrics() const;
 
-	/*! Unloads libraries and releases handles. */
-	void unloadLibraries();
+	/*! Releases slave memory (calls fmi2FreeInstance() FMU function first on slave, then frees slave memory). */
+	void freeSlaves();
 
 private:
 	/*! Defines a group of FMUs that belong to a cycle.

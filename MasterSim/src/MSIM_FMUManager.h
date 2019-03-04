@@ -46,9 +46,6 @@ public:
 	/*! Gives access to FMUs. */
 	const std::vector<FMU*> & fmus() const { return m_fmus; }
 
-	/*! Unloads libraries and releases handles. */
-	void unloadLibraries();
-
 	/*! If true, FMUs are unzipped to directories first (the default), before the modelDescription.xml file is read. */
 	bool	m_unzipFMUs;
 
