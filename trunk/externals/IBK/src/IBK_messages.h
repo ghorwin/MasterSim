@@ -45,6 +45,8 @@
 
 namespace IBK {
 
+#define IBK_Message IBK_MessageMSIM
+
 /*! Avoid costly construction of messages that will be disregarded anyway because of too low console verbosity level.
 	Use as drop-in replacement for IBK::IBK_Message, for example:
 	\code
