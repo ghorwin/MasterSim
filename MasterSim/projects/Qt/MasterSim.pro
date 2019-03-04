@@ -27,7 +27,7 @@ INCLUDEPATH = \
 
 LIBS += -L../../../externals/lib$${DIR_PREFIX} \
 	-lDataIO \
-	-lIBKMK \
+	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP \
 	-lminizip \
