@@ -110,11 +110,17 @@ public:
 	static bool					m_useDebugLogging;
 
 private:
+
+	/*! Copy-constructor disabled. */
+	Slave(const Slave&) = delete;
+	/*! Assignment operator disabled. */
+	Slave& operator=(const Slave& other) = delete;
+
 	/*! Pointer to the FMU object that instantiated this slave. */
 	FMU			*m_fmu;
 
-	/*! Current time the FMU is at. 
-		This value is initialized in setupExperiment() and updated in each successfuly call to 
+	/*! Current time the FMU is at.
+		This value is initialized in setupExperiment() and updated in each successfuly call to
 		doStep() and setState().
 	*/
 	double		m_t;
