@@ -32,8 +32,8 @@ MasterSim::~MasterSim() {
 	// clean up master algorithm
 	delete m_masterAlgorithm;
 
-	// release allocated memory of slaves and shared libraries
-	unloadLibraries();
+	// release allocated memory of slaves (do not unload shared libraries)
+	freeSlaves();
 
 	delete m_stepStatsOutput;
 }
@@ -1236,12 +1236,10 @@ void MasterSim::writeStepStatistics() {
 }
 
 
-void MasterSim::unloadLibraries() {
+void MasterSim::freeSlaves() {
 	for (unsigned int i=0; i<m_slaves.size(); ++i)
 		delete m_slaves[i];
 	m_slaves.clear();
-
-	m_fmuManager.unloadLibraries();
 }
 
 } // namespace MASTER_SIM

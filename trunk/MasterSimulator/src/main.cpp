@@ -61,7 +61,7 @@ int main(int argc, char * argv[]) {
 		// initialize all FMUs (e.g. load dlls/shared libs, parse ModelDescription, do error checking
 		masterSim.importFMUs(parser, project);
 
-#if HAVE_SERIALIZATION_CODE
+#ifdef HAVE_SERIALIZATION_CODE
 		// set master and all FMUs to start time point
 		double tStart = masterSim.tStart(); // override with command line argument
 		masterSim.restoreState(tStart, stateDir);
@@ -78,6 +78,8 @@ int main(int argc, char * argv[]) {
 
 		if (parser.flagEnabled("test-init")) {
 			IBK::IBK_Message("Stopping after successful initialization.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+			// free FMU slaves
+			masterSim.freeSlaves();
 			return EXIT_SUCCESS;
 		}
 
@@ -91,8 +93,8 @@ int main(int argc, char * argv[]) {
 		// print final statistics
 		masterSim.writeMetrics();
 
-		// unload shared libraries
-		masterSim.unloadLibraries();
+		// free FMU slaves
+		masterSim.freeSlaves();
 
 	}
 	catch (IBK::Exception & ex) {
