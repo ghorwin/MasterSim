@@ -16,7 +16,7 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lminizip \
 	-lBlockMod \
 	-lDataIO \
-	-lIBKMK \
+	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP
 

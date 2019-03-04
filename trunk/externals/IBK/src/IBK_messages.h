@@ -45,8 +45,9 @@
 
 namespace IBK {
 
+#ifndef QT_DEBUG_BUILD
 #define IBK_Message IBK_MessageMSIM
-
+#endif
 /*! Avoid costly construction of messages that will be disregarded anyway because of too low console verbosity level.
 	Use as drop-in replacement for IBK::IBK_Message, for example:
 	\code

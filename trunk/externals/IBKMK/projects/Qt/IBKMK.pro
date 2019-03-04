@@ -3,7 +3,7 @@
 # -----------------------
 
 # first we define what we are
-TARGET = IBKMK
+TARGET = IBKMKmini
 TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
