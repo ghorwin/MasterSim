@@ -28,11 +28,12 @@ void FMIVariable::read(const TiXmlElement * element) {
 			m_causality = C_INPUT;
 		else if (causality == "parameter") {
 			m_causality = C_PARAMETER;
-			std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
-			/// \todo variability is currently ignored, all variables are treated as continuous or discrete
 		}
 		else
 			m_causality = C_OTHER;
+
+		/// \todo add support for variability
+		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
 
 		// read child element
 		const TiXmlElement * child = element->FirstChild()->ToElement();
@@ -75,14 +76,33 @@ void FMIVariable::read(const TiXmlElement * element) {
 }
 
 
+const char * FMIVariable::causality2String(FMIVariable::Causality t) {
+	switch (t) {
+		case C_INPUT : return "input";
+		case C_OUTPUT : return "output";
+		case C_PARAMETER : return "parameter";
+		case C_OTHER : return "other";
+	}
+	return "undefined";
+}
+
+
+std::string FMIVariable::toString() const {
+	std::stringstream strm;
+
+	strm << m_name << " (" << varType2String(m_type) << ", " << causality2String(m_causality) << ", start='" << m_startValue << "')";
+	return strm.str();
+}
+
+
 const char *FMIVariable::varType2String(VarType t) {
 	switch (t) {
 		case VT_BOOL : return "Boolean";
 		case VT_INT : return "Integer";
 		case VT_DOUBLE : return "Real";
 		case VT_STRING : return "String";
-		default: return "undefined";
 	}
+	return "undefined";
 }
 
 } // namespace MASTER_SIM
