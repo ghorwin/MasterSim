@@ -399,13 +399,9 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 // Linux/Mac implementation
 
 FMUPrivate::~FMUPrivate() {
-	// we do not unload the dynamic library here, since it may contain OpenMP code that
-	// would cause a segfault (other thread team members are not stopped/unloaded with dlclose())
-#if 0
 	if (m_soHandle != NULL) {
 		dlclose( m_soHandle );
 	}
-#endif
 }
 
 
@@ -433,7 +429,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	///		 when dlclose() is called again with the same pointer, an access violation/segfault occurs.
 	///		 There should be a sanity check here that whenever a handle is returned that previously had been returned already,
 	///		 the import should fail.
-	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW );
+	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW|RTLD_LOCAL );
 
 	if (m_soHandle == NULL)
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")

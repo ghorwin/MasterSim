@@ -27,6 +27,7 @@ public:
 
 	/*! Constructor. */
 	FMIVariable() :
+		m_causality(C_OTHER),
 		m_type(VT_DOUBLE)
 	{
 	}
@@ -61,9 +62,14 @@ public:
 	/*! Type name of type definition for this quantity (only type Real). */
 	std::string m_declaredType;
 
+	/*! Creates a one-line variable info text. */
+	std::string toString() const;
 
 	/*! Returns a string constant that describes the type. */
 	static const char * varType2String(VarType t);
+
+	/*! Returns a string constant that describes the causality. */
+	static const char * causality2String(FMIVariable::Causality t);
 };
 
 } // namespace MASTER_SIM
