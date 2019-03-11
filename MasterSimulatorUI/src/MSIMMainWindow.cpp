@@ -530,6 +530,11 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 			if (!modelDesc.m_csV2ModelIdentifier.empty())
 				msg.append( tr("    FMI v2 CS : %1\n").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
 			msg.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+			// print properties of variables
+			for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
+				msg.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
+			}
+
 			m_modelDescriptions[*it] = modelDesc;
 		}
 		catch (IBK::Exception & ex) {
