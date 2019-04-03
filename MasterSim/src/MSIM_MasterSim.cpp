@@ -687,7 +687,7 @@ void MasterSim::initialConditions() {
 
 		IBK::IBK_Message(IBK::FormatString("Gauss-Jacobi-Iteration, loop #%1.\n").arg(i+1), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 		for (unsigned int j=0; j<m_realyt.size(); ++j) {
-			IBK::IBK_Message(IBK::FormatString("  real[%1] = %2.\n").arg(j).arg(m_realyt[j]), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
+			IBK::IBK_Message(IBK::FormatString("  real[%1] = %2\n").arg(j).arg(m_realyt[j]), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 		}
 
 		// for now just loop over all slaves retrieve outputs
