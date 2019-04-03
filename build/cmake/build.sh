@@ -16,7 +16,7 @@
 #   []
 
 # path export for mac
-export PATH=~/Qt/5.10/clang_64/bin:~/Qt/5.10/gcc_64/bin:$PATH
+export PATH=~/Qt/5.11.3/gcc_64/bin:~/Qt/5.11.3/clang_64/bin:$PATH
 
 CMAKELISTSDIR=$(pwd)
 BUILDDIR="bb"
