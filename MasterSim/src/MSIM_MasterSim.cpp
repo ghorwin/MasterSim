@@ -5,6 +5,9 @@
 #include <fstream>
 #include <algorithm> // for min and max
 
+#include <chrono>
+#include <thread>
+
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
@@ -1237,9 +1240,14 @@ void MasterSim::writeStepStatistics() {
 
 
 void MasterSim::freeSlaves() {
-	for (unsigned int i=0; i<m_slaves.size(); ++i)
-		delete m_slaves[i];
-	m_slaves.clear();
+	// wait a few seconds for the openMP threadpool spin to shut down before deleting the slaves
+	// see https://stackoverflow.com/questions/34439956/vc-crash-when-freeing-a-dll-built-with-openmp
+	if (!m_slaves.empty()) {
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		for (unsigned int i=0; i<m_slaves.size(); ++i)
+			delete m_slaves[i];
+		m_slaves.clear();
+	}
 }
 
 } // namespace MASTER_SIM
