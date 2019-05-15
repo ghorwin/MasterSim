@@ -1243,7 +1243,7 @@ void MasterSim::freeSlaves() {
 	// wait a few seconds for the openMP threadpool spin to shut down before deleting the slaves
 	// see https://stackoverflow.com/questions/34439956/vc-crash-when-freeing-a-dll-built-with-openmp
 	if (!m_slaves.empty()) {
-		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		for (unsigned int i=0; i<m_slaves.size(); ++i)
 			delete m_slaves[i];
 		m_slaves.clear();
