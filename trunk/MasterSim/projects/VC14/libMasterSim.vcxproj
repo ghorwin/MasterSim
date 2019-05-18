@@ -19,12 +19,26 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\fmi\fmi2Functions.h" />
-    <ClInclude Include="..\..\src\fmi\fmi2FunctionTypes.h" />
-    <ClInclude Include="..\..\src\fmi\fmi2TypesPlatform.h" />
-    <ClInclude Include="..\..\src\fmi\fmiFunctions.h" />
-    <ClInclude Include="..\..\src\fmi\fmiModelTypes.h" />
-    <ClInclude Include="..\..\src\fmi\fmiPlatformTypes.h" />
+    <ClCompile Include="..\..\src\MSIM_AlgorithmGaussJacobi.cpp" />
+    <ClCompile Include="..\..\src\MSIM_AlgorithmGaussSeidel.cpp" />
+    <ClCompile Include="..\..\src\MSIM_AlgorithmNewton.cpp" />
+    <ClCompile Include="..\..\src\MSIM_ArgParser.cpp" />
+    <ClCompile Include="..\..\src\MSIM_Constants.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FMIType.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FMIVariable.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FMU.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FMUManager.cpp" />
+    <ClCompile Include="..\..\src\MSIM_MasterSim.cpp" />
+    <ClCompile Include="..\..\src\MSIM_ModelDescription.cpp" />
+    <ClCompile Include="..\..\src\MSIM_OutputWriter.cpp" />
+    <ClCompile Include="..\..\src\MSIM_ProgressFeedback.cpp" />
+    <ClCompile Include="..\..\src\MSIM_Project.cpp" />
+    <ClCompile Include="..\..\src\MSIM_Slave.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\externals\DataIO\src\DataIO" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\..\src\MSIM_AbstractAlgorithm.h" />
     <ClInclude Include="..\..\src\MSIM_AlgorithmGaussJacobi.h" />
     <ClInclude Include="..\..\src\MSIM_AlgorithmGaussSeidel.h" />
@@ -41,23 +55,6 @@
     <ClInclude Include="..\..\src\MSIM_ProgressFeedback.h" />
     <ClInclude Include="..\..\src\MSIM_Project.h" />
     <ClInclude Include="..\..\src\MSIM_Slave.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\MSIM_AlgorithmGaussJacobi.cpp" />
-    <ClCompile Include="..\..\src\MSIM_AlgorithmGaussSeidel.cpp" />
-    <ClCompile Include="..\..\src\MSIM_AlgorithmNewton.cpp" />
-    <ClCompile Include="..\..\src\MSIM_ArgParser.cpp" />
-    <ClCompile Include="..\..\src\MSIM_Constants.cpp" />
-    <ClCompile Include="..\..\src\MSIM_FMIType.cpp" />
-    <ClCompile Include="..\..\src\MSIM_FMIVariable.cpp" />
-    <ClCompile Include="..\..\src\MSIM_FMU.cpp" />
-    <ClCompile Include="..\..\src\MSIM_FMUManager.cpp" />
-    <ClCompile Include="..\..\src\MSIM_MasterSim.cpp" />
-    <ClCompile Include="..\..\src\MSIM_ModelDescription.cpp" />
-    <ClCompile Include="..\..\src\MSIM_OutputWriter.cpp" />
-    <ClCompile Include="..\..\src\MSIM_ProgressFeedback.cpp" />
-    <ClCompile Include="..\..\src\MSIM_Project.cpp" />
-    <ClCompile Include="..\..\src\MSIM_Slave.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0901DB95-829A-403F-BCC7-31E60D6412AB}</ProjectGuid>
@@ -132,7 +129,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
@@ -149,7 +146,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
@@ -167,7 +164,7 @@
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/IBKMK/src;../../../externals/zlib/src;../../../externals/minizip/src;../../../externals/DataIO/src;../../../externals/TiCPP/src</AdditionalIncludeDirectories>
@@ -185,7 +182,7 @@
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/IBKMK/src;../../../externals/zlib/src;../../../externals/minizip/src;../../../externals/DataIO/src;../../../externals/TiCPP/src</AdditionalIncludeDirectories>

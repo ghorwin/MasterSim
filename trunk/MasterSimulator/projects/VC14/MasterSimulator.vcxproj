@@ -71,22 +71,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\..\bin\VC_$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)_$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\..\bin\VC_$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)_$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\..\bin\VC_$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)_$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)_$(Platform)\</OutDir>
+    <OutDir>$(SolutionDir)..\..\bin\VC_$(Configuration)_$(Platform)\</OutDir>
     <IntDir>$(SolutionDir)$(Configuration)_$(Platform)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -100,7 +100,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src;../../../externals/IBKMK/src;../../../externals/TiCPP/src;../../../externals/minizip/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -113,12 +113,12 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MinimalRebuild>false</MinimalRebuild>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src;../../../externals/IBKMK/src;../../../externals/TiCPP/src;../../../externals/minizip/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,7 +135,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src;../../../externals/IBKMK/src;../../../externals/TiCPP/src;../../../externals/minizip/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,10 +151,10 @@
       </PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../externals/IBK/src;../../../externals/DataIO/src;../../../MasterSim/src;../../../externals/IBKMK/src;../../../externals/TiCPP/src;../../../externals/minizip/src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
