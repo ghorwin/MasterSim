@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de PostProc.xsd" fileVersion="1.0">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#55aaff" Checked="1">Math003_GaussSeidel_1iters_variableStep_Richardson</SubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+		</Directory>
+		<Directory>
+			<Path>H:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/description</Path>
+			<SubDir Color="#ffffff" Checked="1">.</SubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Panel states.-->
+	<Panels>
+		<EastPanel>1</EastPanel>
+		<WestPanel>1</WestPanel>
+		<SouthPanel>1</SouthPanel>
+	</Panels>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--All mappers.-->
+	<Mappers>
+		<Mapper name="x1">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_1iters_variableStep_Richardson/results/real_---.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>H:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/description/reference_results.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+					</Series>
+					<Series leftAxis="0">
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#ff0000</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+					</Axis>
+					<Axis index="2">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<Legend />
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="x2">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_1iters_variableStep_Richardson/results/real_---.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>H:/svn/mastersim-code_trunk/data/tests/win32/Math_003_control_loop/description/reference_results.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+					</Series>
+					<Series leftAxis="0">
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+						<PenColor>#ff0000</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+					</Axis>
+					<Axis index="2">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<Legend />
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="x3">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_1iters_variableStep_Richardson/results/real_---.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+					</Axis>
+					<Axis index="2">
+						<TitleText>$quantity [$unit]</TitleText>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<Legend />
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="x4">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_1iters_variableStep_Richardson/results/real_---.d6o</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+					<CutLockXDir>0</CutLockXDir>
+					<CutLockYDir>0</CutLockYDir>
+					<CutLockZDir>0</CutLockZDir>
+					<CutLockTDir>0</CutLockTDir>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<LineStyle>0</LineStyle>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+					</Axis>
+					<Axis index="2">
+						<TitleText>$quantity [$unit]</TitleText>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<Legend />
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+	</Mappers>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="0" size1="504" size2="504" orientation="2" />
+		<Widget id="2" parent="1" viewTable="0" mapperIndex="0" size1="504" size2="504" orientation="2" />
+		<Widget id="3" parent="1" viewTable="0" mapperIndex="1" size1="493" size2="492" orientation="1" />
+		<Widget id="4" parent="2" viewTable="0" mapperIndex="3" size1="493" size2="492" orientation="1" />
+		<FocusedWidget>4</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>

@@ -33,6 +33,9 @@
     <ClCompile Include="..\..\src\DATAIO_Utils.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\DATAIO_ConstructionLines2D.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DATAIO_Constants.h">
@@ -48,6 +51,9 @@
       <Filter>Headerdateien</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\DATAIO_Utils.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\DATAIO_ConstructionLines2D.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
