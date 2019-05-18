@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\DATAIO_Constants.cpp" />
+    <ClCompile Include="..\..\src\DATAIO_ConstructionLines2D.cpp" />
     <ClCompile Include="..\..\src\DATAIO_DataIO.cpp" />
     <ClCompile Include="..\..\src\DATAIO_GeoFile.cpp" />
     <ClCompile Include="..\..\src\DATAIO_TextNotificationHandler.cpp" />
@@ -30,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\DATAIO_Constants.h" />
+    <ClInclude Include="..\..\src\DATAIO_ConstructionLines2D.h" />
     <ClInclude Include="..\..\src\DATAIO_DataIO.h" />
     <ClInclude Include="..\..\src\DATAIO_GeoFile.h" />
     <ClInclude Include="..\..\src\DATAIO_TextNotificationHandler.h" />
