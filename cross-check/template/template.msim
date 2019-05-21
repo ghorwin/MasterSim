@@ -1,0 +1,17 @@
+tStart               $START
+tEnd                 $END
+hMax                 30 min
+hMin                 1e-6 s
+hFallBackLimit       0.001 s
+hStart               $HSTART
+hOutputMin           0.001 s
+binaryOutputFiles    no
+adjustStepSize       no
+absTol               1e-06
+relTol               1e-005
+MasterMode           GAUSS_JACOBI
+ErrorControlMode     NONE
+maxIterations        1
+
+$PARAMETERS
+
