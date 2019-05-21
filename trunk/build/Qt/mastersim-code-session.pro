@@ -7,6 +7,7 @@ SUBDIRS += MasterSim \
 	MasterSimulator \
 	MasterSimulatorUI \
 	BlockMod \
+	QtPropertyBrowser \
 	DataIO \
 	IBK \
 	IBKMK \
@@ -29,6 +30,7 @@ MasterSim.file = ../../MasterSim/projects/Qt/MasterSim.pro
 MasterSimulatorUI.file = ../../MasterSimulatorUI/projects/Qt/MasterSimulatorUI.pro
 
 BlockMod.file = ../../externals/BlockMod/projects/Qt/BlockMod.pro
+QtPropertyBrowser.file = ../../externals/QtPropertyBrowser/projects/Qt/QtPropertyBrowser.pro
 DataIO.file = ../../externals/DataIO/projects/Qt/DataIO.pro
 IBK.file = ../../externals/IBK/projects/Qt/IBK.pro
 IBKMK.file = ../../externals/IBKMK/projects/Qt/IBKMK.pro
@@ -52,7 +54,7 @@ IBKMK.depends = IBK
 BlockMod.depends = IBK
 
 MasterSimulator.depends = MasterSim IBK IBKMK TiCPP DataIO minizip
-MasterSimulatorUI.depends = MasterSim BlockMod IBK IBKMK TiCPP DataIO minizip
+MasterSimulatorUI.depends = MasterSim BlockMod QtPropertyBrowser IBK IBKMK TiCPP DataIO minizip
 
 FMUTestMath003Part1.depends = MasterSimulator
 FMUTestMath003Part2.depends = MasterSimulator
