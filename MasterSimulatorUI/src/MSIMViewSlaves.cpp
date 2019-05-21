@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include <qttreepropertybrowser.h>
+
 #include <IBK_algorithm.h>
 
 #include "MSIMProjectHandler.h"
@@ -19,6 +21,8 @@
 #include "MSIMConversion.h"
 #include "MSIMUndoSlaves.h"
 #include "MSIMMainWindow.h"
+
+#include <MSIM_Project.h>
 
 MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	QWidget(parent),
@@ -30,13 +34,13 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
 
 	// setup tables
-	m_ui->tableWidgetFMUs->horizontalHeader()->setVisible(false);
-	m_ui->tableWidgetFMUs->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetFMUs->setColumnCount(1);
+//	m_ui->tableWidgetFMUs->horizontalHeader()->setVisible(false);
+//	m_ui->tableWidgetFMUs->verticalHeader()->setVisible(false);
+//	m_ui->tableWidgetFMUs->setColumnCount(1);
 	QStringList headers;
-	headers << tr("Full path");
-	m_ui->tableWidgetFMUs->setHorizontalHeaderLabels(headers);
-	m_ui->tableWidgetFMUs->horizontalHeader()->setStretchLastSection(true);
+//	headers << tr("Full path");
+//	m_ui->tableWidgetFMUs->setHorizontalHeaderLabels(headers);
+//	m_ui->tableWidgetFMUs->horizontalHeader()->setStretchLastSection(true);
 
 //	m_ui->tableWidgetSlaves->horizontalHeader()->setVisible(false);
 	m_ui->tableWidgetSlaves->verticalHeader()->setVisible(false);
@@ -45,13 +49,13 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	headers << "" << tr("Name") << tr("FMU") << tr("Cycle Nr.");
 	m_ui->tableWidgetSlaves->setHorizontalHeaderLabels(headers);
 
-	formatTable(m_ui->tableWidgetFMUs);
+//	formatTable(m_ui->tableWidgetFMUs);
 	formatTable(m_ui->tableWidgetSlaves);
 
 	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
 	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
 
-	m_ui->tableWidgetFMUs->setSortingEnabled(true);
+//	m_ui->tableWidgetFMUs->setSortingEnabled(true);
 }
 
 
@@ -210,7 +214,7 @@ void MSIMViewSlaves::updateSlaveTable() {
 	int currentSlaveIdx = m_ui->tableWidgetSlaves->currentRow();
 
 	// update tables based on project file content
-	m_ui->tableWidgetFMUs->clear();
+//	m_ui->tableWidgetFMUs->clear();
 	m_ui->tableWidgetSlaves->clearContents();
 	QSet<QString> fmuPaths;
 
@@ -261,14 +265,14 @@ void MSIMViewSlaves::updateSlaveTable() {
 								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
 		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
 	}
-	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
-	unsigned int rowIdx = 0;
-	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
-		QTableWidgetItem * item = new QTableWidgetItem( *it );
-		item->setFlags(Qt::ItemIsEnabled);
-		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
-	}
-	m_ui->tableWidgetFMUs->resizeColumnsToContents();
+//	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
+//	unsigned int rowIdx = 0;
+//	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
+//		QTableWidgetItem * item = new QTableWidgetItem( *it );
+//		item->setFlags(Qt::ItemIsEnabled);
+//		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
+//	}
+//	m_ui->tableWidgetFMUs->resizeColumnsToContents();
 
 	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
 	if (!project().m_simulators.empty()) {
@@ -277,6 +281,40 @@ void MSIMViewSlaves::updateSlaveTable() {
 		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
 		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
 	}
-	m_ui->tableWidgetFMUs->sortByColumn(0, Qt::AscendingOrder);
+//	m_ui->tableWidgetFMUs->sortByColumn(0, Qt::AscendingOrder);
 
-	blockMySignals(this, false);}
+	blockMySignals(this, false);
+}
+
+
+void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn) {
+	// update property browser for currently selected slave
+	updateProperties(currentRow);
+}
+
+
+void MSIMViewSlaves::updateProperties(int selectedSlave) {
+	if (selectedSlave == -1) {
+		m_ui->widgetProperties->clear();
+		return;
+	}
+	// fill in all parameters defined in FMU slave
+	// get slave instance
+	const MASTER_SIM::Project & p = project();
+	if (selectedSlave >= p.m_simulators.size())
+		return;
+
+	IBK::Path fmuPath = project().m_simulators[selectedSlave].m_pathToFMU;
+
+	// attempt to find FMU definition
+	try {
+		const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(fmuPath.str());
+		// process model description and create properties for all parameters
+
+	}
+	catch (IBK::Exception & ex) {
+		m_ui->widgetProperties->clear();
+		return;
+	}
+
+}

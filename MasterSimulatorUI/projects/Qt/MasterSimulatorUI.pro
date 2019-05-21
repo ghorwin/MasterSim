@@ -15,6 +15,7 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
 	-lBlockMod \
+	-lQtPropertyBrowser \
 	-lDataIO \
 	-lIBKMKmini \
 	-lIBK \
@@ -31,6 +32,7 @@ INCLUDEPATH = \
 	../../../externals/IBK/src \
 	../../../externals/DataIO/src \
 	../../../externals/BlockMod/src \
+	../../../externals/QtPropertyBrowser/src \
 	../../../externals/TiCPP/src \
 	../../../MasterSim/src
 
