@@ -4,9 +4,6 @@
 """
 Cross-check script, processes FMU import test cases.
 Copyright 2019, Andreas Nicolai <andreas.nicolai@gmx.net>
-"""
-
-SYNTAX = '''
 
 > python cross_check.py [-d <directory>] [-t cs|me] [-v 1|2] [-p <platform>] <fmi-directory>
 
@@ -29,7 +26,8 @@ Will process all test cases within directory:
 
     ../fmi-cross-check/fmus/1.0/cs/linux64/Test-FMUs
 
-'''
+"""
+
 
 import numpy as np
 import matplotlib.pyplot as pl
@@ -38,12 +36,14 @@ import platform
 import argparse
 
 import CC_functions as cc
+import MasterSimTestGenerator as msimGenerator
 
 
-# main program
+# *** main program ***
+
 
 # command line arguments
-parser = argparse.ArgumentParser(usage=SYNTAX, description="Runs cross-check tests for MasterSim")
+parser = argparse.ArgumentParser(description="Runs cross-check tests for MasterSim")
 parser.add_argument('-d', action="store", dest="vendorDir", help="Vendor/base directory to process")
 parser.add_argument('-t', action="store", dest="fmiType", help="Operation mode (cs|me).")
 parser.add_argument('-v', action="store", dest="fmiVersion", help="FMI version to use.")
@@ -60,6 +60,9 @@ fullPath = os.path.abspath(args.fmiDirectory)
 fullPathStr = fullPath.replace('\\' ,'/') # windows fix
 fullPathParts = fullPathStr.split('/')
 
+fmuList = []
+
+print("Collecting list of FMUs to import and test-run")
 for root, dirs, files in os.walk(fullPath, topdown=False):
    # split root directory into components
    
@@ -67,11 +70,13 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
    rootStr = root.replace('\\', '/') # windows fix
    pathParts = rootStr.split('/')
    pathParts = pathParts[len(fullPathParts):]
-   
+      
    # we only process directories that can actually contain models
    if len(pathParts) < 5:
       continue
    
+   relPath = '/'.join(pathParts[1:])
+
    # filter out everything except the fmus sub-directory
    if pathParts[0] != "fmus":
       continue
@@ -115,8 +120,40 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
    for name in files:
       e = os.path.splitext(name)
       if len(e) == 2 and e[1] == '.fmu':
-         print(os.path.join(root, name))
+         fmuPath = os.path.join(root, name)
+         fmuList.append(fmuPath[:-4]) # strip the trailing .fmu
+         print("  " + os.path.join(relPath, name))
 
+print("{} FMUs to test".format(len(fmuList)))
+
+passedFMUs = []
+# read list of passed test cases
+if os.path.exists("passed_tests.txt"):
+   fobj = open("passed_tests.txt", 'r')
+   passedFMUs = fobj.readlines()
+   fobj.close()
+   del fobj
+   
+
+# for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files 
+# and then run the test
+for fmuCase in fmuList:
+   # check if case has alreade been completed successfully
+   if fmuCase in passedFMUs:
+      print('Case {} already completed, skipped'.format(fmuCase))
+      continue
+
+   # setup test generator (parse input files)
+   gen = msimGenerator.MasterSimTestGenerator()
+   gen.setup(fmuCase)
+   
+   # generate path to MasterSim working directory
+   relPath = os.path.split(os.path.relpath(fmuCase, fullPathStr))[0] # get relative path to directory with fmu file
+   relPath = relPath.replace('\\', '_') # windows fix
+   relPath = relPath.replace('/', '_')
+
+   # generate MasterSim file
+   gen.generateMSim(relPath)
 
 
 exit(1)
