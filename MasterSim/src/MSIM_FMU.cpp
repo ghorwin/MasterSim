@@ -78,13 +78,6 @@ FMU::FMU(const IBK::Path &fmuFilePath, const IBK::Path &fmuDir) :
 	m_fmuDir(fmuDir),
 	m_impl(new FMUPrivate)
 {
-#ifdef _WIN32
-	// this is actually wrong, the URI prefix should be "file://" so that
-	// network paths become file:///path/to/network/share also on windows
-	m_resourcePath = "file:///" + (m_fmuDir / "resources").str();
-#else
-	m_resourcePath = "file://" + (m_fmuDir / "resources").str();
-#endif
 }
 
 
@@ -110,6 +103,21 @@ void FMU::readModelDescription() {
 			}
 		}
 	}
+	if (m_modelDescription.m_fmuType == ModelDescription::CS_v1 ||
+		m_modelDescription.m_fmuType == ModelDescription::ME_v1)
+	{
+		m_resourcePath = m_fmuDir.str();
+	}
+	else {
+		m_resourcePath = (m_fmuDir / "resources").str();
+	}
+#ifdef _WIN32
+	// this is actually wrong, the URI prefix should be "file://" so that
+	// network paths become file:///path/to/network/share also on windows
+	m_resourcePath = "file:///" + m_resourcePath;
+#else
+	m_resourcePath = "file://" + m_resourcePath;
+#endif
 }
 
 
