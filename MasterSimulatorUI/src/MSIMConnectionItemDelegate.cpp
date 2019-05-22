@@ -31,7 +31,7 @@ void MSIMConnectionItemDelegate::paint( QPainter * painter, const QStyleOptionVi
 	}
 	else {
 		// write colored text otherwise
-		QStyleOptionViewItemV4 options = option;
+		QStyleOptionViewItem options = option;
 
 		painter->save();
 
