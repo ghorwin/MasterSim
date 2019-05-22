@@ -65,6 +65,8 @@ void MasterSim::importFMUs(const ArgParser &args, const Project & prj) {
 
 
 void MasterSim::initialize() {
+	const char * const FUNC_ID = "[MasterSim::initialize]";
+
 	// instantiate all slaves
 	instatiateSlaves();
 
@@ -90,6 +92,12 @@ void MasterSim::initialize() {
 
 	// setup time-stepping variables
 	m_h = m_project.m_hStart.value;
+	// special handling: when m_h == 0, automatically compute h from simulation duration
+	if (m_h == 0) {
+		m_h = (m_project.m_tEnd.value - m_project.m_tStart.value)/1000;
+		IBK::IBK_Message(IBK::FormatString("\nSetting h_0 = %1 s\n").arg(m_h), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	}
+
 	m_hProposed = m_h;
 
 	// initialize t_errTOrig = t - hLast
@@ -213,7 +221,7 @@ void MasterSim::doStep() {
 														 .arg(m_t).arg(m_h),IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
 					break;
 				}
-				// fall-through
+				[[clang::fallthrough]]; // fall-through
 
 			default : {
 				if (m_h/5 < m_project.m_hMin.value)
