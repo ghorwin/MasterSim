@@ -45,7 +45,6 @@ import MasterSimTestGenerator as msimGenerator
 # command line arguments
 parser = argparse.ArgumentParser(description="Runs cross-check tests for MasterSim")
 parser.add_argument('-d', action="store", dest="vendorDir", help="Vendor/base directory to process")
-parser.add_argument('-t', action="store", dest="fmiType", help="Operation mode (cs|me).")
 parser.add_argument('-v', action="store", dest="fmiVersion", help="FMI version to use.")
 parser.add_argument('-p', action="store", dest="platform", help="Platform (win32, win64, darwin32, darwin64, linux32, linux64).")
 parser.add_argument(action="store", dest="fmiDirectory", help="Root directory with fmi-cross-check files.")
@@ -80,24 +79,17 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
    # filter out everything except the fmus sub-directory
    if pathParts[0] != "fmus":
       continue
-      
+   
+   # filter out Model Exchange fmus
+   if pathParts[2] == "me":
+      continue
+   
    # filter out fmi version if given
    if args.fmiVersion != None:
       found = False
       if args.fmiVersion == "1" and pathParts[1] == "1.0":
          found = True
       if args.fmiVersion == "2" and pathParts[1] == "2.0":
-         found = True
-      if not found:
-         continue
-      
-   # filter out fmi type if given
-   if args.fmiType != None:
-      found = False
-      
-      if args.fmiType == "cs" and pathParts[2] == "cs":
-         found = True
-      if args.fmiType == "me" and pathParts[2] == "me":
          found = True
       if not found:
          continue
@@ -162,9 +154,12 @@ for fmuCase in fmuList:
       continue
 
    # read results
+   res = masterSim.checkResults()
+   if not res:
+      continue
    
    # mark fmuCase as completed
-      newFmuList.append(fmuCase)
+   newFmuList.append(fmuCase)
       
 
 # write completed FMU list
