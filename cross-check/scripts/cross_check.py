@@ -137,6 +137,7 @@ if os.path.exists("passed_tests.txt"):
 
 # for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files 
 # and then run the test
+newFmuList = fmuList[:]
 for fmuCase in fmuList:
    # check if case has alreade been completed successfully
    if fmuCase in passedFMUs:
@@ -144,8 +145,8 @@ for fmuCase in fmuList:
       continue
 
    # setup test generator (parse input files)
-   gen = msimGenerator.MasterSimTestGenerator()
-   gen.setup(fmuCase)
+   masterSim = msimGenerator.MasterSimTestGenerator()
+   masterSim.setup(fmuCase)
    
    # generate path to MasterSim working directory
    relPath = os.path.split(os.path.relpath(fmuCase, fullPathStr))[0] # get relative path to directory with fmu file
@@ -153,7 +154,25 @@ for fmuCase in fmuList:
    relPath = relPath.replace('/', '_')
 
    # generate MasterSim file
-   gen.generateMSim(relPath)
+   masterSim.generateMSim(relPath)
+   
+   # run MasterSim, expects MasterSimulator executable to be in the path
+   res = masterSim.run()
+   if not res:
+      continue
+
+   # read results
+   
+   # mark fmuCase as completed
+      newFmuList.append(fmuCase)
+      
+
+# write completed FMU list
+fobj = open("passed_tests.txt", 'w')
+passedFMUs = "\n".join(newFmuList)
+fobj.write(passedFMUs)
+fobj.close()
+del fobj
 
 
 exit(1)
