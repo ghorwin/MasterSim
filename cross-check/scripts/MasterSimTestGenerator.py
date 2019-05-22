@@ -2,7 +2,7 @@
 
 import os
 import csv
-
+import subprocess
 
 # Implementation of class MasterSimTestGenerator 
 
@@ -128,7 +128,7 @@ maxIterations        1
 
 ${FMU-Definition}
 """
-		msim_content = TEMPLATE_MSIM_FILE
+		msim_content = TEMPLATE_MSIM_CS1_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
 			msim_content = msim_content.replace('${'+kw+'}', str(self.simOptions[kw]))
 
@@ -142,10 +142,27 @@ ${FMU-Definition}
 		simLine = 'simulator 0 0 slave1 #ffff8c00 "{}"'.format(relPathToFmu)
 		msim_content = msim_content.replace('${FMU-Definition}', simLine)
 
-		msim_fname = targetDir + "/" + os.path.split(self.fmuPath)[1]
-		msim_fname = msim_fname[:-4] + ".msim"
-		fobj = open(msim_fname, 'w')
+		self.msimFilename = targetDir + "/" + os.path.split(self.fmuPath)[1]
+		self.msimFilename = self.msimFilename[:-4] + ".msim"
+		fobj = open(self.msimFilename, 'w')
 		fobj.write(msim_content)
 		fobj.close()
 		del fobj
+		
+	def run(self):
+		"""Runs the MasterSimulation executable"""
+		
+		command = ['MasterSimulator', '--verbosity-level=4', '-x', self.msimFilename]
+		print("Running 'MasterSimulator' for FMU '{}' ...".format(self.fmuPath))
+		try:
+			retcode = subprocess.call(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			if retcode != 0:
+				print("Error during simulation, see logfile for details.")
+				return False
+			return True
+		except OSError as e:
+			print(e)
+			print("Error running 'MasterSimulator', make sure it is in your PATH!")
+			return False
+		
 		
