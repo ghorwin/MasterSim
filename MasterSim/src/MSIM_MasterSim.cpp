@@ -149,9 +149,28 @@ void MasterSim::simulate() {
 	// write initial statistics and header
 	if (m_args.m_verbosityLevel > 1)
 		writeStepStatistics();
+	// we need to handle rounding errors:
+	// Possibility 1)
+	//     m_t                    = 0.99999
+	//     m_hProposed            = 0.01
+	//     m_project.m_tEnd.value = 1.0
+	//     -> Do not take the next step, write final output at m_t = 0.999999 which may be rounded to 1.0 in output
+	//
+	// Possibility 2)
+	//     m_t                    = 0.99000000032
+	//     m_hProposed            = 0.001
+	//     m_project.m_tEnd.value = 1.0
+	//     -> Take step, but adjust m_hProposed to hit exactly tEnd
 	while (m_t < m_project.m_tEnd.value) {
-		if (!m_enableVariableStepSizes && m_t + m_hProposed > m_project.m_tEnd.value)
-			break; // do not exceed end time point, can happen due to rounding errors
+		double hRemaining = m_project.m_tEnd.value - m_t;
+		if (hRemaining < m_hProposed) {
+			if (!m_enableVariableStepSizes && hRemaining < 1e-9) {
+				break; // do not exceed end time point, can happen due to rounding errors
+			}
+#ifdef PREVENT_OVERSHOOTING_AT_SIMULATION_END
+			m_hProposed = hRemaining;
+#endif //  PREVENT_OVERSHOOTING_AT_SIMULATION_END
+		}
 
 		// Do an internal step with the selected master algorithm
 		doStep();
@@ -185,7 +204,7 @@ void MasterSim::doStep() {
 	// ensure that we do not exceed simulation end time point
 	if (m_enableVariableStepSizes) {
 		// slightly enlarge step if we miss end time only by a fraction
-		if (m_t + m_h + 1e-12 > m_project.m_tEnd.value) {
+		if (m_t + m_h + 1e-10 > m_project.m_tEnd.value) {
 			m_h = m_project.m_tEnd.value - m_t;
 			IBK::IBK_Message(IBK::FormatString("Adjusting h='%1' to hit the end time point exactly.\n").arg(m_h),
 							 IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
