@@ -3,6 +3,9 @@
 import os
 import csv
 import subprocess
+import pandas as pd
+
+import Delphin6OutputFile
 
 # Implementation of class MasterSimTestGenerator 
 
@@ -71,7 +74,15 @@ class MasterSimTestGenerator:
 			# provided to the fmu
 			self.inputVars = next(inReader, None)
 			
-		# all input data parsed and stored
+		# all input data parsed and stored, now also read results
+
+		refFile = fmuCaseBaseName + "_ref.csv"
+		if not os.path.exists(refFile):
+			raise Exception("Reference result file '{}' expected".format(refFile))
+		self.refData = pd.read_csv(refFile, delimiter=',', quotechar='"')
+		if not 'time' in self.refData:
+			raise Exception("Missing 'time' column in reference result file.")
+
 
 
 	def generateMSim(self, targetDir):
@@ -155,7 +166,7 @@ ${FMU-Definition}
 		command = ['MasterSimulator', '--verbosity-level=4', '-x', self.msimFilename]
 		print("Running 'MasterSimulator' for FMU '{}' ...".format(self.fmuPath))
 		try:
-			retcode = subprocess.call(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			retcode = subprocess.call(command)
 			if retcode != 0:
 				print("Error during simulation, see logfile for details.")
 				return False
@@ -166,3 +177,26 @@ ${FMU-Definition}
 			return False
 		
 		
+	def checkResults(self):
+		"""Reads computed results and compares them to provided reference results."""
+		
+		doubleOutputs = Delphin6OutputFile.Delphin6OutputFile()
+		outFile = self.msimFilename[:-5] + "/results/real_---.d6o"
+		if not doubleOutputs.read(outFile):
+			print("Error reading results file '{}'".format(outFile))
+			return False
+		
+		# process all variables in the reference result file
+		
+		tp = self.refData['time']
+		tpOutputs = doubleOutputs.timePoints
+		# now process all variables (except time) in reference data
+		for var in self.refData:
+			if var == 'time':
+				continue
+			# lookup corresponding column in output file
+			colIdx = doubleOutputs.quantities.index(var)
+			# get time point and value vector from 
+			values = doubleOutputs.valueVectorAt(colIdx)
+			# now 
+			#for t in tp:
