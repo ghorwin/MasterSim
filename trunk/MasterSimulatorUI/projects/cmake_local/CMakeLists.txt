@@ -8,6 +8,7 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src
 	${PROJECT_SOURCE_DIR}/../../../externals/BlockMod/src
+	${PROJECT_SOURCE_DIR}/../../../externals/QtPropertyBrowser/src
 	${PROJECT_SOURCE_DIR}/../../../MasterSim/src
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
@@ -99,6 +100,7 @@ target_link_libraries( ${PROJECT_NAME}
 	MasterSim
 	DataIO
 	BlockMod
+	QtPropertyBrowser
 	IBKMK
 	IBK
 	TiCPP
