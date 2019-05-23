@@ -62,8 +62,6 @@ private slots:
 
 	void on_lineEditDtStart_editingFinished();
 
-	void on_checkBoxBinaryOutputFiles_toggled(bool checked);
-
 	void on_pushButton_clicked();
 
 private:
