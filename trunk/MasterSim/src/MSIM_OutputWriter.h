@@ -9,10 +9,6 @@
 
 #include "MSIM_ProgressFeedback.h"
 
-namespace DATAIO {
-	class DataIO;
-}
-
 namespace MASTER_SIM {
 
 class Project;
@@ -21,22 +17,6 @@ class Slave;
 /*! Handles creation and writing of master outputs (output variables of slaves). */
 class OutputWriter {
 public:
-	/*! Holds dataIO for an output file - data container and output variable mapping. */
-	struct OutputFileData {
-		OutputFileData() : m_dataIO(NULL) {}
-
-		/*! Pointer to DataIO container (owned). */
-		DATAIO::DataIO										*m_dataIO;
-		/*! References to all outputs from all slaves that should go into this file. */
-		std::vector<std::pair<const Slave*, unsigned int> >	m_outputMapping;
-	};
-
-	/*! Mapping of output file types stored as DataIO. */
-	enum OutputFileTypes {
-		OF_BOOLEAN,
-		OF_INTEGER
-	};
-
 
 	/*! Constructor, initializes pointers. */
 	OutputWriter();
@@ -77,15 +57,14 @@ public:
 
 	ProgressFeedback		m_progressFeedback;
 
-	/*! Output data containers.
-		For each data type different files.
-		Boolean outputs converted to 0 or 1 and stored in a single DataIO, index 0.
-		Integer outputs stored in single DataIO, index 1.
-	*/
-	std::vector<OutputFileData>		m_outputFiles;
+	std::vector< std::pair<const Slave*, unsigned int> >	m_boolOutputMapping;
+	std::vector< std::pair<const Slave*, unsigned int> >	m_intOutputMapping;
+	std::vector< std::pair<const Slave*, unsigned int> >	m_realOutputMapping;
 
-	/*! All output files of type real. */
-	std::vector<OutputFileData>		m_realOutputFiles;
+	/*! Holds number output values in csv format suitable for PostProc 2.
+		The numbers are written in order boolean, integer and double(real) values.
+	*/
+	std::ofstream											*m_valueOutputs;
 
 	/*! Holds string output values.
 		String outputs are written all together in one csv file (not a DataIO container).
@@ -93,9 +72,6 @@ public:
 	std::ofstream											*m_stringOutputs;
 	/*! Contains references to all outputs that are strings. */
 	std::vector< std::pair<const Slave*, unsigned int> >	m_stringOutputMapping;
-
-	/*! Vector to cache output quantities in before appending data to DataIO container. */
-	std::vector<double>										m_valueVector;
 
 	/*! Holds progress output. */
 	std::ofstream											*m_progressOutputs;

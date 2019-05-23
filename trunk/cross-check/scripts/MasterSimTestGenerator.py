@@ -80,8 +80,24 @@ class MasterSimTestGenerator:
 		if not os.path.exists(refFile):
 			raise Exception("Reference result file '{}' expected".format(refFile))
 		self.refData = pd.read_csv(refFile, delimiter=',', quotechar='"')
-		if not 'time' in self.refData:
-			raise Exception("Missing 'time' column in reference result file.")
+		timeColumnName = 'time'
+		if not timeColumnName in self.refData:
+			timeColumnName = 'Time'
+			if not timeColumnName in self.refData:
+				raise Exception("Missing 'time' o 'Time' column in reference result file '{}'.".format(refFile))
+		
+		# determine output frequency
+		dtOut = None
+		self.tp = self.refData[timeColumnName]
+		for i in range(1,len(self.tp)):
+			dt = self.tp[i] - self.tp[i-1]
+			if dtOut == None:
+				dtOut = dt
+			else:
+				if abs(dt - dtOut) > 1e-8:
+					dtOut = min(dtOut, dt)
+	
+		self.dtOut = dtOut
 
 
 
@@ -109,7 +125,7 @@ hMax                 30 min
 hMin                 1e-6 s
 hFallBackLimit       0.001 s
 hStart               ${StepSize} s
-hOutputMin           0.001 s
+hOutputMin           ${dtOutMin} s
 binaryOutputFiles    no
 adjustStepSize       no
 absTol               1e-06
@@ -128,7 +144,7 @@ hMax                 30 min
 hMin                 1e-6 s
 hFallBackLimit       ${FallBackLimit} s
 hStart               ${StepSize} s
-hOutputMin           0.001 s
+hOutputMin           ${dtOutMin} s
 binaryOutputFiles    no
 adjustStepSize       yes
 absTol               0
@@ -142,6 +158,8 @@ ${FMU-Definition}
 		msim_content = TEMPLATE_MSIM_CS1_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
 			msim_content = msim_content.replace('${'+kw+'}', str(self.simOptions[kw]))
+
+		msim_content = msim_content.replace('${dtOutMin}', str(self.dtOut))
 
 		# generate FMU definition line
 		# 'simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"'
@@ -188,15 +206,20 @@ ${FMU-Definition}
 		
 		# process all variables in the reference result file
 		
-		tp = self.refData['time']
 		tpOutputs = doubleOutputs.timePoints
 		# now process all variables (except time) in reference data
 		for var in self.refData:
-			if var == 'time':
+			if var == 'time' or var == 'Time':
 				continue
 			# lookup corresponding column in output file
-			colIdx = doubleOutputs.quantities.index(var)
+			try:
+				colIdx = doubleOutputs.quantities.index(var)
+			except:
+				print("Quantity '{}' not generated as output. Skipped in test.".format(var))
+				continue
 			# get time point and value vector from 
 			values = doubleOutputs.valueVectorAt(colIdx)
 			# now 
-			#for t in tp:
+			#for t in self.tp:
+		
+		return True

@@ -5,7 +5,6 @@ project( MasterSimulator )
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
-	${PROJECT_SOURCE_DIR}/../../../externals/DataIO/src
 	${PROJECT_SOURCE_DIR}/../../../MasterSim/src
 )
 
@@ -26,7 +25,6 @@ add_executable( ${PROJECT_NAME}
 # link against the dependent libraries
 target_link_libraries( ${PROJECT_NAME} 
 	MasterSim
-	DataIO
 	IBKMK
 	IBK
 	TiCPP

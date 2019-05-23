@@ -34,6 +34,7 @@ import matplotlib.pyplot as pl
 import os
 import platform
 import argparse
+import csv
 
 import CC_functions as cc
 import MasterSimTestGenerator as msimGenerator
@@ -63,112 +64,127 @@ fmuList = []
 
 print("Collecting list of FMUs to import and test-run")
 for root, dirs, files in os.walk(fullPath, topdown=False):
-   # split root directory into components
-   
-   root = os.path.join(fullPath, root)
-   rootStr = root.replace('\\', '/') # windows fix
-   pathParts = rootStr.split('/')
-   pathParts = pathParts[len(fullPathParts):]
-      
-   # we only process directories that can actually contain models
-   if len(pathParts) < 5:
-      continue
-   
-   relPath = '/'.join(pathParts[1:])
+	# split root directory into components
 
-   # filter out everything except the fmus sub-directory
-   if pathParts[0] != "fmus":
-      continue
-   
-   # filter out Model Exchange fmus
-   if pathParts[2] == "me":
-      continue
-   
-   # filter out fmi version if given
-   if args.fmiVersion != None:
-      found = False
-      if args.fmiVersion == "1" and pathParts[1] == "1.0":
-         found = True
-      if args.fmiVersion == "2" and pathParts[1] == "2.0":
-         found = True
-      if not found:
-         continue
-      
-   # filter out platform, if given
-   osType = args.platform
-   if osType == None:
-      s = platform.system()
-      if s == "Linux":
-         osType = "linux64"
-      elif s == "Windows":
-         osType == "win64"
-      else:
-         osType == "darwin64"
-   
-   if pathParts[3] != osType:
-      continue
+	root = os.path.join(fullPath, root)
+	rootStr = root.replace('\\', '/') # windows fix
+	pathParts = rootStr.split('/')
+	pathParts = pathParts[len(fullPathParts):]
 
-   # now find .fmu files
-   for name in files:
-      e = os.path.splitext(name)
-      if len(e) == 2 and e[1] == '.fmu':
-         fmuPath = os.path.join(root, name)
-         fmuList.append(fmuPath[:-4]) # strip the trailing .fmu
-         print("  " + os.path.join(relPath, name))
+	# we only process directories that can actually contain models
+	if len(pathParts) < 5:
+		continue
+
+	relPath = '/'.join(pathParts[1:])
+
+	# filter out everything except the fmus sub-directory
+	if pathParts[0] != "fmus":
+		continue
+
+	# filter out Model Exchange fmus
+	if pathParts[2] == "me":
+		continue
+
+	# filter out fmi version if given
+	if args.fmiVersion != None:
+		found = False
+		if args.fmiVersion == "1" and pathParts[1] == "1.0":
+			found = True
+		if args.fmiVersion == "2" and pathParts[1] == "2.0":
+			found = True
+		if not found:
+			continue
+
+	# filter out platform, if given
+	osType = args.platform
+	if osType == None:
+		s = platform.system()
+		if s == "Linux":
+			osType = "linux64"
+		elif s == "Windows":
+			osType == "win64"
+		else:
+			osType == "darwin64"
+
+	if pathParts[3] != osType:
+		continue
+
+	# now find .fmu files
+	for name in files:
+		e = os.path.splitext(name)
+		if len(e) == 2 and e[1] == '.fmu':
+			fmuPath = os.path.join(root, name)
+			fmuList.append(fmuPath[:-4]) # strip the trailing .fmu
+			print("  " + os.path.join(relPath, name))
 
 print("{} FMUs to test".format(len(fmuList)))
 
-passedFMUs = []
-# read list of passed test cases
-if os.path.exists("passed_tests.txt"):
-   fobj = open("passed_tests.txt", 'r')
-   passedFMUs = fobj.readlines()
-   fobj.close()
-   del fobj
-   
+
+# read list of test cases (may be a subset of total FMUs)
+RESULT_CSV = "fmuTestResults.csv"
+fmuEvalResult = dict() # key is fmuCase; value holds tuples: (runSuccessful, resultsCorrect)
+
+if os.path.exists(RESULT_CSV):
+	fobj = open(RESULT_CSV, 'r')
+	lines = fobj.readlines()
+	fobj.close()
+	del fobj
+	for i in range(1,len(lines)):
+		tokens = lines[i].split('\t')
+		if len(tokens) != 3:
+			continue
+		fmuEvalResult[tokens[0]] = (bool(tokens[1]), bool(tokens[2].strip()))
+
 
 # for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files 
 # and then run the test
-newFmuList = fmuList[:]
 for fmuCase in fmuList:
-   # check if case has alreade been completed successfully
-   if fmuCase in passedFMUs:
-      print('Case {} already completed, skipped'.format(fmuCase))
-      continue
+	# generate path to MasterSim working directory = unique ID for test case
+	relPath = os.path.split(os.path.relpath(fmuCase, fullPathStr))[0] # get relative path to directory with fmu file
+	relPath = relPath.replace('\\', '_') # windows fix
+	relPath = relPath.replace('/', '_')
+	
+	# check if case has already been completed successfully
+	if relPath in fmuEvalResult:
+		res = fmuEvalResult[relPath]
+		if res[1] == True:
+			print('Case {} already completed, skipped'.format(fmuCase))
+			continue
 
-   # setup test generator (parse input files)
-   masterSim = msimGenerator.MasterSimTestGenerator()
-   masterSim.setup(fmuCase)
-   
-   # generate path to MasterSim working directory
-   relPath = os.path.split(os.path.relpath(fmuCase, fullPathStr))[0] # get relative path to directory with fmu file
-   relPath = relPath.replace('\\', '_') # windows fix
-   relPath = relPath.replace('/', '_')
+	# setup test generator (parse input files)
+	try:
+		masterSim = msimGenerator.MasterSimTestGenerator()
+		masterSim.setup(fmuCase)
+	except Exception as e:
+		print e
+		fmuEvalResult[relPath] = (False, False)
+		continue
 
-   # generate MasterSim file
-   masterSim.generateMSim(relPath)
-   
-   # run MasterSim, expects MasterSimulator executable to be in the path
-   res = masterSim.run()
-   if not res:
-      continue
+	# generate MasterSim file
+	masterSim.generateMSim(relPath)
 
-   # read results
-   res = masterSim.checkResults()
-   if not res:
-      continue
-   
-   # mark fmuCase as completed
-   newFmuList.append(fmuCase)
-      
+	# run MasterSim, expects MasterSimulator executable to be in the path
+	res = masterSim.run()
+	if not res:
+		fmuEvalResult[relPath] = (False, False)
+		continue
 
-# write completed FMU list
-fobj = open("passed_tests.txt", 'w')
-passedFMUs = "\n".join(newFmuList)
-fobj.write(passedFMUs)
-fobj.close()
-del fobj
+	# read results
+	res = masterSim.checkResults()
+	if not res:
+		fmuEvalResult[relPath] = (True, False)
+		continue
 
+	# mark fmuCase as completed
+	fmuEvalResult[relPath] = (True, True)
+	break
+
+
+with open(RESULT_CSV, 'w') as csvfile:
+	csvfile.write("FMU\tRuns\tResults correct\n")
+	for t in fmuEvalResult:
+		res = fmuEvalResult[t]
+		csvfile.write("{}\t{}\t{}\n".format(t, int(res[0]), int(res[1])) )
 
 exit(1)
 
@@ -213,10 +229,10 @@ path1 = path0 + fmiversion + '/cs/' + platform + '/' + path_vendor
 
 modelnames = os.listdir(path1)
 if model_number<=len(modelnames):
-    modelname = modelnames[model_number-1]
-    print('\nModel: ' + modelname + '\n')
+	modelname = modelnames[model_number-1]
+	print('\nModel: ' + modelname + '\n')
 else:
-    raise Exception('model_number zu hoch!')    
+	raise Exception('model_number zu hoch!')    
 
 
 # path generation
@@ -234,9 +250,9 @@ standard_ms = r'C:\Daten\SimQuality_cloud\SimQuality\AP8\cross-check\0MS_standar
 
 # delete any passed or failed files
 if os.path.exists(model_path + '/failed'):
-    os.remove(model_path + '/failed')
+	os.remove(model_path + '/failed')
 if  os.path.exists(model_path + '/passed'):
-    os.remove(model_path + '/passed')    
+	os.remove(model_path + '/passed')    
 
 # read and check simulation parameters
 (tstart, tstop, tstep, rTol, tstep_write) = cc.readSimParameters(file_opt, file_ref)
@@ -244,7 +260,7 @@ cc.checkParameters(tstart, tstop, tstep)
 
 # create MasterSim file
 cc.createMasterSim(standard_ms, file_ms, modelname, tstart, tstop, tstep, tstep_write, rTol)
-       
+
 # run Simulation
 cc.runSimulation(solver_win32, solver_win64, file_ms)
 
@@ -286,11 +302,11 @@ tref = np.arange(tstart,tstop,tstep)+tstep
 data_cc_int = np.zeros((len(tref),Nvars+1))
 data_cc_int[:,0] = tref
 for n in range(Nvars):
-    data_cc_int[:,n+1] = np.interp(tref,data_cc[:,0], data_cc[:,n+1])
+	data_cc_int[:,n+1] = np.interp(tref,data_cc[:,0], data_cc[:,n+1])
 data_ref_int = np.zeros((len(tref),Nvars+1))
 data_ref_int[:,0] = tref
 for n in range(Nvars):
-    data_ref_int[:,n+1] = np.interp(tref,data_ref[:,0], data_ref[:,n+1])    
+	data_ref_int[:,n+1] = np.interp(tref,data_ref[:,0], data_ref[:,n+1])    
 
 
 # %% make some checks
@@ -299,9 +315,9 @@ for n in range(Nvars):
 #    diff = np.size(data_cc, axis=0) - np.size(data_ref, axis=0)
 #    diff_rel = (np.size(data_cc, axis=0) - np.size(data_ref, axis=0))/np.size(data_ref, axis=0)
 #    print('Differenz: {0:3d} Schritt(e) bzw. {1:5.2f}%'.format(diff, diff_rel*100))
-    
+
 if np.size(data_cc, axis=1) != np.size(data_ref, axis=1):
-    print('\n ->ungleiche Anzahl an Ausgaben!\n\n')
+	print('\n ->ungleiche Anzahl an Ausgaben!\n\n')
 
 
 # %% write cc-file
@@ -311,29 +327,29 @@ np.savetxt(file_cc, data_cc, fmt='%.5f', delimiter=',', header=','.join(header_c
 # %% compare and compute rmse
 RMSE=np.ones(Nvars)*100
 for n in range(Nvars):
-    diff = data_cc_int[:,n+1] - data_ref_int[:,n+1]
-    RMSE[n] = np.sqrt(np.sum((diff)**2))#/len(data_cc_int[:,n+1]))
-    pl.figure(n)
-    pl.subplot(2,1,1)
-    pl.plot(data_ref[:,0],data_ref[:,n+1],'o--k',linewidth=2.0, label='ref')
-    pl.plot(data_cc[:,0],data_cc[:,n+1],'-r', label='MSim')
-    pl.legend()
-    pl.subplot(2,1,2)
-    pl.plot(data_ref_int[:,0],diff,'m', label='Differenz')
-    pl.legend()    
+	diff = data_cc_int[:,n+1] - data_ref_int[:,n+1]
+	RMSE[n] = np.sqrt(np.sum((diff)**2))#/len(data_cc_int[:,n+1]))
+	pl.figure(n)
+	pl.subplot(2,1,1)
+	pl.plot(data_ref[:,0],data_ref[:,n+1],'o--k',linewidth=2.0, label='ref')
+	pl.plot(data_cc[:,0],data_cc[:,n+1],'-r', label='MSim')
+	pl.legend()
+	pl.subplot(2,1,2)
+	pl.plot(data_ref_int[:,0],diff,'m', label='Differenz')
+	pl.legend()    
 
 # %% create passed or failed file
 print('RMSE:  {}\n'.format(str(RMSE)))
 print('highest RMSE: {}'.format(max(RMSE)))
 if (RMSE<1).all()    :
-    f = open(model_path + '/passed','w')
-    f.close()
-    print('\nPASSED!')
+	f = open(model_path + '/passed','w')
+	f.close()
+	print('\nPASSED!')
 else:
-    f = open(model_path + '/failed','w')
-    f.close()
-    print('\nFAILED!')
-    
+	f = open(model_path + '/failed','w')
+	f.close()
+	print('\nFAILED!')
+
 
 
 

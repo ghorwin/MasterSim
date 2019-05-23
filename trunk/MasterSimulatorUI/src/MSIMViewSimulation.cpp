@@ -109,7 +109,6 @@ void MSIMViewSimulation::onModified( int modificationType, void * /*data*/ ) {
 	m_ui->comboBoxMasterAlgorithm->setCurrentIndex(project().m_masterMode);
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
 	m_ui->checkBoxAdjustStepSize->setChecked( project().m_adjustStepSize);
-	m_ui->checkBoxBinaryOutputFiles->setChecked( project().m_binaryOutputFiles);
 
 	blockMySignals(this, false);
 
@@ -431,15 +430,6 @@ void MSIMViewSimulation::on_lineEditAbsTol_editingFinished() {
 void MSIMViewSimulation::on_checkBoxAdjustStepSize_toggled(bool checked) {
 	MASTER_SIM::Project p = project(); // create copy of project
 	p.m_adjustStepSize = checked;
-
-	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
-	cmd->push();
-}
-
-
-void MSIMViewSimulation::on_checkBoxBinaryOutputFiles_toggled(bool checked) {
-	MASTER_SIM::Project p = project(); // create copy of project
-	p.m_binaryOutputFiles = checked;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();

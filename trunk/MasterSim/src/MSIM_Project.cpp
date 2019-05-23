@@ -27,7 +27,6 @@ Project::Project() :
 	m_absTol(1e-6),
 	m_relTol(1e-5),
 	m_hOutputMin("hOutputMin", 120, "s"),
-	m_binaryOutputFiles(false),
 	m_outputTimeUnit("s")
 {
 }
@@ -181,8 +180,7 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				if (!m_hStart.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
 			} else if (keyword == "hOutputMin") {
 				if (!m_hOutputMin.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
-			} else if (keyword == "binaryOutputFiles")
-				m_binaryOutputFiles = (value == "true" || value == "yes" || value == "1");
+			}
 			else if (keyword == "adjustStepSize")
 				m_adjustStepSize = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "absTol")
@@ -263,7 +261,6 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!m_hFallBackLimit.empty())		writeParameter(m_hFallBackLimit, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_hStart.empty())		writeParameter(m_hStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_hOutputMin.empty())		writeParameter(m_hOutputMin, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
-	out << std::setw(KEYWORD_WIDTH) << std::left << "binaryOutputFiles" << " " << (m_binaryOutputFiles ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "absTol" << " " << m_absTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "relTol" << " " << m_relTol << std::endl;
