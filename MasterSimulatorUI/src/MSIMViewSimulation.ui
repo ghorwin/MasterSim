@@ -211,18 +211,11 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2">
-         <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
-        </item>
         <item row="0" column="1">
          <widget class="QLineEdit" name="lineEditDtOutput"/>
         </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QCheckBox" name="checkBoxBinaryOutputFiles">
-          <property name="text">
-           <string>Write binary output files</string>
-          </property>
-         </widget>
+        <item row="0" column="2">
+         <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
         </item>
        </layout>
       </widget>

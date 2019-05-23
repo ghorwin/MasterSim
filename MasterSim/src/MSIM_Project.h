@@ -172,9 +172,6 @@ public:
 	/*! Minimum output time step. */
 	IBK::Parameter				m_hOutputMin;
 
-	/*! If true, binary output files are written (smaller and faster). */
-	bool						m_binaryOutputFiles;
-
 	/*! Unit defined as output time for output files. */
 	IBK::Unit					m_outputTimeUnit;
 

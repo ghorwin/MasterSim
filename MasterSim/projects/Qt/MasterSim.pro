@@ -22,11 +22,9 @@ INCLUDEPATH = \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
 	../../../externals/IBKMK/src \
-	../../../externals/DataIO/src \
 	../../../externals/TiCPP/src
 
 LIBS += -L../../../externals/lib$${DIR_PREFIX} \
-	-lDataIO \
 	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP \
