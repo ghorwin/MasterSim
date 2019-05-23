@@ -118,15 +118,15 @@ class SolverStats:
 			# skip files without extension
 			if len(fileParts) < 2:
 				continue
-			# skip geometry files
-			if fileParts[1] == ".d6o" or fileParts[1] == ".tsv":
-				if fileParts[1] == ".tsv":
+			# only process files that we know how to compare
+			if fileParts[1] == ".d6o" or fileParts[1] == ".tsv" or fileParts[1] == ".csv":
+				if fileParts[1] == ".tsv" or fileParts[1] == ".csv":
 					# for tsv files we do binary comparison
 					if not filecmp.cmp(os.path.join(dir1,f), os.path.join(dir2,f), shallow=False):
 						printError("Mismatching content of file (byte difference) '{}'".format(f))
 						fail = True
 					else:
-						print f
+						printNotification("Checked: {}".format(f))
 				else:
 					# try to open reference and result files
 					try:
@@ -149,7 +149,7 @@ class SolverStats:
 									printError("  '{}'".format(lines2[i].rstrip('\n')))
 									fail = True
 									break
-							print f
+							printNotification("Checked: {}".format(f))
 					except OSError as e:
 						printError("Error comparing files '{}'".format(f))
 						fail = True
