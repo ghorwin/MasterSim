@@ -12,7 +12,6 @@ hMin                 1e-06 s
 hFallBackLimit       0.0001 s
 hStart               0.14 s
 hOutputMin           0.0001 s
-binaryOutputFiles    no
 adjustStepSize       yes
 absTol               1e-06
 relTol               1e-05

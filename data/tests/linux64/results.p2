@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc version="2.0.16" xmlns="http://www.bauklimatik-dresden.de" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:IBK="http://www.bauklimatik-dresden.de/IBK" xsi:schemaLocation="http://www.bauklimatik-dresden.de PostProc.xsd">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#ffee00" Checked="0">BouncingBall/BouncingBall_outputs_test</SubDir>
+			<SubDir Color="#45ad45" Checked="0">BouncingBall/BouncingBall_outputs_test.gcc_linux</SubDir>
+			<SubDir Color="#aa0000" Checked="0">Lotka_Volterra_System/LV_Richardson_5iter.gcc_linux</SubDir>
+			<SubDir Color="#55aaff" Checked="0">Lotka_Volterra_System/LV_Richardson_noiter.gcc_linux</SubDir>
+			<SubDir Color="#005500" Checked="0">Lotka_Volterra_System/description</SubDir>
+			<SubDir Color="#550000" Checked="0">Math_003_control_loop/Math003_GaussJacobi_1iters_fixedStep</SubDir>
+			<SubDir Color="#ffaaff" Checked="0">Math_003_control_loop/Math003_GaussJacobi_1iters_fixedStep.gcc_linux</SubDir>
+			<SubDir Color="#c66300" Checked="0">Math_003_control_loop/Math003_GaussSeidel_1iters_fixedStep</SubDir>
+			<SubDir Color="#ff5500" Checked="0">Math_003_control_loop/Math003_GaussSeidel_1iters_fixedStep.gcc_linux</SubDir>
+			<SubDir Color="#aa55ff" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive</SubDir>
+			<SubDir Color="#aaaa00" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive.gcc_linux</SubDir>
+			<SubDir Color="#ffffff" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson</SubDir>
+			<SubDir Color="#416fce" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.gcc_linux</SubDir>
+			<SubDir Color="#ffaa00" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep</SubDir>
+			<SubDir Color="#ff007f" Checked="0">Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep.gcc_linux</SubDir>
+			<SubDir Color="#7141d1" Checked="0">Math_003_control_loop/description</SubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="-1" size1="1" size2="1" orientation="2" />
+		<FocusedWidget>0</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>
