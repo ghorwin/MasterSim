@@ -68,6 +68,21 @@ void printUtf8(const std::string & utf8) {
 	std::cout.flush();
 }
 
+/*! Helper function for MessageHandler to print out utf8 strings.
+	Basically behaves as printUtf8, but writes to std::cerr instead of std::cout
+*/
+void printErrorUtf8(const std::string & utf8) {
+#ifdef _WIN32
+	if (GetConsoleOutputCP() == CP_UTF8)
+		std::wprintf(L"%S", utf8.c_str());
+	else
+		std::cout << utf8;
+#else
+	std::cerr << utf8;
+#endif
+	std::cerr.flush();
+}
+
 // *** MessageHandler ***
 
 MessageHandler::MessageHandler() :
@@ -297,7 +312,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			}
 			IBK::set_console_text_color(IBK::CF_BRIGHT_RED);
 			consoleOut << vbStr << istr << msg << std::endl;
-			printUtf8(consoleOut.str());
+			printErrorUtf8(consoleOut.str());
 #ifdef _WIN32
 			IBK::set_console_text_color(IBK::CF_WHITE);
 #else // _WIN32
