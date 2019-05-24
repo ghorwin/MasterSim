@@ -5,8 +5,6 @@ import csv
 import subprocess
 import pandas as pd
 
-import Delphin6OutputFile
-
 # Implementation of class MasterSimTestGenerator 
 
 class MasterSimTestGenerator:
@@ -126,7 +124,6 @@ hMin                 1e-6 s
 hFallBackLimit       0.001 s
 hStart               ${StepSize} s
 hOutputMin           ${dtOutMin} s
-binaryOutputFiles    no
 adjustStepSize       no
 absTol               1e-06
 relTol               ${RelTol}
@@ -145,7 +142,6 @@ hMin                 1e-6 s
 hFallBackLimit       ${FallBackLimit} s
 hStart               ${StepSize} s
 hOutputMin           ${dtOutMin} s
-binaryOutputFiles    no
 adjustStepSize       yes
 absTol               0
 relTol               ${RelTol}
@@ -181,12 +177,30 @@ ${FMU-Definition}
 	def run(self):
 		"""Runs the MasterSimulation executable"""
 		
-		command = ['MasterSimulator', '--verbosity-level=4', '-x', self.msimFilename]
+		command = ['MasterSimulator', '--verbosity-level=0', '-x', self.msimFilename]
 		print("Running 'MasterSimulator' for FMU '{}' ...".format(self.fmuPath))
 		try:
-			retcode = subprocess.call(command)
+			solverProcess = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			retcode = solverProcess.wait()
+			(outlog, errlog) = solverProcess.communicate()
+			outlog = outlog.replace("[01;31m","")
+			outlog = outlog.replace("[22;37m","")
+			
+			errlog = errlog.replace("[01;31m","")
+			errlog = errlog.replace("[22;37m","")
+			# dump output to logfile
+			logf = open(self.msimFilename + ".log", 'w')
+			logf.write(outlog)
+			logf.close()
+			del logf
+
+			logf = open(self.msimFilename + ".errors", 'w')
+			logf.write(errlog)
+			logf.close()
+			del logf
+			
 			if retcode != 0:
-				print("Error during simulation, see logfile for details.")
+				print("Error during simulation, see '{}.logfile' for details.".format(os.path.basename(self.msimFilename)) )
 				return False
 			return True
 		except OSError as e:
@@ -194,32 +208,86 @@ ${FMU-Definition}
 			print("Error running 'MasterSimulator', make sure it is in your PATH!")
 			return False
 		
-		
+	
 	def checkResults(self):
 		"""Reads computed results and compares them to provided reference results."""
 		
-		doubleOutputs = Delphin6OutputFile.Delphin6OutputFile()
-		outFile = self.msimFilename[:-5] + "/results/real_---.d6o"
-		if not doubleOutputs.read(outFile):
-			print("Error reading results file '{}'".format(outFile))
+		outFile = self.msimFilename[:-5] + "/results/values.csv"
+		
+		if not os.path.exists(outFile):
+			print("Result data file '{}' missing!".format(outFile))
 			return False
+			
+		msimResults = open(outFile, 'r')
+		lines = msimResults.readlines()
+		if len(lines) < 2:
+			print("Missing data in result data file '{}'!".format(outFile))
+			return False
+		header = lines[0].strip().split('\t')
+		captions = []
+		data = []
+		for h in header:
+			# remove units []
+			p1 = h.rfind('[')
+			h = h[:p1-1].strip()
+			# remove first part with slave name
+			p1 = h.find('.')
+			h = h[p1+1:]
+			captions.append(h)
+			data.append( [] )
+		
+		for i in range(1, len(lines)):
+			line = lines[i]
+			tokens = line.split('\t')
+			for colIdx in range(len(tokens)):
+				try:
+					d = float(tokens[colIdx])
+					data[colIdx].append(d)
+				except:
+					data[colIdx].append(-99999) # indicates missing/invalid value
+			
 		
 		# process all variables in the reference result file
 		
-		tpOutputs = doubleOutputs.timePoints
+		tpOutputs = data[0]
 		# now process all variables (except time) in reference data
+		success = True
 		for var in self.refData:
 			if var == 'time' or var == 'Time':
 				continue
 			# lookup corresponding column in output file
 			try:
-				colIdx = doubleOutputs.quantities.index(var)
+				colIdx = captions.index(var)
 			except:
 				print("Quantity '{}' not generated as output. Skipped in test.".format(var))
 				continue
+			
 			# get time point and value vector from 
-			values = doubleOutputs.valueVectorAt(colIdx)
-			# now 
-			#for t in self.tp:
+			values = data[colIdx]
+			
+			norm = 0
+			refVals = self.refData[var]
+			# now process all time points in the reference files
+			for i in range(len(self.tp)):
+				ref_t = self.tp[i]
+				ref_val = refVals[i]
+				valueAtT = findValue(ref_t, tpOutputs, values) # find the value in the list of values
+				norm = norm + (valueAtT-ref_val)**2
+			norm = norm/len(self.tp)
+			
+			print("Norm = {}".format(norm))
+			
+			relTol = self.simOptions['RelTol']
+			if norm*relTol > 1:
+				success = False
 		
-		return True
+		return success
+	
+
+def findValue(t, tp, vals):
+	"""Returns first value from vector 'vals' whose time point is >= the given time point 't'."""
+
+	for i in range(len(tp)):
+		ti = tp[i]
+		if t>= ti:
+			return vals[i] 
