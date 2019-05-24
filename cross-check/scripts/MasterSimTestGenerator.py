@@ -185,9 +185,12 @@ ${FMU-Definition}
 			(outlog, errlog) = solverProcess.communicate()
 			outlog = outlog.replace("[01;31m","")
 			outlog = outlog.replace("[22;37m","")
+			outlog = outlog.replace("[01;33m","")
 			
 			errlog = errlog.replace("[01;31m","")
 			errlog = errlog.replace("[22;37m","")
+			errlog = errlog.replace("[01;33m","")
+			
 			# dump output to logfile
 			logf = open(self.msimFilename + ".log", 'w')
 			logf.write(outlog)
@@ -217,6 +220,31 @@ ${FMU-Definition}
 		if not os.path.exists(outFile):
 			print("Result data file '{}' missing!".format(outFile))
 			return False
+		
+		# first generate file with expected results in PostProc 2 format
+		referenceValueFilename = self.msimFilename[:-5] + "/results/referenceValues.csv"
+		refValueFile = open(referenceValueFilename, 'w')
+		header = ["Time [s]"]
+		
+		for var in self.refData:
+			if var == 'time' or var == 'Time':
+				continue
+			header.append(var)
+		refValueFile.write('\t'.join(header) + '\n')
+		# now all columns 
+		
+		for i in range(len(self.tp)):
+			ref_t = self.tp[i]
+			row = [str(ref_t)]
+			for var in self.refData:
+				if var == 'time' or var == 'Time':
+					continue
+				refVals = self.refData[var]
+				ref_val = refVals[i]
+				row.append(str(ref_val))
+			refValueFile.write('\t'.join(row) + '\n')
+		
+	
 			
 		msimResults = open(outFile, 'r')
 		lines = msimResults.readlines()
@@ -259,8 +287,8 @@ ${FMU-Definition}
 			try:
 				colIdx = captions.index(var)
 			except:
-				print("Quantity '{}' not generated as output. Skipped in test.".format(var))
-				continue
+				print("Quantity '{}' not generated as output. Marking test as failed.".format(var))
+				return False
 			
 			# get time point and value vector from 
 			values = data[colIdx]
