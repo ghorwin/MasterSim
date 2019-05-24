@@ -243,7 +243,8 @@ ${FMU-Definition}
 				ref_val = refVals[i]
 				row.append(str(ref_val))
 			refValueFile.write('\t'.join(row) + '\n')
-		
+		refValueFile.close()
+		del refValueFile
 	
 			
 		msimResults = open(outFile, 'r')
