@@ -177,7 +177,6 @@ for fmuCase in fmuList:
 
 	# mark fmuCase as completed
 	fmuEvalResult[relPath] = (True, True)
-	break
 
 
 with open(RESULT_CSV, 'w') as csvfile:
