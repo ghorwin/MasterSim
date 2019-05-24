@@ -32,8 +32,9 @@ void FMIVariable::read(const TiXmlElement * element) {
 		else
 			m_causality = C_OTHER;
 
-		/// \todo add support for variability
-		std::string variability = ModelDescription::readRequiredAttribute(element, "variability");
+		std::string variability = ModelDescription::readOptionalAttribute(element, "variability");
+		if (variability.empty())
+			variability = "continuous";
 
 		// read child element
 		const TiXmlElement * child = element->FirstChild()->ToElement();
