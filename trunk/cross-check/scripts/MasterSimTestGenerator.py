@@ -89,6 +89,9 @@ class MasterSimTestGenerator:
 		self.tp = self.refData[timeColumnName]
 		for i in range(1,len(self.tp)):
 			dt = self.tp[i] - self.tp[i-1]
+			# handle case were missing number precision in ref file gives consecutive time points with same value
+			if dt == 0:
+				continue 
 			if dtOut == None:
 				dtOut = dt
 			else:
@@ -177,7 +180,7 @@ ${FMU-Definition}
 	def run(self):
 		"""Runs the MasterSimulation executable"""
 		
-		command = ['MasterSimulator', '--verbosity-level=0', '-x', self.msimFilename]
+		command = ['MasterSimulator', '--verbosity-level=1', '-x', self.msimFilename]
 		print("Running 'MasterSimulator' for FMU '{}' ...".format(self.fmuPath))
 		try:
 			solverProcess = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
