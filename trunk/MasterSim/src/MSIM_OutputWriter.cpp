@@ -42,6 +42,9 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			throw IBK::Exception(IBK::FormatString("Cannot create directory for results '%1'.").arg(m_resultsDir), FUNC_ID);
 	}
 
+	if (m_project->m_hOutputMin.value <= 0)
+		throw IBK::Exception(IBK::FormatString("Invalid hOutputMin parameter: %1").arg(m_project->m_hOutputMin.toString(true)), FUNC_ID);
+
 	// first string outputs, collect variables of type string from all slaves and create
 	// a map of output column index to slave and variable index
 	std::string descriptions = IBK::FormatString("Time [%1]").arg(m_project->m_outputTimeUnit.name()).str();
