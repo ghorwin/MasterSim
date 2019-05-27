@@ -135,11 +135,15 @@ if os.path.exists(RESULT_CSV):
 	del fobj
 	for i in range(1,len(lines)):
 		tokens = lines[i].split('\t')
-		if len(tokens) != 3:
+		if len(tokens) < 3:
 			continue
 		simOk = tokens[1].strip() == '1'
 		resultsOk = tokens[2].strip() == '1'
-		fmuEvalResult[tokens[0]] = (simOk, resultsOk)
+		if len(tokens) > 3:
+			valueNorms = tokens[3]
+		else:
+			valueNorms = ""
+		fmuEvalResult[tokens[0]] = (simOk, resultsOk, valueNorms)
 
 
 # for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files 
@@ -163,7 +167,7 @@ for fmuCase in fmuList:
 		masterSim.setup(fmuCase)
 	except Exception as e:
 		print e
-		fmuEvalResult[relPath] = (False, False)
+		fmuEvalResult[relPath] = (False, False, "")
 		continue
 
 	# generate MasterSim file
@@ -172,24 +176,26 @@ for fmuCase in fmuList:
 	# run MasterSim, expects MasterSimulator executable to be in the path
 	res = masterSim.run()
 	if not res:
-		fmuEvalResult[relPath] = (False, False)
+		fmuEvalResult[relPath] = (False, False, "")
 		continue
 
 	# read results
 	res = masterSim.checkResults()
 	if not res:
-		fmuEvalResult[relPath] = (True, False)
+		fmuEvalResult[relPath] = (True, False, "")
 		continue
 
 	# mark fmuCase as completed
-	fmuEvalResult[relPath] = (True, True)
+	fmuEvalResult[relPath] = (True, True, masterSim.valueNorms)
 
 
 with open(RESULT_CSV, 'w') as csvfile:
-	csvfile.write("FMU\tRuns\tResults correct\n")
-	for t in fmuEvalResult:
+	csvfile.write("FMU\tRuns\tResults correct\tNorms of value differences\n")
+	cases = fmuEvalResult.keys()
+	cases.sort()
+	for t in cases:
 		res = fmuEvalResult[t]
-		csvfile.write("{}\t{}\t{}\n".format(t, int(res[0]), int(res[1])) )
+		csvfile.write("{}\t{}\t{}\t{}\n".format(t, int(res[0]), int(res[1]), res[2]) )
 
 
 print("Result summary file {} written".format(RESULT_CSV))

@@ -177,6 +177,8 @@ ${FMU-Definition}
 		fobj.close()
 		del fobj
 		
+		
+		
 	def run(self):
 		"""Runs the MasterSimulation executable"""
 		
@@ -214,6 +216,7 @@ ${FMU-Definition}
 			print("Error running 'MasterSimulator', make sure it is in your PATH!")
 			return False
 		
+	
 	
 	def checkResults(self):
 		"""Reads computed results and compares them to provided reference results."""
@@ -283,6 +286,7 @@ ${FMU-Definition}
 		
 		tpOutputs = data[0]
 		# now process all variables (except time) in reference data
+		self.valueNorms = ""
 		success = True
 		for var in self.refData:
 			if var == 'time' or var == 'Time':
@@ -299,18 +303,23 @@ ${FMU-Definition}
 			
 			norm = 0
 			refVals = self.refData[var]
+			relTol = self.simOptions['RelTol']
 			# now process all time points in the reference files
 			for i in range(len(self.tp)):
 				ref_t = self.tp[i]
 				ref_val = refVals[i]
 				valueAtT = findValue(ref_t, tpOutputs, values) # find the value in the list of values
-				norm = norm + (valueAtT-ref_val)**2
+				absValue = max(abs(ref_val), abs(valueAtT))
+				diff = valueAtT - ref_val
+				relDiff = diff/(absValue*relTol + 1e-6)
+				norm = norm + relDiff**2
+				#norm = norm + (valueAtT-ref_val)**2
 			norm = norm/len(self.tp)
 			
-			print("Norm = {}".format(norm))
+			print("|delta({})| = {}".format(var,norm))
+			self.valueNorms = self.valueNorms + "|delta({})| = {}".format(var,norm)
 			
-			relTol = self.simOptions['RelTol']
-			if norm*relTol > 1:
+			if norm > 1:
 				success = False
 		
 		return success
