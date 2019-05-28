@@ -98,7 +98,7 @@ class MasterSimTestGenerator:
 				if abs(dt - dtOut) > 1e-8:
 					dtOut = min(dtOut, dt)
 	
-		self.dtOut = dtOut
+		self.dtOut = dtOut / 100.0 # to get resonably fine output spacing
 
 
 
@@ -156,9 +156,9 @@ ${FMU-Definition}
 """
 		msim_content = TEMPLATE_MSIM_CS1_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
-			msim_content = msim_content.replace('${'+kw+'}', str(self.simOptions[kw]))
+			msim_content = msim_content.replace('${'+kw+'}', "{:e}".format(self.simOptions[kw]))
 
-		msim_content = msim_content.replace('${dtOutMin}', str(self.dtOut))
+		msim_content = msim_content.replace('${dtOutMin}', "{:e}".format(self.dtOut))
 
 		# generate FMU definition line
 		# 'simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"'
