@@ -194,7 +194,7 @@ unsigned int FMU::localOutputIndex(FMIVariable::VarType t, unsigned int valueRef
 
 void FMU::importFMIv1Functions() {
 	try {
-		std::string modelPrefix = m_modelDescription.m_modelName + "_";
+		std::string modelPrefix = m_modelDescription.m_modelIdentifier + "_";
 
 		m_fmi1Functions.getReal						= reinterpret_cast<fmiGetRealTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetReal"));
 		m_fmi1Functions.getInteger					= reinterpret_cast<fmiGetIntegerTYPE*>(m_impl->importFunctionAddress(modelPrefix+"fmiGetInteger"));
