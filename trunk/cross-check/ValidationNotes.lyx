@@ -1,0 +1,546 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{parskip}
+
+\usepackage[hang,scriptsize]{subfigure}
+\usepackage[format=hang,
+font={footnotesize},
+labelfont={bf},
+margin=1cm,
+aboveskip=5pt,
+position=bottom]{caption}
+
+\usepackage{float}
+\usepackage{color}
+\usepackage{calc}
+
+\definecolor{linkblue}{rgb}{0,0,0.4}
+\definecolor{navy}{rgb}{0,0,0.3}
+\definecolor{light-gray}{gray}{0.98}
+\definecolor{dark-gray}{gray}{0.45}
+
+\usepackage{dsfont}
+
+\usepackage[utf8]{inputenc}
+
+\newcommand{\wframe}[1]{\frame{#1}}
+
+\usepackage[ruled,vlined]{algorithm2e}
+
+\usepackage{booktabs}
+
+\usepackage{xcolor}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language ngerman
+\language_package default
+\inputencoding utf8
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref true
+\pdf_title "Handling user-data related exceptions in OpenMP-parallelized Finite-Volume codes"
+\pdf_author "xxx"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "linkcolor=linkblue, citecolor=linkblue, urlcolor=linkblue, bookmarksnumbered=true"
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2.5cm
+\rightmargin 2.5cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style german
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\listings_params "basicstyle={\scriptsize\ttfamily\color{black}},commentstyle={\ttfamily\itshape\color{dark-gray}},identifierstyle={\ttfamily\color{navy}},numbers=left,numberstyle={{\tiny}},stepnumber=1,showspaces=false,showstringspaces=false,showtabs=false,frame=lines,tabsize=4,captionpos=b,breaklines=true,breakatwhitespace=false,texcl=true"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Validierung des Co-Simulations-Masterprogramms MASTERSIM
+\end_layout
+
+\begin_layout Abstract
+Dieser technische Bericht beschreibt die Vorgehensweise bei der Validierung
+ des Co-Simulations-Masterprogramms anhand von FMUs des FMI-Standard-Tool-Verzei
+chnisses und Repositories.
+ Es werden die einzelnen Probleme und Lösungsansätze diskutiert.
+\end_layout
+
+\begin_layout Section
+Überblick
+\end_layout
+
+\begin_layout Standard
+Den Begriff 
+\emph on
+Validierung
+\emph default
+ für Co-Simulations-Master könnte man streng genommen so definieren: Prüfung
+ der korrekten Implementierung eines bestimmten Masteralgorithmus, welches
+ bei der Durchführung einer Co-Simulation zu dem geforderten Ergebnis führt.
+ Bei dieser Definition gibt es aber mehrere Dinge, die zu klären sind:
+\end_layout
+
+\begin_layout Itemize
+Was macht einen Masteralgorithmus aus? Beinhaltet das auch die Algorithmus-Param
+eter und/oder eingebaute Konstanten und Verhaltensregeln?
+\end_layout
+
+\begin_layout Itemize
+Wie ist der Vergleich mit den Ergebnisgrößen definiert? Wie wird mit Rundungsfeh
+lern umgegangen? Woran erkennt man ein Fehlverhalten einer Implementierung?
+\end_layout
+
+\begin_layout Itemize
+Wie ist das zu testende Co-Simulationsszenario definiert? Spielt die Reihenfolge
+ der Auswertung bei mehreren FMUs eine Rolle?
+\end_layout
+
+\begin_layout Subsection
+Validierung entsprechend der FMI-Standard Vorgaben
+\end_layout
+
+\begin_layout Standard
+Beinhaltet das Simulation von einzelnen FMUs in gegebenem Simulationszeitraum
+ und gegebenenfalls unter Verwendung gegebener fester Schrittgrößen.
+\end_layout
+
+\begin_layout Section
+Automatisierung der Validierung
+\end_layout
+
+\begin_layout Standard
+Mittels Python-Skript werden die Schritte der Validierung wie folgt automatisier
+t:
+\end_layout
+
+\begin_layout Itemize
+Einlesen der Verzeichnisstruktur und bestimmen einer Liste von FMUs zum
+ Testen
+\end_layout
+
+\begin_layout Itemize
+Filtern der Liste nach Co-Simulations-FMUs, ausgewähltem Tool/Hersteller,
+ Plattform
+\end_layout
+
+\begin_layout Itemize
+Einlesen der bisherigen Statusliste und Filtern der bereits erfolgreich
+ validierten Fälle
+\end_layout
+
+\begin_layout Standard
+Für jeden verbleibenden Testfall werden nun MasterSim Projektdateien erstellt,
+ dabei werden:
+\end_layout
+
+\begin_layout Itemize
+Datei 
+\family typewriter
+<fmu>_ref.csv
+\family default
+ mit Referenzergebnisse eingelesen
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+tStart = StartZeit
+\family default
+ aus der Datei 
+\family typewriter
+<fmu>_ref.opt
+\family default
+ gesetzt
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+tStop = StopZeit
+\family default
+ aus der Datei 
+\family typewriter
+<fmu>_ref.opt
+\family default
+ gesetzt
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+hStart = StepSize
+\family default
+ aus der Datei 
+\family typewriter
+<fmu>_ref.opt
+\family default
+ gesetzt
+\end_layout
+
+\begin_layout Itemize
+
+\family typewriter
+hOutputMin
+\family default
+ automatisch gesetzt, basierend auf Referenzergebnissen in der Datei 
+\family typewriter
+<fmu>_ref.csv
+\end_layout
+
+\begin_layout Standard
+Sowohl der Parameter hStart und hOutputMin müssen gegebenenfalls angepasst
+ werden.
+\end_layout
+
+\begin_layout Section
+Fehlerquellen und Probleme
+\end_layout
+
+\begin_layout Subsection
+Bei der Simulationsdurchführung
+\end_layout
+
+\begin_layout Subsubsection
+MasterSim bricht mit Fehlermeldung 
+\family typewriter
+
+\begin_inset Quotes gld
+\end_inset
+
+variability
+\family default
+ Attribut fehlt
+\begin_inset Quotes grd
+\end_inset
+
+ ab.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung: 
+\emph default
+MasterSim wird angepasst und verwendet 
+\family typewriter
+continuous
+\family default
+ als Standardwert für das Attribut 
+\family typewriter
+variability.
+\end_layout
+
+\begin_layout Subsubsection
+MasterSim hängt beim Schreiben der Ausgaben
+\end_layout
+
+\begin_layout Standard
+Ursache: 
+\family typewriter
+hOutputMin = 0 s
+\family default
+ ist in der Projektdatei gesetzt.
+ In der gegebenen Referenzergebnisdatei sind identische Zeitpunkte gegeben,
+ entweder wegen Unstetigkeiten (2 Werte beim gleichen Zeitpunkt) oder durch
+ Rundungsfehler beim Schreiben der Zeitpunkte.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung: 
+\emph default
+MasterSim wird angepasst und führt nun Fehlerprüfung durch.
+ Generierungsskript wird angepasst und ignoriert Zeilen mit identischen
+ Zeitpunkten bei der Ausgaberasterbestimmung.
+\end_layout
+
+\begin_layout Subsubsection
+MasterSim hängt bei der Simulation, wenn 
+\family typewriter
+hStart = 0 s
+\family default
+ gegeben ist.
+\end_layout
+
+\begin_layout Standard
+Ursache ist der Parameter 
+\family typewriter
+StepSize = 0
+\family default
+ in der
+\family typewriter
+ <fmu>_ref.opt
+\family default
+-Datei.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung: 
+\emph default
+MasterSim wird erweitert und berechnet standardmäßig einen Zeitschritt von
+ 
+\begin_inset Formula $h=\left(t_{End}-t_{Start}\right)/1000$
+\end_inset
+
+, wenn 
+\family typewriter
+hStart = 0 s
+\family default
+ in der Projektdatei steht.
+\end_layout
+
+\begin_layout Subsubsection
+MasterSim bricht mit Fehlermeldung 
+\begin_inset Quotes gld
+\end_inset
+
+Cannot import function 
+\family typewriter
+'van der Pol oscillator_fmiGetReal'
+\family default
+ from shared/dynamic library
+\begin_inset Quotes grd
+\end_inset
+
+ ab
+\end_layout
+
+\begin_layout Standard
+Ursache: MasterSim liest das Attribut 
+\emph on
+ModelName
+\emph default
+ mit Wert 
+\emph on
+van der Pol
+\emph default
+ und generiert daraus den Symbolnamen
+\family typewriter
+'van der Pol oscillator_fmiGetReal'
+\family default
+.
+ Eine Analyse der von der FMU-shared library exportierten Symbole ergibt:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+> nm VanDerPol.so
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+000000000000305f T VanDerPol_fmiGetIntegerStatus
+\end_layout
+
+\begin_layout Plain Layout
+
+00000000000027d1 T VanDerPol_fmiGetReal
+\end_layout
+
+\begin_layout Plain Layout
+
+0000000000002df5 T VanDerPol_fmiGetRealOutputDerivatives
+\end_layout
+
+\begin_layout Plain Layout
+
+0000000000003034 T VanDerPol_fmiGetRealStatus
+\end_layout
+
+\begin_layout Plain Layout
+
+...
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Die Symbolnamen müssten aus dem 
+\emph on
+ModelIdentifier
+\emph default
+ mit Wert 
+\emph on
+VanDerPol
+\emph default
+ gebildet werden, welches so auch im Standard beschrieben ist (bei anderen
+ FMUs ist meist ModelName = ModelIdentifier, weswegen das dort nicht aufgefallen
+ ist).
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung:
+\emph default
+ MasterSim wird entsprechend standardkonform angepasst.
+\end_layout
+
+\begin_layout Subsection
+Probleme bei der Ergebnisauswertung
+\end_layout
+
+\begin_layout Subsubsection
+MasterSim schreibt Ergebnisse nicht im CSV-Format
+\end_layout
+
+\begin_layout Standard
+Das bisher von MasterSim verwendete DataIO Format ist für die automatische
+ Analyse und Abgleich nicht geeignet.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung: 
+\emph default
+Die Ausgabedateien werden auf CSV-Format umgestellt, wobei Zeichenketten
+ in der Datei 
+\family typewriter
+string.csv
+\family default
+ ausgegeben werden und alle anderen Werte (Integer, boolische Werte und
+ Gleitkommazahlen) in die Datein 
+\family typewriter
+values.csv
+\family default
+ geschrieben werden.
+\end_layout
+
+\begin_layout Subsubsection
+Referenzergebnisse nicht automatisierbar auswertbar
+\end_layout
+
+\begin_layout Standard
+In den Referenzergebnissen wird die Zeitspalte ohne Einheit und mal als
+ 
+\begin_inset Quotes gld
+\end_inset
+
+time
+\begin_inset Quotes grd
+\end_inset
+
+ oder 
+\begin_inset Quotes gld
+\end_inset
+
+Time
+\begin_inset Quotes grd
+\end_inset
+
+ beschriftet.
+ Für die automatisierte Auswertung ist das nicht geeignet.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung: 
+\emph default
+Die Referenzergebnisdateien werden verlustfrei in das geforderte CSV-Format
+ konvertiert.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_body
+\end_document
