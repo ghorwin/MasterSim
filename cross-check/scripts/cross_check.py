@@ -35,7 +35,6 @@ import platform
 import argparse
 import csv
 
-import CC_functions as cc
 import MasterSimTestGenerator as msimGenerator
 
 
@@ -140,7 +139,7 @@ if os.path.exists(RESULT_CSV):
 		simOk = tokens[1].strip() == '1'
 		resultsOk = tokens[2].strip() == '1'
 		if len(tokens) > 3:
-			valueNorms = tokens[3]
+			valueNorms = tokens[3].strip()
 		else:
 			valueNorms = ""
 		fmuEvalResult[tokens[0]] = (simOk, resultsOk, valueNorms)
