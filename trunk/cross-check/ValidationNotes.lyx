@@ -197,7 +197,8 @@ Filtern der Liste nach Co-Simulations-FMUs, ausgewähltem Tool/Hersteller,
 
 \begin_layout Itemize
 Einlesen der bisherigen Statusliste und Filtern der bereits erfolgreich
- validierten Fälle
+ validierten Fälle (notwendig, da sonst umständlich alle Simulationsfälle
+ sehr zeitraubend durchgeführt werden müssen).
 \end_layout
 
 \begin_layout Standard
@@ -536,6 +537,16 @@ Lösung:
 \emph default
 Die Referenzergebnisdateien werden verlustfrei in das geforderte CSV-Format
  konvertiert.
+\end_layout
+
+\begin_layout Subsubsection
+Ausgabefrequenz nicht hoch genug, bzw.
+ Schrittweite zu groß
+\end_layout
+
+\begin_layout Standard
+Beim Vergleich von Ergebniswerten mit Referenzergebnissen kann es folgende
+ Probleme geben:
 \end_layout
 
 \begin_layout Standard
