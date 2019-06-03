@@ -167,13 +167,74 @@ Wie ist das zu testende Co-Simulationsszenario definiert? Spielt die Reihenfolge
  der Auswertung bei mehreren FMUs eine Rolle?
 \end_layout
 
+\begin_layout Standard
+Die Komplexität dieser Tests steht im Wiederspruch zu dem Wunsch des FMI
+ Konsortiums, möglichst schnell den FMI Standard zu etablieren und zu verbreiten.
+ Deshalb ist ein wesentlich einfacheres Testprozedere formuliert worden,
+ welches jeder Tool-Hersteller individell nach eigenen Kriterien ausdeuten
+ kann.
+\end_layout
+
 \begin_layout Subsection
 Validierung entsprechend der FMI-Standard Vorgaben
 \end_layout
 
 \begin_layout Standard
-Beinhaltet das Simulation von einzelnen FMUs in gegebenem Simulationszeitraum
- und gegebenenfalls unter Verwendung gegebener fester Schrittgrößen.
+Vorgegeben ist je ein Prozedere für die Validierung von importierenden Tools
+ (d.h.
+ Masterprogrammen, welche FMUs koppeln) und exportierenden Tools (Programme,
+ welche FMUs generieren).
+ Zu ersteren gehört MASTERSIM, speziell für Co-Simulations-FMUs.
+\end_layout
+
+\begin_layout Standard
+Das Testprozedere sieht vor, dass bereitgestellte FMUs 
+\emph on
+einzeln
+\emph default
+ in einem gegebenem Simulationszeitraum und gegebenenfalls unter Verwendung
+ gegebener fester Schrittgrößen zu simulieren sind und die Ergebnisse mit
+ bereitgestellten Referenzergebnissen zu vergleichen sind.
+ Das prüft letztlich 2 Aspekte:
+\end_layout
+
+\begin_layout Itemize
+Grundsätzliche Fähigkeit des Masterprogramms, eine FMU einzulesen, zu initialisi
+eren und die Berechnung durchzuführen (hierbei können bereits zahlreiche
+ Fehlerquellen auftreten), und
+\end_layout
+
+\begin_layout Itemize
+grundsätzliche Fähigkeit des Masterprogramms, möglicherweise unter Verwendung
+ winziger (und damit unrealistischer) Kopplungszeitschritte, die geforderten
+ Ergebnisse zu erreichen.
+\end_layout
+
+\begin_layout Standard
+Für diese Form der Validierung von MASTERSIM müssen für jede bereitgestellte
+ FMU folgende Schritte durchgeführt werden:
+\end_layout
+
+\begin_layout Enumerate
+MASTERSIM-Projektdatei erstellen, Parameter aus der Datei
+\family typewriter
+ <fmu>_ref.opt
+\family default
+ setzen
+\end_layout
+
+\begin_layout Enumerate
+Simulation starten und gegebenenfalls Fehler auswerten
+\end_layout
+
+\begin_layout Enumerate
+Bereitgestellte Referenzergebnisse einlesen und ins Auswertungsformat konvertier
+en
+\end_layout
+
+\begin_layout Enumerate
+Vergleich der Referenzergebnisse mit MASTERSIM-Simulationsergebnissen und
+ Dokumentation des Vergleichs
 \end_layout
 
 \begin_layout Section
@@ -181,8 +242,8 @@ Automatisierung der Validierung
 \end_layout
 
 \begin_layout Standard
-Mittels Python-Skript werden die Schritte der Validierung wie folgt automatisier
-t:
+Anbetracht der vielzahl an FMUs (> 100), werden die Schritte der Validierung
+ mittels Python-Skripten wie folgt automatisiert:
 \end_layout
 
 \begin_layout Itemize
@@ -202,7 +263,7 @@ Einlesen der bisherigen Statusliste und Filtern der bereits erfolgreich
 \end_layout
 
 \begin_layout Standard
-Für jeden verbleibenden Testfall werden nun MasterSim Projektdateien erstellt,
+Für jeden verbleibenden Testfall werden nun MASTERSIM Projektdateien erstellt,
  dabei werden:
 \end_layout
 
@@ -261,8 +322,15 @@ hOutputMin
 \end_layout
 
 \begin_layout Standard
-Sowohl der Parameter hStart und hOutputMin müssen gegebenenfalls angepasst
- werden.
+Sowohl der Parameter 
+\family typewriter
+hStart
+\family default
+ und 
+\family typewriter
+hOutputMin
+\family default
+ müssen gegebenenfalls angepasst werden.
 \end_layout
 
 \begin_layout Section
@@ -545,8 +613,20 @@ Ausgabefrequenz nicht hoch genug, bzw.
 \end_layout
 
 \begin_layout Standard
-Beim Vergleich von Ergebniswerten mit Referenzergebnissen kann es folgende
- Probleme geben:
+Beim Vergleich von Ergebniswerten mit Referenzergebnissen gibt es Abweichungen,
+ welche durch Verwendung kleinerer Kommunikationsschrittweite reduziert
+ werden können.
+ Probleme gibt es jedoch beim Auftreten von Sprungstellen, da MASTERSIM
+ je Simulationszeitpunkt stehts nur ein Ergebnis hat.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung:
+\emph default
+ Die Kommunikationsschrittweite wird reduziert, bis eine hinreichende Übereinsti
+mmung der Ergebnisse erreicht wird (falls möglich).
 \end_layout
 
 \begin_layout Standard
