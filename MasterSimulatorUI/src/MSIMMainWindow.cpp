@@ -216,6 +216,7 @@ bool MSIMMainWindow::saveProject() {
 const MASTER_SIM::ModelDescription & MSIMMainWindow::modelDescription(const std::string & slaveName) const {
 	const MASTER_SIM::Project::SimulatorDef & slaveDef = project().simulatorDefinition( slaveName );
 	IBK::Path fmuFullPath = slaveDef.m_pathToFMU;
+	fmuFullPath = fmuFullPath.absolutePath(); // we compare by absolute path with removed /../../ etc.
 	for (std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = m_modelDescriptions.begin();
 		 it != m_modelDescriptions.end(); ++it)
 	{
