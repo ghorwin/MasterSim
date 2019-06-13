@@ -58,6 +58,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
 
 	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
+	m_ui->scrollAreaWidgetContents->layout()->setContentsMargins(0,0,0,0);
 	m_ui->widgetProperties->updateProperties(-1);
 }
 
