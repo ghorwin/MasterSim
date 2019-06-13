@@ -27,7 +27,7 @@ void FMIType::read(const TiXmlElement * element) {
 			return;
 
 		if (child->ValueStr() == "Real") {
-			m_unit = ModelDescription::readRequiredAttribute(child, "unit");
+			m_unit = ModelDescription::readOptionalAttribute(child, "unit");
 		}
 	}
 	catch (IBK::Exception & ex) {
