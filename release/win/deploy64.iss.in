@@ -47,7 +47,7 @@ Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\reso
 Source: ..\..\doc\LICENSE ; DestDir: {app}\resources;
 
 ; Documentation
-Source: ..\..\doc\manual\MasterSimulator_Manual.pdf; DestDir: {app}; DestName: MasterSimulator ${Version} Manual.pdf
+;Source: ..\..\doc\manual\MasterSimulator_Manual.pdf; DestDir: {app}; DestName: MasterSimulator ${Version} Manual.pdf
 
 
 [InstallDelete]
@@ -58,7 +58,7 @@ Name: {app}; Type: filesandordirs
 
 [Icons]
 Name: {group}\MasterSimulator ${Version} 64-Bit; Filename: {app}\MasterSimulatorUI.exe; WorkingDir: {app}; IconIndex: 0
-Name: {group}\MasterSimulator ${Version} 64-Bit Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
+;Name: {group}\MasterSimulator ${Version} 64-Bit Manual; Filename: {app}\MasterSimulator ${Version} Manual.pdf; Flags: runmaximized
 
 [Registry]
 Root: HKCR; Subkey: .msim; ValueType: string; ValueData: MasterSim.Project; Flags: uninsdeletekey deletekey
