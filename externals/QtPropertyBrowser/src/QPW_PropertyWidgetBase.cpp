@@ -25,7 +25,9 @@ PropertyWidgetBase::PropertyWidgetBase(QWidget *parent) :
 	connect(m_variantManager, SIGNAL(propertyDestroyed(QtProperty*)),
 			this, SLOT(onPropertyDestroyed(QtProperty*)));
 
+
 	m_layout->addWidget( m_propertyEditor );
+	m_layout->addStretch(1);
 	m_layout->setContentsMargins(0,0,0,0);
 
 	setLayout(m_layout);
