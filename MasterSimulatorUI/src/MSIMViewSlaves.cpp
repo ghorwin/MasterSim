@@ -12,6 +12,8 @@
 #include <QMessageBox>
 
 #include <qttreepropertybrowser.h>
+#include <qtvariantproperty.h>
+#include <QPW_VariantPropertyManager.h>
 
 #include <IBK_algorithm.h>
 
@@ -55,7 +57,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
 	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
 
-//	m_ui->tableWidgetFMUs->setSortingEnabled(true);
+	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
+	m_ui->widgetProperties->updateProperties(-1);
 }
 
 
@@ -284,37 +287,13 @@ void MSIMViewSlaves::updateSlaveTable() {
 //	m_ui->tableWidgetFMUs->sortByColumn(0, Qt::AscendingOrder);
 
 	blockMySignals(this, false);
+	m_ui->widgetProperties->updateProperties(currentSlaveIdx);
 }
 
 
-void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn) {
+void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
 	// update property browser for currently selected slave
-	updateProperties(currentRow);
+	m_ui->widgetProperties->updateProperties(currentRow);
 }
 
 
-void MSIMViewSlaves::updateProperties(int selectedSlave) {
-	if (selectedSlave == -1) {
-		m_ui->widgetProperties->clear();
-		return;
-	}
-	// fill in all parameters defined in FMU slave
-	// get slave instance
-	const MASTER_SIM::Project & p = project();
-	if (selectedSlave >= p.m_simulators.size())
-		return;
-
-	IBK::Path fmuPath = project().m_simulators[selectedSlave].m_pathToFMU;
-
-	// attempt to find FMU definition
-	try {
-		const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(fmuPath.str());
-		// process model description and create properties for all parameters
-
-	}
-	catch (IBK::Exception & ex) {
-		m_ui->widgetProperties->clear();
-		return;
-	}
-
-}

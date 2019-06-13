@@ -68,6 +68,7 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->labelTerminalCommand->setVisible(false);
 	m_ui->comboBoxTerminalCommand->setVisible(false);
 #else
+	m_ui->checkBoxCloseOnExit->setVisible(false);
 #endif
 	m_ui->checkBoxCloseOnExit->setChecked(false);
 
@@ -187,14 +188,20 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 
 #ifdef Q_OS_LINUX
 	// open terminal and start solver in terminal
-	std::string terminalCommand = m_ui->comboBoxTerminalCommand->currentText().toUtf8().data();
-	terminalCommand = IBK::replace_string(terminalCommand, "%wd", MSIMSettings::instance().m_installDir.toUtf8().data());
-	std::string bashCmdLine = (m_solverName + " " + commandLineArgs.join(" ")).toUtf8().data();
-	terminalCommand = IBK::replace_string(terminalCommand, "%cmdline", bashCmdLine);
 
-	QString allCmdLine = QString::fromUtf8(terminalCommand.c_str());
-	/*int res = */ myProcess->execute(allCmdLine);
-//	success = (res == 0);
+	QString terminalCommand = "gnome-terminal";
+	QStringList cmdLineArgs;
+	cmdLineArgs << QString("--working-directory=\"%1\"").arg(MSIMSettings::instance().m_installDir);
+
+	// compose bash command line and
+	// append project file to arguments, but use quotes since spaces may be in the path
+	QString bashCmdLine = "\"" + m_solverName + "\" " + commandLineArgs.join(" ");
+
+	cmdLineArgs << "--command";
+	cmdLineArgs << bashCmdLine;
+	/*int res = */myProcess->execute(terminalCommand, cmdLineArgs);
+
+
 #else
 	/// \todo check how to spawn a terminal on mac
 	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));

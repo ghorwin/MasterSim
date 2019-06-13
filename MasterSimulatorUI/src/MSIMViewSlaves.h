@@ -3,8 +3,12 @@
 
 #include <QWidget>
 
+namespace QPW {
+	class VariantPropertyManager;
+}
+
 namespace Ui {
-class MSIMViewSlaves;
+	class MSIMViewSlaves;
 }
 
 /*! The view containing FMU and slave definition tables. */
@@ -31,9 +35,12 @@ private slots:
 
 private:
 	void updateSlaveTable();
-	void updateProperties(int selectedSlave);
 
-	Ui::MSIMViewSlaves				*m_ui;
+	Ui::MSIMViewSlaves			*m_ui;
+
+	/*! The manager for the properties. */
+	QPW::VariantPropertyManager		*m_variantManager;
+
 };
 
 #endif // MSIMVIEWSLAVES_H
