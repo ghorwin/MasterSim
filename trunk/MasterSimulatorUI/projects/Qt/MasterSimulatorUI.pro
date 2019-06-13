@@ -38,6 +38,7 @@ INCLUDEPATH = \
 
 
 SOURCES += ../../src/main.cpp \
+	../../src/MSIMSlavePropertyWidget.cpp \
 	../../src/MSIMUIConstants.cpp \
 	../../src/MSIMDirectories.cpp \
 	../../src/MSIMMainWindow.cpp \
@@ -67,6 +68,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMLogFileDialog.cpp
 
 HEADERS  += \
+	../../src/MSIMSlavePropertyWidget.h \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMDirectories.h \
 	../../src/MSIMMainWindow.h \
