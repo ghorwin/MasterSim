@@ -36,7 +36,7 @@ cp ../../MasterSimulatorUI/resources/translations/qt_de.qm $OUTPUT_DIRECTORY_NAM
 
 # Copy manual
 
-cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/MasterSimulator_Manual.pdf &&
+#cp ../../doc/manual/MasterSimulator_Manual.pdf $OUTPUT_DIRECTORY_NAME/MasterSimulator_Manual.pdf &&
 
 # Copy application icon and auxilliary files
 
