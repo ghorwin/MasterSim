@@ -1,7 +1,7 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
-Changelog for Version 0.6.3
+Changelog for Version 0.6.0
 ---------------------------
 Key focus in this release was the ability to run quite a lot of the FMU
 test cases from the FMI cross-check repository. Interestingly, this 
