@@ -38,6 +38,8 @@ Source: VC14_x64\Qt5Gui.dll; DestDir: {app}
 Source: VC14_x64\Qt5Network.dll; DestDir: {app}
 Source: VC14_x64\Qt5Widgets.dll; DestDir: {app}
 Source: VC14_x64\vcruntime140.dll; DestDir: {app}
+Source: VC14_x64\libeay32.dll; DestDir: {app}
+Source: VC14_x64\ssleay32.dll; DestDir: {app}
 Source: VC14_x64\platforms\qwindows.dll; DestDir: {app}\platforms
 Source: VC14_x64\styles\qwindowsvistastyle.dll; DestDir: {app}\styles
 
