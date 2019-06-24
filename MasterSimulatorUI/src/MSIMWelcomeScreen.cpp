@@ -172,6 +172,12 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 	}
 
 	// finally set welcome page in textbrowser
+#ifdef DEBUG_WELCOME_PAGE
+	QFile dump("welcompage_html.html");
+	dump.open(QFile::WriteOnly);
+	QTextStream strm(&dump);
+	strm << htmlPage;
+#endif // DEBUG_WELCOME_PAGE
 	m_ui->textBrowser->setHtml(htmlPage);
 }
 
