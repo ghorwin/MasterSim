@@ -51,7 +51,7 @@ QT_BEGIN_NAMESPACE
 class QtPropertyPrivate
 {
 public:
-	QtPropertyPrivate(QtAbstractPropertyManager *manager) : m_enabled(true), m_modified(false), m_manager(manager) {}
+	QtPropertyPrivate(QtAbstractPropertyManager *manager) : m_enabled(true), m_modified(false), m_internal(false), m_manager(manager) {}
 	QtProperty *q_ptr;
 
 	QSet<QtProperty *> m_parentItems;
@@ -64,6 +64,7 @@ public:
 	QString m_name;
 	bool m_enabled;
 	bool m_modified;
+	bool m_internal;
 
 	QtAbstractPropertyManager * const m_manager;
 };
@@ -285,6 +286,16 @@ bool QtProperty::isModified() const
 }
 
 /*!
+	Returns whether the property is internal (drawn in italic/gray).
+
+	\sa setModified()
+*/
+bool QtProperty::isInternal() const
+{
+	return d_ptr->m_internal;
+}
+
+/*!
 	Returns whether the property has a value.
 
 	\sa QtAbstractPropertyManager::hasValue()
@@ -419,6 +430,20 @@ void QtProperty::setModified(bool modified)
 		return;
 
 	d_ptr->m_modified = modified;
+	propertyChanged();
+}
+
+/*!
+	Sets the property's internal state according to the passed \a internal value.
+
+	\sa isInternal()
+*/
+void QtProperty::setInternal(bool internal)
+{
+	if (d_ptr->m_internal == internal)
+		return;
+
+	d_ptr->m_internal = internal;
 	propertyChanged();
 }
 
