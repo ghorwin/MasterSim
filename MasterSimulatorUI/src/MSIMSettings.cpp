@@ -96,10 +96,31 @@ void MSIMSettings::applyCommandLineArgs(const IBK::ArgParser & argParser) {
 }
 
 
-void MSIMSettings::read() {
+void MSIMSettings::read(QString regName) {
 //	const char * const FUNC_ID = "[MSIMSettings::read]";
 
-	QSettings settings( m_organization, m_appName );
+	if (regName.isEmpty())
+		regName = m_appName;
+
+	// if no settings exist for current version, we attempt to read from a previous version,
+	// where we construct the name from format "name <major>.<minor>"
+
+	QSettings settings( m_organization, regName );
+	if (!settings.contains("LangID")) {
+		// attempt reading with reduced version number
+		QStringList tokens = regName.split(".");
+		if (tokens.size() == 2) {
+			bool success;
+			int minor = tokens[1].toInt(&success);
+			if (success && minor > 2) {
+				--minor;
+				regName = tokens[0] + "." + QString::number(minor);
+				read(regName);
+				return;
+			}
+			// fall through and attempt reset defaults if keys cannot be read
+		}
+	}
 	m_lastProjectFile = settings.value("LastProjectFile", QString()).toString();
 	m_recentProjects = settings.value("RecentProjects", QStringList()).toStringList();
 
