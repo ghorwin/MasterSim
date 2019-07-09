@@ -69,13 +69,18 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 					varNameType = QString::fromStdString(var.m_name);
 				QtVariantProperty * varProp = m_variantManager->addProperty( QVariant::String, varNameType );
 				addProperty( varProp, var.m_varIdx );
+				if (var.m_causality == MASTER_SIM::FMIVariable::C_INTERNAL)
+					varProp->setInternal(true);
 				// todo - set "default/auto-text" property propertyResultRootDir->setAttribute()
 				if (var.m_name == "ResultRootDir") {
 					varProp->setToolTip( tr("The directory to be used by the slave to stored output data therein.") );
 					varProp->setValueToolTip( tr("If empty, MasterSim will automatically pass the directory generated for the slave, such that output data can be stored therein.") );
 				}
 				else {
-					varProp->setToolTip( QString::fromStdString(var.m_description) );
+					if (var.m_causality == MASTER_SIM::FMIVariable::C_INTERNAL)
+						varProp->setDescriptionToolTip( tr("Internal parameter: '%1'").arg(QString::fromStdString(var.m_description) ) );
+					else
+						varProp->setDescriptionToolTip( QString::fromStdString(var.m_description) );
 					varProp->setValueToolTip( tr("Default value = %1").arg(QString::fromStdString(var.m_startValue)) );
 				}
 				// check for a parameter value with this name
