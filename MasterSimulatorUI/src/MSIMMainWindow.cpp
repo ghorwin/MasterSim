@@ -125,6 +125,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 
 	connect(m_buttonBar->toolButtonQuit,				SIGNAL(clicked()), this, SLOT(on_actionFileQuit_triggered()));
 
+	addAction(m_ui->actionStartSimulation);
 
 	// *** connect to ProjectHandler signals ***
 
@@ -835,3 +836,11 @@ void MSIMMainWindow::on_actionViewSimulation_toggled(bool) {
 }
 
 
+
+void MSIMMainWindow::on_actionStartSimulation_triggered() {
+	if (!m_projectHandler.isValid())
+		return;
+	// switch to simulation view
+	on_actionViewSimulation_toggled(true);
+	m_viewSimulation->on_toolButtonStartInTerminal_clicked();
+}
