@@ -89,6 +89,9 @@
    <property name="toolTip">
     <string>Opens a project file.</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionFileSave">
    <property name="icon">
@@ -258,6 +261,14 @@
    </property>
    <property name="toolTip">
     <string>Extracts FMUs and reads modelDescription.xml files.</string>
+   </property>
+  </action>
+  <action name="actionStartSimulation">
+   <property name="text">
+    <string>Start simulation</string>
+   </property>
+   <property name="shortcut">
+    <string>F9</string>
    </property>
   </action>
  </widget>
