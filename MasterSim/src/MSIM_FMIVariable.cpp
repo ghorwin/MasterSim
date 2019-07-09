@@ -66,7 +66,7 @@ void FMIVariable::read(const TiXmlElement * element) {
 		}
 
 		if (m_causality != C_OTHER) {
-			IBK_FastMessage(IBK::VL_INFO)( IBK::FormatString("%1 (%2, %3)\n").arg(m_name).arg(child->ValueStr()).arg(causality), IBK::MSG_PROGRESS,
+			IBK_FastMessage(IBK::VL_INFO)( IBK::FormatString("%1\n").arg(toString()), IBK::MSG_PROGRESS,
 							  FUNC_ID, IBK::VL_INFO);
 		}
 

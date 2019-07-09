@@ -111,6 +111,11 @@ public:
 	*/
 	void readModelDescription();
 
+	/*! Populates the vectors m_xxxValueRefsOutput.
+		This function is called during simulation runs (not needed for user interface).
+	*/
+	void collectOutputVariableReferences(bool includeInternalVariables);
+
 	/*! This function imports the FMU, loads dynamic library, imports function pointers, reads model description.
 		Throws an IBK::Exception in case of any error.
 		\param typeToImport Selection of one of the interface types to import.
@@ -146,13 +151,6 @@ public:
 	std::vector<unsigned int>	m_intValueRefsOutput;
 	std::vector<unsigned int>	m_stringValueRefsOutput;
 	std::vector<unsigned int>	m_doubleValueRefsOutput;
-
-	// Value references for internal variables.
-
-	std::vector<unsigned int>	m_boolValueRefsInternal;
-	std::vector<unsigned int>	m_intValueRefsInternal;
-	std::vector<unsigned int>	m_stringValueRefsInternal;
-	std::vector<unsigned int>	m_doubleValueRefsInternal;
 
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.

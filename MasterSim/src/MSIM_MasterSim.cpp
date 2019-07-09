@@ -67,6 +67,10 @@ void MasterSim::importFMUs(const ArgParser &args, const Project & prj) {
 void MasterSim::initialize() {
 	const char * const FUNC_ID = "[MasterSim::initialize]";
 
+	// collect output variable references in all fmus
+	for (auto fmuptr : m_fmuManager.fmus())
+		fmuptr->collectOutputVariableReferences(m_project.m_writeInternalVariables);
+
 	// instantiate all slaves
 	instatiateSlaves();
 
@@ -117,6 +121,9 @@ void MasterSim::initialize() {
 }
 
 
+void MasterSim::openOutputFiles(bool reopen) {
+	m_outputWriter.openOutputFiles(reopen);
+}
 
 
 void MasterSim::restoreState(double t, const IBK::Path & stateDirectory) {
