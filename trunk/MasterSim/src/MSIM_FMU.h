@@ -147,6 +147,12 @@ public:
 	std::vector<unsigned int>	m_stringValueRefsOutput;
 	std::vector<unsigned int>	m_doubleValueRefsOutput;
 
+	// Value references for internal variables.
+
+	std::vector<unsigned int>	m_boolValueRefsInternal;
+	std::vector<unsigned int>	m_intValueRefsInternal;
+	std::vector<unsigned int>	m_stringValueRefsInternal;
+	std::vector<unsigned int>	m_doubleValueRefsInternal;
 
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
