@@ -118,6 +118,14 @@ class MasterSimTestGenerator:
 		
 		if not os.path.exists(targetDir):
 			os.makedirs(targetDir)
+
+		self.msimFilename = targetDir + "/" + os.path.split(self.fmuPath)[1]
+		self.msimFilename = self.msimFilename[:-4] + ".msim"
+
+		# do not overwrite existing MasterSim file, in case it was manually modified
+		if os.path.exists(self.msimFilename):
+			print ("MASTERSIM file '{}' exists...".format(self.msimFilename))
+			return
 		
 		TEMPLATE_MSIM_CS1_FILE = """
 tStart               ${StartTime} s
@@ -170,14 +178,35 @@ ${FMU-Definition}
 		simLine = 'simulator 0 0 slave1 #ffff8c00 "{}"'.format(relPathToFmu)
 		msim_content = msim_content.replace('${FMU-Definition}', simLine)
 
-		self.msimFilename = targetDir + "/" + os.path.split(self.fmuPath)[1]
-		self.msimFilename = self.msimFilename[:-4] + ".msim"
 		fobj = open(self.msimFilename, 'w')
 		fobj.write(msim_content)
 		fobj.close()
 		del fobj
 		
+		# generate file with expected results in PostProc 2 format
+		referenceValueFilename = targetDir + "/referenceValues.csv"
+		refValueFile = open(referenceValueFilename, 'w')
+		header = ["Time [s]"]
 		
+		for var in self.refData:
+			if var == 'time' or var == 'Time':
+				continue
+			header.append(var)
+		refValueFile.write('\t'.join(header) + '\n')
+		# now all columns 
+		
+		for i in range(len(self.tp)):
+			ref_t = self.tp[i]
+			row = [str(ref_t)]
+			for var in self.refData:
+				if var == 'time' or var == 'Time':
+					continue
+				refVals = self.refData[var]
+				ref_val = refVals[i]
+				row.append(str(ref_val))
+			refValueFile.write('\t'.join(row) + '\n')
+		refValueFile.close()
+		del refValueFile		
 		
 	def run(self):
 		"""Runs the MasterSimulation executable"""
@@ -227,30 +256,7 @@ ${FMU-Definition}
 			print("Result data file '{}' missing!".format(outFile))
 			return False
 		
-		# first generate file with expected results in PostProc 2 format
-		referenceValueFilename = self.msimFilename[:-5] + "/results/referenceValues.csv"
-		refValueFile = open(referenceValueFilename, 'w')
-		header = ["Time [s]"]
-		
-		for var in self.refData:
-			if var == 'time' or var == 'Time':
-				continue
-			header.append(var)
-		refValueFile.write('\t'.join(header) + '\n')
-		# now all columns 
-		
-		for i in range(len(self.tp)):
-			ref_t = self.tp[i]
-			row = [str(ref_t)]
-			for var in self.refData:
-				if var == 'time' or var == 'Time':
-					continue
-				refVals = self.refData[var]
-				ref_val = refVals[i]
-				row.append(str(ref_val))
-			refValueFile.write('\t'.join(row) + '\n')
-		refValueFile.close()
-		del refValueFile
+
 	
 			
 		msimResults = open(outFile, 'r')
