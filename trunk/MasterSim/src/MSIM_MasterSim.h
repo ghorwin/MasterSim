@@ -45,8 +45,8 @@ public:
 	*/
 	void initialize();
 
-	/*! Open output files. */
-	void openOutputFiles(bool reopen) { m_outputWriter.openOutputFiles(reopen); }
+	/*! (Re-)opens output files. */
+	void openOutputFiles(bool reopen);
 
 	/*! Restores state of master and all FMUs using data stored below state directory. */
 	void restoreState(double t, const IBK::Path & stateDirectory);

@@ -17,8 +17,8 @@ void fmiLoggerCallback( fmiComponent /* c */, fmiString instanceName, fmiStatus 
 {
 	IBK::msg_type_t msgType = IBK::MSG_PROGRESS;
 	switch (status) {
-		case fmi2Warning	: msgType = IBK::MSG_WARNING; break;
-		case fmi2Error		: msgType = IBK::MSG_ERROR; break;
+		case fmiWarning		: msgType = IBK::MSG_WARNING; break;
+		case fmiError		: msgType = IBK::MSG_ERROR; break;
 		default :;
 	}
 

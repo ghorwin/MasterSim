@@ -89,30 +89,7 @@ FMU::~FMU() {
 void FMU::readModelDescription() {
 	m_modelDescription.read(m_fmuDir / "modelDescription.xml");
 
-	// now collect all output variable valueReferences
-	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
-		const FMIVariable & var = m_modelDescription.m_variables[i];
-		if (var.m_causality == FMIVariable::C_OUTPUT) {
-			switch (var.m_type) {
-				case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
-				default:
-					IBK_ASSERT_X(false, "bad variable initialization");
-			}
-		}
-		else if (var.m_causality == FMIVariable::C_INTERNAL) {
-			switch (var.m_type) {
-				case FMIVariable::VT_BOOL	: m_boolValueRefsInternal.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_INT	: m_intValueRefsInternal.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsInternal.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_STRING	: m_stringValueRefsInternal.push_back(var.m_valueReference); break;
-				default:
-					IBK_ASSERT_X(false, "bad variable initialization");
-			}
-		}
-	}
+	// generate resource path
 	if (m_modelDescription.m_fmuType == ModelDescription::CS_v1 ||
 		m_modelDescription.m_fmuType == ModelDescription::ME_v1)
 	{
@@ -128,6 +105,40 @@ void FMU::readModelDescription() {
 #else
 	m_resourcePath = "file://" + m_resourcePath;
 #endif
+}
+
+
+void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
+	// now collect all output variable valueReferences
+	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
+		const FMIVariable & var = m_modelDescription.m_variables[i];
+		if (var.m_causality == FMIVariable::C_OUTPUT) {
+			switch (var.m_type) {
+				case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
+				default:
+					IBK_ASSERT_X(false, "bad variable initialization");
+			}
+		}
+	}
+	if (includeInternalVariables) {
+		// now append internal variables
+		for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
+			const FMIVariable & var = m_modelDescription.m_variables[i];
+			if (var.m_causality == FMIVariable::C_INTERNAL) {
+				switch (var.m_type) {
+					case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
+					case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
+					case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
+					case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
+					default:
+						IBK_ASSERT_X(false, "bad variable initialization");
+				}
+			}
+		}
+	}
 }
 
 
