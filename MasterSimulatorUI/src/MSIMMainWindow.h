@@ -118,6 +118,8 @@ private slots:
 	void on_actionViewSimulation_toggled(bool arg1);
 
 
+	void on_actionStartSimulation_triggered();
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();

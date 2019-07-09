@@ -25,8 +25,9 @@ public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
 	void onModified( int modificationType, void * data );
 
-private slots:
 	void on_toolButtonStartInTerminal_clicked();
+
+private slots:
 
 	void on_checkBoxCloseOnExit_clicked();
 	void on_comboBoxVerbosityLevel_currentIndexChanged(int index);
