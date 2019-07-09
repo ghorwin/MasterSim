@@ -57,7 +57,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 		// process model description and create properties for all parameters
 		for (unsigned int i=0; i<modelDesc.m_variables.size(); ++i) {
 			const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[i];
-			if (var.m_causality == MASTER_SIM::FMIVariable::C_PARAMETER || var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+			if (var.m_variability == "parameter" || var.m_variability == "tunable") {
 				QString varNameType;
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 					std::string unit = var.m_unit;
