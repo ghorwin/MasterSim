@@ -111,6 +111,8 @@ void MSIMViewSimulation::onModified( int modificationType, void * /*data*/ ) {
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
 	m_ui->checkBoxAdjustStepSize->setChecked( project().m_adjustStepSize);
 
+	m_ui->checkBoxWriteInternalVariables->setChecked( project().m_writeInternalVariables);
+
 	blockMySignals(this, false);
 
 	updateCommandLine();
@@ -533,7 +535,7 @@ void MSIMViewSimulation::on_lineEditDtStart_editingFinished() {
 }
 
 
-void MSIMViewSimulation::on_pushButton_clicked() {
+void MSIMViewSimulation::on_pushButtonShowLogfile_clicked() {
 	// compose log file name
 	QString projectFile = MSIMProjectHandler::instance().projectFile();
 	QString logfile = QFileInfo(projectFile).completeBaseName() + "/log/screenlog.txt";
@@ -541,4 +543,13 @@ void MSIMViewSimulation::on_pushButton_clicked() {
 	MSIMLogFileDialog dlg(this);
 	dlg.setLogFile(logfile, projectFile, false);
 	dlg.exec();
+}
+
+
+void MSIMViewSimulation::on_checkBoxWriteInternalVariables_toggled(bool checked) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_writeInternalVariables = checked;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push();
 }

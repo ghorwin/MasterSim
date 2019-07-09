@@ -175,6 +175,8 @@ public:
 	/*! Unit defined as output time for output files. */
 	IBK::Unit					m_outputTimeUnit;
 
+	/*! If true (disabled by default), internal variables are handled just as regular output variables. */
+	bool						m_writeInternalVariables;
 
 	/*! All simulators coupled in this master scenario. */
 	std::vector<SimulatorDef>	m_simulators;
