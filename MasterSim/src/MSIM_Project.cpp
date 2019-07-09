@@ -27,7 +27,8 @@ Project::Project() :
 	m_absTol(1e-6),
 	m_relTol(1e-5),
 	m_hOutputMin("hOutputMin", 120, "s"),
-	m_outputTimeUnit("s")
+	m_outputTimeUnit("s"),
+	m_writeInternalVariables(false)
 {
 }
 
@@ -209,6 +210,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			}
 			else if (keyword == "maxIterations")
 				m_maxIterations = IBK::string2val<unsigned int>(value);
+			else if (keyword == "writeInternalVariables")
+				m_writeInternalVariables = (value == "true" || value == "yes" || value == "1");
 			else
 				throw IBK::Exception(IBK::FormatString("Unknown keyword '%1'").arg(keyword), FUNC_ID);
 		}
@@ -279,6 +282,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	}
 	out << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "maxIterations" << " " << m_maxIterations << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "writeInternalVariables" << " " << (m_writeInternalVariables ? "yes" : "no") << std::endl;
 	out << std::endl;
 
 	// write simulators
