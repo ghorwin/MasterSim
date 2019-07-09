@@ -75,7 +75,7 @@ public:
 		The data is read in the usual method supported by the various platforms.
 		The default implementation reads and populates all member variables.
 	*/
-	void read();
+	void read(QString regName = QString());
 
 	/*! Reads the main window configuration properties.
 		\param geometry A bytearray with the main window geometry (see QMainWindow::saveGeometry())
