@@ -4,6 +4,7 @@ import os
 import csv
 import subprocess
 import pandas as pd
+from shutil import copyfile
 
 # Implementation of class MasterSimTestGenerator 
 
@@ -12,6 +13,7 @@ class MasterSimTestGenerator:
 	def __init__(self):
 		self.fmuPath = ""
 		self.simOptions = dict()
+		self.variableInputFile = ""
 		MasterSimTestGenerator.OPT_KEYWORDS = [ 'StartTime', 'StopTime', 'StepSize', 'RelTol' ]
 	
 	def setup(self, fmuCaseBaseName):
@@ -67,10 +69,18 @@ class MasterSimTestGenerator:
 		# check if 'in' file exists
 		inFile = fmuCaseBaseName + "_in.csv"
 		if os.path.exists(inFile):
-			inReader = csv.reader(inFile, delimiter=',', quotechar='"')
-			# extract the different column headers, which will become the input variables
-			# provided to the fmu
-			self.inputVars = next(inReader, None)
+			try:
+				inReader = open(inFile, "r")
+				# extract the different column headers, which will become the input variables
+				# provided to the fmu
+				line = inReader.readline()
+				self.inputVars = line.split(',')
+				line = [l.strip('"\r\n') for l in self.inputVars]
+				self.inputVars = line[1:] # remove first column (time column)
+				
+				self.variableInputFile = inFile
+			except:
+				print("Error reading input file '{}'".format(inFile))
 			
 		# all input data parsed and stored, now also read results
 
@@ -119,6 +129,14 @@ class MasterSimTestGenerator:
 		if not os.path.exists(targetDir):
 			os.makedirs(targetDir)
 
+		# copy xxx_in.csv file to target directory
+		if len(self.variableInputFile) > 0:
+			targetInputFile = targetDir + "/" + os.path.basename(self.variableInputFile)
+			copyfile(self.variableInputFile, targetInputFile)
+			# file is now relative to project file and we only need to use the filename
+			self.variableInputFile = os.path.basename(self.variableInputFile)
+
+
 		self.msimFilename = targetDir + "/" + os.path.split(self.fmuPath)[1]
 		self.msimFilename = self.msimFilename[:-4] + ".msim"
 
@@ -143,6 +161,8 @@ ErrorControlMode     NONE
 maxIterations        1
 
 ${FMU-Definition}
+
+${Parameters}
 """
 		
 		TEMPLATE_MSIM_CS2_FILE = """
@@ -161,6 +181,8 @@ ErrorControlMode     NONE
 maxIterations        1
 
 ${FMU-Definition}
+
+${Parameters}
 """
 		msim_content = TEMPLATE_MSIM_CS1_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
@@ -177,12 +199,21 @@ ${FMU-Definition}
 		
 		simLine = 'simulator 0 0 slave1 #ffff8c00 "{}"'.format(relPathToFmu)
 		msim_content = msim_content.replace('${FMU-Definition}', simLine)
+		
+		parameters = ""
+		if len(self.variableInputFile) > 0:
+			# self.inputVars -> parameters
+			for iv in self.inputVars:
+				parameters = parameters + "parameter slave1.{} {}?{}\n".format(iv, self.variableInputFile, iv) 
+		msim_content = msim_content.replace('${Parameters}', parameters)
+		
+		
 
 		fobj = open(self.msimFilename, 'w')
 		fobj.write(msim_content)
 		fobj.close()
 		del fobj
-		
+
 		# generate file with expected results in PostProc 2 format
 		referenceValueFilename = targetDir + "/referenceValues.csv"
 		refValueFile = open(referenceValueFilename, 'w')
