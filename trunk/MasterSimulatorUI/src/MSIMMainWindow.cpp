@@ -41,6 +41,7 @@
 #include "MSIMViewSimulation.h"
 #include "MSIMAboutDialog.h"
 #include "MSIMButtonBar.h"
+#include "MSIMUndoSlaveParameters.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = nullptr;
 
