@@ -63,7 +63,9 @@ private slots:
 
 	void on_lineEditDtStart_editingFinished();
 
-	void on_pushButton_clicked();
+	void on_pushButtonShowLogfile_clicked();
+
+	void on_checkBoxWriteInternalVariables_toggled(bool checked);
 
 private:
 	void updateCommandLine();

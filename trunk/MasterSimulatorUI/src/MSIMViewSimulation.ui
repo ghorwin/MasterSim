@@ -217,6 +217,13 @@
         <item row="0" column="2">
          <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
         </item>
+        <item row="1" column="0" colspan="3">
+         <widget class="QCheckBox" name="checkBoxWriteInternalVariables">
+          <property name="text">
+           <string>Write internal variables as outputs</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -314,7 +321,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="pushButtonShowLogfile">
           <property name="text">
            <string>Show log file...</string>
           </property>
