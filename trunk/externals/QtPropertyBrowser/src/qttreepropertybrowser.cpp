@@ -659,6 +659,12 @@ void QtTreePropertyBrowserPrivate::updateItem(QTreeWidgetItem *item)
 		item->setToolTip(1, valueToolTip.isEmpty() ? valueText : valueToolTip);
 		item->setIcon(1, property->valueIcon());
 		item->setText(1, valueText);
+		if (property->isInternal()) {
+			QFont f = item->font(0);
+			f.setItalic(true);
+			item->setFont(0, f);
+			item->setTextColor(0, Qt::gray);
+		}
 	} else if (markPropertiesWithoutValue() && !m_treeWidget->rootIsDecorated()) {
 		expandIcon = m_expandIcon;
 	}
