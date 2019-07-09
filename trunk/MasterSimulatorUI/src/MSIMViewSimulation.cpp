@@ -217,7 +217,7 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 
 #endif // Q_OS_WIN
 
-	QTimer::singleShot(1000, this, SLOT(on_pushButton_clicked()));
+	QTimer::singleShot(2000, this, SLOT(on_pushButtonShowLogfile_clicked()));
 }
 
 

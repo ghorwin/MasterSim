@@ -64,6 +64,9 @@ void FMIVariable::read(const TiXmlElement * element) {
 		if (m_causality == C_INPUT || m_causality == C_PARAMETER) {
 			m_startValue = ModelDescription::readRequiredAttribute(child, "start");
 		}
+		if (m_causality == C_INTERNAL) {
+			m_startValue = ModelDescription::readOptionalAttribute(child, "start");
+		}
 
 		if (m_causality != C_OTHER) {
 			IBK_FastMessage(IBK::VL_INFO)( IBK::FormatString("%1\n").arg(toString()), IBK::MSG_PROGRESS,
@@ -72,7 +75,7 @@ void FMIVariable::read(const TiXmlElement * element) {
 
 	}
 	catch (IBK::Exception & ex) {
-		throw IBK::Exception(ex, IBK::FormatString("Error reading definition for variable '%1'").arg(m_name), FUNC_ID);
+		throw IBK::Exception(ex, IBK::FormatString("Error reading definition for variable '%1'.").arg(m_name), FUNC_ID);
 	}
 
 }
