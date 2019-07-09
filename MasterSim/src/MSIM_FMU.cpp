@@ -102,6 +102,16 @@ void FMU::readModelDescription() {
 					IBK_ASSERT_X(false, "bad variable initialization");
 			}
 		}
+		else if (var.m_causality == FMIVariable::C_INTERNAL) {
+			switch (var.m_type) {
+				case FMIVariable::VT_BOOL	: m_boolValueRefsInternal.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_INT	: m_intValueRefsInternal.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsInternal.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_STRING	: m_stringValueRefsInternal.push_back(var.m_valueReference); break;
+				default:
+					IBK_ASSERT_X(false, "bad variable initialization");
+			}
+		}
 	}
 	if (m_modelDescription.m_fmuType == ModelDescription::CS_v1 ||
 		m_modelDescription.m_fmuType == ModelDescription::ME_v1)
