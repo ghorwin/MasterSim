@@ -70,6 +70,7 @@ public:
 	QString propertyName() const;
 	bool isEnabled() const;
 	bool isModified() const;
+	bool isInternal() const;
 
 	bool hasValue() const;
 	QIcon valueIcon() const;
@@ -83,6 +84,7 @@ public:
 	void setPropertyName(const QString &text);
 	void setEnabled(bool enable);
 	void setModified(bool modified);
+	void setInternal(bool internal);
 
 	void addSubProperty(QtProperty *property);
 	void insertSubProperty(QtProperty *property, QtProperty *afterProperty);
