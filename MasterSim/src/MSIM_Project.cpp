@@ -301,8 +301,12 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write parameters
 	for (unsigned int i=0; i<m_simulators.size(); ++i) {
 		const SimulatorDef & simDef = m_simulators[i];
-		for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin(); it != simDef.m_parameters.end(); ++it)
+		for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin(); it != simDef.m_parameters.end(); ++it) {
+			// do not write empty parameters
+			if (it->second.empty())
+				continue;
 			out << "parameter " << simDef.m_name << "." << it->first << "   " << it->second << std::endl;
+		}
 	}
 	out << std::endl;
 }

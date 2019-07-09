@@ -73,6 +73,9 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified :
 			break;
+		case MSIMProjectHandler::SlaveParameterModified :
+			m_ui->widgetProperties->updateProperties( m_ui->tableWidgetSlaves->currentRow() );
+			return;
 		case MSIMProjectHandler::ProjectPathModified :
 			// only need to update if we show relative FMU paths
 			if (m_ui->checkBoxRelativeFMUPaths->isChecked())
@@ -260,23 +263,13 @@ void MSIMViewSlaves::updateSlaveTable() {
 	for (unsigned int i=0; i<4; ++i)
 		colSizeSum += m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(i);
 	unsigned int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
-//	qDebug() << m_ui->tableWidgetSlaves->width();
-//	qDebug() << contentsRectWith;
-//	qDebug() << colSizeSum;
+
 	if (colSizeSum < contentsRectWith-20) {
 		unsigned int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
 								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
 								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
 		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
 	}
-//	m_ui->tableWidgetFMUs->setRowCount(fmuPaths.count());
-//	unsigned int rowIdx = 0;
-//	for (QSet<QString>::const_iterator it = fmuPaths.constBegin(); it != fmuPaths.constEnd(); ++it, ++rowIdx) {
-//		QTableWidgetItem * item = new QTableWidgetItem( *it );
-//		item->setFlags(Qt::ItemIsEnabled);
-//		m_ui->tableWidgetFMUs->setItem(rowIdx, 0, item);
-//	}
-//	m_ui->tableWidgetFMUs->resizeColumnsToContents();
 
 	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
 	if (!project().m_simulators.empty()) {
@@ -285,7 +278,6 @@ void MSIMViewSlaves::updateSlaveTable() {
 		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
 		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
 	}
-//	m_ui->tableWidgetFMUs->sortByColumn(0, Qt::AscendingOrder);
 
 	blockMySignals(this, false);
 	m_ui->widgetProperties->updateProperties(currentSlaveIdx);
