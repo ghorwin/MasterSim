@@ -47,6 +47,7 @@ parser.add_argument('-t', action="store", dest="tool", help="Tool/vendor directo
 parser.add_argument('-v', action="store", dest="fmiVersion", help="FMI version to use.")
 parser.add_argument('-p', action="store", dest="platform", help="Platform (win32, win64, darwin32, darwin64, linux32, linux64).")
 parser.add_argument(action="store", dest="fmiDirectory", help="Root directory with fmi-cross-check files.")
+parser.add_argument('-x', action="store_true", dest="excludeRun")
 
 args = parser.parse_args()
 
@@ -173,6 +174,9 @@ for fmuCase in fmuList:
 	masterSim.generateMSim(relPath)
 
 	# run MasterSim, expects MasterSimulator executable to be in the path
+	if args.excludeRun:
+		print("Skipping run")
+		continue
 	res = masterSim.run()
 	if not res:
 		fmuEvalResult[relPath] = (False, False, "")
