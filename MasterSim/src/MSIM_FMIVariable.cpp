@@ -26,15 +26,16 @@ void FMIVariable::read(const TiXmlElement * element) {
 			m_causality = C_OUTPUT;
 		else if (causality == "input")
 			m_causality = C_INPUT;
-		else if (causality == "parameter") {
+		else if (causality == "parameter")
 			m_causality = C_PARAMETER;
-		}
+		else if (causality == "internal")
+			m_causality = C_INTERNAL;
 		else
 			m_causality = C_OTHER;
 
-		std::string variability = ModelDescription::readOptionalAttribute(element, "variability");
-		if (variability.empty())
-			variability = "continuous";
+		m_variability = ModelDescription::readOptionalAttribute(element, "variability");
+		if (m_variability.empty())
+			m_variability = "continuous";
 
 		// read child element
 		const TiXmlElement * child = element->FirstChild()->ToElement();
@@ -82,6 +83,7 @@ const char * FMIVariable::causality2String(FMIVariable::Causality t) {
 		case C_INPUT : return "input";
 		case C_OUTPUT : return "output";
 		case C_PARAMETER : return "parameter";
+		case C_INTERNAL : return "internal";
 		case C_OTHER : return "other";
 	}
 	return "undefined";
@@ -91,7 +93,21 @@ const char * FMIVariable::causality2String(FMIVariable::Causality t) {
 std::string FMIVariable::toString() const {
 	std::stringstream strm;
 
-	strm << m_name << " (" << varType2String(m_type) << ", " << causality2String(m_causality) << ", start='" << m_startValue << "')";
+	// compose variable info text:
+	//   name (type [unit]), causality, variability
+	//      "description"
+
+	strm << m_name << " (" << varType2String(m_type);
+	if (m_type == VT_DOUBLE)
+		strm << " [" << m_unit << "])";
+	else
+		strm << ")";
+
+	strm << ", " << causality2String(m_causality) << "(start='" << m_startValue << "')";
+	strm << ", " << m_variability;
+
+	if (!m_description.empty())
+		strm << ", \"" << m_description << "\"";
 	return strm.str();
 }
 

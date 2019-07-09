@@ -22,6 +22,7 @@ public:
 		C_OUTPUT,
 		C_INPUT,
 		C_PARAMETER,
+		C_INTERNAL,
 		C_OTHER
 	};
 
@@ -61,6 +62,9 @@ public:
 
 	/*! Type name of type definition for this quantity (only type Real). */
 	std::string m_declaredType;
+
+	/*! The variability of this variable. */
+	std::string m_variability;
 
 	/*! Creates a one-line variable info text. */
 	std::string toString() const;
