@@ -95,7 +95,7 @@ void FileReaderSlave::instantiate() {
 
 void FileReaderSlave::setupExperiment(double relTol, double tStart, double tEnd) {
 	m_t = tStart;
-	// check value range in file and issue warning if data is less than simulation time frame
+	/// \todo check value range in file and issue warning if data is less than simulation time frame
 }
 
 
@@ -136,6 +136,9 @@ void FileReaderSlave::cacheOutputs() {
 	int res = fmi2OK;
 
 	// apply spline interpolation
+	for (unsigned int i=0; i<m_valueSplines.size(); ++i) {
+		m_doubleOutputs[i] = m_valueSplines[i]->value(m_t);
+	}
 
 	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
 }
