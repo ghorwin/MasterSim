@@ -111,7 +111,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 	# filter out vendor/tool, if given
 	if args.tool != None and pathParts[4] != args.tool:
 		continue
-		
+
 
 	# now find .fmu files
 	for name in files:
@@ -146,14 +146,14 @@ if os.path.exists(RESULT_CSV):
 		fmuEvalResult[tokens[0]] = (simOk, resultsOk, valueNorms)
 
 
-# for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files 
+# for each fmu, create an instance of our MasterSimImportTester class, parse the input/reference/options files
 # and then run the test
 for fmuCase in fmuList:
 	# generate path to MasterSim working directory = unique ID for test case
 	relPath = os.path.split(os.path.relpath(fmuCase, fullPathStr))[0] # get relative path to directory with fmu file
 	relPath = relPath.replace('\\', '_') # windows fix
 	relPath = relPath.replace('/', '_')
-	
+
 	# check if case has already been completed successfully
 	if relPath in fmuEvalResult:
 		res = fmuEvalResult[relPath]

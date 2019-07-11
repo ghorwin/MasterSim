@@ -17,7 +17,7 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-WIN32 {
+win32|macx {
 	LIBS += -lz
 }
 
