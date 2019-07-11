@@ -447,7 +447,11 @@ void * FMUPrivate::importFunctionAddress(const char* functionName) {
 void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
 	IBK::Path sharedLibraryPath = sharedLibraryDir;
+#ifdef __APPLE__
+	sharedLibraryPath.addExtension(".dylib");
+#else
 	sharedLibraryPath.addExtension(".so");
+#endif
 	IBK::IBK_Message(IBK::FormatString("Loading shared library '%1'.\n").arg(sharedLibraryPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);

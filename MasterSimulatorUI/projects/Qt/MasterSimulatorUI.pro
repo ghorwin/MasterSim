@@ -16,7 +16,6 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lminizip \
 	-lBlockMod \
 	-lQtPropertyBrowser \
-	-lDataIO \
 	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP
@@ -30,7 +29,6 @@ INCLUDEPATH = \
 	../../../externals/zlib/src \
 	../../../externals/minizip/src \
 	../../../externals/IBK/src \
-	../../../externals/DataIO/src \
 	../../../externals/BlockMod/src \
 	../../../externals/QtPropertyBrowser/src \
 	../../../externals/TiCPP/src \

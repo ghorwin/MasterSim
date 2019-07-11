@@ -37,6 +37,8 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
+LIBS -= -L../../../lib$${DIR_PREFIX}
+
 INCLUDEPATH = ../../src
 
 SOURCES += \
