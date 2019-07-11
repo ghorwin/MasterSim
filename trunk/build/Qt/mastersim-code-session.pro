@@ -18,7 +18,7 @@ SUBDIRS += MasterSim \
 	FMUTestLotkaVolterraPrey \
 	FMUTestLotkaVolterraPredator
 
-WIN32 {
+win32|macx {
 	SUBDIRS += zlib
 	zlib.file = ../../externals/zlib/projects/Qt/zlib.pro
 }
@@ -43,8 +43,9 @@ FMUTestLotkaVolterraPredator.file = ../../TestFMUs/LotkaVolterraPredator/project
 
 # dependencies
 MasterSim.depends = IBK IBKMK TiCPP minizip
-WIN32 {
+win32|macx {
 	MasterSim.depends += zlib
+	minizip.depends += zlib
 }
 
 IBKMK.depends = IBK

@@ -39,6 +39,8 @@ unix|mac {
 
 INCLUDEPATH = ../../src
 
+LIBS -= -L../../../lib$${DIR_PREFIX}
+
 SOURCES += \
 	../../src/fmi2common/fmi2Functions.cpp \
 	../../src/fmi2common/InstanceData.cpp \

@@ -13,7 +13,6 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
 	-lz \
-	-lDataIO \
 	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP
@@ -24,7 +23,6 @@ unix {
 
 INCLUDEPATH = \
 	../../../MasterSim/src \
-	../../../externals/DataIO/src \
 	../../../externals/IBK/src
 
 SOURCES += \
