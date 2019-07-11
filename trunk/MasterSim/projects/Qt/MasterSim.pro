@@ -32,12 +32,13 @@ LIBS += -L../../../externals/lib$${DIR_PREFIX} \
 	-lz
 
 SOURCES += \
+	../../src/MSIM_FMUSlave.cpp \
+	../../src/MSIM_FileReaderSlave.cpp \
 	../../src/MSIM_MasterSim.cpp \
 	../../src/MSIM_Project.cpp \
 	../../src/MSIM_ArgParser.cpp \
 	../../src/MSIM_Constants.cpp \
 	../../src/MSIM_FMUManager.cpp \
-	../../src/MSIM_Slave.cpp \
 	../../src/MSIM_FMU.cpp \
 	../../src/MSIM_ModelDescription.cpp \
 	../../src/MSIM_FMIVariable.cpp \
@@ -49,12 +50,14 @@ SOURCES += \
 	../../src/MSIM_ProgressFeedback.cpp
 
 HEADERS += \
+	../../src/MSIM_AbstractSlave.h \
+	../../src/MSIM_FMUSlave.h \
+	../../src/MSIM_FileReaderSlave.h \
 	../../src/MSIM_MasterSim.h \
 	../../src/MSIM_Project.h \
 	../../src/MSIM_ArgParser.h \
 	../../src/MSIM_Constants.h \
 	../../src/MSIM_FMUManager.h \
-	../../src/MSIM_Slave.h \
 	../../src/MSIM_FMU.h \
 	../../src/MSIM_ModelDescription.h \
 	../../src/MSIM_FMIVariable.h \

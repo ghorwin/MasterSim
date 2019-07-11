@@ -38,7 +38,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 		// loop over all slaves
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-			Slave * slave = cycle.m_slaves[s];
+			AbstractSlave * slave = cycle.m_slaves[s];
 
 			// update input variables in all slaves, using variables from time t
 			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, false);

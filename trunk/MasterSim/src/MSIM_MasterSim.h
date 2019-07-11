@@ -102,17 +102,17 @@ private:
 			evaluated (for Gauss-Seidel).
 			\note Pointers are not owned.
 		*/
-		std::vector<Slave*>			m_slaves;
+		std::vector<AbstractSlave*>			m_slaves;
 	};
 
 	/*! Variable mapping structure, used to map exchange quantities between FMUs for the different data types. */
 	struct VariableMapping {
 		unsigned int	m_globalIndex; // matches index of VariableMapping object in m_variableMappings vector
 
-		Slave			*m_outputSlave;
+		AbstractSlave	*m_outputSlave;
 		unsigned int	m_outputLocalIndex; // index of variable slot in locally cached output variables vector
 
-		Slave			*m_inputSlave;
+		AbstractSlave	*m_inputSlave;
 		unsigned int	m_inputValueReference;
 	};
 
@@ -128,7 +128,7 @@ private:
 	/*! Convenience function that extracts slave and variables names from flatVarName and
 		looks up slave and FMI variable in associated FMU.
 	*/
-	std::pair<const Slave*, const FMIVariable *> variableByName(const std::string & flatVarName) const;
+	std::pair<const AbstractSlave*, const FMIVariable *> variableByName(const std::string & flatVarName) const;
 
 	/*! Collects all output variables from all slaves and adds them to the variables vector, ordered according to cycles. */
 	void composeVariableVector();
@@ -199,7 +199,7 @@ private:
 
 
 	/*! Updates all connected inputs of a given slave using the variables in provided vector. */
-	void updateSlaveInputs(Slave * slave,
+	void updateSlaveInputs(AbstractSlave * slave,
 						   const std::vector<double> & variables,
 						   const std::vector<int> &intVariables,
 						   const std::vector<fmi2Boolean> &boolVariables,
@@ -207,7 +207,7 @@ private:
 						   bool realOnly);
 
 	/*! Copies all connected outputs of a given slave into the vector 'variables'. */
-	void syncSlaveOutputs(const Slave * slave,
+	void syncSlaveOutputs(const AbstractSlave * slave,
 						  std::vector<double> & realVariables,
 						  std::vector<int> & intVariables,
 						  std::vector<fmi2Boolean> &boolVariables,
@@ -253,7 +253,7 @@ private:
 	FMUManager				m_fmuManager;
 
 	/*! Vector of instantiated simulation slaves (owned by MasterSim). */
-	std::vector<Slave*>		m_slaves;
+	std::vector<AbstractSlave*>		m_slaves;
 
 	/*! All cycles in order of their evaluation priority. */
 	std::vector<Cycle>		m_cycles;
