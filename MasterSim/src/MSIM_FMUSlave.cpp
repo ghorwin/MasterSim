@@ -1,4 +1,4 @@
-#include "MSIM_Slave.h"
+#include "MSIM_FMUSlave.h"
 
 #include <IBK_Exception.h>
 #include <IBK_assert.h>

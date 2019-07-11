@@ -9,7 +9,7 @@
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
 
-#include "MSIM_Slave.h"
+#include "MSIM_FMUSlave.h"
 #include "MSIM_FMU.h"
 #include "MSIM_Project.h"
 

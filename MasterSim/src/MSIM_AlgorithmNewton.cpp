@@ -4,7 +4,7 @@
 #include <IBK_messages.h>
 
 #include "MSIM_MasterSim.h"
-#include "MSIM_Slave.h"
+#include "MSIM_FMUSlave.h"
 
 namespace MASTER_SIM {
 
