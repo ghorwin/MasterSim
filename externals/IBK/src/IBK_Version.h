@@ -108,7 +108,9 @@ public:
 	*/
 	static bool extractMajorMinorPatchVersionNumber(const std::string & versionString, unsigned int & major, unsigned int & minor, unsigned int & patch);
 
-	/*! Compares two version number strings, so that "4.3.2" is smaller than "4.5.1". */
+	/*! Compares two version number strings, so that "4.3.2" is smaller than "4.5.1" and
+		lesserVersionNumber("4.3.2", "4.5.1") returns true.
+	*/
 	static bool lesserVersionNumber(const std::string & lhs, const std::string & rhs);
 
 	/*! Prints the version number of the currently used compiler as IBK_Message. */

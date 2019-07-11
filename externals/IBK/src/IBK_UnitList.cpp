@@ -711,7 +711,7 @@ const char * const DEFAULT_UNITS =
 "kg/ms        ;"
 "kg/s         * 3600 kg/h         * 86400 kg/d        * 8.64e+07 g/d      * 31536e6 g/a   * 1e6 mg/s      * 1e9 µg/s    ;"
 "kg/m2        / 100 kg/dm2        * 10 g/dm2          / 10 g/cm2          * 1e6 mg/m2     ;"
-"kg/m2s       * 1000 g/m2s        * 3.6e+06 g/m2h     * 3600 kg/m2h       * 1e6 mg/m2s    * 1e9 µg/m2s  * 3.6e9 mg/m2h    * 3.6e12 µg/m2h ;"
+"kg/m2s       * 1000 g/m2s        * 3.6e+06 g/m2h     * 86.4e+06 g/m2d    * 3600 kg/m2h       * 1e6 mg/m2s    * 1e9 µg/m2s  * 3.6e9 mg/m2h    * 3.6e12 µg/m2h ;"
 "kg/m3        / 1000 kg/dm3       * 1 g/dm3           / 1000 g/cm3        * 1000 g/m3     * 1e6 mg/m3   * 1e9 µg/m3       % 0      log(kg/m3)    % 0    log(g/m3)    % 0    log(mg/m3)    % 0    log(µg/m3);"
 "kg/m3s       * 1000 g/m3s        * 3.6e+06 g/m3h     * 3600 kg/m3h       * 1e6 mg/m3s    * 1e9 µg/m3s  * 3.6e9 mg/m3h    * 3.6e12 µg/m3h ;"
 "kg/m         * 1000 g/m          * 1 g/mm            / 1000 kg/mm        ;"
