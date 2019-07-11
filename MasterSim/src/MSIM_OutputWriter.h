@@ -12,7 +12,7 @@
 namespace MASTER_SIM {
 
 class Project;
-class Slave;
+class AbstractSlave;
 
 /*! Handles creation and writing of master outputs (output variables of slaves). */
 class OutputWriter {
@@ -50,31 +50,34 @@ public:
 	Project					*m_project;
 
 	/*! Vector of pointers to slave instances (not owned). */
-	std::vector<Slave*>		m_slaves;
+	std::vector<AbstractSlave*>		m_slaves;
 
 	/*! Last time point when outputs were written. */
 	double					m_tLastOutput;
 
 	ProgressFeedback		m_progressFeedback;
 
-	std::vector< std::pair<const Slave*, unsigned int> >	m_boolOutputMapping;
-	std::vector< std::pair<const Slave*, unsigned int> >	m_intOutputMapping;
-	std::vector< std::pair<const Slave*, unsigned int> >	m_realOutputMapping;
+	std::vector< std::pair<const AbstractSlave*, unsigned int> >	m_boolOutputMapping;
+	std::vector< std::pair<const AbstractSlave*, unsigned int> >	m_intOutputMapping;
+	std::vector< std::pair<const AbstractSlave*, unsigned int> >	m_realOutputMapping;
 
 	/*! Holds number output values in csv format suitable for PostProc 2.
 		The numbers are written in order boolean, integer and double(real) values.
 	*/
-	std::ofstream											*m_valueOutputs;
+	std::ofstream													*m_valueOutputs;
 
 	/*! Holds string output values.
 		String outputs are written all together in one csv file (not a DataIO container).
 	*/
-	std::ofstream											*m_stringOutputs;
-	/*! Contains references to all outputs that are strings. */
-	std::vector< std::pair<const Slave*, unsigned int> >	m_stringOutputMapping;
+	std::ofstream													*m_stringOutputs;
+	/*! Contains references to all outputs that are strings.
+		The vector contains pairs of a slave and the associated index of the variable within
+		the m_stringOutputs vector of the slave.
+	*/
+	std::vector< std::pair<const AbstractSlave*, unsigned int> >	m_stringOutputMapping;
 
 	/*! Holds progress output. */
-	std::ofstream											*m_progressOutputs;
+	std::ofstream													*m_progressOutputs;
 
 };
 

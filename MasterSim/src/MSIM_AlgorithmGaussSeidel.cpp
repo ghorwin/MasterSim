@@ -53,7 +53,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// roll-back all slaves in this cycle, except for first iteration
 				if (iteration > 1) {
 					for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-						Slave * slave = cycle.m_slaves[s];
+						AbstractSlave * slave = cycle.m_slaves[s];
 						m_timer.start();
 						slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
 						m_master->m_statRollBackTimes[slave->m_slaveIndex] += 1e-3*m_timer.stop(); // add elapsed time in seconds
@@ -64,7 +64,7 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 
 			// loop over all slaves
 			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-				Slave * slave = cycle.m_slaves[s];
+				AbstractSlave * slave = cycle.m_slaves[s];
 
 				// update input variables in all slaves, using variables from time t + stepsize (partially updated from previous slaves)
 				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
