@@ -56,12 +56,17 @@ public:
 	/*! Reads table from a file.
 		\param filename Input file name.
 	*/
-	void read(const IBK::Path & filename);
+	void read(const IBK::Path & filename, bool headerOnly = false, bool extractUnits = false);
 
 	/*! Separation character for different tabulator columns. */
 	char								m_separationCharacter;
 	/*! Tabulator captions: columns of the first line. */
 	std::vector<std::string>			m_captions;
+	/*! If read() was call with extractUnits=true, the captions are parsed and if they contain
+		[<unit>], the unit strings will be stored in m_units and the captions will be truncated
+		accordingly.
+	*/
+	std::vector<std::string>			m_units;
 	/*! Data values sorted by row and column. */
 	std::vector<std::vector<double> >	m_values;
 	/*! Number of tabulator columns. */

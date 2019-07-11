@@ -136,6 +136,44 @@ std::string file2String(const IBK::Path & fname) {
 	return strm.str();
 }
 
+
+std::string read_one_line(const IBK::Path & fname) {
+	std::ifstream in;
+#if defined(_WIN32) && !defined(__MINGW32__)
+	in.open(fname.wstr().c_str());
+#else
+	in.open(fname.c_str());
+#endif // _WIN32
+	std::string line;
+	if (!std::getline(in, line))
+		throw IBK::Exception("Error reading file '"+ fname.str() + "'", "[IBK::readFirstLine]");
+
+	return line;
+}
+
+
+bool extract_number_suffix(const IBK::Path & fname, IBK::Path & adjustedFileName, int & number) {
+	std::string extension = fname.extension();
+	std::size_t pos = extension.find('?');
+	if (pos == std::string::npos) {
+		adjustedFileName = fname;
+		return false;
+	}
+	std::string numberStr = extension.substr(pos+1);
+	int numberNew;
+	try {
+		numberNew = IBK::string2val<unsigned int>(numberStr);
+		number = numberNew;
+		adjustedFileName = fname.withoutExtension() + "." + extension.substr(0, pos); // strip ?
+	}
+	catch (...) {
+		adjustedFileName = fname;
+		return false;
+	}
+	return true;
+}
+
+
 IBK::Path userDirectory() {
 	std::string result;
 
