@@ -55,7 +55,7 @@ using namespace std;
 
 namespace IBK {
 
-void CSVReader::read(const IBK::Path & filename) {
+void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUnits) {
 	const char * const FUNC_ID = "[CSVReader::read]";
 	try {
 #if defined(_WIN32)
@@ -76,6 +76,23 @@ void CSVReader::read(const IBK::Path & filename) {
 		IBK::explode(line, m_captions, m_separationCharacter);
 		m_nColumns = (unsigned int)m_captions.size();
 		m_nRows = 0;
+		m_units.clear();
+		if (extractUnits) {
+			for (unsigned int i=0; i<m_captions.size(); ++i) {
+				const std::string & c = m_captions[i];
+				std::size_t pos = c.find("[");
+				std::size_t pos2 = c.find("]");
+				if (pos != std::string::npos && pos != std::string::npos && pos < pos2) {
+					m_units.push_back(c.substr(pos+1, pos2-pos-1));
+					m_captions[i] = c.substr(0, pos);
+					IBK::trim(m_captions[i]);
+				}
+				else
+					m_units.push_back(""); // no unit
+			}
+		}
+		if (headerOnly)
+			return;
 		while (std::getline(in, line)) {
 			++m_nRows; // also count empty rows, to get correct line numbers in error messages
 			// skip empty rows
