@@ -3,6 +3,11 @@
 
 #include "MSIM_AbstractSlave.h"
 
+namespace IBK {
+	class CSVReader;
+	class LinearSpline;
+}
+
 namespace MASTER_SIM {
 
 /*! FileReaderSlave instance that reads data from a linear spline and provides this data
@@ -74,6 +79,11 @@ public:
 		\param value The value as string, will be decoded into the corresponding type.
 	*/
 	void setValue(const FMIVariable & /*var*/, const std::string & /*value*/) override {}
+
+private:
+
+	IBK::CSVReader					*m_fileReader;
+	std::vector<IBK::LinearSpline*>	m_valueSplines;
 };
 
 } // namespace MASTER_SIM

@@ -418,7 +418,10 @@ void MasterSim::importFMUs() {
 	// load FMU library for each fmu
 	for (std::set<IBK::Path>::const_iterator it = fmuFiles.begin(); it != fmuFiles.end(); ++it) {
 		/// \todo check if user has specified extraction path override in project file
-		m_fmuManager.importFMU(fmuBaseDir, *it);
+
+		// only import *.fmu files
+		if (IBK::string_nocase_compare(it->extension(), "fmu") )
+			m_fmuManager.importFMU(fmuBaseDir, *it);
 	}
 
 	// NOTE: From now on, the FMU instances in m_fmuManager must not be modified anylonger, since
@@ -530,7 +533,8 @@ void MasterSim::instatiateSlaves() {
 			else if (IBK::string_nocase_compare(fmuSlavePath.extension(), "tsv") ||
 					 IBK::string_nocase_compare(fmuSlavePath.extension(), "csv"))
 			{
-				IBK_ASSERT(false);
+				// create new file reader slave
+				slave.reset( new FileReaderSlave(fmuSlavePath, slaveDef.m_name) );
 			}
 			else {
 				throw IBK::Exception(IBK::FormatString("Unrecognized extension in simulation file path '%1'.").arg(slaveDef.m_pathToFMU),
