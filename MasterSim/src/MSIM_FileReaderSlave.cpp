@@ -4,6 +4,10 @@
 #include <IBK_assert.h>
 #include <IBK_messages.h>
 
+#include <IBK_CSVReader.h>
+#include <IBK_LinearSpline.h>
+#include <IBK_UnitVector.h>
+
 #include <cstdlib>
 #include <cstdarg>
 #include <cstdio>
@@ -13,27 +17,79 @@
 namespace MASTER_SIM {
 
 FileReaderSlave::FileReaderSlave(const IBK::Path & filepath, const std::string & name) :
-	AbstractSlave(name)
+	AbstractSlave(name),
+	m_fileReader(new IBK::CSVReader)
 {
 	m_filepath = filepath;
 }
 
 
 FileReaderSlave::~FileReaderSlave() {
+	delete m_fileReader;
+	for (auto d : m_valueSplines) {
+		delete d;
+	}
 }
 
 
 void FileReaderSlave::instantiate() {
+	const char * const FUNC_ID = "[FileReaderSlave::instantiate]";
+
+	IBK_ASSERT(m_valueSplines.empty()); // must only be called on empty object
 
 	// read file
+	try {
+		m_fileReader->read(m_filepath, false, true);
+		if (m_fileReader->m_nRows == 0)
+			throw IBK::Exception(IBK::FormatString("File '%1' does not contain any rows.").arg(m_filepath), FUNC_ID);
+		if (m_fileReader->m_nColumns < 1)
+			throw IBK::Exception(IBK::FormatString("File '%1' does not contain any data columns.").arg(m_filepath), FUNC_ID);
+	}
+	catch (IBK::Exception & ex) {
+		throw IBK::Exception(ex, IBK::FormatString("Error during initialization of slave '%1'").arg(m_name), FUNC_ID);
+	}
 
 	// setup linear splines
+	m_valueSplines.resize(m_fileReader->m_nColumns-1);
 
-	// resize vectors
-//	m_boolOutputs.resize(m_fmu->m_boolValueRefsOutput.size());
-//	m_intOutputs.resize(m_fmu->m_intValueRefsOutput.size());
-//	m_doubleOutputs.resize(m_fmu->m_doubleValueRefsOutput.size());
-//	m_stringOutputs.resize(m_fmu->m_stringValueRefsOutput.size());
+	IBK::UnitVector timeVec;
+	timeVec.resize(m_fileReader->m_nRows);
+	for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
+		timeVec[i] = m_fileReader->m_values[i][0];
+	}
+	try {
+		timeVec.m_unit = IBK::Unit(m_fileReader->m_units[0]);
+	} catch (...) {
+		throw IBK::Exception(IBK::FormatString("Invalid/unrecognized time unit '%2' in file '%3'. Error during initialization of slave '%1'")
+							 .arg(m_name).arg(m_fileReader->m_units[0]).arg(m_filepath), FUNC_ID);
+	}
+	// convert to seconds
+	timeVec.convert(IBK::Unit("s"));
+
+	for (unsigned int j=0; j<m_valueSplines.size(); ++j) {
+		m_valueSplines[j] = new IBK::LinearSpline;
+
+		std::vector<double> y(m_fileReader->m_nRows);
+		for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
+			y[i] = m_fileReader->m_values[i][j+1];
+		}
+		try {
+			m_valueSplines[j]->setValues(timeVec.m_data, y);
+		} catch (IBK::Exception & ex) {
+			throw IBK::Exception(ex, IBK::FormatString("Invalid interpolation table data in column '%2' in file '%3'. Error during initialization of slave '%1'")
+								 .arg(m_name).arg(m_fileReader->m_captions[j+1]).arg(m_filepath), FUNC_ID);
+		}
+	}
+
+	// resize vectors - currently only double number inputs supported
+	m_doubleOutputs.resize(m_valueSplines.size());
+	for (unsigned int i=0; i<m_valueSplines.size(); ++i) {
+		std::string varName = m_fileReader->m_captions[i+1];
+		std::string uStr = m_fileReader->m_units[i+1];
+		if (uStr.empty())
+			uStr = "---";
+		m_doubleVarNames.push_back(varName + " [" + uStr + "]");
+	}
 }
 
 
