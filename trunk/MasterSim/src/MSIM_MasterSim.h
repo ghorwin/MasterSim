@@ -10,7 +10,7 @@
 #include "MSIM_Project.h"
 #include "MSIM_ArgParser.h"
 #include "MSIM_FMUManager.h"
-#include "MSIM_Slave.h"
+#include "MSIM_FMUSlave.h"
 #include "MSIM_OutputWriter.h"
 
 
