@@ -9,7 +9,7 @@
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
 
-#include "MSIM_FMUSlave.h"
+#include "MSIM_AbstractSlave.h"
 #include "MSIM_FMU.h"
 #include "MSIM_Project.h"
 
@@ -50,12 +50,11 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	std::string descriptions = IBK::FormatString("Time [%1]").arg(m_project->m_outputTimeUnit.name()).str();
 	// collect output variable references for strings
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
-		const Slave * slave = m_slaves[s];
+		const AbstractSlave * slave = m_slaves[s];
 
 		// loop all string variables in slave
-		for (unsigned int v=0; v<slave->fmu()->m_stringValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_STRING, slave->fmu()->m_stringValueRefsOutput[v]);
-			std::string flatName = slave->m_name + "." + var.m_name;
+		for (unsigned int v=0; v<slave->m_stringVarNames.size(); ++v) {
+			std::string flatName = slave->m_name + "." + slave->m_stringVarNames[v];
 			descriptions += " \t" + flatName;
 			m_stringOutputMapping.push_back( std::make_pair(slave, v));
 		}
@@ -95,32 +94,26 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	descriptions = IBK::FormatString("Time [%1]").arg(m_project->m_outputTimeUnit.name()).str();
 	// collect variable references from all slaves
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
-		const Slave * slave = m_slaves[s];
+		const AbstractSlave * slave = m_slaves[s];
 
 		// loop all boolean variables in slave
-		for (unsigned int v=0; v<slave->fmu()->m_boolValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_BOOL, slave->fmu()->m_boolValueRefsOutput[v]);
-			std::string flatName = slave->m_name + "." + var.m_name;
+		for (unsigned int v=0; v<slave->m_boolVarNames.size(); ++v) {
+			std::string flatName = slave->m_name + "." + slave->m_boolVarNames[v];
 			descriptions += " \t" + flatName + " [---]"; // booleans are unit-less
 			m_boolOutputMapping.push_back( std::make_pair(slave, v));
 		}
 
 		// loop all integer variables in slave
-		for (unsigned int v=0; v<slave->fmu()->m_intValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_INT, slave->fmu()->m_intValueRefsOutput[v]);
-			std::string flatName = slave->m_name + "." + var.m_name;
+		for (unsigned int v=0; v<slave->m_intVarNames.size(); ++v) {
+			std::string flatName = slave->m_name + "." + slave->m_intVarNames[v];
 			descriptions += " \t" + flatName + " [---]"; // ints are unit-less
 			m_intOutputMapping.push_back( std::make_pair(slave, v));
 		}
 
 		// loop all real variables in slave
-		for (unsigned int v=0; v<slave->fmu()->m_doubleValueRefsOutput.size(); ++v) {
-			const FMIVariable & var = slave->fmu()->m_modelDescription.variableByRef(FMIVariable::VT_DOUBLE, slave->fmu()->m_doubleValueRefsOutput[v]);
-			std::string flatName = slave->m_name + "." + var.m_name;
-			std::string unit = var.m_unit;
-			if (unit.empty())
-				unit = "---"; // no unit = undefined
-			descriptions += " \t" + flatName + " [" + unit + "]";
+		for (unsigned int v=0; v<slave->m_doubleVarNames.size(); ++v) {
+			std::string flatName = slave->m_name + "." + slave->m_doubleVarNames[v];
+			descriptions += " \t" + flatName;
 			m_realOutputMapping.push_back( std::make_pair(slave, v));
 		}
 	} // for - slaves
@@ -192,7 +185,7 @@ void OutputWriter::appendOutputs(double t) {
 	// string outputs
 	if (m_stringOutputs != NULL) {
 		*m_stringOutputs << t;
-		for (std::vector< std::pair<const Slave*, unsigned int> >::const_iterator it = m_stringOutputMapping.begin(); it != m_stringOutputMapping.end(); ++it) {
+		for (std::vector< std::pair<const AbstractSlave*, unsigned int> >::const_iterator it = m_stringOutputMapping.begin(); it != m_stringOutputMapping.end(); ++it) {
 			*m_stringOutputs << '\t' << it->first->m_stringOutputs[it->second];
 			// gather all data in output file
 		}
@@ -203,19 +196,19 @@ void OutputWriter::appendOutputs(double t) {
 	*m_valueOutputs << t;
 
 	// booleans
-	for (std::vector< std::pair<const Slave*, unsigned int> >::const_iterator it = m_boolOutputMapping.begin();
+	for (std::vector< std::pair<const AbstractSlave*, unsigned int> >::const_iterator it = m_boolOutputMapping.begin();
 		 it != m_boolOutputMapping.end(); ++it)
 	{
 		*m_valueOutputs << '\t' << it->first->m_boolOutputs[it->second];
 	}
 	// integer
-	for (std::vector< std::pair<const Slave*, unsigned int> >::const_iterator it = m_intOutputMapping.begin();
+	for (std::vector< std::pair<const AbstractSlave*, unsigned int> >::const_iterator it = m_intOutputMapping.begin();
 		 it != m_intOutputMapping.end(); ++it)
 	{
 		*m_valueOutputs << '\t' << it->first->m_intOutputs[it->second];
 	}
 	// real
-	for (std::vector< std::pair<const Slave*, unsigned int> >::const_iterator it = m_realOutputMapping.begin();
+	for (std::vector< std::pair<const AbstractSlave*, unsigned int> >::const_iterator it = m_realOutputMapping.begin();
 		 it != m_realOutputMapping.end(); ++it)
 	{
 		*m_valueOutputs << '\t' << it->first->m_doubleOutputs[it->second];

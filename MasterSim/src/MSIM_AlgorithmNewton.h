@@ -9,7 +9,7 @@
 
 namespace MASTER_SIM {
 
-class Slave;
+class AbstractSlave;
 
 /*! Implementation class for Newton algorithm.
 
@@ -30,7 +30,7 @@ public:
 	Result doStep();
 
 	/*! Advances slave using xi as inputs and updates xi1 (only real values). */
-	Result evaluateSlave(MASTER_SIM::Slave * slave, const std::vector<double> & xi, std::vector<double> & xi1);
+	Result evaluateSlave(MASTER_SIM::AbstractSlave * slave, const std::vector<double> & xi, std::vector<double> & xi1);
 
 	/*! Computes Jacobian using DQ approximation and factorizes it.
 		\param c Cycle index.

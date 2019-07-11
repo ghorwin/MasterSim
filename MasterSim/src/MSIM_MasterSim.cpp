@@ -16,7 +16,9 @@
 
 #include "MSIM_Constants.h"
 #include "MSIM_FMU.h"
-#include "MSIM_Slave.h"
+#include "MSIM_AbstractSlave.h"
+#include "MSIM_FMUSlave.h"
+#include "MSIM_FileReaderSlave.h"
 #include "MSIM_AlgorithmGaussJacobi.h"
 #include "MSIM_AlgorithmGaussSeidel.h"
 #include "MSIM_AlgorithmNewton.h"
@@ -490,7 +492,7 @@ void MasterSim::instatiateSlaves() {
 	IBK::Path absoluteProjectFilePath = m_args.m_projectFile.parentPath();
 
 	// turn on debug logging for high verbosity levels
-	Slave::m_useDebugLogging = m_args.m_verbosityLevel > 3;
+	FMUSlave::m_useDebugLogging = m_args.m_verbosityLevel > 3;
 
 	// now that all FMUs have been loaded and their functions/symbols imported, we can instantiate the simulator slaves
 	std::set<FMU*>	instantiatedFMUs; // set that holds all instantiated slaves, in case an FMU may only be instantiated once
@@ -506,24 +508,37 @@ void MasterSim::instatiateSlaves() {
 			IBK::Path fmuSlavePath = slaveDef.m_pathToFMU;
 			if (!fmuSlavePath.isAbsolute())
 				fmuSlavePath = absoluteProjectFilePath / fmuSlavePath;
-			// search FMU to instantiate
-			FMU * fmu = m_fmuManager.fmuByPath(fmuSlavePath.absolutePath());
-			// check if we try to instantiate an FMU twice that forbids this
-			if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
-				if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
-					throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
-										 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
+
+			std::unique_ptr<AbstractSlave> slave;
+
+			// is this an fmu we load?
+			if (IBK::string_nocase_compare(fmuSlavePath.extension(), "fmu")) {
+
+				// search FMU to instantiate
+				FMU * fmu = m_fmuManager.fmuByPath(fmuSlavePath.absolutePath());
+				// check if we try to instantiate an FMU twice that forbids this
+				if (fmu->m_modelDescription.m_canBeInstantiatedOnlyOncePerProcess) {
+					if (instantiatedFMUs.find(fmu) != instantiatedFMUs.end())
+						throw IBK::Exception(IBK::FormatString("Simulator '%1' attempts to instantiate FMU '%2' a second time, though this FMU "
+											 "may only be instantiated once.").arg(slaveDef.m_name).arg(slaveDef.m_pathToFMU), FUNC_ID);
+				}
+				// remember that this FMU was instantiated
+				instantiatedFMUs.insert(fmu);
+				// create new simulation slave
+				slave.reset( new FMUSlave(fmu, slaveDef.m_name) );
 			}
-			// remember that this FMU was instantiated
-			instantiatedFMUs.insert(fmu);
-			// create new simulation slave
-#if __cplusplus >= 199711L
-			std::unique_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
-#else
-			std::auto_ptr<Slave> slave( new Slave(fmu, slaveDef.m_name) );
-#endif
+			else if (IBK::string_nocase_compare(fmuSlavePath.extension(), "tsv") ||
+					 IBK::string_nocase_compare(fmuSlavePath.extension(), "csv"))
+			{
+				IBK_ASSERT(false);
+			}
+			else {
+				throw IBK::Exception(IBK::FormatString("Unrecognized extension in simulation file path '%1'.").arg(slaveDef.m_pathToFMU),
+									 FUNC_ID);
+			}
+
 			try {
-				slave->instantiateSlave();
+				slave->instantiate();
 			}
 			catch (IBK::Exception & ex) {
 				throw IBK::Exception(ex, IBK::FormatString("Error setting up slave '%1'").arg(slaveDef.m_name), FUNC_ID);
@@ -531,7 +546,7 @@ void MasterSim::instatiateSlaves() {
 			// store index of slave in global slaves vector
 			slave->m_slaveIndex = (unsigned int)m_slaves.size();
 			// add slave to vector with slaves
-			Slave * s = slave.get();
+			AbstractSlave * s = slave.get();
 			m_slaves.push_back(slave.release());
 
 			// insert slave into cycle/priority
@@ -549,8 +564,8 @@ void MasterSim::instatiateSlaves() {
 		IBK::IBK_Message( IBK::FormatString("Cycle %1:\n").arg(i+1),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		for (unsigned int s=0; s<m_cycles[i].m_slaves.size(); ++s) {
-			const Slave * slave = m_cycles[i].m_slaves[s];
-			IBK::IBK_Message( IBK::FormatString("  %1 (%2)\n").arg(slave->m_name).arg(slave->fmu()->fmuFilePath().filename()),
+			const AbstractSlave * slave = m_cycles[i].m_slaves[s];
+			IBK::IBK_Message( IBK::FormatString("  %1 (%2)\n").arg(slave->m_name).arg(slave->m_filepath.filename()),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		}
 	}
@@ -611,7 +626,9 @@ void MasterSim::setupDefaultParameters() {
 	// loop over all slaves
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		// find corresponding parametrization in project file
-		const Slave * slave = m_slaves[s];
+		const FMUSlave * slave = dynamic_cast<const FMUSlave *>(m_slaves[s]);
+		if (slave == nullptr)
+			continue;
 		Project::SimulatorDef & simDef = const_cast<Project::SimulatorDef &>(m_project.simulatorDefinition(slave->m_name));
 		// check if ResultsRootDir parameter is imported by FMU
 		const FMU * fmu = slave->fmu();
@@ -645,7 +662,7 @@ void MasterSim::initialConditions() {
 	IBK::IBK_Message("Setting up experiment\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
+		AbstractSlave * slave = m_slaves[i];
 		slave->setupExperiment(m_project.m_relTol, m_t, m_project.m_tEnd.value);
 	}
 
@@ -657,7 +674,9 @@ void MasterSim::initialConditions() {
 	{
 		IBK::MessageIndentor indent3; (void)indent3;
 		for (unsigned int i=0; i<m_slaves.size(); ++i) {
-			Slave * slave = m_slaves[i];
+			FMUSlave * slave = dynamic_cast<FMUSlave *>(m_slaves[i]);
+			if (slave == nullptr)
+				continue;
 			IBK::IBK_Message( IBK::FormatString("%1\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 			IBK::MessageIndentor indent2; (void)indent2;
 			// process all FMI variables and parameters and set their start values
@@ -683,7 +702,9 @@ void MasterSim::initialConditions() {
 
 		// loop over all slaves
 		for (unsigned int i=0; i<m_slaves.size(); ++i) {
-			Slave * slave = m_slaves[i];
+			FMUSlave * slave = dynamic_cast<FMUSlave *>(m_slaves[i]);
+			if (slave == nullptr)
+				continue;
 
 			try {
 				// set parameters and start values for all slaves
@@ -712,7 +733,7 @@ void MasterSim::initialConditions() {
 	IBK::IBK_Message("Entering initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
+		AbstractSlave * slave = m_slaves[i];
 		slave->enterInitializationMode();
 	}
 
@@ -729,7 +750,7 @@ void MasterSim::initialConditions() {
 
 		// for now just loop over all slaves retrieve outputs
 		for (unsigned int i=0; i<m_slaves.size(); ++i) {
-			Slave * slave = m_slaves[i];
+			AbstractSlave * slave = m_slaves[i];
 			// cache outputs
 			slave->cacheOutputs();
 			// and sync with global variables vector
@@ -739,7 +760,7 @@ void MasterSim::initialConditions() {
 
 
 		for (unsigned int i=0; i<m_slaves.size(); ++i) {
-			Slave * slave = m_slaves[i];
+			AbstractSlave * slave = m_slaves[i];
 			updateSlaveInputs(slave, m_realyt, m_intyt, m_boolyt, m_stringyt, false);
 		}
 	}
@@ -747,13 +768,13 @@ void MasterSim::initialConditions() {
 	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// exit initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
-		Slave * slave = m_slaves[i];
+		AbstractSlave * slave = m_slaves[i];
 		slave->exitInitializationMode();
 	}
 }
 
 
-std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std::string & flatVarName) const {
+std::pair<const AbstractSlave *, const FMIVariable *> MasterSim::variableByName(const std::string & flatVarName) const {
 	const char * const FUNC_ID = "[MasterSim::variableByName]";
 	std::vector<std::string> tokens;
 	// extract slave name for input
@@ -762,25 +783,29 @@ std::pair<const Slave*, const FMIVariable *> MasterSim::variableByName(const std
 
 	std::string slaveName = tokens[0];
 	std::string varName = tokens[1];
-	const Slave * slave = NULL;
+	const AbstractSlave * slave = NULL;
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		if (m_slaves[s]->m_name == slaveName) {
 			slave = m_slaves[s];
 			break;
 		}
 	}
-	if (slave == NULL)
+	if (slave == nullptr)
 		throw IBK::Exception(IBK::FormatString("Unknown/undefined slave name %1").arg(slaveName), FUNC_ID);
 
+	const FMUSlave * fmuSlave = dynamic_cast<const FMUSlave*>(slave);
+	if (fmuSlave == nullptr)
+		throw IBK::Exception(IBK::FormatString("Slave '%1' is not an FMU-based simulation slave.")
+							 .arg(slaveName), FUNC_ID);
 	// lookup variable in FMU variable list
-	for (unsigned int i=0; i<slave->fmu()->m_modelDescription.m_variables.size(); ++i) {
-		const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[i];
+	for (unsigned int i=0; i<fmuSlave->fmu()->m_modelDescription.m_variables.size(); ++i) {
+		const FMIVariable & var = fmuSlave->fmu()->m_modelDescription.m_variables[i];
 		if (var.m_name == varName) {
 			return std::make_pair(slave, &var);
 		}
 	}
 	throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name %1 in FMU %2")
-						 .arg(varName).arg(slave->fmu()->fmuFilePath()), FUNC_ID);
+						 .arg(varName).arg(slave->m_filepath), FUNC_ID);
 }
 
 
@@ -793,23 +818,37 @@ void MasterSim::composeVariableVector() {
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_project.m_graph[i];
 		// resolve variable references
-		std::pair<const Slave*, const FMIVariable*> inputVarRef = variableByName(edge.m_inputVariableRef);
-		std::pair<const Slave*, const FMIVariable*> outputVarRef = variableByName(edge.m_outputVariableRef);
-
-		// check for consistent types
+		std::pair<const AbstractSlave*, const FMIVariable*> inputVarRef = variableByName(edge.m_inputVariableRef);
 		FMIVariable::VarType t = inputVarRef.second->m_type;
-		if (t != outputVarRef.second->m_type)
-			throw IBK::Exception( IBK::FormatString("Mismatching types in connection '%1' -> '%2'").arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef), FUNC_ID);
 
 		IBK::IBK_Message( IBK::FormatString("%1 \t'%2' -> '%3'    (%4)\n").arg(i+1)
 			.arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef).arg(FMIVariable::varType2String(t)), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 
 		VariableMapping varMap;
 		varMap.m_globalIndex = i;
-		varMap.m_inputSlave = const_cast<Slave*>(inputVarRef.first);
+		varMap.m_inputSlave = const_cast<AbstractSlave*>(inputVarRef.first);
 		varMap.m_inputValueReference = inputVarRef.second->m_valueReference;
-		varMap.m_outputSlave = const_cast<Slave*>(outputVarRef.first);
-		varMap.m_outputLocalIndex = varMap.m_outputSlave->fmu()->localOutputIndex(t, outputVarRef.second->m_valueReference);
+
+		// variable may be generated by an FMU slave or a file reader slave, distinguish behavior
+		// if the outputVarRef string contains a ? character, it will be a file reader
+		if (edge.m_outputVariableRef.find("?") != std::string::npos) {
+
+			// determine slave from filename
+			//
+
+			IBK_ASSERT(false);
+		}
+		else {
+			std::pair<const AbstractSlave*, const FMIVariable*> outputVarRef = variableByName(edge.m_outputVariableRef);
+
+			// check for consistent types
+			if (t != outputVarRef.second->m_type)
+				throw IBK::Exception( IBK::FormatString("Mismatching types in connection '%1' -> '%2'").arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef), FUNC_ID);
+
+			varMap.m_outputSlave = const_cast<AbstractSlave*>(outputVarRef.first);
+			FMUSlave * fmuSlave = dynamic_cast<FMUSlave*>(varMap.m_outputSlave);
+			varMap.m_outputLocalIndex = fmuSlave->fmu()->localOutputIndex(t, outputVarRef.second->m_valueReference);
+		}
 
 		// add variable mapping to corresponding vector
 		switch (t) {
@@ -1119,7 +1158,7 @@ double MasterSim::adaptTimeStepBasedOnErrorEstimate(double errEstimate) const {
 }
 
 
-void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & realVariables,
+void MasterSim::updateSlaveInputs(AbstractSlave * slave, const std::vector<double> & realVariables,
 								  const std::vector<int> & intVariables,
 								  const std::vector<fmi2Boolean> &boolVariables,
 								  const std::vector<std::string> & stringVariables,
@@ -1163,7 +1202,7 @@ void MasterSim::updateSlaveInputs(Slave * slave, const std::vector<double> & rea
 }
 
 
-void MasterSim::syncSlaveOutputs(const Slave * slave,
+void MasterSim::syncSlaveOutputs(const AbstractSlave * slave,
 								 std::vector<double> & realVariables,
 								 std::vector<int> & intVariables,
 								 std::vector<fmi2Boolean> &boolVariables,
@@ -1211,7 +1250,7 @@ void MasterSim::syncSlaveOutputs(const Slave * slave,
 void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
 	IBK::StopWatch w;
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
-		Slave * slave = m_slaves[s];
+		AbstractSlave * slave = m_slaves[s];
 		w.start();
 		slave->currentState(&slaveStates[s]);
 		m_statStoreStateTimes[slave->m_slaveIndex] += 1e-3*w.stop(); // add elapsed time in seconds
@@ -1223,7 +1262,7 @@ void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
 void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveStates) {
 	IBK::StopWatch w;
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
-		Slave * slave = m_slaves[s];
+		AbstractSlave * slave = m_slaves[s];
 		w.start();
 		slave->setState(t, slaveStates[slave->m_slaveIndex]);
 		m_statRollBackTimes[slave->m_slaveIndex] += 1e-3*w.stop(); // add elapsed time in seconds

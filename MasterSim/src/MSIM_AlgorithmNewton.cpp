@@ -4,7 +4,7 @@
 #include <IBK_messages.h>
 
 #include "MSIM_MasterSim.h"
-#include "MSIM_FMUSlave.h"
+#include "MSIM_AbstractSlave.h"
 
 namespace MASTER_SIM {
 
@@ -29,7 +29,7 @@ void AlgorithmNewton::init() {
 			bool foundInput = false;
 			bool foundOutput = false;
 			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-				const Slave * slave = cycle.m_slaves[s];
+				const AbstractSlave * slave = cycle.m_slaves[s];
 				// mind that an output of a slave may be directly connected to its own input
 				// so we can have the same slave being used
 				if (m_master->m_realVariableMapping[varIdx].m_inputSlave == slave)
@@ -109,14 +109,14 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 			if (iteration > 1) {
 				// except for the first iteration, roll-back all slaves in this cycle
 				for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-					Slave * slave = cycle.m_slaves[s];
+					AbstractSlave * slave = cycle.m_slaves[s];
 					slave->setState(t, m_master->m_iterationStates[slave->m_slaveIndex]);
 				}
 			}
 
 			// loop over all slaves and compute S(y_{t+h}^i)
 			for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-				Slave * slave = cycle.m_slaves[s];
+				AbstractSlave * slave = cycle.m_slaves[s];
 				Result res = evaluateSlave(slave, m_master->m_realytNext, m_res);
 				if (res != R_CONVERGED) {
 					++m_nFMUErrors;
@@ -176,7 +176,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 		// cycle done, also sync variables of other types with global variable array ytNext so that the results
 		// of the current cycle are available in the next cycle
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-			Slave * slave = cycle.m_slaves[s];
+			AbstractSlave * slave = cycle.m_slaves[s];
 			// Note: when we have converged, m_master->m_realytNext holds corrected solution (with delta added), when
 			//       we now sync again with the last state of the slaves, we actually get the last iterative value
 			//       stored in the slave. However, the difference should be within the error limit.
@@ -193,7 +193,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 }
 
 
-AbstractAlgorithm::Result AlgorithmNewton::evaluateSlave(Slave * slave, const std::vector<double> & xi, std::vector<double> & xi1) {
+AbstractAlgorithm::Result AlgorithmNewton::evaluateSlave(AbstractSlave * slave, const std::vector<double> & xi, std::vector<double> & xi1) {
 	const char * const FUNC_ID = "[AlgorithmNewton::evaluateF]";
 	// update input variables in all slaves, using variables from time t
 	m_master->updateSlaveInputs(slave, xi, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, true);
@@ -247,7 +247,7 @@ void AlgorithmNewton::generateJacobian(unsigned int c) {
 		m_master->m_realytNextIter[varIdx] += delta;
 		// evaluate all slaves in cycle
 		for (unsigned int s=0; s<cycle.m_slaves.size(); ++s) {
-			Slave * slave = cycle.m_slaves[s];
+			AbstractSlave * slave = cycle.m_slaves[s];
 			// reset slave
 			slave->setState(m_master->m_t, m_master->m_iterationStates[slave->m_slaveIndex]);
 			// then evaluate slave

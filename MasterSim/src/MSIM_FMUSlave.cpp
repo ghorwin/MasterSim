@@ -65,24 +65,24 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment /* c */, fmi2String instanceNa
 
 #if defined(_MSC_VER)
 
-fmiCallbackFunctions Slave::m_fmiCallBackFunctions = {
+fmiCallbackFunctions FMUSlave::m_fmiCallBackFunctions = {
 	{ fmiLoggerCallback }, { calloc }, { free }, {NULL}
 };
 
-fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
+fmi2CallbackFunctions FMUSlave::m_fmi2CallBackFunctions = {
 	{ fmi2LoggerCallback }, { calloc }, { free }, {NULL}, {NULL}
 };
 
 #else
 
-fmiCallbackFunctions Slave::m_fmiCallBackFunctions = {
+fmiCallbackFunctions FMUSlave::m_fmiCallBackFunctions = {
 	.logger					= fmiLoggerCallback,
 	.allocateMemory			= calloc,
 	.freeMemory				= free,
 	.stepFinished			= NULL,
 };
 
-fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
+fmi2CallbackFunctions FMUSlave::m_fmi2CallBackFunctions = {
 	.logger					= fmi2LoggerCallback,
 	.allocateMemory			= calloc,
 	.freeMemory				= free,
@@ -92,18 +92,18 @@ fmi2CallbackFunctions Slave::m_fmi2CallBackFunctions = {
 
 #endif
 
-bool Slave::m_useDebugLogging = true;
+bool FMUSlave::m_useDebugLogging = true;
 
-Slave::Slave(FMU * fmu, const std::string & name) :
-	m_name(name),
+FMUSlave::FMUSlave(FMU * fmu, const std::string & name) :
+	AbstractSlave(name),
 	m_fmu(fmu),
-	m_t(0),
 	m_component(NULL)
 {
+	m_filepath = fmu->fmuFilePath();
 }
 
 
-Slave::~Slave() {
+FMUSlave::~FMUSlave() {
 	if (m_component != NULL) {
 		if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1)
 			m_fmu->m_fmi1Functions.freeSlaveInstance(m_component);
@@ -113,7 +113,7 @@ Slave::~Slave() {
 }
 
 
-void Slave::instantiateSlave() {
+void FMUSlave::instantiate() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		m_component = m_fmu->m_fmi1Functions.instantiateSlave(
 							m_name.c_str(),
@@ -138,18 +138,39 @@ void Slave::instantiateSlave() {
 	}
 
 	if (m_component == NULL)
-		throw IBK::Exception("Error instantiating slave.", "[Slave::instantiateSlave]");
+		throw IBK::Exception("Error instantiating slave.", "[FMUSlave::instantiateFMUSlave]");
 
 	// resize vectors
 	m_boolOutputs.resize(m_fmu->m_boolValueRefsOutput.size());
 	m_intOutputs.resize(m_fmu->m_intValueRefsOutput.size());
 	m_doubleOutputs.resize(m_fmu->m_doubleValueRefsOutput.size());
 	m_stringOutputs.resize(m_fmu->m_stringValueRefsOutput.size());
+
+	// compose variable names as they appear in the output file
+	for (unsigned int v=0; v<m_fmu->m_stringValueRefsOutput.size(); ++v) {
+		const FMIVariable & var = m_fmu->m_modelDescription.variableByRef(FMIVariable::VT_STRING, m_fmu->m_stringValueRefsOutput[v]);
+		m_stringVarNames.push_back(var.m_name);
+	}
+	for (unsigned int v=0; v<m_fmu->m_boolValueRefsOutput.size(); ++v) {
+		const FMIVariable & var = m_fmu->m_modelDescription.variableByRef(FMIVariable::VT_BOOL, m_fmu->m_boolValueRefsOutput[v]);
+		m_boolVarNames.push_back(var.m_name);
+	}
+	for (unsigned int v=0; v<m_fmu->m_intValueRefsOutput.size(); ++v) {
+		const FMIVariable & var = m_fmu->m_modelDescription.variableByRef(FMIVariable::VT_INT, m_fmu->m_intValueRefsOutput[v]);
+		m_intVarNames.push_back(var.m_name);
+	}
+	for (unsigned int v=0; v<m_fmu->m_doubleValueRefsOutput.size(); ++v) {
+		const FMIVariable & var = m_fmu->m_modelDescription.variableByRef(FMIVariable::VT_DOUBLE, m_fmu->m_doubleValueRefsOutput[v]);
+		std::string unit = var.m_unit;
+		if (unit.empty())
+			unit = "---"; // no unit = undefined
+		m_doubleVarNames.push_back(var.m_name + " [" + unit + "]");
+	}
 }
 
 
-void Slave::setupExperiment(double relTol, double tStart, double tEnd) {
-	const char * const FUNC_ID = "[Slave::setupExperiment]";
+void FMUSlave::setupExperiment(double relTol, double tStart, double tEnd) {
+	const char * const FUNC_ID = "[FMUSlave::setupExperiment]";
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		// fmi 1 code
 		if (m_fmu->m_fmi1Functions.initializeSlave(m_component, tStart, fmiTrue, tEnd) != fmiOK)
@@ -164,24 +185,24 @@ void Slave::setupExperiment(double relTol, double tStart, double tEnd) {
 }
 
 
-void Slave::enterInitializationMode() {
+void FMUSlave::enterInitializationMode() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
 		if (m_fmu->m_fmi2Functions.enterInitializationMode(m_component) != fmi2OK)
-			throw IBK::Exception( IBK::FormatString("Error while entering initialization mode in slave '%1'.").arg(m_name), "[Slave::enterInitializationMode]");
+			throw IBK::Exception( IBK::FormatString("Error while entering initialization mode in slave '%1'.").arg(m_name), "[FMUSlave::enterInitializationMode]");
 	}
 }
 
 
-void Slave::exitInitializationMode() {
+void FMUSlave::exitInitializationMode() {
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2) {
 		if (m_fmu->m_fmi2Functions.exitInitializationMode(m_component) != fmi2OK)
-			throw IBK::Exception( IBK::FormatString("Error while leaving initialization mode in slave '%1'.").arg(m_name), "[Slave::exitInitializationMode]");
+			throw IBK::Exception( IBK::FormatString("Error while leaving initialization mode in slave '%1'.").arg(m_name), "[FMUSlave::exitInitializationMode]");
 	}
 }
 
 
-int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
-	const char * const FUNC_ID = "[Slave::doStep]";
+int FMUSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
+	const char * const FUNC_ID = "[FMUSlave::doStep]";
 	fmi2Status res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = (fmi2Status)m_fmu->m_fmi1Functions.doStep(m_component, m_t, stepSize,
@@ -201,7 +222,7 @@ int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 		double stopTime;
 		res = m_fmu->m_fmi2Functions.getRealStatus(m_component, fmi2LastSuccessfulTime, &stopTime);
 		if (res == fmi2OK) {
-			IBK::IBK_Message(IBK::FormatString("Slave '%1' stopped at '%2'.\n").arg(m_name).arg(stopTime), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+			IBK::IBK_Message(IBK::FormatString("FMUSlave '%1' stopped at '%2'.\n").arg(m_name).arg(stopTime), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
 		}
 #endif
 
@@ -212,25 +233,25 @@ int Slave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 }
 
 
-void Slave::currentState(fmi2FMUstate * state) const {
+void FMUSlave::currentState(fmi2FMUstate * state) const {
 	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2);
 
 	if (m_fmu->m_fmi2Functions.getFMUstate(m_component, state) != fmi2OK) {
-		throw IBK::Exception(IBK::FormatString("Failed getting FMU state from slave '%1'.").arg(m_name), "[Slave::currentState]");
+		throw IBK::Exception(IBK::FormatString("Failed getting FMU state from slave '%1'.").arg(m_name), "[FMUSlave::currentState]");
 	}
 }
 
 
-void Slave::setState(double t, fmi2FMUstate slaveState) {
+void FMUSlave::setState(double t, fmi2FMUstate slaveState) {
 	if (m_fmu->m_fmi2Functions.setFMUstate(m_component, slaveState) != fmi2OK) {
-		throw IBK::Exception(IBK::FormatString("Failed setting FMU state in slave '%1'.").arg(m_name), "[Slave::setState]");
+		throw IBK::Exception(IBK::FormatString("Failed setting FMU state in slave '%1'.").arg(m_name), "[FMUSlave::setState]");
 	}
 	m_t = t;
 }
 
 
-void Slave::cacheOutputs() {
-	const char * const FUNC_ID = "[Slave::cacheOutputs]";
+void FMUSlave::cacheOutputs() {
+	const char * const FUNC_ID = "[FMUSlave::cacheOutputs]";
 	int res = fmi2OK;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		// booleans must be converted one-by-one for FMI 1
@@ -287,7 +308,7 @@ void Slave::cacheOutputs() {
 }
 
 
-void Slave::setReal(unsigned int valueReference, double value) {
+void FMUSlave::setReal(unsigned int valueReference, double value) {
 	int res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = m_fmu->m_fmi1Functions.setReal(m_component, &valueReference, 1, &value);
@@ -296,12 +317,12 @@ void Slave::setReal(unsigned int valueReference, double value) {
 		res = m_fmu->m_fmi2Functions.setReal(m_component, &valueReference, 1, &value);
 	}
 	if (res != fmi2OK) {
-		throw IBK::Exception("Error setting input variable.", "[Slave::setReal]");
+		throw IBK::Exception("Error setting input variable.", "[FMUSlave::setReal]");
 	}
 }
 
 
-void Slave::setInteger(unsigned int valueReference, int value) {
+void FMUSlave::setInteger(unsigned int valueReference, int value) {
 	int res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		res = m_fmu->m_fmi1Functions.setInteger(m_component, &valueReference, 1, &value);
@@ -310,12 +331,12 @@ void Slave::setInteger(unsigned int valueReference, int value) {
 		res = m_fmu->m_fmi2Functions.setInteger(m_component, &valueReference, 1, &value);
 	}
 	if (res != fmi2OK) {
-		throw IBK::Exception("Error setting input variable.", "[Slave::setInteger]");
+		throw IBK::Exception("Error setting input variable.", "[FMUSlave::setInteger]");
 	}
 }
 
 
-void Slave::setBoolean(unsigned int valueReference, fmi2Boolean value) {
+void FMUSlave::setBoolean(unsigned int valueReference, fmi2Boolean value) {
 	int res;
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
 		fmiBoolean val = (value == fmi2True) ? fmiTrue : fmiFalse;
@@ -325,12 +346,12 @@ void Slave::setBoolean(unsigned int valueReference, fmi2Boolean value) {
 		res = m_fmu->m_fmi2Functions.setBoolean(m_component, &valueReference, 1, &value);
 	}
 	if (res != fmi2OK) {
-		throw IBK::Exception("Error setting input variable.", "[Slave::setBoolean]");
+		throw IBK::Exception("Error setting input variable.", "[FMUSlave::setBoolean]");
 	}
 }
 
 
-void Slave::setString(unsigned int valueReference, const std::string & str) {
+void FMUSlave::setString(unsigned int valueReference, const std::string & str) {
 	int res;
 	const char * const cstr = str.c_str();
 	if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1) {
@@ -340,12 +361,12 @@ void Slave::setString(unsigned int valueReference, const std::string & str) {
 		res = m_fmu->m_fmi2Functions.setString(m_component, &valueReference, 1, &cstr);
 	}
 	if (res != fmi2OK) {
-		throw IBK::Exception("Error setting input variable.", "[Slave::setString]");
+		throw IBK::Exception("Error setting input variable.", "[FMUSlave::setString]");
 	}
 }
 
 
-void Slave::setValue(const FMIVariable & var, const std::string & value) {
+void FMUSlave::setValue(const FMIVariable & var, const std::string & value) {
 	// convert value into type
 	switch (var.m_type) {
 		case FMIVariable::VT_BOOL :
