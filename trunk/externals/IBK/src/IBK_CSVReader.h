@@ -67,7 +67,7 @@ public:
 		accordingly.
 	*/
 	std::vector<std::string>			m_units;
-	/*! Data values sorted by row and column. */
+	/*! Data values sorted by row and column : val = m_values[row][col]. */
 	std::vector<std::vector<double> >	m_values;
 	/*! Number of tabulator columns. */
 	unsigned int						m_nColumns;
