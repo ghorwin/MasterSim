@@ -12,13 +12,18 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-L../../../externals/lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
-	-lz \
 	-lIBKMKmini \
 	-lIBK \
 	-lTiCPP
 
 unix {
-	LIBS += -ldl
+	LIBS += \
+		-lz \
+		-ldl
+}
+
+win32 {
+	LIBS += -lzlib
 }
 
 INCLUDEPATH = \

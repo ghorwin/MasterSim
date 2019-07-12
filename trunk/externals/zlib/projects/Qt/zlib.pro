@@ -3,7 +3,13 @@
 # -------------------------------------------------
 
 # first we define what we are
-TARGET = z
+win32 {
+	TARGET = zlib
+}
+else {
+	TARGET = z
+}
+
 TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
