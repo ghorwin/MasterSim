@@ -51,9 +51,24 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 
 	std::string slaveName = project().m_simulators[m_currentSlaveIndex].m_name;
 
+	// only show properties for fmu files
+	if (!IBK::string_nocase_compare(project().m_simulators[m_currentSlaveIndex].m_pathToFMU.extension(), "fmu"))
+		return;
+
 	// attempt to find FMU definition
+	const MASTER_SIM::ModelDescription * modelDescPtr = nullptr;
 	try {
-		const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(slaveName);
+		modelDescPtr = &MSIMMainWindow::instance().modelDescription(slaveName);
+	}
+	catch (...) {
+		// this is expected to happen, when the table update is triggered before the FMUs have been analyzed
+		// simply return for now - once the FMUs have been analyzed, this function is called again
+		return;
+	}
+
+	// now update the property edits
+	try {
+		const MASTER_SIM::ModelDescription & modelDesc = *modelDescPtr;
 		// process model description and create properties for all parameters
 		for (unsigned int i=0; i<modelDesc.m_variables.size(); ++i) {
 			const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[i];
