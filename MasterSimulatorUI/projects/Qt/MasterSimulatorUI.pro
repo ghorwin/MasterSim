@@ -20,8 +20,8 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lIBK \
 	-lTiCPP
 
-WIN32 {
-	LIBS += -lz
+win32 {
+	LIBS += -lzlib
 }
 
 INCLUDEPATH = \

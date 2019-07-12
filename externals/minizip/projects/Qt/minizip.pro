@@ -17,8 +17,12 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-win32|macx {
+macx {
 	LIBS += -lz
+}
+
+win32 {
+	LIBS += lzlib
 }
 
 INCLUDEPATH += \

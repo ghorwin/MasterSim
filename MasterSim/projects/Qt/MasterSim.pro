@@ -14,9 +14,10 @@ unix|mac {
 	VER_MIN = 5
 	VER_PAT = 2
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
+
+	QMAKE_CXXFLAGS +=  -std=c++11
 }
 
-QMAKE_CXXFLAGS +=  -std=c++11
 
 INCLUDEPATH = \
 	../../../externals/minizip/src \
