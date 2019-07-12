@@ -7,17 +7,38 @@ The template msim-project file used to generate the simulations is located in `t
 
 ## Preparation steps
 
-1. fork the https://github.com/modelica/fmi-cross-check repo into your own github repo
-2. clone the forked repo
-3. edit the master cross_check.py script first and specify the correct paths to the repository 
-   (see comments in the file)
+1. clone the repository https://github.com/modelica/fmi-cross-check into this directory
 
-## Run the cross-check scripts
+## Generate the MasterSim project files
 
-Then, you can simply run the script:
+Run the script from within a temporary directory, for example:
 
-> python scripts/cross_check.py
+> mkdir tmp
+> cd tmp
+> python ../scripts/cross_check.py ../fmi-cross-check 
+
+to generate not-yet existing MasterSim project files. Delete existing msim-files to recreate 
+all project files. You can filter FMI version, tool vendor, platform.
+
+## Test-initialize all MasterSim project files
+
+Run from within the temporary directory.
+
+> python ../scripts/test_init.py
+
+This will generate a list of test cases that could be successfully initialized.
+
+## Run and check all test FMUs
+
+-> do this one-by-one and compare reference results with computed results
 
 ## Publish the results
 
-... 
+Preparation: generate at least one representative figure
+
+(only for MasterSim developers)
+
+1. Fork the original https://github.com/modelica/fmi-cross-check repo into your own repository
+2. clone this repository somewhere
+3. ... 
+
