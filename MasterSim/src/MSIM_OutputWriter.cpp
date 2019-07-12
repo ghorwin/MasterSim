@@ -112,7 +112,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		// loop all real variables in slave
 		for (unsigned int v=0; v<slave->m_doubleVarNames.size(); ++v) {
-			std::string flatName = slave->m_name + "." + slave->m_doubleVarNames[v];
+			std::string flatName = slave->m_name + "." + slave->m_doubleVarNames[v] + " [" + slave->m_doubleVarUnits[v] + "]";
 			descriptions += " \t" + flatName;
 			m_realOutputMapping.push_back( std::make_pair(slave, v));
 		}

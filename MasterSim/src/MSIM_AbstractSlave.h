@@ -106,8 +106,10 @@ public:
 	std::vector<std::string>	m_intVarNames;
 	/*! Variables names for string quantities (used for outputs). */
 	std::vector<std::string>	m_stringVarNames;
-	/*! Variables names for double quantities (used for outputs), already with appended ' [unit]' text. */
+	/*! Variables names for double quantities (used for outputs). */
 	std::vector<std::string>	m_doubleVarNames;
+	/*! Units for double quantities, to be appended when writing output files as ' [unit]' text. */
+	std::vector<std::string>	m_doubleVarUnits;
 
 	/*! Holds definitions all variables of this slave. */
 	std::vector<FMIVariable>	m_variables;
