@@ -88,7 +88,8 @@ void FileReaderSlave::instantiate() {
 		std::string uStr = m_fileReader->m_units[i+1];
 		if (uStr.empty())
 			uStr = "---";
-		m_doubleVarNames.push_back(varName + " [" + uStr + "]");
+		m_doubleVarNames.push_back(varName);
+		m_doubleVarUnits.push_back(uStr);
 	}
 }
 

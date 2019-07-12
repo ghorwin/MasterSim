@@ -130,6 +130,12 @@ private:
 	*/
 	std::pair<const AbstractSlave*, const FMIVariable *> variableByName(const std::string & flatVarName) const;
 
+	/*! Extracts the slave name from a flat variable name ('slave1' from 'slave1.var2') and looks up the corresponding
+		FMU/simulator slave and returns a pointer to it.
+		Throws an exception if the slave name is unknown.
+	*/
+	AbstractSlave * splitFlatVariableName(const std::string & flatVarName, std::string & varname) const;
+
 	/*! Collects all output variables from all slaves and adds them to the variables vector, ordered according to cycles. */
 	void composeVariableVector();
 

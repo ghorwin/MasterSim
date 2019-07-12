@@ -164,7 +164,8 @@ void FMUSlave::instantiate() {
 		std::string unit = var.m_unit;
 		if (unit.empty())
 			unit = "---"; // no unit = undefined
-		m_doubleVarNames.push_back(var.m_name + " [" + unit + "]");
+		m_doubleVarNames.push_back(var.m_name);
+		m_doubleVarUnits.push_back(unit);
 	}
 }
 

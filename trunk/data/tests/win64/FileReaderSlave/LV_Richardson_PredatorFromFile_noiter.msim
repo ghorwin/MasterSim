@@ -1,18 +1,23 @@
-tStart               0 a
-tEnd                 100 s
-hMax                 10 s
-hMin                 1e-08 s
-hFallBackLimit       1e-10 s
-hStart               0.1 s
-hOutputMin           0.01 s
-adjustStepSize       yes
-absTol               1e-06
-relTol               1e-06
-MasterMode           GAUSS_SEIDEL
-ErrorControlMode     STEP_DOUBLING
-maxIterations        1
+# Created:	Fr. Juli 12 18:21:52 2019
+# LastModified:	Fr. Juli 12 18:21:52 2019
+
+tStart                   0 a
+tEnd                     100 s
+hMax                     10 s
+hMin                     1e-08 s
+hFallBackLimit           1e-10 s
+hStart                   0.1 s
+hOutputMin               0.01 s
+adjustStepSize           yes
+absTol                   1e-06
+relTol                   1e-06
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         STEP_DOUBLING
+maxIterations            1
+writeInternalVariables   no
 
 simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"
 simulator 1 0 values #ff008000 "values.csv"
 
-graph values.csv?2 Prey.y
+graph values.Predator.y Prey.y
+
