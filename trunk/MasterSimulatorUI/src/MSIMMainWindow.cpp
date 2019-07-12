@@ -24,6 +24,9 @@
 
 #include <IBK_FileUtils.h>
 #include <IBK_messages.h>
+#include <IBK_CSVReader.h>
+#include <IBK_Unit.h>
+#include <IBK_UnitList.h>
 
 #include <MSIM_Project.h>
 
@@ -474,8 +477,54 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 	// now process all FMUs
 	m_modelDescriptions.clear();
 	for (std::set<IBK::Path>::const_iterator it = fmus.begin(); it != fmus.end(); ++it) {
+		// check if the simulation slave is actually a csv/tsv file and use the file reader instead
+		if (!IBK::string_nocase_compare(it->extension(), "fmu")) {
+			// attempt to read the file as csv/tsv file
+			msg.append( tr("Reading tabulated data from '%1'\n").arg(QString::fromStdString(it->str())));
+			try {
+				IBK::CSVReader reader;
+				reader.read(*it, true, true); // only read header
+
+				// sanity checks
+				if (reader.m_nColumns < 1 || IBK::Unit(reader.m_units[0]).base_id() != IBK_UNIT_ID_SECONDS)
+					throw IBK::Exception("Invalid number of columns or invalid/undefined/missing time unit in first column.",
+										 "[MSIMMainWindow::extractFMUsAndParseModelDesc]");
+
+				// now create a model description for this file
+				MASTER_SIM::ModelDescription modelDesc;
+				modelDesc.m_modelName = it->filename().withoutExtension().str();
+				modelDesc.m_fmuType = MASTER_SIM::ModelDescription::CS_v1;
+				// for now we only support double parameters
+				for (unsigned int i=1; i<reader.m_nColumns; ++i) {
+					// get quantity
+					MASTER_SIM::FMIVariable v;
+					v.m_name = reader.m_captions[i];
+					v.m_unit = reader.m_units[i];
+					v.m_type = MASTER_SIM::FMIVariable::VT_DOUBLE;
+					v.m_varIdx = i;
+					v.m_causality = MASTER_SIM::FMIVariable::C_OUTPUT;
+					v.m_variability = "continuous";
+					modelDesc.m_variables.push_back(v);
+				}
+				m_modelDescriptions[*it] = modelDesc;
+
+				msg.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+				for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
+					msg.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
+				}
+			}
+			catch (IBK::Exception & ex) {
+				ex.writeMsgStackToError();
+				msg.append( tr("Error reading header from csv/tsv file (invalid format?)."));
+
+			}
+
+			continue;
+		}
+
+
 		// attempt to unzip FMU
-		msg.append( tr("Extracting '%1'\n").arg(QString::fromUtf8(it->c_str())));
+		msg.append( tr("Extracting '%1'\n").arg(QString::fromStdString(it->str())));
 
 		std::string fileContent;
 		unzFile zip = unzOpen(it->c_str());

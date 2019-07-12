@@ -106,7 +106,9 @@ std::string FMIVariable::toString() const {
 	else
 		strm << ")";
 
-	strm << ", " << causality2String(m_causality) << "(start='" << m_startValue << "')";
+	strm << ", " << causality2String(m_causality);
+	if (m_causality == C_INPUT || m_causality == C_INTERNAL || m_causality == C_PARAMETER)
+		strm << "(start='" << m_startValue << "')";
 	strm << ", " << m_variability;
 
 	if (!m_description.empty())
