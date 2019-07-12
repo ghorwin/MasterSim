@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc version="2.1.1">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#416fce" Checked="1">.</SubDir>
+			<SubDir Color="#005500" Checked="1">Math003_GaussSeidel_2iters_adaptive_Richardson</SubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--All mappers.-->
+	<Mappers>
+		<Mapper name="0.1 s, x1">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x1 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>8</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>1.5</Maximum>
+						<Minimum>-0.5</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x2">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x2 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>8</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>1.5</Maximum>
+						<Minimum>-0.5</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x3">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x3 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>8</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0000999999999998</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x4">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x4 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>Part3.x4</TitleText>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>8</Maximum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0000999999999998</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>7</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x1 Detail">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x1 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.13073</Maximum>
+						<Minimum>0.94195099999999998</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>1.56128</Maximum>
+						<Minimum>-0.39303300000000002</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0" autoscale="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>696.98400000000004</Maximum>
+						<Minimum>449.87900000000002</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x2 Detail">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x2 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.7</Maximum>
+						<Minimum>0.80000000000000004</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0010000000000003</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x3 Detail">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>2</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x3 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.7</Maximum>
+						<Minimum>0.80000000000000004</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0010000000000003</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="0.1 s, x4 Detail">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>reference_results.tsv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/results/values.csv?1|2|3|4</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>3</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>x4 [ref]</TitleText>
+					</Series>
+					<Series>
+						<TitleText>Part3.x4</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#00aaff</PenColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.7</Maximum>
+						<Minimum>0.80000000000000004</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">---</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0010000000000003</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="StepSize [$filename]">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>Math003_GaussSeidel_2iters_adaptive_Richardson/log/stepstats.tsv?2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>1.7</Maximum>
+						<Minimum>0.80000000000000004</Minimum>
+						<GridPenStyle>1</GridPenStyle>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="1">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,75,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>4</Maximum>
+						<Minimum>-4.0010000000000003</Minimum>
+						<MaxMajorScale>5</MaxMajorScale>
+						<MinorGridVisible>0</MinorGridVisible>
+					</Axis>
+					<Axis index="2" enabled="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>1</Maximum>
+						<Minimum>-1</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText />
+					<TitleFont>Roboto Condensed,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<AxisScalesInside>1</AxisScalesInside>
+					<Legend>
+						<Position>Inside</Position>
+						<Alignment>5</Alignment>
+						<MaxColumns>1</MaxColumns>
+						<Font>Roboto Condensed,9,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+	</Mappers>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="4" size1="624" size2="623" orientation="2" />
+		<Widget id="2" parent="1" viewTable="0" mapperIndex="6" size1="624" size2="623" orientation="2" />
+		<Widget id="3" parent="1" viewTable="0" mapperIndex="5" size1="766" size2="873" orientation="1" />
+		<Widget id="4" parent="2" viewTable="0" mapperIndex="7" size1="820" size2="819" orientation="1" />
+		<FocusedWidget>1</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>
