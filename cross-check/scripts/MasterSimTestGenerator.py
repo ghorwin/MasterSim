@@ -204,7 +204,7 @@ ${Graph}
 		
 		graph = ""
 		if len(self.variableInputFile) > 0:
-			simLine = '\nsimulator 0 0 in_csv #ff0000ff "{}"'.format(self.variableInputFile)
+			simLine = simLine + '\nsimulator 0 0 in_csv #ff0000ff "{}"'.format(self.variableInputFile)
 			# self.inputVars -> parameters
 			for iv in self.inputVars:
 				graph = graph + "graph in_csv.{} slave1.{}\n".format(iv, iv) 
