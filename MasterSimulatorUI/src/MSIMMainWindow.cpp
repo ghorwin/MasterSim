@@ -485,6 +485,10 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 				IBK::CSVReader reader;
 				reader.read(*it, true, true); // only read header
 
+				// special convention: no time unit, assume "s" seconds
+				if (reader.m_units.size() > 0 && reader.m_units[0].empty())
+					reader.m_units[0] = "s";
+
 				// sanity checks
 				if (reader.m_nColumns < 1 || IBK::Unit(reader.m_units[0]).base_id() != IBK_UNIT_ID_SECONDS)
 					throw IBK::Exception("Invalid number of columns or invalid/undefined/missing time unit in first column.",
