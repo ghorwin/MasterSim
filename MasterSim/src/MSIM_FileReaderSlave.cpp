@@ -40,6 +40,10 @@ void FileReaderSlave::instantiate() {
 	// read file
 	try {
 		m_fileReader->read(m_filepath, false, true);
+		// special convention: no time unit, assume "s" seconds
+		if (m_fileReader->m_units.size() > 0 && m_fileReader->m_units[0].empty())
+			m_fileReader->m_units[0] = "s";
+
 		if (m_fileReader->m_nRows == 0)
 			throw IBK::Exception(IBK::FormatString("File '%1' does not contain any rows.").arg(m_filepath), FUNC_ID);
 		if (m_fileReader->m_nColumns < 1)
