@@ -112,7 +112,7 @@ class MasterSimTestGenerator:
 
 
 
-	def generateMSim(self, targetDir):
+	def generateMSim(self, targetDir, cs1):
 		"""Generates the MasterSim project file to run the test case.
 		This function creates a directory structure based on the fmu-name below the targetDir, whereby
 		targetDir is a relative path to the current working directory. The entire directory structure
@@ -162,7 +162,7 @@ maxIterations        1
 
 ${FMU-Definition}
 
-${Parameters}
+${Graph}
 """
 		
 		TEMPLATE_MSIM_CS2_FILE = """
@@ -174,7 +174,7 @@ hFallBackLimit       ${FallBackLimit} s
 hStart               ${StepSize} s
 hOutputMin           ${dtOutMin} s
 adjustStepSize       yes
-absTol               0
+absTol               1e-6
 relTol               ${RelTol}
 MasterMode           GAUSS_JACOBI
 ErrorControlMode     NONE
@@ -182,9 +182,12 @@ maxIterations        1
 
 ${FMU-Definition}
 
-${Parameters}
+${Graph}
 """
-		msim_content = TEMPLATE_MSIM_CS1_FILE
+		if cs1:
+			msim_content = TEMPLATE_MSIM_CS1_FILE
+		else:
+			msim_content = TEMPLATE_MSIM_CS2_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
 			msim_content = msim_content.replace('${'+kw+'}', "{:e}".format(self.simOptions[kw]))
 
@@ -198,15 +201,16 @@ ${Parameters}
 		relPathToFmu = os.path.relpath(self.fmuPath, absPathToTarget)
 		
 		simLine = 'simulator 0 0 slave1 #ffff8c00 "{}"'.format(relPathToFmu)
-		msim_content = msim_content.replace('${FMU-Definition}', simLine)
 		
-		parameters = ""
+		graph = ""
 		if len(self.variableInputFile) > 0:
+			simLine = '\nsimulator 0 0 in_csv #ff0000ff "{}"'.format(self.variableInputFile)
 			# self.inputVars -> parameters
 			for iv in self.inputVars:
-				parameters = parameters + "parameter slave1.{} {}?{}\n".format(iv, self.variableInputFile, iv) 
-		msim_content = msim_content.replace('${Parameters}', parameters)
+				graph = graph + "graph in_csv.{} slave1.{}\n".format(iv, iv) 
+		msim_content = msim_content.replace('${Graph}', graph)
 		
+		msim_content = msim_content.replace('${FMU-Definition}', simLine)
 		
 
 		fobj = open(self.msimFilename, 'w')
