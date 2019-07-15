@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Solver test suite runner script, used for
 # * regression tests (default)
@@ -153,7 +153,7 @@ def run_performance_evaluation(args, projects):
     
     for iter in range(ITERATIONS):
         for project in projects:
-            print project
+            print(project)
             path, fname = os.path.split(project)
             #print "Path    : " + path
             #print "Project : " + fname
@@ -190,10 +190,10 @@ def run_performance_evaluation(args, projects):
                 exit(1)
                     
 
-    print ""
-    print "Successful projects:"
-    print ""
-    print "{:60s} {}".format("Project path", "Wall clock times [s], last column is min of all runs")
+    print("")
+    print("Successful projects:")
+    print("")
+    print("{:60s} {}".format("Project path", "Wall clock times [s], last column is min of all runs"))
     filenames = eval_times.keys()
     filenames.sort()
     perfstats = open(os.path.join(args.path, "performance_stats.txt"), 'w')
@@ -211,11 +211,11 @@ def run_performance_evaluation(args, projects):
         perfstats.write(s + '\n')
     del perfstats    
     if len(failed_projects) > 0:
-        print ""
-        print "Failed projects:"
+        print("")
+        print("Failed projects:")
         for p in failed_projects:
             printError(p)
-        print ""
+        print("")
         printError("*** Failure ***")
         exit(1)
 
@@ -253,12 +253,12 @@ if compilerID == None:
     printError("Unknown/unsupported platform")
     exit(1)
 else:
-    print "Compiler ID            : " + compilerID
+    print("Compiler ID            : " + compilerID)
 
-print "Test suite             : " + args.path
-print "Solver                 : " + args.solver
-print "Project file extension : " + args.extension
-print "\n"
+print("Test suite             : " + args.path)
+print("Solver                 : " + args.solver)
+print("Project file extension : " + args.extension)
+print("\n")
 
 # walk all subdirectories (except .svn) within testsuite and collect project file names
 projects = []
@@ -279,7 +279,7 @@ failed_projects = []
 eval_times = dict() # key - file path to project, value - eval time in [s]
 
 for project in projects:
-    print project
+    print(project)
     path, fname = os.path.split(project)
     #print "Path    : " + path
     #print "Project : " + fname
@@ -332,23 +332,22 @@ for project in projects:
         printError("Error starting solver executable '{}', error: {}".format(args.solver, e))
         exit(1)
 
-print ""
-print "Successful projects:"
-print ""
-print "{:60s} {}".format("Project path", "Wall clock time [s]")
-filenames = eval_times.keys()
-filenames.sort()
+print("")
+print("Successful projects:")
+print("")
+print("{:60s} {}".format("Project path", "Wall clock time [s]"))
+filenames = sorted(eval_times.keys())
 for filename in filenames:
     fname = os.path.basename(filename)
     onedir = os.path.join(os.path.basename(os.path.dirname(filename)), os.path.basename(filename))
     printNotification("{:65s} {:>10.3f}".format(onedir, eval_times[filename]))
 
 if len(failed_projects) > 0:
-    print ""
-    print "Failed projects:"
+    print("")
+    print("Failed projects:")
     for p in failed_projects:
         printError(p)
-    print ""
+    print("")
     printError("*** Failure ***")
     exit(1)
     

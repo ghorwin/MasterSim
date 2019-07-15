@@ -78,6 +78,53 @@ rename Part3.zip Part3.fmu
 echo *** Done: Created Part3.fmu
 
 
+:: --- Prey ---
+
+echo Removing old 'Prey' directory
+rmdir /Q /S Prey
+
+echo Creating directory structure
+mkdir Prey\binaries\win64
+cd Prey
+
+echo Copying Prey.dll and modelDescription.xml
+copy ..\..\..\bin\release_x64\LotkaVolterraPrey.dll binaries\win64\Prey.dll
+copy ..\..\LotkaVolterraPrey\data\modelDescription.xml .
+
+echo Removing old Prey.fmu
+del ..\Prey.fmu
+
+echo Creating archive Prey.zip
+7za a ..\Prey.zip .
+cd .. 
+echo Renaming to Prey.fmu
+rename Prey.zip Prey.fmu
+echo *** Done: Created Prey.fmu
+
+
+:: --- Predator ---
+
+echo Removing old 'Predator' directory
+rmdir /Q /S Predator
+
+echo Creating directory structure
+mkdir Predator\binaries\win64
+cd Predator
+
+echo Copying Predator.dll and modelDescription.xml
+copy ..\..\..\bin\release_x64\LotkaVolterraPredator.dll binaries\win64\Predator.dll
+copy ..\..\LotkaVolterraPredator\data\modelDescription.xml .
+
+echo Removing old Predator.fmu
+del ..\Predator.fmu
+
+echo Creating archive Predator.zip
+7za a ..\Predator.zip .
+cd .. 
+echo Renaming to Predator.fmu
+rename Predator.zip Predator.fmu
+echo *** Done: Created Predator.fmu
+
 
 :: go back to original directory
 cd ..
@@ -87,4 +134,5 @@ echo Copying fmus to test directory
 copy fmus\Part1.fmu ..\data\tests\win64\Math_003_control_loop\fmus\IBK
 copy fmus\Part2.fmu ..\data\tests\win64\Math_003_control_loop\fmus\IBK
 copy fmus\Part3.fmu ..\data\tests\win64\Math_003_control_loop\fmus\IBK
+copy fmus\Prey.fmu ..\data\tests\win64\FileReaderSlave\fmus\IBK
 
