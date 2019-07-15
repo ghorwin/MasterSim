@@ -88,11 +88,14 @@ class MasterSimTestGenerator:
 		if not os.path.exists(refFile):
 			raise Exception("Reference result file '{}' expected".format(refFile))
 		self.refData = pd.read_csv(refFile, delimiter=',', quotechar='"')
-		timeColumnName = 'time'
-		if not timeColumnName in self.refData:
-			timeColumnName = 'Time'
-			if not timeColumnName in self.refData:
-				raise Exception("Missing 'time' o 'Time' column in reference result file '{}'.".format(refFile))
+		timeColumnName = None
+		for colName in self.refData:
+			colNameStripped = colName.strip(' "')
+			#print(colNameStripped)
+			if colNameStripped == 'time' or colNameStripped == 'Time':
+				timeColumnName = colName
+		if timeColumnName == None:
+			raise Exception("Missing 'time' or 'Time' column in reference result file '{}'.".format(refFile))
 		
 		# determine output frequency
 		dtOut = None

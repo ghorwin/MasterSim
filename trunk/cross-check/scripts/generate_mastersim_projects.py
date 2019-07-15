@@ -78,6 +78,18 @@ else:
 fmuList = []
 
 print("Collecting list of FMUs to import and test-run")
+# filter out platform, if given
+osType = args.platform
+if osType == None:
+	s = platform.system()
+	if s == "Linux":
+		osType = "linux64"
+	elif s == "Windows":
+		print("Selecting 'win64' platform")
+		osType = "win64"
+	else:
+		osType = "darwin64"
+
 for root, dirs, files in os.walk(fullPath, topdown=False):
 
 	root = os.path.join(fullPath, root) # full path to current fmu file
@@ -109,25 +121,13 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 		if not found:
 			continue
 
-	# filter out platform, if given
-	osType = args.platform
-	if osType == None:
-		s = platform.system()
-		if s == "Linux":
-			osType = "linux64"
-		elif s == "Windows":
-			osType == "win64"
-		else:
-			osType == "darwin64"
-
 	if pathParts[3] != osType:
 		continue
 
 	# filter out vendor/tool, if given
 	if args.tool != None and pathParts[4] != args.tool:
 		continue
-
-
+	
 	# now find .fmu files
 	for name in files:
 		e = os.path.splitext(name)
@@ -153,9 +153,9 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			except Exception as e:
 				print(e)
 				# create a 'fail' file with error message
-				with open("filename") as file: 
+				with open("fail", 'w') as file: 
 					file.write("invalid\n")
-					file.write(e.message + "\n")
+					file.write(str(e) + "\n")
 				continue
 
 			# generate MasterSim file
