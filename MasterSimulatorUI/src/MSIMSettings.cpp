@@ -60,6 +60,8 @@ void MSIMSettings::setDefaults() {
 
 	m_maxNumUNDOSteps = 10000;
 
+	m_thumbNailSize = 0; // for now we do not have thumbnails, yet
+
 	// determine text executable
 	m_textEditorExecutable.clear();
 #ifdef Q_OS_UNIX
