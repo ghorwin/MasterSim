@@ -249,7 +249,7 @@ void MasterSim::doStep() {
 														 .arg(m_t).arg(m_h),IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
 					break;
 				}
-				[[clang::fallthrough]]; // fall-through
+				/* fall through */
 
 			default : {
 				if (m_h/5 < m_project.m_hMin.value)
