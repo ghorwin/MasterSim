@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import filecmp
 from print_funcs import *
@@ -33,9 +35,9 @@ class SolverStats:
 				if tokens[0].find("Time") != -1:
 					self.timers[tokens[0]] = float(tokens[1])
 				else:
-					self.counters[tokens[0]] = long(tokens[1])
+					self.counters[tokens[0]] = int(tokens[1])
 		except Exception as e:
-			print "Error opening/reading file '{}', error: {}".format(statsFile, e)
+			print("Error opening/reading file '{}', error: {}".format(statsFile, e))
 			return False
 		return True
 
@@ -54,10 +56,10 @@ class SolverStats:
 		"""
 		
 		# compare counters
-		print "  {:30s}  {:>12s}    {:>12s}".format("", "Reference", "New")
+		print("  {:30s}  {:>12s}    {:>12s}".format("", "Reference", "New"))
 		# print side-by-side differences
-		s1keys = s1.counters.keys()
-		s2keys = s2.counters.keys()
+		s1keys = list(s1.counters)
+		s2keys = list(s2.counters)
 		s1keys = list(set(s1keys + s2keys))
 		s1keys.sort()
 		fail = False
@@ -66,7 +68,7 @@ class SolverStats:
 				if s2.counters.has_key(k):
 					match = s1.counters[k] == s2.counters[k]
 					if match:
-						print "  {:30s}  {:12d} == {:12d}".format(k, s1.counters[k], s2.counters[k])
+						print("  {:30s}  {:12d} == {:12d}".format(k, s1.counters[k], s2.counters[k]))
 					else:
 						printError("  {:30s}  {:12d} <> {:12d}".format(k, s1.counters[k], s2.counters[k]))
 						fail = True
@@ -78,11 +80,11 @@ class SolverStats:
 				fail = True
 		
 		# compare timings (with threshold)
-		s1keys = s1.timers.keys()
-		s2keys = s2.timers.keys()
+		s1keys = list(s1)
+		s2keys = list(s2)
 		s1keys = list(set(s1keys + s2keys))
 		s1keys.sort()
-		print "  --"
+		print("  --")
 		THRESHOLD = 0.1
 		for k in s1keys:
 			if s1.timers.has_key(k):
@@ -94,14 +96,14 @@ class SolverStats:
 					if abs(val1-val2) < 1:
 						match = True
 					if match:
-						print "  {:30s}  {:12.2f} ~~ {:12.2f}".format(k, s1.timers[k], s2.timers[k])
+						print("  {:30s}  {:12.2f} ~~ {:12.2f}".format(k, s1.timers[k], s2.timers[k]))
 					else:
 						printWarning("  {:30s}  {:12.2f} <> {:12.2f}".format(k, s1.timers[k], s2.timers[k]))
 				else:
 					printWarning("  {:30s}  {:12.2f} <> {:12s}".format(k, s1.timers[k], ""))
 			else:
 				printWarning("  {:30s}  {:12s} <> {:12.2f}".format(k, "", s2.timers[k]))
-		print "\n"
+		print("\n")
 			
 		return not fail
 		
