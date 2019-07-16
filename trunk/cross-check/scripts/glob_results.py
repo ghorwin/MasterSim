@@ -53,8 +53,7 @@ from datetime import datetime
 import MasterSimTestGenerator as msimGenerator
 from CrossCheckResult import CrossCheckResult
 
-MASTERSIM_VERSION = "MasterSim 0.7\n" # written in success files
-
+MASTERSIM_VERSION = "0.7.0" # written in success files
 
 
 def runMasterSim(projectFile, workingDirectory):
@@ -139,6 +138,12 @@ class CSVFile:
 		return
 
 	def write(self,csvFile):
+		# write csv file in comma separated format
+		with open(csvFile, 'w') as f:
+			quotedCaptions = ['"' + c + '"' for c in self.captions]
+			f.write(",".join(quotedCaptions) + "\n")
+			for l in self.content:
+				f.write(",".join(l) + "\n")
 		return
 
 
@@ -152,8 +157,11 @@ def writeResultFile(fmuCaseDir, fileType, notes):
 	* notes - content of README.txt
 	"""
 	
+	if not os.path.exists(fmuCaseDir):
+		os.makedirs(fmuCaseDir)
+	
 	with open(fmuCaseDir + "/" + fileType, 'w') as f:
-		f.write(MASTERSIM_VERSION)
+		f.write("MasterSim_" + MASTERSIM_VERSION + "\n")
 		
 	with open(fmuCaseDir + "/README.txt", 'w') as f:
 		f.write(notes + "\n")
@@ -231,8 +239,13 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 		e = os.path.splitext(name)
 		if len(e) == 2 and e[1] == '.fmu':
 			fmuPath = os.path.join(root, name)
-
+			
 			fmuCase = fmuPath[:-4] # strip the trailing .fmu
+			modelName = os.path.split(fmuCase)[1]
+
+			# compose path for results (to be pushed to github)
+			resultsRoot = fullPath + "/results/" + "/".join(pathParts[1:4])
+			resultsRoot = resultsRoot + "/MasterSim/" + MASTERSIM_VERSION + "/" + pathParts[4] + "/" + pathParts[5] + "/" + modelName
 			
 			# generate path to target directory, hereby substitute / with _ so that we only have one directory level
 			relPath = os.path.split(os.path.relpath(fmuCase, fullPath))[0] # get relative path to directory with fmu file
@@ -259,7 +272,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# open README.md file and also create a rejected file in target directory
 				with open(rejectedFile, 'r') as f:
 					lines = f.readlines()
-				writeResultFile(root, 'rejected', "\n".join(lines))
+				writeResultFile(resultsRoot, 'rejected', "\n".join(lines))
 				print("rejected : {}".format(relPath))
 				# store info
 				# modification date
@@ -276,7 +289,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# open README.md file and also create a rejected file in target directory
 				with open(failedFile, 'r') as f:
 					lines = f.readlines()
-				writeResultFile(root, 'failed', "\n".join(lines))
+				writeResultFile(resultsRoot, 'failed', "\n".join(lines))
 				print("failed : {}".format(relPath))
 				# store info
 				# modification date
@@ -288,7 +301,6 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				continue
 			
 			# - check if a msim project file exists in this working directory
-			modelName = os.path.split(fmuCase)[1]
 			msimFilename = relPath + "/" + modelName + ".msim"
 			if not os.path.exists(msimFilename):
 				print("skipped : {} - MasterSim file missing.".format(relPath))
@@ -393,9 +405,9 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			results[hash(cres)] = cres
 			
 			# write success file and README.txt file
-			writeResultFile(root, "passed", "\n".join(notes))
+			writeResultFile(resultsRoot, "passed", "\n".join(notes))
 			# write computed results as CSV file
-			resultCSV.write(root + "/" + modelName + "_out.csv")
+			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv")
 
 
 # now write new database
