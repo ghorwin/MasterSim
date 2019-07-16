@@ -153,8 +153,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			except Exception as e:
 				print(e)
 				# create a 'fail' file with error message
-				with open(relPath + "/fail", 'w') as file: 
-					file.write("invalid\n")
+				with open(relPath + "/rejected", 'w') as file: 
 					file.write(str(e) + "\n")
 				continue
 
