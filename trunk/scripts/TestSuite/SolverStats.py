@@ -80,8 +80,8 @@ class SolverStats:
 				fail = True
 		
 		# compare timings (with threshold)
-		s1keys = list(s1)
-		s2keys = list(s2)
+		s1keys = list(s1.timers)
+		s2keys = list(s2.timers)
 		s1keys = list(set(s1keys + s2keys))
 		s1keys.sort()
 		print("  --")
