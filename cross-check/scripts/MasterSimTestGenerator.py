@@ -174,7 +174,7 @@ tStart               ${StartTime} s
 tEnd                 ${StopTime} s
 hMax                 30 min
 hMin                 1e-6 s
-hFallBackLimit       ${FallBackLimit} s
+hFallBackLimit       0.001 s
 hStart               ${StepSize} s
 hOutputMin           ${dtOutMin} s
 adjustStepSize       yes
