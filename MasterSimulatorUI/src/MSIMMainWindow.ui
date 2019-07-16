@@ -218,7 +218,7 @@
     <string>FMUs and Simulators</string>
    </property>
    <property name="toolTip">
-    <string>Switches to FMU setup mode</string>
+    <string>Switches to slave edit mode</string>
    </property>
   </action>
   <action name="actionViewConnections">
