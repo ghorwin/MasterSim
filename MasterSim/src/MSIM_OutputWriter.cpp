@@ -121,7 +121,9 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	} // for - slaves
 
 
-	// finally add descriptions for all double parameters
+//#define DUMP_PARAMETERS
+#ifdef DUMP_PARAMETERS
+	// add descriptions for all double parameters
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		const AbstractSlave * slave = m_slaves[s];
 		const FMUSlave * fmuSlave = dynamic_cast<const FMUSlave *>(slave);
@@ -138,7 +140,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			}
 		}
 	} // for - slaves
-
+#endif // DUMP_PARAMETERS
 
 	{
 		IBK::IBK_Message( IBK::FormatString("Creating output file 'values.csv'.\n"),
@@ -236,6 +238,7 @@ void OutputWriter::appendOutputs(double t) {
 		*m_valueOutputs << '\t' << it->first->m_doubleOutputs[it->second];
 	}
 
+#ifdef DUMP_PARAMETERS
 	// real parameters
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		const AbstractSlave * slave = m_slaves[s];
@@ -244,6 +247,7 @@ void OutputWriter::appendOutputs(double t) {
 			for (unsigned int v=0; v<fmuSlave->fmu()->m_modelDescription.m_variables.size(); ++v) {
 				const MASTER_SIM::FMIVariable & var = fmuSlave->fmu()->m_modelDescription.m_variables[v];
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+					// query current parameter value from slave
 					std::string value = var.m_startValue;
 					if (value.empty())
 						value = "0.0";
@@ -252,6 +256,7 @@ void OutputWriter::appendOutputs(double t) {
 			}
 		}
 	} // for - slaves
+#endif // DUMP_PARAMETERS
 
 	*m_valueOutputs << std::endl;
 
