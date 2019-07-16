@@ -1,6 +1,6 @@
 @echo off
-set PATH=c:\Qt\4.8.6_VC10\bin;%PATH%
-lupdate -noobsolete ..\..\projects\Qt\MasterSimulatorUI.pro
+set PATH=c:\Qt\5.11.3\msvc2015_64\bin;%PATH%
+lupdate ..\..\projects\Qt\MasterSimulatorUI.pro
 
 pause
 

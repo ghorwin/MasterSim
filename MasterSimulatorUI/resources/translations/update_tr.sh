@@ -1,6 +1,7 @@
 #!/bin/bash
 
-lupdate-qt4 -noobsolete ../../projects/Qt/MasterSimulatorUI.pro
+export PATH=~/Qt/5.11.3/gcc_64/bin:$PATH
+lupdate ../../projects/Qt/MasterSimulatorUI.pro
 
-linguist-qt4 MasterSimulatorUI_de.ts
+linguist MasterSimulatorUI_de.ts
 
