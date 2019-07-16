@@ -46,6 +46,7 @@ import csv
 import subprocess, os   # for subprocess and os.path
 import platform         # for checking for Windows OS
 import numpy as np
+import math
 
 from datetime import datetime
 
@@ -109,6 +110,9 @@ class CSVFile:
 					p2 = t.find(']')
 					if p1 != -1 and p2 != -1 and p2 > p1:
 						t = t[:p1-1].strip()
+					# special handling of MasterSim reference test cases, remove 'slave1.' from string
+					if t.find('slave1.') == 0:
+						t = t[7:]
 					self.captions.append(t)
 				self.content = [l.strip().split('\t') for l in contentLines]
 			else:
@@ -133,8 +137,23 @@ class CSVFile:
 	def write(self,csvFile):
 		return
 
+
 def writeResultFile(fmuCaseDir, fileType, notes):
-	pass
+	"""Generates a result file.
+	
+	Parameters:
+	
+	* fmuCase - path to FMU case in github repo
+	* fileType - success, failure, rejected
+	* notes - content of README.txt
+	"""
+	
+	with open(fmuCase + "/" + fileType, 'w') as f:
+		f.write("MasterSim 0.7\n")
+		
+	with open(fmuCase + "/README.txt", 'w') as f:
+		f.write(notes + "\n")
+	
 
 
 # ---- main ----------------------------------------------------------------------------------------------------
@@ -217,14 +236,19 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			relPath = relPath.replace('/', '_')
 			relPath = MSIM_DIRECTORY + '/' + relPath
 			
+			
+			# initialize database entry, even for other platforms 
+			cres = CrossCheckResult(datetime.now(), relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", "Not calculated, yet")
+			if not hash(cres) in results:
+				results[hash(cres)] = cres
+			
 			# create directory if not existing
 			# directory is most likely missing, because this test case belongs to a different platform
 			# in this case we do not want to touch possibly existing reference results
 			if not os.path.exists(relPath):
 				print("skipped : {} - Working directory missing".format(relPath))
 				continue
-			
-			
+		
 			# check if a 'rejected' file exists in the directory
 			rejectedFile = relPath + "/rejected"
 			if os.path.exists(rejectedFile):
@@ -238,7 +262,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				modDate = os.path.getmtime(rejectedFile)
 				date = datetime.fromtimestamp(modDate)
 				lines = [l.strip() for l in lines]
-				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[3], pathParts[1], pathParts[4]+"-"+pathParts[5], "rejected", ",".join(lines)) 
+				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "rejected", ",".join(lines)) 
 				results[hash(cres)] = cres
 				continue
 			
@@ -255,7 +279,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				modDate = os.path.getmtime(failedFile)
 				date = datetime.fromtimestamp(modDate)
 				lines = [l.strip() for l in lines]
-				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[3], pathParts[1], pathParts[4]+"-"+pathParts[5], "failed", ",".join(lines)) 
+				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", ",".join(lines)) 
 				results[hash(cres)] = cres
 				continue
 			
@@ -281,26 +305,91 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 					print("failed : {} - Error running MasterSim".format(relPath))
 					continue
 
-				
+			
+			print ("Processing {}...".format(relPath))
+			
 			# now we read our valuesFile and create the {modelname}_out.csv
 			resultCSV = CSVFile()
 			resultCSV.read(valuesFile)
-			resultCSV.write(root + "/" + modelName + "_out.csv")
 			
-			refResultCSV = CSVFile()
-			refResultCSV.read(refValuesFile)
+			referenceCSV = CSVFile()
+			referenceCSV.read(refValuesFile)
 			
 			# compare by variable
 			# - what if time points differ? linear interpolation? If so, use linear interpolation
 			#   on MasterSim results
-			for caption in resultsCSV.captions[1:]:
-				pass
-				# generate np array with reference values 
-				#refIndex = 
+			failure = False
+			variableComparisonResults = [] # vector of tuple for each variable: first = success flag, second = wrms norm
+			for i in range(1, len(referenceCSV.captions)):
+				refIndex = i-1
+				refCaption = referenceCSV.captions[i] # 'captions' includes time column!
+
+				# look up corresponding index of calculated values
+				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
+				if resultIndex == -1:
+					print("skipped : {} - result variable '{}' not computed by MasterSim.".format(relPath, refCaption))
+					failure = True
+					break
+				
+				resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
+				
+				# now compare values, first interpolate calculated data at time points of reference values
+				valuesInterpolated = np.interp(referenceCSV.time, resultCSV.time, resultCSV.values[resultIndex])
+				
+				# valuesInterpolated has now the same size as referenceCSV.time
+				
+				# compute vector norm between values
+				refVals = referenceCSV.values[refIndex]
+				diff = valuesInterpolated - refVals
+				
+				maxVal = refVals.max()
+				minVal = refVals.min()
+				absMax = max(abs(maxVal), abs(minVal))
+				ABSTOL = absMax * 1e-5 + 1e-20
+				RELTOL = 1e-5
+				
+				# normalize differences
+				weights = 1.0/(RELTOL*abs(refVals) + ABSTOL)
+				diff = diff*weights
+								
+				diff = diff**2 # square sum
+				wrms = math.sqrt(diff.sum()/len(valuesInterpolated))
+				print ("  WRMS({}) = {}".format(refCaption, wrms))
+				
+				if wrms < 1.2:
+					evalstr = "success"
+				else:
+					evalstr = "failure"
+				variableComparisonResults.append( (refCaption, evalstr, wrms) )
 			
-			# extend our database with tests
-			#cres = CrossCheckResult(fmuCase)
-			#results[hash(cres)] = cres
+			# if variable was not generated by MasterSim, skip case
+			if failure:
+				continue
+			
+			# now check if any of the results has a 'failure' marking
+			anyVarFailed = False
+			notes = []
+			for r in variableComparisonResults:
+				if r[1] == 'failure':
+					anyVarFailed = True
+				notes.append("WRMS({}) = {}".format(r[0], r[2]))
+			
+			if anyVarFailed:
+				print("failed : {} - Results mismatch".format(relPath))
+				cres.result = "failure"
+				cres.notes = ",".join(notes)
+				results[hash(cres)] = cres
+				continue
+				
+			# update database
+			cres.result = "success"
+			cres.notes = ",".join(notes)
+			results[hash(cres)] = cres
+			
+			# write success file and README.txt file
+			writeResultFile(root, "success", cres.notes)
+			# write computed results as CSV file
+			resultCSV.write(root + "/" + modelName + "_out.csv")
 
 
 # now write new database
