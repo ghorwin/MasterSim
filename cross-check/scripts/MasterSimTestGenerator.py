@@ -16,6 +16,7 @@ class MasterSimTestGenerator:
 		self.variableInputFile = ""
 		MasterSimTestGenerator.OPT_KEYWORDS = [ 'StartTime', 'StopTime', 'StepSize', 'RelTol' ]
 	
+	
 	def setup(self, fmuCaseBaseName):
 		"""Reads auxiliary files for the given fmu test case.
 		
@@ -80,7 +81,7 @@ class MasterSimTestGenerator:
 				
 				self.variableInputFile = inFile
 			except:
-				print("Error reading input file '{}'".format(inFile))
+				raise("Error reading input file '{}'".format(inFile))
 			
 		# all input data parsed and stored, now also read results
 
@@ -146,7 +147,7 @@ class MasterSimTestGenerator:
 		# do not overwrite existing MasterSim file, in case it was manually modified
 		if os.path.exists(self.msimFilename):
 			print ("MASTERSIM file '{}' exists...".format(self.msimFilename))
-			return
+			return False
 		
 		TEMPLATE_MSIM_CS1_FILE = """
 tStart               ${StartTime} s
@@ -245,6 +246,9 @@ ${Graph}
 			refValueFile.write('\t'.join(row) + '\n')
 		refValueFile.close()
 		del refValueFile		
+		
+		return True # all ok, ready for simulation
+
 		
 	def run(self):
 		"""Runs the MasterSimulation executable"""

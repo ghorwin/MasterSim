@@ -153,14 +153,16 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			except Exception as e:
 				print(e)
 				# create a 'fail' file with error message
-				with open("fail", 'w') as file: 
+				with open(relPath + "/fail", 'w') as file: 
 					file.write("invalid\n")
 					file.write(str(e) + "\n")
 				continue
 
 			# generate MasterSim file
-			masterSim.generateMSim(relPath, pathParts[1]=="1.0")
+			if not masterSim.generateMSim(relPath, pathParts[1]=="1.0"):
+				continue # MasterSim project file exists already, skip FMU
 			
 			relPathFMUStr = os.path.join(relPath, name)
-			print("  " + relPathFMUStr)
+			print(relPathFMUStr + " processed...")
 
+print("MasterSim project files regenerated.")
