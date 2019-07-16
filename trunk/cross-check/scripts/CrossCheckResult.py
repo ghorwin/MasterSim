@@ -32,7 +32,7 @@ class CrossCheckResult:
 	
 	def read(self, line):
 		"""Extracts the content of the class members from a tab-separated line."""
-		tokens = line.strip().split('\t')
+		tokens = line.strip('\r\n').split('\t')
 		assert(len(tokens) == 7)
 		self.date = datetime.strptime(tokens[0], "%d.%m.%Y %H:%M:%S")
 		self.fmuCase = tokens[1]
