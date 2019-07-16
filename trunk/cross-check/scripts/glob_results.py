@@ -53,6 +53,10 @@ from datetime import datetime
 import MasterSimTestGenerator as msimGenerator
 from CrossCheckResult import CrossCheckResult
 
+MASTERSIM_VERSION = "MasterSim 0.7\n" # written in success files
+
+
+
 def runMasterSim(projectFile, workingDirectory):
 	"""Creates a new process to run MasterSim command line solver.
 	Returns when the simulation is complete.
@@ -144,14 +148,14 @@ def writeResultFile(fmuCaseDir, fileType, notes):
 	Parameters:
 	
 	* fmuCase - path to FMU case in github repo
-	* fileType - success, failure, rejected
+	* fileType - passed, failed, rejected
 	* notes - content of README.txt
 	"""
 	
-	with open(fmuCase + "/" + fileType, 'w') as f:
-		f.write("MasterSim 0.7\n")
+	with open(fmuCaseDir + "/" + fileType, 'w') as f:
+		f.write(MASTERSIM_VERSION)
 		
-	with open(fmuCase + "/README.txt", 'w') as f:
+	with open(fmuCaseDir + "/README.txt", 'w') as f:
 		f.write(notes + "\n")
 	
 
@@ -255,7 +259,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# open README.md file and also create a rejected file in target directory
 				with open(rejectedFile, 'r') as f:
 					lines = f.readlines()
-				writeResultFile(root, 'rejected', lines)
+				writeResultFile(root, 'rejected', "\n".join(lines))
 				print("rejected : {}".format(relPath))
 				# store info
 				# modification date
@@ -272,7 +276,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# open README.md file and also create a rejected file in target directory
 				with open(failedFile, 'r') as f:
 					lines = f.readlines()
-				writeResultFile(root, 'failed', lines)
+				writeResultFile(root, 'failed', "\n".join(lines))
 				print("failed : {}".format(relPath))
 				# store info
 				# modification date
@@ -325,12 +329,14 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				refCaption = referenceCSV.captions[i] # 'captions' includes time column!
 
 				# look up corresponding index of calculated values
-				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
-				if resultIndex == -1:
+				if not refCaption in resultCSV.captions:
 					print("skipped : {} - result variable '{}' not computed by MasterSim.".format(relPath, refCaption))
+					print("          {} variables generated".format(resultCSV.captions))
 					failure = True
 					break
 				
+				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
+			
 				resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
 				
 				# now compare values, first interpolate calculated data at time points of reference values
@@ -357,7 +363,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				print ("  WRMS({}) = {}".format(refCaption, wrms))
 				
 				if wrms < 1.2:
-					evalstr = "success"
+					evalstr = "passed"
 				else:
 					evalstr = "failure"
 				variableComparisonResults.append( (refCaption, evalstr, wrms) )
@@ -374,20 +380,20 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 					anyVarFailed = True
 				notes.append("WRMS({}) = {}".format(r[0], r[2]))
 			
+			cres.note = ",".join(notes) # must be single line, no line breaks
+
 			if anyVarFailed:
 				print("failed : {} - Results mismatch".format(relPath))
-				cres.result = "failure"
-				cres.notes = ",".join(notes)
+				cres.result = "failed"
 				results[hash(cres)] = cres
 				continue
 				
 			# update database
-			cres.result = "success"
-			cres.notes = ",".join(notes)
+			cres.result = "passed"
 			results[hash(cres)] = cres
 			
 			# write success file and README.txt file
-			writeResultFile(root, "success", cres.notes)
+			writeResultFile(root, "passed", "\n".join(notes))
 			# write computed results as CSV file
 			resultCSV.write(root + "/" + modelName + "_out.csv")
 
