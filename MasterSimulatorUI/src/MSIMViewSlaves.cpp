@@ -97,7 +97,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	}
 
 	QString fname = QFileDialog::getOpenFileName(this, tr("Select FMU"), fmuSearchPath,
-												 tr("Support slave files (*.fmu *.tsv *.csv);;FMUs (*.fmu)"));
+												 tr("Slave files (*.fmu *.tsv *.csv);;FMUs (*.fmu)"));
 	if (fname.isEmpty())
 		return; // Dialog was cancelled
 
