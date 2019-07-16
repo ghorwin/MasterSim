@@ -10,6 +10,7 @@
 #include <IBK_StringUtils.h>
 
 #include "MSIM_AbstractSlave.h"
+#include "MSIM_FMUSlave.h"
 #include "MSIM_FMU.h"
 #include "MSIM_Project.h"
 
@@ -116,7 +117,28 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			descriptions += " \t" + flatName;
 			m_realOutputMapping.push_back( std::make_pair(slave, v));
 		}
+
 	} // for - slaves
+
+
+	// finally add descriptions for all double parameters
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		const AbstractSlave * slave = m_slaves[s];
+		const FMUSlave * fmuSlave = dynamic_cast<const FMUSlave *>(slave);
+		if (fmuSlave != nullptr) {
+			for (unsigned int v=0; v<fmuSlave->fmu()->m_modelDescription.m_variables.size(); ++v) {
+				const MASTER_SIM::FMIVariable & var = fmuSlave->fmu()->m_modelDescription.m_variables[v];
+				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+					std::string unit = var.m_unit;
+					if (unit.empty())
+						unit = "---";
+					std::string flatName = slave->m_name + "." + var.m_name + " [" + unit + "]";
+					descriptions += " \t" + flatName;
+				}
+			}
+		}
+	} // for - slaves
+
 
 	{
 		IBK::IBK_Message( IBK::FormatString("Creating output file 'values.csv'.\n"),
@@ -213,6 +235,24 @@ void OutputWriter::appendOutputs(double t) {
 	{
 		*m_valueOutputs << '\t' << it->first->m_doubleOutputs[it->second];
 	}
+
+	// real parameters
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		const AbstractSlave * slave = m_slaves[s];
+		const FMUSlave * fmuSlave = dynamic_cast<const FMUSlave *>(slave);
+		if (fmuSlave != nullptr) {
+			for (unsigned int v=0; v<fmuSlave->fmu()->m_modelDescription.m_variables.size(); ++v) {
+				const MASTER_SIM::FMIVariable & var = fmuSlave->fmu()->m_modelDescription.m_variables[v];
+				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+					std::string value = var.m_startValue;
+					if (value.empty())
+						value = "0.0";
+					*m_valueOutputs << '\t' << value;
+				}
+			}
+		}
+	} // for - slaves
+
 	*m_valueOutputs << std::endl;
 
 
