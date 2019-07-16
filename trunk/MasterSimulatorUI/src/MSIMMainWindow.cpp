@@ -250,7 +250,7 @@ void MSIMMainWindow::changeEvent(QEvent *event) {
 				int res = QMessageBox::question(this, tr("Reload project file"),
 									  tr("The project file has been modified by an external application. "
 										 "When reloading this project file all unsaved changes will be lost. "
-										 "Reload modified project file? "), QMessageBox::Yes | QMessageBox::No);
+										 "Reload modified project file?"), QMessageBox::Yes | QMessageBox::No);
 				if (res == QMessageBox::Yes) {
 					// reload project
 					m_projectHandler.reloadProject(this);
