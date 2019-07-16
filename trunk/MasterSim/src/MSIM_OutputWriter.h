@@ -63,6 +63,7 @@ public:
 
 	/*! Holds number output values in csv format suitable for PostProc 2.
 		The numbers are written in order boolean, integer and double(real) values.
+		Lastly, all double parameters are written to file (later, it will be possible to filter out certain variables).
 	*/
 	std::ofstream													*m_valueOutputs;
 
