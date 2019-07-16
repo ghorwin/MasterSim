@@ -45,6 +45,7 @@ import argparse
 import csv
 import subprocess, os   # for subprocess and os.path
 import platform         # for checking for Windows OS
+import numpy as np
 
 from datetime import datetime
 
@@ -85,6 +86,52 @@ def runMasterSim(projectFile, workingDirectory):
 		print ("Error running MasterSim executable '{}', {}".format(MASTERSIM_SOLVER, ex))
 		return -1
 
+
+class CSVFile:
+	def read(self,csvFile):
+		"""Reads CSV file either in tab-separated or , mode."""
+		self.captions = []
+		self.content = []
+		with open(csvFile, 'r') as f:
+			contentLines = f.readlines()
+			if len(contentLines) < 2:
+				raise("Missing data")
+			captionLine = contentLines[0]
+			contentLines = contentLines[1:]
+			
+			# determine separation character
+			tokens = captionLine.strip().split('\t')
+			if len(tokens) > 1:
+				# extract units from tokens
+				self.captions = []
+				for t in tokens:
+					p1 = t.find('[')
+					p2 = t.find(']')
+					if p1 != -1 and p2 != -1 and p2 > p1:
+						t = t[:p1-1].strip()
+					self.captions.append(t)
+				self.content = [l.strip().split('\t') for l in contentLines]
+			else:
+				self.captions = captionLine.strip('\n').split(",")
+				self.captions = [c.strip('"') for c in self.captions] # remove quotes around variable names
+				self.content = [l.strip().split(',') for l in contentLines]
+
+			valueVectors = []
+			for i in range(len(self.captions)):
+				valueVectors.append([])
+				for j in range(len(self.content)):
+					valueVectors[i].append(float(self.content[j][i]))
+			
+			# generate np arrays
+			self.time = np.array(valueVectors[0])
+			self.values = []
+			for i in range(1,len(valueVectors)):
+				self.values.append( np.array(valueVectors[i]) )
+			
+		return
+
+	def write(self,csvFile):
+		return
 
 def writeResultFile(fmuCaseDir, fileType, notes):
 	pass
@@ -213,11 +260,17 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				continue
 			
 			# - check if a msim project file exists in this working directory
-			msimFilename = relPath + "/" + os.path.split(fmuCase)[1] + ".msim"
+			modelName = os.path.split(fmuCase)[1]
+			msimFilename = relPath + "/" + modelName + ".msim"
 			if not os.path.exists(msimFilename):
 				print("skipped : {} - MasterSim file missing.".format(relPath))
 				continue
 			
+			refValuesFile = root + "/" + modelName + "_ref.csv"
+			if not os.path.exists(refValuesFile):
+				print("skipped : {} - Reference values file {} missing.".format(relPath, refValuesFile))
+				continue
+				
 			valuesFile = msimFilename[:-5] + "/results/values.csv"
 			if not os.path.exists(valuesFile):
 				print("running : {}...".format(relPath))
@@ -230,7 +283,20 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 
 				
 			# now we read our valuesFile and create the {modelname}_out.csv
+			resultCSV = CSVFile()
+			resultCSV.read(valuesFile)
+			resultCSV.write(root + "/" + modelName + "_out.csv")
 			
+			refResultCSV = CSVFile()
+			refResultCSV.read(refValuesFile)
+			
+			# compare by variable
+			# - what if time points differ? linear interpolation? If so, use linear interpolation
+			#   on MasterSim results
+			for caption in resultsCSV.captions[1:]:
+				pass
+				# generate np array with reference values 
+				#refIndex = 
 			
 			# extend our database with tests
 			#cres = CrossCheckResult(fmuCase)
