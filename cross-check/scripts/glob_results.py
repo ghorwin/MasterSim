@@ -155,7 +155,7 @@ def writeResultFile(fmuCaseDir, fileType, notes):
 	
 	* fmuCase - path to FMU case in github repo
 	* fileType - passed, failed, rejected
-	* notes - content of README.txt
+	* notes - content of README.md
 	"""
 	
 	if not os.path.exists(fmuCaseDir):
@@ -164,7 +164,7 @@ def writeResultFile(fmuCaseDir, fileType, notes):
 	with open(fmuCaseDir + "/" + fileType, 'w') as f:
 		f.write("MasterSim_" + MASTERSIM_VERSION + "\n")
 		
-	with open(fmuCaseDir + "/README.txt", 'w') as f:
+	with open(fmuCaseDir + "/README.md", 'w') as f:
 		f.write(notes + "\n")
 	
 
@@ -264,7 +264,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			# directory is most likely missing, because this test case belongs to a different platform
 			# in this case we do not want to touch possibly existing reference results
 			if not os.path.exists(relPath):
-				print("skipped : {} - Working directory missing".format(relPath))
+				#print("skipped : {} - Working directory missing".format(relPath))
 				continue
 		
 			# check if a 'rejected' file exists in the directory
@@ -362,8 +362,8 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				maxVal = refVals.max()
 				minVal = refVals.min()
 				absMax = max(abs(maxVal), abs(minVal))
-				ABSTOL = absMax * 1e-5 + 1e-20
-				RELTOL = 1e-5
+				ABSTOL = absMax * 1e-3 + 1e-20
+				RELTOL = 1e-3
 				
 				# normalize differences
 				weights = 1.0/(RELTOL*abs(refVals) + ABSTOL)
@@ -373,7 +373,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				wrms = math.sqrt(diff.sum()/len(valuesInterpolated))
 				print ("  WRMS({}) = {}".format(refCaption, wrms))
 				
-				if wrms < 1.2:
+				if wrms < 100:
 					evalstr = "passed"
 				else:
 					evalstr = "failed"
@@ -401,7 +401,30 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			results[hash(cres)] = cres
 			
 			# write success file and README.txt file
-			writeResultFile(resultsRoot, "passed", "\n".join(notes))
+			mdFile = """# Validation of '{}'
+
+## Variables
+Weighted-root-mean-square norm with RelTol = 1e-3 and AbsTol = 1e-3, where
+AbsTol is based on max. magnitude of reference values.
+
+{}
+
+## MasterSim project file
+
+Below is the project file that was used to successfully simulation the test case.
+Mind: project file is copied from working directory, hence relative path to fmu file.
+
+```
+{}
+```
+"""
+			# read project file
+			with open(msimFilename, 'r') as f:
+				masterSimProject = f.readlines()
+				masterSimProject = [l.strip('\r\n') for l in masterSimProject]
+			
+			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
+			writeResultFile(resultsRoot, "passed", mdFile)
 			# write computed results as CSV file
 			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv")
 
