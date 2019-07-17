@@ -164,16 +164,19 @@ void MasterSim::simulate() {
 	//     m_hProposed            = 0.01
 	//     m_project.m_tEnd.value = 1.0
 	//     -> Do not take the next step, write final output at m_t = 0.999999 which may be rounded to 1.0 in output
+	//        This will lead to a duplication of the last output value, since no step has been taken in-between.
 	//
 	// Possibility 2)
 	//     m_t                    = 0.99000000032
 	//     m_hProposed            = 0.001
 	//     m_project.m_tEnd.value = 1.0
 	//     -> Take step, but adjust m_hProposed to hit exactly tEnd
+	bool skipLastOutput = false;
 	while (m_t < m_project.m_tEnd.value) {
 		double hRemaining = m_project.m_tEnd.value - m_t;
 		if (hRemaining < m_hProposed) {
 			if (!m_enableVariableStepSizes && hRemaining < 1e-9) {
+				skipLastOutput = true; // no step has been taken, do not write last output twice
 				break; // do not exceed end time point, can happen due to rounding errors
 			}
 #ifdef PREVENT_OVERSHOOTING_AT_SIMULATION_END
@@ -198,9 +201,10 @@ void MasterSim::simulate() {
 
 	// ensure, that final results are definitely written, but only if the last output time is not already
 	// close enough to the final results
-	if (m_project.m_tEnd.value - m_outputWriter.m_tLastOutput > 1e-8)
-		m_outputWriter.m_tLastOutput = -1;  // this ensures that
-	appendOutputs();
+	if (!skipLastOutput) {
+		m_outputWriter.m_tEarliestOutputTime = -1;  // this ensures that output is always written
+		appendOutputs();
+	}
 }
 
 
