@@ -138,17 +138,31 @@ class CSVFile:
 
 		return
 
-	def write(self,csvFile):
+	def write(self,csvFile, filterCaptions):
+		"""
+		filterCaptions - list of captions to be written to file, first caption is always
+		   'time' or 'Time' and is always written
+		"""
 		# write csv file in comma separated format
+		captionIndexes = [0] # time column always
+		for i in range(1,len(self.captions)):
+			if self.captions[i] in filterCaptions:
+				captionIndexes.append(i)
+				
 		with open(csvFile, 'w') as f:
-			quotedCaptions = ['"' + c + '"' for c in self.captions]
+			quotedCaptions = []
+			for i in captionIndexes:
+				quotedCaptions.append( '"' + self.captions[i] + '"')
 			f.write(",".join(quotedCaptions) + "\n")
 			for l in self.content:
 				# reduce the number precision of the output file
 				timeStamp = l[0]
 				tval = float(timeStamp)
 				l[0] = "{:.5g}".format(tval)
-				f.write(",".join(l) + "\n")
+				selectedValues = []
+				for i in captionIndexes:
+					selectedValues.append(l[i])
+				f.write(",".join(selectedValues) + "\n")
 		return
 
 
@@ -357,7 +371,8 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 
 				# look up corresponding index of calculated values
 				if not refCaption in resultCSV.captions:
-					print("  result variable '{}' not computed by MasterSim (ignored in comparison test).".format(relPath, refCaption))
+					print("    '{}' not computed.".format(refCaption))
+					failure = True
 					continue
 
 				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
@@ -393,6 +408,12 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 					evalstr = "failed"
 				variableComparisonResults.append( (refCaption, evalstr, wrms) )
 
+			# if marked as failure (missing variable), the test is failed
+			if failure:
+				print("failed : {} - missing result variables".format(relPath))
+				cres.result = "failed"
+				results[hash(cres)] = cres
+				continue
 
 			# now check if any of the results has a 'failure' marking
 			anyVarFailed = False
@@ -441,7 +462,7 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
 			writeResultFile(resultsRoot, "passed", mdFile)
 			
-			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv")
+			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv", referenceCSV.captions)
 			if 0:
 				# write computed results as CSV file
 				resCSV = CSVFile()
@@ -470,6 +491,12 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 
 with open(DATABASE_FILE,'w') as dbfile:
 	dbfile.write('Date\tFMUCase\tCS-Version\tPlatform\tTool\tResult\tNotes\n')
+	# need a sorted list of fmuCases, otherwise we cannot use svn efficiently to monitor changes 
+	fmuCaseList = []
 	for d in results:
-		dbfile.write(results[d].write() + '\n')
+		fmuCaseList.append(results[d].fmuCase)
+	fmuCaseList.sort()
+	
+	for c in fmuCaseList:
+		dbfile.write(results[hash(c)].write() + '\n')
 print("New db written with {} entries".format(len(results)) )
