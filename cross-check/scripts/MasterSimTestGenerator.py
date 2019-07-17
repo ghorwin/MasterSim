@@ -100,20 +100,22 @@ class MasterSimTestGenerator:
 			raise Exception("Missing 'time' or 'Time' column in reference result file '{}'.".format(refFile))
 		
 		# determine output frequency
-		dtOut = None
-		self.tp = self.refData[timeColumnName]
-		for i in range(1,len(self.tp)):
-			dt = self.tp[i] - self.tp[i-1]
-			# handle case were missing number precision in ref file gives consecutive time points with same value
-			if dt == 0:
-				continue 
-			if dtOut == None:
-				dtOut = dt
-			else:
-				if abs(dt - dtOut) > 1e-8:
-					dtOut = min(dtOut, dt)
-	
-		self.dtOut = dtOut / 100.0 # to get resonably fine output spacing
+		
+		#dtOut = None
+		#self.tp = self.refData[timeColumnName]
+		#for i in range(1,len(self.tp)):
+			#dt = self.tp[i] - self.tp[i-1]
+			## handle case were missing number precision in ref file gives consecutive time points with same value
+			#if dt == 0:
+				#continue 
+			#if dtOut == None:
+				#dtOut = dt
+			#else:
+				#if abs(dt - dtOut) > 1e-8:
+					#dtOut = min(dtOut, dt)
+
+		simTime = self.simOptions['StopTime'] - self.simOptions['StartTime']
+		self.dtOut = simTime / 10000.0 # to get resonably fine output spacing
 
 
 
