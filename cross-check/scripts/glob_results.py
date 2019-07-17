@@ -144,6 +144,10 @@ class CSVFile:
 			quotedCaptions = ['"' + c + '"' for c in self.captions]
 			f.write(",".join(quotedCaptions) + "\n")
 			for l in self.content:
+				# reduce the number precision of the output file
+				timeStamp = l[0]
+				tval = float(timeStamp)
+				l[0] = "{:.5g}".format(tval)
 				f.write(",".join(l) + "\n")
 		return
 
@@ -425,13 +429,30 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 
 			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
 			writeResultFile(resultsRoot, "passed", mdFile)
-			# write computed results as CSV file
-            resCSV = CSVFile()
-            # use the same time stamps as the reference values file
-            # when transferring captions, only transfer those that exist in resultsCSV and referenceCSV
-            
-
+			
 			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv")
+			if 0:
+				# write computed results as CSV file
+				resCSV = CSVFile()
+				# use the same time stamps as the reference values file
+				# when transferring captions, only transfer those that exist in resultsCSV and referenceCSV
+				
+				resCSV.captions.append(referenceCSV.captions[0]) # time caption
+				for i in range(1, len(referenceCSV.captions)):
+					refIndex = i-1
+					refCaption = referenceCSV.captions[i] # 'captions' includes time column!
+		
+					# look up corresponding index of calculated values, skip unknown variables
+					if not refCaption in resultCSV.captions:
+						continue # this might cause the validation to fail, not sure though
+					resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
+		
+					resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
+		
+					# now compare values, first interpolate calculated data at time points of reference values
+					valuesInterpolated = np.interp(referenceCSV.time, resultCSV.time, resultCSV.values[resultIndex])
+					
+
 
 
 # now write new database
