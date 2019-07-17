@@ -29,12 +29,12 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	toolButtonAbout = new QToolButton(this); lay->addWidget(toolButtonAbout);
 
 	toolButtonNew = new QToolButton(this); lay->addWidget(toolButtonNew);
-	toolButtonNew->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N) );
+//	toolButtonNew->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N) );
 
 	toolButtonLoad = new QToolButton(this); lay->addWidget(toolButtonLoad);
-	toolButtonLoad->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O) );
+//	toolButtonLoad->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O) );
 	toolButtonSave = new QToolButton(this); lay->addWidget(toolButtonSave);
-	toolButtonSave->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S) );
+//	toolButtonSave->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S) );
 	toolButtonAnalyze = new QToolButton(this); lay->addWidget(toolButtonAnalyze);
 	lay->addSpacerItem( new QSpacerItem(20,20, QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	toolButtonEditFMUs = new QToolButton(this); lay->addWidget(toolButtonEditFMUs);

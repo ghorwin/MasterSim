@@ -77,6 +77,9 @@
    <property name="toolTip">
     <string>Creates a new project</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionFileOpen">
    <property name="icon">
@@ -103,6 +106,9 @@
    </property>
    <property name="toolTip">
     <string>Saves current changes.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionFileSaveAs">
