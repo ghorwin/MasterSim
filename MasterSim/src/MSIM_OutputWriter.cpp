@@ -100,14 +100,14 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop all boolean variables in slave
 		for (unsigned int v=0; v<slave->m_boolVarNames.size(); ++v) {
 			std::string flatName = slave->m_name + "." + slave->m_boolVarNames[v];
-			descriptions += " \t" + flatName + " [---]"; // booleans are unit-less
+			descriptions += " \t" + flatName + " [-]"; // booleans are unit-less
 			m_boolOutputMapping.push_back( std::make_pair(slave, v));
 		}
 
 		// loop all integer variables in slave
 		for (unsigned int v=0; v<slave->m_intVarNames.size(); ++v) {
 			std::string flatName = slave->m_name + "." + slave->m_intVarNames[v];
-			descriptions += " \t" + flatName + " [---]"; // ints are unit-less
+			descriptions += " \t" + flatName + " [-]"; // ints are unit-less
 			m_intOutputMapping.push_back( std::make_pair(slave, v));
 		}
 
@@ -133,7 +133,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 					std::string unit = var.m_unit;
 					if (unit.empty())
-						unit = "---";
+						unit = "-";
 					std::string flatName = slave->m_name + "." + var.m_name + " [" + unit + "]";
 					descriptions += " \t" + flatName;
 				}

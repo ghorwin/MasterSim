@@ -101,8 +101,12 @@ std::string FMIVariable::toString() const {
 	//      "description"
 
 	strm << m_name << " (" << varType2String(m_type);
-	if (m_type == VT_DOUBLE)
-		strm << " [" << m_unit << "])";
+	if (m_type == VT_DOUBLE) {
+		std::string unit = m_unit;
+		if (unit.empty())
+			unit = "-";
+		strm << " [" << unit << "])";
+	}
 	else
 		strm << ")";
 
