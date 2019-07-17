@@ -19,7 +19,7 @@ namespace MASTER_SIM {
 
 OutputWriter::OutputWriter() :
 	m_project(NULL),
-	m_tLastOutput(-1),
+	m_tEarliestOutputTime(-1),
 	m_valueOutputs(NULL),
 	m_stringOutputs(NULL),
 	m_progressOutputs(NULL)
@@ -199,19 +199,21 @@ void OutputWriter::setupProgressReport() {
 void OutputWriter::appendOutputs(double t) {
 	// skip output writing, if last output was written within minimum output
 	// time step size; mind rounding errors here!
-	if (m_tLastOutput >= 0 && m_tLastOutput + m_project->m_hOutputMin.value > t + 1e-8) {
+	if (m_tEarliestOutputTime >= 0 && m_tEarliestOutputTime > t + 1e-8) {
 		m_progressFeedback.writeFeedbackFromF(t);
 		return;
 	}
-	if (m_tLastOutput == -1) {
+	if (m_tEarliestOutputTime == -1) {
 		// subtract a little time from last time stamp that outputs were written
 		// in order to get the final progress statistics printed out for sure
 		m_progressFeedback.m_lastElapsedSecondsWithOutput -= 1;
-		m_tLastOutput = 0;
+		m_tEarliestOutputTime = 0;
 	}
-	// increase m_tLastOutput by selected steps until t is surpassed
-	while (m_tLastOutput < t)
-		m_tLastOutput += m_project->m_hOutputMin.value;
+	// increase m_tEarliestOutputTime by selected steps until t is surpassed,
+	// this will be the first time that we allow next outputs to be made again
+	int i = 0;
+	while (++i*m_project->m_hOutputMin.value < t + 1e-8);
+	m_tEarliestOutputTime = i*m_project->m_hOutputMin.value;
 
 	m_progressFeedback.writeFeedback(t, false);
 
