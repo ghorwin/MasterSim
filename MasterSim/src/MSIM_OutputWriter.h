@@ -53,7 +53,7 @@ public:
 	std::vector<AbstractSlave*>		m_slaves;
 
 	/*! Last time point when outputs were written. */
-	double					m_tLastOutput;
+	double					m_tEarliestOutputTime;
 
 	ProgressFeedback		m_progressFeedback;
 
