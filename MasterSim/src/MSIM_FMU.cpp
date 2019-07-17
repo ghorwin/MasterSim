@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <algorithm>
 
 #if defined(_WIN32)
 
@@ -24,6 +25,7 @@
 
 #include <IBK_Exception.h>
 #include <IBK_messages.h>
+#include <IBK_FormatString.h>
 #include <IBK_assert.h>
 
 namespace MASTER_SIM {
@@ -108,16 +110,27 @@ void FMU::readModelDescription() {
 }
 
 
+void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, int valueReference) {
+	if (std::find(valueRefList.begin(), valueRefList.end(), valueReference) == valueRefList.end())
+		valueRefList.push_back(valueReference);
+	else {
+		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2] has valueReference %3 which is already selected for output by another variable.")
+						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference),
+							   IBK::MSG_WARNING, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+	}
+}
+
+
 void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 	// now collect all output variable valueReferences
 	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 		const FMIVariable & var = m_modelDescription.m_variables[i];
 		if (var.m_causality == FMIVariable::C_OUTPUT) {
 			switch (var.m_type) {
-				case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
-				case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
+				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
 				default:
 					IBK_ASSERT_X(false, "bad variable initialization");
 			}
@@ -129,10 +142,10 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 			const FMIVariable & var = m_modelDescription.m_variables[i];
 			if (var.m_causality == FMIVariable::C_INTERNAL) {
 				switch (var.m_type) {
-					case FMIVariable::VT_BOOL	: m_boolValueRefsOutput.push_back(var.m_valueReference); break;
-					case FMIVariable::VT_INT	: m_intValueRefsOutput.push_back(var.m_valueReference); break;
-					case FMIVariable::VT_DOUBLE	: m_doubleValueRefsOutput.push_back(var.m_valueReference); break;
-					case FMIVariable::VT_STRING	: m_stringValueRefsOutput.push_back(var.m_valueReference); break;
+					case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+					case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+					case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+					case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
 					default:
 						IBK_ASSERT_X(false, "bad variable initialization");
 				}
