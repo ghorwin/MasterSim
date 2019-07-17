@@ -163,7 +163,7 @@ void FMUSlave::instantiate() {
 		const FMIVariable & var = m_fmu->m_modelDescription.variableByRef(FMIVariable::VT_DOUBLE, m_fmu->m_doubleValueRefsOutput[v]);
 		std::string unit = var.m_unit;
 		if (unit.empty())
-			unit = "---"; // no unit = undefined
+			unit = "-"; // no unit = undefined
 		m_doubleVarNames.push_back(var.m_name);
 		m_doubleVarUnits.push_back(unit);
 	}

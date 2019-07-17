@@ -91,7 +91,7 @@ void FileReaderSlave::instantiate() {
 		std::string varName = m_fileReader->m_captions[i+1];
 		std::string uStr = m_fileReader->m_units[i+1];
 		if (uStr.empty())
-			uStr = "---";
+			uStr = "-";
 		m_doubleVarNames.push_back(varName);
 		m_doubleVarUnits.push_back(uStr);
 	}

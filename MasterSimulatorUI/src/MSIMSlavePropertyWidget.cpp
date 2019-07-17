@@ -77,7 +77,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 					std::string unit = var.m_unit;
 					if (unit.empty())
-						unit = "---";
+						unit = "-";
 					varNameType = QString::fromStdString(var.m_name + " [" + unit + "]");
 				}
 				else
