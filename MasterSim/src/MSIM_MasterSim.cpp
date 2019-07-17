@@ -195,7 +195,11 @@ void MasterSim::simulate() {
 			appendOutputs();// appends outputs (filtering/scheduling is implemented inside OutputWriter class)
 	}
 	// write final results
-	m_outputWriter.m_tLastOutput = -1;  // this ensures that final results are definitely written
+
+	// ensure, that final results are definitely written, but only if the last output time is not already
+	// close enough to the final results
+	if (m_project.m_tEnd.value - m_outputWriter.m_tLastOutput > 1e-8)
+		m_outputWriter.m_tLastOutput = -1;  // this ensures that
 	appendOutputs();
 }
 
