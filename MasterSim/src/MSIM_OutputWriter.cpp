@@ -93,6 +93,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 	// now value outputs (boolean, integer and real)
 	descriptions = IBK::FormatString("Time [%1]").arg(m_project->m_outputTimeUnit.name()).str();
+	int outputVars = 0;
 	// collect variable references from all slaves
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		const AbstractSlave * slave = m_slaves[s];
@@ -102,6 +103,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			std::string flatName = slave->m_name + "." + slave->m_boolVarNames[v];
 			descriptions += " \t" + flatName + " [-]"; // booleans are unit-less
 			m_boolOutputMapping.push_back( std::make_pair(slave, v));
+			++outputVars;
 		}
 
 		// loop all integer variables in slave
@@ -109,6 +111,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			std::string flatName = slave->m_name + "." + slave->m_intVarNames[v];
 			descriptions += " \t" + flatName + " [-]"; // ints are unit-less
 			m_intOutputMapping.push_back( std::make_pair(slave, v));
+			++outputVars;
 		}
 
 		// loop all real variables in slave
@@ -116,6 +119,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			std::string flatName = slave->m_name + "." + slave->m_doubleVarNames[v] + " [" + slave->m_doubleVarUnits[v] + "]";
 			descriptions += " \t" + flatName;
 			m_realOutputMapping.push_back( std::make_pair(slave, v));
+			++outputVars;
 		}
 
 	} // for - slaves
@@ -142,6 +146,12 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	} // for - slaves
 #endif // DUMP_PARAMETERS
 
+	if (outputVars == 0) {
+		IBK::IBK_Message("No output quantities defined in slaves, MasterSim will not generate any results!",
+						 IBK::MSG_WARNING, FUNC_ID, IBK::VL_STANDARD);
+	}
+
+
 	{
 		IBK::IBK_Message( IBK::FormatString("Creating output file 'values.csv'.\n"),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
@@ -165,6 +175,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		}
 		m_valueOutputs->precision(14);
 	}
+
 
 }
 
