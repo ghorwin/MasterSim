@@ -9,22 +9,22 @@ Steps:
 - process entire directory structure in fmi-cross-check
 - for each directory (cs only), generate local path as does the 'generate_mastersim_projects.py' script
 
-For example: 
+For example:
   from   ./fmi-cross-check/fmus/1.0/cs/linux64/JModelica.org/1.15/ControlledTemperature
   to     ./msim/fmus_1.0_cs_linux64_JModelica.org_1.15_ControlledTemperature
   (working directory)
-  
+
 - check if a msim project file exists in this working directory
 - check if a result directory exists
 - check if a values.csv file exists
 - read 'values.csv' file
 - read 'referenceValues.csv' file
-- read 'rejected', 'fail', 'success' files if existing in working directory
+- read 'rejected', 'failed', 'passed' files if existing in working directory
 - create README.md file in cross-check directory with documentation of the validation process
-- if 'fail' exists, copy content of 'fail' file to README.md, create 'failed' file; done
+- if 'failed' exists, copy content of 'failed' file to README.md, create 'failed' file; done
 - if 'rejected' exists, copy content of 'rejected' file to README.md, create 'rejected' file; done
 - perform fairly strict value comparison for all quantities in 'referenceValues.csv'
-  - for each variable compared, add a line with the absolute and relative norm in README.md
+  - for each variable compared, add a line with the WRMS norm in README.md
 
 - populate summary db table with following data for each case:
   - case path
@@ -34,7 +34,7 @@ For example:
   - state (failed, rejected, success)
   - comment
   - details (content of readme file)
-  
+
   summary db file should be read/appended (to support cross-platform testing)
 """
 
@@ -102,7 +102,7 @@ class CSVFile:
 				raise("Missing data")
 			captionLine = contentLines[0]
 			contentLines = contentLines[1:]
-			
+
 			# determine separation character
 			tokens = captionLine.strip().split('\t')
 			if len(tokens) > 1:
@@ -129,13 +129,13 @@ class CSVFile:
 				valueVectors.append([])
 				for j in range(len(self.content)):
 					valueVectors[i].append(float(self.content[j][i]))
-			
+
 			# generate np arrays
 			self.time = np.array(valueVectors[0])
 			self.values = []
 			for i in range(1,len(valueVectors)):
 				self.values.append( np.array(valueVectors[i]) )
-			
+
 		return
 
 	def write(self,csvFile):
@@ -150,23 +150,23 @@ class CSVFile:
 
 def writeResultFile(fmuCaseDir, fileType, notes):
 	"""Generates a result file.
-	
+
 	Parameters:
-	
+
 	* fmuCase - path to FMU case in github repo
 	* fileType - passed, failed, rejected
 	* notes - content of README.md
 	"""
-	
+
 	if not os.path.exists(fmuCaseDir):
 		os.makedirs(fmuCaseDir)
-	
+
 	with open(fmuCaseDir + "/" + fileType, 'w') as f:
 		f.write("MasterSim_" + MASTERSIM_VERSION + "\n")
-		
+
 	with open(fmuCaseDir + "/README.md", 'w') as f:
 		f.write(notes + "\n")
-	
+
 
 
 # ---- main ----------------------------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ else:
 print("Parsing fmi-cross-check directory structure")
 
 results = dict()
-# read existing database file 
+# read existing database file
 if os.path.exists(DATABASE_FILE):
 	with open(DATABASE_FILE,'r') as dbfile:
 		lines = dbfile.readlines()
@@ -220,7 +220,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 	rootStr = root.replace('\\', '/') # windows fix
 	pathParts = rootStr.split('/') # split into component
 	pathParts = pathParts[len(fullPathParts):] # keep only path parts below toplevel dir
-	
+
 	# we only process directories that can actually contain models, that means more than 4 path parts
 	if len(pathParts) < 5:
 		continue
@@ -240,33 +240,33 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 		e = os.path.splitext(name)
 		if len(e) == 2 and e[1] == '.fmu':
 			fmuPath = os.path.join(root, name)
-			
+
 			fmuCase = fmuPath[:-4] # strip the trailing .fmu
 			modelName = os.path.split(fmuCase)[1]
 
 			# compose path for results (to be pushed to github)
 			resultsRoot = fullPath + "/results/" + "/".join(pathParts[1:4])
 			resultsRoot = resultsRoot + "/MasterSim/" + MASTERSIM_VERSION + "/" + pathParts[4] + "/" + pathParts[5] + "/" + modelName
-			
+
 			# generate path to target directory, hereby substitute / with _ so that we only have one directory level
 			relPath = os.path.split(os.path.relpath(fmuCase, fullPath))[0] # get relative path to directory with fmu file
 			relPath = relPath.replace('\\', '_') # windows fix
 			relPath = relPath.replace('/', '_')
 			relPath = MSIM_DIRECTORY + '/' + relPath
-			
-			
-			# initialize database entry, even for other platforms 
+
+
+			# initialize database entry, even for other platforms
 			cres = CrossCheckResult(datetime.now(), relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", "Not calculated, yet")
 			if not hash(cres) in results:
 				results[hash(cres)] = cres
-			
+
 			# create directory if not existing
 			# directory is most likely missing, because this test case belongs to a different platform
 			# in this case we do not want to touch possibly existing reference results
 			if not os.path.exists(relPath):
 				#print("skipped : {} - Working directory missing".format(relPath))
 				continue
-		
+
 			# check if a 'rejected' file exists in the directory
 			rejectedFile = relPath + "/rejected"
 			if os.path.exists(rejectedFile):
@@ -280,10 +280,10 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				modDate = os.path.getmtime(rejectedFile)
 				date = datetime.fromtimestamp(modDate)
 				lines = [l.strip() for l in lines]
-				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "rejected", ",".join(lines)) 
+				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "rejected", ",".join(lines))
 				results[hash(cres)] = cres
 				continue
-			
+
 			# check if a 'failed' file exists in the directory
 			failedFile = relPath + "/failed"
 			if os.path.exists(failedFile):
@@ -297,21 +297,21 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				modDate = os.path.getmtime(failedFile)
 				date = datetime.fromtimestamp(modDate)
 				lines = [l.strip() for l in lines]
-				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", ",".join(lines)) 
+				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", ",".join(lines))
 				results[hash(cres)] = cres
 				continue
-			
+
 			# - check if a msim project file exists in this working directory
 			msimFilename = relPath + "/" + modelName + ".msim"
 			if not os.path.exists(msimFilename):
 				print("skipped : {} - MasterSim file missing.".format(relPath))
 				continue
-			
+
 			refValuesFile = root + "/" + modelName + "_ref.csv"
 			if not os.path.exists(refValuesFile):
 				print("skipped : {} - Reference values file {} missing.".format(relPath, refValuesFile))
 				continue
-				
+
 			valuesFile = msimFilename[:-5] + "/results/values.csv"
 			if not os.path.exists(valuesFile):
 				print("running : {}...".format(relPath))
@@ -322,16 +322,16 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 					print("failed : {} - Error running MasterSim".format(relPath))
 					continue
 
-			
+
 			print ("Processing {}...".format(relPath))
-			
+
 			# now we read our valuesFile and create the {modelname}_out.csv
 			resultCSV = CSVFile()
 			resultCSV.read(valuesFile)
-			
+
 			referenceCSV = CSVFile()
 			referenceCSV.read(refValuesFile)
-			
+
 			# compare by variable
 			# - what if time points differ? linear interpolation? If so, use linear interpolation
 			#   on MasterSim results
@@ -345,41 +345,41 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				if not refCaption in resultCSV.captions:
 					print("  result variable '{}' not computed by MasterSim (ignored in comparison test).".format(relPath, refCaption))
 					continue
-				
+
 				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
-			
+
 				resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
-				
+
 				# now compare values, first interpolate calculated data at time points of reference values
 				valuesInterpolated = np.interp(referenceCSV.time, resultCSV.time, resultCSV.values[resultIndex])
-				
+
 				# valuesInterpolated has now the same size as referenceCSV.time
-				
+
 				# compute vector norm between values
 				refVals = referenceCSV.values[refIndex]
 				diff = valuesInterpolated - refVals
-				
+
 				maxVal = refVals.max()
 				minVal = refVals.min()
 				absMax = max(abs(maxVal), abs(minVal))
 				ABSTOL = absMax * 1e-3 + 1e-20
 				RELTOL = 1e-3
-				
+
 				# normalize differences
 				weights = 1.0/(RELTOL*abs(refVals) + ABSTOL)
 				diff = diff*weights
-								
+
 				diff = diff**2 # square sum
 				wrms = math.sqrt(diff.sum()/len(valuesInterpolated))
 				print ("  WRMS({}) = {}".format(refCaption, wrms))
-				
+
 				if wrms < 100:
 					evalstr = "passed"
 				else:
 					evalstr = "failed"
 				variableComparisonResults.append( (refCaption, evalstr, wrms) )
-			
-		
+
+
 			# now check if any of the results has a 'failure' marking
 			anyVarFailed = False
 			notes = []
@@ -387,7 +387,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				if r[1] == 'failed':
 					anyVarFailed = True
 				notes.append("WRMS({}) = {}".format(r[0], r[2]))
-			
+
 			cres.note = ",".join(notes) # must be single line, no line breaks
 
 			if anyVarFailed:
@@ -395,11 +395,11 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				cres.result = "failed"
 				results[hash(cres)] = cres
 				continue
-				
+
 			# update database
 			cres.result = "passed"
 			results[hash(cres)] = cres
-			
+
 			# write success file and README.txt file
 			mdFile = """# Validation of '{}'
 
@@ -422,10 +422,15 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 			with open(msimFilename, 'r') as f:
 				masterSimProject = f.readlines()
 				masterSimProject = [l.strip('\r\n') for l in masterSimProject]
-			
+
 			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
 			writeResultFile(resultsRoot, "passed", mdFile)
 			# write computed results as CSV file
+            resCSV = CSVFile()
+            # use the same time stamps as the reference values file
+            # when transferring captions, only transfer those that exist in resultsCSV and referenceCSV
+            
+
 			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv")
 
 
