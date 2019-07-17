@@ -174,6 +174,9 @@ private:
 	/*! Disable assignment operator. */
 	FMU & operator=(const FMU &);
 
+	void addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName,
+							 FMIVariable::VarType varType, int valueReference);
+
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
 	/*! Directory where FMU was extracted to (as absolute file path). */
