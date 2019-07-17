@@ -263,12 +263,22 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			cres = CrossCheckResult(datetime.now(), relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "failed", "Not calculated, yet")
 			if not hash(cres) in results:
 				results[hash(cres)] = cres
+			else:
+				cres = results[hash(cres)]
 
 			# create directory if not existing
 			# directory is most likely missing, because this test case belongs to a different platform
 			# in this case we do not want to touch possibly existing reference results
 			if not os.path.exists(relPath):
 				#print("skipped : {} - Working directory missing".format(relPath))
+				continue
+			
+			# check if a 'passed' file exists in the directory
+			passedFile = relPath + "/passed"
+			if os.path.exists(passedFile):
+				# update success flag in results db
+				cres.result = "passed"
+				results[hash(cres)] = cres
 				continue
 
 			# check if a 'rejected' file exists in the directory
@@ -402,6 +412,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 
 			# update database
 			cres.result = "passed"
+			cres.note = ";".join(notes)
 			results[hash(cres)] = cres
 
 			# write success file and README.txt file
