@@ -88,6 +88,7 @@ class MasterSimTestGenerator:
 		refFile = fmuCaseBaseName + "_ref.csv"
 		if not os.path.exists(refFile):
 			raise Exception("Reference result file '{}' expected".format(refFile))
+		self.refDataFile = refFile
 		self.refData = pd.read_csv(refFile, delimiter=',', quotechar='"')
 		timeColumnName = None
 		for colName in self.refData:
@@ -215,37 +216,41 @@ ${Graph}
 		msim_content = msim_content.replace('${Graph}', graph)
 		
 		msim_content = msim_content.replace('${FMU-Definition}', simLine)
-		
 
 		fobj = open(self.msimFilename, 'w')
 		fobj.write(msim_content)
 		fobj.close()
 		del fobj
 
-		# generate file with expected results in PostProc 2 format
-		referenceValueFilename = targetDir + "/referenceValues.csv"
-		refValueFile = open(referenceValueFilename, 'w')
-		header = ["Time [s]"]
-		
-		for var in self.refData:
-			if var == 'time' or var == 'Time':
-				continue
-			header.append(var)
-		refValueFile.write('\t'.join(header) + '\n')
-		# now all columns 
-		
-		for i in range(len(self.tp)):
-			ref_t = self.tp[i]
-			row = [str(ref_t)]
+		if 0:
+			# generate file with expected results in PostProc 2 format
+			referenceValueFilename = targetDir + "/referenceValues.csv"
+			refValueFile = open(referenceValueFilename, 'w')
+			header = ["Time [s]"]
+			
 			for var in self.refData:
 				if var == 'time' or var == 'Time':
 					continue
-				refVals = self.refData[var]
-				ref_val = refVals[i]
-				row.append(str(ref_val))
-			refValueFile.write('\t'.join(row) + '\n')
-		refValueFile.close()
-		del refValueFile		
+				header.append(var)
+			refValueFile.write('\t'.join(header) + '\n')
+			# now all columns 
+			
+			for i in range(len(self.tp)):
+				ref_t = self.tp[i]
+				row = [str(ref_t)]
+				for var in self.refData:
+					if var == 'time' or var == 'Time':
+						continue
+					refVals = self.refData[var]
+					ref_val = refVals[i]
+					row.append(str(ref_val))
+				refValueFile.write('\t'.join(row) + '\n')
+			refValueFile.close()
+			del refValueFile		
+		else:
+			# copy reference values file to target directory
+			refFilename = os.path.split(self.refDataFile)[1]
+			copyfile(self.refDataFile, targetDir + "/" + refFilename)
 		
 		return True # all ok, ready for simulation
 
