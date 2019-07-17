@@ -62,13 +62,13 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	} // for - slaves
 
 	// create output file if at least one output of type string is written
-	IBK::Path stringOutputFilename = m_resultsDir / "strings.tsv";
+	IBK::Path stringOutputFilename = m_resultsDir / "strings.csv";
 	if (m_stringOutputMapping.empty()) {
-		IBK::IBK_Message( IBK::FormatString("Skipping output file 'strings.tsv', no outputs of this type are generated.\n"),
+		IBK::IBK_Message( IBK::FormatString("Skipping output file 'strings.csv', no outputs of this type are generated.\n"),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	else {
-		IBK::IBK_Message( IBK::FormatString("Creating output file 'strings.tsv' with %1 outputs.\n").arg(m_stringOutputMapping.size()),
+		IBK::IBK_Message( IBK::FormatString("Creating output file 'strings.csv' with %1 outputs.\n").arg(m_stringOutputMapping.size()),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		// if we restart, we simply re-open the files for writing
 		if (reopen) {
@@ -153,9 +153,9 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 
 	{
-		IBK::IBK_Message( IBK::FormatString("Creating output file 'values.tsv'.\n"),
+		IBK::IBK_Message( IBK::FormatString("Creating output file 'values.csv'.\n"),
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-		IBK::Path outputFilename = m_resultsDir / "values.tsv";
+		IBK::Path outputFilename = m_resultsDir / "values.csv";
 		// if we restart, we simply re-open the files for writing
 		if (reopen) {
 #ifdef _MSC_VER
