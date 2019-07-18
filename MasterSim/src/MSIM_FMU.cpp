@@ -111,11 +111,17 @@ void FMU::readModelDescription() {
 
 
 void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, int valueReference) {
-	if (std::find(valueRefList.begin(), valueRefList.end(), valueReference) == valueRefList.end())
+	if (std::find(valueRefList.begin(), valueRefList.end(), valueReference) == valueRefList.end()) {
 		valueRefList.push_back(valueReference);
-	else {
-		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2] has valueReference %3 which is already selected for output by another variable.")
+		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2], valueRef = %3\n")
 						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference),
+							   IBK::MSG_PROGRESS, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+	}
+	else {
+		// look up variable with given variable reference
+		const FMIVariable & var = m_modelDescription.variableByRef(varType, valueReference);
+		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2] has valueReference %3 which is already selected for output (variable '%4').")
+						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference).arg(var.m_name),
 							   IBK::MSG_WARNING, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
 	}
 }
