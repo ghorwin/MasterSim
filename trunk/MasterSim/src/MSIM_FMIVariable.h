@@ -43,7 +43,10 @@ public:
 	/*! Description. */
 	std::string	m_description;
 
+	/*! The causality of the variable - needed for connection logic: input, output or parameter - rest is not important (in GUI or solver). */
 	Causality	m_causality;
+	/*! The string identifier of the causality, only used for logging/output purposes. */
+	std::string m_causalityString;
 
 	/*! The variable type. */
 	VarType		m_type;
@@ -71,9 +74,6 @@ public:
 
 	/*! Returns a string constant that describes the type. */
 	static const char * varType2String(VarType t);
-
-	/*! Returns a string constant that describes the causality. */
-	static const char * causality2String(FMIVariable::Causality t);
 };
 
 } // namespace MASTER_SIM

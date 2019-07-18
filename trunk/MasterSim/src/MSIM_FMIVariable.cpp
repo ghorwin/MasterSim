@@ -32,6 +32,7 @@ void FMIVariable::read(const TiXmlElement * element) {
 			m_causality = C_INTERNAL;
 		else
 			m_causality = C_OTHER;
+		m_causalityString = causality;
 
 		m_variability = ModelDescription::readOptionalAttribute(element, "variability");
 		if (m_variability.empty())
@@ -81,18 +82,6 @@ void FMIVariable::read(const TiXmlElement * element) {
 }
 
 
-const char * FMIVariable::causality2String(FMIVariable::Causality t) {
-	switch (t) {
-		case C_INPUT : return "input";
-		case C_OUTPUT : return "output";
-		case C_PARAMETER : return "parameter";
-		case C_INTERNAL : return "internal";
-		case C_OTHER : return "other";
-	}
-	return "undefined";
-}
-
-
 std::string FMIVariable::toString() const {
 	std::stringstream strm;
 
@@ -110,7 +99,7 @@ std::string FMIVariable::toString() const {
 	else
 		strm << ")";
 
-	strm << ", " << causality2String(m_causality);
+	strm << ", " << m_causalityString;
 	if (m_causality == C_INPUT || m_causality == C_INTERNAL || m_causality == C_PARAMETER)
 		strm << "(start='" << m_startValue << "')";
 	strm << ", " << m_variability;
