@@ -16,6 +16,6 @@ ErrorControlMode         NONE
 maxIterations            1
 writeInternalVariables   yes
 
-simulator 0 0 slave1 #ffff8c00 "../../fmi-cross-check/fmus/1.0/cs/linux64/JModelica.org/1.15/ControlledTemperature/ControlledTemperature.fmu"
+simulator 0 0 slave1 #ffff8c00 "../../fmi-cross-check/fmus/2.0/cs/linux64/JModelica.org/1.15/ControlledTemperature/ControlledTemperature.fmu"
 
 
