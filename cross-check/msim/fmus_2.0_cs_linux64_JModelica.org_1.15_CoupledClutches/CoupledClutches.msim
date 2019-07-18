@@ -1,8 +1,8 @@
-# Created:	Mi. Juli 17 20:28:36 2019
-# LastModified:	Mi. Juli 17 20:58:32 2019
+# Created:	Mi. Juli 17 20:28:21 2019
+# LastModified:	Do. Juli 18 14:58:37 2019
 
 tStart                   0 s
-tEnd                     10 s
+tEnd                     1.5 s
 hMax                     30 min
 hMin                     1e-06 s
 hFallBackLimit           0.001 s
@@ -16,6 +16,8 @@ ErrorControlMode         NONE
 maxIterations            1
 writeInternalVariables   yes
 
-simulator 0 0 slave1 #ffff8c00 "../../fmi-cross-check/fmus/1.0/cs/linux64/JModelica.org/1.15/ControlledTemperature/ControlledTemperature.fmu"
+simulator 0 0 slave1 #ffff8c00 "../../fmi-cross-check/fmus/2.0/cs/linux64/JModelica.org/1.15/CoupledClutches/CoupledClutches.fmu"
+simulator 0 0 in_csv #ff0000ff "CoupledClutches_in.csv"
 
+graph in_csv.u slave1.u
 
