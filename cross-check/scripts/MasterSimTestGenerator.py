@@ -180,7 +180,7 @@ hMin                 1e-6 s
 hFallBackLimit       0.001 s
 hStart               ${StepSize} s
 hOutputMin           ${dtOutMin} s
-adjustStepSize       yes
+adjustStepSize       no
 absTol               1e-6
 relTol               ${RelTol}
 MasterMode           GAUSS_JACOBI
