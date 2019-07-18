@@ -70,8 +70,15 @@ void MasterSim::initialize() {
 	const char * const FUNC_ID = "[MasterSim::initialize]";
 
 	// collect output variable references in all fmus
-	for (auto fmuptr : m_fmuManager.fmus())
-		fmuptr->collectOutputVariableReferences(m_project.m_writeInternalVariables);
+	{
+		IBK::IBK_Message("Collecting value references for output quantities\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::MessageIndentor indent; (void)indent;
+		for (auto fmuptr : m_fmuManager.fmus()) {
+			IBK::IBK_Message( IBK::FormatString("Outputs generated from FMU '%1':\n").arg(fmuptr->fmuFilePath().filename()), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+			IBK::MessageIndentor indent2; (void)indent2;
+			fmuptr->collectOutputVariableReferences(m_project.m_writeInternalVariables);
+		}
+	}
 
 	// instantiate all slaves
 	instatiateSlaves();
