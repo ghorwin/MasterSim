@@ -141,10 +141,103 @@ Validierungsstand
 \end_layout
 
 \begin_layout Subsection
-Plattform: Linux 64
+Version 0.6
 \end_layout
 
 \begin_layout Standard
+Wesentliche Verbesserungen in dieser Version:
+\end_layout
+
+\begin_layout Itemize
+korrigiertes Resourcen-Verzeichnis übergeben
+\end_layout
+
+\begin_layout Itemize
+Unterstützung von Standard-Attributen (bei unvollständigen XML-Beschreibungsdate
+ien)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename results-0.5.3.pdf
+	width 18cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validierungsergebnisse in Version 0.6 (Juni 2019), nur Plattform 
+\emph on
+Linux64
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Version 0.5.3
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename results-0.5.3.pdf
+	width 18cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Validierungsergebnisse in Version 0.5.3 (Mai 2019), nur Plattform 
+\emph on
+Linux64
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
