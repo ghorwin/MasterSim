@@ -21,6 +21,7 @@ namespace MASTER_SIM {
 OutputWriter::OutputWriter() :
 	m_project(NULL),
 	m_tEarliestOutputTime(-1),
+	m_tLastOutput(-1),
 	m_valueOutputs(NULL),
 	m_stringOutputs(NULL),
 	m_progressOutputs(NULL)
@@ -253,11 +254,13 @@ void OutputWriter::appendOutputs(double t) {
 	}
 	// increase m_tEarliestOutputTime by selected steps until t is surpassed,
 	// this will be the first time that we allow next outputs to be made again
+	// we use the multiplication method here, since this avoids accumulation of rounding errors
 	int i = 0;
 	while (++i*m_project->m_hOutputMin.value < t + 1e-8);
 	m_tEarliestOutputTime = i*m_project->m_hOutputMin.value;
 
 	m_progressFeedback.writeFeedback(t, false);
+	m_tLastOutput = t; // remember this output time
 
 	// 1. dump state of master to output files
 

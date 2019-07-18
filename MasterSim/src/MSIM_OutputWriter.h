@@ -52,8 +52,16 @@ public:
 	/*! Vector of pointers to slave instances (not owned). */
 	std::vector<AbstractSlave*>		m_slaves;
 
-	/*! Last time point when outputs were written. */
+	/*! Next time point when outputs will be written again.
+		If set to -1, outputs will always be written.
+	*/
 	double					m_tEarliestOutputTime;
+
+	/*! Cached time point when output were last written (only needed to test if final output shall be written).
+		Outputs are always written at end of simulation, except when last step was skipped because hStep was
+		too small (rounding error issue).
+	*/
+	double					m_tLastOutput;
 
 	ProgressFeedback		m_progressFeedback;
 
