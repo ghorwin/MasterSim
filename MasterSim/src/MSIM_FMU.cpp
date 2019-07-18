@@ -149,7 +149,7 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 		// now append internal variables
 		for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 			const FMIVariable & var = m_modelDescription.m_variables[i];
-			if (var.m_causality == FMIVariable::C_INTERNAL) {
+			if (var.m_causality == FMIVariable::C_INTERNAL || var.m_causality == FMIVariable::C_PARAMETER || var.m_causality == FMIVariable::C_OTHER) {
 				switch (var.m_type) {
 					case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
 					case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
