@@ -148,6 +148,16 @@ const FMIVariable & ModelDescription::variableByRef(FMIVariable::VarType varType
 }
 
 
+const FMIVariable & ModelDescription::variableByRef(unsigned int valueReference) const {
+	const char * const FUNC_ID = "[ModelDescription::variableByRef]";
+
+	for (const FMIVariable & fmiVar : m_variables) {
+		if (fmiVar.m_valueReference == valueReference)
+			return fmiVar;
+	}
+	throw IBK::Exception(IBK::FormatString("FMIVariable with value reference '%1' is not exported.").arg(valueReference), FUNC_ID);
+}
+
 
 void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_csV2ModelIdentifier = readRequiredAttribute(element, "modelIdentifier");

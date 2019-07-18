@@ -152,6 +152,13 @@ public:
 	std::vector<unsigned int>	m_stringValueRefsOutput;
 	std::vector<unsigned int>	m_doubleValueRefsOutput;
 
+
+	/*! Maps with variable names that have the same value reference as the one selected for output.
+		Key - the common value reference, value - list of variable names that share this value reference.
+		Map is populated in collectOutputVariableReferences().
+	*/
+	std::map<unsigned int, std::vector<std::string> > m_synonymousVars;
+
 	/*! Utility function to unzip an FMU archive into an existing directory.
 		This is a static function because unzipping is done in an optional step before importing the FMU.
 		\param pathToFMU Holds path to FMU.
@@ -174,8 +181,12 @@ private:
 	/*! Disable assignment operator. */
 	FMU & operator=(const FMU &);
 
+	/*! This function will add a variable (via value reference) to the given list of value reference, but only if the variable
+		is not yet selected.
+		If the variable (value reference) has been already selected, the synonymous variable will be added to the m_synonymousVars map.
+	*/
 	void addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName,
-							 FMIVariable::VarType varType, int valueReference);
+							 FMIVariable::VarType varType, unsigned int valueReference);
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
