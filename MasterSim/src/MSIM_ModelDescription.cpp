@@ -187,8 +187,8 @@ void ModelDescription::readElementVariables(const TiXmlElement * element) {
 			var.read(e);
 			var.m_varIdx = ++varIdx;
 			// skip all variables that are not input, output or parameter
-			if (var.m_causality == FMIVariable::C_OTHER)
-				continue;
+//			if (var.m_causality == FMIVariable::C_OTHER)
+//				continue;
 			// if no variable has been set, yet, and a declared type is given, try to resolve unit
 			if (var.m_unit.empty() && !var.m_declaredType.empty())  {
 				std::vector<FMIType>::const_iterator it = std::find(m_typeDefinitions.begin(), m_typeDefinitions.end(),
