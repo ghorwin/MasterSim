@@ -166,6 +166,34 @@ class CSVFile:
 		return
 
 
+class SynonymousVars:
+	def __init__(self):
+		self.variableSynonyms = dict()
+		
+	def read(self, synFile):
+		with open(synFile, 'r') as f:
+			lines = f.readlines()
+			for l in lines:
+				l = l.strip('\r\n')
+				if len(l) == 0:
+					continue # skip empty lines
+				varNames = l.split('\t')
+				outputVarName = varNames[1]
+				if not outputVarName in self.variableSynonyms:
+					self.variableSynonyms[outputVarName] = []
+				self.variableSynonyms[outputVarName].append(varNames[2])
+				
+	def resolveVarName(self, varName):
+		"""Looks up output variable name for a variable synonyme.
+		Returns None if no such variable is defined sy synonymous variable.
+		"""
+		for m in self.variableSynonyms:
+			for v in self.variableSynonyms[m]:
+				if v == varName:
+					return m
+		return None
+
+
 def writeResultFile(fmuCaseDir, fileType, notes):
 	"""Generates a result file.
 
@@ -350,6 +378,11 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 					print("failed : {} - Error running MasterSim".format(relPath))
 					continue
 
+			synonymousVarsFile = msimFilename[:-5] + "/results/synonymous_variables.txt"
+			synVars = SynonymousVars()
+			if os.path.exists(synonymousVarsFile):
+				synVars.read(synonymousVarsFile)
+			
 
 			print ("Processing {}...".format(relPath))
 
@@ -371,11 +404,16 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 
 				# look up corresponding index of calculated values
 				if not refCaption in resultCSV.captions:
-					print("    '{}' not computed.".format(refCaption))
-					failure = True
-					continue
-
-				resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
+					# check if this is a variably synonyme
+					synOutputVar = synVars.resolveVarName(refCaption)
+					if synOutputVar == None:
+						print("    '{}' not computed.".format(refCaption))
+						failure = True
+						continue
+					# use synoymous variable output instead
+					resultIndex = resultCSV.captions.index(synOutputVar) # 'captions' includes time columns
+				else:
+					resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
 
 				resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
 
