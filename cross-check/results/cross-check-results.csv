@@ -488,7 +488,7 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_CoupledClutches	2.0	linux64	MapleSim-2018	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_Rectifier	2.0	linux64	MapleSim-2018	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_7.01_ControlledTemperature	2.0	linux64	MapleSim-7.01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_BouncingBall	2.0	linux64	Test-FMUs-0.0.1	failed	Not calculated, yet
+18.07.2019 19:32:48	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_BouncingBall	2.0	linux64	Test-FMUs-0.0.1	rejected	Test case is marked 'notCompliantWithLatestRules'.
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_Dahlquist	2.0	linux64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.00625474308999
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_Feedthrough	2.0	linux64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_Resource	2.0	linux64	Test-FMUs-0.0.1	passed	WRMS(y) = 0.0
