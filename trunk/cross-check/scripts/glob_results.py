@@ -321,6 +321,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# update success flag in results db
 				cres.result = "passed"
 				results[hash(cres)] = cres
+				print("passed : {}".format(relPath))
 				continue
 
 			# check if a 'rejected' file exists in the directory
