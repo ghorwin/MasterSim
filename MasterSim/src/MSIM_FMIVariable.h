@@ -22,8 +22,8 @@ public:
 		C_OUTPUT,
 		C_INPUT,
 		C_PARAMETER,
-		C_INTERNAL,
-		C_OTHER
+		C_INTERNAL,	/* only CS1 */
+		C_OTHER		/* for local (CS1), calculatedParameter (CS2), independent (CS2) */
 	};
 
 	/*! Constructor. */
