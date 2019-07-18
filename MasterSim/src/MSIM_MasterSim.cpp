@@ -165,6 +165,7 @@ void MasterSim::simulate() {
 	// write initial statistics and header
 	if (m_args.m_verbosityLevel > 1)
 		writeStepStatistics();
+
 	// we need to handle rounding errors:
 	// Possibility 1)
 	//     m_t                    = 0.99999
@@ -178,13 +179,11 @@ void MasterSim::simulate() {
 	//     m_hProposed            = 0.001
 	//     m_project.m_tEnd.value = 1.0
 	//     -> Take step, but adjust m_hProposed to hit exactly tEnd
-	bool skipLastOutput = false;
 	while (m_t < m_project.m_tEnd.value) {
 		double hRemaining = m_project.m_tEnd.value - m_t;
 		if (hRemaining < m_hProposed) {
 			if (!m_enableVariableStepSizes && hRemaining < 1e-9) {
-				skipLastOutput = true; // no step has been taken, do not write last output twice
-				break; // do not exceed end time point, can happen due to rounding errors
+				break; // do not exceed end time point if already very close to it, can happen due to rounding errors
 			}
 #ifdef PREVENT_OVERSHOOTING_AT_SIMULATION_END
 			m_hProposed = hRemaining;
@@ -201,14 +200,15 @@ void MasterSim::simulate() {
 		// Now the master's internal state has moved to the next time point m_t = m_t + m_h
 		// m_h holds the step size used during the last master step
 
-		if (m_t < m_project.m_tEnd.value)
+		if (m_t < m_project.m_tEnd.value) {
 			appendOutputs();// appends outputs (filtering/scheduling is implemented inside OutputWriter class)
+		}
 	}
 	// write final results
 
 	// ensure, that final results are definitely written, but only if the last output time is not already
 	// close enough to the final results
-	if (!skipLastOutput) {
+	if (m_t - m_outputWriter.m_tLastOutput > 1e-8) {
 		m_outputWriter.m_tEarliestOutputTime = -1;  // this ensures that output is always written
 		appendOutputs();
 	}

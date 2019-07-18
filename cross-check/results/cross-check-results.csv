@@ -56,22 +56,22 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_ForkLift	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_SpringMassDamper	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_Valve	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_ControlBuild_2015_FD01_batch	1.0	linux64	ControlBuild-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_ControlBuild_2015_FD01_drill	1.0	linux64	ControlBuild-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_CauerLowPassAnalog	1.0	linux64	JModelica.org-1.15	passed	WRMS(C1.v) = 4.5325431657;WRMS(C3.v) = 0.507140339316;WRMS(C5.v) = 0.266243832156;WRMS(L1.i) = 0.102878567982;WRMS(L2.i) = 0.00939387253639
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_ControlBuild_2015_FD01_batch	1.0	linux64	ControlBuild-2015_FD01	passed	WRMS(tankLevel) = 1.0282400453;WRMS(tankLevel2) = 1.67241628274;WRMS(tankLevel3) = 0.542284483792
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_ControlBuild_2015_FD01_drill	1.0	linux64	ControlBuild-2015_FD01	passed	WRMS(axlePosition) = 45.5878371358;WRMS(speedVal2) = 50.1862644675;WRMS(RUN1_rotation) = 113.871879668;WRMS(RUN1_cycleEnd) = 138.531120581
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_CauerLowPassAnalog	1.0	linux64	JModelica.org-1.15	passed	WRMS(C1.v) = 4.49750077006;WRMS(C3.v) = 0.503982307203;WRMS(C5.v) = 0.263271591624;WRMS(L1.i) = 0.137496252884;WRMS(L2.i) = 0.0363839184695
 17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_ControlledTemperature	1.0	linux64	JModelica.org-1.15	passed	WRMS(TAmb) = 0.0;WRMS(TDif) = 0.0;WRMS(heatCapacitor.T) = 0.00847533187344;WRMS(TRes) = 0.00847533187344
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_CoupledClutches	1.0	linux64	JModelica.org-1.15	passed	WRMS(freqHz) = 0.0;WRMS(T2) = 0.0;WRMS(clutch1.phi_rel) = 0.316170903038;WRMS(clutch1.w_rel) = 1.05389656122;WRMS(clutch2.phi_rel) = 0.156625149863;WRMS(clutch2.w_rel) = 0.130946105136;WRMS(clutch3.phi_rel) = 2.88104088093;WRMS(clutch3.w_rel) = 5.3150678992;WRMS(J1.phi) = 0.249377109345;WRMS(J1.w) = 0.797349450445
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_PID_Controller	1.0	linux64	JModelica.org-1.15	passed	WRMS(driveAngle) = 0.0;WRMS(spring.w_rel) = 8.36283200588;WRMS(PI.I.y) = 0.0583771460392;WRMS(inertia1.phi) = 0.146890063045;WRMS(spring.phi_rel) = 0.0325878961339;WRMS(integrator.y) = 0.184988973441;WRMS(inertia1.w) = 0.0921935862856
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_CoupledClutches	1.0	linux64	JModelica.org-1.15	passed	WRMS(freqHz) = 0.0;WRMS(T2) = 0.0;WRMS(clutch1.phi_rel) = 0.315950099766;WRMS(clutch1.w_rel) = 1.05092590526;WRMS(clutch2.phi_rel) = 0.1585698784;WRMS(clutch2.w_rel) = 0.134763227133;WRMS(clutch3.phi_rel) = 2.88718335176;WRMS(clutch3.w_rel) = 5.30757995533;WRMS(J1.phi) = 0.249253614639;WRMS(J1.w) = 0.801274265524
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_JModelica.org_1.15_PID_Controller	1.0	linux64	JModelica.org-1.15	passed	WRMS(driveAngle) = 0.0;WRMS(spring.w_rel) = 13.8219181536;WRMS(PI.I.y) = 0.098961178589;WRMS(inertia1.phi) = 0.147016685018;WRMS(spring.phi_rel) = 0.158539045458;WRMS(integrator.y) = 0.185003026931;WRMS(inertia1.w) = 0.0950471113975
 17.07.2019 20:19:38	fmus_1.0_cs_linux64_Test-FMUs_0.0.1_BouncingBall	1.0	linux64	Test-FMUs-0.0.1	passed	WRMS(h) = 0.189837847237;WRMS(v) = 63.0896314607
 17.07.2019 20:19:38	fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Dahlquist	1.0	linux64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.00625474308999
 17.07.2019 20:19:38	fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Resource	1.0	linux64	Test-FMUs-0.0.1	passed	WRMS(y) = 0.0
 17.07.2019 20:19:38	fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Stair	1.0	linux64	Test-FMUs-0.0.1	passed	WRMS(counter) = 42.6426211203
 17.07.2019 20:19:38	fmus_1.0_cs_linux64_Test-FMUs_0.0.1_VanDerPol	1.0	linux64	Test-FMUs-0.0.1	passed	WRMS(x0) = 0.381200865105;WRMS(x1) = 0.37011006279
-18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_BouncingBall	1.0	linux64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Dahlquist	1.0	linux64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Resource	1.0	linux64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Stair	1.0	linux64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_VanDerPol	1.0	linux64	Test-FMUs-0.0.2	failed	Not calculated, yet
+18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_BouncingBall	1.0	linux64	Test-FMUs-0.0.2	passed	WRMS(h) = 8.18792984658;WRMS(v) = 107.768632443
+18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Dahlquist	1.0	linux64	Test-FMUs-0.0.2	passed	WRMS(x) = 6.36859960457
+18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Resource	1.0	linux64	Test-FMUs-0.0.2	passed	WRMS(y) = 0.0
+18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_Stair	1.0	linux64	Test-FMUs-0.0.2	passed	WRMS(counter) = 41.1271517838
+18.07.2019 12:10:57	fmus_1.0_cs_linux64_Test-FMUs_0.0.2_VanDerPol	1.0	linux64	Test-FMUs-0.0.2	passed	WRMS(x0) = 41.4658798162;WRMS(x1) = 42.9625762829
 17.07.2019 20:12:23	fmus_1.0_cs_win32_AMESim_13SL3_MIS_cs	1.0	win32	AMESim-13SL3	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win32_AMESim_13SL3_steam_plant	1.0	win32	AMESim-13SL3	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win32_AMESim_14_MIS_cs	1.0	win32	AMESim-14	failed	Not calculated, yet

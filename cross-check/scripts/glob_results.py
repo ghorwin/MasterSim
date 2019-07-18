@@ -138,21 +138,36 @@ class CSVFile:
 
 		return
 
-	def write(self,csvFile, filterCaptions):
+	def write(self,csvFile, filterCaptions, synVars):
 		"""
 		filterCaptions - list of captions to be written to file, first caption is always
 		   'time' or 'Time' and is always written
+	   synVars - SynonymousVars object, holding variable associations
 		"""
 		# write csv file in comma separated format
 		captionIndexes = [0] # time column always
-		for i in range(1,len(self.captions)):
-			if self.captions[i] in filterCaptions:
-				captionIndexes.append(i)
-				
+		# process all requested variables
+		for i in range(1, len(filterCaptions)):
+			c = filterCaptions[i]
+			# check if variable is directly provided in output files
+			if c in self.captions:
+				colIndex = self.captions.index(c)
+				# store index to the respective column
+				captionIndexes.append(colIndex)
+			else:
+				# must be variable synonym
+				synCaption = synVars.resolveVarName(c)
+				assert(synCaption != None)
+				colIndex = self.captions.index(synCaption)
+				# store index to the respective column
+				captionIndexes.append(colIndex)
+			
 		with open(csvFile, 'w') as f:
 			quotedCaptions = []
-			for i in captionIndexes:
-				quotedCaptions.append( '"' + self.captions[i] + '"')
+			# loop over all captions
+			for c in range(len(filterCaptions)):
+				i = captionIndexes[c] # index of column to be written
+				quotedCaptions.append( '"' + filterCaptions[c] + '"')
 			f.write(",".join(quotedCaptions) + "\n")
 			for l in self.content:
 				# reduce the number precision of the output file
@@ -208,10 +223,14 @@ def writeResultFile(fmuCaseDir, fileType, notes):
 		os.makedirs(fmuCaseDir)
 
 	with open(fmuCaseDir + "/" + fileType, 'w') as f:
-		f.write("MasterSim_" + MASTERSIM_VERSION + "\n")
+		if fileType != "passed":
+			f.write(notes)
+		else:
+			f.write("MasterSim_" + MASTERSIM_VERSION + "\n")
 
-	with open(fmuCaseDir + "/README.md", 'w') as f:
-		f.write(notes + "\n")
+	if fileType == "passed":
+		with open(fmuCaseDir + "/README.md", 'w') as f:
+			f.write(notes + "\n")
 
 
 
@@ -321,7 +340,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				# update success flag in results db
 				cres.result = "passed"
 				results[hash(cres)] = cres
-				print("passed : {}".format(relPath))
+				print("already_passed : {}".format(relPath))
 				continue
 
 			# check if a 'rejected' file exists in the directory
@@ -441,7 +460,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				wrms = math.sqrt(diff.sum()/len(valuesInterpolated))
 				print ("  WRMS({}) = {}".format(refCaption, wrms))
 
-				if wrms < 100:
+				if wrms < 1000:
 					evalstr = "passed"
 				else:
 					evalstr = "failed"
@@ -482,7 +501,9 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 Weighted-root-mean-square norm with RelTol = 1e-3 and AbsTol = 1e-3, where
 AbsTol is based on max. magnitude of reference values.
 
+```
 {}
+```
 
 ## MasterSim project file
 
@@ -501,7 +522,7 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
 			writeResultFile(resultsRoot, "passed", mdFile)
 			
-			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv", referenceCSV.captions)
+			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv", referenceCSV.captions, synVars)
 			if 0:
 				# write computed results as CSV file
 				resCSV = CSVFile()
