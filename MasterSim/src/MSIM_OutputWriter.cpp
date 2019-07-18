@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <memory>
 
 #include <IBK_Exception.h>
 #include <IBK_FormatString.h>
@@ -177,6 +178,47 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	}
 
 
+	// finally, also create the "synonymous variables" file
+
+	std::stringstream synonymousVars;
+	std::set<const FMU * > processedFMUs;
+	for (unsigned int s=0; s<m_slaves.size(); ++s) {
+		const AbstractSlave * slave = m_slaves[s];
+		// skip all but FMUslaves
+		const FMUSlave * fmuSlave = dynamic_cast<const FMUSlave*>(slave);
+		if (fmuSlave == nullptr)
+			continue;
+		// check (in case of multiple instances of fmu slaves), if the fmu was already processed
+		const FMU * fmuPtr = fmuSlave->fmu();
+		if (processedFMUs.find(fmuPtr) != processedFMUs.end())
+			continue;
+		processedFMUs.insert(fmuPtr);
+
+		// now process map with synonymous variables
+		for (auto m : fmuPtr->m_synonymousVars) {
+			int valueRef = m.first;
+			// lookup written variable name
+			const FMIVariable & var = fmuPtr->m_modelDescription.variableByRef(valueRef);
+			// process all variable synonyms in table
+			for (auto varName : m.second) {
+				// first column: fmu file path (currently only filename; full path is only needed when different fmus with same name are used)
+				// second column: variable name that appears in 'values.csv' file
+				// other columns: variables with same value reference
+				synonymousVars << fmuPtr->fmuFilePath().filename().str() << '\t' << var.m_name << '\t' << varName << '\n';
+			}
+		}
+	}
+	// if we have at least one synonymous variable, write the respective file
+	std::stringstream::pos_type offset = synonymousVars.tellp();
+	if (offset != 0) {
+		IBK::Path synFilename = m_resultsDir / "synonymous_variables.txt";
+	#ifdef _MSC_VER
+		std::ofstream synStream(synFilename.wstr().c_str());
+	#else
+		std::ofstream synStream(synFilename.c_str());
+	#endif
+		synStream << synonymousVars.rdbuf();
+	}
 }
 
 

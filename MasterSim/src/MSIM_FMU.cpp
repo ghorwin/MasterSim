@@ -110,7 +110,7 @@ void FMU::readModelDescription() {
 }
 
 
-void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, int valueReference) {
+void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, unsigned int valueReference) {
 	if (std::find(valueRefList.begin(), valueRefList.end(), valueReference) == valueRefList.end()) {
 		valueRefList.push_back(valueReference);
 		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2], valueRef = %3\n")
@@ -123,11 +123,14 @@ void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const st
 		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2] has valueReference %3 which is already selected for output (variable '%4').")
 						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference).arg(var.m_name),
 							   IBK::MSG_WARNING, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+		m_synonymousVars[valueReference].push_back(varName);
 	}
 }
 
 
 void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
+	// clear map m_synonymousVars
+	m_synonymousVars.clear();
 	// now collect all output variable valueReferences
 	for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 		const FMIVariable & var = m_modelDescription.m_variables[i];
