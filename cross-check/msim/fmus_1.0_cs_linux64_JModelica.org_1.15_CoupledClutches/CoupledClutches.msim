@@ -1,5 +1,5 @@
 # Created:	Mi. Juli 17 20:28:21 2019
-# LastModified:	Do. Juli 18 12:20:07 2019
+# LastModified:	Do. Juli 18 14:58:37 2019
 
 tStart                   0 s
 tEnd                     1.5 s
@@ -7,7 +7,7 @@ hMax                     30 min
 hMin                     1e-06 s
 hFallBackLimit           0.001 s
 hStart                   0.0001 s
-hOutputMin               0.001 s
+hOutputMin               0.01 s
 adjustStepSize           no
 absTol                   1e-06
 relTol                   0.0001
