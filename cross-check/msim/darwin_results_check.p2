@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc version="2.1.1">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#416fce" Checked="1">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall</SubDir>
+			<SubDir Color="#ffaa00" Checked="1">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall</SubDir>
+			<SubDir Color="#ff007f" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Dahlquist</SubDir>
+			<SubDir Color="#7141d1" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Dahlquist/Dahlquist</SubDir>
+			<SubDir Color="#ffee00" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Resource</SubDir>
+			<SubDir Color="#45ad45" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Resource/Resource</SubDir>
+			<SubDir Color="#aa0000" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Stair</SubDir>
+			<SubDir Color="#55aaff" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_Stair/Stair</SubDir>
+			<SubDir Color="#005500" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_VanDerPol</SubDir>
+			<SubDir Color="#550000" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_VanDerPol/VanDerPol</SubDir>
+			<SubDir Color="#ffaaff" Checked="1">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall</SubDir>
+			<SubDir Color="#c66300" Checked="1">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall</SubDir>
+			<SubDir Color="#ff5500" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Dahlquist</SubDir>
+			<SubDir Color="#aa55ff" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Dahlquist/Dahlquist</SubDir>
+			<SubDir Color="#aaaa00" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Resource</SubDir>
+			<SubDir Color="#ffffff" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Resource/Resource</SubDir>
+			<SubDir Color="#416fce" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Stair</SubDir>
+			<SubDir Color="#ffaa00" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_Stair/Stair</SubDir>
+			<SubDir Color="#ff007f" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_VanDerPol</SubDir>
+			<SubDir Color="#7141d1" Checked="0">fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_VanDerPol/VanDerPol</SubDir>
+			<SubDir Color="#ffee00" Checked="0">fmus_1.0_cs_linux64_Test-FMUs_0.0.1_BouncingBall</SubDir>
+			<SubDir Color="#45ad45" Checked="0">fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Dahlquist</SubDir>
+			<SubDir Color="#aa0000" Checked="0">fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Resource</SubDir>
+			<SubDir Color="#55aaff" Checked="0">fmus_1.0_cs_linux64_Test-FMUs_0.0.1_Stair</SubDir>
+			<SubDir Color="#005500" Checked="0">fmus_1.0_cs_linux64_Test-FMUs_0.0.1_VanDerPol</SubDir>
+			<ExpandedSubDir>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall</ExpandedSubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+			<ExpandedSubDir>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall</ExpandedSubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--All mappers.-->
+	<Mappers>
+		<Mapper name="h|v [$filename]">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>0</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<MarkerColor>#000000</MarkerColor>
+						<MarkerSize>8</MarkerSize>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<MarkerStyle>1</MarkerStyle>
+						<PenColor>#ffd320</PenColor>
+						<MarkerColor>#ffd320</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity -0.0.2</TitleText>
+						<PenColor>#004586</PenColor>
+						<MarkerColor>#004586</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity - 0.0.1</TitleText>
+						<PenColor>#83caff</PenColor>
+						<MarkerColor>#83caff</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity - 0.0.2</TitleText>
+						<PenColor>#aecf00</PenColor>
+						<MarkerColor>#aecf00</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity - 0.0.1</TitleText>
+						<PenColor>#579d1c</PenColor>
+						<MarkerColor>#579d1c</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<PenColor>#ff420e</PenColor>
+						<MarkerColor>#ff420e</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>$quantity</TitleText>
+						<PenColor>#7e0021</PenColor>
+						<MarkerColor>#7e0021</MarkerColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>2.6662636033857319</Maximum>
+						<Minimum>2.2515114873035067</Minimum>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>0.60117647058823565</Maximum>
+						<Minimum>-0.60588235294117609</Minimum>
+					</Axis>
+					<Axis index="2" enabled="0" autoscale="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<Maximum>605.28462558648243</Maximum>
+						<Minimum>605.27514452576565</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>h|v [$filename]</TitleText>
+					<Legend>
+						<Position>Inside</Position>
+						<MaxColumns>2</MaxColumns>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+		<Mapper name="h|v [$filename]">
+			<Extractors>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall_ref.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+				<Extractor>
+					<DataIOFileName>fmus_1.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall/BouncingBall/results/values.csv?1|2</DataIOFileName>
+					<CutType>NoCut</CutType>
+					<DataFormat>DF_2D</DataFormat>
+					<DataType>T_REFERENCE</DataType>
+					<ColumnIndex>1</ColumnIndex>
+				</Extractor>
+			</Extractors>
+			<ChartModel chartType="2D">
+				<SeriesProperties>
+					<Series>
+						<TitleText>$quantity - 0.0.2</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#dc6836</PenColor>
+						<MarkerColor>#dc6836</MarkerColor>
+						<MarkerSize>7</MarkerSize>
+					</Series>
+					<Series>
+						<TitleText>$quantity - 0.0.1</TitleText>
+						<MarkerStyle>0</MarkerStyle>
+						<PenColor>#5e2009</PenColor>
+						<MarkerColor>#5e2009</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>v (MasterSim) - 0.0.2</TitleText>
+						<MarkerColor>#000000</MarkerColor>
+					</Series>
+					<Series>
+						<TitleText>v (MasterSim) - 0.0.1</TitleText>
+						<PenColor>#ff00ff</PenColor>
+						<MarkerColor>#ff00ff</MarkerColor>
+					</Series>
+				</SeriesProperties>
+				<AxisProperties>
+					<Axis index="0" autoscale="0">
+						<TitleText>Zeit [$unit]</TitleText>
+						<TitleFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">s</IBK:Unit>
+						<Maximum>2.6861445783132529</Maximum>
+						<Minimum>1.4295180722891567</Minimum>
+					</Axis>
+					<Axis index="1" autoscale="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<IBK:Unit name="AxisUnit">-</IBK:Unit>
+						<Maximum>2.5</Maximum>
+						<Minimum>-2.3741176470588234</Minimum>
+					</Axis>
+					<Axis index="2" enabled="0" autoscale="0">
+						<TitleText>$quantity [$unit]</TitleText>
+						<TitleFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</TitleFont>
+						<LabelFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</LabelFont>
+						<Maximum>605.28215469683812</Maximum>
+						<Minimum>605.27790610830937</Minimum>
+					</Axis>
+				</AxisProperties>
+				<ChartProperties>
+					<TitleText>h|v [$filename]</TitleText>
+					<TitleFont>.SF NS Text,9,-1,5,50,0,0,0,0,0</TitleFont>
+					<Legend>
+						<Position>Inside</Position>
+						<MaxColumns>1</MaxColumns>
+						<Font>.SF NS Text,8,-1,5,50,0,0,0,0,0</Font>
+					</Legend>
+				</ChartProperties>
+			</ChartModel>
+		</Mapper>
+	</Mappers>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="1" size1="1" size2="1" orientation="2" />
+		<FocusedWidget>0</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>
