@@ -347,16 +347,16 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	1.0	win64	SimulationX-3.7.41138	passed	WRMS(revolute1.w) = 0.15941946829940068;WRMS(revolute2.w) = 0.18399734586640398
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_Engine1b	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_Rectifier	1.0	win64	SimulationX-3.7.41138	passed	WRMS(Capacitor1.i) = 65.37922946276984;WRMS(IdealDiode3.v) = 31.14758105765111
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Resource	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Stair	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_VanDerPol	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_BouncingBall	1.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Dahlquist	1.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Resource	1.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Stair	1.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_VanDerPol	1.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	1.0	win64	Test-FMUs-0.0.1	passed	WRMS(h) = 1.5318007383129322;WRMS(v) = 67.77686130483112
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	1.0	win64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.0062547430900313766
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Resource	1.0	win64	Test-FMUs-0.0.1	passed	WRMS(y) = 0.0
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Stair	1.0	win64	Test-FMUs-0.0.1	passed	WRMS(counter) = 42.06691273002863
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_VanDerPol	1.0	win64	Test-FMUs-0.0.1	passed	WRMS(x0) = 0.3812008650423192;WRMS(x1) = 0.37011006292314946
+18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_BouncingBall	1.0	win64	Test-FMUs-0.0.2	passed	WRMS(h) = 8.254393196809144;WRMS(v) = 98.94848788281526
+18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Dahlquist	1.0	win64	Test-FMUs-0.0.2	passed	WRMS(x) = 6.368599604568692
+18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Resource	1.0	win64	Test-FMUs-0.0.2	passed	WRMS(y) = 0.0
+18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_Stair	1.0	win64	Test-FMUs-0.0.2	passed	WRMS(counter) = 41.12715178376706
+18.07.2019 12:10:57	fmus_1.0_cs_win64_Test-FMUs_0.0.2_VanDerPol	1.0	win64	Test-FMUs-0.0.2	passed	WRMS(x0) = 41.465879816214056;WRMS(x1) = 42.96257628288455
 17.07.2019 20:12:23	fmus_2.0_cs_arm-linux-gnueabi_OpenModelica_v1.11.0_FmuExportCrossCompile	2.0	arm-linux-gnueabi	OpenModelica-v1.11.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_arm-linux-gnueabi_OpenModelica_v1.11.0_RoomHeating_OM_RH	2.0	arm-linux-gnueabi	OpenModelica-v1.11.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_arm-linux-gnueabi_OpenModelica_v1.11.0_WaterTank_Control	2.0	arm-linux-gnueabi	OpenModelica-v1.11.0	failed	Not calculated, yet
@@ -757,18 +757,18 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	2.0	win64	SimulationX-3.7.41138	passed	WRMS(revolute1.w) = 0.1587102326486843;WRMS(revolute2.w) = 0.18423493457778137
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Engine1b	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Rectifier	2.0	win64	SimulationX-3.7.41138	passed	WRMS(Capacitor1.i) = 65.38075608072663;WRMS(IdealDiode3.v) = 31.14758106519928
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	2.0	win64	Test-FMUs-0.0.1	rejected	Test case is marked 'notCompliantWithLatestRules'.
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	2.0	win64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.0062547430900313766
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Feedthrough	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Resource	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Stair	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_VanDerPol	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_BouncingBall	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Dahlquist	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Resource	2.0	win64	Test-FMUs-0.0.1	passed	WRMS(y) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Stair	2.0	win64	Test-FMUs-0.0.1	passed	WRMS(counter) = 42.06691273002863
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_VanDerPol	2.0	win64	Test-FMUs-0.0.1	passed	WRMS(x0) = 0.3812008650423192;WRMS(x1) = 0.37011006292314946
+18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_BouncingBall	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(h) = 8.254393196809144;WRMS(v) = 98.94848788281526
+18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Dahlquist	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(x) = 6.368599604568692
 18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Feedthrough	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Resource	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Stair	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_VanDerPol	2.0	win64	Test-FMUs-0.0.2	failed	Not calculated, yet
+18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Resource	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(y) = 0.0
+18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Stair	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(counter) = 41.12715178376706
+18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_VanDerPol	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(x0) = 41.465879816214056;WRMS(x1) = 42.96257628288455
 17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_FmuTL_VelocityController	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmucontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmufuelratecontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
