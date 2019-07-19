@@ -696,14 +696,14 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_MixtureGases	2.0	win64	Dymola-2017	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_Rectifier	2.0	win64	Dymola-2017	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_BooleanNetwork1	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_ControlledTemperature	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_CoupledClutches	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_DFFREG	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Engine1b	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_ControlledTemperature	2.0	win64	Dymola-2019FD01	passed	WRMS(heatCapacitor_T) = 0.20101337933369753;WRMS(switch_Controll) = 69.59774952301696
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_CoupledClutches	2.0	win64	Dymola-2019FD01	passed	WRMS(J1_w) = 0.478210957508296;WRMS(J2_w) = 0.309441155236518;WRMS(J3_w) = 0.3252035147935851;WRMS(J4_w) = 1.761847965186758
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_DFFREG	2.0	win64	Dymola-2019FD01	passed	WRMS(dataOut1) = 71.75748447171212;WRMS(dataOut2) = 84.39494725697222
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Engine1b	2.0	win64	Dymola-2019FD01	passed	WRMS(Piston_r2) = 14.386412480746484;WRMS(Inertia_w) = 9.937485534218672
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_IntegerNetwork1	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_MixtureGases	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_MixtureGases	2.0	win64	Dymola-2019FD01	passed	WRMS(der_p) = 0.2491682765821296;WRMS(der_T) = 0.231518909457977
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Rectifier	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_fullRobot	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_fullRobot	2.0	win64	Dymola-2019FD01	passed	WRMS(axis1_w) = 0.5591447921149562;WRMS(axis2_w) = 0.6338667284091659;WRMS(axis3_w) = 0.6442646028440573;WRMS(axis4_w) = 2.6087572210029593;WRMS(axis5_w) = 2.1896281912354927;WRMS(axis6_w) = 3.7025896680112917
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_Linear_Pos	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_PneumaticActuator	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_VanDerPol	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
