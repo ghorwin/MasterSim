@@ -38,11 +38,13 @@ public:
 
 	/*! Returns a variable identified by value reference.
 		\deprecated remove, 'valueReference' are unique within a model, regardless of variable type, use variableByRef(unsigned int) instead
-
 	*/
 	const FMIVariable & variableByRef(FMIVariable::VarType varType, unsigned int valueReference) const;
 
-	/*! Returns a variable identified by value reference. */
+	/*! Returns a variable identified by value reference.
+		In case of several variables using the same value reference (synonymous variables), the preference is given to "output" type
+		variables, before other causality type variables.
+	*/
 	const FMIVariable & variableByRef(unsigned int valueReference) const;
 
 	std::string		m_modelName;

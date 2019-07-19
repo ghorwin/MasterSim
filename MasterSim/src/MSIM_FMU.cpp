@@ -149,18 +149,31 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 		// now append internal variables
 		for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 			const FMIVariable & var = m_modelDescription.m_variables[i];
-			if (var.m_causality == FMIVariable::C_INTERNAL || var.m_causality == FMIVariable::C_PARAMETER || var.m_causality == FMIVariable::C_OTHER) {
-				switch (var.m_type) {
-					case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-					case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-					case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-					case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-					default:
-						IBK_ASSERT_X(false, "bad variable initialization");
-				}
+			switch (var.m_type) {
+				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				default:
+					IBK_ASSERT_X(false, "bad variable initialization");
 			}
 		}
 	}
+
+	// there is one problem to be adressed:
+	// a variable "TRes" with valueRef 20 is defined as "output" -> valueRef 20 is stoed in m_doubleValuesRefs
+	// another variable "Tx", also with valuesRef 20 is defined as "internal", but earlier in the list of variables
+
+	// when creating the output files, the captions are created by looking up the variable by valueReference -> 20 yields "Tx", so
+	// the caption of the output column will be "Tx", despite the "TRes" variable being the actual output variable
+
+	// Solution: (quick and dirty)
+	// - enable write internal variables and include "all variables" -> this will create the synonym variables list which will
+	//   then also include "TRes" -> post-processing may then resolve the synonymous variables
+
+	// Solution 2: (proper)
+	// - implement lookup preference when resolving variables by valueRef - first glob all variables with same value reference, then
+	//   pick "output" type variables before resolving "internal" or "parameter" variables
 }
 
 
