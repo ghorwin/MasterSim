@@ -337,16 +337,16 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Silver_3.5_Compute	1.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Silver_3.5_egs	1.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Silver_3.5_lights_control	1.0	win64	Silver-3.5	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_ControlledTemperature	1.0	win64	SimulationX-3.6	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_CoupledClutches	1.0	win64	SimulationX-3.6	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_ControlledTemperature	1.0	win64	SimulationX-3.6	passed	WRMS(temperatureSensor.T) = 0.48455150638554056
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_CoupledClutches	1.0	win64	SimulationX-3.6	passed	WRMS(J1.w) = 4.372858714878475;WRMS(J2.w) = 7.3557282825469805;WRMS(J3.w) = 7.4276295175844815;WRMS(J4.w) = 8.585438131285134
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_DFFREG	1.0	win64	SimulationX-3.6	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_Engine1b	1.0	win64	SimulationX-3.6	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_Rectifier	1.0	win64	SimulationX-3.6	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_ControlledTemperature	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_CoupledClutches	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.6_Rectifier	1.0	win64	SimulationX-3.6	passed	WRMS(Capacitor1.v) = 1.927000455975153;WRMS(IdealDiode3.off) = 109.91000817059857
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_ControlledTemperature	1.0	win64	SimulationX-3.7.41138	passed	WRMS(TRes) = 0.14058894290025062
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_CoupledClutches	1.0	win64	SimulationX-3.7.41138	passed	WRMS(J1.w) = 0.5474846420596704;WRMS(J2.w) = 0.7419569057594273;WRMS(J3.w) = 0.7762330477297313;WRMS(J4.w) = 4.055681788317064
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	1.0	win64	SimulationX-3.7.41138	passed	WRMS(revolute1.w) = 0.15941946829940068;WRMS(revolute2.w) = 0.18399734586640398
 17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_Engine1b	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_Rectifier	1.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_SimulationX_3.7.41138_Rectifier	1.0	win64	SimulationX-3.7.41138	passed	WRMS(Capacitor1.i) = 65.37922946276984;WRMS(IdealDiode3.v) = 31.14758105765111
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Test-FMUs_0.0.1_Resource	1.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
@@ -752,11 +752,11 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_Compute	2.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_egs	2.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_lights_control	2.0	win64	Silver-3.5	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_ControlledTemperature	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_CoupledClutches	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_ControlledTemperature	2.0	win64	SimulationX-3.7.41138	passed	WRMS(TRes) = 0.14058894290025062
+17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_CoupledClutches	2.0	win64	SimulationX-3.7.41138	passed	WRMS(J1.w) = 0.5474846420596704;WRMS(J2.w) = 0.7419569057594273;WRMS(J3.w) = 0.7762330477297313;WRMS(J4.w) = 4.055681788317064
+17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	2.0	win64	SimulationX-3.7.41138	passed	WRMS(revolute1.w) = 0.1587102326486843;WRMS(revolute2.w) = 0.18423493457778137
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Engine1b	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Rectifier	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Rectifier	2.0	win64	SimulationX-3.7.41138	passed	WRMS(Capacitor1.i) = 65.38075608072663;WRMS(IdealDiode3.v) = 31.14758106519928
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Feedthrough	2.0	win64	Test-FMUs-0.0.1	failed	Not calculated, yet
