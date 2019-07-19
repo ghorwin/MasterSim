@@ -17,6 +17,10 @@ proj.launch-config = {loc('cross_check.py'): ('project',
          ''))}
 proj.main-file = loc('glob_results.py')
 [user attributes]
+debug.breakpoints = {loc('glob_results.py'): {359: (0,
+        None,
+        1,
+        0)}}
 debug.err-values = {loc('cross_check.py'): {},
                     loc('glob_results.py'): {}}
 debug.recent-run-args = {loc('cross_check.py'): [u'-x -v 1 /home/ghorwin/git/fmi-cross-check/',
@@ -483,14 +487,14 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
                                 'zoom': 0L}),
                               (loc('glob_results.py'),
                                {'attrib-starts': [],
-                                'code-line': '\tprint("Existing db read with'\
-        ' {} entries".format(len(results)) )\r\n',
-                                'first-line': 273L,
+                                'code-line': '\t\t\t\tcres.result = "rejecte'\
+        'd"\r\n',
+                                'first-line': 342L,
                                 'folded-linenos': [],
-                                'sel-line': 278L,
-                                'sel-line-start': 9087L,
-                                'selection_end': 9087L,
-                                'selection_start': 9087L,
+                                'sel-line': 358L,
+                                'sel-line-start': 12264L,
+                                'selection_end': 12292L,
+                                'selection_start': 12292L,
                                 'zoom': 0L}),
                               (loc('MasterSimTestGenerator.py'),
                                {'attrib-starts': [('MasterSimTestGenerator|0'\
@@ -523,7 +527,7 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
         'tab_location': 'top',
         'traversal_pos': ((1,
                            0),
-                          1563535480.527),
+                          1563535555.857),
         'user_data': {}},
                  'saved_notebook_display': None,
                  'split_percents': {},
