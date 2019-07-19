@@ -1,6 +1,34 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.7.0
+---------------------------
+This release is centered around standard compliance - a lot of small adjustments were
+necessary, to run FMUs from very different tools.
+
+One major improvement is the ability of the user interfance and solver to treat csv-format 
+time series files (format specs see wiki) as a calculation slave that generates variables
+by means of linear interpolation between tabulated values.
+
+Another major addition is the ability to specify slave-specific parameter values in the user interface.
+
+Here's a list of all features and bug fixes (details can be checked in the ticket system of the 
+SourceForge project):
+
+* Feature: Ticket #50 - Enable output of parameters and locals
+* Feature: Ticket #48 - Detect synonymous variables and create a file that holds this information
+* Feature: Ticket #47 - Distinguish between valuereference and value index when writing outputs
+* Feature: Ticket #46 - Raise error if simulation is started that does not generate any outputs
+* Feature: Ticket #43 - Add UI support for selection csv/​tsv files as input files.
+* Feature: Ticket #42 - Add test case for FileReader slave
+* Feature: Ticket #41 - Add feature that keeps application settings when upgrading to newer version
+* Feature: Ticket #40 - Add shortcuts Ctrl+O (open project) and F9 (run simulation)
+* Feature: Ticket #39 - Read internal variables and add option to write outputs for internal variables
+* Bugfix:  Ticket #37 - Fix start page (recently opened projects and examples)
+* Feature: Ticket #31 - Allow specifying fixed/​tunable parameters in GUI
+* Feature: Ticket #29 - Enable reading of CSV-files with input variables and using them in connection graph
+
+
 Changelog for Version 0.6.0
 ---------------------------
 Key focus in this release was the ability to run quite a lot of the FMU
