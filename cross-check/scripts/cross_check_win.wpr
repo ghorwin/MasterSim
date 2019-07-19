@@ -17,10 +17,6 @@ proj.launch-config = {loc('cross_check.py'): ('project',
          ''))}
 proj.main-file = loc('glob_results.py')
 [user attributes]
-debug.breakpoints = {loc('glob_results.py'): {359: (0,
-        None,
-        1,
-        0)}}
 debug.err-values = {loc('cross_check.py'): {},
                     loc('glob_results.py'): {}}
 debug.recent-run-args = {loc('cross_check.py'): [u'-x -v 1 /home/ghorwin/git/fmi-cross-check/',
@@ -487,14 +483,14 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
                                 'zoom': 0L}),
                               (loc('glob_results.py'),
                                {'attrib-starts': [],
-                                'code-line': '\t\t\t\tcres.result = "rejecte'\
-        'd"\r\n',
-                                'first-line': 342L,
+                                'code-line': '\t\t\tif os.path.exists(reject'\
+        'edFile):\r\n',
+                                'first-line': 312L,
                                 'folded-linenos': [],
-                                'sel-line': 358L,
-                                'sel-line-start': 12264L,
-                                'selection_end': 12292L,
-                                'selection_start': 12292L,
+                                'sel-line': 347L,
+                                'sel-line-start': 11799L,
+                                'selection_end': 11834L,
+                                'selection_start': 11834L,
                                 'zoom': 0L}),
                               (loc('MasterSimTestGenerator.py'),
                                {'attrib-starts': [('MasterSimTestGenerator|0'\
@@ -527,7 +523,7 @@ guimgr.overall-gui-state = {'windowing-policy': 'combined-window',
         'tab_location': 'top',
         'traversal_pos': ((1,
                            0),
-                          1563535555.857),
+                          1563545202.213),
         'user_data': {}},
                  'saved_notebook_display': None,
                  'split_percents': {},

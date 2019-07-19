@@ -611,6 +611,22 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 								"a summary of the data is shown below:"));
 	lay->addWidget(label);
 	MSIMLogWidget * logWidget = new MSIMLogWidget(this);
+	QFont f;
+#if defined(Q_OS_MAC) // Q_OS_UNIX
+
+	const char * const FIXED_FONT_FAMILY = "Monaco";
+
+#elif defined(Q_OS_UNIX)
+
+	const char * const FIXED_FONT_FAMILY = "Monospace";
+
+#else
+
+	const char * const FIXED_FONT_FAMILY = "Consolas";
+
+#endif
+	f.setFamily(FIXED_FONT_FAMILY);
+	logWidget->setFont(f);
 	lay->addWidget(logWidget);
 	dlg.setLayout(lay);
 	dlg.resize(1200,800);

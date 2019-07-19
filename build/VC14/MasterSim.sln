@@ -11,8 +11,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libz", "..\..\externals\zli
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libMinizip", "..\..\externals\minizip\projects\VC14\libMinizip.vcxproj", "{D77F4B94-C821-4CD2-99F2-319A777A07BA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libDataIO", "..\..\externals\DataIO\projects\VC14\libDataIO.vcxproj", "{9E663452-9758-4911-8CD7-BD52A4642D15}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libIBK", "..\..\externals\IBK\projects\VC14\libIBK.vcxproj", "{ADD5097F-8DA9-4E93-B3DC-7FBE40CC3E0D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libTiCPP", "..\..\externals\TiCPP\projects\VC14\libTiCPP.vcxproj", "{51F2CF62-3D4D-4367-BD53-16026E36EE61}"
@@ -59,14 +57,6 @@ Global
 		{D77F4B94-C821-4CD2-99F2-319A777A07BA}.Release|x64.Build.0 = Release|x64
 		{D77F4B94-C821-4CD2-99F2-319A777A07BA}.Release|x86.ActiveCfg = Release|Win32
 		{D77F4B94-C821-4CD2-99F2-319A777A07BA}.Release|x86.Build.0 = Release|Win32
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Debug|x64.ActiveCfg = Debug|x64
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Debug|x64.Build.0 = Debug|x64
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Debug|x86.ActiveCfg = Debug|Win32
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Debug|x86.Build.0 = Debug|Win32
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Release|x64.ActiveCfg = Release|x64
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Release|x64.Build.0 = Release|x64
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Release|x86.ActiveCfg = Release|Win32
-		{9E663452-9758-4911-8CD7-BD52A4642D15}.Release|x86.Build.0 = Release|Win32
 		{ADD5097F-8DA9-4E93-B3DC-7FBE40CC3E0D}.Debug|x64.ActiveCfg = Debug|x64
 		{ADD5097F-8DA9-4E93-B3DC-7FBE40CC3E0D}.Debug|x64.Build.0 = Debug|x64
 		{ADD5097F-8DA9-4E93-B3DC-7FBE40CC3E0D}.Debug|x86.ActiveCfg = Debug|Win32

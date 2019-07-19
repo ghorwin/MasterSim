@@ -24,37 +24,40 @@
     <ClCompile Include="..\..\src\MSIM_AlgorithmNewton.cpp" />
     <ClCompile Include="..\..\src\MSIM_ArgParser.cpp" />
     <ClCompile Include="..\..\src\MSIM_Constants.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FileReaderSlave.cpp" />
     <ClCompile Include="..\..\src\MSIM_FMIType.cpp" />
     <ClCompile Include="..\..\src\MSIM_FMIVariable.cpp" />
     <ClCompile Include="..\..\src\MSIM_FMU.cpp" />
     <ClCompile Include="..\..\src\MSIM_FMUManager.cpp" />
+    <ClCompile Include="..\..\src\MSIM_FMUSlave.cpp" />
     <ClCompile Include="..\..\src\MSIM_MasterSim.cpp" />
     <ClCompile Include="..\..\src\MSIM_ModelDescription.cpp" />
     <ClCompile Include="..\..\src\MSIM_OutputWriter.cpp" />
     <ClCompile Include="..\..\src\MSIM_ProgressFeedback.cpp" />
     <ClCompile Include="..\..\src\MSIM_Project.cpp" />
-    <ClCompile Include="..\..\src\MSIM_Slave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\externals\DataIO\src\DataIO" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\MSIM_AbstractAlgorithm.h" />
+    <ClInclude Include="..\..\src\MSIM_AbstractSlave.h" />
     <ClInclude Include="..\..\src\MSIM_AlgorithmGaussJacobi.h" />
     <ClInclude Include="..\..\src\MSIM_AlgorithmGaussSeidel.h" />
     <ClInclude Include="..\..\src\MSIM_AlgorithmNewton.h" />
     <ClInclude Include="..\..\src\MSIM_ArgParser.h" />
     <ClInclude Include="..\..\src\MSIM_Constants.h" />
+    <ClInclude Include="..\..\src\MSIM_FileReaderSlave.h" />
     <ClInclude Include="..\..\src\MSIM_FMIType.h" />
     <ClInclude Include="..\..\src\MSIM_FMIVariable.h" />
     <ClInclude Include="..\..\src\MSIM_FMU.h" />
     <ClInclude Include="..\..\src\MSIM_FMUManager.h" />
+    <ClInclude Include="..\..\src\MSIM_FMUSlave.h" />
     <ClInclude Include="..\..\src\MSIM_MasterSim.h" />
     <ClInclude Include="..\..\src\MSIM_ModelDescription.h" />
     <ClInclude Include="..\..\src\MSIM_OutputWriter.h" />
     <ClInclude Include="..\..\src\MSIM_ProgressFeedback.h" />
     <ClInclude Include="..\..\src\MSIM_Project.h" />
-    <ClInclude Include="..\..\src\MSIM_Slave.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0901DB95-829A-403F-BCC7-31E60D6412AB}</ProjectGuid>
