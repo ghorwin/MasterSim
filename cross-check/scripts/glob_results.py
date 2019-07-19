@@ -356,7 +356,8 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 				modDate = os.path.getmtime(rejectedFile)
 				date = datetime.fromtimestamp(modDate)
 				lines = [l.strip() for l in lines]
-				cres = CrossCheckResult(date, relPath[len(MSIM_DIRECTORY)+1:], pathParts[1], pathParts[3], pathParts[4]+"-"+pathParts[5], "rejected", ",".join(lines))
+				cres.result = "rejected"
+				cres.note = ",".join(lines)
 				results[hash(cres)] = cres
 				continue
 
