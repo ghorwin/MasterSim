@@ -210,8 +210,8 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		}
 	}
 	// if we have at least one synonymous variable, write the respective file
-	std::stringstream::pos_type offset = synonymousVars.tellp();
-	if (offset != 0) {
+	std::string fileContent = synonymousVars.str();
+	if (fileContent.size() != 0) {
 		IBK::Path synFilename = m_resultsDir / "synonymous_variables.txt";
 	#ifdef _MSC_VER
 		std::ofstream synStream(synFilename.wstr().c_str());
