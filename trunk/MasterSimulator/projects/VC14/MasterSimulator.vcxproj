@@ -167,9 +167,6 @@
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\externals\DataIO\projects\VC14\libDataIO.vcxproj">
-      <Project>{9e663452-9758-4911-8cd7-bd52a4642d15}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\externals\IBKMK\projects\VC14\libIBKMK.vcxproj">
       <Project>{a81bbb5a-756a-40d8-acf1-d5ad16c6f95f}</Project>
     </ProjectReference>
