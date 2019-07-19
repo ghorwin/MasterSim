@@ -57,7 +57,10 @@
     <ClCompile Include="..\..\src\MSIM_Project.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\MSIM_Slave.cpp">
+    <ClCompile Include="..\..\src\MSIM_FileReaderSlave.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\MSIM_FMUSlave.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,7 +113,13 @@
     <ClInclude Include="..\..\src\MSIM_Project.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\MSIM_Slave.h">
+    <ClInclude Include="..\..\src\MSIM_AbstractSlave.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\MSIM_FileReaderSlave.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\MSIM_FMUSlave.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
