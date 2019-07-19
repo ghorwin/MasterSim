@@ -74,12 +74,12 @@ def runMasterSim(projectFile, workingDirectory):
 			return -2
 	try:
 		if platform.system() == "Windows":
-			MASTERSIM_SOLVER = "../bin/release_x64/MasterSimulator"
+			MASTERSIM_SOLVER = "../bin/release_x64/MasterSimulator.exe"
 		else:
 			MASTERSIM_SOLVER = "../bin/release/MasterSimulator"
 		cmdline = [MASTERSIM_SOLVER, projectFile, '--verbosity-level=0']
 		if platform.system() == "Windows":
-			cmdline.append['-x']
+			cmdline.append('-x')
 			solver_process = subprocess.Popen(cmdline, creationflags=subprocess.CREATE_NEW_CONSOLE,
 		                                      cwd=workingDirectory)
 		else:
