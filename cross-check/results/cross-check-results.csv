@@ -420,35 +420,35 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_c-code_dSPACE_TargetLink_Release_2018-B_FmuTL_VelocityController	2.0	c-code	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_c-code_dSPACE_TargetLink_Release_2018-B_Fmucontroller	2.0	c-code	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_c-code_dSPACE_TargetLink_Release_2018-B_Fmufuelratecontroller	2.0	c-code	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_20sim_4.6.4.8004_TorsionBar	2.0	darwin64	20sim-4.6.4.8004	passed	WRMS(LoadDiskRev) = 3.56056108341e-05;WRMS(MotorDiskRev) = 2.8536461594e-07
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_ControlledTemperature	2.0	darwin64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_CoupledClutches	2.0	darwin64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_Rectifier	2.0	darwin64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_ControlledTemperature	2.0	darwin64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_CoupledClutches	2.0	darwin64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_Rectifier	2.0	darwin64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_ControlledTemperature	2.0	darwin64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_CoupledClutches	2.0	darwin64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_Rectifier	2.0	darwin64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_ControlledTemperature	2.0	darwin64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_CoupledClutches	2.0	darwin64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_Rectifier	2.0	darwin64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_ControlledTemperature	2.0	darwin64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_CoupledClutches	2.0	darwin64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_Rectifier	2.0	darwin64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_7.01_ControlledTemperature	2.0	darwin64	MapleSim-7.01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall	2.0	darwin64	Test-FMUs-0.0.1	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_20sim_4.6.4.8004_TorsionBar	2.0	darwin64	20sim-4.6.4.8004	passed	WRMS(LoadDiskRev) = 3.56098581825e-05;WRMS(MotorDiskRev) = 2.67843747075e-07
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_ControlledTemperature	2.0	darwin64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_CoupledClutches	2.0	darwin64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.1_Rectifier	2.0	darwin64	MapleSim-2015.1	passed	WRMS(outputs) = 1.75793384363
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_ControlledTemperature	2.0	darwin64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_CoupledClutches	2.0	darwin64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2015.2_Rectifier	2.0	darwin64	MapleSim-2015.2	passed	WRMS(outputs) = 1.75793384363
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_ControlledTemperature	2.0	darwin64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_CoupledClutches	2.0	darwin64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.1_Rectifier	2.0	darwin64	MapleSim-2016.1	passed	WRMS(outputs) = 1.75793384363
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_ControlledTemperature	2.0	darwin64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_CoupledClutches	2.0	darwin64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2016.2_Rectifier	2.0	darwin64	MapleSim-2016.2	passed	WRMS(outputs) = 1.75793384363
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_ControlledTemperature	2.0	darwin64	MapleSim-2018	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_CoupledClutches	2.0	darwin64	MapleSim-2018	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_2018_Rectifier	2.0	darwin64	MapleSim-2018	passed	WRMS(outputs) = 1.75793384363
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_MapleSim_7.01_ControlledTemperature	2.0	darwin64	MapleSim-7.01	passed	WRMS(outputs[1]) = 1.94032233244e-12;WRMS(outputs[2]) = 1.0485593799
+17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_BouncingBall	2.0	darwin64	Test-FMUs-0.0.1	rejected	﻿Test fmu is marked 'notCompliantWithLatestRules'
 17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_Dahlquist	2.0	darwin64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.00625474308999
 17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_Feedthrough	2.0	darwin64	Test-FMUs-0.0.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_Resource	2.0	darwin64	Test-FMUs-0.0.1	passed	WRMS(y) = 0.0
 17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_Stair	2.0	darwin64	Test-FMUs-0.0.1	passed	WRMS(counter) = 42.6426211203
 17.07.2019 20:12:23	fmus_2.0_cs_darwin64_Test-FMUs_0.0.1_VanDerPol	2.0	darwin64	Test-FMUs-0.0.1	passed	WRMS(x0) = 0.381200865105;WRMS(x1) = 0.37011006279
-18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Dahlquist	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
+18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_BouncingBall	2.0	darwin64	Test-FMUs-0.0.2	passed	WRMS(h) = 8.18379826881;WRMS(v) = 114.554072993
+18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Dahlquist	2.0	darwin64	Test-FMUs-0.0.2	passed	WRMS(x) = 6.36859960457
 18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Feedthrough	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Resource	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Stair	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
-18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_VanDerPol	2.0	darwin64	Test-FMUs-0.0.2	failed	Not calculated, yet
+18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Resource	2.0	darwin64	Test-FMUs-0.0.2	passed	WRMS(y) = 0.0
+18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_Stair	2.0	darwin64	Test-FMUs-0.0.2	passed	WRMS(counter) = 41.1271517838
+18.07.2019 12:11:40	fmus_2.0_cs_darwin64_Test-FMUs_0.0.2_VanDerPol	2.0	darwin64	Test-FMUs-0.0.2	passed	WRMS(x0) = 41.0172856127;WRMS(x1) = 43.349326433
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_20sim_4.6.4.8004_TorsionBar	2.0	linux32	20sim-4.6.4.8004	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_AMESim_15_ClassEAmplifier	2.0	linux32	AMESim-15	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_AMESim_15_MIS_cs	2.0	linux32	AMESim-15	failed	Not calculated, yet
