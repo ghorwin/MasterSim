@@ -162,6 +162,8 @@ void MasterSim::storeState(const IBK::Path & stateDirectory) {
 
 
 void MasterSim::simulate() {
+	const char * const FUNC_ID = "[MasterSim::simulate]";
+
 	// write initial statistics and header
 	if (m_args.m_verbosityLevel > 1)
 		writeStepStatistics();
@@ -185,9 +187,12 @@ void MasterSim::simulate() {
 			if (!m_enableVariableStepSizes && hRemaining < 1e-9) {
 				break; // do not exceed end time point if already very close to it, can happen due to rounding errors
 			}
-#ifdef PREVENT_OVERSHOOTING_AT_SIMULATION_END
-			m_hProposed = hRemaining;
-#endif //  PREVENT_OVERSHOOTING_AT_SIMULATION_END
+			if (m_project.m_preventOversteppingOfEndTime) {
+				if (m_hProposed - hRemaining > 1e-6)
+					IBK::IBK_Message(IBK::FormatString("Truncating last step by %1 to avoid overstepping end time.").arg(m_hProposed - hRemaining),
+									 IBK::MSG_WARNING, FUNC_ID, IBK::VL_STANDARD);
+				m_hProposed = hRemaining;
+			}
 		}
 
 		// Do an internal step with the selected master algorithm
