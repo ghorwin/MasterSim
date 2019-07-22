@@ -9,7 +9,7 @@ Steps:
 - read existing cross-check database file, default "results/cross-check-results.csv"
 
 - process entire directory structure in fmi-cross-check
-- for each directory (cs only), generate local path to working directory, 
+- for each directory (cs only), generate local path to working directory,
   as does the 'generate_mastersim_projects.py' script
 
 For example:
@@ -21,24 +21,24 @@ For example:
   entry object with "failed" status and "Not yet calculated" note
 
 - check if working directory exists:
-  if not, skip the case and continue to next case (this preserves status of cross-check cases 
+  if not, skip the case and continue to next case (this preserves status of cross-check cases
   of different platforms)
 
 - check if any of the files 'rejected', 'failed', 'passed' exist in working directory:
-  if so, read the file, update content of database entry accordingly (note), and in case 
+  if so, read the file, update content of database entry accordingly (note), and in case
   of 'rejected' or 'failed' files, create a corresponding file in the target
   result directory; then update database and continue to next case.
   In case of a 'passed' entry, simply continue to next case.
 
 - check if a msim project file exists in this working directory
-  if not, skip the case and continue to next case 
-  
+  if not, skip the case and continue to next case
+
 - check if the file 'xxx_ref.csv' exist:
-  if not, skip the case and continue to next case 
+  if not, skip the case and continue to next case
 
 - check if the file 'results/values.csv' exist:
   if not, run the MasterSim simulation on the file, afterwards try to read 'results/values.csv' again:
-  if that fails, skip the case and continue to next case 
+  if that fails, skip the case and continue to next case
 
 - read '/results/synonymous_variables.txt' file, if existing
 
@@ -172,7 +172,7 @@ class CSVFile:
 				colIndex = self.captions.index(synCaption)
 				# store index to the respective column
 				captionIndexes.append(colIndex)
-			
+
 		with open(csvFile, 'w') as f:
 			quotedCaptions = []
 			# loop over all captions
@@ -184,7 +184,7 @@ class CSVFile:
 				# reduce the number precision of the output file
 				timeStamp = l[0]
 				tval = float(timeStamp)
-				l[0] = "{:.5g}".format(tval)
+				l[0] = "{:.6g}".format(tval)
 				selectedValues = []
 				for i in captionIndexes:
 					selectedValues.append(l[i])
@@ -195,7 +195,7 @@ class CSVFile:
 class SynonymousVars:
 	def __init__(self):
 		self.variableSynonyms = dict()
-		
+
 	def read(self, synFile):
 		with open(synFile, 'r') as f:
 			lines = f.readlines()
@@ -208,7 +208,7 @@ class SynonymousVars:
 				if not outputVarName in self.variableSynonyms:
 					self.variableSynonyms[outputVarName] = []
 				self.variableSynonyms[outputVarName].append(varNames[2])
-				
+
 	def resolveVarName(self, varName):
 		"""Looks up output variable name for a variable synonyme.
 		Returns None if no such variable is defined sy synonymous variable.
@@ -344,7 +344,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			if not os.path.exists(relPath):
 				#print("skipped : {} - Working directory missing".format(relPath))
 				continue
-			
+
 			# check if a 'passed' file exists in the directory
 			passedFile = relPath + "/passed"
 			if os.path.exists(passedFile):
@@ -414,7 +414,7 @@ for root, dirs, files in os.walk(fullPath, topdown=False):
 			synVars = SynonymousVars()
 			if os.path.exists(synonymousVarsFile):
 				synVars.read(synonymousVarsFile)
-			
+
 
 			print ("Processing {}...".format(relPath))
 
@@ -533,29 +533,29 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 
 			mdFile = mdFile.format(modelName, "\n".join(notes), "\n".join(masterSimProject))
 			writeResultFile(resultsRoot, "passed", mdFile)
-			
+
 			resultCSV.write(resultsRoot + "/" + modelName + "_out.csv", referenceCSV.captions, synVars)
 			if 0:
 				# write computed results as CSV file
 				resCSV = CSVFile()
 				# use the same time stamps as the reference values file
 				# when transferring captions, only transfer those that exist in resultsCSV and referenceCSV
-				
+
 				resCSV.captions.append(referenceCSV.captions[0]) # time caption
 				for i in range(1, len(referenceCSV.captions)):
 					refIndex = i-1
 					refCaption = referenceCSV.captions[i] # 'captions' includes time column!
-		
+
 					# look up corresponding index of calculated values, skip unknown variables
 					if not refCaption in resultCSV.captions:
 						continue # this might cause the validation to fail, not sure though
 					resultIndex = resultCSV.captions.index(refCaption) # 'captions' includes time columns
-		
+
 					resultIndex = resultIndex - 1 # mind 0 based indexing of values vector
-		
+
 					# now compare values, first interpolate calculated data at time points of reference values
 					valuesInterpolated = np.interp(referenceCSV.time, resultCSV.time, resultCSV.values[resultIndex])
-					
+
 
 
 
@@ -563,12 +563,12 @@ Mind: project file is copied from working directory, hence relative path to fmu 
 
 with open(DATABASE_FILE,'w') as dbfile:
 	dbfile.write('Date\tFMUCase\tCS-Version\tPlatform\tTool\tResult\tNotes\n')
-	# need a sorted list of fmuCases, otherwise we cannot use svn efficiently to monitor changes 
+	# need a sorted list of fmuCases, otherwise we cannot use svn efficiently to monitor changes
 	fmuCaseList = []
 	for d in results:
 		fmuCaseList.append(results[d].fmuCase)
 	fmuCaseList.sort()
-	
+
 	for c in fmuCaseList:
 		dbfile.write(results[hash(c)].write() + '\n')
 print("New db written with {} entries".format(len(results)) )
