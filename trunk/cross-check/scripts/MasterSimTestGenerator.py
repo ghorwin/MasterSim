@@ -115,7 +115,7 @@ class MasterSimTestGenerator:
 					#dtOut = min(dtOut, dt)
 
 		simTime = self.simOptions['StopTime'] - self.simOptions['StartTime']
-		self.dtOut = simTime / 10000.0 # to get resonably fine output spacing
+		self.dtOut = simTime / 100.0 # to get resonably fine output spacing
 
 
 
