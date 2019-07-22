@@ -109,8 +109,8 @@ class CSVFile:
 				# extract units from tokens
 				self.captions = []
 				for t in tokens:
-					p1 = t.find('[')
-					p2 = t.find(']')
+					p1 = t.rfind('[')
+					p2 = t.rfind(']')
 					if p1 != -1 and p2 != -1 and p2 > p1:
 						t = t[:p1-1]
 					t = t.strip('\r\n')
