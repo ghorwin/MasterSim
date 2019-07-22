@@ -161,6 +161,11 @@ public:
 	*/
 	bool						m_adjustStepSize;
 
+	/*! If true (the default), MasterSim will truncate the last step such, that the end time will be hit exactly.
+		This is also done when constant-step size is defined by the FMU.
+	*/
+	bool						m_preventOversteppingOfEndTime;
+
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
 	unsigned int				m_maxIterations;
 
