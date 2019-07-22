@@ -6,36 +6,47 @@ Cross-check helper script, processes simulation results and generates/updates th
 
 Steps:
 
+- read existing cross-check database file, default "results/cross-check-results.csv"
+
 - process entire directory structure in fmi-cross-check
-- for each directory (cs only), generate local path as does the 'generate_mastersim_projects.py' script
+- for each directory (cs only), generate local path to working directory, 
+  as does the 'generate_mastersim_projects.py' script
 
 For example:
   from   ./fmi-cross-check/fmus/1.0/cs/linux64/JModelica.org/1.15/ControlledTemperature
   to     ./msim/fmus_1.0_cs_linux64_JModelica.org_1.15_ControlledTemperature
   (working directory)
 
+- extract existing cross-check entry from database for this directory, if missing, create a new
+  entry object with "failed" status and "Not yet calculated" note
+
+- check if working directory exists:
+  if not, skip the case and continue to next case (this preserves status of cross-check cases 
+  of different platforms)
+
+- check if any of the files 'rejected', 'failed', 'passed' exist in working directory:
+  if so, read the file, update content of database entry accordingly (note), and in case 
+  of 'rejected' or 'failed' files, create a corresponding file in the target
+  result directory; then update database and continue to next case.
+  In case of a 'passed' entry, simply continue to next case.
+
 - check if a msim project file exists in this working directory
-- check if a result directory exists
-- check if a values.csv file exists
-- read 'values.csv' file
-- read 'referenceValues.csv' file
-- read 'rejected', 'failed', 'passed' files if existing in working directory
-- create README.md file in cross-check directory with documentation of the validation process
-- if 'failed' exists, copy content of 'failed' file to README.md, create 'failed' file; done
-- if 'rejected' exists, copy content of 'rejected' file to README.md, create 'rejected' file; done
-- perform fairly strict value comparison for all quantities in 'referenceValues.csv'
-  - for each variable compared, add a line with the WRMS norm in README.md
+  if not, skip the case and continue to next case 
+  
+- check if the file 'xxx_ref.csv' exist:
+  if not, skip the case and continue to next case 
 
-- populate summary db table with following data for each case:
-  - case path
-  - cs version
-  - tool
-  - platform
-  - state (failed, rejected, success)
-  - comment
-  - details (content of readme file)
+- check if the file 'results/values.csv' exist:
+  if not, run the MasterSim simulation on the file, afterwards try to read 'results/values.csv' again:
+  if that fails, skip the case and continue to next case 
 
-  summary db file should be read/appended (to support cross-platform testing)
+- read '/results/synonymous_variables.txt' file, if existing
+
+- now perform variable comparison, and if within bounds:
+  create 'passed' file in target result directory, create 'xxx_out.csv' file in target directory,
+  update databae entry to show case has passed
+
+Finally, write updated database.
 """
 
 
