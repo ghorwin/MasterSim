@@ -260,45 +260,45 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_1.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel2_sf	1.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TriggeredSubsystems_sf	1.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_BooleanNetwork1	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_ControlledTemperature	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_CoupledClutches	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_DFFREG	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_MixtureGases	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_Rectifier	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_fullRobot	1.0	win64	Dymola-2015_FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_ControlledTemperature	1.0	win64	Dymola-2015_FD01	passed	WRMS(heatCapacitor_T) = 0.7477488353353364;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_CoupledClutches	1.0	win64	Dymola-2015_FD01	passed	WRMS(J1_w) = 0.3989962680991912;WRMS(J2_w) = 0.6814610023124129;WRMS(J3_w) = 0.9893493550044278;WRMS(J4_w) = 2.6808956340919563
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_DFFREG	1.0	win64	Dymola-2015_FD01	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_MixtureGases	1.0	win64	Dymola-2015_FD01	passed	WRMS(der_p) = 0.24923374651924365;WRMS(der_T) = 0.23493592846535458
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_Rectifier	1.0	win64	Dymola-2015_FD01	passed	WRMS(uDC) = 1.8448068418100292;WRMS(iAC[1]) = 38.99031088966157;WRMS(iAC[2]) = 50.57312657597094;WRMS(iAC[3]) = 76.37978023408682;WRMS(uAC[1]) = 47.20349328669486;WRMS(uAC[2]) = 64.70441416712231;WRMS(uAC[3]) = 46.84884827797074;WRMS(Losses) = 35.12500642343665
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2015_FD01_fullRobot	1.0	win64	Dymola-2015_FD01	passed	WRMS(axis1_w) = 0.5593100314809843;WRMS(axis2_w) = 0.6302427105752078;WRMS(axis3_w) = 0.6386869809288308;WRMS(axis4_w) = 2.586782551929055;WRMS(axis5_w) = 2.143326347882315;WRMS(axis6_w) = 3.6708009986252117
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_BooleanNetwork1	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_ControlledTemperature	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_CoupledClutches	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_DFFREG	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_Engine1b	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_ControlledTemperature	1.0	win64	Dymola-2016FD01	passed	WRMS(heatCapacitor_T) = 0.7477488353353364;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_CoupledClutches	1.0	win64	Dymola-2016FD01	passed	WRMS(J1_w) = 0.398996270926162;WRMS(J2_w) = 0.6814610031921707;WRMS(J3_w) = 0.9893493556548844;WRMS(J4_w) = 2.6808956326604276
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_DFFREG	1.0	win64	Dymola-2016FD01	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_Engine1b	1.0	win64	Dymola-2016FD01	passed	WRMS(Piston_r2) = 23.478442645792487;WRMS(Inertia_w) = 24.161971372707995
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_IntegerNetwork1	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_MixtureGases	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_Rectifier	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_fullRobot	1.0	win64	Dymola-2016FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_MixtureGases	1.0	win64	Dymola-2016FD01	passed	WRMS(der_p) = 0.24923374651924365;WRMS(der_T) = 0.23493592846535458
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_Rectifier	1.0	win64	Dymola-2016FD01	passed	WRMS(uDC) = 1.8448067586255326;WRMS(iAC[1]) = 38.990315394344755;WRMS(iAC[2]) = 50.5731171978102;WRMS(iAC[3]) = 76.3797615639495;WRMS(uAC[1]) = 47.203493691374746;WRMS(uAC[2]) = 64.70441418044538;WRMS(uAC[3]) = 46.848848347407404;WRMS(Losses) = 35.125000889771066
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016FD01_fullRobot	1.0	win64	Dymola-2016FD01	passed	WRMS(axis1_w) = 0.5593101515472733;WRMS(axis2_w) = 0.6302427933649664;WRMS(axis3_w) = 0.6386870702113253;WRMS(axis4_w) = 2.5867825798303206;WRMS(axis5_w) = 2.1433264068763296;WRMS(axis6_w) = 3.6708010342908715
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_BooleanNetwork1	1.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_ControlledTemperature	1.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_CoupledClutches	1.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_DFFREG	1.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_MixtureGases	1.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_Rectifier	1.0	win64	Dymola-2016	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_ControlledTemperature	1.0	win64	Dymola-2016	passed	WRMS(heatCapacitor_T) = 0.7477488353358328;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_CoupledClutches	1.0	win64	Dymola-2016	passed	WRMS(J1_w) = 0.39899629311354967;WRMS(J2_w) = 0.6814610100990772;WRMS(J3_w) = 0.9893493607593675;WRMS(J4_w) = 2.6808956214183257
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_DFFREG	1.0	win64	Dymola-2016	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_MixtureGases	1.0	win64	Dymola-2016	passed	WRMS(der_p) = 0.24923374651924365;WRMS(der_T) = 0.23493592846535458
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2016_Rectifier	1.0	win64	Dymola-2016	passed	WRMS(uDC) = 1.8448067514043989;WRMS(iAC[1]) = 38.990315703606605;WRMS(iAC[2]) = 50.573116703270976;WRMS(iAC[3]) = 76.37976052285315;WRMS(uAC[1]) = 47.20349366839792;WRMS(uAC[2]) = 64.70441421768491;WRMS(uAC[3]) = 46.84884823812025;WRMS(Losses) = 35.12500059118502
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_BooleanNetwork1	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_ControlledTemperature	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_CoupledClutches	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_DFFREG	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_Engine1b	1.0	win64	Dymola-2017	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_ControlledTemperature	1.0	win64	Dymola-2017	passed	WRMS(heatCapacitor_T) = 0.7477488353353364;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_CoupledClutches	1.0	win64	Dymola-2017	passed	WRMS(J1_w) = 0.39899626764514207;WRMS(J2_w) = 0.6814610022164399;WRMS(J3_w) = 0.9893493549330853;WRMS(J4_w) = 2.6808956342510832
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_DFFREG	1.0	win64	Dymola-2017	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_Engine1b	1.0	win64	Dymola-2017	passed	WRMS(Piston_r2) = 23.478442645969135;WRMS(Inertia_w) = 24.161971372666617
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_IntegerNetwork1	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_MixtureGases	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_Rectifier	1.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_fullRobot	1.0	win64	Dymola-2017	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_MixtureGases	1.0	win64	Dymola-2017	passed	WRMS(der_p) = 0.24923374651924365;WRMS(der_T) = 0.23493592846535458
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_Rectifier	1.0	win64	Dymola-2017	passed	WRMS(uDC) = 1.844806767537736;WRMS(iAC[1]) = 38.990315341340924;WRMS(iAC[2]) = 50.57311744665638;WRMS(iAC[3]) = 76.37976197999907;WRMS(uAC[1]) = 47.203493737699105;WRMS(uAC[2]) = 64.70441432075278;WRMS(uAC[3]) = 46.848848253745615;WRMS(Losses) = 35.12500103342034
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2017_fullRobot	1.0	win64	Dymola-2017	passed	WRMS(axis1_w) = 0.5585416500164487;WRMS(axis2_w) = 0.6301276731057376;WRMS(axis3_w) = 0.6388902982246425;WRMS(axis4_w) = 2.5879035836105992;WRMS(axis5_w) = 2.149694683848994;WRMS(axis6_w) = 3.6726282022270014
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_BooleanNetwork1	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_ControlledTemperature	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_CoupledClutches	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_DFFREG	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_Engine1b	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_ControlledTemperature	1.0	win64	Dymola-2019FD01	passed	WRMS(heatCapacitor_T) = 0.5464231144436035;WRMS(switch_Controll) = 118.67092160530913
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_CoupledClutches	1.0	win64	Dymola-2019FD01	passed	WRMS(J1_w) = 0.378772605471205;WRMS(J2_w) = 0.5068142951131392;WRMS(J3_w) = 0.7424058405143752;WRMS(J4_w) = 1.8046436448858132
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_DFFREG	1.0	win64	Dymola-2019FD01	passed	WRMS(dataOut1) = 71.75748447171212;WRMS(dataOut2) = 84.39494725697222
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_Engine1b	1.0	win64	Dymola-2019FD01	passed	WRMS(Piston_r2) = 23.47844264593186;WRMS(Inertia_w) = 24.161971372625104
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_IntegerNetwork1	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_MixtureGases	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_Rectifier	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_fullRobot	1.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_MixtureGases	1.0	win64	Dymola-2019FD01	passed	WRMS(der_p) = 0.24923374651924365;WRMS(der_T) = 0.23493592846535458
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_Rectifier	1.0	win64	Dymola-2019FD01	passed	WRMS(uDC) = 1.8136512546993566;WRMS(iAC[1]) = 36.03318475865596;WRMS(iAC[2]) = 45.689435774366004;WRMS(iAC[3]) = 68.14431567962778;WRMS(uAC[1]) = 44.50844984771527;WRMS(uAC[2]) = 57.39542684766144;WRMS(uAC[3]) = 42.46876138810217;WRMS(Losses) = 33.223648656007455
+17.07.2019 20:12:23	fmus_1.0_cs_win64_Dymola_2019FD01_fullRobot	1.0	win64	Dymola-2019FD01	passed	WRMS(axis1_w) = 0.5588442161892828;WRMS(axis2_w) = 0.6335940171983231;WRMS(axis3_w) = 0.643870070347558;WRMS(axis4_w) = 2.6085615345500686;WRMS(axis5_w) = 2.1895102258270747;WRMS(axis6_w) = 3.7029152383786297
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Easy5_2017.1_Linear_Pos	1.0	win64	Easy5-2017.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Easy5_2017.1_PneumaticActuator	1.0	win64	Easy5-2017.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_win64_Easy5_2017.1_VanDerPol	1.0	win64	Easy5-2017.1	failed	Not calculated, yet
@@ -671,30 +671,30 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_BooleanNetwork1	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_ControlledTemperature	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_CoupledClutches	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_DFFREG	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_ControlledTemperature	2.0	win64	Dymola-2015FD01	passed	WRMS(heatCapacitor_T) = 0.7580855051169767;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_CoupledClutches	2.0	win64	Dymola-2015FD01	passed	WRMS(J1_w) = 0.5425748689223694;WRMS(J2_w) = 0.6929255350111919;WRMS(J3_w) = 0.9981439435837306;WRMS(J4_w) = 2.698755694859082
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_DFFREG	2.0	win64	Dymola-2015FD01	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_IntegerNetwork1	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_Rectifier	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_Rectifier	2.0	win64	Dymola-2015FD01	passed	WRMS(uDC) = 1.8427834229648046;WRMS(iAC[1]) = 38.974441996427856;WRMS(iAC[2]) = 50.658141605406826;WRMS(iAC[3]) = 76.54254185134882;WRMS(uAC[1]) = 47.198609995452095;WRMS(uAC[2]) = 64.70848160108054;WRMS(uAC[3]) = 46.84941713650202;WRMS(Losses) = 35.189153155832656
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_BooleanNetwork1	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_ControlledTemperature	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_CoupledClutches	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_DFFREG	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_ControlledTemperature	2.0	win64	Dymola-2016FD01	passed	WRMS(heatCapacitor_T) = 0.7580855051169767;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_CoupledClutches	2.0	win64	Dymola-2016FD01	passed	WRMS(J1_w) = 0.5425748689138636;WRMS(J2_w) = 0.6929255349685477;WRMS(J3_w) = 0.9981439435509513;WRMS(J4_w) = 2.698755694808682
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_DFFREG	2.0	win64	Dymola-2016FD01	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_IntegerNetwork1	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_Rectifier	2.0	win64	Dymola-2016FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016FD01_Rectifier	2.0	win64	Dymola-2016FD01	passed	WRMS(uDC) = 1.8427835970080213;WRMS(iAC[1]) = 38.97444250749995;WRMS(iAC[2]) = 50.65814221369233;WRMS(iAC[3]) = 76.54254189075142;WRMS(uAC[1]) = 47.19861019887958;WRMS(uAC[2]) = 64.70848142497952;WRMS(uAC[3]) = 46.8494170700813;WRMS(Losses) = 35.18915382006084
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_BooleanNetwork1	2.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_ControlledTemperature	2.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_CoupledClutches	2.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_DFFREG	2.0	win64	Dymola-2016	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_ControlledTemperature	2.0	win64	Dymola-2016	passed	WRMS(heatCapacitor_T) = 0.7580855051169767;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_CoupledClutches	2.0	win64	Dymola-2016	passed	WRMS(J1_w) = 0.5425748693121606;WRMS(J2_w) = 0.6929255368263848;WRMS(J3_w) = 0.9981439449715565;WRMS(J4_w) = 2.6987556965606867
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_DFFREG	2.0	win64	Dymola-2016	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_IntegerNetwork1	2.0	win64	Dymola-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_Rectifier	2.0	win64	Dymola-2016	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2016_Rectifier	2.0	win64	Dymola-2016	passed	WRMS(uDC) = 1.842783596599619;WRMS(iAC[1]) = 38.974442559400686;WRMS(iAC[2]) = 50.65814231941052;WRMS(iAC[3]) = 76.54254193439735;WRMS(uAC[1]) = 47.198610151854524;WRMS(uAC[2]) = 64.70848146301768;WRMS(uAC[3]) = 46.84941695074472;WRMS(Losses) = 35.189153881560905
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_BooleanNetwork1	2.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_ControlledTemperature	2.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_CoupledClutches	2.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_DFFREG	2.0	win64	Dymola-2017	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_ControlledTemperature	2.0	win64	Dymola-2017	passed	WRMS(heatCapacitor_T) = 0.7580855051169767;WRMS(switch_Controll) = 156.37607753637255
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_CoupledClutches	2.0	win64	Dymola-2017	passed	WRMS(J1_w) = 0.5425748693605078;WRMS(J2_w) = 0.6929255370523093;WRMS(J3_w) = 0.9981439451422018;WRMS(J4_w) = 2.6987556967749016
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_DFFREG	2.0	win64	Dymola-2017	passed	WRMS(dataOut1) = 29.317656047261675;WRMS(dataOut2) = 34.48088846366453
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_IntegerNetwork1	2.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_MixtureGases	2.0	win64	Dymola-2017	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_Rectifier	2.0	win64	Dymola-2017	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_MixtureGases	2.0	win64	Dymola-2017	passed	WRMS(der_p) = 0.2491682765821296;WRMS(der_T) = 0.231518909457977
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2017_Rectifier	2.0	win64	Dymola-2017	passed	WRMS(uDC) = 1.8427838970424377;WRMS(iAC[1]) = 38.974444381370795;WRMS(iAC[2]) = 50.6581450612729;WRMS(iAC[3]) = 76.54254206408739;WRMS(uAC[1]) = 47.19861137067587;WRMS(uAC[2]) = 64.70848141806306;WRMS(uAC[3]) = 46.84941713375189;WRMS(Losses) = 35.189156173289206
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_BooleanNetwork1	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_ControlledTemperature	2.0	win64	Dymola-2019FD01	passed	WRMS(heatCapacitor_T) = 0.20101337933369753;WRMS(switch_Controll) = 69.59774952301696
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_CoupledClutches	2.0	win64	Dymola-2019FD01	passed	WRMS(J1_w) = 0.478210957508296;WRMS(J2_w) = 0.309441155236518;WRMS(J3_w) = 0.3252035147935851;WRMS(J4_w) = 1.761847965186758
@@ -702,7 +702,7 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Engine1b	2.0	win64	Dymola-2019FD01	passed	WRMS(Piston_r2) = 14.386412480746484;WRMS(Inertia_w) = 9.937485534218672
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_IntegerNetwork1	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_MixtureGases	2.0	win64	Dymola-2019FD01	passed	WRMS(der_p) = 0.2491682765821296;WRMS(der_T) = 0.231518909457977
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Rectifier	2.0	win64	Dymola-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Rectifier	2.0	win64	Dymola-2019FD01	passed	WRMS(uDC) = 1.8115863884450185;WRMS(iAC[1]) = 36.01168444804717;WRMS(iAC[2]) = 45.76010523658054;WRMS(iAC[3]) = 68.28442541124905;WRMS(uAC[1]) = 44.5041556503458;WRMS(uAC[2]) = 57.399196259245166;WRMS(uAC[3]) = 42.46876472130757;WRMS(Losses) = 33.27540075191158
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_fullRobot	2.0	win64	Dymola-2019FD01	passed	WRMS(axis1_w) = 0.5591447921149562;WRMS(axis2_w) = 0.6338667284091659;WRMS(axis3_w) = 0.6442646028440573;WRMS(axis4_w) = 2.6087572210029593;WRMS(axis5_w) = 2.1896281912354927;WRMS(axis6_w) = 3.7025896680112917
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_Linear_Pos	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_PneumaticActuator	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
