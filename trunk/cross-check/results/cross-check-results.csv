@@ -633,43 +633,43 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win32_dSPACE_TargetLink_Release_2018-B_FmuTL_VelocityController	2.0	win32	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win32_dSPACE_TargetLink_Release_2018-B_Fmucontroller	2.0	win32	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win32_dSPACE_TargetLink_Release_2018-B_Fmufuelratecontroller	2.0	win32	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_20sim_4.6.4.8004_TorsionBar	2.0	win64	20sim-4.6.4.8004	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_ClassEAmplifier	2.0	win64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_MIS_cs	2.0	win64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_fuelrail_cs	2.0	win64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Circle_SWC	2.0	win64	ASim-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Counter	2.0	win64	ASim-2019FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Speed_SWC	2.0	win64	ASim-2019FD01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_20sim_4.6.4.8004_TorsionBar	2.0	win64	20sim-4.6.4.8004	passed	WRMS(LoadDiskRev) = 9.435868240270192;WRMS(MotorDiskRev) = 7.1642568558408986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_ClassEAmplifier	2.0	win64	AMESim-15	passed	WRMS(U@resistance) = 15.450139000932866;WRMS(I@variable_resistance) = 73.35435684737989
+17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_MIS_cs	2.0	win64	AMESim-15	passed	WRMS(volume@INJ01) = 0.4020345681426726;WRMS(q@INJ01) = 9.650761975613179
+17.07.2019 20:12:23	fmus_2.0_cs_win64_AMESim_15_fuelrail_cs	2.0	win64	AMESim-15	passed	WRMS(p1@general_hydraulic_chamber) = 29.003157152928676;WRMS(p1@hydraulic_4) = 91.26465888859536;WRMS(q@volumesensor) = 93.18816773705592
+17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Circle_SWC	2.0	win64	ASim-2019FD01	passed	WRMS(Circle_SWC_output_Coords.x) = 9.347505256583758e-06;WRMS(Circle_SWC_output_Coords.y) = 8.987313648544923e-06
+17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Counter	2.0	win64	ASim-2019FD01	passed	WRMS(Counter_SWC_output_data) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_ASim_2019FD01_Speed_SWC	2.0	win64	ASim-2019FD01	passed	WRMS(Speed_SWC_output_data) = 4.735579654113661e-05
 17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_BooleanNetwork1	2.0	win64	CATIA-R2015x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_ControlledTemperature	2.0	win64	CATIA-R2015x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_CoupledClutches	2.0	win64	CATIA-R2015x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_DFFREG	2.0	win64	CATIA-R2015x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_Rectifier	2.0	win64	CATIA-R2015x	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_ControlledTemperature	2.0	win64	CATIA-R2015x	passed	WRMS(heatCapacitor_T) = 0.758091061471162;WRMS(switch_Controll) = 156.3761931488119
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_CoupledClutches	2.0	win64	CATIA-R2015x	passed	WRMS(J1_w) = 0.6356507321804515;WRMS(J2_w) = 0.7399434152621654;WRMS(J3_w) = 1.0905096403368613;WRMS(J4_w) = 2.7120773158546703
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_DFFREG	2.0	win64	CATIA-R2015x	passed	WRMS(dataOut1) = 29.317659064297796;WRMS(dataOut2) = 34.48089504035914
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2015x_Rectifier	2.0	win64	CATIA-R2015x	passed	WRMS(uDC) = 1.8427822646691332;WRMS(iAC[1]) = 38.97436752119164;WRMS(iAC[2]) = 50.658249730324336;WRMS(iAC[3]) = 76.54296979026358;WRMS(uAC[1]) = 47.19880402663914;WRMS(uAC[2]) = 64.70829562136942;WRMS(uAC[3]) = 46.849276210805705;WRMS(Losses) = 35.189265894236534
 17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_BooleanNetwork1	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_ControlledTemperature	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_CoupledClutches	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_DFFREG	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_MixtureGases	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_Rectifier	2.0	win64	CATIA-R2016x	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_ControlledTemperature	2.0	win64	CATIA-R2016x	passed	WRMS(heatCapacitor_T) = 0.7580910621115932;WRMS(switch_Controll) = 156.3761931488119
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_CoupledClutches	2.0	win64	CATIA-R2016x	passed	WRMS(J1_w) = 0.6356507321804515;WRMS(J2_w) = 0.7399434152621654;WRMS(J3_w) = 1.0905096403368613;WRMS(J4_w) = 2.7120773158546703
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_DFFREG	2.0	win64	CATIA-R2016x	passed	WRMS(dataOut1) = 29.317659064297796;WRMS(dataOut2) = 34.48089504035914
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_MixtureGases	2.0	win64	CATIA-R2016x	passed	WRMS(der_p) = 0.2491948496360737;WRMS(der_T) = 0.23152487965014878
+17.07.2019 20:12:23	fmus_2.0_cs_win64_CATIA_R2016x_Rectifier	2.0	win64	CATIA-R2016x	passed	WRMS(uDC) = 1.8427822646691332;WRMS(iAC[1]) = 38.97436752119164;WRMS(iAC[2]) = 50.658249730324336;WRMS(iAC[3]) = 76.54296979026358;WRMS(uAC[1]) = 47.19880402663914;WRMS(uAC[2]) = 64.70829562136942;WRMS(uAC[3]) = 46.849276210805705;WRMS(Losses) = 35.189265894236534
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	passed	WRMS(Ball1_pos) = 2.7556489320285205;WRMS(Ball2_pos) = 2.424897343906637;WRMS(Ball1_vel) = 54.11595203798009;WRMS(Ball2_vel) = 56.117201134511916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	passed	WRMS(Noise) = 240.07037443135;WRMS(Noise_Filt) = 63.63472896386721;WRMS(Noise_Filt_Sat) = 135.268983507227;WRMS(Sine) = 0.3482045670742671;WRMS(Sine_Filt) = 0.42071296139057535;WRMS(Sine_Filt_Quantized) = 13.976101562712916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	passed	WRMS(y1) = 154.60590125091662;WRMS(y2) = 164.88225005876893
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.1_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.1	passed	WRMS(yRising) = 128.471393059717;WRMS(yFalling) = 128.69917313822987;WRMS(yEither) = 196.58812108236847
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	passed	WRMS(Ball1_pos) = 2.7556489320285205;WRMS(Ball2_pos) = 2.424897343906637;WRMS(Ball1_vel) = 54.11595203798009;WRMS(Ball2_vel) = 56.117201134511916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	passed	WRMS(Noise) = 240.07037443135;WRMS(Noise_Filt) = 63.63472896386721;WRMS(Noise_Filt_Sat) = 135.268983507227;WRMS(Sine) = 0.3482045670742671;WRMS(Sine_Filt) = 0.42071296139057535;WRMS(Sine_Filt_Quantized) = 13.976101562712916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	passed	WRMS(y1) = 131.28842803135723;WRMS(y2) = 143.24741888695849
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1.2_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1.2	passed	WRMS(yRising) = 128.471393059717;WRMS(yFalling) = 128.69917313822987;WRMS(yEither) = 196.58812108236847
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	passed	WRMS(Ball1_pos) = 2.7556489320285205;WRMS(Ball2_pos) = 2.424897343906637;WRMS(Ball1_vel) = 54.11595203798009;WRMS(Ball2_vel) = 56.117201134511916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	passed	WRMS(Noise) = 240.07037443135;WRMS(Noise_Filt) = 63.63472896386721;WRMS(Noise_Filt_Sat) = 135.268983507227;WRMS(Sine) = 0.34820456708629227;WRMS(Sine_Filt) = 0.42071296139935327;WRMS(Sine_Filt_Quantized) = 13.976101562712916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.1_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.1	passed	WRMS(yRising) = 118.65657103283395;WRMS(yFalling) = 126.25795825013958;WRMS(yEither) = 189.51192230368585
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	passed	WRMS(Ball1_pos) = 2.7556489320285205;WRMS(Ball2_pos) = 2.424897343906637;WRMS(Ball1_vel) = 54.11595203798009;WRMS(Ball2_vel) = 56.117201134511916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	passed	WRMS(Noise) = 240.07037443135;WRMS(Noise_Filt) = 63.63472896386721;WRMS(Noise_Filt_Sat) = 135.268983507227;WRMS(Sine) = 0.3482045670742671;WRMS(Sine_Filt) = 0.42071296139057535;WRMS(Sine_Filt_Quantized) = 13.976101562712916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	passed	WRMS(y1) = 131.28842803135723;WRMS(y2) = 143.24741888695849
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.2.0_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.2.0	passed	WRMS(yRising) = 128.471393059717;WRMS(yFalling) = 128.69917313822987;WRMS(yEither) = 196.58812108236847
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_BouncingBalls_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	passed	WRMS(Ball1_pos) = 18.502524601830356;WRMS(Ball2_pos) = 18.456162730460335;WRMS(Ball1_vel) = 59.499155771216536;WRMS(Ball2_vel) = 61.32498296519775
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel1_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	passed	WRMS(Noise) = 240.44289608056403;WRMS(Noise_Filt) = 63.676373385941005;WRMS(Noise_Filt_Sat) = 135.27779911436855;WRMS(Sine) = 0.3482045670742671;WRMS(Sine_Filt) = 0.42071296139057535;WRMS(Sine_Filt_Quantized) = 13.976101562712916
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TestModel2_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	passed	WRMS(y1) = 134.4709699373912;WRMS(y2) = 143.24741888695849
+17.07.2019 20:12:23	fmus_2.0_cs_win64_DS_FMU_Export_from_Simulink_2.3.0_TriggeredSubsystems_sf	2.0	win64	DS_FMU_Export_from_Simulink-2.3.0	passed	WRMS(yRising) = 128.471393059717;WRMS(yFalling) = 128.69917313822987;WRMS(yEither) = 196.58812108236847
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_BooleanNetwork1	2.0	win64	Dymola-2015FD01	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_ControlledTemperature	2.0	win64	Dymola-2015FD01	passed	WRMS(heatCapacitor_T) = 0.7580855051169767;WRMS(switch_Controll) = 156.37607753637255
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2015FD01_CoupledClutches	2.0	win64	Dymola-2015FD01	passed	WRMS(J1_w) = 0.5425748689223694;WRMS(J2_w) = 0.6929255350111919;WRMS(J3_w) = 0.9981439435837306;WRMS(J4_w) = 2.698755694859082
@@ -704,58 +704,58 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_MixtureGases	2.0	win64	Dymola-2019FD01	passed	WRMS(der_p) = 0.2491682765821296;WRMS(der_T) = 0.231518909457977
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_Rectifier	2.0	win64	Dymola-2019FD01	passed	WRMS(uDC) = 1.8115863884450185;WRMS(iAC[1]) = 36.01168444804717;WRMS(iAC[2]) = 45.76010523658054;WRMS(iAC[3]) = 68.28442541124905;WRMS(uAC[1]) = 44.5041556503458;WRMS(uAC[2]) = 57.399196259245166;WRMS(uAC[3]) = 42.46876472130757;WRMS(Losses) = 33.27540075191158
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Dymola_2019FD01_fullRobot	2.0	win64	Dymola-2019FD01	passed	WRMS(axis1_w) = 0.5591447921149562;WRMS(axis2_w) = 0.6338667284091659;WRMS(axis3_w) = 0.6442646028440573;WRMS(axis4_w) = 2.6087572210029593;WRMS(axis5_w) = 2.1896281912354927;WRMS(axis6_w) = 3.7025896680112917
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_Linear_Pos	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_PneumaticActuator	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_VanDerPol	2.0	win64	Easy5-2017.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Continuous	2.0	win64	FMIToolbox_MATLAB-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Discontinuities	2.0	win64	FMIToolbox_MATLAB-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_EmbeddedCode	2.0	win64	FMIToolbox_MATLAB-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_IntegrateSignal	2.0	win64	FMIToolbox_MATLAB-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Signal_Attributes	2.0	win64	FMIToolbox_MATLAB-2.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_Continuous	2.0	win64	FMIToolbox_MATLAB-2.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_Discontinuities	2.0	win64	FMIToolbox_MATLAB-2.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_EmbeddedCode	2.0	win64	FMIToolbox_MATLAB-2.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_IntegrateSignal	2.0	win64	FMIToolbox_MATLAB-2.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_BouncingBall	2.0	win64	FMUSDK-2.0.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_dq	2.0	win64	FMUSDK-2.0.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_inc	2.0	win64	FMUSDK-2.0.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_vanDerPol	2.0	win64	FMUSDK-2.0.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_BouncingBall	2.0	win64	FMUSDK-2.0.4	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_dq	2.0	win64	FMUSDK-2.0.4	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_inc	2.0	win64	FMUSDK-2.0.4	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_vanDerPol	2.0	win64	FMUSDK-2.0.4	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_BouncingBall	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_ControlledTemperature	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_CoupledClutches	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_DFFREG	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_MixtureGases	2.0	win64	MWorks-2016	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_Linear_Pos	2.0	win64	Easy5-2017.1	passed	WRMS(PistonPosition) = 0.3861071186242311;WRMS(ExtendPressure) = 2.0544126934119427;WRMS(RetractPressure) = 3.458505818774847;WRMS(ExtendFlow) = 7.886438384110617;WRMS(RetractFlow) = 14.332121949267641
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_PneumaticActuator	2.0	win64	Easy5-2017.1	passed	WRMS(PistonPosition) = 4.9463998071107715;WRMS(PressureExtend) = 2.0246157668504354;WRMS(PressureRetract) = 1.9913473211786068;WRMS(TemperatureExtend) = 3.096838972682828;WRMS(TemperatureRetract) = 7.010360368357393;WRMS(FlowExtend) = 29.15341658667233;WRMS(FlowRetract) = 32.896117691832735
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Easy5_2017.1_VanDerPol	2.0	win64	Easy5-2017.1	passed	WRMS(V) = 29.58237552391966;WRMS(X) = 76.03954239791827
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Continuous	2.0	win64	FMIToolbox_MATLAB-2.1	passed	WRMS(Out1) = 0.2432133370565813;WRMS(Out2) = 1.961852547333404;WRMS(Out3[1]) = 0.044508776547113445;WRMS(Out3[2]) = 0.2432133370565813;WRMS(Out4) = 0.12677101935076449;WRMS(Out5) = 0.380573566201363;WRMS(Out6) = 0.23946062199087953
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Discontinuities	2.0	win64	FMIToolbox_MATLAB-2.1	passed	WRMS(Out1[1]) = 35.21563001030157;WRMS(Out1[2]) = 53.07678563288166;WRMS(Out2) = 3.6378489912829357;WRMS(Out3) = 8.135534510732263;WRMS(Out4) = 53.358718567379846;WRMS(Out5) = 26.02061708285615;WRMS(Out6) = 78.70073820364838;WRMS(Out7) = 11.412376827156645;WRMS(Out8) = 83.55909411885916;WRMS(Out9) = 51.33763184758951
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_EmbeddedCode	2.0	win64	FMIToolbox_MATLAB-2.1	passed	WRMS(Out1) = 0.34796027589332695
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_IntegrateSignal	2.0	win64	FMIToolbox_MATLAB-2.1	passed	WRMS(Out1) = 1.2007307124815818
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.1_Signal_Attributes	2.0	win64	FMIToolbox_MATLAB-2.1	passed	WRMS(Out1[1]) = 53.358718567379846;WRMS(Out1[2]) = 0.34796027589332695;WRMS(Out2) = 19.303541454033017;WRMS(Out3) = 36.82585852555033;WRMS(Out4) = 0.0;WRMS(Out5) = 0.0;WRMS(Out6[1]) = 0.0;WRMS(Out6[2]) = 0.0;WRMS(Out6[3]) = 0.0;WRMS(Out6[4]) = 0.0;WRMS(Out6[5]) = 0.0;WRMS(Out6[6]) = 0.0;WRMS(Out7) = 48.615982955227935;WRMS(Out8.signal1) = 0.34796027589332695;WRMS(Out8.signal2) = 53.358718567379846;WRMS(Out9) = 31.41863320583498;WRMS(Out10) = 28.484172447696157;WRMS(Out11) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_Continuous	2.0	win64	FMIToolbox_MATLAB-2.3	passed	WRMS(Out1) = 0.2432133370565813;WRMS(Out2[1]) = 0.044508776547113445;WRMS(Out2[2]) = 0.2432133370565813;WRMS(Out3) = 0.12677101935076449;WRMS(Out4) = 0.380573566201363;WRMS(Out5) = 0.23946062199087953
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_Discontinuities	2.0	win64	FMIToolbox_MATLAB-2.3	passed	WRMS(Out1[1]) = 35.21563001030157;WRMS(Out1[2]) = 53.07678563288166;WRMS(Out2) = 3.6378489912829357;WRMS(Out3) = 8.135534510732263;WRMS(Out4) = 53.358718567379846;WRMS(Out5) = 26.02061708285615;WRMS(Out6) = 78.70073820364838;WRMS(Out7) = 11.412376827156645;WRMS(Out8) = 83.55909411885916;WRMS(Out9) = 51.33763184758951
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_EmbeddedCode	2.0	win64	FMIToolbox_MATLAB-2.3	passed	WRMS(Out1) = 0.34796027589332695
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMIToolbox_MATLAB_2.3_IntegrateSignal	2.0	win64	FMIToolbox_MATLAB-2.3	passed	WRMS(Out1) = 1.2007307124815818
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_BouncingBall	2.0	win64	FMUSDK-2.0.3	passed	WRMS(h) = 4.463080275417619;WRMS(der(h)) = 58.93097720030767;WRMS(v) = 58.93097720030767;WRMS(der(v)) = 0.0;WRMS(g) = 0.0;WRMS(e) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_dq	2.0	win64	FMUSDK-2.0.3	passed	WRMS(x) = 7.59065581866443;WRMS(der(x)) = 7.59065581866443;WRMS(k) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_inc	2.0	win64	FMUSDK-2.0.3	passed	WRMS(counter) = 25.642396831460832
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.3_vanDerPol	2.0	win64	FMUSDK-2.0.3	passed	WRMS(x0) = 7.251973912297454;WRMS(der(x0)) = 4.603098669536256;WRMS(x1) = 4.603098669536256;WRMS(der(x1)) = 4.800341638591288;WRMS(mu) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_BouncingBall	2.0	win64	FMUSDK-2.0.4	passed	WRMS(h) = 4.463080275417619;WRMS(der(h)) = 58.93097720030767;WRMS(v) = 58.93097720030767;WRMS(der(v)) = 0.0;WRMS(g) = 0.0;WRMS(e) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_dq	2.0	win64	FMUSDK-2.0.4	passed	WRMS(x) = 7.59065581866443;WRMS(der(x)) = 7.59065581866443;WRMS(k) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_inc	2.0	win64	FMUSDK-2.0.4	passed	WRMS(counter) = 19.47695941741313
+17.07.2019 20:12:23	fmus_2.0_cs_win64_FMUSDK_2.0.4_vanDerPol	2.0	win64	FMUSDK-2.0.4	passed	WRMS(x0) = 7.251973912297454;WRMS(der(x0)) = 4.603098669536256;WRMS(x1) = 4.603098669536256;WRMS(der(x1)) = 4.800341638591288;WRMS(mu) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_BouncingBall	2.0	win64	MWorks-2016	passed	WRMS(y) = 5.129453485431507;WRMS(z) = 85.48419487133249
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_ControlledTemperature	2.0	win64	MWorks-2016	passed	WRMS(heatCapacitor_T) = 0.06651374354487255;WRMS(switch_Controll) = 142.27356208048732
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_CoupledClutches	2.0	win64	MWorks-2016	passed	WRMS(J1_w) = 0.5011194940038155;WRMS(J2_w) = 0.726138184046051;WRMS(J3_w) = 0.7700884917759611;WRMS(J4_w) = 2.6832288828449053
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_DFFREG	2.0	win64	MWorks-2016	passed	WRMS(dateOut1) = 16.776731637382305;WRMS(dateOut2) = 19.012113834162353
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_MixtureGases	2.0	win64	MWorks-2016	passed	WRMS(der_p) = 0.24952711374400227;WRMS(der_T) = 0.24283335332956538
 17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_Rectifier	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_fullRobot	2.0	win64	MWorks-2016	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_ControlledTemperature	2.0	win64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_CoupledClutches	2.0	win64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_Rectifier	2.0	win64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_ControlledTemperature	2.0	win64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_CoupledClutches	2.0	win64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_Rectifier	2.0	win64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_ControlledTemperature	2.0	win64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_CoupledClutches	2.0	win64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_Rectifier	2.0	win64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_ControlledTemperature	2.0	win64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_CoupledClutches	2.0	win64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_Rectifier	2.0	win64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_ControlledTemperature	2.0	win64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_CoupledClutches	2.0	win64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_Rectifier	2.0	win64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_7.01_ControlledTemperature	2.0	win64	MapleSim-7.01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.3_Compute	2.0	win64	Silver-3.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.3_egs	2.0	win64	Silver-3.3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_Compute	2.0	win64	Silver-3.5	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MWorks_2016_fullRobot	2.0	win64	MWorks-2016	passed	WRMS(axis1_w) = 0.0;WRMS(axis2_w) = 0.0;WRMS(axis3_w) = 0.0;WRMS(axis4_w) = 0.0;WRMS(axis5_w) = 0.0;WRMS(axis6_w) = 0.0
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_ControlledTemperature	2.0	win64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 3.026546604777238e-12;WRMS(outputs[2]) = 0.47801489522056706
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_CoupledClutches	2.0	win64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 0.4390797933126513;WRMS(outputs[2]) = 3.0467298402158156;WRMS(outputs[3]) = 3.1600041685710285;WRMS(outputs[4]) = 10.88900778529986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.1_Rectifier	2.0	win64	MapleSim-2015.1	passed	WRMS(outputs) = 1.7579338434690597
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_ControlledTemperature	2.0	win64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 3.026546604777238e-12;WRMS(outputs[2]) = 0.47801489522056706
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_CoupledClutches	2.0	win64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 0.4390797933126513;WRMS(outputs[2]) = 3.0467298402158156;WRMS(outputs[3]) = 3.1600041685710285;WRMS(outputs[4]) = 10.88900778529986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2015.2_Rectifier	2.0	win64	MapleSim-2015.2	passed	WRMS(outputs) = 1.7579338434690597
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_ControlledTemperature	2.0	win64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 3.026546604777238e-12;WRMS(outputs[2]) = 0.47801489522056706
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_CoupledClutches	2.0	win64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 0.4390797933126513;WRMS(outputs[2]) = 3.0467298402158156;WRMS(outputs[3]) = 3.1600041685710285;WRMS(outputs[4]) = 10.88900778529986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.1_Rectifier	2.0	win64	MapleSim-2016.1	passed	WRMS(outputs) = 1.7579338434690597
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_ControlledTemperature	2.0	win64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 3.026546604777238e-12;WRMS(outputs[2]) = 0.47801489522056706
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_CoupledClutches	2.0	win64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 0.4390797933126513;WRMS(outputs[2]) = 3.0467298402158156;WRMS(outputs[3]) = 3.1600041685710285;WRMS(outputs[4]) = 10.88900778529986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2016.2_Rectifier	2.0	win64	MapleSim-2016.2	passed	WRMS(outputs) = 1.7579338434690597
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_ControlledTemperature	2.0	win64	MapleSim-2018	passed	WRMS(outputs[1]) = 3.026546604777238e-12;WRMS(outputs[2]) = 0.47801489522056706
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_CoupledClutches	2.0	win64	MapleSim-2018	passed	WRMS(outputs[1]) = 0.4390797933126513;WRMS(outputs[2]) = 3.0467298402158156;WRMS(outputs[3]) = 3.1600041685710285;WRMS(outputs[4]) = 10.88900778529986
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_2018_Rectifier	2.0	win64	MapleSim-2018	passed	WRMS(outputs) = 1.7579338434691218
+17.07.2019 20:12:23	fmus_2.0_cs_win64_MapleSim_7.01_ControlledTemperature	2.0	win64	MapleSim-7.01	passed	WRMS(outputs[1]) = 1.9037088004802013e-12;WRMS(outputs[2]) = 0.8294346375284323
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.3_Compute	2.0	win64	Silver-3.3	passed	WRMS(y_0) = 0.42831005442736486;WRMS(y_1) = 3.5813606682609525;WRMS(y_2) = 7.856367473715714
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.3_egs	2.0	win64	Silver-3.3	passed	WRMS(egsCarSpeed) = 1.6275930449871214;WRMS(egsGear) = 20.85269947741078;WRMS(egsTargetGear) = 13.383319730846848;WRMS(valves_eds) = 0.0;WRMS(valves_eds1) = 0.0;WRMS(valves_eds2) = 14.446836888341323;WRMS(valves_eds3) = 18.321381355777525;WRMS(valves_eds4) = 0.0;WRMS(valves_eds5) = 14.805128418409186;WRMS(valves_mv1) = 84.57802433452989;WRMS(valves_mv2) = 60.17503323172012;WRMS(valves_mv3) = 0.0;WRMS(tShiftStart) = 13.051781822536281
+17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_Compute	2.0	win64	Silver-3.5	passed	WRMS(y_0) = 0.40286692729692597;WRMS(y_1) = 3.5531698738451736;WRMS(y_2) = 7.800616764790842
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_egs	2.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Silver_3.5_lights_control	2.0	win64	Silver-3.5	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_ControlledTemperature	2.0	win64	SimulationX-3.7.41138	passed	WRMS(TRes) = 0.14058894290025062
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_CoupledClutches	2.0	win64	SimulationX-3.7.41138	passed	WRMS(J1.w) = 0.5474846420596704;WRMS(J2.w) = 0.7419569057594273;WRMS(J3.w) = 0.7762330477297313;WRMS(J4.w) = 4.055681788317064
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_DoublePendulum	2.0	win64	SimulationX-3.7.41138	passed	WRMS(revolute1.w) = 0.1587102326486843;WRMS(revolute2.w) = 0.18423493457778137
-17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Engine1b	2.0	win64	SimulationX-3.7.41138	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Engine1b	2.0	win64	SimulationX-3.7.41138	passed	WRMS(Piston.body.r_0[2]) = 14.353565507975857;WRMS(Inertia.w) = 20.82352444314517
 17.07.2019 20:12:23	fmus_2.0_cs_win64_SimulationX_3.7.41138_Rectifier	2.0	win64	SimulationX-3.7.41138	passed	WRMS(Capacitor1.i) = 65.38075608072663;WRMS(IdealDiode3.v) = 31.14758106519928
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_BouncingBall	2.0	win64	Test-FMUs-0.0.1	rejected	Test case is marked 'notCompliantWithLatestRules'.
 17.07.2019 20:12:23	fmus_2.0_cs_win64_Test-FMUs_0.0.1_Dahlquist	2.0	win64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.0062547430900313766
@@ -769,6 +769,6 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Resource	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(y) = 0.0
 18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_Stair	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(counter) = 41.12715178376706
 18.07.2019 12:11:40	fmus_2.0_cs_win64_Test-FMUs_0.0.2_VanDerPol	2.0	win64	Test-FMUs-0.0.2	passed	WRMS(x0) = 41.465879816214056;WRMS(x1) = 42.96257628288455
-17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_FmuTL_VelocityController	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmucontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmufuelratecontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_FmuTL_VelocityController	2.0	win64	dSPACE_TargetLink-Release_2018-B	passed	WRMS(Rte_UPiActuator_EcuUPi_OP_SET_upi) = 38.10346920853382
+17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmucontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	passed	WRMS(Sa1_UPI) = 56.91408208865728
+17.07.2019 20:12:23	fmus_2.0_cs_win64_dSPACE_TargetLink_Release_2018-B_Fmufuelratecontroller	2.0	win64	dSPACE_TargetLink-Release_2018-B	passed	WRMS(fuel_rate) = 27.244438138016818
