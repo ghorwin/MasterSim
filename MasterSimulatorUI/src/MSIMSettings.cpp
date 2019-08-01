@@ -64,18 +64,41 @@ void MSIMSettings::setDefaults() {
 
 	// determine text executable
 	m_textEditorExecutable.clear();
+
+	/// \todo Improve default text editor detection
 #ifdef Q_OS_UNIX
 	m_textEditorExecutable = "gedit";
 #elif defined(Q_OS_WIN)
-	m_textEditorExecutable = "C:\\Program Files (x86)\\Notepad++\\notepad++.exe";
+	m_textEditorExecutable = "C:\\Program Files\\Notepad++\\notepad++.exe";
+	if (!QFileInfo(m_textEditorExecutable).exists())
+		m_textEditorExecutable = "C:\\Program Files (x86)\\Notepad++\\notepad++.exe";
 #else
 	// OS x editor?
 #endif
 
-	/// \todo Implement default text editor detection
-
 	m_flags[NoSplashScreen] = false;
 	m_flags[FullScreen] = false;
+
+#if defined(Q_OS_WIN)
+	// auto-detect postproc 2 in install directory
+	QString postProc2FilePath;
+	QString postProc2FilePathMask = "Program Files\\IBK\\PostProc 2.%1\\PostProcApp.exe";
+	// search postproc (first 20 versions)
+	for (int i=0; i<20; ++i) {
+		QString postProc2FilePath2 = postProc2FilePathMask.arg(i);
+		if (QFile(postProc2FilePath2).exists()) {
+			postProc2FilePath = postProc2FilePath2;
+			break;
+		}
+	}
+#elif defined (Q_OS_MAC)
+	QString postProc2FilePath = "/Applications/PostProcApp.app/Contents/MacOS/PostProcApp";
+#else
+	QString postProc2FilePath = "PostProcApp";
+#endif
+	if (QFile(postProc2FilePath).exists())
+		m_postProcExecutable = postProc2FilePath;
+
 }
 
 
@@ -142,6 +165,9 @@ void MSIMSettings::read(QString regName) {
 		if (var.isValid())
 			m_propertyMap.insert((PropertyType)i, var);
 	}
+
+	m_postProcExecutable = settings.value("PostProcExecutable", QString()).toString();
+
 }
 
 
@@ -175,6 +201,8 @@ void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 	{
 		settings.setValue(PROPERTY_KEYWORDS[it.key()], it.value());
 	}
+
+	settings.setValue("PostProcExecutable", m_postProcExecutable );
 }
 
 

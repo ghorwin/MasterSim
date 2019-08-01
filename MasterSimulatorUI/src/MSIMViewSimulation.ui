@@ -132,6 +132,9 @@
         <string>Time Step Adjustment and Error Control</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_5">
+        <item row="2" column="2">
+         <widget class="QComboBox" name="comboBoxMinDtUnit"/>
+        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="label_12">
           <property name="text">
@@ -149,8 +152,21 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QComboBox" name="comboBoxMinDtUnit"/>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>Time step minimum for iteration:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QComboBox" name="comboBoxMaxDtUnit"/>
+        </item>
+        <item row="4" column="2">
+         <widget class="QComboBox" name="comboBoxDtIterLimitUnit"/>
+        </item>
+        <item row="0" column="1" colspan="2">
+         <widget class="QComboBox" name="comboBoxErrorControl"/>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_13">
@@ -173,27 +189,21 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QComboBox" name="comboBoxErrorControl"/>
-        </item>
         <item row="3" column="1">
          <widget class="QLineEdit" name="lineEditDtMax"/>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>Time step minimum for iteration:</string>
-          </property>
-         </widget>
         </item>
         <item row="4" column="1">
          <widget class="QLineEdit" name="lineEditDtIterLimit"/>
         </item>
-        <item row="3" column="2">
-         <widget class="QComboBox" name="comboBoxMaxDtUnit"/>
-        </item>
-        <item row="4" column="2">
-         <widget class="QComboBox" name="comboBoxDtIterLimitUnit"/>
+        <item row="5" column="0" colspan="3">
+         <widget class="QCheckBox" name="checkBoxPreventOversteppingOfEndTime">
+          <property name="toolTip">
+           <string>When enabled, the last time step will be shortened so that the last interval ends excactly at the desired end point. Use this only as compatibility option for specific FMUs since it potentially violates the constant-time-step rule.</string>
+          </property>
+          <property name="text">
+           <string>Prevent overstepping over end time</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

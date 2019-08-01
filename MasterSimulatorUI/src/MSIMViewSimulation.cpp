@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QDialogButtonBox>
 #include <QTimer>
+#include <QThread>
 
 #include <memory>
 #include <cstring>
@@ -26,6 +27,7 @@
 #include "MSIMConversion.h"
 #include "MSIMUndoSimulationSettings.h"
 #include "MSIMLogFileDialog.h"
+#include "MSIMSimulationMonitorWidget.h"
 
 MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	QWidget(parent),
@@ -112,6 +114,7 @@ void MSIMViewSimulation::onModified( int modificationType, void * /*data*/ ) {
 	m_ui->checkBoxAdjustStepSize->setChecked( project().m_adjustStepSize);
 
 	m_ui->checkBoxWriteInternalVariables->setChecked( project().m_writeInternalVariables);
+	m_ui->checkBoxPreventOversteppingOfEndTime->setChecked( project().m_preventOversteppingOfEndTime);
 
 	blockMySignals(this, false);
 
@@ -128,6 +131,18 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 			return;
 	}
 	projectFile = MSIMProjectHandler::instance().projectFile();
+
+#if 0
+//	QThread * runThread = new QThread(this);
+
+	MSIMSimulationMonitorWidget msimWidget(this);
+	msimWidget.show();
+	IBK::Path projectFilePath(projectFile.toStdString());
+//	msimWidget.moveToThread(runThread);
+	msimWidget.run(projectFilePath, m_ui->comboBoxVerbosityLevel->currentIndex());
+//	runThread->start();
+	return;
+#endif
 
 	// check if solver exists
 	if (!QFileInfo(m_solverName).exists()) {
@@ -549,6 +564,15 @@ void MSIMViewSimulation::on_pushButtonShowLogfile_clicked() {
 void MSIMViewSimulation::on_checkBoxWriteInternalVariables_toggled(bool checked) {
 	MASTER_SIM::Project p = project(); // create copy of project
 	p.m_writeInternalVariables = checked;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push();
+}
+
+
+void MSIMViewSimulation::on_checkBoxPreventOversteppingOfEndTime_toggled(bool checked) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_preventOversteppingOfEndTime = checked;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();

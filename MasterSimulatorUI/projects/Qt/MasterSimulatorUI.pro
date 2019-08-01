@@ -36,6 +36,9 @@ INCLUDEPATH = \
 
 
 SOURCES += ../../src/main.cpp \
+	../../src/MSIMGUIMessageHandler.cpp \
+	../../src/MSIMPostProcBindings.cpp \
+	../../src/MSIMSimulationMonitorWidget.cpp \
 	../../src/MSIMSlavePropertyWidget.cpp \
 	../../src/MSIMUIConstants.cpp \
 	../../src/MSIMDirectories.cpp \
@@ -68,6 +71,9 @@ SOURCES += ../../src/main.cpp \
 
 
 HEADERS  += \
+	../../src/MSIMGUIMessageHandler.h \
+	../../src/MSIMPostProcBindings.h \
+	../../src/MSIMSimulationMonitorWidget.h \
 	../../src/MSIMSlavePropertyWidget.h \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMDirectories.h \
@@ -100,6 +106,7 @@ HEADERS  += \
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
+	../../src/MSIMSimulationMonitorWidget.ui \
 	../../src/MSIMWelcomeScreen.ui \
 	../../src/MSIMPreferencesDialog.ui \
 	../../src/MSIMPreferencesPageGeneral.ui \
