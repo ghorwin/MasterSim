@@ -197,9 +197,9 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 		// now process map with synonymous variables
 		for (auto m : fmuPtr->m_synonymousVars) {
-			int valueRef = m.first;
+			const std::pair<FMIVariable::VarType, unsigned int> & valueRef = m.first;
 			// lookup written variable name
-			const FMIVariable & var = fmuPtr->m_modelDescription.variableByRef(valueRef);
+			const FMIVariable & var = fmuPtr->m_modelDescription.variableByRef(valueRef.first, valueRef.second);
 			// process all variable synonyms in table
 			for (auto varName : m.second) {
 				// first column: fmu file path (currently only filename; full path is only needed when different fmus with same name are used)
