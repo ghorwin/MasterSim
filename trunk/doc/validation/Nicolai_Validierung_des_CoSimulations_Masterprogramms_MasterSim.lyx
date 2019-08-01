@@ -1,0 +1,746 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage{parskip}
+
+\usepackage[hang,scriptsize]{subfigure}
+\usepackage[format=hang,
+font={footnotesize},
+labelfont={bf},
+margin=1cm,
+aboveskip=5pt,
+position=bottom]{caption}
+
+\usepackage{float}
+\usepackage{color}
+\usepackage{calc}
+
+\definecolor{linkblue}{rgb}{0,0,0.4}
+\definecolor{navy}{rgb}{0,0,0.3}
+\definecolor{light-gray}{gray}{0.98}
+\definecolor{dark-gray}{gray}{0.45}
+
+\usepackage{dsfont}
+
+\usepackage[utf8]{inputenc}
+
+\newcommand{\wframe}[1]{\frame{#1}}
+
+\usepackage[ruled,vlined]{algorithm2e}
+
+\usepackage{listings}
+\input{listings-modelica.cfg}
+
+\usepackage{booktabs}
+
+\usepackage{lastpage}
+
+\usepackage[a-2b]{pdfx}
+
+\begin{filecontents*}{\jobname.xmpdata}
+  \Title{Validation of the co-simulation master MASTERSIM}
+  \Author{A. Nicolai}
+  \Keywords{Co-Simulation\sep FMI\sep MASTERSIM\sep Validation\sep Standard compliance\sep accuracy}
+  \Publisher{Qucosa}
+\end{filecontents*}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language ngerman
+\language_package default
+\inputencoding utf8
+\fontencoding global
+\font_roman "lmodern" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 10
+\spacing single
+\use_hyperref true
+\pdf_title "Validation of the FMI co-simulation master program MasterSim"
+\pdf_author "Andreas Nicolai"
+\pdf_keywords "Co-Simulation, FMI, validation, standard compliance, accuracy"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks true
+\pdf_backref false
+\pdf_pdfusetitle true
+\pdf_quoted_options "linkcolor=linkblue, citecolor=linkblue, urlcolor=linkblue, bookmarksnumbered=true"
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 2
+\use_package amssymb 2
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Stichwortverzeichnis
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2.5cm
+\topmargin 2.5cm
+\rightmargin 2cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip smallskip
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style german
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\listings_params "language={C++},basicstyle={\scriptsize\ttfamily\color{black}},commentstyle={\ttfamily\itshape\color{dark-gray}},stepnumber=1,showspaces=false,showstringspaces=false,showtabs=false,frame=single,tabsize=4,captionpos=b,breaklines=true,breakatwhitespace=false,texcl=true"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Validierung des Co-Simulations-Masterprogramms MASTERSIM
+\end_layout
+
+\begin_layout Author
+Andreas Nicolai
+\begin_inset Newline newline
+\end_inset
+
+TU Dresden
+\begin_inset Newline newline
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+andreas.nicolai@tu-dresden.de
+\end_layout
+
+\begin_layout Abstract
+Die im Functional Mock-Up Interface (FMI) Standard definierte Co-Simulations-Fun
+ktionalität ist vielfältig und enthält viele Implementierungsregeln.
+ Die korrekte Umsetzung dieser Regeln ist zwingend notwendig, um Simulationsmode
+lle verschiedener Tools/Hersteller gemeinsam gekoppelt einsetzen zu können.
+ In diesem Artikel wird die Methodik und Vorgehensweise bei der Prüfung
+ der Implementierung des Co-Simulations-Programms MASTERSIM beschrieben.
+ Es werden einige der dabei erkannten und behobenen Probleme beim Test der
+ Implementierung mit anderen Simulationsmodellen diskutiert, sowie die dafür
+ notwendigen Anpassungen und Erweiterungen am MASTERSIM Programm.
+ Weiterhin werden die Ansätze zur Automatisierung des Testprozederes beschrieben
+ und die verschiedenen entwickelten Skripte vorgestellt.
+\end_layout
+
+\begin_layout Standard
+
+\size small
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{fancy}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyhf{} %alle Kopf- und Fußzeilenfelder bereinigen
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[L]{
+\backslash
+includegraphics[width=3cm]{logolinks}} %Kopfzeile links
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[C]{
+\backslash
+includegraphics[width=9.4cm]{logomitte}} %zentrierte Kopfzeile
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[R]{
+\backslash
+includegraphics[width=2.5cm]{logorechts}} %Kopfzeile rechts
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+headrulewidth}{0pt} %obere Trennlinie
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyfoot[C]{
+\backslash
+small Seite 
+\backslash
+thepage
+\backslash
+ von
+\backslash
+ 
+\backslash
+pageref{LastPage} } %Seitennummer
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+footrulewidth}{0.4pt} %untere Trennlinie
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size small
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size small
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size small
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyhf{} %alle Kopf- und Fußzeilenfelder bereinigen
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[L]{} %Kopfzeile links
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[C]{} %zentrierte Kopfzeile
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyhead[R]{Validatierung des Co-Simulationsmasters MASTERSIM}
+\end_layout
+
+\begin_layout Plain Layout
+
+%
+\backslash
+fancyhead[R]{
+\backslash
+includegraphics[width=4cm]{gwt_logo}} %Kopfzeile rechts
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+headrulewidth}{0.4pt} %obere Trennlinie
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyfoot[L]{
+\backslash
+small 
+\backslash
+today} %Seitennummer
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyfoot[C]{
+\backslash
+small A.
+ Nicolai } %Seitennummer
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+fancyfoot[R]{
+\backslash
+small Seite 
+\backslash
+thepage
+\backslash
+ von
+\backslash
+ 
+\backslash
+pageref{LastPage} } %Seitennummer
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+footrulewidth}{0.4pt} %untere Trennlinie
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Hintergrund
+\end_layout
+
+\begin_layout Standard
+Der 
+\emph on
+Functional Mock-Up Interface
+\emph default
+ (FMI) Standard definiert eine Programmierschnittstelle für eine Bibliothek,
+ welche eine spezifische Modell-/Berechnungsfunktionalität kapselt.
+ Dadurch können Simulationsmodelle zusammen mit anderen Modellen zur Laufzeit
+ gekoppelt werden.
+ Der Standard defiiert weiterhin den Inhalt und die Struktur von modellbeleitend
+en Metadaten, welche die Eigenschaften des Modells und der Schnittstelle
+ definieren (z.B.
+ die veröffentlichten Variablennamen und -typen, etc.).
+\end_layout
+
+\begin_layout Standard
+Programme, welche diese Bibliotheken und dazugehörige Metadaten erstellen
+ werden als Exporttools bezeichnet.
+ Die exportierte Programmbibliothek und Metadaten werden in einer Verzeichnisstr
+uktur abgelegt und in einem zip-Archiv verpackt (welches die Endung 
+\family typewriter
+.fmu
+\family default
+ trägt) und als 
+\emph on
+Functional Mock-Up Unit
+\emph default
+ (FMU) bezeichnet wird.
+ Programme, welche derartige FMUs verwenden und damit Simulationen durchführen
+ sind Importtools.
+ 
+\end_layout
+
+\begin_layout Standard
+Der Standard definiert zwei Kopplungsmodi: 
+\emph on
+FMI for Model Exchange
+\emph default
+ und 
+\emph on
+FMI for Co-Simulation
+\emph default
+.
+ Bei Letzterem enthält jede FMU einen eigenen Zeitintegrator, sofern dynamische
+ Gleichungen zu lösen sind.
+ Bei Ersterem muss das importierende Tool einen solchen Integrationsalgorithmus
+ zentral für alle importierten FMUs bereitstellen.
+ Das Programm MASTERSIM ist ein Importtool für Co-Simulation FMUs, daher
+ auch 
+\emph on
+Co-Simulations-Masterprogram
+\emph default
+ genannt.
+\end_layout
+
+\begin_layout Section
+Validierungsschritte und Methodik
+\end_layout
+
+\begin_layout Subsection
+Allgemeine Anforderungen an Simulationsprogramme
+\end_layout
+
+\begin_layout Standard
+Wie für jedes andere Simulationsprogramm zur Lösung wissenschaftlicher bzw.
+ ingenieurstechnischer Problemstellungen sollten die zugrunde liegenden
+ Gleichungen 
+\emph on
+korrekt
+\emph default
+ gelöst werden.
+ Die Definition von 
+\emph on
+korrekt
+\emph default
+ ist hierbei keineswegs trivial, da dies stark vom betrachteten Problem
+ abhängt.
+ Die Genauigkeit, welche ein Ingenieur vom Modell erwartet wird zumeist
+ von der Genauigkeit der verfügbaren Eingangsdaten abhängen.
+ Zum Beispiel wäre es bedeutungslos eine Temperatur mit maximaler Abweichung
+ von 0,01 K berechnen zu wollen, wenn dem Modell als Eingangsdaten Schätzwerte
+ mit 
+\begin_inset Formula $\pm$
+\end_inset
+
+1 K Toleranz gegeben werden.
+ Es wäre daher eine geeignete Herangehensweise, typische Anwendungsfälle
+ aus Ingenieursbereichen zu wählen, und Eingangsdaten wie erwartete Ergebnisdate
+n im gleichen Kontext zu definieren.
+ Ein korrekt arbeitendes Simulationsprogramm sollte die erwarteten Ergebnisse
+ dann in der geforderten Genauigkeit liefern können.
+ Diese Anforderung lässt sich auch auf Co-Simulations-Masterprogramme überführen
+, wobei hierbeit Fehlerquellen im Masterprogramm selbst, wie auch in den
+ gekoppelten Simulationsmodellen zu berücksichtigen sind.
+\end_layout
+
+\begin_layout Subsection
+Fehlerquellen
+\end_layout
+
+\begin_layout Standard
+Betrachtet man die Komplexität fortgeschrittener Simulationsprogramme, so
+ lassen sich Programmierfehler nicht komplett vermeiden.
+ Ebenso können die Wahl ungeeigneter Algorithmen (z.B.
+ solche, die zu numerischen Instabilitäten führen), wie auch schlecht gewählte
+ numerische Parameter zu inkorrekten Ergebnissen führen.
+ Ein Programmfehler wäre z.B.
+ ein komplettes Fehlschlagen/Abbrechen der Berechnung, bzw.
+ das Berechnen von Ergebnissen mit zu großen Abweichungen zu den Referenzwerten.
+ Solche Fehler können vielfältige Ursachen haben.
+ Zudem können bei komplexeren Programmen mit alternativen Algorithmen/Ausführung
+spfaden problematische Programmteile auch nur bei bestimmten Anwendungsfällen
+ zum Tragen kommen.
+ Schlimmstenfalls führt dies dazu, dass in den Tests scheinbar alles korrekt
+ rechnet, jedoch bei der späteren praktischen Anwendung Fehler auftreten.
+\end_layout
+
+\begin_layout Standard
+Daher mögen einzelne, isolierte Testfälle nicht ausreichen.
+ Stattdessen sollte eine Reihe von Testfällen mit unterschiedlicher Charakterist
+ik verwendet werden.
+ Auf diesem Weg können verschiedene Funktionalitäten eines Berechnungsprogramms
+ individuell getestet werden und eine umfassende Korrektheitsprüfung erfolgen.
+\end_layout
+
+\begin_layout Standard
+Mit Hinblick auf Co-Simulationsfunktionlität sind Fehlerquellen unterschiedlichs
+ter Art auszuschließen, z.B.:
+\end_layout
+
+\begin_layout Itemize
+Fehlerhaftes Einlesen und Interpretieren der Metadaten,
+\end_layout
+
+\begin_layout Itemize
+fehlerhaftes Ansprechen der Programmierschnittstelle,
+\end_layout
+
+\begin_layout Itemize
+fehlerhaft implementierte Kopplungsalgorithmen,
+\end_layout
+
+\begin_layout Itemize
+Fehler bei der Ausgabe der Ergebnisdaten, etc.
+\end_layout
+
+\begin_layout Subsection
+Prüfmethodiken
+\end_layout
+
+\begin_layout Standard
+Grundsätzlich kann zwischen zwei unterschiedlichen Herangehensweisen unterschied
+en werden:
+\end_layout
+
+\begin_layout Enumerate
+Detailprüfung einzelnen Programmkomponenten und Algorithmen mit strikten
+ Forderungen an die Berechnungsergebnisse, da diese aus Sicht des Programmentwic
+klers bekannt sind,
+\end_layout
+
+\begin_layout Enumerate
+Allgemeine Prüfung durch Berechnung von Testszenarien und Vergleich mit
+ Referenzwerten unter Verwendung eines Toleranzbandes bzw.
+ anderer Ähnlichkeitsforderung.
+\end_layout
+
+\begin_layout Standard
+Beide Verfahren sind in der Herangehensweise grundverschieden, und liefern
+ auch grundsätzlich unterschiedliche Erkenntnisse.
+\end_layout
+
+\begin_layout Subsubsection
+Detailprüfungen
+\end_layout
+
+\begin_layout Standard
+Bei der Detailprüfung bzw.
+ Algorithmenprüfung testet der Programmentwickler in kleinen, sehr exakt
+ definierten Tests
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+manchmal auch als Modultest (engl.
+ 
+\emph on
+Unit Test)
+\emph default
+ bezeichnet
+\end_layout
+
+\end_inset
+
+ die korrekte Funktionalität des Programms.
+ Durch die exakte Definition des zu testenden Teils und der bekannten, erwartete
+n Ergebnisse, lassen sich diese Tests automatisiert durchführen und auswerten.
+ Bei der modernen Softwareentwicklung gehören diese Tests zum Entwicklungsprozes
+s und zur Qualitätssicherung.
+ Wesentliche Erkenntnisse aus diesen Tests sind:
+\end_layout
+
+\begin_layout Itemize
+Nachweis, dass ein implementierter Algorithmus, bzw.
+ Programmmodul 
+\emph on
+exakt
+\emph default
+ die geforderte Funktionalität aufweist,
+\end_layout
+
+\begin_layout Itemize
+Nachweis, dass bei fortschreitender Programmentwicklung ein bereits funktioniere
+nder Teil 
+\emph on
+nicht
+\emph default
+ unabsichtlich verändert wird und dadurch nun fehlerbehaftet ist, und
+\end_layout
+
+\begin_layout Itemize
+Nachweis, dass die Qualität einer Implementierung (z.B.
+ hinsichtlich der Berechnungseffizienz) konstant bleibt.
+\end_layout
+
+\begin_layout Standard
+In Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Detailprüfungen-der-MASTERSIM-Algorithmen"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ werden einzelne Modultests des MASTERSIM-Programms im Detail erläutert.
+ Das Entwickeln und Durchführen von Modultests ist Teil des Softwareentwicklungs
+prozesses und somit stets der erste Schritt einer Programmvalidierung.
+\end_layout
+
+\begin_layout Subsubsection
+Querschnittstests bzw.
+ Tests gegen Anwendungsszenarien
+\end_layout
+
+\begin_layout Standard
+Unter Querschnittstests wird die Anwendung des Programms auf allgemeiner
+ formulierte Testszenarien verstanden.
+ Die bereitgestellten Referenzergebnisse können üblicherweise nicht mehr
+ 100%-tig erreicht werden, da diese von anderen Programmen bzw.
+ Lösungsalgorithmen oder auch Messwerten stammen können.
+ Abweichungen zwischen den Referenzwerten und den Ergebnissen des zu prüfenden
+ Programmes können vielfältige Gründe haben, 
+\emph on
+auch wenn das zu prüfende Programm korrekt funktioniert
+\emph default
+.
+ Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Prozess-der-Transformation-Modell-Result"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ illustriert den Prozess von der Problembeschreibung bis zu den verschiedenen
+ Ergebnissen und deren möglicherweise großen Unterschieden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Prozess-der-Transformation-Modell-Result"
+
+\end_inset
+
+Prozess der Transformation einer Problembeschreibung zu Referenz-/Berechnungserg
+ebnissen
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Detailprüfungen-der-MASTERSIM-Algorithmen"
+
+\end_inset
+
+Detailprüfungen der MASTERSIM-Algorithmen
+\end_layout
+
+\begin_layout Subsection
+Grundfunktionalität
+\end_layout
+
+\begin_layout Subsection
+Gauss-Jacobi
+\end_layout
+
+\begin_layout Subsection
+Gauss-Seidel
+\end_layout
+
+\begin_layout Subsection
+Iterationsalgorithmen (FMU 2.0 Rücksetz-Funktionalität)
+\end_layout
+
+\begin_layout Subsection
+Zeitschrittsadaption
+\end_layout
+
+\begin_layout Subsection
+Fehlerkontrolle und Genauigkeitskontrolle
+\end_layout
+
+\end_body
+\end_document
