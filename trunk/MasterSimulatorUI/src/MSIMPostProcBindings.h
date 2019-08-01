@@ -1,18 +1,18 @@
 #ifndef MSIMPostProcBindingsH
 #define MSIMPostProcBindingsH
 
-
-#ifdef _WIN32
-	#undef UNICODE
-	#include <windows.h>
-#endif
-
 #include <string>
 
 #include <QProcess>
 #include <QString>
 
 #include <IBK_Path.h>
+
+#ifdef _WIN32
+	#undef UNICODE
+	#include <Windows.h>
+#endif
+
 
 /*! This class encapsulates everything related to PostProc interaction functionality. */
 class MSIMPostProcBindings {

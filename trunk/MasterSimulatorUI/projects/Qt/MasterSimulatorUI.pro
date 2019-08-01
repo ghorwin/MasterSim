@@ -21,7 +21,7 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lTiCPP
 
 win32 {
-	LIBS += -lzlib
+	LIBS += -lzlib -luser32
 }
 
 INCLUDEPATH = \
