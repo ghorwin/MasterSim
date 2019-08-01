@@ -629,6 +629,27 @@ Lösung:
 mmung der Ergebnisse erreicht wird (falls möglich).
 \end_layout
 
+\begin_layout Subsubsection
+Ausgabe nicht beim Endzeitpunkt (Rundungsproblematik 1)
+\end_layout
+
+\begin_layout Subsubsection
+Ausgabe überspringt Zeitpunkte (Rundungsproblematik 2)
+\end_layout
+
+\begin_layout Subsubsection
+Letzter Zeitschritt muss gekürzt werden
+\end_layout
+
+\begin_layout Subsubsection
+CSV-Eingabedaten müssen gelesen werden
+\end_layout
+
+\begin_layout Subsubsection
+CSV-Eingabedaten nur für Real-Variablen (da noch keine Unterscheidung in
+ Variablentyp möglich)
+\end_layout
+
 \begin_layout Standard
 
 \end_layout
