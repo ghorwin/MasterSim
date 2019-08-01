@@ -45,6 +45,7 @@
 #include "MSIMAboutDialog.h"
 #include "MSIMButtonBar.h"
 #include "MSIMUndoSlaveParameters.h"
+#include "MSIMPostProcBindings.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = nullptr;
 
@@ -72,7 +73,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	m_viewSlaves(nullptr),
 	m_viewConnections(nullptr),
 	m_viewSimulation(nullptr),
-	m_aboutDialog(nullptr)
+	m_aboutDialog(nullptr),
+	m_postProcHandler(new MSIMPostProcHandler)
 {
 //	const char * const FUNC_ID = "[MSIMMainWindow::MSIMMainWindow]";
 
@@ -122,6 +124,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	connect(m_buttonBar->toolButtonLoad,				SIGNAL(clicked()), this, SLOT(on_actionFileOpen_triggered()));
 
 	m_buttonBar->toolButtonAnalyze->setDefaultAction(m_ui->actionEditParseFMUs);
+	m_buttonBar->toolButtonLaunchPostProc->setDefaultAction(m_ui->actionEditOpenPostProc);
 
 	m_buttonBar->toolButtonEditFMUs->setDefaultAction(m_ui->actionViewSlaves);
 	m_buttonBar->toolButtonEditConnections->setDefaultAction(m_ui->actionViewConnections);
@@ -655,6 +658,58 @@ void MSIMMainWindow::on_actionEditPreferences_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionEditOpenPostProc_triggered() {
+	// check if post-proc executable is set and existing
+	// if not, inform user and open settings
+	if (MSIMSettings::instance().m_postProcExecutable.isEmpty() ||
+			!QFileInfo(MSIMSettings::instance().m_postProcExecutable).exists())
+	{
+		QMessageBox::information(this, tr("Setup external tool"), tr("Please select first the path to the external "
+																  "post processing in the preferences dialog!"));
+		// spawn preferences dialog
+		if (m_preferencesDialog == nullptr)
+			m_preferencesDialog = new MSIMPreferencesDialog(this);
+
+		if (!m_preferencesDialog->edit())
+			return;
+
+		// still no post-proc executable set?
+		if (MSIMSettings::instance().m_postProcExecutable.isEmpty() ||
+				!QFileInfo(MSIMSettings::instance().m_postProcExecutable).exists())
+		{
+			return;
+		}
+	}
+
+	// check if session with same name as project exists
+	// if not, create default session file
+	QString sessionFile;
+	if (m_projectHandler.isValid()) {
+		IBK::Path sessionFilePath = MSIMPostProcBindings::defaultSessionFilePath(m_projectHandler.projectFile());
+		if (!sessionFilePath.exists())
+			MSIMPostProcBindings::generateDefaultSessionFile(m_projectHandler.projectFile());
+		sessionFile = utf82QString(sessionFilePath.str());
+	}
+
+	// check, if already an instance of PostProc is running
+	int res = m_postProcHandler->reopenIfActive();
+	if (res != 0) {
+		// try to spawn new postprocessing
+		if (!m_postProcHandler->spawnPostProc(sessionFile.toStdString())) {
+			QMessageBox::critical(this, tr("Error running PostProc"),
+								  tr("Could not start executable '%1'.").arg(MSIMSettings::instance().m_postProcExecutable));
+			return;
+		}
+	}
+#if !defined(Q_OS_WIN)
+	else {
+		QMessageBox::information(this, tr("Error running PostProc"),
+							  tr("Process already running."));
+	}
+#endif
+}
+
+
 void MSIMMainWindow::on_actionHelpAboutQt_triggered() {
 	QMessageBox::aboutQt(this, tr("About Qt..."));
 }
@@ -700,6 +755,7 @@ void MSIMMainWindow::onUpdateActions() {
 	m_ui->actionFileClose->setEnabled(have_project);
 	m_ui->actionEditTextEditProject->setEnabled(have_project);
 	m_ui->actionEditParseFMUs->setEnabled(have_project);
+	m_ui->actionEditOpenPostProc->setEnabled(have_project);
 
 	// no project, no undo actions -> clearing undostack also disables undo actions
 	if (!have_project)
@@ -914,3 +970,5 @@ void MSIMMainWindow::on_actionStartSimulation_triggered() {
 	on_actionViewSimulation_toggled(true);
 	m_viewSimulation->on_toolButtonStartInTerminal_clicked();
 }
+
+

@@ -35,5 +35,6 @@
         <file>gfx/views/32x32/info_32x32.png</file>
         <file>gfx/views/32x32/switch_language_32x32.png</file>
         <file>gfx/views/32x32/exit_32x32.png</file>
+        <file>gfx/views/32x32/PostProcApp_32x32.png</file>
     </qresource>
 </RCC>

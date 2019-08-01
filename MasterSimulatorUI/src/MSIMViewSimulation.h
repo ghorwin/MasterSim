@@ -67,6 +67,8 @@ private slots:
 
 	void on_checkBoxWriteInternalVariables_toggled(bool checked);
 
+	void on_checkBoxPreventOversteppingOfEndTime_toggled(bool checked);
+
 private:
 	void updateCommandLine();
 

@@ -36,6 +36,7 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	toolButtonSave = new QToolButton(this); lay->addWidget(toolButtonSave);
 //	toolButtonSave->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S) );
 	toolButtonAnalyze = new QToolButton(this); lay->addWidget(toolButtonAnalyze);
+	toolButtonLaunchPostProc = new QToolButton(this); lay->addWidget(toolButtonLaunchPostProc);
 	lay->addSpacerItem( new QSpacerItem(20,20, QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	toolButtonEditFMUs = new QToolButton(this); lay->addWidget(toolButtonEditFMUs);
 	toolButtonEditConnections = new QToolButton(this); lay->addWidget(toolButtonEditConnections);
@@ -55,6 +56,7 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	setupToolButton(toolButtonLoad, ":/gfx/views/32x32/fileopen_32x32.png", tr("Loads a project (Ctrl + O)."));
 	setupToolButton(toolButtonSave, ":/gfx/views/32x32/filesave_32x32.png", tr("Saves current project (Ctrl + S)."));
 	setupToolButton(toolButtonAnalyze, ":/gfx/views/32x32/filesave_32x32.png", tr("Saves current project (Ctrl + S)."));
+	setupToolButton(toolButtonLaunchPostProc, ":/gfx/views/32x32/postproc_32x32.png", tr("Opens Post-Processing."));
 
 	setupToolButton(toolButtonEditFMUs, ":/gfx/views/32x32/MasterSim_Simulators_32x32.png", tr("Switches to slave edit mode."));
 	setupToolButton(toolButtonEditConnections, ":/gfx/views/32x32/MasterSim_Connections_32x32.png", tr("Switches to connection edit mode."));

@@ -185,6 +185,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			}
 			else if (keyword == "adjustStepSize")
 				m_adjustStepSize = (value == "true" || value == "yes" || value == "1");
+			else if (keyword == "preventOversteppingOfEndTime")
+				m_preventOversteppingOfEndTime = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "absTol")
 				m_absTol = IBK::string2val<double>(value);
 			else if (keyword == "relTol")
@@ -266,6 +268,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!m_hStart.empty())		writeParameter(m_hStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_hOutputMin.empty())		writeParameter(m_hOutputMin, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "preventOversteppingOfEndTime" << " " << (m_preventOversteppingOfEndTime ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "absTol" << " " << m_absTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "relTol" << " " << m_relTol << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "MasterMode" << " ";

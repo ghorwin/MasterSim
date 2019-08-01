@@ -27,6 +27,7 @@ void MSIMPreferencesPageGeneral::updateUi() {
 	MSIMSettings & s = MSIMSettings::instance();
 	// transfer data to Ui
 	m_ui->filepathTextEditor->setFilename(s.m_textEditorExecutable);
+	m_ui->filepathPostProcExecutable->setFilename(s.m_postProcExecutable);
 }
 
 
@@ -34,6 +35,7 @@ bool MSIMPreferencesPageGeneral::storeConfig() {
 	// no checks necessary
 	MSIMSettings & s = MSIMSettings::instance();
 	s.m_textEditorExecutable = m_ui->filepathTextEditor->filename();
+	s.m_postProcExecutable = m_ui->filepathPostProcExecutable->filename();
 
 	return true;
 }
