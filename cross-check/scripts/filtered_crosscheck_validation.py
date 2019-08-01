@@ -28,7 +28,7 @@ if not os.path.exists('fmi-cross-check'):
 
 
 # run cross check
-fmu_count, result_count, problems = fmpy.cross_check.validate_vendor_repo.validate_repo('fmi-cross-check', False, platform_filter=args.platform, fmi_type_filter='cs')
+fmu_count, result_count, problems = fmpy.cross_check.validate_vendor_repo.validate_repo('fmi-cross-check', True, platform_filter=args.platform, fmi_type_filter='cs')
 
 # print results
 
