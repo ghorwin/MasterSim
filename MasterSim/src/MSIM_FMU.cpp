@@ -123,7 +123,7 @@ void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const st
 		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2] has valueReference %3 which is already selected for output (variable '%4').")
 						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference).arg(var.m_name),
 							   IBK::MSG_WARNING, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
-		m_synonymousVars[valueReference].push_back(varName);
+		m_synonymousVars[std::make_pair(var.m_type, valueReference)].push_back(varName);
 	}
 }
 

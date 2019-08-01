@@ -138,14 +138,27 @@ const FMIVariable & ModelDescription::variable(const std::string & varName) cons
 const FMIVariable & ModelDescription::variableByRef(FMIVariable::VarType varType, unsigned int valueReference) const {
 	const char * const FUNC_ID = "[ModelDescription::variableByRef]";
 
-	const FMIVariable & var = variableByRef(valueReference);
-	if (var.m_type != varType)
-		throw IBK::Exception(IBK::FormatString("FMIVariable with value reference '%1' has type '%2', but type '%3' was requested.")
-							 .arg(valueReference).arg(FMIVariable::varType2String(var.m_type)).arg(FMIVariable::varType2String(varType)), FUNC_ID);
-	return var;
+	const FMIVariable * outputVar = nullptr;
+	const FMIVariable * otherVar = nullptr;
+
+	for (const FMIVariable & fmiVar : m_variables) {
+		if (fmiVar.m_type == varType && fmiVar.m_valueReference == valueReference) {
+			if (fmiVar.m_causality == FMIVariable::C_OUTPUT)
+				outputVar = &fmiVar;
+			else
+				otherVar = &fmiVar;
+		}
+	}
+	if (outputVar != nullptr)
+		return *outputVar;
+
+	if (otherVar != nullptr)
+		return *otherVar;
+
+	throw IBK::Exception(IBK::FormatString("FMIVariable with value reference '%1' is not exported.").arg(valueReference), FUNC_ID);
 }
 
-
+/*
 const FMIVariable & ModelDescription::variableByRef(unsigned int valueReference) const {
 	const char * const FUNC_ID = "[ModelDescription::variableByRef]";
 
@@ -169,7 +182,7 @@ const FMIVariable & ModelDescription::variableByRef(unsigned int valueReference)
 
 	throw IBK::Exception(IBK::FormatString("FMIVariable with value reference '%1' is not exported.").arg(valueReference), FUNC_ID);
 }
-
+*/
 
 void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_csV2ModelIdentifier = readRequiredAttribute(element, "modelIdentifier");
