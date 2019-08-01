@@ -28,6 +28,7 @@ public:
 	QToolButton  * toolButtonSave;
 	QToolButton  * toolButtonLoad;
 	QToolButton  * toolButtonAnalyze;
+	QToolButton  * toolButtonLaunchPostProc;
 
 	QToolButton  * toolButtonEditFMUs;
 	QToolButton  * toolButtonEditConnections;

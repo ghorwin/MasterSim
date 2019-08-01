@@ -179,6 +179,9 @@ public:
 	/*! The version number stored during last run (used to detect version changes). */
 	QString						m_lastVersionNumber;
 
+	/*! Path to Post-Proc executable. */
+	QString						m_postProcExecutable;
+
 	/*! Enumeration values for different properties to be managed in settings.
 	*/
 	enum PropertyType {

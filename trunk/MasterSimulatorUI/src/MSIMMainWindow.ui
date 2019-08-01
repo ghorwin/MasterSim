@@ -51,6 +51,7 @@
     </widget>
     <addaction name="actionEditParseFMUs"/>
     <addaction name="actionEditTextEditProject"/>
+    <addaction name="actionEditOpenPostProc"/>
     <addaction name="separator"/>
     <addaction name="actionEditPreferences"/>
     <addaction name="menuLanguage"/>
@@ -275,6 +276,18 @@
    </property>
    <property name="shortcut">
     <string>F9</string>
+   </property>
+  </action>
+  <action name="actionEditOpenPostProc">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open Post-Proc...</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens the Post-processing with a matching session for this project.</string>
    </property>
   </action>
  </widget>

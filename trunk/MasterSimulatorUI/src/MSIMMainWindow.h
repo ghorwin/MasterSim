@@ -25,7 +25,7 @@ class MSIMViewConnections;
 class MSIMViewSimulation;
 class MSIMAboutDialog;
 class MSIMButtonBar;
-
+class MSIMPostProcHandler;
 
 /*! Main window class. */
 class MSIMMainWindow : public QMainWindow {
@@ -120,6 +120,8 @@ private slots:
 
 	void on_actionStartSimulation_triggered();
 
+	void on_actionEditOpenPostProc_triggered();
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();
@@ -202,6 +204,9 @@ private:
 	MSIMAboutDialog				*m_aboutDialog;
 
 	MSIMButtonBar				*m_buttonBar;
+
+	/*! Handles spawning/activating of PostProc executable. */
+	MSIMPostProcHandler			*m_postProcHandler;
 };
 
 #endif // MSIMMainWindow_H
