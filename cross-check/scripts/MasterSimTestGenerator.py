@@ -153,19 +153,20 @@ class MasterSimTestGenerator:
 			return False
 		
 		TEMPLATE_MSIM_CS1_FILE = """
-tStart               ${StartTime} s
-tEnd                 ${StopTime} s
-hMax                 30 min
-hMin                 1e-6 s
-hFallBackLimit       0.001 s
-hStart               ${StepSize} s
-hOutputMin           ${dtOutMin} s
-adjustStepSize       no
-absTol               1e-06
-relTol               ${RelTol}
-MasterMode           GAUSS_JACOBI
-ErrorControlMode     NONE
-maxIterations        1
+tStart                   ${StartTime} s
+tEnd                     ${StopTime} s
+hMax                     30 min
+hMin                     1e-6 s
+hFallBackLimit           0.001 s
+hStart                   ${StepSize} s
+hOutputMin               ${dtOutMin} s
+adjustStepSize           no
+absTol                   1e-06
+relTol                   ${RelTol}
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   yes
 
 ${FMU-Definition}
 
@@ -173,19 +174,20 @@ ${Graph}
 """
 		
 		TEMPLATE_MSIM_CS2_FILE = """
-tStart               ${StartTime} s
-tEnd                 ${StopTime} s
-hMax                 30 min
-hMin                 1e-6 s
-hFallBackLimit       0.001 s
-hStart               ${StepSize} s
-hOutputMin           ${dtOutMin} s
-adjustStepSize       no
-absTol               1e-6
-relTol               ${RelTol}
-MasterMode           GAUSS_JACOBI
-ErrorControlMode     NONE
-maxIterations        1
+tStart                   ${StartTime} s
+tEnd                     ${StopTime} s
+hMax                     30 min
+hMin                     1e-6 s
+hFallBackLimit           0.001 s
+hStart                   ${StepSize} s
+hOutputMin               ${dtOutMin} s
+adjustStepSize           no
+absTol                   1e-6
+relTol                   ${RelTol}
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   yes
 
 ${FMU-Definition}
 
@@ -196,9 +198,9 @@ ${Graph}
 		else:
 			msim_content = TEMPLATE_MSIM_CS2_FILE
 		for kw in MasterSimTestGenerator.OPT_KEYWORDS:
-			msim_content = msim_content.replace('${'+kw+'}', "{:e}".format(self.simOptions[kw]))
+			msim_content = msim_content.replace('${'+kw+'}', "{:f}".format(self.simOptions[kw]))
 
-		msim_content = msim_content.replace('${dtOutMin}', "{:e}".format(self.dtOut))
+		msim_content = msim_content.replace('${dtOutMin}', "{:f}".format(self.dtOut))
 
 		# generate FMU definition line
 		# 'simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"'
