@@ -46,13 +46,13 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_1.0_cs_linux32_AMESim_15_fuelrail_cs	1.0	linux32	AMESim-15	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_linux32_ControlBuild_2015_FD01_batch	1.0	linux32	ControlBuild-2015_FD01	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_1.0_cs_linux32_ControlBuild_2015_FD01_drill	1.0	linux32	ControlBuild-2015_FD01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_13SL3_MIS_cs	1.0	linux64	AMESim-13SL3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_13SL3_steam_plant	1.0	linux64	AMESim-13SL3	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_14_MIS_cs	1.0	linux64	AMESim-14	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_14_steam_plant	1.0	linux64	AMESim-14	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_ClassEAmplifier	1.0	linux64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_MIS_cs	1.0	linux64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_fuelrail_cs	1.0	linux64	AMESim-15	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_13SL3_MIS_cs	1.0	linux64	AMESim-13SL3	passed	WRMS(lca@PUMP01) = 0.025812518963;WRMS(x1@INJ01) = 7.33982141222;WRMS(q@INJ01) = 9.85208631245;WRMS(volume@INJ01) = 0.413597992294;WRMS(p1@PUMP01) = 0.986812174803;WRMS(pa@DVALV01) = 2.01581902056;WRMS(sacp@INJ01) = 6.39073117462
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_13SL3_steam_plant	1.0	linux64	AMESim-13SL3	passed	WRMS(tempc@tpf_st_chamber) = 10.7936719373;WRMS(press@tpf_st_chamber) = 16.8507792622;WRMS(out2@division) = 1.71476352752;WRMS(tau@tpf_st_chamber) = 1.65351537626;WRMS(dm2@tpf_pump) = 7.94772603419;WRMS(torque@expseu_) = 17.8508032688
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_14_MIS_cs	1.0	linux64	AMESim-14	passed	WRMS(lca@PUMP01) = 0.0260800675139;WRMS(x1@INJ01) = 7.32453793624;WRMS(q@INJ01) = 9.84382089294;WRMS(volume@INJ01) = 0.412760425162;WRMS(p1@PUMP01) = 0.985555424584;WRMS(pa@DVALV01) = 2.01416289452;WRMS(sacp@INJ01) = 6.39168175553
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_14_steam_plant	1.0	linux64	AMESim-14	passed	WRMS(tempc@tpf_st_chamber) = 0.0884029814026;WRMS(press@tpf_st_chamber) = 0.286514242502;WRMS(out2@division) = 0.0149487176754;WRMS(tau@tpf_st_chamber) = 0.0144163709264;WRMS(dm2@tpf_pump) = 0.0165846403864;WRMS(torque@expseu_) = 0.315766142626
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_ClassEAmplifier	1.0	linux64	AMESim-15	passed	WRMS(U@resistance) = 15.4499968298;WRMS(I@variable_resistance) = 73.3543518287
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_MIS_cs	1.0	linux64	AMESim-15	passed	WRMS(volume@INJ01) = 0.401943532516;WRMS(q@INJ01) = 9.65073987368
+17.07.2019 20:12:23	fmus_1.0_cs_linux64_AMESim_15_fuelrail_cs	1.0	linux64	AMESim-15	passed	WRMS(p1@general_hydraulic_chamber) = 1.94986849575;WRMS(p1@hydraulic_4) = 88.0827393498;WRMS(q@volumesensor) = 93.1881677371
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_ForkLift	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_SpringMassDamper	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
 18.07.2019 13:25:42	fmus_1.0_cs_linux64_Adams_2017.2_Valve	1.0	linux64	Adams-2017.2	rejected	License missing, FMU hangs during init.
@@ -460,10 +460,10 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_MapleSim_2015.2_CoupledClutches	2.0	linux32	MapleSim-2015.2	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_MapleSim_2015.2_Rectifier	2.0	linux32	MapleSim-2015.2	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux32_MapleSim_7.01_ControlledTemperature	2.0	linux32	MapleSim-7.01	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_20sim_4.6.4.8004_TorsionBar	2.0	linux64	20sim-4.6.4.8004	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_ClassEAmplifier	2.0	linux64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_MIS_cs	2.0	linux64	AMESim-15	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_fuelrail_cs	2.0	linux64	AMESim-15	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_20sim_4.6.4.8004_TorsionBar	2.0	linux64	20sim-4.6.4.8004	passed	WRMS(LoadDiskRev) = 9.43586824027;WRMS(MotorDiskRev) = 7.16425685584
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_ClassEAmplifier	2.0	linux64	AMESim-15	passed	WRMS(U@resistance) = 15.4500231477;WRMS(I@variable_resistance) = 73.3543458172
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_MIS_cs	2.0	linux64	AMESim-15	passed	WRMS(volume@INJ01) = 0.401943532516;WRMS(q@INJ01) = 9.65073987368
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_AMESim_15_fuelrail_cs	2.0	linux64	AMESim-15	passed	WRMS(p1@general_hydraulic_chamber) = 29.0031571372;WRMS(p1@hydraulic_4) = 91.2646593224;WRMS(q@volumesensor) = 93.1881677371
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_EDALab_HIFSuite_2017.05_antlia_b01	2.0	linux64	EDALab_HIFSuite-2017.05_antlia	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_EDALab_HIFSuite_2017.05_antlia_des56_original	2.0	linux64	EDALab_HIFSuite-2017.05_antlia	failed	Not calculated, yet
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_EDALab_HIFSuite_2017.05_antlia_m6502	2.0	linux64	EDALab_HIFSuite-2017.05_antlia	failed	Not calculated, yet
@@ -472,22 +472,22 @@ Date	FMUCase	CS-Version	Platform	Tool	Result	Notes
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_JModelica.org_1.15_ControlledTemperature	2.0	linux64	JModelica.org-1.15	passed	WRMS(TAmb) = 0.0;WRMS(TDif) = 0.0;WRMS(heatCapacitor.T) = 2.93394381572e-05;WRMS(TRes) = 2.93394381572e-05
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_JModelica.org_1.15_CoupledClutches	2.0	linux64	JModelica.org-1.15	passed	WRMS(freqHz) = 0.0;WRMS(T2) = 0.0;WRMS(clutch1.phi_rel) = 0.0236391416484;WRMS(clutch1.w_rel) = 0.0656576005473;WRMS(clutch2.phi_rel) = 0.0466095828284;WRMS(clutch2.w_rel) = 0.00250740502055;WRMS(clutch3.phi_rel) = 0.0;WRMS(clutch3.w_rel) = 0.0;WRMS(J1.phi) = 0.0106469433519;WRMS(J1.w) = 0.0571466095951
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_JModelica.org_1.15_PID_Controller	2.0	linux64	JModelica.org-1.15	passed	WRMS(driveAngle) = 0.0;WRMS(spring.w_rel) = 0.0;WRMS(PI.I.y) = 0.0;WRMS(inertia1.phi) = 0.0;WRMS(spring.phi_rel) = 0.0;WRMS(integrator.y) = 0.0;WRMS(inertia1.w) = 0.0
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_ControlledTemperature	2.0	linux64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_CoupledClutches	2.0	linux64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_Rectifier	2.0	linux64	MapleSim-2015.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_ControlledTemperature	2.0	linux64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_CoupledClutches	2.0	linux64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_Rectifier	2.0	linux64	MapleSim-2015.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_ControlledTemperature	2.0	linux64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_CoupledClutches	2.0	linux64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_Rectifier	2.0	linux64	MapleSim-2016.1	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_ControlledTemperature	2.0	linux64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_CoupledClutches	2.0	linux64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_Rectifier	2.0	linux64	MapleSim-2016.2	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_ControlledTemperature	2.0	linux64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_CoupledClutches	2.0	linux64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_Rectifier	2.0	linux64	MapleSim-2018	failed	Not calculated, yet
-17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_7.01_ControlledTemperature	2.0	linux64	MapleSim-7.01	failed	Not calculated, yet
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_ControlledTemperature	2.0	linux64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_CoupledClutches	2.0	linux64	MapleSim-2015.1	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.1_Rectifier	2.0	linux64	MapleSim-2015.1	passed	WRMS(outputs) = 1.75793384347
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_ControlledTemperature	2.0	linux64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_CoupledClutches	2.0	linux64	MapleSim-2015.2	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2015.2_Rectifier	2.0	linux64	MapleSim-2015.2	passed	WRMS(outputs) = 1.75793384347
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_ControlledTemperature	2.0	linux64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_CoupledClutches	2.0	linux64	MapleSim-2016.1	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.1_Rectifier	2.0	linux64	MapleSim-2016.1	passed	WRMS(outputs) = 1.75793384347
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_ControlledTemperature	2.0	linux64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_CoupledClutches	2.0	linux64	MapleSim-2016.2	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2016.2_Rectifier	2.0	linux64	MapleSim-2016.2	passed	WRMS(outputs) = 1.75793384347
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_ControlledTemperature	2.0	linux64	MapleSim-2018	passed	WRMS(outputs[1]) = 3.02654660478e-12;WRMS(outputs[2]) = 0.478014895221
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_CoupledClutches	2.0	linux64	MapleSim-2018	passed	WRMS(outputs[1]) = 0.439079793313;WRMS(outputs[2]) = 3.04672984022;WRMS(outputs[3]) = 3.16000416857;WRMS(outputs[4]) = 10.8890077853
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_2018_Rectifier	2.0	linux64	MapleSim-2018	passed	WRMS(outputs) = 1.75793384347
+17.07.2019 20:12:23	fmus_2.0_cs_linux64_MapleSim_7.01_ControlledTemperature	2.0	linux64	MapleSim-7.01	passed	WRMS(outputs[1]) = 1.94032233244e-12;WRMS(outputs[2]) = 1.0485593799
 18.07.2019 21:50:26	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_BouncingBall	2.0	linux64	Test-FMUs-0.0.1	rejected	Test case is marked 'notCompliantWithLatestRules'.
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_Dahlquist	2.0	linux64	Test-FMUs-0.0.1	passed	WRMS(x) = 0.00625474308999
 17.07.2019 20:12:23	fmus_2.0_cs_linux64_Test-FMUs_0.0.1_Feedthrough	2.0	linux64	Test-FMUs-0.0.1	failed	Not calculated, yet
