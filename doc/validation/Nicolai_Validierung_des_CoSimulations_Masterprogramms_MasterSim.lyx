@@ -33,9 +33,6 @@ position=bottom]{caption}
 
 \usepackage[ruled,vlined]{algorithm2e}
 
-\usepackage{listings}
-\input{listings-modelica.cfg}
-
 \usepackage{booktabs}
 
 \usepackage{lastpage}
@@ -43,9 +40,9 @@ position=bottom]{caption}
 \usepackage[a-2b]{pdfx}
 
 \begin{filecontents*}{\jobname.xmpdata}
-  \Title{Validation of the co-simulation master MASTERSIM}
+  \Title{Validierung des Co-Simulationsmasterprogramms MASTERSIM}
   \Author{A. Nicolai}
-  \Keywords{Co-Simulation\sep FMI\sep MASTERSIM\sep Validation\sep Standard compliance\sep accuracy}
+  \Keywords{Co-Simulation\sep FMI\sep MASTERSIM\sep Validierung\sep Genauigkeit}
   \Publisher{Qucosa}
 \end{filecontents*}
 \end_preamble
@@ -450,296 +447,337 @@ Co-Simulations-Masterprogram
 \end_layout
 
 \begin_layout Section
-Validierungsschritte und Methodik
-\end_layout
-
-\begin_layout Subsection
-Allgemeine Anforderungen an Simulationsprogramme
+Validierungsmethodik
 \end_layout
 
 \begin_layout Standard
-Wie für jedes andere Simulationsprogramm zur Lösung wissenschaftlicher bzw.
- ingenieurstechnischer Problemstellungen sollten die zugrunde liegenden
- Gleichungen 
-\emph on
-korrekt
-\emph default
- gelöst werden.
- Die Definition von 
-\emph on
-korrekt
-\emph default
- ist hierbei keineswegs trivial, da dies stark vom betrachteten Problem
- abhängt.
- Die Genauigkeit, welche ein Ingenieur vom Modell erwartet wird zumeist
- von der Genauigkeit der verfügbaren Eingangsdaten abhängen.
- Zum Beispiel wäre es bedeutungslos eine Temperatur mit maximaler Abweichung
- von 0,01 K berechnen zu wollen, wenn dem Modell als Eingangsdaten Schätzwerte
- mit 
-\begin_inset Formula $\pm$
-\end_inset
-
-1 K Toleranz gegeben werden.
- Es wäre daher eine geeignete Herangehensweise, typische Anwendungsfälle
- aus Ingenieursbereichen zu wählen, und Eingangsdaten wie erwartete Ergebnisdate
-n im gleichen Kontext zu definieren.
- Ein korrekt arbeitendes Simulationsprogramm sollte die erwarteten Ergebnisse
- dann in der geforderten Genauigkeit liefern können.
- Diese Anforderung lässt sich auch auf Co-Simulations-Masterprogramme überführen
-, wobei hierbeit Fehlerquellen im Masterprogramm selbst, wie auch in den
- gekoppelten Simulationsmodellen zu berücksichtigen sind.
-\end_layout
-
-\begin_layout Subsection
-Fehlerquellen
-\end_layout
-
-\begin_layout Standard
-Betrachtet man die Komplexität fortgeschrittener Simulationsprogramme, so
- lassen sich Programmierfehler nicht komplett vermeiden.
- Ebenso können die Wahl ungeeigneter Algorithmen (z.B.
- solche, die zu numerischen Instabilitäten führen), wie auch schlecht gewählte
- numerische Parameter zu inkorrekten Ergebnissen führen.
- Ein Programmfehler wäre z.B.
- ein komplettes Fehlschlagen/Abbrechen der Berechnung, bzw.
- das Berechnen von Ergebnissen mit zu großen Abweichungen zu den Referenzwerten.
- Solche Fehler können vielfältige Ursachen haben.
- Zudem können bei komplexeren Programmen mit alternativen Algorithmen/Ausführung
-spfaden problematische Programmteile auch nur bei bestimmten Anwendungsfällen
- zum Tragen kommen.
- Schlimmstenfalls führt dies dazu, dass in den Tests scheinbar alles korrekt
- rechnet, jedoch bei der späteren praktischen Anwendung Fehler auftreten.
-\end_layout
-
-\begin_layout Standard
-Daher mögen einzelne, isolierte Testfälle nicht ausreichen.
- Stattdessen sollte eine Reihe von Testfällen mit unterschiedlicher Charakterist
-ik verwendet werden.
- Auf diesem Weg können verschiedene Funktionalitäten eines Berechnungsprogramms
- individuell getestet werden und eine umfassende Korrektheitsprüfung erfolgen.
-\end_layout
-
-\begin_layout Standard
-Mit Hinblick auf Co-Simulationsfunktionlität sind Fehlerquellen unterschiedlichs
-ter Art auszuschließen, z.B.:
-\end_layout
-
-\begin_layout Itemize
-Fehlerhaftes Einlesen und Interpretieren der Metadaten,
-\end_layout
-
-\begin_layout Itemize
-fehlerhaftes Ansprechen der Programmierschnittstelle,
-\end_layout
-
-\begin_layout Itemize
-fehlerhaft implementierte Kopplungsalgorithmen,
-\end_layout
-
-\begin_layout Itemize
-Fehler bei der Ausgabe der Ergebnisdaten, etc.
-\end_layout
-
-\begin_layout Subsection
-Prüfmethodiken
-\end_layout
-
-\begin_layout Standard
-Grundsätzlich kann zwischen zwei unterschiedlichen Herangehensweisen unterschied
-en werden:
-\end_layout
-
-\begin_layout Enumerate
-Detailprüfung einzelnen Programmkomponenten und Algorithmen mit strikten
- Forderungen an die Berechnungsergebnisse, da diese aus Sicht des Programmentwic
-klers bekannt sind,
-\end_layout
-
-\begin_layout Enumerate
-Allgemeine Prüfung durch Berechnung von Testszenarien und Vergleich mit
- Referenzwerten unter Verwendung eines Toleranzbandes bzw.
- anderer Ähnlichkeitsforderung.
-\end_layout
-
-\begin_layout Standard
-Beide Verfahren sind in der Herangehensweise grundverschieden, und liefern
- auch grundsätzlich unterschiedliche Erkenntnisse.
-\end_layout
-
-\begin_layout Subsubsection
-Detailprüfungen
-\end_layout
-
-\begin_layout Standard
-Bei der Detailprüfung bzw.
- Algorithmenprüfung testet der Programmentwickler in kleinen, sehr exakt
- definierten Tests
-\begin_inset Foot
-status open
-
-\begin_layout Plain Layout
-manchmal auch als Modultest (engl.
- 
-\emph on
-Unit Test)
-\emph default
- bezeichnet
-\end_layout
+Bei der Entwicklung des Programms MASTERSIM wurden nach Erreichen einer
+ Mindestfunktionalität, entwicklungsbegleitende Modultests entwickelt.
+ Diese testen (und demonstrieren) die korrekte Implementierung der verschiedenen
+ Masteralgorithmen und Zeitschrittsadaptionstechniken.
+ Im Detail sind diese Tests in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nicolai:2018:qucosa_MastersimAlgorithms"
+literal "false"
 
 \end_inset
 
- die korrekte Funktionalität des Programms.
- Durch die exakte Definition des zu testenden Teils und der bekannten, erwartete
-n Ergebnisse, lassen sich diese Tests automatisiert durchführen und auswerten.
- Bei der modernen Softwareentwicklung gehören diese Tests zum Entwicklungsprozes
-s und zur Qualitätssicherung.
- Wesentliche Erkenntnisse aus diesen Tests sind:
-\end_layout
+ und 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nicolai:2019:TechReport_MasterSimTestCase"
+literal "false"
 
-\begin_layout Itemize
-Nachweis, dass ein implementierter Algorithmus, bzw.
- Programmmodul 
-\emph on
-exakt
-\emph default
- die geforderte Funktionalität aufweist,
-\end_layout
+\end_inset
 
-\begin_layout Itemize
-Nachweis, dass bei fortschreitender Programmentwicklung ein bereits funktioniere
-nder Teil 
-\emph on
-nicht
-\emph default
- unabsichtlich verändert wird und dadurch nun fehlerbehaftet ist, und
-\end_layout
-
-\begin_layout Itemize
-Nachweis, dass die Qualität einer Implementierung (z.B.
- hinsichtlich der Berechnungseffizienz) konstant bleibt.
+ beschrieben.
 \end_layout
 
 \begin_layout Standard
-In Abschnitt
+Die Erstellung des Programms MASTERSIM erfolgt scriptgesteuert.
+ Nachgelagert kann ein Python-Script (entwickelt am IBK, TU Dresden) gestartet
+ werden, welches eine Verzeichnisstruktur durchläuft, und nach Testfällen
+ sucht (
+\family typewriter
+*.msim
+\family default
+-Dateien) .
+ Existiert für den Testfall ein Unterverzeichnis mit Referenzergebnissen
+ für die aktuelle Plattform und Compiler, wird der Testfall simuliert und
+ die Simulationsstatistiken und Ergebnisse verglichen.
+ Listing
 \begin_inset space ~
 \end_inset
 
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:Detailprüfungen-der-MASTERSIM-Algorithmen"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- werden einzelne Modultests des MASTERSIM-Programms im Detail erläutert.
- Das Entwickeln und Durchführen von Modultests ist Teil des Softwareentwicklungs
-prozesses und somit stets der erste Schritt einer Programmvalidierung.
-\end_layout
-
-\begin_layout Subsubsection
-Querschnittstests bzw.
- Tests gegen Anwendungsszenarien
+ zeigt exemplarisch einen Auszug aus dem Validierungsreport:
 \end_layout
 
 \begin_layout Standard
-Unter Querschnittstests wird die Anwendung des Programms auf allgemeiner
- formulierte Testszenarien verstanden.
- Die bereitgestellten Referenzergebnisse können üblicherweise nicht mehr
- 100%-tig erreicht werden, da diese von anderen Programmen bzw.
- Lösungsalgorithmen oder auch Messwerten stammen können.
- Abweichungen zwischen den Referenzwerten und den Ergebnissen des zu prüfenden
- Programmes können vielfältige Gründe haben, 
-\emph on
-auch wenn das zu prüfende Programm korrekt funktioniert
-\emph default
-.
- Abbildung
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Prozess-der-Transformation-Modell-Result"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- illustriert den Prozess von der Problembeschreibung bis zu den verschiedenen
- Ergebnissen und deren möglicherweise großen Unterschieden.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
+\begin_inset Box Frameless
+position "t"
+hor_pos "c"
+has_inner_box 1
+inner_pos "t"
+use_parbox 0
+use_makebox 0
+width "100col%"
+special "none"
+height "1in"
+height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_inset listings
+lstparams "basicstyle={\scriptsize},breaklines=true,showstringspaces=false,tabsize=4,basicstyle={\footnotesize\ttfamily\color{black}},commentstyle={\ttfamily\itshape\color{dark-gray}},showtabs=false,frame=single,captionpos=b,breakatwhitespace=false,texcl=true"
+inline false
+status open
 
 \begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Prozess-der-Transformation-Modell-Result"
 
-\end_inset
-
-Prozess der Transformation einer Problembeschreibung zu Referenz-/Berechnungserg
-ebnissen
-\end_layout
-
-\end_inset
-
-
+...
 \end_layout
 
 \begin_layout Plain Layout
 
 \end_layout
 
+\begin_layout Plain Layout
+
+../../data/tests/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_R
+ichardson.msim
+\end_layout
+
+\begin_layout Plain Layout
+
+                                     Reference             New
+\end_layout
+
+\begin_layout Plain Layout
+
+  ConvergenceFails                          41 ==           41
+\end_layout
+
+\begin_layout Plain Layout
+
+  ConvergenceIterLimitExceeded              41 ==           41
+\end_layout
+
+\begin_layout Plain Layout
+
+  ErrorTestFails                            85 ==           85
+\end_layout
+
+\begin_layout Plain Layout
+
+  MasterAlgorithmSteps                     324 ==          324
+\end_layout
+
+\begin_layout Plain Layout
+
+  --
+\end_layout
+
+\begin_layout Plain Layout
+
+  ErrorTestTime                           0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  FrameworkTimeWriteOutputs               0.01 ~~         0.07
+\end_layout
+
+\begin_layout Plain Layout
+
+  MasterAlgorithmTime                     0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[1]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[2]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[3]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  WallClockTime                           0.01 ~~         0.07
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Checked: values.csv
+\end_layout
+
+\begin_layout Plain Layout
+
+../../data/tests/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep.m
+sim
+\end_layout
+
+\begin_layout Plain Layout
+
+                                     Reference             New
+\end_layout
+
+\begin_layout Plain Layout
+
+  ConvergenceFails                           0 ==            0
+\end_layout
+
+\begin_layout Plain Layout
+
+  ConvergenceIterLimitExceeded              95 ==           95
+\end_layout
+
+\begin_layout Plain Layout
+
+  ErrorTestFails                             0 ==            0
+\end_layout
+
+\begin_layout Plain Layout
+
+  MasterAlgorithmSteps                    1000 ==         1000
+\end_layout
+
+\begin_layout Plain Layout
+
+  --
+\end_layout
+
+\begin_layout Plain Layout
+
+  ErrorTestTime                           0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  FrameworkTimeWriteOutputs               0.02 ~~         0.02
+\end_layout
+
+\begin_layout Plain Layout
+
+  MasterAlgorithmTime                     0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[1]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[2]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  Slave[3]Time                            0.00 ~~         0.00
+\end_layout
+
+\begin_layout Plain Layout
+
+  WallClockTime                           0.02 ~~         0.02
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Checked: values.csv
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Successful projects:
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Project path                                                 Wall clock
+ time [s]
+\end_layout
+
+\begin_layout Plain Layout
+
+FileReaderSlave/LV_Richardson_PredatorFromFile_noiter                  0.318
+\end_layout
+
+\begin_layout Plain Layout
+
+Lotka_Volterra_System/LV_Richardson_5iter                              0.244
+\end_layout
+
+\begin_layout Plain Layout
+
+Lotka_Volterra_System/LV_Richardson_noiter                             0.224
+\end_layout
+
+\begin_layout Plain Layout
+
+Math_003_control_loop/Math003_GaussJacobi_1iters_fixedStep             0.040
+\end_layout
+
+\begin_layout Plain Layout
+
+Math_003_control_loop/Math003_GaussSeidel_1iters_fixedStep             0.024
+\end_layout
+
+\begin_layout Plain Layout
+
+Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive              0.006
+\end_layout
+
+\begin_layout Plain Layout
+
+Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson   0.073
+\end_layout
+
+\begin_layout Plain Layout
+
+Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep             0.023
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
 \end_inset
 
 
 \end_layout
 
-\begin_layout Section
-\begin_inset CommandInset label
-LatexCommand label
-name "sec:Detailprüfungen-der-MASTERSIM-Algorithmen"
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintCited"
+bibfiles "/home/ghorwin/svn/mastersim-code/doc/articles/Literature"
+options "plaindin"
 
 \end_inset
 
-Detailprüfungen der MASTERSIM-Algorithmen
-\end_layout
 
-\begin_layout Subsection
-Grundfunktionalität
-\end_layout
-
-\begin_layout Subsection
-Gauss-Jacobi
-\end_layout
-
-\begin_layout Subsection
-Gauss-Seidel
-\end_layout
-
-\begin_layout Subsection
-Iterationsalgorithmen (FMU 2.0 Rücksetz-Funktionalität)
-\end_layout
-
-\begin_layout Subsection
-Zeitschrittsadaption
-\end_layout
-
-\begin_layout Subsection
-Fehlerkontrolle und Genauigkeitskontrolle
 \end_layout
 
 \end_body
