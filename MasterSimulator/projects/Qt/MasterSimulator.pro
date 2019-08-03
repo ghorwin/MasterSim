@@ -8,6 +8,10 @@ TEMPLATE = app
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
+QT -= core gui
+CONFIG += console
+CONFIG -= app_bundle
+
 LIBS += -L../../../lib$${DIR_PREFIX} \
 	-L../../../externals/lib$${DIR_PREFIX} \
 	-lMasterSim \
