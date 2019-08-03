@@ -1,6 +1,19 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.7.1
+---------------------------
+This is a minor update, with only fine-tuning and a compatibility feature needed
+for cross-checking/validation of MasterSim (the 'prevent overstepping' feature).
+Also, on the Mac starting the simulation spawns a new terminal application window,
+so no more running jobs in the background.
+
+* Feature: Ticket #52 - Add option to 'prevent overstepping of end time'
+* Feature: Ticket #54 - Open Terminal.app on MacOS when launching MasterSimulator
+* Feature: Ticket #56 - Remove target directory when running new simulation from GUI
+* Feature: Ticket #57 - Fix problem when FMU uses same value reference for several (different) variables
+
+
 Changelog for Version 0.7.0
 ---------------------------
 This release is centered around standard compliance - a lot of small adjustments were
