@@ -8,12 +8,15 @@
 #include <QDialogButtonBox>
 #include <QTimer>
 #include <QThread>
+#include <QStandardPaths>
+#include <QTextStream>
 
 #include <memory>
 #include <cstring>
 
 #include <IBK_UnitList.h>
 #include <IBK_Unit.h>
+#include <IBK_configuration.h>
 
 #ifdef Q_OS_WIN
 #undef UNICODE
@@ -62,17 +65,6 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	verbosityLevels << tr("Minimal") << tr("Normal") << tr("Informative") << tr("Detailed") << tr("Developer");
 	m_ui->comboBoxVerbosityLevel->addItems(verbosityLevels);
 	m_ui->comboBoxVerbosityLevel->setCurrentIndex(MSIMSettings::instance().m_userLogLevelConsole);
-
-	// preset for terminal command
-	m_ui->comboBoxTerminalCommand->addItem("gnome-terminal --working-directory=\"%wd\" -x %cmdline");
-
-#ifdef Q_OS_WIN
-	m_ui->labelTerminalCommand->setVisible(false);
-	m_ui->comboBoxTerminalCommand->setVisible(false);
-#else
-	m_ui->checkBoxCloseOnExit->setVisible(false);
-#endif
-	m_ui->checkBoxCloseOnExit->setChecked(false);
 
 	blockMySignals(this, false);
 }
@@ -154,6 +146,11 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	updateCommandLine();
 	QStringList commandLineArgs = m_commandLineArgs;
 
+	// remove existing directory structure
+	QString targetPath = projectFile.left(projectFile.lastIndexOf('.'));
+	QDir resultDir( targetPath );
+	resultDir.removeRecursively();
+
 	// spawn process
 #ifdef Q_OS_WIN
 
@@ -194,16 +191,15 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	}
 #else // Q_OS_WIN
 
+	commandLineArgs.append(projectFile);
+
+#ifdef Q_OS_LINUX
 #if __cplusplus >= 199711L
 	std::unique_ptr<QProcess> myProcess (new QProcess(this));
 #else
 	std::auto_ptr<QProcess> myProcess (new QProcess(this));
 #endif
-	commandLineArgs.append(projectFile);
-	/// \todo Bug: startDetached returns true even if solver fails to start due to missing shared libs.
-//	bool success;
 
-#ifdef Q_OS_LINUX
 	// open terminal and start solver in terminal
 
 	QString terminalCommand = "gnome-terminal";
@@ -218,21 +214,41 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	cmdLineArgs << bashCmdLine;
 	/*int res = */myProcess->execute(terminalCommand, cmdLineArgs);
 
-
-#else
-	/// \todo check how to spawn a terminal on mac
-	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
-	QString allCmdLine = "osascript -e 'tell application \"Terminal\" to do script \"ls\"'";
-	//myProcess->execute(allCmdLine);//.arg(bashCmdLine));
-	QMessageBox::critical(this, tr("Error starting command"), tr("On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now."));
-#endif
-
 	// release process
 	myProcess.release();
 
+#else
+
+	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
+
+	// on Mac, create a bash script in a temporary location with the command line as content
+	QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" +
+			QFileInfo(projectFile).baseName() + ".sh";
+	QFile bashFile(tmpPath);
+	bashFile.open(QFile::WriteOnly);
+	QTextStream strm(&bashFile);
+	strm << "#!/bin/bash\n";
+	// only for debugging we need to add the library fall back path
+#ifdef IBK_DEBUG
+	strm << QString("export DYLD_FALLBACK_LIBRARY_PATH=%1:%2\n")
+			.arg(MSIMSettings::instance().m_installDir + "/../../../../../externals/lib_x64")
+			.arg(MSIMSettings::instance().m_installDir + "/../../../../../lib_x64");
+#endif
+	strm << bashCmdLine + '\n';
+
+	// finally set executable permissions
+	bashFile.setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther );
+	bashFile.close();
+
+	QStringList allCmdLine{ "-a" , "Terminal.app" , tmpPath };
+	QProcess::execute("open", allCmdLine);
+#endif
+
 #endif // Q_OS_WIN
 
+#ifdef Q_OS_LINUX
 	QTimer::singleShot(2000, this, SLOT(on_pushButtonShowLogfile_clicked()));
+#endif
 }
 
 
@@ -241,10 +257,6 @@ void MSIMViewSimulation::updateCommandLine() {
 
 	m_commandLineArgs.clear();
 
-	// arguments, currently only project file
-	if (m_ui->checkBoxCloseOnExit->isChecked())
-		m_commandLineArgs.append("--close-on-exit");
-
 	m_commandLineArgs.append(QString("--verbosity-level=%1").arg(m_ui->comboBoxVerbosityLevel->currentIndex()));
 
 	QString appName = MSIMSettings::instance().m_installDir;
@@ -252,6 +264,15 @@ void MSIMViewSimulation::updateCommandLine() {
 	appName += "/MasterSimulator.exe";
 #else // Q_OS_WIN
 	appName += "/MasterSimulator";
+
+
+#ifdef Q_OS_MAC
+	// on MAC we check if the executable is inside the application bundle (deployment mode), or if not, we
+	// expect it alongside the MasterSimulatorUI.app file
+	if (!QFile::exists(appName))
+		appName = MSIMSettings::instance().m_installDir + "/../../../MasterSimulator";
+#endif
+
 #endif // Q_OS_WIN
 	m_solverName = appName;
 
