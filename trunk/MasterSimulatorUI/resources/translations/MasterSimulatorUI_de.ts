@@ -27,68 +27,73 @@
 <context>
     <name>MSIMButtonBar</name>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="53"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="54"/>
         <source>Shows information about the program.</source>
         <translation>Zeigt Informationen über das Programm.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="54"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="55"/>
         <source>Create a new default project (Ctrl + N).</source>
         <translation>Erstellt ein neues Projekt (Strg + N).</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="55"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="56"/>
         <source>Loads a project (Ctrl + O).</source>
         <translation>Öffnet eine Projektdatei (Strg + O).</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="56"/>
         <location filename="../../src/MSIMButtonBar.cpp" line="57"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="58"/>
         <source>Saves current project (Ctrl + S).</source>
         <translation>Speichert das aktuelle Projekt (Strg + S).</translation>
     </message>
     <message>
         <location filename="../../src/MSIMButtonBar.cpp" line="59"/>
+        <source>Opens Post-Processing.</source>
+        <translation>Öffnet das Post-Processing.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMButtonBar.cpp" line="61"/>
         <source>Switches to slave edit mode.</source>
         <translation>Schaltet in den Slave-Bearbeitungsmodus um.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="60"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="62"/>
         <source>Switches to connection edit mode.</source>
         <translation>Schaltet in den Verbindungs-Bearbeitungsmodus um.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="61"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="63"/>
         <source>Switches to simulation settings mode.</source>
         <translation>Schaltet in den Simulationsmodus um.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="63"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="65"/>
         <source>Undo of last change.</source>
         <translation>Macht die letzte Änderung rückgängig.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="64"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="66"/>
         <source>Redo of last change.</source>
         <translation>Wiederholt die letzte Aktion.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="66"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="68"/>
         <source>Change currently used language.</source>
         <translation>Ändert die Programmsprache.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="67"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="69"/>
         <source>Closes the program (asks for saving confirmation first).</source>
         <translation>Schließt das Programm (fragt vorher um Bestätigung zum Speichern).</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="117"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="119"/>
         <source>Language Changed</source>
         <translation>Sprache geändert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMButtonBar.cpp" line="118"/>
+        <location filename="../../src/MSIMButtonBar.cpp" line="120"/>
         <source>Please restart the program to activate the selected language!</source>
         <translation>Bitte starten Sie die Anwendung neu, um die neu gewählte Sprache zu verwenden!</translation>
     </message>
@@ -142,7 +147,7 @@
         <translation>Programmsprache</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="60"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="61"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
@@ -151,204 +156,224 @@
         <translation type="vanished">Haupt Werkzeugleiste</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="75"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="76"/>
         <source>New...</source>
         <translation>Neu...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="78"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="79"/>
         <source>Creates a new project</source>
         <translation>Erstellt ein neues Projekt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="87"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="82"/>
+        <source>Ctrl+N</source>
+        <translation>Strg+N</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.ui" line="91"/>
         <source>Open...</source>
         <translation>Öffnen...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="90"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="94"/>
         <source>Opens a project file.</source>
         <translation>Öffnet eine Projektdatei.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="93"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="97"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="102"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="106"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="105"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="109"/>
         <source>Saves current changes.</source>
         <translation>Speicher aktuelle Änderungen.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="110"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="112"/>
+        <source>Ctrl+S</source>
+        <translation>Strg+S</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.ui" line="117"/>
         <source>Save as...</source>
         <translation>Speichern unter...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="113"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="120"/>
         <source>Saves project under new name.</source>
         <translation>Speichert Projekt unter anderem Namen.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="116"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="123"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="121"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="128"/>
         <source>Export project package...</source>
         <translation>Exportiert eine Projektpaket...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="124"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="131"/>
         <source>Exports project as package.</source>
         <translation>Exportiert das Projekt als Paket.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="127"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="134"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="132"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="139"/>
         <source>Close</source>
         <translation>Schließen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="135"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="142"/>
         <source>Closes current project.</source>
         <translation>Schließt das aktuelle Projekt.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="140"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="147"/>
         <source>Quit</source>
         <translation>Beenden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="143"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="150"/>
         <source>Quits the application.</source>
         <translation>Beendet die Anwendung.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="151"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="158"/>
         <source>Recent projects</source>
         <translation>Kürzlich geöffnete Projekte</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="160"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="167"/>
         <source>Open project in text editor</source>
         <translation>Öffne Projekt in Texteditor</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="163"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="170"/>
         <source>Opens the project file in a text editor</source>
         <translation>Öffnet die Projektdatei in einem Texteditor</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="166"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="173"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="171"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="643"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="178"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="714"/>
         <source>About Qt...</source>
         <translation>Über Qt...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="179"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="186"/>
         <source>About MasterSimulator...</source>
         <translation>Über MasterSimulator...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="191"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="198"/>
         <source>Preferences...</source>
         <translation>Einstellungen...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="203"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="377"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="382"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="210"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="380"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="385"/>
         <source>Reload project</source>
         <translation>Projektdatei neu laden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="206"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="213"/>
         <source>Reloads the current project</source>
         <translation>Lädt die Projektdatei erneut</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="218"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="225"/>
         <source>FMUs and Simulators</source>
         <translation>FMUs und Simulatoren</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="221"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="228"/>
         <source>Switches to slave edit mode</source>
         <translation>Schaltet in den Slave-Bearbeitungsmodus um</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="233"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="240"/>
         <source>Connections</source>
         <translation>Verbindungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="236"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="243"/>
         <source>Switches to connection edit mode</source>
         <translation>Schaltet in den Verbindungs-Bearbeitungsmodus um</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="248"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="255"/>
         <source>Simulation Settings</source>
         <translation>Simulationseinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="251"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="258"/>
         <source>Switches to simulation setup mode</source>
         <translation>Schaltet in den Simulationsmodus um</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="268"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="275"/>
         <source>Start simulation</source>
         <translation>Startet die Simulation</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="271"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="278"/>
         <source>F9</source>
         <translation>F9</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.ui" line="287"/>
+        <source>Open Post-Proc...</source>
+        <translation>Öffne Post-Proc...</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.ui" line="290"/>
+        <source>Opens the Post-processing with a matching session for this project.</source>
+        <translation>Öffnet das Post-Processing mit einer passenden Sitzungsdatei für das Projekt.</translation>
     </message>
     <message>
         <source>Simulation/Project settings</source>
         <translation type="vanished">Simulations-/Projekteinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="260"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="267"/>
         <source>Analyze FMUs</source>
         <translation>Analysiere FMUs</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.ui" line="263"/>
+        <location filename="../../src/MSIMMainWindow.ui" line="270"/>
         <source>Extracts FMUs and reads modelDescription.xml files.</source>
         <translation>Entpackt FMUs und liest modelDescription.xml Datei ein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="157"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="160"/>
         <source>Undo</source>
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="160"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="163"/>
         <source>Redo</source>
         <translation>Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="250"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="253"/>
         <source>Reload project file</source>
         <translation>Projektdatei erneut laden</translation>
     </message>
@@ -357,148 +382,148 @@
         <translation type="vanished">Die Projektdatei wurde von einer externen Anwendung verändert. Wenn die Projektdatei erneut geladen wird, werden alle ungesicherten Änderungen verloren gehen. Veränderte Projektdatei erneut laden?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="251"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="254"/>
         <source>The project file has been modified by an external application. When reloading this project file all unsaved changes will be lost. Reload modified project file?</source>
         <translation>Die Projektdatei wurde von einer externen Anwendung verändert. Wenn die Projektdatei erneut geladen wird, werden alle ungesicherten Änderungen verloren gehen. Veränderte Projektdatei erneut laden?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="319"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="322"/>
         <source>Select project file</source>
         <translation>Projektdatei wählen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="321"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="324"/>
         <source>MasterSim Projects (*.cfg *%1);;All files (*.*)</source>
         <translation>MasterSim Projekte (*.cfg *%1);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="330"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="751"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="333"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="823"/>
         <source>File not found</source>
         <translation>Datei nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="331"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="334"/>
         <source>The file &apos;%1&apos; does not exist or cannot be accessed.</source>
         <translation>Die Datei &apos;%1&apos; existiert nicht oder es kann nicht darauf zugegriffen werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="377"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="380"/>
         <source>The project has not yet been saved.</source>
         <translation>Das Projekt wurde noch nicht gespeichert.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="382"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="385"/>
         <source>The project has been modified. Discard those changes?</source>
         <translation>Das Projekt wurde verändert. Diese Änderungen verwerfen?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="405"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="408"/>
         <source>Project file must be saved</source>
         <translation>Projektdatei muss gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="406"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="409"/>
         <source>The project must be saved before it can be exported.</source>
         <translation>Das Projekt muss gespeichert werden, bevor es exportiert werden kann.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="419"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="422"/>
         <source>Specify MasterSim project package file</source>
         <translation>Wähle MasterSim Projektpaketdatei</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="421"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="424"/>
         <source>MasterSim Project Packages (*.msip);;All files (*.*)</source>
         <translation>MasterSim Projektpakete (*.msip);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="433"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="436"/>
         <source>Invalid file name</source>
         <translation>Ungültiger Dateiname</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="433"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="436"/>
         <source>Please enter a valid file name!</source>
         <translation>Bitte wählen Sie einen gültigen Dateinamen!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="456"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="459"/>
         <source>Missing user preferences</source>
         <translation>Fehlende Anwendereinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="456"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="459"/>
         <source>Please open the preferences dialog and specify a text editor first!</source>
         <translation>Bitte öffnen Sie den Einstellungsdialog und wählen Sie zuerst einen Texteditor!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="463"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="466"/>
         <source>Error starting external application</source>
         <translation>Fehler beim Start der externen Anwendung</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="463"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="466"/>
         <source>Text editor &apos;%1&apos; could not be started.</source>
         <translation>Der Texteditor &apos;%1&apos; konnte nicht gestartet werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="483"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="486"/>
         <source>Reading tabulated data from &apos;%1&apos;
 </source>
         <translation>Lese Datentabelle von &apos;%1&apos;
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="515"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="588"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="518"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="591"/>
         <source>  Variables: %1
 </source>
         <translation>  Variablen: %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="522"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="525"/>
         <source>Error reading header from csv/tsv file (invalid format?).</source>
         <translation>Fehler beim Lesen der Kopfzeile in der csv/tsv Datei (ungültiges Format?).</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="531"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="534"/>
         <source>Extracting &apos;%1&apos;
 </source>
         <translation>Entpacke &apos;%1&apos;
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="537"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="540"/>
         <source>ERROR: FMU does not contain the file modelDescription.xml.
 </source>
         <translation>FEHLER: FMU enthält keine modelDescription.xml.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="543"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="546"/>
         <source>ERROR: Could not open modelDescription.xml.
 </source>
         <translation>FEHLER: Konnte modelDescription.xml nicht öffnen.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="553"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="556"/>
         <source>ERROR: Error while extracting modelDescription.xml.
 </source>
         <translation>FEHLER: Fehler beim Entpacken der modelDescription.xml.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="568"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="571"/>
         <source>ERROR: Could not open FMU file (not a zip archive?).
 </source>
         <translation>FEHLER: Konnte FMU Datei nicht öffnen (keine zip-Datei?).
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="576"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="579"/>
         <source>ERROR: Error parsing XML file. Error message:
 %1
 </source>
@@ -507,49 +532,75 @@
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="581"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="584"/>
         <source>  Model identifiers:
 </source>
         <translation>  Modelidentifizierung:
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="583"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="586"/>
         <source>    FMI v1    : %1
 </source>
         <translation>    FMI v1    : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="585"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="588"/>
         <source>    FMI v2 ME : %1
 </source>
         <translation>    FMI v2 ME : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="587"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="590"/>
         <source>    FMI v2 CS : %1
 </source>
         <translation>    FMI v2 CS : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="598"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="601"/>
         <source>ERROR: Error parsing model description.
 </source>
         <translation>FEHLER: Fehler beim Lesen der Modellbeschreibung.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="608"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="611"/>
         <source>Extracting FMUs and parsing modelDescription.xml</source>
         <translation>Entpacke FMUs und parse modelDescription.xml</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="610"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="613"/>
         <source>All FMUs referenced in the project are being extracted, their modelDescription.xml file is read and a summary of the data is shown below:</source>
         <translation>Alle im Projekt referenzierten FMUs/Slaves werden entpackt, deren modelDescription.xml-Datei wird gelesen und eine Zusammenfassung der Daten wird unten angezeigt:</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="667"/>
+        <source>Setup external tool</source>
+        <translation>Externes Programm einrichten</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="667"/>
+        <source>Please select first the path to the external post processing in the preferences dialog!</source>
+        <translation>Bitte wählen Sie zuerst den Pfad zum externen Post-Processing im Einstellungsdialog!</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="699"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="706"/>
+        <source>Error running PostProc</source>
+        <translation>Fehler beim Start vom PostProc</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="700"/>
+        <source>Could not start executable &apos;%1&apos;.</source>
+        <translation>Konnte Anwendung &apos;%1&apos; nicht starten.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="707"/>
+        <source>Process already running.</source>
+        <translation>Prozess läuft bereits.</translation>
     </message>
     <message>
         <source>Extracting &apos;%1&apos;</source>
@@ -592,22 +643,22 @@
         <translation type="vanished">This is the placeholder for the MasterSim aboutbox, see https://sourceforge.net/projects/mastersim.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="668"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="739"/>
         <source>Languange changed</source>
         <translation>Sprache geändert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="668"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="739"/>
         <source>Please restart the software to activate the new language!</source>
         <translation>Bitte starten Sie die Anwendung neu, um die neue Sprache zu aktivieren!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="751"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="823"/>
         <source>The file &apos;%1&apos; cannot be found or does not exist.</source>
         <translation>Die Datei &apos;%1&apos; kann nicht gefunden werden oder existiert nicht.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="777"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="849"/>
         <source>unnamed%1</source>
         <translation>Unbenannt%1</translation>
     </message>
@@ -633,9 +684,19 @@
         <translation>Externe Anwendungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="33"/>
+        <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="23"/>
         <source>Text editor executable:</source>
         <translation>Texteditor Programmdatei:</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="40"/>
+        <source>Post-Proc executable:</source>
+        <translation>Post-Proc Ausführungsdatei:</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="57"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://bauklimatik-dresden.de/downloads.php&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Download PostProc...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://bauklimatik-dresden.de/downloads.php&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;PostProc herunterladen...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.cpp" line="13"/>
@@ -710,24 +771,47 @@
 <context>
     <name>MSIMSettings</name>
     <message>
-        <location filename="../../src/MSIMSettings.cpp" line="184"/>
+        <location filename="../../src/MSIMSettings.cpp" line="212"/>
         <source>Missing user preferences</source>
         <translation>Fehlende Anwendereinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMSettings.cpp" line="184"/>
+        <location filename="../../src/MSIMSettings.cpp" line="212"/>
         <source>Please open the preferences dialog and specify a text editor first!</source>
         <translation>Bitte öffnen Sie den Einstellungsdialog und wählen Sie zuerst einen Texteditor!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMSettings.cpp" line="191"/>
+        <location filename="../../src/MSIMSettings.cpp" line="219"/>
         <source>Error starting external application</source>
         <translation>Fehler beim Start der externen Anwendung</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMSettings.cpp" line="191"/>
+        <location filename="../../src/MSIMSettings.cpp" line="219"/>
         <source>Text editor &apos;%1&apos; could not be started.</source>
         <translation>Der Texteditor &apos;%1&apos; konnte nicht gestartet werden.</translation>
+    </message>
+</context>
+<context>
+    <name>MSIMSimulationMonitorWidget</name>
+    <message>
+        <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished">Form</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="20"/>
+        <source>MasterSim project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="42"/>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="52"/>
+        <source>Simulation progress</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -973,47 +1057,47 @@
         <translation>Zeitschrittanpassung und Fehlerkontrolle</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="138"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="141"/>
         <source>Lower time step limit:</source>
         <translation>Unteres Limit für den Zeitschritt:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="145"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="148"/>
         <source>Can be checked when error-based time step adjustment is off and iteration algorithm is enabled.</source>
         <translation>Kann eingeschaltet werden, wenn Zeitschrittanpassung durch Fehlerkontrolle deaktiviert ist und ein Iterationsalgorithmus verwendet wird.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="148"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="151"/>
         <source>Adjust step size</source>
         <translation>Zeitschrittweite anpassen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="158"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="174"/>
         <source>Maximum time step size:</source>
         <translation>Maximale Zeitschrittlänge:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="165"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="181"/>
         <source>If time step is reduced below this limit, simulation is stopped.</source>
         <translation>Wenn der Zeitschritt unter diese Grenze reduziert wird, stoppt die Simulation.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="172"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="188"/>
         <source>Error control mode:</source>
         <translation>Fehlerkontrollmethode:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="185"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="158"/>
         <source>Time step minimum for iteration:</source>
         <translation>Zeitschrittlimit für Iterationsverfahren:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="204"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="214"/>
         <source>Output options</source>
         <translation>Ausgabeeinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="210"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="220"/>
         <source>Minimum output time step:</source>
         <translation>Minimale Schrittlänge für Ausgaben:</translation>
     </message>
@@ -1022,171 +1106,182 @@
         <translation type="vanished">Schreibe Ausgabedateien im Binärformat</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="261"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="271"/>
         <source>Start Simulation</source>
         <translation>Starte Simulation</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="267"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="277"/>
         <source>Command line:</source>
         <translation>Kommandozeile:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="347"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="357"/>
         <source>Terminal program command:</source>
         <translation>Kommando für Terminal Programm:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="296"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="306"/>
         <source>Starts the simulation.</source>
         <translation>Startet die Simulation.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="223"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="201"/>
+        <source>When enabled, the last time step will be shortened so that the last interval ends excactly at the desired end point. Use this only as compatibility option for specific FMUs since it potentially violates the constant-time-step rule.</source>
+        <translation>Falls eingeschaltet, wird der letzte Zeitschritt notfalls gekürzt, um das Simulationsende exakt zu erreichen. Sollte nur als Kompatibilitätsoption für spezifische FMUs verwendet werden, da es möglichweise die konstante-Zeitschritt-Regel einer FMU verletzt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSimulation.ui" line="204"/>
+        <source>Prevent overstepping over end time</source>
+        <translation>Verhindere Überschreitung des Simulationsendes</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSimulation.ui" line="233"/>
         <source>Write internal variables as outputs</source>
         <translation>Schreibe interne Variablen als Ausgaben</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="274"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="284"/>
         <source>Verbosity/Logging detail:</source>
         <translation>Ausgabehäufigkeit/Log-Detailstufe:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="326"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="336"/>
         <source>Show log file...</source>
         <translation>Zeige Logdatei...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="354"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="364"/>
         <source>Close console/terminal window on exit</source>
         <translation>Schließe Konsolenprogramm/Terminal-Fenster nach Programmende</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="56"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="56"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
         <source>Monitor</source>
         <translation>Beobachten</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="56"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
         <source>Richardson (adjust step size)</source>
         <translation>Richardson (Zeitschrittanpassung)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="60"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Minimal</source>
         <translation>Minimal</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="60"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="60"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Informative</source>
         <translation>Informativ</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="60"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Detailed</source>
         <translation>Detailliert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="60"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Developer</source>
         <translation>Entwickler</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="134"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="149"/>
         <source>Solver error</source>
         <translation>Solverfehler</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="134"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="149"/>
         <source>Cannot find solver executable &apos;%1&apos;.</source>
         <translation>Kann Ausführungsdatei &apos;%1&apos; nicht finden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="176"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="191"/>
         <source>Error running solver</source>
         <translation>Fehler beim Start des Solvers</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="177"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="192"/>
         <source>Could not start solver executable &apos;%1&apos;.</source>
         <translation>Konnte Ausführungsdatei &apos;%1&apos; nicht starten.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="212"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="227"/>
         <source>Error starting command</source>
         <translation>Fehler beim Ausführen des Befehls</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="212"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="227"/>
         <source>On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now.</source>
         <translation>Aktuell muss auf dem Mac die Kommandozeile kopiert und im Terminal ausgeführt werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="278"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="287"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="296"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="308"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="317"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="326"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="335"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="344"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="353"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="362"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="380"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="398"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="416"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="434"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="443"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="461"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="479"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="497"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="515"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="533"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="553"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="293"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="302"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="311"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="323"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="332"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="341"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="350"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="359"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="368"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="377"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="395"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="413"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="431"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="449"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="458"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="476"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="494"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="512"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="530"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="548"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="568"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="577"/>
         <source>Simulation setting changed</source>
         <translation>Simulationseinstellungen verändert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="372"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="390"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="408"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="426"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="453"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="471"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="489"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="507"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="525"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="387"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="405"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="423"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="441"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="468"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="486"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="504"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="522"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="540"/>
         <source>Invalid input</source>
         <translation>Ungültige Eingabe</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="372"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="390"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="387"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="405"/>
         <source>Time must be &gt;= 0.</source>
         <translation>Zeitpunkt muss &gt;= 0 sein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="408"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="426"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="423"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="441"/>
         <source>Tolerance must be &gt; 0.</source>
         <translation>Toleranz muss &gt; 0 sein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="453"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="471"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="489"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="507"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="525"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="468"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="486"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="504"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="522"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="540"/>
         <source>Step size must be &gt;= 0.</source>
         <translation>Zeitschrittlänge muss &gt;= 0 sein.</translation>
     </message>
