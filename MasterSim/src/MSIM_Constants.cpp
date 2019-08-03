@@ -4,7 +4,7 @@ namespace MASTER_SIM {
 
 const char * const VERSION = "0.7";
 
-const char * const LONG_VERSION = "0.7.0";
+const char * const LONG_VERSION = "0.7.1";
 
 const char * const PROGRAM_NAME = "MasterSim 0.7";
 
