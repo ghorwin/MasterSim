@@ -259,7 +259,9 @@ footrulewidth}{0.4pt} %untere Trennlinie
 \begin_layout Standard
 
 \size small
-\begin_inset Newpage pagebreak
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
 \end_inset
 
 
@@ -268,9 +270,7 @@ footrulewidth}{0.4pt} %untere Trennlinie
 \begin_layout Standard
 
 \size small
-\begin_inset CommandInset toc
-LatexCommand tableofcontents
-
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -375,13 +375,6 @@ renewcommand{
 footrulewidth}{0.4pt} %untere Trennlinie
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
 \end_inset
 
 
@@ -625,7 +618,7 @@ sschritt zum nächsten von einer FMU (hier Variable) in die nächste propagiert
 placement H
 wide false
 sideways false
-status open
+status collapsed
 
 \begin_layout Plain Layout
 \noindent
@@ -729,7 +722,16 @@ Daher wurden für die Tests eigene, spezifische C++ Implementierung mit exakt
 ert.
  Diese Test-FMUs sind strukturell sehr ähnlich, sodass für den Zweck des
  Test/Referenz-FMU-Entwicklung ein eigenes Projekt entwickelt wurde.
- Dieser FMICodeGenerator (
+ Dieser FMICodeGenerator
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+FMICodeGenerator
+\family default
+ Quelltext-Repository: 
 \begin_inset Flex URL
 status open
 
@@ -740,11 +742,19 @@ https://github.com/ghorwin/FMICodeGenerator
 
 \end_inset
 
-) kann dazu verwendet werden, sehr schnell ein fertig compilierfähiges Grundgerü
-st für eine FMU zu erstellen, worin nur noch an weniger Stellen im Quelltext
+
+\end_layout
+
+\end_inset
+
+ kann dazu verwendet werden, sehr schnell ein fertig compilierfähiges Grundgerüs
+t für eine FMU zu erstellen, worin nur noch an wenigen Stellen im Quelltext
  die eigentliche Mathematik implementiert werden muss (siehe auch Beispiel
- auf den Wiki-Seiten des Projekts, z.B.
- 
+ auf den Wiki-Seiten des Projekts
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
 \begin_inset Flex URL
 status open
 
@@ -756,11 +766,13 @@ oller
 
 \end_inset
 
-).
+, Wiki-Seite mit komplettem Ablauf der Script-gestützten FMU-Generierung
 \end_layout
 
-\begin_layout Standard
-Mithilfe dieses Code-Generators wurden nun alle für die MASTERSIM-Modultests
+\end_inset
+
+).
+ Mithilfe dieses Code-Generators wurden nun alle für die MASTERSIM-Modultests
  benötigten FMUs erstellt.
 \end_layout
 
@@ -1101,11 +1113,533 @@ FMI Cross-Check Validierung
 \end_layout
 
 \begin_layout Subsection
+Hintergrund
+\end_layout
+
+\begin_layout Standard
+Wie im Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Modultests"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ über Modultests beschrieben, können verschiedene Algorithmen und Optionen
+ zu zum Teil sehr unterschiedlichen Ergebnissen führen.
+ Man könnte den Ansatz dennoch für die Validierung verschiedener Co-Simulations-
+Master verallgemeinern, d.h.
+ man benennt für jeden Testfall kontret die zu verwendenden Algorithmen
+ und Parameter.
+ Dann könnte man entsprechend strenge Übereinstimmung mit entsprechend passenden
+ Referenzwerten fordern.
+\end_layout
+
+\begin_layout Standard
+Zum Zeitpunkt der Einführung des FMI Standards wurde die FMU-Importfunktionalitä
+t in vielen bereits vorhandenen Tools nachgerüstet.
+ Dabei wurden viele Kompromisse und Workarounds verwendet, um relativ schnell
+ eine gewisse Basiskompatibiltät herzustellen.
+ Es zeigte sich jedoch, dass nur wenige Importtools (d.h.
+ Co-Simulations-Masterprogramme) mit nur wenigen exportieren FMUs zusammenarbeit
+en konnten.
+ Dies lag an zum Teil unspezifischen Formulierungen im Standard, unterschiedlich
+en Interpretationen bzw.
+ Interpretationsfehlern und natürlich in Programmier- und Umsetzungsfehlern.
+ Hätte man nun den strengen Ansatz aus der Modulprüfung zum Test verwendet,
+ würden noch mehr Tools durch das Validierungsraster fallen.
+ Das würde aber dem Entwicklungsziel der maximalen Interoperabilität des
+ FMI-Standards zuwiederlaufen und im Wiederspruch zu dem Wunsch des FMI
+ Konsortiums stehen, möglichst schnell den FMI Standard zu etablieren und
+ zu verbreiten.
+ Deshalb ist ein wesentlich einfacheres Testprozedere formuliert worden.
+\end_layout
+
+\begin_layout Standard
+In diesem Testprozess, formuliert in den Cross-Check-Regeln, wurde der Schwerpun
+kt auf Interoperabilität gelegt.
+\end_layout
+
+\begin_layout Subsection
 Vorgehensweise und Validierungsprinzip
+\end_layout
+
+\begin_layout Standard
+Das Prinzip des Cross-Checks kann wie folgt zusammengefasst werden:
+\end_layout
+
+\begin_layout Enumerate
+verschiedenen Simulationsprogramme exportieren FMUs und führen für diese
+ zunächst einen Standard-Über\SpecialChar softhyphen
+einstimmungs-Check (engl.
+ 
+\emph on
+Compliance check
+\emph default
+) durch.
+ Dieser prüft grundlegende Eigenschaften, wie z.B.
+ korrekt gesetzte Metadaten, und grundlegend korrekte Funktion der Programmiersc
+hnittstelle.
+ Es wird hierbei Testweise eine einfache alleinstehende Simulation mit Standardw
+erten durchgeführt (konstante Kommunikationsschrittweite, keine Iteration
+ und kein Datenaustausch mit anderen FMUs).
+ Ist der Test erfolgreich abgeschlossen, wird die FMU in eine Verzeichnisstruktu
+r überführt.
+ Diese wird in einem fmi-cross-check-Repository öffentlich sichtbar vorgehalten
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Github-Repository mit Cross-Check Daten: 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/modelica/fmi-cross-check
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Zusätzlich zu der FMU selbst muss man Referenzergebnisse ablegen.
+ 
+\emph on
+Hierbei sind die Cross-Check-Regeln sehr knapp und unpräzise formuliert.
+ Es ist z.B.
+ nicht definiert, ob die Referenzergebnisse mit der FMU selbst erzeugt werden,
+ oder mit einem anderen Berechnungsverfahren/Modell erstellt wurden.
+ Es ist daher möglich, dass selbst bei korrekter Funktionalität des FMU-Importto
+ols, die Referenzergebnisse nicht wiedergegeben werden können.
+\end_layout
+
+\begin_layout Enumerate
+Wurden bei der Berechnung der Referenzergebnisse Eingangsvariablen im Modell
+ verwendet, sind diese auch in einer csv-Datei anzugeben.
+ 
+\emph on
+Die Cross-Check-Regeln definieren hier jedoch nicht, wie verschiedenen Datentype
+n in der csv-Datei identifiziert werden.
+ Es muss daher aktuell angenommen werden, dass der Datentyp dem der verknüpften
+ Eingangsvariable der FMU entspricht.
+\end_layout
+
+\begin_layout Enumerate
+Jedes FMU-Importtool (z.B.
+ MASTERSIM als Co-Simulations-Masterprogramm) kann nun diese FMUs einbinden
+ und simulieren.
+ Hierbei obliegt es dem importierenden Tool zu entscheiden, ob Zeitschrittanpass
+ung oder konstante Zeitschritte verwendet werden.
+ Auch alle weiteren (numerischen) Parameter, können beliebig gewählt werden.
+\end_layout
+
+\begin_layout Enumerate
+Die simulierten Ergebnisse werden nun offiziell dokumentiert.
+ Hierfür muss eine Verzeichnisstruktur im oben genannten fmi-cross-check-Reposit
+ory entsprechend folgendem Verzeichnisschema befüllt werden:
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+results/
+\end_layout
+
+\begin_layout Plain Layout
+
+  {FMI_Version}/
+\end_layout
+
+\begin_layout Plain Layout
+
+    {FMI_Type}/
+\end_layout
+
+\begin_layout Plain Layout
+
+      {Platform}/
+\end_layout
+
+\begin_layout Plain Layout
+
+        {Importing_Tool_Name}/
+\end_layout
+
+\begin_layout Plain Layout
+
+          {Importing_Tool_Version}/
+\end_layout
+
+\begin_layout Plain Layout
+
+            {Exporting_Tool_Name}/
+\end_layout
+
+\begin_layout Plain Layout
+
+              {Exporting_Tool_Version}/
+\end_layout
+
+\begin_layout Plain Layout
+
+                {Model_Name}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+In dieses Verzeichnis kopiert man die erstellten Simulationsergebnisse und
+ bei Erfolg die Datei 
+\family typewriter
+passed
+\family default
+.
+ Diese Änderungen werden in einem persönlichen Fork
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Ein 
+\emph on
+Fork
+\emph default
+ ist eine Abspaltung von einem Repository, d.h.
+ eine Kopie eines bestimmten Bearbeitungsstandes.
+\end_layout
+
+\end_inset
+
+ vom offiziellen Repository eingecheckt und dann via Pull-Request
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Ein 
+\emph on
+Pull-Request
+\emph default
+ ist eine Anfrage an die Verwalter/Entwickler des ursprünglichen Repositories,
+ von dem ein Fork erstellt wurde, die in der Anfrage enthaltenen Änderungen
+ zu übernehmen.
+\end_layout
+
+\end_inset
+
+ an das offizielle Repository übertragen.
+\end_layout
+
+\begin_layout Enumerate
+Beim Erstellen des Pull-Requests werden die eigenen Simulationsergebnisse
+ mit den Referenzergebnissen verglichen (siehe Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Vergleichskriterium"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Stimmen die Ergebnisse hinreichend gut überein, so gilt der Test als Bestanden
+ und der Betreuer des offiziellen fmi-cross-check-Repositories übernimmt
+ die Daten in die offizielle Struktur.
+ Damit wird auch automatisch die Webseite mit dem FMI-Kompatibilitätslisten
+ aktualisiert.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Vergleichskriterium"
+
+\end_inset
+
+Vergleichskriterium
+\end_layout
+
+\begin_layout Standard
+Für den Vergleich zwischen Referenz- und Simulationsdaten wurde seitens
+ des FMI-Konsortiums bewusst ein Test mit sehr großen Toleranzen gewählt.
+ Fokus lag zunächst darauf, sicher zu stellen, dass die Tools nicht kompletten
+ Unsinn ausrechnen und recht bald viele miteinander (im Prinzip) koppelbare
+ Simulationsprogramme entstehen.
+ Folgendes Vergleichskriterium wird verwendet:
+\end_layout
+
+\begin_layout Quotation
+
+\emph on
+\begin_inset Quotes gld
+\end_inset
+
+The provided import results are filtered against the reference solution
+ provided by the exporter using the following epsilon band method:
+\begin_inset Newline newline
+\end_inset
+
+Each reference signal is re-sampled (using linear interpolation) into an
+ array of 1000 equally spaced samples between the first and last element
+ of the reference time.
+ The upper limit y_max of the epsilon band is calculated by taking the maximum
+ of 21 neighboring values (10 to either side) at each sample point and adding
+ 10% of the absolute maximum of all values in the reference signal (or 0.5
+ if all values are equal 0).
+ The lower y_min is calculated respectively.
+ The validation passes if at least 90% of the samples in the provided output
+ are inside the epsilon band defined by y_min and y_max (again linearly
+ interpolated at the respective sample time of the result file).
+ Samples before and after the first and last sample time of the reference
+ result will be ignored.
+\begin_inset Quotes grd
+\end_inset
+
+
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\family typewriter
+FMI-CROSS-CHECK-RULES.md
+\family default
+, 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/modelica/fmi-cross-check
+\end_layout
+
+\end_inset
+
+, vom 02.08.2019
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Dieses Akzeptanzband ist recht grob, funktioniert aber praktisch recht gut.
+ In Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Beispiel-Testfälle"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ sind einige Testfälle aufgeführt, wobei Referenzergebnisse und MASTERSIM-Simula
+tionsergebnisse (unter Verwendung unterschiedlicher Parameter und Algorithmen)
+ einschließlich des Toleranzbandes dargestellt werden.
+\end_layout
+
+\begin_layout Subsubsection
+Nicht geprüfte Einflussfaktoren
+\end_layout
+
+\begin_layout Standard
+Bei der Prüfung einzelner FMUs in einem Importprogramm können jedoch einige
+ (wichtige) Aspekte nicht geprüft werden:
+\end_layout
+
+\begin_layout Itemize
+Funktioniert der Masteralgorithmus, d.h.
+ die 
+\emph on
+Koordination des Datenaustauschs zwischen mehreren FMUs
+\emph default
+ korrekt? 
+\end_layout
+
+\begin_layout Itemize
+Werden die Algorithmus-Parameter und/oder eingebaute Konstanten und Verhaltensre
+geln korrekt umgesetzt?
+\end_layout
+
+\begin_layout Itemize
+Funktionieren fortgeschrittene FMU-Funktionen, wie das Rücksetzen oder Speichern
+/Wiederherstellen des FMU-Zustands?
+\end_layout
+
+\begin_layout Itemize
+Wie performant ist die jeweilige Master-Implementierung?
+\end_layout
+
+\begin_layout Standard
+Für solche Tests müssen noch einige Fragestellungen geklärt werden:
+\end_layout
+
+\begin_layout Itemize
+Wie ist das zu testende Co-Simulationsszenario definiert? Spielt die Reihenfolge
+ der Auswertung bei mehreren FMUs eine Rolle?
+\end_layout
+
+\begin_layout Itemize
+Wie ist der Vergleich mit den Ergebnisgrößen definiert? Wie wird mit Rundungsfeh
+lern umgegangen? Woran erkennt man ein Fehlverhalten einer Implementierung?
+\end_layout
+
+\begin_layout Standard
+Die Entwicklung solcher erweiterter Algorithmentests ist aktuell noch in
+ Arbeit.
+ Die Modultests vom MASTERSIM könnten hierbei als Vorlage dienen.
+\end_layout
+
+\begin_layout Subsection
+Ausgangspunkt bei der Cross-Check Prüfung
+\end_layout
+
+\begin_layout Standard
+Die Version 0.5.3 vom September 2018 war Ausgangspunkt der Cross-Check-Prüfung.
+ In dieser Version waren die Modultests bereits für alle implementierten
+ Algorithmen und die selbst erstellten FMUs erfolgreich absolviert worden.
+ Bei der ersten Analyse waren folgende Tests erfolgreich:
+\end_layout
+
+\begin_layout Itemize
+FMI 1.0
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Win32 - 25 erfolgreich
+\end_layout
+
+\begin_layout Itemize
+Win64 - 16 erfolgreich
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+FMI 2.0
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Win32 - 22 erfolgreich
+\end_layout
+
+\begin_layout Itemize
+Win64 - 13 erfolgreich
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Anbetracht von derzeit 557 Test-FMUs alleine für die Win32 und Win64 Plattform,
+ war die Kompatibilität des MASTERSIM-Tools in diesem Entwicklungsstand
+ noch nicht zufriedenstellend.
 \end_layout
 
 \begin_layout Subsection
 Ausschluss von FMUs
+\end_layout
+
+\begin_layout Standard
+Wärend der Tests stellte sich heraus, dass einige FMUs nicht den Cross-Check-Reg
+eln entsprachen.
+ Insbesondere betraf dies diejenigen FMUs, welche ein lizensiertes Simulationspr
+ogramm benötigten.
+ Da diese Lizenz nicht bereitgestellt wurde, konnten diese FMUs nicht validiert
+ werden und wurden aus der Liste der Test-FMUs entfernt (in der Übersicht
+ in der Spalte 
+\emph on
+rejected
+\emph default
+ aufgeführt).
+ Ebenso ausgeschlossen wurden FMUs, die im Repository mit der Datei 
+\family typewriter
+notCompliantWithLatestRules
+\family default
+ markiert wurden (d.h.
+ nicht den aktuellen Cross-Check Regeln entsprechen).
+\end_layout
+
+\begin_layout Standard
+Weiterhin gab es einige FMUs, die bezüglich des Simulationsendzeitpunkts
+ eine strikte Prüfung implementiert haben.
+ Diese ist nach aktueller Ansicht
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+siehe Diskussion in Ticket 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/modelica/fmi-standard/issues/575
+\end_layout
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+ nicht standardkonform, jedoch der eventuell unterschiedlich auslegbaren
+ Standardformulierung geschuldet.
+ Hierfür konnte jedoch eine Speziallbehandlung in MASTERSIM integriert werden
+ (siehe Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Überschreitung-des-Endzeitpunkts"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsection
+Automatisierung des Validierungsprozederes
+\end_layout
+
+\begin_layout Subsubsection
+Schritte bei der Validierung ohne Skriptunterstützung
+\end_layout
+
+\begin_layout Standard
+Zum Verständnis der nachfolgend erläuterten
 \end_layout
 
 \begin_layout Subsection
@@ -1113,7 +1647,30 @@ Erkannte Probleme und Lösungen
 \end_layout
 
 \begin_layout Subsubsection
-Version 0.5
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Überschreitung-des-Endzeitpunkts"
+
+\end_inset
+
+Überschreitung des Endzeitpunkts verhindern
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Beispiel-Testfälle"
+
+\end_inset
+
+Beispiel-Testfälle
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
