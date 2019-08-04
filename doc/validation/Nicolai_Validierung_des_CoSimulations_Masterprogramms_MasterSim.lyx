@@ -472,13 +472,310 @@ literal "false"
 \end_inset
 
  beschrieben.
+ Eine kurze Zusammenfassung der Algorithmentest ist in Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Modultests"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ beschrieben.
+\end_layout
+
+\begin_layout Standard
+Anschließend erfolgte eine Validierung durch Querschnittstests entsprechend
+ der FMI Cross-Check-Regeln.
+ Diese Validierung ist Voraussetzung für die Auflistung des Programms in
+ der offiziellen Tool-Seite des FMI-Standards und dient der Information
+ über mögliche Interoperabilität zwischen Simulationsprogrammen.
+ Für einen Co-Simulations-Master ist die Fähigkeit, möglichst viele unterschiedl
+iche FMUs aus verschiedenen Tools verwenden zu können, eine der wichtigsten
+ Eigenschaften.
+ Die Details dieser Validierungsprozedur und der benötigten Anpassungen
+ am MASTERSIM-Programm sind in Abschnitt
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:FMI-Cross-Check-Validierung"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ beschrieben.
+\end_layout
+
+\begin_layout Standard
+Eine allgemeine Einführung zu Validierungsmethodiken und Verfahrensweisen
+ zur Qualitätssicherung bei Simulationsprogrammen einschließlich der Beschreibun
+g von Modul- und Querschnittstests ist
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "nicolai:2019:validation_of_simtools"
+literal "false"
+
+\end_inset
+
+ in gegeben.
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Modultests"
+
+\end_inset
+
+Modultests
+\end_layout
+
+\begin_layout Subsection
+Konzept
+\end_layout
+
+\begin_layout Standard
+MASTERSIM kann verschiedene Kopplungsalgorithmen verwenden.
+ Diese unterscheiden sich hinsichtlich der Funktionalitäten der beteiligten
+ FMUs.
+ FMUs mit Schnittstelle 1.0 können nicht zurückgesetzt werden, wodurch eine
+ Iteration über den gleichen Kommunikationsschritt nicht möglich ist.
+ FMUs mit Schnittstelle 2.0 können zurückgesetzt werden, wodurch auch iterierende
+ Algorithmen, d.h.
+ die Wiederholung eines Kommunikationsschritts, möglich ist.
+\end_layout
+
+\begin_layout Standard
+Weiterhin unterscheiden sich die Algorithmen bei der Zeitschrittweitenanpassung:
+\end_layout
+
+\begin_layout Itemize
+feste Kommunikationsschrittweite,
+\end_layout
+
+\begin_layout Itemize
+Schrittweite reduzieren bei Konvergenzfehler (nur iterierende Algorithmen),
+\end_layout
+
+\begin_layout Itemize
+Schrittweite entsprechend Fehlerschätzer anpassen.
+\end_layout
+
+\begin_layout Standard
+Natürlich haben auch numerische Konstanten, wie die Schrittweitenbegrenzung
+ nach oben und unten, die geforderten Toleranzen bei fehlerkontrollierten
+ Verfahren, und die Ausgabehäufigkeit einen Einfluss auf das Ergebnis.
+ 
+\end_layout
+
+\begin_layout Standard
+Alle Kombinationsmöglichkeiten indivuell zu testen, wäre extrem zeitaufwändig
+ und nur bedingt zielführend.
+ Es wurden daher einzelne Tests entwickelt, die immer eine sinnvolle Kombination
+ der Optionen vereinen und charakteristische Ausgaben erzeugen.
+\end_layout
+
+\begin_layout Standard
+Der Testfall 
+\emph on
+Math003
+\emph default
+ (einer, aus einer Reihe von speziell definierten Testfällen für Co-Simulation)
+ ist dabei besonders geeignet, da drei indivuell unterschiedliche FMUs mit
+ unstetigem Verhalten gekoppelt werden.
+ Dabei lassen sich die theoretisch erwarteten Ergebnisse genau ablesen.
+ Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Beispielergebnisse-der-Modultest-Math003"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ zeigt beispielsweise, wie bei einem einfachen Gauss-Jacobi-Algorithmus
+ ohne Iteration die Information über Variablenänderungen von einem Kommunikation
+sschritt zum nächsten von einer FMU (hier Variable) in die nächste propagiert
+ wird.
+ Dies ist für diesen Algorithmus das erwartete Ergebnis und muss bei korrekter
+ Implementierung auch genau so erhalten werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename fig/Math003_GaussJacobi_1iters_fixedStep_0.1s_x3_detail.pdf
+	width 8cm
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename fig/Math003_GaussJacobi_1iters_fixedStep_0.1s_x4_detail.pdf
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Beispielergebnisse-der-Modultest-Math003"
+
+\end_inset
+
+Beispielergebnisse der Modultest-Validierung, Vergleich exakte Referenzlösung
+ mit numerischer Lösung: einfacher Gauss-Jacobi-Algorithmus ohne Iteration
+ mit relativ großer Zeitschrittweite; um einen Schritt verzögerte Signalweiterle
+itung in Variable 
+\begin_inset Formula $x_{3}$
+\end_inset
+
+ und wiederum um einen weiteren Schritt verzögerte Reaktion von Variable
+ 
+\begin_inset Formula $x_{4}$
+\end_inset
+
+ sind 
+\emph on
+korrekte 
+\emph default
+Ergebnisse für diese Algorithmus.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Für diesen Testfall und zwei weitere Testfälle wurden nun verschiedene Projektda
+teien mit unterschiedlichen Algorithmen- und Parameterkombinationen erstellt,
+ ausgeführt und die Ergebnisse kontrolliert.
+ Danach wurden die erhaltenen Ergebnisse und Solverstatistiken als Referenz
+ für zukünftige Kontrollrechnungen abgelegt (im Quelltextrepository im Unterverz
+eichnis 
+\family typewriter
+<repo-root>/data/tests
+\family default
+).
+\end_layout
+
+\begin_layout Subsection
+Verwendete FMUs
+\end_layout
+
+\begin_layout Standard
+Eine Schwierigkeit bei der Validierung von Co-Simulations-Programmen liegt
+ in der Verwendung von FMUs als Black-Box-Simulationsmodule.
+ Die Korrektheit der Masterprogramm-Funktionalität hängt direkt von der
+ Voraussetzung ab, dass die Berechnungsfunktionalität in den FMUs korrekt
+ funktioniert.
+ 
+\end_layout
+
+\begin_layout Standard
+In den ersten Versuchen wurden die Testgleichungen in Modelica implementiert
+ und dann aus einer Modelica-Entwicklungsumgebung (hier SimulationX und
+ Dymola) FMUs exportiert.
+ Es zeigte sich jedoch, dass aufgrund der bei diesem Export verwendeten
+ numerischen Zeitintegrationsverfahren und der individuellen Umsetzung des
+ Modelica-Modells in Machinencode Abweichungen vom idealen vorgegeben Verhalten
+ auftraten.
+ Diese wiederum verfälschten die Ergebnisse der gekoppelten Simulation und
+ machten eine direkte Prüfung der MASTERSIM-Implementierung schwierig.
+\end_layout
+
+\begin_layout Standard
+Daher wurden für die Tests eigene, spezifische C++ Implementierung mit exakt
+ den geforderten Gleichungen und analytischen Integrationsgleichungen implementi
+ert.
+ Diese Test-FMUs sind strukturell sehr ähnlich, sodass für den Zweck des
+ Test/Referenz-FMU-Entwicklung ein eigenes Projekt entwickelt wurde.
+ Dieser FMICodeGenerator (
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/ghorwin/FMICodeGenerator
+\end_layout
+
+\end_inset
+
+) kann dazu verwendet werden, sehr schnell ein fertig compilierfähiges Grundgerü
+st für eine FMU zu erstellen, worin nur noch an weniger Stellen im Quelltext
+ die eigentliche Mathematik implementiert werden muss (siehe auch Beispiel
+ auf den Wiki-Seiten des Projekts, z.B.
+ 
+\begin_inset Flex URL
+status open
+
+\begin_layout Plain Layout
+
+https://github.com/ghorwin/FMICodeGenerator/wiki/Test-scenario:-Stateless-P-contr
+oller
+\end_layout
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Mithilfe dieses Code-Generators wurden nun alle für die MASTERSIM-Modultests
+ benötigten FMUs erstellt.
+\end_layout
+
+\begin_layout Subsection
+Automatisierte Modultests während der Entwicklung
 \end_layout
 
 \begin_layout Standard
 Die Erstellung des Programms MASTERSIM erfolgt scriptgesteuert.
  Nachgelagert kann ein Python-Script (entwickelt am IBK, TU Dresden) gestartet
- werden, welches eine Verzeichnisstruktur durchläuft, und nach Testfällen
- sucht (
+ werden, welches eine Verzeichnisstruktur 
+\family typewriter
+<repo-root>/data/tests
+\family default
+ durchläuft, und nach Testfällen sucht (
 \family typewriter
 *.msim
 \family default
@@ -488,6 +785,16 @@ Die Erstellung des Programms MASTERSIM erfolgt scriptgesteuert.
  die Simulationsstatistiken und Ergebnisse verglichen.
  Listing
 \begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "lis:ModultestReport"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
  zeigt exemplarisch einen Auszug aus dem Validierungsreport:
@@ -756,6 +1063,16 @@ Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep             0.023
 
 \begin_layout Plain Layout
 
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "lis:ModultestReport"
+
+\end_inset
+
+Auszug aus dem Validierungsreport für MASTERSIM (automatische Modultests)
 \end_layout
 
 \end_inset
@@ -766,6 +1083,37 @@ Math_003_control_loop/Math003_GaussSeidel_2iters_fixedStep             0.023
 \end_inset
 
 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:FMI-Cross-Check-Validierung"
+
+\end_inset
+
+FMI Cross-Check Validierung
+\end_layout
+
+\begin_layout Subsection
+Vorgehensweise und Validierungsprinzip
+\end_layout
+
+\begin_layout Subsection
+Ausschluss von FMUs
+\end_layout
+
+\begin_layout Subsection
+Erkannte Probleme und Lösungen
+\end_layout
+
+\begin_layout Subsubsection
+Version 0.5
 \end_layout
 
 \begin_layout Standard
