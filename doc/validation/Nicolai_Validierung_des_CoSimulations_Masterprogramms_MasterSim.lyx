@@ -149,7 +149,11 @@ Andreas Nicolai
 \begin_inset Newline newline
 \end_inset
 
+
+\size normal
 Institut für Bauklimatik, TU Dresden
+\size default
+
 \begin_inset Newline newline
 \end_inset
 
@@ -1526,8 +1530,8 @@ Ausgangspunkt bei der Cross-Check Prüfung
 \end_layout
 
 \begin_layout Standard
-Die MATERSIM Version 0.5.3 vom September 2018 war Ausgangspunkt der Cross-Check-Pr
-üfung.
+Die MASTERSIM Version 0.5.3 vom September 2018 war Ausgangspunkt der Cross-Check-P
+rüfung.
  In dieser Version waren die Modultests bereits für alle implementierten
  Algorithmen und die selbst erstellten FMUs erfolgreich absolviert worden.
  Eine erste Analyse ergab:
@@ -2819,6 +2823,48 @@ name "subsec:Überschreitung-des-Endzeitpunkts"
 \end_inset
 
 Überschreitung des Endzeitpunkts verhindern
+\end_layout
+
+\begin_layout Subsection
+Zusammenfassung des Cross-Check-Validierungsstandes für MASTERSIM Version
+ 0.7
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename fig/MasterSim_0.7.1_cross-check_results.pdf
+	width 16cm
+	BoundingBox 2cm 7.5cm 19cm 19cm
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Aktueller Stand der Cross-Check-Validierung von MASTERSIM 0.7
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
