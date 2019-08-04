@@ -1,8 +1,9 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
-Changelog for Version 0.7.1
----------------------------
+Changelog for Version 0.7.1 (03.08.2019)
+----------------------------------------
+
 This is a minor update, with only fine-tuning and a compatibility feature needed
 for cross-checking/validation of MasterSim (the 'prevent overstepping' feature).
 Also, on the Mac starting the simulation spawns a new terminal application window,
@@ -13,9 +14,9 @@ so no more running jobs in the background.
 * Feature: Ticket #56 - Remove target directory when running new simulation from GUI
 * Feature: Ticket #57 - Fix problem when FMU uses same value reference for several (different) variables
 
+Changelog for Version 0.7.0 (09.07.2019)
+----------------------------------------
 
-Changelog for Version 0.7.0
----------------------------
 This release is centered around standard compliance - a lot of small adjustments were
 necessary, to run FMUs from very different tools.
 
@@ -41,9 +42,9 @@ SourceForge project):
 * Feature: Ticket #31 - Allow specifying fixed/​tunable parameters in GUI
 * Feature: Ticket #29 - Enable reading of CSV-files with input variables and using them in connection graph
 
+Changelog for Version 0.6.0 (23.05.2019)
+----------------------------------------
 
-Changelog for Version 0.6.0
----------------------------
 Key focus in this release was the ability to run quite a lot of the FMU
 test cases from the FMI cross-check repository. Interestingly, this 
 involved reading up a bit on the standard specs and finding out, that quite
@@ -83,9 +84,8 @@ Here's a list of all features and bug fixes:
 * Bugfix:  Ticket #7  - Fix "reload project on external file change"
 * Feature: Ticket #6  - Associate file extension msim with MasterSimulator user interface
 
-
-Changelog for Version 0.5.3
----------------------------
+Changelog for Version 0.5.3 (24.09.2018)
+----------------------------------------
 
 * Feature: Ticket #30 - Ensure that integration does not surpass end time point
 * Feature: Ticket #23 - Implement slope-based error test using history information only
@@ -100,24 +100,24 @@ Changelog for Version 0.5.3
 * Feature: Ticket #22 - Adjust format of step-statistics file to be usable in PostProcessing
 * Feature: Ticket #21 - MasterSim should be deployed with icon files and create a .desktop file on Linux
 
-Changelog for Version 0.5.2
----------------------------
+Changelog for Version 0.5.2 (02.08.2018)
+----------------------------------------
 
 * Feature: Ticket #20 - Iterative algorithms without time step adjustment
   should continue when max iters have been reached
 * Feature: Ticket #19 - Improve diagnostic messages from iterative algorithms
 * Feature: Ticket #18 - Add button in UI to show simulation log file
 
-Changelog for Version 0.5.1
----------------------------
+Changelog for Version 0.5.1 (23.01.2018)
+----------------------------------------
 
 * Bugfix: Ticket #15: Boolean outputs are written to integer output file
   (also fixes the segfault when having booling and integer outputs)
 * Feature: Ticket #16: Improve simulation log (add solver version for bug reporting)
 * Feature: Ticket #17: Match timesteps in all output files (use same number precision for time points)
 
-Changelog for Version 0.5.0
----------------------------
+Changelog for Version 0.5.0 (17.11.2017)
+----------------------------------------
 
 * Bugfix: Ticket #7: Fixed reloading of project files
   modified by external applications (editors)
@@ -131,8 +131,8 @@ New feature:
 * added support for whitespaces and linebreaks (encoded) in string parameters when
   specified in project file
 
-Changelog for Version 0.4.4
----------------------------
+Changelog for Version 0.4.4 (15.12.2016)
+----------------------------------------
 
 * Bugfix: Minimum time step size is now honored by the error test
 * Bugfix: Output time grid is kept fixed even for variable stepping runs
@@ -148,21 +148,21 @@ New features:
 *    step statistics are now written to the `log/stepstats.txt` file when master
      is run with verbosity level > 1
 
-Changelog for Version 0.4.3
----------------------------
+Changelog for Version 0.4.3 (06.10.2016)
+----------------------------------------
 
 * 32bit and 64bit Windows platforms supported
 * Bugfix: Main window short cuts work again
 * Bugfix: Project file format correctly written from user interface (parameter format fixed)
 
-Changelog for Version 0.4
--------------------------
+Changelog for Version 0.4 (14.06.2016)
+--------------------------------------
 
 * Bugfix: when adding slaves before project had been saved already, UI got stuck
 * Stability improvement: added Gauss-Jacobi initial value iteration (when FMUs are in initialization mode).
 
-Changelog for Version 0.3
--------------------------
+Changelog for Version 0.3 (13.06.2016)
+--------------------------------------
 
 * User Interface is now completed to a point where definition of
   master scenarios is possible
@@ -176,8 +176,8 @@ Things you can do:
 * you can specify simulation parameters and run the simulation
 
 
-Changelog for Version 0.2
--------------------------
+Changelog for Version 0.2 (03.06.2016)
+--------------------------------------
 
 * UI Implementation has progressed a lot, Simulation can be started from UI
   and solver parameters can be edited
