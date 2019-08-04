@@ -297,11 +297,6 @@ void MSIMViewSimulation::setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox 
 }
 
 
-void MSIMViewSimulation::on_checkBoxCloseOnExit_clicked() {
-	updateCommandLine();
-}
-
-
 void MSIMViewSimulation::on_comboBoxVerbosityLevel_currentIndexChanged(int) {
 	updateCommandLine();
 }
