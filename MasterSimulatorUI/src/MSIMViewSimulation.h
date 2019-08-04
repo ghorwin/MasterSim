@@ -29,7 +29,6 @@ public slots:
 
 private slots:
 
-	void on_checkBoxCloseOnExit_clicked();
 	void on_comboBoxVerbosityLevel_currentIndexChanged(int index);
 
 
