@@ -342,6 +342,18 @@ Bei der Simulationsdurchführung
 \end_layout
 
 \begin_layout Subsubsection
+MasterSim übergibt das falsche 
+\begin_inset Quotes gld
+\end_inset
+
+Resources
+\begin_inset Quotes grd
+\end_inset
+
+-Verzeichnis bei FMI 1.0
+\end_layout
+
+\begin_layout Subsubsection
 MasterSim bricht mit Fehlermeldung 
 \family typewriter
 
