@@ -145,7 +145,7 @@ const FMIVariable & ModelDescription::variableByRef(FMIVariable::VarType varType
 		if (fmiVar.m_type == varType && fmiVar.m_valueReference == valueReference) {
 			if (fmiVar.m_causality == FMIVariable::C_OUTPUT)
 				outputVar = &fmiVar;
-			else
+			else if (otherVar == nullptr) // we always search from front and take the first occurance
 				otherVar = &fmiVar;
 		}
 	}
