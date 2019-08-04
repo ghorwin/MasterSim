@@ -149,7 +149,7 @@ Andreas Nicolai
 \begin_inset Newline newline
 \end_inset
 
-TU Dresden
+Institut für Bauklimatik, TU Dresden
 \begin_inset Newline newline
 \end_inset
 
@@ -2461,15 +2461,20 @@ MASTERSIM bricht mit Fehlermeldung
 \begin_inset Quotes gld
 \end_inset
 
-Cannot import function 
-\family typewriter
-'van der Pol oscillator_fmiGetReal'
-\family default
- from shared/dynamic library
+Cannot import function
 \begin_inset Quotes grd
 \end_inset
 
  ab
+\end_layout
+
+\begin_layout Standard
+Bei der Instanzierung einer FMU bricht MASTERSIM mit der Fehlermeldung 
+\family typewriter
+Cannot import function 'van der Pol oscillator_fmiGetReal' from shared/dynamic
+ library
+\family default
+ ab.
 \end_layout
 
 \begin_layout Standard
@@ -2838,7 +2843,7 @@ Beispiel-Testfälle
 LatexCommand bibtex
 btprint "btPrintCited"
 bibfiles "/home/ghorwin/svn/mastersim-code/doc/articles/Literature"
-options "plaindin"
+options "bibtotoc,plaindin"
 
 \end_inset
 
