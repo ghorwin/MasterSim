@@ -1454,23 +1454,23 @@ https://github.com/modelica/fmi-cross-check
 
 \begin_layout Standard
 Dieses Akzeptanzband ist recht grob, funktioniert aber praktisch recht gut.
- In Abschnitt
+ Abschnitt
 \begin_inset space ~
 \end_inset
 
 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:Beispiel-Testfälle"
+reference "subsec:Beispiel-für-Abgleich"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
- sind einige Testfälle aufgeführt, wobei Referenzergebnisse und MASTERSIM-Simula
-tionsergebnisse (unter Verwendung unterschiedlicher Parameter und Algorithmen)
- einschließlich des Toleranzbandes dargestellt werden.
+ zeigt einen Testfall, wobei Referenzergebnisse und MASTERSIM-Simulationsergebni
+sse (unter Verwendung unterschiedlicher Parameter und Algorithmen) einschließlic
+h des Toleranzbandes dargestellt werden.
 \end_layout
 
 \begin_layout Subsubsection
@@ -1876,7 +1876,19 @@ Gauss-Seidel
 \emph on
 1 Iteration
 \emph default
-, ausgewählt (nicht-iterierender Algorithmus).
+, ausgewählt (nicht-iterierender Algorithmus)
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Bei der automatisierten Validierung wurde alternativ der Gauss-Jacobi Algorithmu
+s ohne Iteration verwenden, da viele der anderen Tools offensichtlich diesen
+ auch verwendet haben und so die Übereinstimmung größer war.
+\end_layout
+
+\end_inset
+
+.
  Beim Gauss-Seidel-Algorithmus wird zuerst Variable der 
 \family typewriter
 csv
@@ -1914,9 +1926,54 @@ Schreibe interne Variablen als Ausgaben
 \end_layout
 
 \begin_layout Enumerate-Resume
-Als Ausgabeinterval wird 0,01 s gewählt, also eine Ausgabe je Kommunikationsinte
-rval.
- Nachdem alle Simulationseinstellungen eingetragen wurden (siehe Abbildung
+Als Ausgabeinterval (
+\family typewriter
+hOutputMin
+\family default
+) wird 0,01 s gewählt, also eine Ausgabe je Kommunikationsinterval.
+ Bei Co-Simulationsanwendungen ist dieses Ausgabeinterval entscheidend,
+ da eine Ausgabe der Variablen nach jedem Kommunikationsschritt zu unnötig
+ großen Ausgabedateien führen würde.
+ Daher wird diese Interval als Raster für Ausgaben definiert, d.h.
+ es wird nach jeder erfolgten Ausgabe der nächste Ausgaberaster-Zeitpunkt
+ bestimmt und erst nach Erreichen/Überschreiten dieses Ausgabezeitpunkts
+ wird eine weitere Ausgabe erlaubt.
+ Beispielsweise kann so die Zeitintegration mit Schrittlängen 0,001 s durchgefüh
+rt werden, wohingegen Ausgaben nur alle 0,1 s erfolgen.
+ Die Umsetzung dieser Regel birgt jedoch zahlreiche Fehlerquellen, wie in
+ den Abschnitten
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Ausgabe-enden-vor-Endzeitpunkt"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ bis
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Ausgabe-überspringt-Zeitpunkte"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ erläutert ist.
+\end_layout
+
+\begin_layout Enumerate-Resume
+Nachdem alle Simulationseinstellungen eingetragen wurden (siehe Abbildung
 \begin_inset space ~
 \end_inset
 
@@ -2261,7 +2318,7 @@ hStart = StepSize
 \family typewriter
 StepSize
 \family default
- nicht gegeben ist oder = 0, auf (
+ = 0, auf (
 \family typewriter
 StopZeit-StartZeit
 \family default
@@ -2273,15 +2330,11 @@ StopZeit-StartZeit
 \family typewriter
 hOutputMin
 \family default
- automatisch gesetzt (Maximum von 
-\family typewriter
-StepSize
-\family default
- oder (
+ automatisch gesetzt auf (
 \family typewriter
 StopZeit-StartZeit
 \family default
-)/1000).
+)/100.
 \end_layout
 
 \begin_layout Subsubsection
@@ -2668,7 +2721,13 @@ mmung der Ergebnisse erreicht wird (falls möglich).
 \end_layout
 
 \begin_layout Subsubsection
-Ausgabe nicht beim Endzeitpunkt (Rundungsproblematik 1)
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Ausgabe-enden-vor-Endzeitpunkt"
+
+\end_inset
+
+Ausgabe enden vor Simulationsende (Rundungsproblematik 1)
 \end_layout
 
 \begin_layout Standard
@@ -2712,7 +2771,7 @@ Lösung:
 \end_layout
 
 \begin_layout Subsubsection
-Ausgabe nicht beim Endzeitpunkt (Rundungsproblematik 2)
+Keine Ausgabe beim Endzeitpunkt (Rundungsproblematik 2)
 \end_layout
 
 \begin_layout Standard
@@ -2739,14 +2798,40 @@ Lösung:
 \emph default
  MASTERSIM wird erweitert und schreibt nun am Simulationsende in jedem Fall
  die Ergebnisse.
- Eine Sonderbehandlung war notwendig, dass nicht unbeabsichtigterweise nach
- dem letzten Rechenschritt eine planmäßige Ausgabe erstellt wird, gefolgt
- von der gleichen Ausgabe am Ende der Berechnung (Problem: doppelte Ausgabezeile
- am Ende der Simulation).
 \end_layout
 
 \begin_layout Subsubsection
-Ausgabe überspringt Zeitpunkte (Rundungsproblematik 3)
+Letzte Ausgabe doppelt in Ausgabedatei (Rundungsproblematik 3)
+\end_layout
+
+\begin_layout Standard
+Eine Sonderbehandlung war notwendig, dass nicht unbeabsichtigterweise nach
+ dem letzten Rechenschritt eine planmäßige Ausgabe erstellt wird, gefolgt
+ von der gleichen Ausgabe am Ende der Berechnung.
+ Dies trat z.B.
+ auf, wenn der letzte Integrationsschritt bei t=2,0 endete, der nächste
+ Ausgabezeitpunkt ebenfalls bei t=2,0 gesetzt war.
+ Wenn dann zusätzlich noch die Ausgabe am Simulationsende angehängt wurde,
+ erschien die Ausgabe zum Zeitpunkt t=2,0 doppelt.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung:
+\emph default
+ Erweiterter Test integriert, um Zeitpunkt der letzten Ausgabe zusätzlich
+ zu prüfen.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Ausgabe-überspringt-Zeitpunkte"
+
+\end_inset
+
+Ausgabe überspringt Zeitpunkte (Rundungsproblematik 4)
 \end_layout
 
 \begin_layout Standard
@@ -2825,9 +2910,59 @@ name "subsec:Überschreitung-des-Endzeitpunkts"
 Überschreitung des Endzeitpunkts verhindern
 \end_layout
 
+\begin_layout Standard
+Einige FMUs verhalten sich hinsichtlich des Überschreitens des Endzeitpunkts
+ nicht standardkonform und brechen die Simulation im letzten Integrationsschritt
+ ab.
+ Dies tritt z.B.
+ dann auf, wenn der letzte Kommunikationsschritt von 1,9 bis 2,0 geht, jedoch
+ die Addition von 1,9 und 0,1 mit Maschinenzahlen einen Wert von 2,000000001
+ ergibt.
+ In diesem Fall sollte die FMU keinen Fehler ausgeben.
+ Einige FMUs prüfen den Endzeitpunkt jedoch sehr strikt und brechen die
+ Simulation mit einem Fehler ab.
+\end_layout
+
+\begin_layout Standard
+
+\emph on
+Lösung:
+\emph default
+ MASTERSIM erhält eine zusätzliche Option, um notfalls den letzten Zeitschritt
+ exakt so zu kürzen, dass tatsächlich der Simulationsendzeitpunkt 
+\emph on
+exakt
+\emph default
+ erreicht wird.
+\end_layout
+
 \begin_layout Subsection
 Zusammenfassung des Cross-Check-Validierungsstandes für MASTERSIM Version
  0.7
+\end_layout
+
+\begin_layout Standard
+Nach umfangreicher Anpassung und Korrektur von MASTERSIM war in der Version
+ 0.7 nun eine recht umfängliche Validierung der Testfälle möglich.
+ Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Stand-der-Cross-Check-Validierun"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ zeigt eine Übersicht der Validierungsergebnisse für die getesteten Plattformen
+ Windows 64bit, Linux 64bit, und MacOS (Darwin) 64bit.
+ Die Validierung der 32-bit Windows-Version ist für diese Programmversion
+ ausgelassen worden, da dieses Betriebssystem einer immer geringere Verbreitung
+ aufweist.
 \end_layout
 
 \begin_layout Standard
@@ -2854,7 +2989,13 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Aktueller Stand der Cross-Check-Validierung von MASTERSIM 0.7
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Stand-der-Cross-Check-Validierun"
+
+\end_inset
+
+Stand der Cross-Check-Validierung von MASTERSIM Version 0.7
 \end_layout
 
 \end_inset
@@ -2865,16 +3006,322 @@ Aktueller Stand der Cross-Check-Validierung von MASTERSIM 0.7
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Die meisten fehlgeschlagenen Tests sind begründet mit einer noch verbleibenden
+ Einschränkung im MASTERSIM: die durch 
+\family typewriter
+csv
+\family default
+-Eingabedateien bereitgestellten Variablen werden derzeit als vom Datentyp
+ 
+\emph on
+Real
+\emph default
+ angenommen und stets linear interpoliert.
+ Bei den Testfällen, wo diese Variablen mit Integervariablen oder boolischen
+ Variablen verknüpft sind, scheitert die Berechnung.
+ Aktuell könnten diese FMUs durch Einsatz von Adaptor-FMUs dennoch validiert
+ werden, in denen eine entsprechende Typkonvertierung möglich ist.
 \end_layout
 
 \begin_layout Subsection
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:Beispiel-Testfälle"
+name "subsec:Beispiel-für-Abgleich"
 
 \end_inset
 
-Beispiel-Testfälle
+Beispiel für Abgleich zwischen Simulationsergebnissen und Referenzwerten
+\end_layout
+
+\begin_layout Standard
+Nachfolgend soll beispielhaft anhand von einzelnen Testfällen gezeigt werden,
+ wie unterschiedlich die Berechnungsergebnisse verschiedener Tools im Vergleich
+ zu den Referenzwerten ausfallen können, und wie breit das Toleranzband
+ in diesem Fall gesetzt ist.
+ 
+\end_layout
+
+\begin_layout Subsubsection
+Beispiel-Testfall: ControlledTemperature
+\end_layout
+
+\begin_layout Standard
+Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ zeigt die Referenzergebnisse des Testfalls 
+\family typewriter
+2.0/cs/linux64/MapleSim/2016.1/ControlledTemperature
+\family default
+, die daraus abgeleiteten oberen und unteren Grenzen des Toleranzbandes
+ und die Ergebnisse der Tools, welche diesen Test bestanden haben.
+ Es schein eine recht gute Übereinstimmung der Berechnungsergebnisse zu
+ geben.
+ Man kann in der Abbildung aber auch sehen, dass das Toleranzband sehr breit
+ ist.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename fig/ControlledTemperatureWithToleranzBand.pdf
+	width 12cm
+	BoundingBox 0bp 0bp 454bp 340bp
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example1"
+
+\end_inset
+
+Vergleich Referenzergebnisse mit Simulationsergebnissen des Testfalls 
+\emph on
+ControlledTemperature
+\emph default
+ und Darstellung des Toleranzbandes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Bei Detailbetrachtung (siehe Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example1-Detail"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) fallen bereits kleinere Abweichungen in einem FMI-Importtool auf, welche
+ auf ein nicht ganz korrektes Verhalten des Importtools zurückzuführen sind.
+ Diese können aber aufgrund des breiten Toleranzbandes so nicht entdeckt
+ werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename fig/ControlledTemperatureWithToleranzBandZoom.pdf
+	width 12cm
+	BoundingBox 0bp 0bp 454bp 340bp
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example1-Detail"
+
+\end_inset
+
+Detailbetrachtung der Berechnungsergebnisse mit Abweichungen im Ergebnis
+ des Adams-Solvers, welche durch das breite Toleranzband nicht erkannt werden.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Beispiel-Testfall: Fuelrail
+\end_layout
+
+\begin_layout Standard
+Die recht großzüge Wahl des Toleranzbandes kann jedoch auch dazu führen,
+ dass die Details der Berechnungsergebnisse komplett irrelevant für die
+ Bewertung werden.
+ Abbildung
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Example2-Detail"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ zeigt einen solchen Extremfall, im Testfall 
+\family typewriter
+2.0/cs/linux64/AMESim/15/fuelrail_cs
+\family default
+.
+ Glücklicherweise liegen bei diesem Testfall alle Ergebnisse sehr gut übereinand
+er - jedoch würde in diesem Fall auch ein komplett falsches Ergebnis, z.B.
+ ein konstanter Wert von 0, als validiert gelten.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename fig/fuelrail_cs.pdf
+	width 12cm
+	BoundingBox 0bp 0bp 454bp 340bp
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Example2-Detail"
+
+\end_inset
+
+Extrembeispiel für ein zu großes Toleranzband.
+ Der Verlauf der hochfrequenten Modellreaktion im Inneren der Toleranzhülle
+ hat keinerlei Einfluss auf die Validierungsbewertung.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Aus diesem Testfall wird deutlich, dass das Verfahren mit dem gleitenden
+ Mittel zur Bestimmung des Toleranzbandes nur bedingt für die automatische
+ Prüfung geeignet ist.
+ Wahrscheinlich wäre es zielführender, wenn der Ersteller eines Testfalls
+ die Genauigkeit des Toleranzbandes selbst kontrolliert, und gegebenefalls
+ über die Ausgabefrequenz anpasst.
+\end_layout
+
+\begin_layout Subsection
+Eigene Bewertungskriterien für die MASTERSIM-Validierung
+\end_layout
+
+\begin_layout Standard
+Wie oben dargestellt, sind die Kriterien für die Cross-Check-Validierung
+ recht grob gesteckt, und erlauben daher zum Teil auch inkorrekte Ergebnisse
+ die Tests zu bestehen.
+\end_layout
+
+\begin_layout Standard
+Für die Validierung von MASTERSIM wurde deshalb zusätzlich ein eigenes Prüfkrite
+rium eingebaut, welches auch dazu dient, die optimalen Kommunikationsschrittläng
+en und Ausgabefrequenzen zu bestimmen.
+ Dafür wird eine gewichtete Vektornorm (WRMS-Norm, engl.
+ 
+\emph on
+weighted-root-mean-square
+\emph default
+ Norm) zwischen Referenzergebnissen und Berechnungsergebnissen im MASTERSIM
+ berechnet.
+ Die erstellte README.md-Datei enthält dann für alle Referenzvariablen die
+ selbst berechnete Norm in der Form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset listings
+inline false
+status open
+
+\begin_layout Plain Layout
+
+WRMS(p1@general_hydraulic_chamber) = 2.88624153058
+\end_layout
+
+\begin_layout Plain Layout
+
+WRMS(p1@hydraulic_4) = 2.38231879683
+\end_layout
+
+\begin_layout Plain Layout
+
+WRMS(q@volumesensor) = 6.45486466337
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+wobei Werte < 100 eine gute Übereinstimmung signalisieren.
 \end_layout
 
 \begin_layout Standard
