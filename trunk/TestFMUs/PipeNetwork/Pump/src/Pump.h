@@ -41,6 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "fmi2common/InstanceData.h"
 
+#include "IBK_LinearSpline.h"
+
 /*! This class wraps all data needed for a single instance of the FMU. */
 class Pump : public InstanceData {
 public:
@@ -82,6 +84,8 @@ public:
 
 	/*! Cached current time point of the FMU, defines starting point for time integration in co-simulation mode. */
 	double m_currentTimePoint;
+
+	IBK::LinearSpline m_kennLinie;
 }; // class Pump
 
 #endif // PumpH

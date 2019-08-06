@@ -89,15 +89,69 @@ Pump::~Pump() {
 void Pump::init() {
 	logger(fmi2OK, "progress", "Starting initialization.");
 
+	// parse spline parameter
+	m_kennLinie.clear();
+
+	// parse data definition
+	std::string Kennlinie = m_stringVar[FMI_PARA_Kennlinie];
+	// extract both strings
+	std::string xvals;
+	std::string yvals;
+	int bracketLevel = 0;
+	std::size_t substrStart = 0;
+	for (unsigned int i=0; i<Kennlinie.size(); ++i) {
+		switch (Kennlinie[i]) {
+			case '[' :
+				if (++bracketLevel == 1)
+					substrStart = i;
+			break;
+			case ']' :
+				if (--bracketLevel == 1) {
+					if (xvals.empty())
+						xvals = Kennlinie.substr(substrStart, i-substrStart);
+					else
+						yvals = Kennlinie.substr(substrStart, i-substrStart);
+				}
+			break;
+			case ',' :
+				Kennlinie[i] = ' ';
+			break;
+			default : ; // leave remaining chars
+		}
+	}
+
+	logger(fmi2OK, "debug", "Reading 'Kennlinie' parameter");
+	std::string msg = "  xvals = " + xvals;
+	logger(fmi2OK, "debug", msg.c_str());
+	msg = "  yvals = " + yvals;
+	logger(fmi2OK, "debug", msg.c_str());
+
+	std::stringstream xvalsstrm(xvals);
+	std::vector<double> xvalVec;
+	double val;
+	while (xvalsstrm >> val)
+		xvalVec.push_back(val);
+	std::stringstream yvalsstrm(yvals);
+	std::vector<double> yvalVec;
+	while (yvalsstrm >> val)
+		yvalVec.push_back(val);
+
+	if (xvalVec.size() != yvalVec.size())
+		throw std::runtime_error("Invalid data in 'Kennlinie' parameter.");
+
+	m_kennLinie.setValues(xvalVec, yvalVec);
+	if (!m_kennLinie.valid())
+		throw std::runtime_error("Invalid data in 'Kennlinie' parameter.");
+
 	if (m_modelExchange) {
 		// initialize states
-		
+
 
 		// TODO : implement your own initialization code here
 	}
 	else {
 		// initialize states, these are used for our internal time integration
-		
+
 
 		// TODO : implement your own initialization code here
 
@@ -118,15 +172,12 @@ void Pump::updateIfModified() {
 	double MaxPower = m_realVar[FMI_INPUT_MaxPower];
 	double p_in = m_realVar[FMI_INPUT_p_in];
 	double mdot_in = m_realVar[FMI_INPUT_mdot_in];
-	const std::string & Kennlinie = m_stringVar[FMI_PARA_Kennlinie];
-
 
 	// TODO : implement your code here
 
 	// output variables
 	m_realVar[FMI_OUTPUT_p_out] = 0; // TODO : store your results here
 	m_realVar[FMI_OUTPUT_mdot_out] = 0; // TODO : store your results here
-
 
 	// reset externalInputVarsModified flag
 	m_externalInputVarsModified = false;
