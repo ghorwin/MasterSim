@@ -315,7 +315,7 @@ fancyhead[C]{} %zentrierte Kopfzeile
 
 
 \backslash
-fancyhead[R]{Validatierung des Co-Simulationsmasters MASTERSIM}
+fancyhead[R]{Validierung des Co-Simulationsmasters MASTERSIM}
 \end_layout
 
 \begin_layout Plain Layout
