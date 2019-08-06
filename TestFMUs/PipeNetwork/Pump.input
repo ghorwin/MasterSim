@@ -1,0 +1,72 @@
+{
+    "variables": [
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "MaxPower", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "approx", 
+            "startValue": "20", 
+            "unit": "kW", 
+            "description": "Maximale Pumpenleistung"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "p_in", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "approx", 
+            "startValue": "0", 
+            "unit": "Pa", 
+            "description": "Druck am Einlass"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "mdot_in", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "approx", 
+            "startValue": "0", 
+            "unit": "kg/s", 
+            "description": "Massenstrom am Einlass"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "output", 
+            "name": "p_out", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "calculated", 
+            "startValue": "", 
+            "unit": "Pa", 
+            "description": "Druck am Auslass"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "output", 
+            "name": "mdot_out", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "calculated", 
+            "startValue": "", 
+            "unit": "kg/s", 
+            "description": "Massestrom am Auslass"
+        }, 
+        {
+            "variability": "fixed", 
+            "causality": "parameter", 
+            "name": "Kennlinie", 
+            "typeID": "String", 
+            "valueRef": -1, 
+            "initial": "exact", 
+            "startValue": "[ [0,0.2,0.5,0.8],[1000,800,400,0] ]", 
+            "unit": "", 
+            "description": "Eine Datentabelle (encoded als Python-Array) mit der Pumpenkennline, d.h. Funktion des Druckverlusts \u00fcber dem Massestrom."
+        }
+    ], 
+    "modelName": "Pump", 
+    "description": "Eine Pumpe mit Kennlinie."
+}

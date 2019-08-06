@@ -47,11 +47,13 @@ unix|mac {
 INCLUDEPATH = ../../src
 
 SOURCES += \
+	../../src/IBK_LinearSpline.cpp \
 	../../src/fmi2common/fmi2Functions.cpp \
 	../../src/fmi2common/InstanceData.cpp \
 	../../src/Pump.cpp
 
 HEADERS += \
+	../../src/IBK_LinearSpline.h \
 	../../src/fmi2common/fmi2Functions.h \
 	../../src/fmi2common/fmi2Functions_complete.h \
 	../../src/fmi2common/fmi2FunctionTypes.h \
