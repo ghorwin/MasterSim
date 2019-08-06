@@ -1,0 +1,61 @@
+{
+    "variables": [
+        {
+            "variability": "constant", 
+            "causality": "parameter", 
+            "name": "A", 
+            "typeID": "Real", 
+            "valueRef": 1, 
+            "initial": "exact", 
+            "startValue": "0.1", 
+            "unit": "m2", 
+            "description": "Str\u00f6mungsquerschnitt"
+        }, 
+        {
+            "variability": "constant", 
+            "causality": "parameter", 
+            "name": "xeta", 
+            "typeID": "Real", 
+            "valueRef": 2, 
+            "initial": "exact", 
+            "startValue": "0.2", 
+            "unit": "", 
+            "description": "Str\u00f6mungsbeiwert"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "mdot", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "exact", 
+            "startValue": "0", 
+            "unit": "kg/m2s", 
+            "description": "Massestromdichte"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "p_in", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "exact", 
+            "startValue": "0", 
+            "unit": "Pa", 
+            "description": "Einlassdruck"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "output", 
+            "name": "p_out", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "calculated", 
+            "startValue": "", 
+            "unit": "Pa", 
+            "description": "Auslassdruck"
+        }
+    ], 
+    "modelName": "Pipe", 
+    "description": "Ein einfaches durchstr\u00f6mtes Bauteil mit Druckverlustbeiwert."
+}
