@@ -41,37 +41,39 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "fmi2common/fmi2Functions.h"
 #include "fmi2common/fmi2FunctionTypes.h"
-#include "Pipe.h"
+#include "Valve.h"
 
 // FMI interface variables
 
-#define FMI_PARA_A 1
+#define FMI_INPUT_k 1
 #define FMI_PARA_xeta 2
-#define FMI_INPUT_mdot_in 3
+#define FMI_PARA_A 3
 #define FMI_INPUT_p_in 4
-#define FMI_OUTPUT_p_out 5
-#define FMI_OUTPUT_mdot_out 6
+#define FMI_INPUT_mdot_in 5
+#define FMI_OUTPUT_p_out 6
+#define FMI_OUTPUT_mdot_out 7
 
 
 // *** Variables and functions to be implemented in user code. ***
 
 // *** GUID that uniquely identifies this FMU code
-const char * const InstanceData::GUID = "{ba8ea160-b85c-11e9-b652-48a4728dac0c}";
+const char * const InstanceData::GUID = "{80d9592e-b85c-11e9-b652-48a4728dac0c}";
 
 // *** Factory function, creates model specific instance of InstanceData-derived class
 InstanceData * InstanceData::create() {
-	return new Pipe; // caller takes ownership
+	return new Valve; // caller takes ownership
 }
 
 
-Pipe::Pipe() :
+Valve::Valve() :
 	InstanceData()
 {
 	// initialize input variables and/or parameters
-	m_realVar[FMI_PARA_A] = 0.1;
-	m_realVar[FMI_PARA_xeta] = 0.2;
-	m_realVar[FMI_INPUT_mdot_in] = 0;
+	m_realVar[FMI_INPUT_k] = 1;
+	m_realVar[FMI_PARA_xeta] = 0.3;
+	m_realVar[FMI_PARA_A] = 0.2;
 	m_realVar[FMI_INPUT_p_in] = 0;
+	m_realVar[FMI_INPUT_mdot_in] = 0;
 
 	// initialize output variables
 	m_realVar[FMI_OUTPUT_p_out] = 0;
@@ -81,12 +83,12 @@ Pipe::Pipe() :
 }
 
 
-Pipe::~Pipe() {
+Valve::~Valve() {
 }
 
 
 // create a model instance
-void Pipe::init() {
+void Valve::init() {
 	logger(fmi2OK, "progress", "Starting initialization.");
 
 	if (m_modelExchange) {
@@ -110,15 +112,16 @@ void Pipe::init() {
 
 
 // model exchange: implementation of derivative and output update
-void Pipe::updateIfModified() {
+void Valve::updateIfModified() {
 	if (!m_externalInputVarsModified)
 		return;
 
 	// get input variables
-	double A = m_realVar[FMI_PARA_A];
+	double k = m_realVar[FMI_INPUT_k];
 	double xeta = m_realVar[FMI_PARA_xeta];
-	double mdot_in = m_realVar[FMI_INPUT_mdot_in];
+	double A = m_realVar[FMI_PARA_A];
 	double p_in = m_realVar[FMI_INPUT_p_in];
+	double mdot_in = m_realVar[FMI_INPUT_mdot_in];
 
 	double p_out;
 
@@ -130,7 +133,10 @@ void Pipe::updateIfModified() {
 		const double RHO_W = 1000; // density of water, kg/m3
 		double v = mdot_in/(RHO_W*A); // flow velocity = mass flow rate / cross section and density: kg/s / ( m2 * kg/m3) = m/s
 		// now compute the pressure drop
-		double deltaP = xeta * RHO_W * v*v / 2;
+
+		double k_limit = std::max(1e-5, k);
+		k_limit = std::min(1.0, k_limit);
+		double deltaP = xeta * RHO_W * v*v / ( 2 * k_limit );
 		p_out = p_in - deltaP;
 	}
 
@@ -138,14 +144,13 @@ void Pipe::updateIfModified() {
 	m_realVar[FMI_OUTPUT_p_out] = p_out;
 	m_realVar[FMI_OUTPUT_mdot_out] = mdot_in;
 
-
 	// reset externalInputVarsModified flag
 	m_externalInputVarsModified = false;
 }
 
 
 // Co-simulation: time integration
-void Pipe::integrateTo(double tCommunicationIntervalEnd) {
+void Valve::integrateTo(double tCommunicationIntervalEnd) {
 
 	// state of FMU before integration:
 	//   m_currentTimePoint = t_IntervalStart;
@@ -160,7 +165,7 @@ void Pipe::integrateTo(double tCommunicationIntervalEnd) {
 }
 
 
-void Pipe::computeFMUStateSize() {
+void Valve::computeFMUStateSize() {
 	// store time, states and outputs
 	m_fmuStateSize = sizeof(double)*1;
 	// we store all cached variables
@@ -212,7 +217,7 @@ void Pipe::computeFMUStateSize() {
 
 
 template <typename T>
-bool deserializeMap(Pipe * obj, const char * & dataPtr, const char * typeID, std::map<int, T> & varMap) {
+bool deserializeMap(Valve * obj, const char * & dataPtr, const char * typeID, std::map<int, T> & varMap) {
 	// now de-serialize the maps: first the size (for checking), then each key-value pair
 	int mapsize;
 	DESERIALIZE(const int, dataPtr, mapsize);
@@ -241,7 +246,7 @@ bool deserializeMap(Pipe * obj, const char * & dataPtr, const char * typeID, std
 
 
 
-void Pipe::serializeFMUstate(void * FMUstate) {
+void Valve::serializeFMUstate(void * FMUstate) {
 	char * dataPtr = reinterpret_cast<char*>(FMUstate);
 	if (m_modelExchange) {
 		SERIALIZE(double, dataPtr, m_tInput);
@@ -287,7 +292,7 @@ void Pipe::serializeFMUstate(void * FMUstate) {
 }
 
 
-bool Pipe::deserializeFMUstate(void * FMUstate) {
+bool Valve::deserializeFMUstate(void * FMUstate) {
 	const char * dataPtr = reinterpret_cast<const char*>(FMUstate);
 	if (m_modelExchange) {
 		DESERIALIZE(const double, dataPtr, m_tInput);

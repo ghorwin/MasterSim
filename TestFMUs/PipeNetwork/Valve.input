@@ -1,37 +1,37 @@
 {
     "variables": [
         {
-            "variability": "fixed", 
-            "causality": "parameter", 
-            "name": "A", 
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "k", 
             "typeID": "Real", 
-            "valueRef": 1, 
-            "initial": "exact", 
-            "startValue": "0.1", 
-            "unit": "m2", 
-            "description": "Str\u00f6mungsquerschnitt"
+            "valueRef": -1, 
+            "initial": "approx", 
+            "startValue": "1", 
+            "unit": "---", 
+            "description": "Ventilstellung (0-geschlossen, 1-offen)"
         }, 
         {
             "variability": "fixed", 
             "causality": "parameter", 
             "name": "xeta", 
             "typeID": "Real", 
-            "valueRef": 2, 
+            "valueRef": -1, 
             "initial": "exact", 
-            "startValue": "0.2", 
+            "startValue": "0.3", 
             "unit": "", 
             "description": "Str\u00f6mungsbeiwert"
         }, 
         {
-            "variability": "continuous", 
-            "causality": "input", 
-            "name": "mdot_in", 
+            "variability": "fixed", 
+            "causality": "parameter", 
+            "name": "A", 
             "typeID": "Real", 
             "valueRef": -1, 
-            "initial": "approx", 
-            "startValue": "0", 
-            "unit": "kg/s", 
-            "description": "Massestrom am Einlass"
+            "initial": "exact", 
+            "startValue": "0.2", 
+            "unit": "m2", 
+            "description": "Str\u00f6mungsquerschnitt"
         }, 
         {
             "variability": "continuous", 
@@ -42,7 +42,18 @@
             "initial": "approx", 
             "startValue": "0", 
             "unit": "Pa", 
-            "description": "Einlassdruck"
+            "description": "Druck am Einlass"
+        }, 
+        {
+            "variability": "continuous", 
+            "causality": "input", 
+            "name": "mdot_in", 
+            "typeID": "Real", 
+            "valueRef": -1, 
+            "initial": "approx", 
+            "startValue": "0", 
+            "unit": "kg/s", 
+            "description": "Massenstrom am Einlass"
         }, 
         {
             "variability": "continuous", 
@@ -53,7 +64,7 @@
             "initial": "calculated", 
             "startValue": "", 
             "unit": "Pa", 
-            "description": "Auslassdruck"
+            "description": "Druck am Auslass"
         }, 
         {
             "variability": "continuous", 
@@ -64,9 +75,9 @@
             "initial": "calculated", 
             "startValue": "", 
             "unit": "kg/s", 
-            "description": "Massestrom am Einlass"
+            "description": "Massestrom am Auslass"
         }
     ], 
-    "modelName": "Pipe", 
-    "description": "Ein einfaches durchstr\u00f6mtes Bauteil mit Druckverlustbeiwert."
+    "modelName": "Valve", 
+    "description": "Ein Ventil, d.h. ein Str\u00f6mungswiderstand mit Ventilstellung als Eingangsvariable."
 }
