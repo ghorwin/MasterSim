@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fmiModelDescription
 	fmiVersion="2.0"
-	modelName="Pipe"
-	guid="{ba8ea160-b85c-11e9-b652-48a4728dac0c}"
+	modelName="Valve"
+	guid="{80d9592e-b85c-11e9-b652-48a4728dac0c}"
 	version="1.0.0"
 	author="not specified"
 	copyright="not specified"
 	license="not specified"
-	description="Ein einfaches durchströmtes Bauteil mit Druckverlustbeiwert."
+	description="Ein Ventil, d.h. ein Strömungswiderstand mit Ventilstellung als Eingangsvariable."
 	generationTool="ghorwin/FMICodeGenerator@github - C++ Code using FMI support functions from IBK@TU Dresden"
-	generationDateAndTime="2019-08-06T05:13:21Z"
+	generationDateAndTime="2019-08-06T05:11:44Z"
 	variableNamingConvention="structured"
 	numberOfEventIndicators="0">
 
@@ -24,7 +24,7 @@
 	-->
 
 	<ModelExchange
-		modelIdentifier="Pipe"
+		modelIdentifier="Valve"
 		completedIntegratorStepNotNeeded="true"
 		canNotUseMemoryManagementFunctions="true"
 		canGetAndSetFMUstate="true"
@@ -32,7 +32,7 @@
 	/>
 
 	<CoSimulation
-		modelIdentifier="Pipe"
+		modelIdentifier="Valve"
 		canHandleVariableCommunicationStepSize="true"
 		canInterpolateInputs="false"
 		maxOutputDerivativeOrder="0"
@@ -58,13 +58,13 @@
 
 		<!-- Index of variable = "1" -->
 		<ScalarVariable
-			name="A"
-            description="Strömungsquerschnitt"
+			name="k"
+            description="Ventilstellung (0-geschlossen, 1-offen)"
 			valueReference="1"
-			variability="fixed"
-			causality="parameter"
-			initial="exact">
-			<Real start="0.1" unit="m2"/>
+			variability="continuous"
+			causality="input"
+			initial="approx">
+			<Real start="1" unit="---"/>
 		</ScalarVariable>		
 		
 
@@ -76,26 +76,26 @@
 			variability="fixed"
 			causality="parameter"
 			initial="exact">
-			<Real start="0.2"/>
+			<Real start="0.3"/>
 		</ScalarVariable>		
 		
 
 		<!-- Index of variable = "3" -->
 		<ScalarVariable
-			name="mdot_in"
-            description="Massestrom am Einlass"
+			name="A"
+            description="Strömungsquerschnitt"
 			valueReference="3"
-			variability="continuous"
-			causality="input"
-			initial="approx">
-			<Real start="0" unit="kg/s"/>
+			variability="fixed"
+			causality="parameter"
+			initial="exact">
+			<Real start="0.2" unit="m2"/>
 		</ScalarVariable>		
 		
 
 		<!-- Index of variable = "4" -->
 		<ScalarVariable
 			name="p_in"
-            description="Einlassdruck"
+            description="Druck am Einlass"
 			valueReference="4"
 			variability="continuous"
 			causality="input"
@@ -106,9 +106,21 @@
 
 		<!-- Index of variable = "5" -->
 		<ScalarVariable
-			name="p_out"
-            description="Auslassdruck"
+			name="mdot_in"
+            description="Massenstrom am Einlass"
 			valueReference="5"
+			variability="continuous"
+			causality="input"
+			initial="approx">
+			<Real start="0" unit="kg/s"/>
+		</ScalarVariable>		
+		
+
+		<!-- Index of variable = "6" -->
+		<ScalarVariable
+			name="p_out"
+            description="Druck am Auslass"
+			valueReference="6"
 			variability="continuous"
 			causality="output"
 			initial="calculated">
@@ -116,11 +128,11 @@
 		</ScalarVariable>		
 		
 
-		<!-- Index of variable = "6" -->
+		<!-- Index of variable = "7" -->
 		<ScalarVariable
 			name="mdot_out"
-            description="Massestrom am Einlass"
-			valueReference="6"
+            description="Massestrom am Auslass"
+			valueReference="7"
 			variability="continuous"
 			causality="output"
 			initial="calculated">
@@ -136,9 +148,9 @@
 				when some dependencies are constant factors or parameters.
 			-->
 			
-			<Unknown index="5" dependencies="3 4"/>
+			<Unknown index="6" dependencies="1 4 5"/>
 		
-			<Unknown index="6" dependencies="3 4"/>
+			<Unknown index="7" dependencies="1 4 5"/>
 		
 
 		</Outputs>
