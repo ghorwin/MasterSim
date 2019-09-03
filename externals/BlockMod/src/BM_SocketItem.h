@@ -31,69 +31,61 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef BM_BlockH
-#define BM_BlockH
+#ifndef BM_SocketItemH
+#define BM_SocketItemH
 
-#include <QList>
-#include <QString>
-#include <QPointF>
-#include <QSizeF>
-#include <QLineF>
-#include <QMap>
-
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
-
-#include "BM_Socket.h"
+#include <QGraphicsItem>
 
 namespace BLOCKMOD {
 
-/*! Stores properties of a block.
-	* appearance properties of block
-	* position of block
-	* sockets
-	* custom properties in the property map
-*/
-class Block {
+class Socket;
+class BlockItem;
+
+/*! Base class for sockets to be painted on a block item. */
+class SocketItem : public QGraphicsItem {
 public:
-	Block() : m_connectionHelperBlock(false) {}
-
-	Block(const QString & name);
-	Block(const QString & name, double x, double y);
-
-	/*! Reads content of the block from XML stream. */
-	void readXML(QXmlStreamReader & reader);
-
-	/*! Dumps out content of block to stream writer. */
-	void writeXML(QXmlStreamWriter & writer) const;
-
-	/*! Generate connection line between socket and point, where first connector segment starts.
-		Returned coordinates are in scene-coordinates.
+	/*! Constructor, takes a pointer to the associated socket data structure (which
+		must have a lifetime longer than the graphics item.
 	*/
-	QLineF socketStartLine(const Socket * socket) const;
+	explicit SocketItem(BlockItem * parent, Socket * socket);
 
-	/*! Unique identification name of this block instance. */
-	QString						m_name;
+	QRectF boundingRect() const override;
 
-	/*! Position (top left corner) of block. */
-	QPointF						m_pos;
+	void setHoverEnabled(bool enabled);
 
-	/*! Sockets that belong to this block. */
-	QList<Socket>				m_sockets;
+	/*! Returns pointer to socket. */
+	const Socket * socket() const { return m_socket; }
 
-	/*! Size of block. */
-	QSizeF						m_size;
+protected:
+	virtual void hoverEnterEvent (QGraphicsSceneHoverEvent *event) override;
+	virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent *event) override;
 
-	/*! Custom properties. */
-	QMap<QString, QVariant>		m_properties;
+	/*! Re-implemented to draw the styled rectangle of the block. */
+	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-	/*! If true, this block is only a virtual block with a single socket, that is invisible (not painted)
-		and only exists, until the connected has been attached to a socket of another block.
+	/*! Only works for outlet socket items, puts the scene in connection mode. */
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+private:
+
+	/*! Pointer to the socket data structure. */
+	Socket	*m_socket;
+
+	/*! The bounding rectangle of the symbol (updated whenever content of the socket changes). */
+	QRectF	m_symbolRect;
+
+	/*! If enabled, the mouse hover event is captured and m_hovered flag is adjusted. */
+	bool	m_hoverEnabled;
+
+	/*! Set to true, when mouse hovers over item.
+		Causes different pointing operation to be used.
 	*/
-	bool						m_connectionHelperBlock;
+	bool	m_hovered;
+
+	friend class SceneManager;
 };
 
 } // namespace BLOCKMOD
 
 
-#endif // BM_BlockH
+#endif // BM_SocketItemH

@@ -1,3 +1,36 @@
+/*	BSD 3-Clause License
+
+	This file is part of the BlockMod Library.
+
+	Copyright (c) 2019, Andreas Nicolai
+	All rights reserved.
+
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+
+	1. Redistributions of source code must retain the above copyright notice, this
+	   list of conditions and the following disclaimer.
+
+	2. Redistributions in binary form must reproduce the above copyright notice,
+	   this list of conditions and the following disclaimer in the documentation
+	   and/or other materials provided with the distribution.
+
+	3. Neither the name of the copyright holder nor the names of its
+	   contributors may be used to endorse or promote products derived from
+	   this software without specific prior written permission.
+
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+	AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+	FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+	CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+	OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
 #include "BM_Block.h"
 
 #include <QXmlStreamWriter>
@@ -5,20 +38,22 @@
 #include <QDebug>
 
 #include "BM_XMLHelpers.h"
+#include "BM_Globals.h"
 
 namespace BLOCKMOD {
 
 Block::Block(const QString & name) :
-	Entity(name),
-	m_pos(0,0)
+	m_name(name),
+	m_pos(0,0),
+	m_connectionHelperBlock(false)
 {
 }
 
 Block::Block(const QString & name, double x, double y) :
-	Entity(name),
-	m_pos(x,y)
+	m_name(name),
+	m_pos(x,y),
+	m_connectionHelperBlock(false)
 {
-
 }
 
 void Block::readXML(QXmlStreamReader & reader) {
@@ -73,6 +108,30 @@ void Block::writeXML(QXmlStreamWriter & writer) const {
 	}
 
 	writer.writeEndElement();
+}
+
+
+QLineF Block::socketStartLine(const Socket * socket) const {
+	// special handling for "invisible" blocks
+
+	if (m_name == Globals::InvisibleLabel) {
+		QPointF startPoint(socket->m_pos);
+		startPoint += m_pos;
+		return QLineF(startPoint, startPoint);
+	}
+	// first determine the direction: top, left, right, bottom
+	QPointF otherPoint = socket->m_pos;
+	switch (socket->direction()) {
+		case Socket::Left	: otherPoint += QPointF(-2*Globals::GridSpacing, 0); break;
+		case Socket::Right	: otherPoint += QPointF(+2*Globals::GridSpacing, 0); break;
+		case Socket::Top	: otherPoint += QPointF(0, -2*Globals::GridSpacing); break;
+		case Socket::Bottom	: otherPoint += QPointF(0, +2*Globals::GridSpacing); break;
+	}
+	QPointF startPoint(socket->m_pos);
+	// shift both points by block position
+	startPoint += m_pos;
+	otherPoint += m_pos;
+	return QLineF(startPoint, otherPoint);
 }
 
 
