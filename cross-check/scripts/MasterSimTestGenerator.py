@@ -64,8 +64,14 @@ class MasterSimTestGenerator:
 		if self.simOptions['StartTime'] >= self.simOptions['StopTime']:
 			raise Exception("Invalid 'StartTime' or 'StopTime' parameter.")
 		
+		simTime = self.simOptions['StopTime'] - self.simOptions['StartTime']
+		
 		if self.simOptions['StepSize'] < 0:
 			raise Exception("Invalid 'StepSize' parameter.")
+		
+		# no StepSize - set to default value
+		if self.simOptions['StepSize'] == 0:
+			self.simOptions['StepSize'] = simTime/1000.0
 		
 		# check if 'in' file exists
 		inFile = fmuCaseBaseName + "_in.csv"
@@ -114,7 +120,6 @@ class MasterSimTestGenerator:
 				#if abs(dt - dtOut) > 1e-8:
 					#dtOut = min(dtOut, dt)
 
-		simTime = self.simOptions['StopTime'] - self.simOptions['StartTime']
 		self.dtOut = simTime / 100.0 # to get resonably fine output spacing
 
 
