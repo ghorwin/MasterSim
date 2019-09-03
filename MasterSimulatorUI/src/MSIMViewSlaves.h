@@ -11,6 +11,10 @@ namespace Ui {
 	class MSIMViewSlaves;
 }
 
+namespace BLOCKMOD {
+	class SceneManager;
+}
+
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
@@ -36,10 +40,12 @@ private slots:
 private:
 	void updateSlaveTable();
 
-	Ui::MSIMViewSlaves			*m_ui;
+	Ui::MSIMViewSlaves				*m_ui;
 
 	/*! The manager for the properties. */
 	QPW::VariantPropertyManager		*m_variantManager;
+
+	BLOCKMOD::SceneManager			*m_sceneManager;
 
 };
 

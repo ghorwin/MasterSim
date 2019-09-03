@@ -14,6 +14,8 @@
 
 #include <MSIM_Project.h>
 
+#include <BM_Network.h>
+
 #include "MSIMSettings.h"
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
@@ -32,6 +34,7 @@ MSIMProjectHandler & MSIMProjectHandler::instance() {
 
 MSIMProjectHandler::MSIMProjectHandler() :
 	m_project(NULL),
+	m_network(NULL),
 	m_modified(false)
 {
 	IBK_ASSERT(m_self == NULL);
@@ -42,6 +45,7 @@ MSIMProjectHandler::MSIMProjectHandler() :
 MSIMProjectHandler::~MSIMProjectHandler( ){
 	// free owned project, if any
 	delete m_project;
+	delete m_network;
 	m_self = NULL;
 }
 
@@ -321,6 +325,7 @@ void MSIMProjectHandler::createProject() {
 	Q_ASSERT(m_project == NULL);
 
 	m_project = new MASTER_SIM::Project;
+	m_network = new BLOCKMOD::Network;
 	m_projectFile.clear();
 	m_modified = false; // new projects are never modified
 }
@@ -330,7 +335,9 @@ void MSIMProjectHandler::destroyProject() {
 	Q_ASSERT(m_project != NULL);
 
 	delete m_project;
+	delete m_network;
 	m_project = NULL;
+	m_network = NULL;
 	m_projectFile.clear();
 }
 
@@ -350,8 +357,24 @@ bool MSIMProjectHandler::read(const QString & fname) {
 	try {
 
 		// filename is converted to utf8 before calling readXML
-		m_project->read(IBK::Path(fname.toUtf8().data()), false);
+		IBK::Path fpath(fname.toUtf8().data());
+		m_project->read(fpath, false);
 		m_projectFile = fname;
+
+		IBK::Path bmPath(fpath.withoutExtension().str() + ".bm");
+		*m_network = BLOCKMOD::Network();
+		if (bmPath.exists()) {
+			try {
+				m_network->readXML(QString::fromStdString(bmPath.str()));
+				// sanity checks : block names must match FMU slave names, connections must be valid...
+				m_network->checkNames();
+			}
+			catch (...) {
+				IBK::IBK_Message(IBK::FormatString("Error reading network representation file '%1'.")
+								 .arg(bmPath), IBK::MSG_ERROR, FUNC_ID);
+				*m_network = BLOCKMOD::Network();
+			}
+		}
 
 		m_lastReadTime = QFileInfo(fname).lastModified();
 
@@ -404,6 +427,10 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 			}
 		}
 		m_project->write(fpath);
+
+		// write network representation to file
+		IBK::Path bmPath(fpath.withoutExtension().str() + ".bm");
+		m_network->writeXML(QString::fromStdString(bmPath.str()));
 
 		// and now restore filepath from copy
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {

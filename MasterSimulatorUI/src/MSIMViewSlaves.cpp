@@ -17,6 +17,10 @@
 
 #include <IBK_algorithm.h>
 
+#include <BM_Network.h>
+#include <BM_SceneManager.h>
+#include <BM_Globals.h>
+
 #include "MSIMProjectHandler.h"
 #include "MSIMUIConstants.h"
 #include "MSIMSlaveItemDelegate.h"
@@ -28,7 +32,8 @@
 
 MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	QWidget(parent),
-	m_ui(new Ui::MSIMViewSlaves)
+	m_ui(new Ui::MSIMViewSlaves),
+	m_sceneManager(new BLOCKMOD::SceneManager)
 {
 	m_ui->setupUi(this);
 	m_ui->verticalLayout_2->setContentsMargins(9,0,9,9);
@@ -60,11 +65,17 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
 	m_ui->scrollAreaWidgetContents->layout()->setContentsMargins(0,0,0,0);
 	m_ui->widgetProperties->updateProperties(-1);
+
+	// set the scene showing the network
+	m_ui->blockModWidget->setResolution(1);
+	m_ui->blockModWidget->setGridStep(BLOCKMOD::Globals::GridSpacing*10);
+	m_ui->blockModWidget->setScene( m_sceneManager );
 }
 
 
 MSIMViewSlaves::~MSIMViewSlaves() {
 	delete m_ui;
+	delete m_sceneManager;
 }
 
 
@@ -72,6 +83,7 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified :
+			// sync network with
 			break;
 		case MSIMProjectHandler::SlaveParameterModified :
 			m_ui->widgetProperties->updateProperties( m_ui->tableWidgetSlaves->currentRow() );
