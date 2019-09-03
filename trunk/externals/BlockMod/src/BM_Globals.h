@@ -31,69 +31,30 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef BM_BlockH
-#define BM_BlockH
-
-#include <QList>
-#include <QString>
-#include <QPointF>
-#include <QSizeF>
-#include <QLineF>
-#include <QMap>
-
-#include <QXmlStreamReader>
-#include <QXmlStreamWriter>
-
-#include "BM_Socket.h"
+#ifndef BM_GlobalsH
+#define BM_GlobalsH
 
 namespace BLOCKMOD {
 
-/*! Stores properties of a block.
-	* appearance properties of block
-	* position of block
-	* sockets
-	* custom properties in the property map
-*/
-class Block {
+class Globals {
 public:
-	Block() : m_connectionHelperBlock(false) {}
 
-	Block(const QString & name);
-	Block(const QString & name, double x, double y);
-
-	/*! Reads content of the block from XML stream. */
-	void readXML(QXmlStreamReader & reader);
-
-	/*! Dumps out content of block to stream writer. */
-	void writeXML(QXmlStreamWriter & writer) const;
-
-	/*! Generate connection line between socket and point, where first connector segment starts.
-		Returned coordinates are in scene-coordinates.
+	/*! Tests, if a given grid distance is approximately zero (with respect to grid spacing).
+		Function accounts for rounding errors.
 	*/
-	QLineF socketStartLine(const Socket * socket) const;
+	static bool nearZero(double gridDistance);
 
-	/*! Unique identification name of this block instance. */
-	QString						m_name;
+	/*! The grid spacing, used to align blocks/connectors/sockets and snap to while moving. */
+	static double GridSpacing;
 
-	/*! Position (top left corner) of block. */
-	QPointF						m_pos;
+	/*! Size of labels to draw on sockets. */
+	static double LabelFontSize;
 
-	/*! Sockets that belong to this block. */
-	QList<Socket>				m_sockets;
-
-	/*! Size of block. */
-	QSizeF						m_size;
-
-	/*! Custom properties. */
-	QMap<QString, QVariant>		m_properties;
-
-	/*! If true, this block is only a virtual block with a single socket, that is invisible (not painted)
-		and only exists, until the connected has been attached to a socket of another block.
-	*/
-	bool						m_connectionHelperBlock;
+	/*! Constant to identify hidden block used during connection operation. */
+	static const char * const InvisibleLabel;
 };
 
 } // namespace BLOCKMOD
 
 
-#endif // BM_BlockH
+#endif // BM_GlobalsH

@@ -31,62 +31,67 @@
 	OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef BM_BlockItemH
-#define BM_BlockItemH
+#ifndef BM_ConnectorSegmentItemH
+#define BM_ConnectorSegmentItemH
 
-#include <QGraphicsRectItem>
+#include <QGraphicsLineItem>
 
 namespace BLOCKMOD {
 
-class Block;
-class SocketItem;
+class Connector;
 
-/*! A graphics item that represents a block. */
-class BlockItem : public QGraphicsRectItem {
+/*! A segment (line item) of a connection. */
+class ConnectorSegmentItem : public QGraphicsLineItem {
 public:
-	/*! Constructor, takes a pointer to the associated block data structure (which
-		must have a lifetime longer than the graphics item.
-	*/
-	explicit BlockItem(Block * b);
+	explicit ConnectorSegmentItem(Connector * connector);
 
-	const Block * block() const { return m_block; }
+	/*! Re-implemented to initialize m_lastPos. */
+	void setLine(const QLineF &line);
 
-	/*! Searches for a socket item at the given scene position and returns a pointer to it, if
-		it is not yet connected.
+
+	/*! The connector, that this line segment belongs to. */
+	Connector	*m_connector;
+
+	/*! The index of the segment this item corresponds to.
+		- -1 means start segment
+		- -2 means end segment
+		- 0...n corresponds to the index in m_connector->m_segments[]
 	*/
-	SocketItem * inletSocketAcceptingConnection(const QPointF & scenePos);
+	int			m_segmentIdx;
+
+	/*! If true, the connector segment is painted in highlighted mode. */
+	bool		m_isHighlighted;
 
 protected:
-	/*! This function is called from the constructor and creates child socket items.
-		You can overload this function to create your own socket items.
-	*/
-	virtual void createSocketItems();
-
-	/*! Re-implemented to draw the styled rectangle of the block. */
+	/*! Re-implemented to draw the highlighted connection. */
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+	/*! Re-implemented to highlight the entire connection line (all segments) when hovered. */
+	virtual void hoverEnterEvent (QGraphicsSceneHoverEvent *event) override;
+	/*! Re-implemented to turn off highlighting of the entire connection line (all segments) when hovered. */
+	virtual void hoverLeaveEvent (QGraphicsSceneHoverEvent *event) override;
+
+	/*! Re-implemented to select the segment and all other segments. */
+	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 	/*! Re-implemented to reset the m_moved flag. */
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
-	/*! Overloaded to react on block move.
-		Implements the snap-to-grid functionality, and updates attached connectors. */
+	/*! Overloaded to react on item move.
+		Implements the snap-to-grid functionality.
+	*/
 	virtual QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
 
-
 private:
-	/*! Pointer to associated block. */
-	Block				*m_block;
+	/*! Indicates, that the item has been moved. */
+	bool		m_moved;
 
-	/*! Indicates, that the block has been moved. */
-	bool				m_moved;
-
-	/*! Our socket items, childs of this block item. */
-	QList<SocketItem*>	m_socketItems;
-
-	friend class SceneManager;
+	/*! Caches current position of the line to detect snapped grid movement.
+		\note Position of the line is not the same as p1 and p2, which are changed with setLine().
+	*/
+	QPoint		m_lastPos;
 };
 
 } // namespace BLOCKMOD
 
 
-#endif // BM_BlockItemH
+#endif // BM_ConnectorSegmentItemH
