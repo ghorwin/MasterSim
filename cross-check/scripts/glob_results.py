@@ -55,7 +55,6 @@ import platform
 import argparse
 import csv
 import subprocess, os   # for subprocess and os.path
-import platform         # for checking for Windows OS
 import numpy as np
 import math
 
