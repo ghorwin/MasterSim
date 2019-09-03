@@ -1,23 +1,25 @@
 # Created:	Di. Aug. 14 17:01:42 2018
-# LastModified:	Di. Aug. 14 17:02:02 2018
+# LastModified:	Di. Sep. 3 18:11:18 2019
 
 # Project file example for iterating GaussSeidel with time step adjustment
 # based on Richardson-Extrapolation error test.
 # Time step adjustment is done based on convergence failures and error test.
 
-tStart               0 s
-tEnd                 10 s
-hMax                 0.14 s
-hMin                 1e-05 s
-hFallBackLimit       0.0001 s
-hStart               0.14 s
-hOutputMin           1e-05 s
-adjustStepSize       yes
-absTol               1e-05
-relTol               0.0001
-MasterMode           GAUSS_SEIDEL
-ErrorControlMode     ADAPT_STEP
-maxIterations        2
+tStart                   0 s
+tEnd                     10 s
+hMax                     0.14 s
+hMin                     1e-05 s
+hFallBackLimit           0.0001 s
+hStart                   0.14 s
+hOutputMin               1e-05 s
+adjustStepSize           yes
+preventOversteppingOfEndTime yes
+absTol                   1e-05
+relTol                   0.0001
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         STEP_DOUBLING
+maxIterations            2
+writeInternalVariables   no
 
 simulator 0 0 Part1 #ff447cb4 "fmus/IBK/Part1.fmu"
 simulator 1 1 Part2 #ffc38200 "fmus/IBK/Part2.fmu"
