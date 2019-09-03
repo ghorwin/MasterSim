@@ -8,6 +8,10 @@
 
 #include <MSIM_Project.h>
 
+namespace BLOCKMOD {
+	class Network;
+};
+
 /*! Utility class that manages common project-related functions, in particular
 	modification state setting, project file reading/writing and other.
 	A project handler maintains a project instance with all project-related data.
@@ -235,6 +239,9 @@ private:
 		to undo actions via a suitable mechanism.
 	*/
 	MASTER_SIM::Project		*m_project;
+
+	/*! Holds the graphical representation of the FMU simulation scenario. */
+	BLOCKMOD::Network		*m_network;
 
 	/*! Holds the time stamp of the last time the project was read.
 		This time stamp is updated in read() and used to check for external project modifications.

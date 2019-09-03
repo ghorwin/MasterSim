@@ -191,7 +191,6 @@ public:
 
 	/*! If not empty, only the values in the filter are dumped to file. */
 	std::set<std::string>		m_outputFilter;
-
 };
 
 } // namespace MASTER_SIM
