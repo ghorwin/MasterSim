@@ -5,12 +5,10 @@
 TARGET = BlockMod
 TEMPLATE = lib
 
-# this pri must be sourced from all our libraries,
-# it contains all functions defined for casual libraries
-include( ../../../IBK/projects/Qt/IBK.pri )
+# common project configurations, source this file after TEMPLATE was specified
+include( BlockMod.pri )
 
-QT += core gui network xml
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core gui network xml widgets
 
 INCLUDEPATH = \
 	../../src
@@ -18,20 +16,24 @@ INCLUDEPATH = \
 RESOURCES += ../../resources/BlockMod.qrc
 
 HEADERS += \
+	../../src/BM_ConnectorSegmentItem.h \
+	../../src/BM_Globals.h \
+	../../src/BM_SocketItem.h \
 	../../src/BM_ZoomMeshGraphicsView.h \
 	../../src/BM_Block.h \
 	../../src/BM_Connector.h \
 	../../src/BM_Socket.h \
 	../../src/BM_Network.h \
-	../../src/BM_Entity.h \
 	../../src/BM_XMLHelpers.h \
 	../../src/BM_SceneManager.h \
 	../../src/BM_BlockItem.h
 SOURCES += \
+	../../src/BM_ConnectorSegmentItem.cpp \
+	../../src/BM_Globals.cpp \
+	../../src/BM_SocketItem.cpp \
 	../../src/BM_ZoomMeshGraphicsView.cpp \
 	../../src/BM_Network.cpp \
 	../../src/BM_Block.cpp \
-	../../src/BM_Entity.cpp \
 	../../src/BM_Socket.cpp \
 	../../src/BM_XMLHelpers.cpp \
 	../../src/BM_Connector.cpp \
