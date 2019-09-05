@@ -37,6 +37,8 @@ private slots:
 
 	void on_tableWidgetSlaves_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
+	void on_toolButtonCreateConnection_clicked();
+
 private:
 	void updateSlaveTable();
 
