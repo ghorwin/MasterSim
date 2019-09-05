@@ -35,7 +35,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui(new Ui::MSIMViewSlaves)
 {
 	m_ui->setupUi(this);
-	m_ui->verticalLayout_2->setContentsMargins(9,0,9,9);
+	m_ui->verticalLayout_4->setContentsMargins(9,0,9,9);
 
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
 
@@ -317,3 +317,8 @@ void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int
 }
 
 
+void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
+	// set scene into connection mode
+	BLOCKMOD::SceneManager * sceneManager = MSIMProjectHandler::instance().sceneManager();
+	sceneManager->enableConnectionMode();
+}
