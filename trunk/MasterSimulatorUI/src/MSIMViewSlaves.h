@@ -45,8 +45,6 @@ private:
 	/*! The manager for the properties. */
 	QPW::VariantPropertyManager		*m_variantManager;
 
-	BLOCKMOD::SceneManager			*m_sceneManager;
-
 };
 
 #endif // MSIMVIEWSLAVES_H
