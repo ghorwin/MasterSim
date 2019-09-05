@@ -118,17 +118,24 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	settings.setValue("FMUSearchPath", fmuSearchPath);
 
 	MASTER_SIM::Project p = project();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
 
 	// create simulator definition
 	MASTER_SIM::Project::SimulatorDef simDef;
 	simDef.m_name = finfo.baseName().toUtf8().data(); // disambiguity?
 	simDef.m_name = IBK::pick_name(simDef.m_name, p.m_simulators.begin(), p.m_simulators.end());
 	simDef.m_pathToFMU = fname.toUtf8().data();
-
-	// create undo action
 	p.m_simulators.push_back(simDef);
 
-	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p);
+	// create a block for the graphical representation
+	unsigned int gx = BLOCKMOD::Globals::GridSpacing*qrand()*int(40.0/RAND_MAX);
+	unsigned int gy = BLOCKMOD::Globals::GridSpacing*qrand()*int(40.0/RAND_MAX);
+	BLOCKMOD::Block b(QString::fromStdString(simDef.m_name), gx, gy);
+	b.m_size = QSize(BLOCKMOD::Globals::GridSpacing*8, BLOCKMOD::Globals::GridSpacing*12);
+	n.m_blocks.append(b);
+
+	// create undo action
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p, n);
 	cmd->push();
 }
 
@@ -136,6 +143,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 
 	MASTER_SIM::Project p = project();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
 
 	// find currently selected slave definition
 	int currentIdx = m_ui->tableWidgetSlaves->currentRow();
@@ -155,9 +163,10 @@ void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 
 	// remove slave instance
 	p.m_simulators.erase( p.m_simulators.begin() + currentIdx);
+	n.removeBlock(currentIdx);
 
 	// create undo action
-	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave removed"), p);
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave removed"), p, n);
 	cmd->push();
 }
 
@@ -166,6 +175,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	// triggered when editor finishes, update simulator definition in selected row
 
 	MASTER_SIM::Project p = project();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
 
 	QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(row, column);
 	switch (column) {
@@ -204,6 +214,10 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 					edge.m_outputVariableRef = MASTER_SIM::Project::GraphEdge::replaceSlaveName(edge.m_outputVariableRef, newSlaveName);
 				}
 			}
+
+			// and also update the connections in the network
+			n.renameBlock(row, QString::fromStdString(newSlaveName));
+
 		} break;
 		case 2 : {
 			IBK::Path path( item->text().toUtf8().data() );
@@ -218,7 +232,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	}
 
 	// create undo action
-	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave modified"), p);
+	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave modified"), p, n);
 	cmd->push();
 }
 
