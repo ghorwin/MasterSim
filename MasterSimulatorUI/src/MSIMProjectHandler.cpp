@@ -15,6 +15,8 @@
 #include <MSIM_Project.h>
 
 #include <BM_Network.h>
+#include <BM_Globals.h>
+#include <BM_SceneManager.h>
 
 #include "MSIMSettings.h"
 #include "MSIMUIConstants.h"
@@ -34,18 +36,18 @@ MSIMProjectHandler & MSIMProjectHandler::instance() {
 
 MSIMProjectHandler::MSIMProjectHandler() :
 	m_project(NULL),
-	m_network(NULL),
+	m_sceneManager(NULL),
 	m_modified(false)
 {
 	IBK_ASSERT(m_self == NULL);
 	m_self = this;
- }
+}
 
 
 MSIMProjectHandler::~MSIMProjectHandler( ){
 	// free owned project, if any
 	delete m_project;
-	delete m_network;
+	delete m_sceneManager;
 	m_self = NULL;
 }
 
@@ -325,7 +327,7 @@ void MSIMProjectHandler::createProject() {
 	Q_ASSERT(m_project == NULL);
 
 	m_project = new MASTER_SIM::Project;
-	m_network = new BLOCKMOD::Network;
+	m_sceneManager = new BLOCKMOD::SceneManager;
 	m_projectFile.clear();
 	m_modified = false; // new projects are never modified
 }
@@ -335,9 +337,9 @@ void MSIMProjectHandler::destroyProject() {
 	Q_ASSERT(m_project != NULL);
 
 	delete m_project;
-	delete m_network;
+	delete m_sceneManager;
 	m_project = NULL;
-	m_network = NULL;
+	m_sceneManager = NULL;
 	m_projectFile.clear();
 }
 
@@ -362,20 +364,52 @@ bool MSIMProjectHandler::read(const QString & fname) {
 		m_projectFile = fname;
 
 		IBK::Path bmPath(fpath.withoutExtension().str() + ".bm");
-		*m_network = BLOCKMOD::Network();
+		BLOCKMOD::Network network;
 		if (bmPath.exists()) {
 			try {
-				m_network->readXML(QString::fromStdString(bmPath.str()));
+				network.readXML(QString::fromStdString(bmPath.str()));
 				// sanity checks : block names must match FMU slave names, connections must be valid...
-				m_network->checkNames();
+				network.checkNames();
 			}
 			catch (...) {
 				IBK::IBK_Message(IBK::FormatString("Error reading network representation file '%1'.")
 								 .arg(bmPath), IBK::MSG_ERROR, FUNC_ID);
-				*m_network = BLOCKMOD::Network();
+				network = BLOCKMOD::Network();
+			}
+			// now check, if the network contains blocks that do not match slave names
+			for (BLOCKMOD::Block & b : network.m_blocks) {
+				std::vector<MASTER_SIM::Project::SimulatorDef>::const_iterator it;
+				for ( it = m_project->m_simulators.begin(); it != m_project->m_simulators.end(); ++it) {
+					if (it->m_name == b.m_name.toStdString())
+						break;
+				}
+				if (it == m_project->m_simulators.end()) {
+					IBK::IBK_Message(IBK::FormatString("Invalid block in network representation file '%1'.")
+									 .arg(bmPath), IBK::MSG_ERROR, FUNC_ID);
+					network = BLOCKMOD::Network();
+				}
+			}
+			// add dummy blocks for each simulator, that is not yet in the network
+			for (MASTER_SIM::Project::SimulatorDef & simdef : m_project->m_simulators) {
+				// look for existing block
+				QList<BLOCKMOD::Block>::iterator it;
+				for (it = network.m_blocks.begin(); it != network.m_blocks.end(); ++it) {
+					if (it->m_name.toStdString() == simdef.m_name)
+						break;
+				}
+				if (it == network.m_blocks.end()) {
+					int blockCount = network.m_blocks.count();
+					BLOCKMOD::Block b( QString::fromStdString(simdef.m_name), BLOCKMOD::Globals::GridSpacing*blockCount,
+									   BLOCKMOD::Globals::GridSpacing*blockCount);
+
+					b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*5,
+								 BLOCKMOD::Globals::GridSpacing*10);
+					network.m_blocks.append(b);
+				}
 			}
 		}
 
+		m_sceneManager->setNetwork(network); // data is copied into the scene manager
 		m_lastReadTime = QFileInfo(fname).lastModified();
 
 		// after reading the project file, we should update the views
@@ -430,7 +464,7 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 
 		// write network representation to file
 		IBK::Path bmPath(fpath.withoutExtension().str() + ".bm");
-		m_network->writeXML(QString::fromStdString(bmPath.str()));
+		m_sceneManager->network().writeXML(QString::fromStdString(bmPath.str()));
 
 		// and now restore filepath from copy
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
