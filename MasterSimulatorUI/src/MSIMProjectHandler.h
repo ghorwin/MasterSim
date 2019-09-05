@@ -10,6 +10,7 @@
 
 namespace BLOCKMOD {
 	class Network;
+	class SceneManager;
 };
 
 /*! Utility class that manages common project-related functions, in particular
@@ -150,11 +151,15 @@ public:
 	*/
 	const MASTER_SIM::Project & project() const;
 
+	/*! Returns the scene that manages the network representation. */
+	BLOCKMOD::SceneManager * sceneManager() { return m_sceneManager; }
+
 	/*! Returns the time stamp of the last modification of the current project. */
 	const QDateTime lastReadTime() const { return m_lastReadTime; }
 
 	/*! Updates time stamp of the last modification of the current project, but only if project is present. */
 	void updateLastReadTime();
+
 
 signals:
 	/*! Emitted when the project has been modified.
@@ -240,8 +245,10 @@ private:
 	*/
 	MASTER_SIM::Project		*m_project;
 
-	/*! Holds the graphical representation of the FMU simulation scenario. */
-	BLOCKMOD::Network		*m_network;
+	/*! The graphics scene that shows the managed network.
+		The scene manager also holds the managed network, so that only one instance of the network is used in the project.
+	*/
+	BLOCKMOD::SceneManager	*m_sceneManager;
 
 	/*! Holds the time stamp of the last time the project was read.
 		This time stamp is updated in read() and used to check for external project modifications.
