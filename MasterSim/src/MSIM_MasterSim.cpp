@@ -683,7 +683,7 @@ void MasterSim::initialConditions() {
 	const char * const FUNC_ID = "[MasterSim::initialConditions]";
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::IBK_Message("Setting up experiment\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Setting up experiment (calling initializeSlave()/setupExperiment() in slaves)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		AbstractSlave * slave = m_slaves[i];
@@ -691,17 +691,17 @@ void MasterSim::initialConditions() {
 	}
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
-	IBK::IBK_Message("Computing initial conditions\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message("Initial conditions (parameters, input values, initial condition iteration)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::MessageIndentor indent; (void)indent;
 
-	IBK::IBK_Message("Setting default start values for input variables.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("Setting default start values for input variables/parameters\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	{
 		IBK::MessageIndentor indent3; (void)indent3;
 		for (unsigned int i=0; i<m_slaves.size(); ++i) {
 			FMUSlave * slave = dynamic_cast<FMUSlave *>(m_slaves[i]);
 			if (slave == nullptr)
 				continue;
-			IBK::IBK_Message( IBK::FormatString("%1\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			IBK::IBK_Message( IBK::FormatString("Slave '%1'\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 			IBK::MessageIndentor indent2; (void)indent2;
 			// process all FMI variables and parameters and set their start values
 			for (unsigned int v=0; v<slave->fmu()->m_modelDescription.m_variables.size(); ++v) {
@@ -733,7 +733,7 @@ void MasterSim::initialConditions() {
 			try {
 				// set parameters and start values for all slaves
 				const Project::SimulatorDef & simDef = m_project.simulatorDefinition(slave->m_name);
-				IBK::IBK_Message(IBK::FormatString("%1\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+				IBK::IBK_Message(IBK::FormatString("Slave '%1'\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 				IBK::MessageIndentor indent2; (void)indent2;
 				for (std::map<std::string, std::string>::const_iterator it = simDef.m_parameters.begin();
 					 it != simDef.m_parameters.end(); ++it)
@@ -754,16 +754,18 @@ void MasterSim::initialConditions() {
 		}
 	}
 
-	IBK::IBK_Message("Entering initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("Entering initialization mode (calling enterInitializationMode() in FMI 2 slaves)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		AbstractSlave * slave = m_slaves[i];
+		IBK::IBK_Message(IBK::FormatString("  Slave '%1'\n").arg(slave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 		slave->enterInitializationMode();
 	}
 
 	// if enabled, iterate over initial conditions using the selected master algorithm
 	// but disable doStep() and get/set state calls within algorithm
 
+	IBK::IBK_Message("Initial condition iteration (Gauss-Jacobi-Iteration only with get/set functions)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// Do a Gauss-Jacobi Iteration
 	for (unsigned int i=0; i<3; ++i) {
 
@@ -789,7 +791,7 @@ void MasterSim::initialConditions() {
 		}
 	}
 
-	IBK::IBK_Message("Leaving initialization mode.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message("Leaving initialization mode (calling exitInitializationMode() in FMI 2 slaves)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	// exit initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		AbstractSlave * slave = m_slaves[i];
@@ -1318,6 +1320,9 @@ void MasterSim::syncSlaveOutputs(const AbstractSlave * slave,
 
 
 void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
+	const char * const FUNC_ID = "[MasterSim::storeCurrentSlaveStates]";
+	IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("MASTER: Retrieving slave states at t=%1 (calling getFMUState() in FMI 2 slaves)\n")
+		.arg(m_t), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::StopWatch w;
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		AbstractSlave * slave = m_slaves[s];
