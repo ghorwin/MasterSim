@@ -80,7 +80,10 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified :
-			// trigger delayed sync check of all blocks and FMU slaves
+			// sync check of all blocks and FMU slaves
+
+			syncCoSimNetworkToBlocks();
+
 			// sync network with graphical display
 			m_ui->blockModWidget->setScene(MSIMProjectHandler::instance().sceneManager());
 			break;
@@ -243,6 +246,22 @@ void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 }
 
 
+void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
+	// update property browser for currently selected slave
+	m_ui->widgetProperties->updateProperties(currentRow);
+}
+
+
+void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
+	// set scene into connection mode
+	BLOCKMOD::SceneManager * sceneManager = MSIMProjectHandler::instance().sceneManager();
+	sceneManager->enableConnectionMode();
+}
+
+
+
+// *** private functions ***
+
 void MSIMViewSlaves::updateSlaveTable() {
 	blockMySignals(this, true);
 
@@ -312,14 +331,7 @@ void MSIMViewSlaves::updateSlaveTable() {
 }
 
 
-void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
-	// update property browser for currently selected slave
-	m_ui->widgetProperties->updateProperties(currentRow);
+void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
+	// started implementing block-slave sync code
 }
 
-
-void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
-	// set scene into connection mode
-	BLOCKMOD::SceneManager * sceneManager = MSIMProjectHandler::instance().sceneManager();
-	sceneManager->enableConnectionMode();
-}
