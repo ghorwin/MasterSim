@@ -333,5 +333,83 @@ void MSIMViewSlaves::updateSlaveTable() {
 
 void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 	// started implementing block-slave sync code
+
+	// get a copy of the network
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	bool modified = false; // remember, if the network was modified
+
+	// remove superfluous blocks (only needed when someone manually edited the graph/simulator
+	// defs in project file)
+	const MASTER_SIM::Project & prj = project();
+	while (n.m_blocks.size() > (int)prj.m_simulators.size()) {
+		n.removeBlock(n.m_blocks.size()-1);
+		modified = true;
+	}
+
+	// add missing blocks - newly added blocks will be configured later on
+	while (n.m_blocks.size() < (int)prj.m_simulators.size()) {
+		BLOCKMOD::Block b;
+		b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*6, BLOCKMOD::Globals::GridSpacing*8);
+		int blockCount = n.m_blocks.count();
+		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
+						  BLOCKMOD::Globals::GridSpacing*blockCount);
+		n.m_blocks.append(b);
+		modified = true;
+	}
+
+	// loop over all simulation slaves
+	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
+		BLOCKMOD::Block & b = n.m_blocks[i];
+
+		// check if name matches the block with the same index in the network
+		if (QString::fromStdString(simDef.m_name) != b.m_name) {
+			// this block does not match the simulator slave name -> adjust
+			b.m_name = QString::fromStdString(simDef.m_name);
+			modified = true;
+		}
+
+		// retrieve FMU for given slave
+		const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
+		if (modelDescriptions.find(simDef.m_pathToFMU) == modelDescriptions.end()) {
+			b.m_properties["haveFMU"] = false;
+			modified = true;
+			continue;
+		}
+		if (!b.m_properties.contains("haveFMU") || !b.m_properties["haveFMU"].toBool()) {
+			modified = true;
+			b.m_properties["haveFMU"] = true;
+		}
+		const MASTER_SIM::ModelDescription & modDesc = modelDescriptions.at(simDef.m_pathToFMU);
+
+		// check if number of sockets match
+		int numInputVars = 0;
+		int numOutputVars = 0;
+		for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT)
+				++numInputVars;
+			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT)
+				++numOutputVars;
+		}
+
+		int numInletSockets = 0;
+		int numOutletSockets = 0;
+		for (const BLOCKMOD::Socket & s : b.m_sockets) {
+			if (s.m_inlet)
+				++numInletSockets;
+			else
+				++numOutletSockets;
+		}
+
+		if (numInletSockets != numInputVars || numOutletSockets != numOutputVars) {
+			modified = true;
+			b.m_properties["typeChanged"] = true; // mark as "type changed", i.e. sockets of FMU no longer match block representation
+		}
+		else {
+			if (b.m_properties.contains("typeChanged"))
+				modified = true;
+			b.m_properties.remove("typeChanged");
+		}
+	}
 }
 
