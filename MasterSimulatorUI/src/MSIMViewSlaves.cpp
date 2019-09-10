@@ -80,6 +80,7 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified :
+			// trigger delayed sync check of all blocks and FMU slaves
 			// sync network with graphical display
 			m_ui->blockModWidget->setScene(MSIMProjectHandler::instance().sceneManager());
 			break;
