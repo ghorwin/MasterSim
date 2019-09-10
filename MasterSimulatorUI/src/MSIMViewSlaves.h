@@ -42,6 +42,14 @@ private slots:
 private:
 	void updateSlaveTable();
 
+	/*! This function is called from onModified(), whenever slave data or FMU specs have changed.
+		The function processes all slaves and associated FMU data (if read), and checks if
+		the block names and socket number/types/names match those of the FMU slave.
+		If not, the block is marked as "outdated"/not configured and the user is requested to
+		configure the blocks one-by-one.
+	*/
+	void syncCoSimNetworkToBlocks();
+
 	Ui::MSIMViewSlaves				*m_ui;
 
 	/*! The manager for the properties. */
