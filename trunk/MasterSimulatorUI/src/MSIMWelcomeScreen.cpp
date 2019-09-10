@@ -120,6 +120,10 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 			recentProjectTable = recentProjectTable.replace("${IMG_FILENAME}", thumbPath);
 			recentProjects += recentProjectTable;
 		}
+		if (!MSIMSettings::instance().m_recentProjects.isEmpty()) {
+			recentProjects +=
+				"\n<br><a href=\"page:clearRecentFiles\">[Clear project list]</a></n>";
+		}
 		htmlPage.replace("${RECENT_PROJECT_FILELIST}", recentProjects);
 	}
 	else {
@@ -217,6 +221,9 @@ void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 		}
 		else if (page == "demoFiles") {
 			m_showRecentlyOpenedFiles = false;
+		}
+		else if (page == "clearRecentFiles") {
+			MSIMSettings::instance().m_recentProjects.clear();
 		}
 		updateWelcomePage();
 		return;

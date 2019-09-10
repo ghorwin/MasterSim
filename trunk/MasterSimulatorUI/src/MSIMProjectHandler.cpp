@@ -368,7 +368,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 		if (bmPath.exists()) {
 			try {
 				network.readXML(QString::fromStdString(bmPath.str()));
-				// sanity checks : block names must match FMU slave names, connections must be valid...
+				// sanity checks (network level, not synced with slaves yet)
 				network.checkNames();
 			}
 			catch (...) {
