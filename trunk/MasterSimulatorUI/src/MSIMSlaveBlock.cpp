@@ -5,7 +5,7 @@
 
 #include <BM_Block.h>
 
-void SlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
+void MSIMSlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget) {
 	// special handling for invisible blocks
 	if (isInvisible())
 		return; // nothing to be drawn
@@ -13,13 +13,16 @@ void SlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 	// special handlin for blocks without FMU
 	if (!block()->m_properties.contains("haveFMU")) {
 		painter->save();
-		QPen p(Qt::gray);
-		p.setStyle(Qt::DashLine);
-		painter->setPen( p );
-		painter->drawRect(rect());
-		// now draw the label of the block
 		QRectF r = rect();
+		QPen p(Qt::black);
+		QBrush b(QColor(96,96,96,64));
+		p.setStyle(Qt::DashLine);
+		painter->setBrush(b);
+		painter->setPen( p );
+		painter->drawRect(r);
+		// now draw the label of the block
 		r.moveTop(4);
+		painter->setPen(Qt::black);
 		painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, block()->m_name);
 		painter->restore();
 		return;

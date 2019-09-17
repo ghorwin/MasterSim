@@ -18,7 +18,6 @@
 #include <IBK_algorithm.h>
 
 #include <BM_Network.h>
-#include <BM_SceneManager.h>
 #include <BM_Globals.h>
 
 #include "MSIMProjectHandler.h"
@@ -27,6 +26,7 @@
 #include "MSIMConversion.h"
 #include "MSIMUndoSlaves.h"
 #include "MSIMMainWindow.h"
+#include "MSIMSceneManager.h"
 
 #include <MSIM_Project.h>
 
