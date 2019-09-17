@@ -38,6 +38,7 @@ INCLUDEPATH = \
 SOURCES += ../../src/main.cpp \
 	../../src/MSIMGUIMessageHandler.cpp \
 	../../src/MSIMPostProcBindings.cpp \
+	../../src/MSIMSceneManager.cpp \
 	../../src/MSIMSimulationMonitorWidget.cpp \
 	../../src/MSIMSlaveBlock.cpp \
 	../../src/MSIMSlavePropertyWidget.cpp \
@@ -68,13 +69,13 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMAboutDialog.cpp \
 	../../src/MSIMButtonBar.cpp \
 	../../src/MSIMLogFileDialog.cpp \
-	../../src/MSIMUndoSlaveParameters.cpp \
-	../../src/MSIM_SceneManager.cpp
+	../../src/MSIMUndoSlaveParameters.cpp
 
 
 HEADERS  += \
 	../../src/MSIMGUIMessageHandler.h \
 	../../src/MSIMPostProcBindings.h \
+	../../src/MSIMSceneManager.h \
 	../../src/MSIMSimulationMonitorWidget.h \
 	../../src/MSIMSlaveBlock.h \
 	../../src/MSIMSlavePropertyWidget.h \
@@ -105,8 +106,7 @@ HEADERS  += \
 	../../src/MSIMUndoConnections.h \
 	../../src/MSIMAboutDialog.h \
 	../../src/MSIMButtonBar.h \
-	../../src/MSIMLogFileDialog.h \
-	../../src/MSIM_SceneManager.h
+	../../src/MSIMLogFileDialog.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
