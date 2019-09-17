@@ -39,6 +39,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMGUIMessageHandler.cpp \
 	../../src/MSIMPostProcBindings.cpp \
 	../../src/MSIMSimulationMonitorWidget.cpp \
+	../../src/MSIMSlaveBlock.cpp \
 	../../src/MSIMSlavePropertyWidget.cpp \
 	../../src/MSIMUIConstants.cpp \
 	../../src/MSIMDirectories.cpp \
@@ -67,13 +68,15 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMAboutDialog.cpp \
 	../../src/MSIMButtonBar.cpp \
 	../../src/MSIMLogFileDialog.cpp \
-	../../src/MSIMUndoSlaveParameters.cpp
+	../../src/MSIMUndoSlaveParameters.cpp \
+	../../src/MSIM_SceneManager.cpp
 
 
 HEADERS  += \
 	../../src/MSIMGUIMessageHandler.h \
 	../../src/MSIMPostProcBindings.h \
 	../../src/MSIMSimulationMonitorWidget.h \
+	../../src/MSIMSlaveBlock.h \
 	../../src/MSIMSlavePropertyWidget.h \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMDirectories.h \
@@ -102,7 +105,8 @@ HEADERS  += \
 	../../src/MSIMUndoConnections.h \
 	../../src/MSIMAboutDialog.h \
 	../../src/MSIMButtonBar.h \
-	../../src/MSIMLogFileDialog.h
+	../../src/MSIMLogFileDialog.h \
+	../../src/MSIM_SceneManager.h
 
 FORMS    += \
 	../../src/MSIMMainWindow.ui \
