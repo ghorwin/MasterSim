@@ -3,9 +3,9 @@
 
 #include <BM_BlockItem.h>
 
-class SlaveBlock : public BLOCKMOD::BlockItem {
+class MSIMSlaveBlock : public BLOCKMOD::BlockItem {
 public:
-	explicit SlaveBlock(BLOCKMOD::Block * b) :
+	explicit MSIMSlaveBlock(BLOCKMOD::Block * b) :
 		BLOCKMOD::BlockItem(b)
 	{}
 

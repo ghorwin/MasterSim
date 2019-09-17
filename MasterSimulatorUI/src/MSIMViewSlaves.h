@@ -11,9 +11,6 @@ namespace Ui {
 	class MSIMViewSlaves;
 }
 
-namespace BLOCKMOD {
-	class SceneManager;
-}
 
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
