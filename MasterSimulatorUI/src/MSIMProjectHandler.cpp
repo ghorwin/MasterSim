@@ -16,13 +16,13 @@
 
 #include <BM_Network.h>
 #include <BM_Globals.h>
-#include <BM_SceneManager.h>
 
 #include "MSIMSettings.h"
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
 #include "MSIMLogWidget.h"
 #include "MSIMUndoProject.h"
+#include "MSIMSceneManager.h"
 
 MSIMProjectHandler * MSIMProjectHandler::m_self = NULL;
 
@@ -327,7 +327,7 @@ void MSIMProjectHandler::createProject() {
 	Q_ASSERT(m_project == NULL);
 
 	m_project = new MASTER_SIM::Project;
-	m_sceneManager = new BLOCKMOD::SceneManager;
+	m_sceneManager = new MSIMSceneManager;
 	m_projectFile.clear();
 	m_modified = false; // new projects are never modified
 }
