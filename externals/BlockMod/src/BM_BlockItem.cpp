@@ -177,4 +177,11 @@ QVariant BlockItem::itemChange(GraphicsItemChange change, const QVariant & value
 	return QGraphicsRectItem::itemChange(change, value);
 }
 
+
+void BlockItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
+	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
+	sceneManager->blockDoubleClicked(this);
+	QGraphicsRectItem::mouseDoubleClickEvent(event);
+}
+
 } // namespace BLOCKMOD
