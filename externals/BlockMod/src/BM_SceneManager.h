@@ -96,6 +96,8 @@ public:
 	/*! Connected to selectionChanged() signal. */
 	void onSelectionChanged();
 
+	/*! Called from a block item when a block has been double-clicked, emits signal blockActionTriggered()  */
+	void blockDoubleClicked(const BlockItem * blockItem);
 
 	/*! This function removes line segments with 0 offset and merges the neighboring segments into one.
 		Must not be called from within a move operation (only, for example, from mouse-release event handlers).
@@ -187,7 +189,13 @@ signals:
 	*/
 	void newConnectionAdded();
 
+	/*! Emitted whenever a block action was triggered (usually by double-clicking on the block). */
+	void blockActionTriggered(const BlockItem * blockItem);
+
 protected:
+
+
+	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 
 	/*! Listens for right-mouse-button clicks that turn off connection mode. */
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
