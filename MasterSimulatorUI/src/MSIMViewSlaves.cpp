@@ -86,7 +86,18 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 			syncCoSimNetworkToBlocks();
 
 			// sync network with graphical display
+			if (m_ui->blockModWidget->scene() != nullptr) {
+				BLOCKMOD::SceneManager * sceneManager = qobject_cast<BLOCKMOD::SceneManager *>(m_ui->blockModWidget->scene());
+				Q_ASSERT(sceneManager != nullptr);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::blockActionTriggered,
+						   this, &MSIMViewSlaves::onBlockActionTriggered);
+			}
 			m_ui->blockModWidget->setScene(MSIMProjectHandler::instance().sceneManager());
+			connect(MSIMProjectHandler::instance().sceneManager(), &BLOCKMOD::SceneManager::blockActionTriggered,
+					this, &MSIMViewSlaves::onBlockActionTriggered);
+			MSIMProjectHandler::instance().sceneManager()->installEventFilter ( m_ui->blockModWidget );
+
+
 			break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
@@ -260,6 +271,22 @@ void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
 }
 
 
+void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockItem) {
+	// first get the block in question
+	const BLOCKMOD::Block * b = blockItem->block();
+	// check if block has an FMU
+	MSIMSlaveBlock::BlockState fmuState = MSIMSlaveBlock::StateNoFMU;
+	if (b->m_properties.contains("state"))
+		fmuState = (MSIMSlaveBlock::BlockState)b->m_properties["state"].toInt();
+	if (fmuState == MSIMSlaveBlock::StateNoFMU) {
+		QMessageBox::critical(this, tr("Error in Block Editor"),
+							  tr("Cannot edit block without knownledge of inlet/outlet sockets. Must have a valid FMU with a modelDescription.xml file for this slave."));
+		return;
+	}
+	// now startup the block editor
+
+}
+
 
 // *** private functions ***
 
@@ -413,6 +440,5 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
 		}
 	}
-
 }
 

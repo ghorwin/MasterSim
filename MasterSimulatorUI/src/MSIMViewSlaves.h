@@ -11,12 +11,18 @@ namespace Ui {
 	class MSIMViewSlaves;
 }
 
+namespace BLOCKMOD {
+	class BlockItem;
+}
+
 
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
 public:
+	/*! C'tor */
 	explicit MSIMViewSlaves(QWidget *parent = 0);
+	/*! D'tor */
 	~MSIMViewSlaves();
 
 public slots:
@@ -35,6 +41,9 @@ private slots:
 	void on_tableWidgetSlaves_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
 	void on_toolButtonCreateConnection_clicked();
+
+	/*! Connected to the scene's block triggering action (usually double-click on block item). */
+	void onBlockActionTriggered(const BLOCKMOD::BlockItem * blockItem);
 
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
