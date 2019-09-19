@@ -193,10 +193,6 @@ signals:
 	void blockActionTriggered(const BlockItem * blockItem);
 
 protected:
-
-
-	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
-
 	/*! Listens for right-mouse-button clicks that turn off connection mode. */
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
 

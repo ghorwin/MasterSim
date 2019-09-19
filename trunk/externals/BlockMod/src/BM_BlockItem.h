@@ -68,6 +68,9 @@ protected:
 	/*! Re-implemented to draw the styled rectangle of the block. */
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+	/*! Re-implemented to trigger the editor. */
+	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
+
 	/*! Re-implemented to reset the m_moved flag. */
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 
