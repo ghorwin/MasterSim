@@ -27,6 +27,7 @@
 #include "MSIMUndoSlaves.h"
 #include "MSIMMainWindow.h"
 #include "MSIMSceneManager.h"
+#include "MSIMSlaveBlock.h"
 
 #include <MSIM_Project.h>
 
@@ -336,14 +337,12 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 
 	// get a copy of the network
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
-	bool modified = false; // remember, if the network was modified
 
 	// remove superfluous blocks (only needed when someone manually edited the graph/simulator
 	// defs in project file)
 	const MASTER_SIM::Project & prj = project();
 	while (n.m_blocks.size() > (int)prj.m_simulators.size()) {
 		n.removeBlock(n.m_blocks.size()-1);
-		modified = true;
 	}
 
 	// add missing blocks - newly added blocks will be configured later on
@@ -354,62 +353,66 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
 						  BLOCKMOD::Globals::GridSpacing*blockCount);
 		n.m_blocks.append(b);
-		modified = true;
 	}
 
 	// loop over all simulation slaves
 	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
 		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
 		BLOCKMOD::Block & b = n.m_blocks[i];
+		b.m_properties["state"] = MSIMSlaveBlock::StateNoFMU; // assume noFMU - worst case scenario
 
 		// check if name matches the block with the same index in the network
 		if (QString::fromStdString(simDef.m_name) != b.m_name) {
 			// this block does not match the simulator slave name -> adjust
 			b.m_name = QString::fromStdString(simDef.m_name);
-			modified = true;
 		}
 
 		// retrieve FMU for given slave
 		const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
 		if (modelDescriptions.find(simDef.m_pathToFMU) == modelDescriptions.end()) {
-			b.m_properties["haveFMU"] = false;
-			modified = true;
 			continue;
 		}
-		if (!b.m_properties.contains("haveFMU") || !b.m_properties["haveFMU"].toBool()) {
-			modified = true;
-			b.m_properties["haveFMU"] = true;
-		}
+
 		const MASTER_SIM::ModelDescription & modDesc = modelDescriptions.at(simDef.m_pathToFMU);
 
-		// check if number of sockets match
-		int numInputVars = 0;
-		int numOutputVars = 0;
+		// generate list of published inlet/outlets from FMU description
+		QList<QString> inletSocketNames;
+		QList<QString> outletSocketNames;
 		for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
-			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT)
-				++numInputVars;
-			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT)
-				++numOutputVars;
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+				inletSocketNames.append( QString::fromStdString(var.m_name));
+			}
+			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+				outletSocketNames.append( QString::fromStdString(var.m_name));
+			}
 		}
 
-		int numInletSockets = 0;
-		int numOutletSockets = 0;
+		// now process current block definition and remove all defined sockets from lists - remaining
+		// items must
+		bool missingSocket = false;
 		for (const BLOCKMOD::Socket & s : b.m_sockets) {
-			if (s.m_inlet)
-				++numInletSockets;
-			else
-				++numOutletSockets;
+			if (s.m_inlet) {
+				if (inletSocketNames.contains(s.m_name))
+					inletSocketNames.removeOne(s.m_name);
+				else
+					missingSocket = true;
+			}
+			else {
+				if (outletSocketNames.contains(s.m_name))
+					outletSocketNames.removeOne(s.m_name);
+				else
+					missingSocket = true;
+			}
 		}
 
-		if (numInletSockets != numInputVars || numOutletSockets != numOutputVars) {
-			modified = true;
-			b.m_properties["typeChanged"] = true; // mark as "type changed", i.e. sockets of FMU no longer match block representation
+		if (missingSocket || !inletSocketNames.isEmpty() || !outletSocketNames.isEmpty()) {
+			b.m_properties["state"] = MSIMSlaveBlock::StateUnsynced;
 		}
 		else {
-			if (b.m_properties.contains("typeChanged"))
-				modified = true;
-			b.m_properties.remove("typeChanged");
+			// check that block socket names match those of the inputs and outputs
+			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
 		}
 	}
+
 }
 
