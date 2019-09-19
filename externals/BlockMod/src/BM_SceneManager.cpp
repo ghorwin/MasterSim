@@ -521,14 +521,8 @@ void SceneManager::removeConnector(int connectorIndex) {
 
 // ** protected functions **
 
-void SceneManager::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-	qDebug() << "[SceneManager::mouseDoubleClickEvent]";
-	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
-}
-
 
 void SceneManager::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
-	qDebug() << "[SceneManager::mousePressEvent]";
 	if (mouseEvent->button() == Qt::RightButton) {
 		disableConnectionMode();
 	}
@@ -583,7 +577,6 @@ void SceneManager::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
 void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
-	qDebug() << "[SceneManager::mouseReleaseEvent]";
 	QGraphicsScene::mouseReleaseEvent(mouseEvent);
 	if (mouseEvent->button() & Qt::LeftButton) {
 		QString startSocket;
