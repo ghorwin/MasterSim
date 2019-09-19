@@ -57,7 +57,6 @@ SceneManager::SceneManager(QObject *parent) :
 	m_connectionModeEnabled(false)
 {
 	// listen for selection changes
-//	connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
 }
 
 
@@ -522,7 +521,14 @@ void SceneManager::removeConnector(int connectorIndex) {
 
 // ** protected functions **
 
+void SceneManager::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+	qDebug() << "[SceneManager::mouseDoubleClickEvent]";
+	QGraphicsScene::mouseDoubleClickEvent(mouseEvent);
+}
+
+
 void SceneManager::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
+	qDebug() << "[SceneManager::mousePressEvent]";
 	if (mouseEvent->button() == Qt::RightButton) {
 		disableConnectionMode();
 	}
@@ -537,7 +543,6 @@ void SceneManager::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 		// make the last item the mouse grabber objects
 		m_blockItems.back()->grabMouse();
 	}
-
 }
 
 
@@ -578,6 +583,7 @@ void SceneManager::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
 void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 
+	qDebug() << "[SceneManager::mouseReleaseEvent]";
 	QGraphicsScene::mouseReleaseEvent(mouseEvent);
 	if (mouseEvent->button() & Qt::LeftButton) {
 		QString startSocket;
@@ -717,6 +723,11 @@ void SceneManager::onSelectionChanged() {
 		}
 //		connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
 	}
+}
+
+
+void SceneManager::blockDoubleClicked(const BlockItem * blockItem) {
+	emit blockActionTriggered(blockItem);
 }
 
 
