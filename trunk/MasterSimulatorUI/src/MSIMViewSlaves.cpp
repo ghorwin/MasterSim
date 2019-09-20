@@ -10,6 +10,7 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QMessageBox>
+#include <QTimer>
 
 #include <qttreepropertybrowser.h>
 #include <qtvariantproperty.h>
@@ -28,12 +29,14 @@
 #include "MSIMMainWindow.h"
 #include "MSIMSceneManager.h"
 #include "MSIMSlaveBlock.h"
+#include "MSIMBlockEditorDialog.h"
 
 #include <MSIM_Project.h>
 
 MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	QWidget(parent),
-	m_ui(new Ui::MSIMViewSlaves)
+	m_ui(new Ui::MSIMViewSlaves),
+	m_blockEditorDialog(nullptr)
 {
 	m_ui->setupUi(this);
 	m_ui->verticalLayout_4->setContentsMargins(9,0,9,9);
@@ -285,6 +288,51 @@ void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockIte
 	}
 	// now startup the block editor
 
+	// editor needs to know number and names of inlet/outlet sockets
+
+	// first lookup associated model description
+	// search for simulator definition with this name
+	for (const MASTER_SIM::Project::SimulatorDef & simDef : project().m_simulators) {
+		if (QString::fromStdString(simDef.m_name) != b->m_name)
+			continue;
+		// got a simulator with matching name
+		const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
+		// must have a FMU
+		std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(simDef.m_pathToFMU);
+		Q_ASSERT(it != modelDescriptions.end());
+		const MASTER_SIM::ModelDescription & modDesc = it->second;
+		// collect list of inlet/outlet variables
+		QStringList inletSocketNames;
+		QStringList outletSocketNames;
+		for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+				inletSocketNames.append( QString::fromStdString(var.m_name));
+			}
+			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+				outletSocketNames.append( QString::fromStdString(var.m_name));
+			}
+		}
+
+		// now launch the editor with a copy of the block
+		if (m_blockEditorDialog == nullptr)
+			m_blockEditorDialog = new MSIMBlockEditorDialog(this);
+		int res = m_blockEditorDialog->editBlock(*b, simDef.m_pathToFMU, inletSocketNames, outletSocketNames);
+		// if dialog was accepted, we need to create an undo action for modifying network
+		// WARNING: This function is called via signal-slot from within a member function of a block object
+		//          So we must not call any function that will potentially delete this block object!
+		if (res == QDialog::Accepted) {
+			QTimer::singleShot(0, this, &MSIMViewSlaves::onBlockEditingCompleted);
+		}
+	}
+
+}
+
+
+void MSIMViewSlaves::onBlockEditingCompleted() {
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	n.m_blocks[m_blockEditorDialog->m_modifiedBlockIdx] = m_blockEditorDialog->m_modifiedBlock;
+	MSIMUndoSlaves * undo = new MSIMUndoSlaves(tr("Changed block definition"), project(), n);
+	undo->push();
 }
 
 
@@ -440,5 +488,9 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
 		}
 	}
+
+	// update network without undo-action
+	MSIMProjectHandler::instance().sceneManager()->setNetwork(n);
+
 }
 
