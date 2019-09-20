@@ -15,6 +15,7 @@ namespace BLOCKMOD {
 	class BlockItem;
 }
 
+class MSIMBlockEditorDialog;
 
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
@@ -45,6 +46,11 @@ private slots:
 	/*! Connected to the scene's block triggering action (usually double-click on block item). */
 	void onBlockActionTriggered(const BLOCKMOD::BlockItem * blockItem);
 
+	/*! Function is called from single-shot timer once a block-action trigger slot has finished.
+		Creates an undo-action for a block change.
+	*/
+	void onBlockEditingCompleted();
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
@@ -64,6 +70,7 @@ private:
 	/*! The manager for the properties. */
 	QPW::VariantPropertyManager		*m_variantManager;
 
+	MSIMBlockEditorDialog			*m_blockEditorDialog;
 };
 
 #endif // MSIMVIEWSLAVES_H

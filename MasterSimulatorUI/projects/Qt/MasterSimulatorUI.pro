@@ -36,6 +36,7 @@ INCLUDEPATH = \
 
 
 SOURCES += ../../src/main.cpp \
+	../../src/MSIMBlockEditorDialog.cpp \
 	../../src/MSIMGUIMessageHandler.cpp \
 	../../src/MSIMPostProcBindings.cpp \
 	../../src/MSIMSceneManager.cpp \
@@ -73,6 +74,7 @@ SOURCES += ../../src/main.cpp \
 
 
 HEADERS  += \
+	../../src/MSIMBlockEditorDialog.h \
 	../../src/MSIMGUIMessageHandler.h \
 	../../src/MSIMPostProcBindings.h \
 	../../src/MSIMSceneManager.h \
@@ -109,6 +111,7 @@ HEADERS  += \
 	../../src/MSIMLogFileDialog.h
 
 FORMS    += \
+	../../src/MSIMBlockEditorDialog.ui \
 	../../src/MSIMMainWindow.ui \
 	../../src/MSIMSimulationMonitorWidget.ui \
 	../../src/MSIMWelcomeScreen.ui \
