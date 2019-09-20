@@ -24,8 +24,8 @@ void MSIMSlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 		case StateUnsynced : {
 			painter->save();
 			QRectF r = rect();
-			QBrush b(QColor(192,96,96,64));
-			QPen p(QColor(96,0,0));
+			QBrush b(QColor(255,96,96,100));
+			QPen p(QColor(192,0,0));
 			if (option->state.testFlag(QStyle::State_Selected))
 				p.setStyle(Qt::DashLine);
 			else
@@ -38,7 +38,8 @@ void MSIMSlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 			painter->setPen(Qt::black);
 			painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, block()->m_name);
 			painter->restore();
-		}
+		} break;
+
 		case StateNoFMU : {
 			painter->save();
 			QRectF r = rect();
@@ -56,7 +57,7 @@ void MSIMSlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 			painter->setPen(Qt::black);
 			painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, block()->m_name);
 			painter->restore();
-		}
+		} break;
 
 	}
 
