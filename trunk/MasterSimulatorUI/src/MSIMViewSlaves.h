@@ -51,6 +51,8 @@ private slots:
 	*/
 	void onBlockEditingCompleted();
 
+	void on_pushButton_clicked();
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();

@@ -494,3 +494,10 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 
 }
 
+
+void MSIMViewSlaves::on_pushButton_clicked() {
+	if (m_blockEditorDialog == nullptr)
+		m_blockEditorDialog = new MSIMBlockEditorDialog(this);
+
+	m_blockEditorDialog->exec();
+}
