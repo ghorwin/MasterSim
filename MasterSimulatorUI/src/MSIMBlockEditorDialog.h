@@ -10,12 +10,16 @@ namespace Ui {
 }
 
 
+namespace BLOCKMOD {
+	class BlockItem;
+}
+
 /*! The editor for block definitions/geometry. */
 class MSIMBlockEditorDialog : public QDialog {
 	Q_OBJECT
 
 public:
-	explicit MSIMBlockEditorDialog(QWidget *parent = 0);
+	explicit MSIMBlockEditorDialog(QWidget *parent = nullptr);
 	~MSIMBlockEditorDialog();
 
 	/*! Launches the editor to edit the block.
@@ -34,6 +38,7 @@ public:
 	*/
 	int editBlock(const BLOCKMOD::Block & b, const IBK::Path & fmuPath, const QStringList & inletSockets, const QStringList & outletSockets);
 
+
 	/*! Stores the block that was modified during last call of editBlock() and is updated only
 		when editBlock() returns QDialog::Accepted.
 	*/
@@ -43,7 +48,10 @@ public:
 	int				m_modifiedBlockIdx;
 
 private:
+
 	Ui::MSIMBlockEditorDialog	*m_ui;
+
+	BLOCKMOD::BlockItem			*m_blockItem;
 };
 
 #endif // MSIMBLOCKEDITORDIALOG_H
