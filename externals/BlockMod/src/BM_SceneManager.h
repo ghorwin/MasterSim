@@ -72,7 +72,7 @@ public:
 	/*! Called from BlockItem when a block was moved to signal the scene manager
 		to adjust the connected connectors.
 	*/
-	void blockMoved(const Block * block);
+	void blockMoved(const Block * block, const QPointF oldPos);
 
 	/*! Called from ConnectorSegmentItem when a segment was moved to signal the scene manager
 		to adjust the connected connectors.
@@ -191,6 +191,9 @@ signals:
 
 	/*! Emitted whenever a block action was triggered (usually by double-clicking on the block). */
 	void blockActionTriggered(const BlockItem * blockItem);
+
+	/*! Emitted when a block or connector has been moved. */
+	void networkGeometryChanged();
 
 protected:
 	/*! Listens for right-mouse-button clicks that turn off connection mode. */

@@ -41,6 +41,10 @@ MSIMProjectHandler::MSIMProjectHandler() :
 {
 	IBK_ASSERT(m_self == NULL);
 	m_self = this;
+
+	// initialization of other globals
+	BLOCKMOD::Globals::GridSpacing = 16;
+	BLOCKMOD::Globals::LabelFontSize = 8;
 }
 
 

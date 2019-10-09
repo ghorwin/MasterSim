@@ -56,6 +56,13 @@ SocketItem::SocketItem(BlockItem * parent, Socket * socket) :
 	m_hoverEnabled(false),
 	m_hovered(false)
 {
+	updateSocketItem();
+	setZValue(12);
+	setAcceptHoverEvents(true);
+}
+
+
+void SocketItem::updateSocketItem() {
 	if (m_socket->m_inlet) {
 		switch (m_socket->direction()) {
 			case Socket::Left		: m_symbolRect = QRectF(-4, m_socket->m_pos.y()-4, 8, 8); break;
@@ -72,8 +79,6 @@ SocketItem::SocketItem(BlockItem * parent, Socket * socket) :
 			case Socket::Bottom		: m_symbolRect = QRectF(m_socket->m_pos.x()-4, m_socket->m_pos.y(), 8, 8); break;
 		}
 	}
-	setZValue(12);
-	setAcceptHoverEvents(true);
 }
 
 
