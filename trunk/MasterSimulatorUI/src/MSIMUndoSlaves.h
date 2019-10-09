@@ -5,7 +5,7 @@
 
 #include <BM_Network.h>
 
-/*! Command for changing simulation settings data. */
+/*! Command for changing slave blocks. */
 class MSIMUndoSlaves : public MSIMUndoCommandBase {
 	Q_DECLARE_TR_FUNCTIONS(MSIMUndoSlaves)
 public:

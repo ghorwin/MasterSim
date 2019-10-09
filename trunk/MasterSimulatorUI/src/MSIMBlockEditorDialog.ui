@@ -68,14 +68,21 @@
         <item>
          <widget class="QSpinBox" name="spinBoxColumns">
           <property name="minimum">
-           <number>1</number>
+           <number>2</number>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSpinBox" name="spinBoxRows">
           <property name="minimum">
-           <number>1</number>
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButtonLayoutSockets">
+          <property name="text">
+           <string>Layout sockets</string>
           </property>
          </widget>
         </item>

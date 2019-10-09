@@ -60,9 +60,6 @@
            <height>24</height>
           </size>
          </property>
-         <property name="shortcut">
-          <string>Del</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="2">
@@ -152,7 +149,7 @@
    </item>
    <item>
     <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="2">
+     <item row="1" column="1">
       <spacer name="horizontalSpacer_3">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -165,7 +162,17 @@
        </property>
       </spacer>
      </item>
-     <item row="0" column="0" colspan="3">
+     <item row="1" column="0">
+      <widget class="QToolButton" name="toolButtonCreateConnection">
+       <property name="toolTip">
+        <string>Switches to connection mode.</string>
+       </property>
+       <property name="text">
+        <string>Connect sockets...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="2">
       <widget class="QLabel" name="label_3">
        <property name="font">
         <font>
@@ -178,15 +185,8 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QToolButton" name="toolButtonCreateConnection">
-       <property name="text">
-        <string>Connect sockets...</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" colspan="3">
-      <widget class="BLOCKMOD::ZoomMeshGraphicsView" name="blockModWidget" native="true">
+     <item row="2" column="0" colspan="2">
+      <widget class="BLOCKMOD::ZoomMeshGraphicsView" name="blockModWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>1</horstretch>
@@ -201,13 +201,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
-        <string>PushButton</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
   </layout>
@@ -215,7 +208,7 @@
  <customwidgets>
   <customwidget>
    <class>BLOCKMOD::ZoomMeshGraphicsView</class>
-   <extends>QWidget</extends>
+   <extends>QGraphicsView</extends>
    <header location="global">BM_ZoomMeshGraphicsView.h</header>
    <container>1</container>
   </customwidget>

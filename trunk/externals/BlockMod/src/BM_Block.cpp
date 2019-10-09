@@ -212,25 +212,25 @@ void Block::unusedSocketSpots(QList<int> & leftSockets, QList<int> & topSockets,
 		// left side?
 		if (s.m_pos.x() == 0.0) {
 			if (rowIdx > 0 && rowIdx < rowCount)
-				leftSockets[rowCount] = 1;
+				++leftSockets[rowIdx];
 		}
 
 		// right side?
 		if (s.m_pos.x() == m_size.width()) {
 			if (rowIdx > 0 && rowIdx < rowCount)
-				rightSockets[rowCount] = 1;
+				++rightSockets[rowIdx];
 		}
 
 		// top size
 		if (s.m_pos.y() == 0.0) {
 			if (colIdx > 0 && colIdx < colCount)
-				topSockets[colIdx] = 1;
+				++topSockets[colIdx];
 		}
 
 		// bottom size
 		if (s.m_pos.y() == m_size.height()) {
 			if (colIdx > 0 && colIdx < colCount)
-				bottomSockets[colIdx] = 1;
+				++bottomSockets[colIdx];
 		}
 	}
 }

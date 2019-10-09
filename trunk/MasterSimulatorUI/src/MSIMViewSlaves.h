@@ -51,7 +51,11 @@ private slots:
 	*/
 	void onBlockEditingCompleted();
 
-	void on_pushButton_clicked();
+	/*! Called from sceneManager() whenever user has finished creating a connection. */
+	void onNewConnectionCreated();
+
+	/*! Called from sceneManager() whenever a block or connector has been moved. */
+	void onNetworkGeometryChanged();
 
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */

@@ -47,11 +47,20 @@ public:
 	/*! Index of the block in the network's block list. */
 	int				m_modifiedBlockIdx;
 
-private:
+private slots:
+	void on_pushButtonLayoutSockets_clicked();
 
+	void on_spinBoxColumns_valueChanged(int arg1);
+
+	void on_spinBoxRows_valueChanged(int arg1);
+
+private:
 	Ui::MSIMBlockEditorDialog	*m_ui;
 
 	BLOCKMOD::BlockItem			*m_blockItem;
+	QStringList					m_inletSockets;
+	QStringList					m_outletSockets;
+
 };
 
 #endif // MSIMBLOCKEDITORDIALOG_H
