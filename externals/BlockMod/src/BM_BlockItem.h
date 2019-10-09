@@ -59,6 +59,9 @@ public:
 	/*! Returns true, if this block is invisible (call this when re-implementing the paint() function). */
 	bool isInvisible() const;
 
+	/*! Changes size of a block item (and moves socket items accordingly). */
+	void resize(int newWidth, int newHeight);
+
 protected:
 	/*! This function is called from the constructor and creates child socket items.
 		You can overload this function to create your own socket items.

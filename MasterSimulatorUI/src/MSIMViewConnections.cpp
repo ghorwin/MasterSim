@@ -6,6 +6,8 @@
 
 #include <IBK_Exception.h>
 
+#include <BM_SceneManager.h>
+
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
 #include "MSIMMainWindow.h"
@@ -359,7 +361,9 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 	p.m_graph.push_back(edge);
 
 	// create undo action
-	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p);
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	/// \todo auto-create socket connections
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
 	cmd->push();
 }
 
@@ -379,7 +383,9 @@ void MSIMViewConnections::on_toolButtonRemoveConnection_clicked() {
 	p.m_graph.erase( p.m_graph.begin() + connIdx);
 
 	// create undo action
-	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p);
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	/// \todo remove correspondin socket connections
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p, n);
 	cmd->push();
 }
 
@@ -496,7 +502,9 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 	}
 
 	// create undo action
-	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connections added"), p);
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	/// \todo auto-create socket connections (several!)
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connections added"), p, n);
 	cmd->push();
 
 //	QMessageBox::information(this, tr("Connection result"), tr("%1 new connections are made between slaves.").arg(newConnections));

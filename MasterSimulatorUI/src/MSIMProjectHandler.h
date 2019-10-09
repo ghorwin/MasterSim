@@ -44,6 +44,8 @@ public:
 		/*! Used when simulation settings have been modified.
 			Only updates simulation settings page, all other views remain unmodified. */
 		SimulationSettingsModified,
+		/*! Used when only the network geometry has changed (block/connector items have beeen moved). */
+		NetworkGeometryModified,
 		/*! Used whenever the project data changes completely (new project created, project loaded etc.)
 			and a complete reset of all views and models is needed. */
 		AllModified = 0xFFFF0001
@@ -144,7 +146,7 @@ public:
 
 		Emits updateActions() signal.
 	*/
-	void setModified(int modificationType, void * data = NULL);
+	void setModified(int modificationType, void * data = nullptr);
 
 	/*! Returns a const reference to the internal project.
 		\warning This function throws an exception if there isn't a valid project loaded.

@@ -34,6 +34,8 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 									 const QStringList & inletSockets, const QStringList & outletSockets)
 {
 	m_modifiedBlock = b; // create copy
+	m_inletSockets = inletSockets;
+	m_outletSockets = outletSockets;
 
 	// first store block index in network's block list
 	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
@@ -58,20 +60,54 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	m_ui->spinBoxRows->setValue(rowCount);
 	m_ui->spinBoxColumns->setValue(colCount);
 
-	// now auto-matically layout sockets and create missing sockets
-	m_modifiedBlock.autoUpdateSockets(inletSockets, outletSockets);
-
 	// finally, create block item and a scene and show in graphics view
 	QGraphicsScene * scene = new QGraphicsScene(this);
+	m_ui->graphicsView->setScene(scene);
+
+	// now auto-matically layout sockets and create missing sockets
+	m_modifiedBlock.autoUpdateSockets(m_inletSockets, m_outletSockets);
 
 	// TODO : use different block item?
 	m_blockItem = new BLOCKMOD::BlockItem(&m_modifiedBlock);
-	m_blockItem->setRect(0, 0, b.m_size.width(), b.m_size.height());
+	m_blockItem->setRect(0, 0, m_modifiedBlock.m_size.width(), m_modifiedBlock.m_size.height());
 	m_blockItem->setPos(0, 0);
-	m_blockItem->setFlags(0);
-	//m_blockItem->setFlags(Qt::ItemIsEnabled);
-	scene->addItem(m_blockItem);
-	m_ui->graphicsView->setScene(scene);
+	m_blockItem->setFlags(QGraphicsItem::GraphicsItemFlags());
+	m_ui->graphicsView->scene()->addItem(m_blockItem);
 
 	return exec();
+}
+
+
+void MSIMBlockEditorDialog::on_pushButtonLayoutSockets_clicked() {
+	// get block size from spin boxes
+	int rowCount = m_ui->spinBoxRows->value();
+	int colCount = m_ui->spinBoxColumns->value();
+
+	m_modifiedBlock.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*colCount, BLOCKMOD::Globals::GridSpacing*rowCount);
+	m_modifiedBlock.m_sockets.clear(); // remove existing sockets to cause a relayouting
+
+	// now auto-matically layout sockets and create missing sockets
+	m_modifiedBlock.autoUpdateSockets(m_inletSockets, m_outletSockets);
+
+	// TODO : use different block item?
+	delete m_blockItem;
+	m_blockItem = new BLOCKMOD::BlockItem(&m_modifiedBlock);
+	m_blockItem->setRect(0, 0, m_modifiedBlock.m_size.width(), m_modifiedBlock.m_size.height());
+	m_blockItem->setPos(0, 0);
+	m_blockItem->setFlags(QGraphicsItem::GraphicsItemFlags());
+	m_ui->graphicsView->scene()->addItem(m_blockItem);
+
+}
+
+
+void MSIMBlockEditorDialog::on_spinBoxColumns_valueChanged(int) {
+	int rowCount = m_ui->spinBoxRows->value();
+	int colCount = m_ui->spinBoxColumns->value();
+	if (m_blockItem != nullptr)
+		m_blockItem->resize(BLOCKMOD::Globals::GridSpacing*colCount, BLOCKMOD::Globals::GridSpacing*rowCount);
+}
+
+
+void MSIMBlockEditorDialog::on_spinBoxRows_valueChanged(int) {
+	on_spinBoxColumns_valueChanged(0);
 }

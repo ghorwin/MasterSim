@@ -25,11 +25,14 @@
 #include "MSIMUIConstants.h"
 #include "MSIMSlaveItemDelegate.h"
 #include "MSIMConversion.h"
-#include "MSIMUndoSlaves.h"
 #include "MSIMMainWindow.h"
 #include "MSIMSceneManager.h"
 #include "MSIMSlaveBlock.h"
 #include "MSIMBlockEditorDialog.h"
+
+#include "MSIMUndoSlaves.h"
+#include "MSIMUndoConnections.h"
+#include "MSIMUndoNetworkGeometry.h"
 
 #include <MSIM_Project.h>
 
@@ -83,7 +86,7 @@ MSIMViewSlaves::~MSIMViewSlaves() {
 void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
-		case MSIMProjectHandler::SlavesModified :
+		case MSIMProjectHandler::SlavesModified : {
 			// sync check of all blocks and FMU slaves
 
 			syncCoSimNetworkToBlocks();
@@ -94,14 +97,22 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 				Q_ASSERT(sceneManager != nullptr);
 				disconnect(sceneManager, &BLOCKMOD::SceneManager::blockActionTriggered,
 						   this, &MSIMViewSlaves::onBlockActionTriggered);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::newConnectionAdded,
+						   this, &MSIMViewSlaves::onNewConnectionCreated);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::networkGeometryChanged,
+						   this, &MSIMViewSlaves::onNetworkGeometryChanged);
 			}
-			m_ui->blockModWidget->setScene(MSIMProjectHandler::instance().sceneManager());
-			connect(MSIMProjectHandler::instance().sceneManager(), &BLOCKMOD::SceneManager::blockActionTriggered,
+			BLOCKMOD::SceneManager * newSceneManager = MSIMProjectHandler::instance().sceneManager();
+			m_ui->blockModWidget->setScene(newSceneManager);
+			connect(newSceneManager, &BLOCKMOD::SceneManager::blockActionTriggered,
 					this, &MSIMViewSlaves::onBlockActionTriggered);
-			MSIMProjectHandler::instance().sceneManager()->installEventFilter ( m_ui->blockModWidget );
+			connect(newSceneManager, &BLOCKMOD::SceneManager::newConnectionAdded,
+					this, &MSIMViewSlaves::onNewConnectionCreated);
+			connect(newSceneManager, &BLOCKMOD::SceneManager::networkGeometryChanged,
+					this, &MSIMViewSlaves::onNetworkGeometryChanged);
+			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
-
-			break;
+		} break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
 			m_ui->widgetProperties->updateProperties( m_ui->tableWidgetSlaves->currentRow() );
@@ -160,7 +171,6 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 
 
 void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
-
 	MASTER_SIM::Project p = project();
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
 
@@ -495,9 +505,27 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 }
 
 
-void MSIMViewSlaves::on_pushButton_clicked() {
-	if (m_blockEditorDialog == nullptr)
-		m_blockEditorDialog = new MSIMBlockEditorDialog(this);
+void MSIMViewSlaves::onNewConnectionCreated() {
+	// get the last connection made from network
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
+	const BLOCKMOD::Connector & con = n.m_connectors.back();
 
-	m_blockEditorDialog->exec();
+	MASTER_SIM::Project::GraphEdge edge;
+	edge.m_outputVariableRef = con.m_sourceSocket.toStdString();
+	edge.m_inputVariableRef = con.m_targetSocket.toStdString();
+
+	MASTER_SIM::Project p = project();
+	p.m_graph.push_back(edge);
+
+	// add undo action for new connection
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
+	cmd->push();
+}
+
+
+void MSIMViewSlaves::onNetworkGeometryChanged() {
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
+	// add undo action
+	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
+	cmd->push();
 }

@@ -73,6 +73,9 @@ void SceneManager::setNetwork(const Network & network) {
 	qDeleteAll(m_connectorSegmentItems);
 	m_connectorSegmentItems.clear();
 
+	// clear block connector map
+	m_blockConnectorMap.clear();
+
 	// create new graphics items
 	for (int i=0; i<m_network->m_blocks.count(); ++i) {
 		BlockItem * item = createBlockItem( m_network->m_blocks[i] );
@@ -98,7 +101,7 @@ const Network & SceneManager::network() const {
 }
 
 
-void SceneManager::blockMoved(const Block * block) {
+void SceneManager::blockMoved(const Block * block, const QPointF oldPos) {
 	// lookup connected connectors
 	QSet<Connector *> & cons = m_blockConnectorMap[block];
 	// adjust connectors to new block positions
@@ -107,12 +110,14 @@ void SceneManager::blockMoved(const Block * block) {
 		// update corresponding connectorItems (maybe remove/add items)
 		updateConnectorSegmentItems(*con, nullptr);
 	}
+	emit networkGeometryChanged(); /// \todo add old position to signal
 }
 
 
 void SceneManager::connectorSegmentMoved(ConnectorSegmentItem * currentItem) {
 	// update corresponding connectorItems (maybe remove/add items)
 	updateConnectorSegmentItems(*currentItem->m_connector, currentItem);
+	emit networkGeometryChanged();
 }
 
 
@@ -257,6 +262,7 @@ bool SceneManager::isConnectedSocket(const Block * b, const Socket * s) const {
 	}
 	return false;
 }
+
 
 
 void SceneManager::enableConnectionMode() {

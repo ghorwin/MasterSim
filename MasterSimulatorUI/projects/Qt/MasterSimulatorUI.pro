@@ -52,6 +52,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMLanguageHandler.cpp \
 	../../src/MSIMMessageHandler.cpp \
 	../../src/MSIMDebugApplication.cpp \
+	../../src/MSIMUndoNetworkGeometry.cpp \
 	../../src/MSIMWelcomeScreen.cpp \
 	../../src/MSIMLogWidget.cpp \
 	../../src/MSIMPreferencesDialog.cpp \
@@ -90,6 +91,7 @@ HEADERS  += \
 	../../src/MSIMLanguageHandler.h \
 	../../src/MSIMMessageHandler.h \
 	../../src/MSIMDebugApplication.h \
+	../../src/MSIMUndoNetworkGeometry.h \
 	../../src/MSIMUndoSlaveParameters.h \
 	../../src/MSIMWelcomeScreen.h \
 	../../src/MSIMLogWidget.h \
