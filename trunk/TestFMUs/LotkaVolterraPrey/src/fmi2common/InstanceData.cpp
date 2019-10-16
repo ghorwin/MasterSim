@@ -92,8 +92,13 @@ void InstanceData::getRealParameter(int varID, double & value) {
 	// update procedure for model exchange
 	if (m_modelExchange)
 		updateIfModified();
-	checkIfIDExists(m_realOutput, varID);
-	value = m_realOutput[varID];
+	// first try to return output variable
+	if (m_realOutput.find(varID) != m_realOutput.end() ) {
+		value = m_realOutput[varID];
+	}
+	else if (m_realInput.find(varID) != m_realInput.end() ) {
+		value = m_realOutput[varID];
+	}
 }
 
 
