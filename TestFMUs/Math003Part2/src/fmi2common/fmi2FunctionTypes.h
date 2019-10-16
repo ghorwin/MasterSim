@@ -11,44 +11,44 @@
    - Apr.  3, 2014: Added #include <stddef.h> for size_t definition
    - Mar. 27, 2014: Added #include "fmiTypesPlatform.h" (#179)
    - Mar. 26, 2014: Introduced function argument "void" for the functions (#171)
-					  fmiGetTypesPlatformTYPE and fmiGetVersionTYPE
+                      fmiGetTypesPlatformTYPE and fmiGetVersionTYPE
    - Oct. 11, 2013: Functions of ModelExchange and CoSimulation merged:
-					  fmiInstantiateModelTYPE , fmiInstantiateSlaveTYPE  -> fmiInstantiateTYPE
-					  fmiFreeModelInstanceTYPE, fmiFreeSlaveInstanceTYPE -> fmiFreeInstanceTYPE
-					  fmiEnterModelInitializationModeTYPE, fmiEnterSlaveInitializationModeTYPE -> fmiEnterInitializationModeTYPE
-					  fmiExitModelInitializationModeTYPE , fmiExitSlaveInitializationModeTYPE  -> fmiExitInitializationModeTYPE
-					  fmiTerminateModelTYPE , fmiTerminateSlaveTYPE  -> fmiTerminate
-					  fmiResetSlave -> fmiReset (now also for ModelExchange and not only for CoSimulation)
-					Functions renamed
-					  fmiUpdateDiscreteStatesTYPE -> fmiNewDiscreteStatesTYPE
-					Renamed elements of the enumeration fmiEventInfo
-					  upcomingTimeEvent             -> nextEventTimeDefined // due to generic naming scheme: varDefined + var
-					  newUpdateDiscreteStatesNeeded -> newDiscreteStatesNeeded;
+                      fmiInstantiateModelTYPE , fmiInstantiateSlaveTYPE  -> fmiInstantiateTYPE
+                      fmiFreeModelInstanceTYPE, fmiFreeSlaveInstanceTYPE -> fmiFreeInstanceTYPE
+                      fmiEnterModelInitializationModeTYPE, fmiEnterSlaveInitializationModeTYPE -> fmiEnterInitializationModeTYPE
+                      fmiExitModelInitializationModeTYPE , fmiExitSlaveInitializationModeTYPE  -> fmiExitInitializationModeTYPE
+                      fmiTerminateModelTYPE , fmiTerminateSlaveTYPE  -> fmiTerminate
+                      fmiResetSlave -> fmiReset (now also for ModelExchange and not only for CoSimulation)
+                    Functions renamed
+                      fmiUpdateDiscreteStatesTYPE -> fmiNewDiscreteStatesTYPE
+                    Renamed elements of the enumeration fmiEventInfo
+                      upcomingTimeEvent             -> nextEventTimeDefined // due to generic naming scheme: varDefined + var
+                      newUpdateDiscreteStatesNeeded -> newDiscreteStatesNeeded;
    - June 13, 2013: Changed type fmiEventInfo
-					Functions removed:
-					   fmiInitializeModelTYPE
-					   fmiEventUpdateTYPE
-					   fmiCompletedEventIterationTYPE
-					   fmiInitializeSlaveTYPE
-					Functions added:
-					   fmiEnterModelInitializationModeTYPE
-					   fmiExitModelInitializationModeTYPE
-					   fmiEnterEventModeTYPE
-					   fmiUpdateDiscreteStatesTYPE
-					   fmiEnterContinuousTimeModeTYPE
-					   fmiEnterSlaveInitializationModeTYPE;
-					   fmiExitSlaveInitializationModeTYPE;
+                    Functions removed:
+                       fmiInitializeModelTYPE
+                       fmiEventUpdateTYPE
+                       fmiCompletedEventIterationTYPE
+                       fmiInitializeSlaveTYPE
+                    Functions added:
+                       fmiEnterModelInitializationModeTYPE
+                       fmiExitModelInitializationModeTYPE
+                       fmiEnterEventModeTYPE
+                       fmiUpdateDiscreteStatesTYPE
+                       fmiEnterContinuousTimeModeTYPE
+                       fmiEnterSlaveInitializationModeTYPE;
+                       fmiExitSlaveInitializationModeTYPE;
    - Feb. 17, 2013: Added third argument to fmiCompletedIntegratorStepTYPE
-					Changed function name "fmiTerminateType" to "fmiTerminateModelType" (due to #113)
-					Changed function name "fmiGetNominalContinuousStateTYPE" to
-										  "fmiGetNominalsOfContinuousStatesTYPE"
-					Removed fmiGetStateValueReferencesTYPE.
+                    Changed function name "fmiTerminateType" to "fmiTerminateModelType" (due to #113)
+                    Changed function name "fmiGetNominalContinuousStateTYPE" to
+                                          "fmiGetNominalsOfContinuousStatesTYPE"
+                    Removed fmiGetStateValueReferencesTYPE.
    - Nov. 14, 2011: First public Version
 
 
-   Copyright Â© 2011 MODELISAR consortium,
-			   2012-2013 Modelica Association Project "FMI"
-			   All rights reserved.
+   Copyright © 2011 MODELISAR consortium,
+               2012-2013 Modelica Association Project "FMI"
+               All rights reserved.
    This file is licensed by the copyright holders under the BSD 2-Clause License
    (http://www.opensource.org/licenses/bsd-license.html):
 
@@ -57,13 +57,13 @@
    modification, are permitted provided that the following conditions are met:
 
    - Redistributions of source code must retain the above copyright notice,
-	 this list of conditions and the following disclaimer.
+     this list of conditions and the following disclaimer.
    - Redistributions in binary form must reproduce the above copyright notice,
-	 this list of conditions and the following disclaimer in the documentation
-	 and/or other materials provided with the distribution.
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
    - Neither the name of the copyright holders nor the names of its
-	 contributors may be used to endorse or promote products derived
-	 from this software without specific prior written permission.
+     contributors may be used to endorse or promote products derived
+     from this software without specific prior written permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
@@ -83,7 +83,7 @@
    You may distribute or publicly perform any modification only under the
    terms of this license.
    (Note, this means that if you distribute a modified file,
-	the modified file must also be provided under this license).
+    the modified file must also be provided under this license).
 */
 
 #ifdef __cplusplus
@@ -101,24 +101,24 @@ extern "C" {
 
 /* Type definitions */
 typedef enum {
-	fmi2OK,
-	fmi2Warning,
-	fmi2Discard,
-	fmi2Error,
-	fmi2Fatal,
-	fmi2Pending
+    fmi2OK,
+    fmi2Warning,
+    fmi2Discard,
+    fmi2Error,
+    fmi2Fatal,
+    fmi2Pending
 } fmi2Status;
 
 typedef enum {
-	fmi2ModelExchange,
-	fmi2CoSimulation
+    fmi2ModelExchange,
+    fmi2CoSimulation
 } fmi2Type;
 
 typedef enum {
-	fmi2DoStepStatus,
-	fmi2PendingStatus,
-	fmi2LastSuccessfulTime,
-	fmi2Terminated
+    fmi2DoStepStatus,
+    fmi2PendingStatus,
+    fmi2LastSuccessfulTime,
+    fmi2Terminated
 } fmi2StatusKind;
 
 typedef void      (*fmi2CallbackLogger)        (fmi2ComponentEnvironment, fmi2String, fmi2Status, fmi2String, fmi2String, ...);
@@ -193,8 +193,8 @@ Types for Common Functions
 
 /* Getting partial derivatives */
    typedef fmi2Status fmi2GetDirectionalDerivativeTYPE(fmi2Component, const fmi2ValueReference[], size_t,
-																   const fmi2ValueReference[], size_t,
-																   const fmi2Real[], fmi2Real[]);
+                                                                   const fmi2ValueReference[], size_t,
+                                                                   const fmi2Real[], fmi2Real[]);
 
 /***************************************************
 Types for Functions for FMI2 for Model Exchange
