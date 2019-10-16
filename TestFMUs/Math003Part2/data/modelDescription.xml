@@ -21,7 +21,7 @@
 
 	<ModelExchange
 		modelIdentifier="Part2"
-		completedlntegratorStepNotNeeded="true"
+		completedIntegratorStepNotNeeded="true"
 		canNotUseMemoryManagementFunctions="true"
 		canGetAndSetFMUstate="true"
 		canSerializeFMUstate="true"
