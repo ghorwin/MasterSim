@@ -67,6 +67,12 @@ public:
 	const Network & network() const;
 
 
+	// query functions
+
+	/*! Looks up the block item with a block that has the given name. */
+	const BlockItem * blockItemByName(const QString & blockName) const;
+
+
 	// Functions called from blocks/items to adjust the network due to user interaction
 
 	/*! Called from BlockItem when a block was moved to signal the scene manager

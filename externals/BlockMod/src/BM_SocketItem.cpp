@@ -226,17 +226,17 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 	QFontMetricsF metrics(f);
 	painter->setFont(f);
 	QRectF textBoundingRect = metrics.boundingRect(m_socket->m_name);
-	textBoundingRect.setWidth(textBoundingRect.width()+2);
+	textBoundingRect.setWidth(textBoundingRect.width()+6); // add some space to avoid clipping of italic fonts to the right
 
 	switch (m_socket->direction()) {
 		case Socket::Left		:
 			// left side
-			textBoundingRect.moveTo(r.left()-textBoundingRect.width(), r.top()-textBoundingRect.height());
+			textBoundingRect.moveTo(r.left()-textBoundingRect.width(), r.top()-textBoundingRect.height()+3);
 			painter->drawText(textBoundingRect, Qt::AlignRight | Qt::AlignTop, m_socket->m_name);
 		break;
 		case Socket::Right		:
 			// right side
-			textBoundingRect.moveTo(r.right(), r.top()-textBoundingRect.height());
+			textBoundingRect.moveTo(r.right(), r.top()-textBoundingRect.height()+3);
 			painter->drawText(textBoundingRect, Qt::AlignLeft | Qt::AlignTop, m_socket->m_name);
 		break;
 		case Socket::Top		:

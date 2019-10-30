@@ -101,6 +101,15 @@ const Network & SceneManager::network() const {
 }
 
 
+const BlockItem * SceneManager::blockItemByName(const QString & blockName) const {
+	for (BlockItem* item : m_blockItems) {
+		if (item->m_block->m_name == blockName)
+			return item;
+	}
+	return nullptr;
+}
+
+
 void SceneManager::blockMoved(const Block * block, const QPointF oldPos) {
 	// lookup connected connectors
 	QSet<Connector *> & cons = m_blockConnectorMap[block];
