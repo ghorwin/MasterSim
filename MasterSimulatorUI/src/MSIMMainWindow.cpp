@@ -64,6 +64,11 @@ void MSIMMainWindow::addUndoCommand(QUndoCommand * command) {
 }
 
 
+void MSIMMainWindow::addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc) {
+	instance().m_modelDescriptions[fmuPath] = modelDesc;
+}
+
+
 MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) :
 	m_ui(new Ui::MSIMMainWindow),
 	m_undoStack(new QUndoStack(this)),
@@ -139,6 +144,10 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	connect(&m_projectHandler, SIGNAL(updateActions()), this, SLOT(onUpdateActions()));
 	connect(&m_projectHandler, SIGNAL(updateRecentProjects()), this, SLOT(onUpdateRecentProjects()));
 
+	// *** connect to signals of views ***
+
+	connect(m_viewSlaves, SIGNAL(newSlaveAdded(const QString &)),
+			this, SLOT(onNewSlaveAdded(const QString &)));
 
 	// *** Setup log widget ***
 
@@ -962,7 +971,6 @@ void MSIMMainWindow::on_actionViewSimulation_toggled(bool) {
 }
 
 
-
 void MSIMMainWindow::on_actionStartSimulation_triggered() {
 	if (!m_projectHandler.isValid())
 		return;
@@ -971,4 +979,17 @@ void MSIMMainWindow::on_actionStartSimulation_triggered() {
 	m_viewSimulation->on_toolButtonStartInTerminal_clicked();
 }
 
+
+void MSIMMainWindow::onNewSlaveAdded(const QString & fullFMUPath) {
+	// retrieve model description - only present if it could be parsed successfully
+	IBK::Path fmuPath(fullFMUPath.toStdString());
+	if (m_modelDescriptions.find(fmuPath) == m_modelDescriptions.end())
+		return;
+
+	// ask user to open block editor dialog
+	int res = QMessageBox::question(this, tr("Open block editor"),
+									tr("Open the block editor now to define graphical representation of FMU? "
+									   "Since MASTERSIM allows defining simulations also without graphical schematics."));
+
+}
 

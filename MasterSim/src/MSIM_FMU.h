@@ -186,7 +186,7 @@ private:
 		If the variable (value reference) has been already selected, the synonymous variable will be added to the m_synonymousVars map.
 	*/
 	void addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName,
-							 FMIVariable::VarType varType, unsigned int valueReference);
+							 FMIVariable::VarType varType, unsigned int valueReference, const std::string & unit);
 
 	/*! File path to FMU as referenced in project file (should be an absolute file path). */
 	IBK::Path			m_fmuFilePath;
