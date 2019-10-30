@@ -132,7 +132,7 @@ private slots:
 	/*! Called from slave view whenever an FMU has been added successfully (including successful
 		parsing of the model description.
 	*/
-	void onNewSlaveAdded(const QString & fullFMUPath);
+	void onNewSlaveAdded(const QString & slaveName, const QString & fullFMUPath);
 
 private:
 	/*! Sets up all dock widgets with definition lists. */

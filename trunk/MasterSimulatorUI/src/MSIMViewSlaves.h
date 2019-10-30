@@ -34,6 +34,9 @@ public:
 	/*! D'tor */
 	~MSIMViewSlaves();
 
+	/*! Looks up the block item corresponding to the given slave and opens the block editor. */
+	void editBlockItem(const QString & slaveName);
+
 	/*! Extract the FMU with the given absolute file path, and determined properties for analysis.
 		If successful, returns true and the modelDesc data structure can be accessed to provide the
 		required information.
@@ -49,9 +52,9 @@ public slots:
 
 signals:
 	/*! Emitted when a new slave has been added.
-		The argument passed is the **absolute file path** to the slave (FMU or tsv/csv table).
+		The second argument passed is the **absolute file path** to the slave (FMU or tsv/csv table).
 	*/
-	void newSlaveAdded(const QString & fmuFilePath);
+	void newSlaveAdded(const QString & slaveName, const QString & fmuFilePath);
 
 private slots:
 	void on_toolButtonAddSlave_clicked();
