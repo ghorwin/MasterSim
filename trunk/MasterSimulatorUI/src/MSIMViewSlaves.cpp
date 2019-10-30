@@ -16,7 +16,12 @@
 #include <qtvariantproperty.h>
 #include <QPW_VariantPropertyManager.h>
 
+#include <unzip.h>
+#include <tinyxml.h>
+
 #include <IBK_algorithm.h>
+#include <IBK_Path.h>
+#include <IBK_CSVReader.h>
 
 #include <BM_Network.h>
 #include <BM_Globals.h>
@@ -83,6 +88,127 @@ MSIMViewSlaves::~MSIMViewSlaves() {
 }
 
 
+bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
+												QString & msgLog, MASTER_SIM::ModelDescription & modelDesc)
+{
+
+	// check if the simulation slave is actually a csv/tsv file and use the file reader instead
+	if (!IBK::string_nocase_compare(fmuFilePath.extension(), "fmu")) {
+		// attempt to read the file as csv/tsv file
+		msgLog.append( tr("Reading tabulated data from '%1'\n").arg(QString::fromStdString(fmuFilePath.str())));
+		try {
+			IBK::CSVReader reader;
+			reader.read(fmuFilePath, true, true); // only read header
+
+			// special convention: no time unit, assume "s" seconds
+			if (reader.m_units.size() > 0 && reader.m_units[0].empty())
+				reader.m_units[0] = "s";
+
+			// sanity checks
+			if (reader.m_nColumns < 1 || IBK::Unit(reader.m_units[0]).base_id() != IBK_UNIT_ID_SECONDS)
+				throw IBK::Exception("Invalid number of columns or invalid/undefined/missing time unit in first column.",
+									 "[MSIMMainWindow::extractFMUsAndParseModelDesc]");
+
+			// now create a model description for this file
+			modelDesc.m_modelName = fmuFilePath.filename().withoutExtension().str();
+			modelDesc.m_fmuType = MASTER_SIM::ModelDescription::CS_v1;
+			// for now we only support double parameters
+			for (unsigned int i=1; i<reader.m_nColumns; ++i) {
+				// get quantity
+				MASTER_SIM::FMIVariable v;
+				v.m_name = reader.m_captions[i];
+				v.m_unit = reader.m_units[i];
+				v.m_type = MASTER_SIM::FMIVariable::VT_DOUBLE;
+				v.m_varIdx = i;
+				v.m_causality = MASTER_SIM::FMIVariable::C_OUTPUT;
+				v.m_variability = "continuous";
+				modelDesc.m_variables.push_back(v);
+			}
+
+			msgLog.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			msgLog.append( tr("Error reading header from csv/tsv file (invalid format?)."));
+			return false;
+		}
+		return true;
+	}
+
+
+	// attempt to unzip FMU
+	msgLog.append( tr("Extracting '%1'\n").arg(QString::fromStdString(fmuFilePath.str())));
+
+	std::string fileContent;
+	unzFile zip = unzOpen(fmuFilePath.c_str());
+	if (zip) {
+		if (unzLocateFile(zip, "modelDescription.xml", 1) != UNZ_OK) {
+			msgLog.append( tr("ERROR: FMU does not contain the file modelDescription.xml.\n"));
+			unzClose( zip );
+			return false;
+		}
+
+		if (unzOpenCurrentFile( zip ) != UNZ_OK) {
+			msgLog.append( tr("ERROR: Could not open modelDescription.xml.\n"));
+			unzClose( zip );
+			return false;
+		}
+
+		unsigned char buffer[4096];
+		int readBytes;
+		do {
+			readBytes = unzReadCurrentFile(zip, buffer, 4096);
+			if (readBytes < 0) {
+				msgLog.append( tr("ERROR: Error while extracting modelDescription.xml.\n"));
+				unzCloseCurrentFile(zip);
+				unzClose( zip );
+				return false;
+			}
+			if (readBytes > 0) {
+				fileContent += std::string(buffer, buffer+readBytes);
+			}
+		}
+		while (readBytes > 0);
+
+		unzCloseCurrentFile(zip);
+		unzClose(zip);
+	}
+	else {
+		msgLog.append( tr("ERROR: Could not open FMU file (not a zip archive?).\n"));
+		return false;
+	}
+	try {
+		TiXmlDocument doc;
+		doc.Parse(fileContent.c_str(), nullptr, TIXML_ENCODING_UTF8);
+		if (doc.Error()) {
+			msgLog.append( tr("ERROR: Error parsing XML file. Error message:\n%1\n")
+										   .arg(QString::fromUtf8(doc.ErrorDesc())));
+			return false;
+		}
+		modelDesc.readXMLDoc(doc);
+		msgLog.append( tr("  Model identifiers:\n"));
+		if (!modelDesc.m_modelIdentifier.empty())
+			msgLog.append( tr("    FMI v1    : %1\n").arg(QString::fromUtf8(modelDesc.m_modelIdentifier.c_str())));
+		if (!modelDesc.m_meV2ModelIdentifier.empty())
+			msgLog.append( tr("    FMI v2 ME : %1\n").arg(QString::fromUtf8(modelDesc.m_meV2ModelIdentifier.c_str())));
+		if (!modelDesc.m_csV2ModelIdentifier.empty())
+			msgLog.append( tr("    FMI v2 CS : %1\n").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
+		msgLog.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+		// print properties of variables
+//		for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
+//			msgLog.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
+//		}
+
+	}
+	catch (IBK::Exception & ex) {
+		ex.writeMsgStackToError();
+		msgLog.append( tr("ERROR: Error parsing model description.\n"));
+		return false;
+	}
+	return true;
+}
+
+
 void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
@@ -122,6 +248,8 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 			// only need to update if we show relative FMU paths
 			if (m_ui->checkBoxRelativeFMUPaths->isChecked())
 				break;
+			return;
+
 		default:
 			return; // nothing to do for us
 	}
@@ -167,6 +295,25 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// create undo action
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p, n);
 	cmd->push();
+
+	// now trigger the "analyze FMU" action
+	QString msgLog;
+	MASTER_SIM::ModelDescription modelDesc;
+	bool res = extractFMUAndParseModelDesc(simDef.m_pathToFMU, msgLog, modelDesc);
+	if (!res) {
+		QMessageBox box(QMessageBox::Critical, tr("Error analyzing FMU/Slave"), tr("There were errors while analizing the slave FMU or data table."), QMessageBox::Ok);
+		box.setDetailedText(msgLog);
+		box.exec();
+		return;
+	}
+	else {
+		// insert model description to global model description list
+		IBK::Path fmuFullPath = simDef.m_pathToFMU.absolutePath();
+		MSIMMainWindow::addModelDescription(fmuFullPath, modelDesc);
+		// and signal main window
+		// to handle this new slave (i.e. show FMU info dialog)
+		emit newSlaveAdded(QString::fromStdString(fmuFullPath.str()));
+	}
 }
 
 
@@ -529,3 +676,5 @@ void MSIMViewSlaves::onNetworkGeometryChanged() {
 	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
 	cmd->push();
 }
+
+

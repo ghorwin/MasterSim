@@ -11,6 +11,14 @@ namespace Ui {
 	class MSIMViewSlaves;
 }
 
+namespace IBK {
+	class Path;
+}
+
+namespace MASTER_SIM {
+	class ModelDescription;
+}
+
 namespace BLOCKMOD {
 	class BlockItem;
 }
@@ -26,9 +34,24 @@ public:
 	/*! D'tor */
 	~MSIMViewSlaves();
 
+	/*! Extract the FMU with the given absolute file path, and determined properties for analysis.
+		If successful, returns true and the modelDesc data structure can be accessed to provide the
+		required information.
+		The msgLog is a log of the operations done and can be shown in a plain text edit field.
+	*/
+	static bool extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
+									QString & msgLog,
+									MASTER_SIM::ModelDescription & modelDesc);
+
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
 	void onModified( int modificationType, void * data );
+
+signals:
+	/*! Emitted when a new slave has been added.
+		The argument passed is the **absolute file path** to the slave (FMU or tsv/csv table).
+	*/
+	void newSlaveAdded(const QString & fmuFilePath);
 
 private slots:
 	void on_toolButtonAddSlave_clicked();
@@ -64,12 +87,9 @@ private:
 	/*! This function is called from onModified(), whenever slave data or FMU specs have changed.
 		The function processes all slaves and associated FMU data (if read), and checks if
 		the block names and socket number/types/names match those of the FMU slave.
-		The block is marked to have one of three states:
-
-		*
-
 	*/
 	void syncCoSimNetworkToBlocks();
+
 
 	Ui::MSIMViewSlaves				*m_ui;
 
