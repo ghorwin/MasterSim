@@ -110,12 +110,19 @@ void FMU::readModelDescription() {
 }
 
 
-void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, unsigned int valueReference) {
+void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const std::string & varName, FMIVariable::VarType varType, unsigned int valueReference, const std::string & unit) {
 	if (std::find(valueRefList.begin(), valueRefList.end(), valueReference) == valueRefList.end()) {
 		valueRefList.push_back(valueReference);
-		IBK::IBK_Message(IBK::FormatString("Variable '%1' [%2], valueRef = %3\n")
-						 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference),
-							   IBK::MSG_PROGRESS, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+		if (varType == FMIVariable::VT_DOUBLE) {
+			IBK::IBK_Message(IBK::FormatString("Variable '%1' (%2) [%3], valueRef = %4\n")
+							 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(unit).arg(valueReference),
+								   IBK::MSG_PROGRESS, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+		}
+		else {
+			IBK::IBK_Message(IBK::FormatString("Variable '%1' (%2), valueRef = %3\n")
+							 .arg(varName).arg(FMIVariable::varType2String(varType)).arg(valueReference),
+								   IBK::MSG_PROGRESS, "[FMU::addIfNotInList]", IBK::VL_STANDARD);
+		}
 	}
 	else {
 		// look up variable with given variable reference
@@ -136,10 +143,10 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 		const FMIVariable & var = m_modelDescription.m_variables[i];
 		if (var.m_causality == FMIVariable::C_OUTPUT) {
 			switch (var.m_type) {
-				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
+				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
+				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
+				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
 					IBK_ASSERT_X(false, "bad variable initialization");
 			}
@@ -150,10 +157,10 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 		for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 			const FMIVariable & var = m_modelDescription.m_variables[i];
 			switch (var.m_type) {
-				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
-				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference); break;
+				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
+				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
+				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
+				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
 					IBK_ASSERT_X(false, "bad variable initialization");
 			}

@@ -43,6 +43,11 @@ public:
 	*/
 	static void addUndoCommand(QUndoCommand * command);
 
+	/*! Add a model description to the global list of known model descriptions in UI. */
+	static void addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc);
+
+
+
 	/*! Default MSIMMainWindow constructor. */
 	explicit MSIMMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = nullptr);
 
@@ -81,6 +86,8 @@ private slots:
 	void on_actionEditTextEditProject_triggered();
 	void on_actionEditParseFMUs_triggered();
 	void on_actionEditPreferences_triggered();
+	/*! Post-proc opening triggered. */
+	void on_actionEditOpenPostProc_triggered();
 	void on_actionHelpAboutQt_triggered();
 	void on_actionHelpAboutMasterSim_triggered();
 
@@ -112,15 +119,20 @@ private slots:
 	*/
 	void onOpenProjectByFilename(const QString & filename);
 
-
+	/*! Slave view activated. */
 	void on_actionViewSlaves_toggled(bool arg1);
+	/*! Connvection view activated. */
 	void on_actionViewConnections_toggled(bool arg1);
+	/*! Simulation options view activated. */
 	void on_actionViewSimulation_toggled(bool arg1);
 
-
+	/*! Direct simulation start triggered (via shortcut). */
 	void on_actionStartSimulation_triggered();
 
-	void on_actionEditOpenPostProc_triggered();
+	/*! Called from slave view whenever an FMU has been added successfully (including successful
+		parsing of the model description.
+	*/
+	void onNewSlaveAdded(const QString & fullFMUPath);
 
 private:
 	/*! Sets up all dock widgets with definition lists. */
@@ -183,6 +195,8 @@ private:
 
 	/*! Model description data for all FMUs currently parsed.
 		This map is updated in on_actionEditParseFMUs_triggered().
+		Key is the absolute file path to the FMU, value is the model description.
+		The values are updated whenever the fmu is parsed.
 	*/
 	std::map<IBK::Path, MASTER_SIM::ModelDescription>	m_modelDescriptions;
 
