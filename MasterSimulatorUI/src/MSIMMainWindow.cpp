@@ -146,8 +146,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 
 	// *** connect to signals of views ***
 
-	connect(m_viewSlaves, SIGNAL(newSlaveAdded(const QString &)),
-			this, SLOT(onNewSlaveAdded(const QString &)));
+	connect(m_viewSlaves, SIGNAL(newSlaveAdded(const QString &, const QString &)),
+			this, SLOT(onNewSlaveAdded(const QString &, const QString &)));
 
 	// *** Setup log widget ***
 
@@ -980,7 +980,12 @@ void MSIMMainWindow::on_actionStartSimulation_triggered() {
 }
 
 
-void MSIMMainWindow::onNewSlaveAdded(const QString & fullFMUPath) {
+void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & fullFMUPath) {
+	// This slot is called from view-slaves when user has added a new slave,
+	// and after its model description was attempted to be read. In case
+	// this modelDescription was broken or could not be read, it won't be
+	// in the m_modelDescriptions map.
+
 	// retrieve model description - only present if it could be parsed successfully
 	IBK::Path fmuPath(fullFMUPath.toStdString());
 	if (m_modelDescriptions.find(fmuPath) == m_modelDescriptions.end())
@@ -988,8 +993,11 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & fullFMUPath) {
 
 	// ask user to open block editor dialog
 	int res = QMessageBox::question(this, tr("Open block editor"),
-									tr("Open the block editor now to define graphical representation of FMU? "
-									   "Since MASTERSIM allows defining simulations also without graphical schematics."));
+									tr("Open the block editor now to define a graphical representation of the FMU "
+									   "(you may skip this, since MASTERSIM also allows defining simulations without graphical schematics)?"));
+	if (res == QMessageBox::Yes) {
+		m_viewSlaves->editBlockItem(slaveName);
+	}
 
 }
 

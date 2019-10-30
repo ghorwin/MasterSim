@@ -88,6 +88,15 @@ MSIMViewSlaves::~MSIMViewSlaves() {
 }
 
 
+void MSIMViewSlaves::editBlockItem(const QString & slaveName) {
+	BLOCKMOD::SceneManager * sceneManager = qobject_cast<BLOCKMOD::SceneManager *>(m_ui->blockModWidget->scene());
+	Q_ASSERT(sceneManager != nullptr);
+	const BLOCKMOD::BlockItem * blockItem = sceneManager->blockItemByName(slaveName);
+	Q_ASSERT(blockItem != nullptr);
+	onBlockActionTriggered(blockItem);
+}
+
+
 bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 												QString & msgLog, MASTER_SIM::ModelDescription & modelDesc)
 {
@@ -292,11 +301,13 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	b.m_size = QSize(BLOCKMOD::Globals::GridSpacing*8, BLOCKMOD::Globals::GridSpacing*12);
 	n.m_blocks.append(b);
 
-	// create undo action
+	// create undo action - this will update the network and also
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p, n);
 	cmd->push();
 
-	// now trigger the "analyze FMU" action
+	// new block still has NoFmuState
+
+	// now trigger the "analyze FMU" action, but silently, without showing results
 	QString msgLog;
 	MASTER_SIM::ModelDescription modelDesc;
 	bool res = extractFMUAndParseModelDesc(simDef.m_pathToFMU, msgLog, modelDesc);
@@ -304,15 +315,18 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 		QMessageBox box(QMessageBox::Critical, tr("Error analyzing FMU/Slave"), tr("There were errors while analizing the slave FMU or data table."), QMessageBox::Ok);
 		box.setDetailedText(msgLog);
 		box.exec();
-		return;
 	}
 	else {
 		// insert model description to global model description list
 		IBK::Path fmuFullPath = simDef.m_pathToFMU.absolutePath();
 		MSIMMainWindow::addModelDescription(fmuFullPath, modelDesc);
-		// and signal main window
+
+		// new block has now an FMU to look after, so call the sync function to update its appearance
+		syncCoSimNetworkToBlocks();
+
+		// and finally signal main window to open editor
 		// to handle this new slave (i.e. show FMU info dialog)
-		emit newSlaveAdded(QString::fromStdString(fmuFullPath.str()));
+		emit newSlaveAdded(QString::fromStdString(simDef.m_name), QString::fromStdString(fmuFullPath.str()));
 	}
 }
 
