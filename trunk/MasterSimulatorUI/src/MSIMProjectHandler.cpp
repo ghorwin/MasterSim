@@ -138,7 +138,7 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
 			IBK::Path p = m_project->m_simulators[i].m_pathToFMU; // may be a relative path
 			if (!p.isAbsolute()) {
-				m_project->m_simulators[i].m_pathToFMU = absoluteProjectFilePath / p;
+				m_project->m_simulators[i].m_pathToFMU = (absoluteProjectFilePath / p).absolutePath();
 			}
 		}
 
