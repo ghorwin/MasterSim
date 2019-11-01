@@ -289,9 +289,9 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 
 	// create simulator definition
 	MASTER_SIM::Project::SimulatorDef simDef;
-	simDef.m_name = finfo.baseName().toUtf8().data(); // disambiguity?
+	simDef.m_name = finfo.baseName().toStdString(); // disambiguity?
 	simDef.m_name = IBK::pick_name(simDef.m_name, p.m_simulators.begin(), p.m_simulators.end());
-	simDef.m_pathToFMU = fname.toUtf8().data();
+	simDef.m_pathToFMU = fname.toStdString();
 	p.m_simulators.push_back(simDef);
 
 	// create a block for the graphical representation
