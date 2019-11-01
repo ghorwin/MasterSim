@@ -250,7 +250,7 @@ void SceneManager::mergeConnectorSegments(Connector & con) {
 	}
 	if (updateSegments)
 		updateConnectorSegmentItems(con, nullptr);
-	QApplication::setOverrideCursor(Qt::ArrowCursor);
+	QApplication::restoreOverrideCursor();
 }
 
 
@@ -314,7 +314,7 @@ void SceneManager::disableConnectionMode() {
 		removeBlock(m_network->m_blocks.count()-1);
 
 	m_connectionModeEnabled = false;
-	QApplication::setOverrideCursor(Qt::ArrowCursor);
+	QApplication::restoreOverrideCursor();
 }
 
 
