@@ -94,7 +94,16 @@ inline double f_dew_DIN1(double T, double phi) {
 		return IBK::f_pow(phi, 1.0/12.3) * (T - 124.55) + 124.55;
 
 	// function is only valid result is > 273.15;
-	return IBK::f_pow(phi, 1.0/8.02) * (T - 163.25) + 163.35;
+	return IBK::f_pow(phi, 1.0/8.02) * (T - 163.35) + 163.35;
+}
+
+/*! Calculates the relative humidity (unitless) from a given temperature T and dew point temperature in [K]. */
+inline double f_relhum_Tdew(double T, double Tdew) {
+	if (T<273.15)
+		return IBK::f_pow((Tdew - 124.55) / (T - 124.55), 12.3);
+
+	// function is only valid result is > 273.15;
+	return IBK::f_pow((Tdew - 163.35) / (T - 163.35), 8.02);
 }
 
 /*! Calculates the saturation pressure in [Pa] for a temperature T in [K] using the DIN function (reformulated equation). */

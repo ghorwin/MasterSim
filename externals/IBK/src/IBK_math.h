@@ -185,6 +185,11 @@ inline bool near_equal(double a, double b) {
 	return (a + NEAR_ZERO >= b  &&  a <= b + NEAR_ZERO);
 }
 
+/*! Tests if a is equal to b including a certain range for potential rounding errors. */
+inline bool near_zero(double a) {
+	return (a  >= -NEAR_ZERO  &&  a <= NEAR_ZERO);
+}
+
 /*! Meta template struct for calulating 10 power N with positiv N.
 	\code
 	double p10_to_power_8 = pow10Pos<8>();
@@ -198,13 +203,13 @@ template <int N> struct pow10Pos {
 
 /*! Meta template struct spezialisation for N=1 for calulating 10 power N with positiv N.*/
 template <> struct pow10Pos<1> {
-	/*! Power constant to speed up power calculation, specialization for N=10. */
+	/*! Power constant to speed up power calculation, specialization for N=1. */
 	static const int pow = 10;
 };
 
 /*! Meta template struct spezialisation for N=0 for calulating 10 power N with positiv N.*/
 template <> struct pow10Pos<0> {
-	/*! Power constant to speed up power calculation, specialization for N=1. */
+	/*! Power constant to speed up power calculation, specialization for N=0. */
 	static const int pow = 1;
 };
 
