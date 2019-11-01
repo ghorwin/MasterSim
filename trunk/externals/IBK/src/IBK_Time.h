@@ -145,6 +145,9 @@ public:
 	*/
 	void decomposeTOY(unsigned int& day, unsigned int & hour, unsigned int & minutes, unsigned int& seconds) const;
 
+	/*! Computes the seconds between this date/time and the other date/time, just as if "other - this" is evaluated in total seconds. */
+	double secondsUntil(const Time& other) const;
+
 	/*! Adds 'secs' seconds to the current time. */
 	Time& operator+=(double secs);
 	/*! Subtracts 'secs' seconds from the current time. */

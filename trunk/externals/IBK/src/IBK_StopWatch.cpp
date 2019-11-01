@@ -245,7 +245,7 @@ public:
 // *** Implementation of StopWatch, for all plattforms and versions ***
 
 StopWatch::StopWatch() :
-	m_intervalLength(15),
+	m_intervalLengthInSeconds(15),
 	m_lastIntervalDiff(0),
 	m_p(new StopWatchImpl)
 {
@@ -298,13 +298,13 @@ const std::string StopWatch::diff_str(std::size_t width) const {
 }
 
 
-void StopWatch::setIntervalLength(double intervalLength) {
-	m_intervalLength = intervalLength;
+void StopWatch::setIntervalLength(double intervalLengthInSeconds) {
+	m_intervalLengthInSeconds = intervalLengthInSeconds;
 }
 
 bool StopWatch::intervalCompleted() {
-	if (m_lastIntervalDiff + m_intervalLength < difference()/1000) {
-		m_lastIntervalDiff += m_intervalLength;
+	if (m_lastIntervalDiff + m_intervalLengthInSeconds < difference()/1000) {
+		m_lastIntervalDiff += m_intervalLengthInSeconds;
 		return true;
 	}
 	return false;

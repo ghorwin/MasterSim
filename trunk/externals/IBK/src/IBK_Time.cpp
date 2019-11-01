@@ -208,6 +208,12 @@ void Time::decomposeTOY(unsigned int& day, unsigned int & hour, unsigned int & m
 // ---------------------------------------------------------------------------
 
 
+double Time::secondsUntil(const Time& other) const {
+	return other.m_sec - m_sec + (other.m_year - m_year)*SECONDS_PER_YEAR;
+}
+// ---------------------------------------------------------------------------
+
+
 Time& Time::operator-=(const Time& rhs) {
 	// convert this->m_year to rhs.m_year
 	while (m_year < rhs.m_year) {
@@ -675,6 +681,7 @@ const char * Time::suitableSpeedUnit(double sec) {
 }
 // ---------------------------------------------------------------------------
 
+
 std::string Time::dateRFC2822(const std::string& timeFormat ) {
 	const char * const FUNC_ID = "[Time::dateRFC2822]";
 
@@ -771,9 +778,6 @@ Time Time::operator+(double s) const {
 	return newTime+=(s);
 }
 
-double Time::operator-(const Time& rhs) {
-	return m_sec - rhs.m_sec + (m_year - rhs.m_year)*SECONDS_PER_YEAR;
-}
 
 */
 

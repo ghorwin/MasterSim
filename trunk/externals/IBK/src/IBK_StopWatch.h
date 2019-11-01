@@ -116,7 +116,7 @@ public:
 	/*! Sets interval length.
 		\param intervalLength Interval length in [s].
 	*/
-	void setIntervalLength(double intervalLength);
+	void setIntervalLength(double intervalLengthInSeconds);
 
 	/*! Returns true when interval has completed and increases the interval counter.
 		Call this function repeatedly in your code to check if the selected interval has
@@ -126,7 +126,7 @@ public:
 
 protected:
 	/*! Timer check interval in  [s]. */
-	double m_intervalLength;
+	double m_intervalLengthInSeconds;
 
 	/*! Time elapsed since start of timer and until last interval in [s]. */
 	double m_lastIntervalDiff;
