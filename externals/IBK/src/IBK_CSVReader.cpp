@@ -73,22 +73,8 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 
 		std::string line;
 		std::getline(in, line);
-
-		// determine format of line
-		m_separationCharacter = '\t';
 		IBK::explode(line, m_captions, m_separationCharacter);
 		m_nColumns = (unsigned int)m_captions.size();
-		if (m_nColumns == 1) {
-			// we probably have "..",".." format
-			m_separationCharacter = ',';
-			IBK::explode(line, m_captions, m_separationCharacter);
-			m_nColumns = (unsigned int)m_captions.size();
-		}
-		// strip all strings from enclosing ""
-		for (unsigned int i=0; i<m_captions.size(); ++i) {
-			IBK::trim(m_captions[i], "\"\r");
-		}
-
 		m_nRows = 0;
 		m_units.clear();
 		if (extractUnits) {
