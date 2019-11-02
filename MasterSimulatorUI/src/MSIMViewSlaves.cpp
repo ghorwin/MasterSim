@@ -98,7 +98,7 @@ void MSIMViewSlaves::editBlockItem(const QString & slaveName) {
 
 
 bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
-												QString & msgLog, MASTER_SIM::ModelDescription & modelDesc)
+												QString & msgLog, MASTER_SIM::ModelDescription & modelDesc, QPixmap & modelPixmap)
 {
 
 	// check if the simulation slave is actually a csv/tsv file and use the file reader instead
@@ -180,6 +180,33 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 		while (readBytes > 0);
 
 		unzCloseCurrentFile(zip);
+
+		// also try to read the "model.png" file, if it exists
+		if (unzLocateFile(zip, "model.png", 1) == UNZ_OK) {
+			if (unzOpenCurrentFile( zip ) == UNZ_OK) {
+				char buffer[4096];
+				int readBytes;
+				QByteArray byteArray;
+				do {
+					readBytes = unzReadCurrentFile(zip, buffer, 4096);
+					if (readBytes < 0) {
+						msgLog.append( tr("ERROR: Error while extracting modelDescription.xml.\n"));
+						unzCloseCurrentFile(zip);
+						unzClose( zip );
+						return false;
+					}
+					if (readBytes > 0) {
+						byteArray.append(buffer, readBytes);
+					}
+				}
+				while (readBytes > 0);
+				QPixmap p;
+				if (p.loadFromData(byteArray, "png")) {
+					modelPixmap = p;
+				}
+			}
+			unzCloseCurrentFile(zip);
+		}
 		unzClose(zip);
 	}
 	else {
@@ -310,7 +337,8 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// now trigger the "analyze FMU" action, but silently, without showing results
 	QString msgLog;
 	MASTER_SIM::ModelDescription modelDesc;
-	bool res = extractFMUAndParseModelDesc(simDef.m_pathToFMU, msgLog, modelDesc);
+	QPixmap modelPixmap;
+	bool res = extractFMUAndParseModelDesc(simDef.m_pathToFMU, msgLog, modelDesc, modelPixmap);
 	if (!res) {
 		QMessageBox box(QMessageBox::Critical, tr("Error analyzing FMU/Slave"), tr("There were errors while analizing the slave FMU or data table."), QMessageBox::Ok);
 		box.setDetailedText(msgLog);
@@ -319,7 +347,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	else {
 		// insert model description to global model description list
 		IBK::Path fmuFullPath = simDef.m_pathToFMU.absolutePath();
-		MSIMMainWindow::addModelDescription(fmuFullPath, modelDesc);
+		MSIMMainWindow::addModelDescription(fmuFullPath, modelDesc, modelPixmap);
 
 		// new block has now an FMU to look after, so call the sync function to update its appearance
 		MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();

@@ -64,8 +64,9 @@ void MSIMMainWindow::addUndoCommand(QUndoCommand * command) {
 }
 
 
-void MSIMMainWindow::addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc) {
+void MSIMMainWindow::addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc, const QPixmap & modelPixmap) {
 	instance().m_modelDescriptions[fmuPath] = modelDesc;
+	instance().m_modelPixmaps[fmuPath] = modelPixmap;
 }
 
 
@@ -245,6 +246,21 @@ const MASTER_SIM::ModelDescription & MSIMMainWindow::modelDescription(const std:
 		}
 	}
 	throw IBK::Exception(IBK::FormatString("Cannot find modelDescription data for slave '%1'").arg(slaveName), "[MSIMMainWindow::modelDescription]");
+}
+
+
+const QPixmap & MSIMMainWindow::modelPixmap(const std::string & slaveName) const {
+	const MASTER_SIM::Project::SimulatorDef & slaveDef = project().simulatorDefinition( slaveName );
+	IBK::Path fmuFullPath = slaveDef.m_pathToFMU;
+	fmuFullPath = fmuFullPath.absolutePath(); // we compare by absolute path with removed /../../ etc.
+	for (std::map<IBK::Path, QPixmap>::const_iterator it = m_modelPixmaps.begin();
+		 it != m_modelPixmaps.end(); ++it)
+	{
+		if (it->first == fmuFullPath) {
+			return it->second;
+		}
+	}
+	throw IBK::Exception(IBK::FormatString("Cannot find pixmap data for slave '%1'").arg(slaveName), "[MSIMMainWindow::modelPixmap]");
 }
 
 
@@ -492,6 +508,12 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 	// now process all FMUs
 	m_modelDescriptions.clear();
 	for (std::set<IBK::Path>::const_iterator it = fmus.begin(); it != fmus.end(); ++it) {
+		MASTER_SIM::ModelDescription modelDesc;
+		QPixmap p;
+		if (MSIMViewSlaves::extractFMUAndParseModelDesc(*it, msg, modelDesc, p)) {
+			addModelDescription(*it, modelDesc, p);
+		}
+#if 0
 		// check if the simulation slave is actually a csv/tsv file and use the file reader instead
 		if (!IBK::string_nocase_compare(it->extension(), "fmu")) {
 			// attempt to read the file as csv/tsv file
@@ -613,6 +635,7 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 			msg.append( tr("ERROR: Error parsing model description.\n"));
 			continue;
 		}
+#endif
 	}
 }
 
