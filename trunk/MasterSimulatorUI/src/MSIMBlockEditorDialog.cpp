@@ -44,8 +44,9 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
 	// determine index of block to modify
 	m_modifiedBlockIdx = n.m_blocks.size();
-	for (int i=0; i<n.m_blocks.size(); ++i) {
-		if (&n.m_blocks[i] == &b) {
+	auto bit = n.m_blocks.begin();
+	for (int i=0; i<n.m_blocks.size(); ++i, ++bit) {
+		if (&(*bit) == &b) {
 			m_modifiedBlockIdx = i;
 			break;
 		}

@@ -351,9 +351,10 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 	}
 
 	// loop over all simulation slaves
-	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
+	auto bit = n.m_blocks.begin();
+	for (unsigned int i=0; i<prj.m_simulators.size(); ++i, ++bit) {
 		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
-		BLOCKMOD::Block & b = n.m_blocks[i];
+		BLOCKMOD::Block & b = *bit;
 		b.m_properties["state"] = MSIMSlaveBlock::StateNoFMU; // assume noFMU - worst case scenario
 
 		// check if name matches the block with the same index in the network
@@ -486,7 +487,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 			// add dummy blocks for each simulator, that is not yet in the network
 			for (MASTER_SIM::Project::SimulatorDef & simdef : m_project->m_simulators) {
 				// look for existing block
-				std::vector<BLOCKMOD::Block>::iterator it;
+				std::list<BLOCKMOD::Block>::iterator it;
 				for (it = network.m_blocks.begin(); it != network.m_blocks.end(); ++it) {
 					if (it->m_name.toStdString() == simdef.m_name)
 						break;

@@ -124,8 +124,8 @@ void Network::writeXML(const QString & fname) const {
 	if (!m_blocks.empty()) {
 		stream.writeComment("Blocks");
 		stream.writeStartElement("Blocks");
-		for (int i=0; i<m_blocks.size(); ++i)
-			m_blocks[i].writeXML(stream);
+		for (const Block & b : m_blocks)
+			b.writeXML(stream);
 
 		stream.writeEndElement(); // Blocks
 	}
@@ -133,8 +133,8 @@ void Network::writeXML(const QString & fname) const {
 	if (!m_connectors.empty()) {
 		stream.writeComment("Connectors");
 		stream.writeStartElement("Connectors");
-		for (int i=0; i<m_connectors.size(); ++i)
-			m_connectors[i].writeXML(stream);
+		for (const Connector & c : m_connectors)
+			c.writeXML(stream);
 
 		stream.writeEndElement(); // Connectors
 	}
@@ -149,23 +149,23 @@ void Network::writeXML(const QString & fname) const {
 
 void Network::checkNames() const {
 	QSet<QString> blockNames;
-	for (int i=0; i<m_blocks.size(); ++i) {
-		QString bName = m_blocks[i].m_name;
+	for (const Block & b : m_blocks) {
+		QString bName = b.m_name;
 		if (bName.indexOf(".") != -1)
 			throw std::runtime_error("Invalid Block ID name '"+bName.toStdString()+"'");
 		if (blockNames.contains(bName))
 			throw std::runtime_error("Duplicate Block ID name '"+bName.toStdString()+"'");
 		blockNames.insert(bName);
-		qDebug() << bName;
+//		qDebug() << bName;
 		// now all sockets
 		QSet<QString> socketNames;
-		for (int j=0; j<m_blocks[i].m_sockets.count(); ++j) {
-			QString sName = m_blocks[i].m_sockets[j].m_name;
+		for (const Socket & s : b.m_sockets) {
+			QString sName = s.m_name;
 			// check if such a name already exists
 			if (socketNames.contains(sName))
 				throw std::runtime_error("Duplicate Socket ID name '"+sName.toStdString()+"' within block '"+bName.toStdString()+"'");
 			socketNames.insert(sName);
-			qDebug() << sName;
+//			qDebug() << sName;
 		}
 	}
 	// check all connections for valid socket names
@@ -296,41 +296,49 @@ void Network::removeBlock(unsigned int blockIdx) {
 	Q_ASSERT(blockIdx < static_cast<unsigned int>(m_blocks.size()));
 
 	// get block ID name
-	QString bName = m_blocks[blockIdx].m_name;
+	auto bit = m_blocks.begin(); std::advance(bit, blockIdx);
+	QString bName = bit->m_name;
 
 	// erase all connectors that refer to this block
-	int i=0;
-	while (i<m_connectors.size()) {
+	auto cit = m_connectors.begin();
+	while (cit != m_connectors.end()) {
 		QString blockName, socketName;
-		splitFlatName(m_connectors[i].m_sourceSocket, blockName, socketName);
+		splitFlatName(cit->m_sourceSocket, blockName, socketName);
 		if (blockName == bName) {
-			m_connectors.erase(m_connectors.begin() + i);
+			auto cit2 = cit;
+			++cit2;
+			m_connectors.erase(cit);
+			cit = cit2;
 			continue;
 		}
-		splitFlatName(m_connectors[i].m_targetSocket, blockName, socketName);
+		splitFlatName(cit->m_targetSocket, blockName, socketName);
 		if (blockName == bName) {
-			m_connectors.erase(m_connectors.begin() + i);
+			auto cit2 = cit;
+			++cit2;
+			m_connectors.erase(cit);
+			cit = cit2;
 			continue;
 		}
-		++i;
+		++cit;
 	}
-	m_blocks.erase(m_blocks.begin() + blockIdx);
+	m_blocks.erase(bit);
 }
 
 
 void Network::renameBlock(unsigned int blockIdx, const QString &newName) {
-	QString oldName = m_blocks[blockIdx].m_name;
-	m_blocks[blockIdx].m_name = newName;
+	auto bit = m_blocks.begin(); std::advance(bit, blockIdx);
+	QString oldName = bit->m_name;
+	bit->m_name = newName;
 
-	for (unsigned int i=0; i<m_connectors.size(); ++i) {
+	for (Connector & c : m_connectors) {
 		QString blockName, socketName;
-		splitFlatName(m_connectors[i].m_sourceSocket, blockName, socketName);
+		splitFlatName(c.m_sourceSocket, blockName, socketName);
 		if (blockName == oldName) {
-			m_connectors[i].m_sourceSocket = newName + "." + socketName;
+			c.m_sourceSocket = newName + "." + socketName;
 		}
-		splitFlatName(m_connectors[i].m_targetSocket, blockName, socketName);
+		splitFlatName(c.m_targetSocket, blockName, socketName);
 		if (blockName == oldName) {
-			m_connectors[i].m_targetSocket = newName + "." + socketName;
+			c.m_targetSocket = newName + "." + socketName;
 		}
 	}
 }
