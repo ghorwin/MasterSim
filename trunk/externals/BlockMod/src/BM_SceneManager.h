@@ -63,7 +63,12 @@ public:
 	*/
 	void setNetwork(const Network & network);
 
-	/*! Provide read-only access to the network data structure. */
+	/*! Provide read-only access to the network data structure.
+		\note This data structure is internally used and modified by user actions.
+		So, whenever a change signal is emitted, this network contains
+		already the changes. If you need to create UNDO actions based on the previous
+		state of the network, you must keep a separate copy of the network.
+	*/
 	const Network & network() const;
 
 

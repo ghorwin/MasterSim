@@ -108,7 +108,6 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	// *** create views ***
 
 	m_stackedWidget = new QStackedWidget(this);
-	lay->addWidget(m_stackedWidget);
 	m_viewSlaves = new MSIMViewSlaves(this);
 	m_stackedWidget->insertWidget(0, m_viewSlaves);
 	m_viewConnections = new MSIMViewConnections(this);
@@ -138,6 +137,10 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	connect(m_buttonBar->toolButtonQuit,				SIGNAL(clicked()), this, SLOT(on_actionFileQuit_triggered()));
 
 	addAction(m_ui->actionStartSimulation);
+
+	// views are to the left of the button bar
+	lay->addWidget(m_stackedWidget);
+
 
 	// *** connect to ProjectHandler signals ***
 

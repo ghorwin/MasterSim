@@ -19,8 +19,8 @@ void MSIMUndoSlaves::undo() {
 	std::swap( theProject(), m_project );
 
 	// exchange Network
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
-	MSIMProjectHandler::instance().sceneManager()->setNetwork(m_network);
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
+	setNetwork(m_network);
 	m_network.swap(n);
 
 	// tell project handler that everything has changed

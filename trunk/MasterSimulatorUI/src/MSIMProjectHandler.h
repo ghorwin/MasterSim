@@ -8,8 +8,9 @@
 
 #include <MSIM_Project.h>
 
+#include <BM_Network.h>
+
 namespace BLOCKMOD {
-	class Network;
 	class SceneManager;
 };
 
@@ -153,8 +154,17 @@ public:
 	*/
 	const MASTER_SIM::Project & project() const;
 
-	/*! Returns the scene that manages the network representation. */
-	BLOCKMOD::SceneManager * sceneManager() { return m_sceneManager; }
+	/*! Returns the scene that manages the network representation.
+		\note You should not access the network throught the scene manager directly, but
+		rather use the member function m_network. An exception are functions dealing
+		with blocks of the scene (e.g. edit trigger functions), where comparisons between
+		block pointers and pointers stored in graphics items are made. Here, you MUST USE
+		the network of the scene manager.
+	*/
+	const BLOCKMOD::SceneManager * sceneManager() const { return m_sceneManager; }
+
+	/*! Returns network stored in the project. */
+	const BLOCKMOD::Network & network() const { return m_network; }
 
 	/*! Returns the time stamp of the last modification of the current project. */
 	const QDateTime lastReadTime() const { return m_lastReadTime; }
@@ -162,6 +172,13 @@ public:
 	/*! Updates time stamp of the last modification of the current project, but only if project is present. */
 	void updateLastReadTime();
 
+	/*! This function is called from ViewSlaves::onModified(), whenever slave data or FMU specs have changed.
+		The function processes all slaves and associated FMU data (if read), and checks if
+		the block names and socket number/types/names match those of the FMU slave.
+
+		It updates the network (both in project and in sceneManager()) without creating an undo action.
+	*/
+	void syncCoSimNetworkToBlocks();
 
 signals:
 	/*! Emitted when the project has been modified.
@@ -232,7 +249,6 @@ private:
 	*/
 	void addToRecentFiles(const QString& fname);
 
-
 	// *** PRIVATE DATA MEMBERS ***
 
 	/*! Pointer to self instance.
@@ -248,9 +264,21 @@ private:
 	MASTER_SIM::Project		*m_project;
 
 	/*! The graphics scene that shows the managed network.
-		The scene manager also holds the managed network, so that only one instance of the network is used in the project.
+		The scene manager also holds the managed network, currently shown in the view.
+		The member variable m_network holds a copy of the network currently stored in the
+		project data structure (see documentation of m_network).
 	*/
 	BLOCKMOD::SceneManager	*m_sceneManager;
+
+	/*! The network of the project.
+		This stores the current state of the network of the project.
+		The network of the scene manager may differ only, when a user interaction has
+		caused a modification, e.g. geometry change. In this case, the network in the
+		project is updated in the undo action.
+
+		For reading/writing the network to file, only the network in m_network is used.
+	*/
+	BLOCKMOD::Network		m_network;
 
 	/*! Holds the time stamp of the last time the project was read.
 		This time stamp is updated in read() and used to check for external project modifications.
@@ -267,6 +295,8 @@ private:
 		The variable is only set in the read() and write() functions.
 		*/
 	mutable QString			m_projectFile;
+
+	friend class MSIMUndoCommandBase;
 };
 
 /*! Convenience function for accessing the MASTER_SIM::Project data directly with a shorter synopsis. */

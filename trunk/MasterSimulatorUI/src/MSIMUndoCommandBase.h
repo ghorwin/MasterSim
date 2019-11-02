@@ -22,6 +22,8 @@ protected:
 		change the project data. */
 	MASTER_SIM::Project & theProject() const;
 
+	/*! Gives write access to the network managed in parallel to the project(). */
+	void setNetwork(const BLOCKMOD::Network & network, bool projectOnly = false);
 };
 
 #endif // MSIMUndoCommandBaseH
