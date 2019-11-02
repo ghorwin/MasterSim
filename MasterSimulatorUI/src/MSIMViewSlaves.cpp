@@ -529,7 +529,8 @@ void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockIte
 
 void MSIMViewSlaves::onBlockEditingCompleted() {
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
-	n.m_blocks[m_blockEditorDialog->m_modifiedBlockIdx] = m_blockEditorDialog->m_modifiedBlock;
+	auto bit = n.m_blocks.begin(); std::advance(bit, m_blockEditorDialog->m_modifiedBlockIdx);
+	*bit = m_blockEditorDialog->m_modifiedBlock;
 	MSIMUndoSlaves * undo = new MSIMUndoSlaves(tr("Changed block definition"), project(), n);
 	undo->push();
 }
