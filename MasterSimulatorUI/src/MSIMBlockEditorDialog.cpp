@@ -5,6 +5,7 @@
 
 #include "MSIMSettings.h"
 #include "MSIMProjectHandler.h"
+#include "MSIMMainWindow.h"
 
 #include <BM_Network.h>
 #include <BM_SceneManager.h>
@@ -69,6 +70,13 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	// now auto-matically layout sockets and create missing sockets
 	m_modifiedBlock.autoUpdateSockets(m_inletSockets, m_outletSockets);
 
+	QPixmap p = MSIMMainWindow::instance().modelPixmap(m_modifiedBlock.m_name.toStdString());
+	if (p.isNull())
+		m_modifiedBlock.m_properties.remove("Pixmap");
+	else
+		m_modifiedBlock.m_properties["Pixmap"] = QVariant(p);
+	m_modifiedBlock.m_properties["ShowPixmap"] = m_ui->checkBoxShowFMUPixmap->isChecked();
+
 	// TODO : use different block item?
 	m_blockItem = new BLOCKMOD::BlockItem(&m_modifiedBlock);
 	m_blockItem->setRect(0, 0, m_modifiedBlock.m_size.width(), m_modifiedBlock.m_size.height());
@@ -98,7 +106,6 @@ void MSIMBlockEditorDialog::on_pushButtonLayoutSockets_clicked() {
 	m_blockItem->setPos(0, 0);
 	m_blockItem->setFlags(QGraphicsItem::GraphicsItemFlags());
 	m_ui->graphicsView->scene()->addItem(m_blockItem);
-
 }
 
 
@@ -112,4 +119,10 @@ void MSIMBlockEditorDialog::on_spinBoxColumns_valueChanged(int) {
 
 void MSIMBlockEditorDialog::on_spinBoxRows_valueChanged(int) {
 	on_spinBoxColumns_valueChanged(0);
+}
+
+void MSIMBlockEditorDialog::on_checkBoxShowFMUPixmap_clicked() {
+	// if checked, set pixmap property in block
+	m_modifiedBlock.m_properties["ShowPixmap"] = m_ui->checkBoxShowFMUPixmap->isChecked();
+	m_blockItem->update();
 }

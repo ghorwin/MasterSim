@@ -44,8 +44,7 @@ public:
 	static void addUndoCommand(QUndoCommand * command);
 
 	/*! Add a model description to the global list of known model descriptions in UI. */
-	static void addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc);
-
+	static void addModelDescription(const IBK::Path & fmuPath, const MASTER_SIM::ModelDescription & modelDesc, const QPixmap & modelPixmap);
 
 
 	/*! Default MSIMMainWindow constructor. */
@@ -67,6 +66,7 @@ public:
 		Throws an IBK::Exception if either slave name is invalid, or FMU model description is not in the map.
 	*/
 	const MASTER_SIM::ModelDescription & modelDescription(const std::string & slaveName) const;
+	const QPixmap & modelPixmap(const std::string & slaveName) const;
 
 protected:
 	/*! Checks if project file has been changed by external application. */
@@ -199,6 +199,7 @@ private:
 		The values are updated whenever the fmu is parsed.
 	*/
 	std::map<IBK::Path, MASTER_SIM::ModelDescription>	m_modelDescriptions;
+	std::map<IBK::Path, QPixmap>						m_modelPixmaps;
 
 	/*! The welcome screen. */
 	MSIMWelcomeScreen			*m_welcomeScreen;
