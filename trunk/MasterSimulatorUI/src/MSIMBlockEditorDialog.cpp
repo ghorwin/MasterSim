@@ -40,14 +40,14 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	// first store block index in network's block list
 	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
 	// determine index of block to modify
-	m_modifiedBlockIdx = n.m_blocks.count();
-	for (int i=0; i<n.m_blocks.count(); ++i) {
+	m_modifiedBlockIdx = n.m_blocks.size();
+	for (int i=0; i<n.m_blocks.size(); ++i) {
 		if (&n.m_blocks[i] == &b) {
 			m_modifiedBlockIdx = i;
 			break;
 		}
 	}
-	Q_ASSERT(m_modifiedBlockIdx != n.m_blocks.count());
+	Q_ASSERT(m_modifiedBlockIdx != n.m_blocks.size());
 
 	// populate GUI
 	m_ui->lineEditName->setText(b.m_name);

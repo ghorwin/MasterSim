@@ -299,7 +299,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	unsigned int gy = BLOCKMOD::Globals::GridSpacing*qrand()*int(40.0/RAND_MAX);
 	BLOCKMOD::Block b(QString::fromStdString(simDef.m_name), gx, gy);
 	b.m_size = QSize(BLOCKMOD::Globals::GridSpacing*8, BLOCKMOD::Globals::GridSpacing*12);
-	n.m_blocks.append(b);
+	n.m_blocks.push_back(b);
 
 	// create undo action - this will update the network and also
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave added"), p, n);
@@ -595,10 +595,10 @@ void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
 	while (n.m_blocks.size() < (int)prj.m_simulators.size()) {
 		BLOCKMOD::Block b;
 		b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*6, BLOCKMOD::Globals::GridSpacing*8);
-		int blockCount = n.m_blocks.count();
+		int blockCount = n.m_blocks.size();
 		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
 						  BLOCKMOD::Globals::GridSpacing*blockCount);
-		n.m_blocks.append(b);
+		n.m_blocks.push_back(b);
 	}
 
 	// loop over all simulation slaves

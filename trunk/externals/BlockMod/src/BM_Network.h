@@ -77,21 +77,27 @@ public:
 	/*! Searches block and socket data structure by flat variable name. */
 	void lookupBlockAndSocket(const QString & flatName, const Block * &block, const Socket * &socket) const;
 
-	/*! Removes block at given index and all associated connectors. */
+	/*! Removes block at given index and all associated connectors.
+		\warning Invalidates all block and connector pointers!
+	*/
 	void removeBlock(unsigned int blockIdx);
 
+	/*! Renames a single block. */
 	void renameBlock(unsigned int blockIdx, const QString & newName);
 
 	// *** member variables ***
 
-	/*! List of all blocks in the network. */
-	QList<Block>		m_blocks;
+	/*! List of all blocks in the network.
+		\note Cannot use a QList here, because we maintain persistent pointers to block objects
+			and QList's copy-on-write functionality breaks these persistent pointers.
+	*/
+	std::vector<Block>		m_blocks;
 
 	/*! List of all connectors in the network.
 		Connectors are always associated with sockets (referenced via
 		block-id and socket-id).
 	*/
-	QList<Connector>	m_connectors;
+	std::vector<Connector>	m_connectors;
 
 
 	// *** static functions ***
