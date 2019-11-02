@@ -24,10 +24,10 @@
 #include "MSIMUndoProject.h"
 #include "MSIMSceneManager.h"
 
-MSIMProjectHandler * MSIMProjectHandler::m_self = NULL;
+MSIMProjectHandler * MSIMProjectHandler::m_self = nullptr;
 
 MSIMProjectHandler & MSIMProjectHandler::instance() {
-	Q_ASSERT_X(m_self != NULL, "[MSIMProjectHandler::instance]",
+	Q_ASSERT_X(m_self != nullptr, "[MSIMProjectHandler::instance]",
 		"You must not access MSIMProjectHandler::instance() when the is no MSIMProjectHandler "
 		"instance (anylonger).");
 	return *m_self;
@@ -35,11 +35,11 @@ MSIMProjectHandler & MSIMProjectHandler::instance() {
 
 
 MSIMProjectHandler::MSIMProjectHandler() :
-	m_project(NULL),
-	m_sceneManager(NULL),
+	m_project(nullptr),
+	m_sceneManager(nullptr),
 	m_modified(false)
 {
-	IBK_ASSERT(m_self == NULL);
+	IBK_ASSERT(m_self == nullptr)
 	m_self = this;
 
 	// initialization of other globals
@@ -52,7 +52,7 @@ MSIMProjectHandler::~MSIMProjectHandler( ){
 	// free owned project, if any
 	delete m_project;
 	delete m_sceneManager;
-	m_self = NULL;
+	m_self = nullptr;
 }
 
 
@@ -122,7 +122,7 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 	const char * const FUNC_ID = "[MSIMProjectHandler::loadProject]";
 
 	// we must not have a project loaded
-	IBK_ASSERT(!isValid());
+	IBK_ASSERT(!isValid())
 
 	// create a new project
 	createProject();
@@ -280,7 +280,7 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 
 	if (fileName != lastFileName) {
 		// signal that project file has changed
-		emit modified(ProjectPathModified, NULL);
+		emit modified(ProjectPathModified, nullptr);
 	}
 
 	// clear modified flag
@@ -311,7 +311,7 @@ void MSIMProjectHandler::setModified(int modificationType, void * data) {
 const MASTER_SIM::Project & MSIMProjectHandler::project() const {
 	const char * const FUNC_ID = "[MSIMProjectHandler::project]";
 
-	if (m_project == NULL)
+	if (m_project == nullptr)
 		throw IBK::Exception("Must not call project() on invalid ProjectHandler.", FUNC_ID);
 	return *m_project;
 }
@@ -328,7 +328,7 @@ void MSIMProjectHandler::updateLastReadTime() {
 // *** PRIVATE MEMBER FUNCTIONS ***
 
 void MSIMProjectHandler::createProject() {
-	Q_ASSERT(m_project == NULL);
+	Q_ASSERT(m_project == nullptr);
 
 	m_project = new MASTER_SIM::Project;
 	m_sceneManager = new MSIMSceneManager;
@@ -338,12 +338,12 @@ void MSIMProjectHandler::createProject() {
 
 
 void MSIMProjectHandler::destroyProject() {
-	Q_ASSERT(m_project != NULL);
+	Q_ASSERT(m_project != nullptr);
 
 	delete m_project;
 	delete m_sceneManager;
-	m_project = NULL;
-	m_sceneManager = NULL;
+	m_project = nullptr;
+	m_sceneManager = nullptr;
 	m_projectFile.clear();
 }
 
@@ -396,19 +396,19 @@ bool MSIMProjectHandler::read(const QString & fname) {
 			// add dummy blocks for each simulator, that is not yet in the network
 			for (MASTER_SIM::Project::SimulatorDef & simdef : m_project->m_simulators) {
 				// look for existing block
-				QList<BLOCKMOD::Block>::iterator it;
+				std::vector<BLOCKMOD::Block>::iterator it;
 				for (it = network.m_blocks.begin(); it != network.m_blocks.end(); ++it) {
 					if (it->m_name.toStdString() == simdef.m_name)
 						break;
 				}
 				if (it == network.m_blocks.end()) {
-					int blockCount = network.m_blocks.count();
+					int blockCount = network.m_blocks.size();
 					BLOCKMOD::Block b( QString::fromStdString(simdef.m_name), BLOCKMOD::Globals::GridSpacing*blockCount,
 									   BLOCKMOD::Globals::GridSpacing*blockCount);
 
 					b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*5,
 								 BLOCKMOD::Globals::GridSpacing*10);
-					network.m_blocks.append(b);
+					network.m_blocks.push_back(b);
 				}
 			}
 		}
