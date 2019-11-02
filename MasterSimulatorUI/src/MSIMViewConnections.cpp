@@ -361,7 +361,7 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 	p.m_graph.push_back(edge);
 
 	// create undo action
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
 	/// \todo auto-create socket connections
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
 	cmd->push();
@@ -383,7 +383,7 @@ void MSIMViewConnections::on_toolButtonRemoveConnection_clicked() {
 	p.m_graph.erase( p.m_graph.begin() + connIdx);
 
 	// create undo action
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // net network
 	/// \todo remove correspondin socket connections
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p, n);
 	cmd->push();
@@ -502,7 +502,7 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 	}
 
 	// create undo action
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // net network
 	/// \todo auto-create socket connections (several!)
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connections added"), p, n);
 	cmd->push();

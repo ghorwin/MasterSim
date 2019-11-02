@@ -20,6 +20,13 @@ private:
 	/*! Cache for network before/after the block was inserted. */
 	BLOCKMOD::Network	m_network;
 
+	/*! We need to distinguish between the first redo (the initial modification of the project)
+		and subsequent redos triggered by the undo action.
+		In the first redo we must not update the network in the scene manager, because
+		this would delete the block item that is actually sending the change. Do avoid that,
+		we only update the project's copy of the network in the first redo, and only afterwards
+		update both.
+	*/
 	bool				m_firstRedo;
 };
 
