@@ -39,6 +39,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
+#include <QTimer>
 
 #include <iostream>
 
@@ -119,6 +120,15 @@ void SceneManager::blockMoved(const Block * block, const QPointF oldPos) {
 		// update corresponding connectorItems (maybe remove/add items)
 		updateConnectorSegmentItems(*con, nullptr);
 	}
+
+	// Mind the following problem:
+	// - this function is called from within BlockItem::itemChange() event handler
+	// - when you set a new network in the scene manager, for example in the slot connected
+	//	to networkGeometryChanged(), this will delete all existing block items and create new ones
+	// - when the execution returns from this function, it accesses now invalid memory --> boom!
+
+	// Rule: never ever call setNetwork() when processing this signal!
+
 	emit networkGeometryChanged(); /// \todo add old position to signal
 }
 

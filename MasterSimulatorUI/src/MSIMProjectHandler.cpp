@@ -23,6 +23,8 @@
 #include "MSIMLogWidget.h"
 #include "MSIMUndoProject.h"
 #include "MSIMSceneManager.h"
+#include "MSIMSlaveBlock.h"
+#include "MSIMMainWindow.h"
 
 MSIMProjectHandler * MSIMProjectHandler::m_self = nullptr;
 
@@ -325,6 +327,94 @@ void MSIMProjectHandler::updateLastReadTime() {
 }
 
 
+void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
+	// started implementing block-slave sync code
+
+	// get a copy of the network
+	BLOCKMOD::Network n = m_network;
+
+	// remove superfluous blocks (only needed when someone manually edited the graph/simulator
+	// defs in project file)
+	const MASTER_SIM::Project & prj = *m_project;
+	while (n.m_blocks.size() > (int)prj.m_simulators.size()) {
+		n.removeBlock(n.m_blocks.size()-1);
+	}
+
+	// add missing blocks - newly added blocks will be configured later on
+	while (n.m_blocks.size() < (int)prj.m_simulators.size()) {
+		BLOCKMOD::Block b;
+		b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*6, BLOCKMOD::Globals::GridSpacing*8);
+		int blockCount = n.m_blocks.size();
+		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
+						  BLOCKMOD::Globals::GridSpacing*blockCount);
+		n.m_blocks.push_back(b);
+	}
+
+	// loop over all simulation slaves
+	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
+		BLOCKMOD::Block & b = n.m_blocks[i];
+		b.m_properties["state"] = MSIMSlaveBlock::StateNoFMU; // assume noFMU - worst case scenario
+
+		// check if name matches the block with the same index in the network
+		if (QString::fromStdString(simDef.m_name) != b.m_name) {
+			// this block does not match the simulator slave name -> adjust
+			b.m_name = QString::fromStdString(simDef.m_name);
+		}
+
+		// retrieve FMU for given slave
+		const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
+		if (modelDescriptions.find(simDef.m_pathToFMU) == modelDescriptions.end()) {
+			continue;
+		}
+
+		const MASTER_SIM::ModelDescription & modDesc = modelDescriptions.at(simDef.m_pathToFMU);
+
+		// generate list of published inlet/outlets from FMU description
+		QList<QString> inletSocketNames;
+		QList<QString> outletSocketNames;
+		for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+				inletSocketNames.append( QString::fromStdString(var.m_name));
+			}
+			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+				outletSocketNames.append( QString::fromStdString(var.m_name));
+			}
+		}
+
+		// now process current block definition and remove all defined sockets from lists - remaining
+		// items must
+		bool missingSocket = false;
+		for (const BLOCKMOD::Socket & s : b.m_sockets) {
+			if (s.m_inlet) {
+				if (inletSocketNames.contains(s.m_name))
+					inletSocketNames.removeOne(s.m_name);
+				else
+					missingSocket = true;
+			}
+			else {
+				if (outletSocketNames.contains(s.m_name))
+					outletSocketNames.removeOne(s.m_name);
+				else
+					missingSocket = true;
+			}
+		}
+
+		if (missingSocket || !inletSocketNames.isEmpty() || !outletSocketNames.isEmpty()) {
+			b.m_properties["state"] = MSIMSlaveBlock::StateUnsynced;
+		}
+		else {
+			// check that block socket names match those of the inputs and outputs
+			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
+		}
+	}
+
+	// update network without undo-action
+	m_network = n;
+	m_sceneManager->setNetwork(n);
+}
+
+
 // *** PRIVATE MEMBER FUNCTIONS ***
 
 void MSIMProjectHandler::createProject() {
@@ -413,6 +503,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 			}
 		}
 
+		m_network = network; // data is copied into project's own network
 		m_sceneManager->setNetwork(network); // data is copied into the scene manager
 		m_lastReadTime = QFileInfo(fname).lastModified();
 
@@ -468,7 +559,7 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 
 		// write network representation to file
 		IBK::Path bmPath(fpath.withoutExtension().str() + ".bm");
-		m_sceneManager->network().writeXML(QString::fromStdString(bmPath.str()));
+		m_network.writeXML(QString::fromStdString(bmPath.str()));
 
 		// and now restore filepath from copy
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {

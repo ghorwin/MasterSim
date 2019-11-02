@@ -38,6 +38,8 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	m_outletSockets = outletSockets;
 
 	// first store block index in network's block list
+	// Mind to use network() in sceneManager() here, so that the pointers of the graphics item match those of
+	// the scene.
 	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
 	// determine index of block to modify
 	m_modifiedBlockIdx = n.m_blocks.size();

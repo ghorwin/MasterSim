@@ -19,9 +19,9 @@ void MSIMUndoConnections::undo() {
 	std::swap( theProject(), m_project );
 
 	// exchange Network
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
-	MSIMProjectHandler::instance().sceneManager()->setNetwork(m_network);
-	m_network.swap(n);
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network(); // get current network from project
+	setNetwork(m_network); // set new network in both project and scene manager
+	m_network.swap(n); // exchange cached network data
 
 	// tell project handler that everything has changed
 	MSIMProjectHandler::instance().setModified( MSIMProjectHandler::ConnectionsModified);

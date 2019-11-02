@@ -219,12 +219,12 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 
 
 void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
-	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
+	switch (static_cast<MSIMProjectHandler::ModificationTypes>(modificationType)) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified : {
 			// sync check of all blocks and FMU slaves
 
-			syncCoSimNetworkToBlocks();
+			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 
 			// sync network with graphical display
 			if (m_ui->blockModWidget->scene() != nullptr) {
@@ -237,7 +237,7 @@ void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
 				disconnect(sceneManager, &BLOCKMOD::SceneManager::networkGeometryChanged,
 						   this, &MSIMViewSlaves::onNetworkGeometryChanged);
 			}
-			BLOCKMOD::SceneManager * newSceneManager = MSIMProjectHandler::instance().sceneManager();
+			BLOCKMOD::SceneManager * newSceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
 			m_ui->blockModWidget->setScene(newSceneManager);
 			connect(newSceneManager, &BLOCKMOD::SceneManager::blockActionTriggered,
 					this, &MSIMViewSlaves::onBlockActionTriggered);
@@ -285,7 +285,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	settings.setValue("FMUSearchPath", fmuSearchPath);
 
 	MASTER_SIM::Project p = project();
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
 
 	// create simulator definition
 	MASTER_SIM::Project::SimulatorDef simDef;
@@ -322,7 +322,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 		MSIMMainWindow::addModelDescription(fmuFullPath, modelDesc);
 
 		// new block has now an FMU to look after, so call the sync function to update its appearance
-		syncCoSimNetworkToBlocks();
+		MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 
 		// and finally signal main window to open editor
 		// to handle this new slave (i.e. show FMU info dialog)
@@ -333,7 +333,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 
 void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 	MASTER_SIM::Project p = project();
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
 
 	// find currently selected slave definition
 	int currentIdx = m_ui->tableWidgetSlaves->currentRow();
@@ -365,7 +365,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	// triggered when editor finishes, update simulator definition in selected row
 
 	MASTER_SIM::Project p = project();
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
 
 	QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(row, column);
 	switch (column) {
@@ -440,7 +440,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int
 
 void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
 	// set scene into connection mode
-	BLOCKMOD::SceneManager * sceneManager = MSIMProjectHandler::instance().sceneManager();
+	BLOCKMOD::SceneManager * sceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
 	sceneManager->enableConnectionMode();
 }
 
@@ -500,7 +500,7 @@ void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockIte
 
 
 void MSIMViewSlaves::onBlockEditingCompleted() {
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
 	n.m_blocks[m_blockEditorDialog->m_modifiedBlockIdx] = m_blockEditorDialog->m_modifiedBlock;
 	MSIMUndoSlaves * undo = new MSIMUndoSlaves(tr("Changed block definition"), project(), n);
 	undo->push();
@@ -578,97 +578,9 @@ void MSIMViewSlaves::updateSlaveTable() {
 }
 
 
-void MSIMViewSlaves::syncCoSimNetworkToBlocks() {
-	// started implementing block-slave sync code
-
-	// get a copy of the network
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network();
-
-	// remove superfluous blocks (only needed when someone manually edited the graph/simulator
-	// defs in project file)
-	const MASTER_SIM::Project & prj = project();
-	while (n.m_blocks.size() > (int)prj.m_simulators.size()) {
-		n.removeBlock(n.m_blocks.size()-1);
-	}
-
-	// add missing blocks - newly added blocks will be configured later on
-	while (n.m_blocks.size() < (int)prj.m_simulators.size()) {
-		BLOCKMOD::Block b;
-		b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*6, BLOCKMOD::Globals::GridSpacing*8);
-		int blockCount = n.m_blocks.size();
-		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
-						  BLOCKMOD::Globals::GridSpacing*blockCount);
-		n.m_blocks.push_back(b);
-	}
-
-	// loop over all simulation slaves
-	for (unsigned int i=0; i<prj.m_simulators.size(); ++i) {
-		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
-		BLOCKMOD::Block & b = n.m_blocks[i];
-		b.m_properties["state"] = MSIMSlaveBlock::StateNoFMU; // assume noFMU - worst case scenario
-
-		// check if name matches the block with the same index in the network
-		if (QString::fromStdString(simDef.m_name) != b.m_name) {
-			// this block does not match the simulator slave name -> adjust
-			b.m_name = QString::fromStdString(simDef.m_name);
-		}
-
-		// retrieve FMU for given slave
-		const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
-		if (modelDescriptions.find(simDef.m_pathToFMU) == modelDescriptions.end()) {
-			continue;
-		}
-
-		const MASTER_SIM::ModelDescription & modDesc = modelDescriptions.at(simDef.m_pathToFMU);
-
-		// generate list of published inlet/outlets from FMU description
-		QList<QString> inletSocketNames;
-		QList<QString> outletSocketNames;
-		for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
-			if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
-				inletSocketNames.append( QString::fromStdString(var.m_name));
-			}
-			else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
-				outletSocketNames.append( QString::fromStdString(var.m_name));
-			}
-		}
-
-		// now process current block definition and remove all defined sockets from lists - remaining
-		// items must
-		bool missingSocket = false;
-		for (const BLOCKMOD::Socket & s : b.m_sockets) {
-			if (s.m_inlet) {
-				if (inletSocketNames.contains(s.m_name))
-					inletSocketNames.removeOne(s.m_name);
-				else
-					missingSocket = true;
-			}
-			else {
-				if (outletSocketNames.contains(s.m_name))
-					outletSocketNames.removeOne(s.m_name);
-				else
-					missingSocket = true;
-			}
-		}
-
-		if (missingSocket || !inletSocketNames.isEmpty() || !outletSocketNames.isEmpty()) {
-			b.m_properties["state"] = MSIMSlaveBlock::StateUnsynced;
-		}
-		else {
-			// check that block socket names match those of the inputs and outputs
-			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
-		}
-	}
-
-	// update network without undo-action
-	MSIMProjectHandler::instance().sceneManager()->setNetwork(n);
-
-}
-
-
 void MSIMViewSlaves::onNewConnectionCreated() {
 	// get the last connection made from network
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
 	const BLOCKMOD::Connector & con = n.m_connectors.back();
 
 	MASTER_SIM::Project::GraphEdge edge;
@@ -685,7 +597,7 @@ void MSIMViewSlaves::onNewConnectionCreated() {
 
 
 void MSIMViewSlaves::onNetworkGeometryChanged() {
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network();
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
 	// add undo action
 	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
 	cmd->push();
