@@ -44,7 +44,8 @@ public:
 	*/
 	static bool extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 									QString & msgLog,
-									MASTER_SIM::ModelDescription & modelDesc);
+									MASTER_SIM::ModelDescription & modelDesc,
+									QPixmap & modelPixmap);
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */

@@ -54,6 +54,8 @@ private slots:
 
 	void on_spinBoxRows_valueChanged(int arg1);
 
+	void on_checkBoxShowFMUPixmap_clicked();
+
 private:
 	Ui::MSIMBlockEditorDialog	*m_ui;
 
