@@ -141,7 +141,7 @@ void readList(QXmlStreamReader & reader, QList<T> & typeList) {
 
 // templated function that works with all types of lists
 template <typename T>
-void readList(QXmlStreamReader & reader, std::vector<T> & typeList) {
+void readList(QXmlStreamReader & reader, std::list<T> & typeList) {
 	// then read all the subsections
 	int count = 0;
 	while (!reader.atEnd() && !reader.hasError()) {

@@ -90,14 +90,16 @@ public:
 	/*! List of all blocks in the network.
 		\note Cannot use a QList here, because we maintain persistent pointers to block objects
 			and QList's copy-on-write functionality breaks these persistent pointers.
+			We must use a list here, so that when we add a block during the socket-connect operation
+			(the invisible block) the existing nodes are not invalidated.
 	*/
-	std::vector<Block>		m_blocks;
+	std::list<Block>		m_blocks;
 
 	/*! List of all connectors in the network.
 		Connectors are always associated with sockets (referenced via
 		block-id and socket-id).
 	*/
-	std::vector<Connector>	m_connectors;
+	std::list<Connector>	m_connectors;
 
 
 	// *** static functions ***

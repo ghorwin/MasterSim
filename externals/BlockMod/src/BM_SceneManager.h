@@ -180,7 +180,7 @@ public:
 		Index must be a valid, otherwise an exception is thrown.
 		Also removes any connections made to this block.
 	*/
-	void removeBlock(int blockIndex);
+	void removeBlock(unsigned int blockIndex);
 
 	/*! Removes connector by giving a pointer to a connector in the managed network.
 		Connector must be stored in the network's connector list.
@@ -190,7 +190,7 @@ public:
 	/*! Removes connector with given index.
 		Index must be a valid, otherwise an exception is thrown.
 	*/
-	void removeConnector(int connectorIndex);
+	void removeConnector(unsigned int connectorIndex);
 
 
 

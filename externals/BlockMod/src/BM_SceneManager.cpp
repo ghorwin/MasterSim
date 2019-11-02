@@ -78,15 +78,15 @@ void SceneManager::setNetwork(const Network & network) {
 	m_blockConnectorMap.clear();
 
 	// create new graphics items
-	for (int i=0; i<m_network->m_blocks.size(); ++i) {
-		BlockItem * item = createBlockItem( m_network->m_blocks[i] );
+	for (Block & b : m_network->m_blocks) {
+		BlockItem * item = createBlockItem( b );
 		addItem(item);
 		m_blockItems.append(item);
 	}
 
 	// create new graphics items for connectors
-	for (int i=0; i<m_network->m_connectors.size(); ++i) {
-		QList<ConnectorSegmentItem *> newConns = createConnectorItems(m_network->m_connectors[i]);
+	for (Connector & c : m_network->m_connectors) {
+		QList<ConnectorSegmentItem *> newConns = createConnectorItems(c);
 		for( BLOCKMOD::ConnectorSegmentItem * item : newConns) {
 			addItem(item);
 			m_connectorSegmentItems.append(item);
@@ -458,9 +458,9 @@ void SceneManager::addConnector(const Connector & con) {
 
 
 void SceneManager::removeBlock(const Block * block) {
-	int idx = 0;
-	for (;idx<m_network->m_blocks.size(); ++idx)
-		if (block == &m_network->m_blocks[idx])
+	size_t idx = 0;
+	for (auto bit = m_network->m_blocks.begin(); bit != m_network->m_blocks.end(); ++bit, ++idx)
+		if (block == &(*bit))
 			break;
 	if (idx == m_network->m_blocks.size())
 		throw std::runtime_error("[SceneManager::removeBlock] Invalid pointer (not in managed network)");
@@ -468,23 +468,22 @@ void SceneManager::removeBlock(const Block * block) {
 }
 
 
-void SceneManager::removeBlock(int blockIndex) {
+void SceneManager::removeBlock(unsigned int blockIndex) {
 	Q_ASSERT(m_network->m_blocks.size() > blockIndex);
 	Q_ASSERT(m_blockItems.count() > blockIndex);
 
-	Block * blockToBeRemoved = &m_network->m_blocks[blockIndex];
+	auto bit = m_network->m_blocks.begin(); std::advance(bit, blockIndex);
+	Block * blockToBeRemoved = &(*bit);
 
 	// find connectors that connect to this block
 	QSet<Connector*> connectors = m_blockConnectorMap[blockToBeRemoved];
 	for (Connector * con : connectors) {
-		// get index of connector
-		int i=0;
-		while (i < m_network->m_connectors.size()) {
-			if (&m_network->m_connectors[i] == con) {
-				m_network->m_connectors.erase(m_network->m_connectors.begin() + i);
-				continue;
+		// find connector to be removed from list
+		for (auto cit = m_network->m_connectors.begin(); cit != m_network->m_connectors.end(); ++cit) {
+			if (&(*cit) == con) {
+				m_network->m_connectors.erase(cit);
+				break;
 			}
-			++i;
 		}
 	}
 
@@ -493,7 +492,8 @@ void SceneManager::removeBlock(int blockIndex) {
 	m_blockItems.removeAt(blockIndex);
 	delete bi;
 
-	m_network->m_blocks.erase(m_network->m_blocks.begin() + blockIndex);
+	// finally remove block itself from list
+	m_network->m_blocks.erase(bit);
 
 	// and update all connector items; first remove all, then recreate as needed
 	qDeleteAll(m_connectorSegmentItems); // will be recreated
@@ -506,9 +506,9 @@ void SceneManager::removeBlock(int blockIndex) {
 
 
 void SceneManager::removeConnector(const Connector * con) {
-	int idx = 0;
-	for (;idx<m_network->m_connectors.size(); ++idx)
-		if (con == &m_network->m_connectors[idx])
+	size_t idx = 0;
+	for (auto cit = m_network->m_connectors.begin(); cit != m_network->m_connectors.end(); ++cit, ++idx)
+		if (con == &(*cit))
 			break;
 	if (idx == m_network->m_connectors.size())
 		throw std::runtime_error("[SceneManager::removeConnector] Invalid pointer (not in managed network)");
@@ -516,10 +516,11 @@ void SceneManager::removeConnector(const Connector * con) {
 }
 
 
-void SceneManager::removeConnector(int connectorIndex) {
+void SceneManager::removeConnector(unsigned int connectorIndex) {
 	Q_ASSERT(m_network->m_connectors.size() > connectorIndex);
 
-	Connector * conToBeRemoved = &m_network->m_connectors[connectorIndex];
+	auto cit = m_network->m_connectors.begin(); std::advance(cit, connectorIndex);
+	Connector * conToBeRemoved = &(*cit);
 
 	// find corresponding connector items
 	int i=0;
@@ -539,7 +540,7 @@ void SceneManager::removeConnector(int connectorIndex) {
 	}
 
 	// finally remove connector at given index
-	m_network->m_connectors.erase(m_network->m_connectors.begin() + connectorIndex);
+	m_network->m_connectors.erase(cit);
 
 }
 

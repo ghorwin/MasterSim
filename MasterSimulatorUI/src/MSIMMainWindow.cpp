@@ -516,6 +516,7 @@ void MSIMMainWindow::extractFMUsAndParseModelDesc(QString & msg) {
 	}
 }
 
+
 void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	// open log window
 	// start reading FMUs
