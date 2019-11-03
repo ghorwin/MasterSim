@@ -301,7 +301,8 @@ void MSIMProjectHandler::setModified(unsigned int modificationType, void * data)
 	// special case:  modification type = NotModified
 	ModificationTypes modType = static_cast<ModificationTypes>(modificationType);
 	switch (modType) {
-
+		case ConnectionsModified :
+			syncCoSimNetworkToBlocks(); break;
 		default: ; // skip all others
 	}
 	m_modified = true;
@@ -409,6 +410,63 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
 		}
 	}
+
+	// now that all blocks are updated, we look for connections
+
+	std::vector<MASTER_SIM::Project::GraphCheckErrorCodes> graphCheckResults;
+	prj.checkGraphs(MSIMMainWindow::instance().modelDescriptions(), graphCheckResults);
+
+	// process all connections in connection graph that do not show an error
+
+	// we have to deal with the following situations:
+	// 1. no model descriptions read yet for some slaves -> connections to these slaves are marked "Undetermined". Such connections
+	//    cannot be shown in the graph and must not appear in the network. However, if we remove them, the routining information is also
+	//    lost and we cannot add them later again. So, to avoid loosing information, we simply disable these connections so
+	//    that there will no graphics items be created.
+	// 2. connections may be invalid, because blocks have been removed, renamed, or variables have changed since last FMU export. In
+	//    any of these cases, the connections must be removed because even with updating model descriptions, still no valid connections
+	//    can be shown.
+	// 3. graph-connections are valid, but do not exist in the network yet. Then, we have to create new connections with default routing.
+	// 4. there are connections in the network, but no matching graph connections. We have to remove these from the network.
+
+	// algorith: 1. loop over all graphs defined in project and look up matching connections (via source/target variable references) in network
+	//              and create a list of these connection. For missing connections in network, create default invalid connections.
+	//           2. then process all graphs and handle the already obtained error codes for each graph connection
+
+	std::list<BLOCKMOD::Connector> connections;
+	for (unsigned int i=0; i<prj.m_graph.size(); ++i) {
+		const MASTER_SIM::Project::GraphEdge & edge = prj.m_graph[i];
+		// if check state of this connection is anything but NoError or Undetermined, ignore this connection
+		if (graphCheckResults[i] != MASTER_SIM::Project::NoError && graphCheckResults[i] != MASTER_SIM::Project::Undetermined)
+			continue;
+		// search for this connection in current network
+		BLOCKMOD::Connector newCon;
+		for (const BLOCKMOD::Connector & con : n.m_connectors) {
+			if (con.m_sourceSocket.toStdString() == edge.m_outputVariableRef &&
+				con.m_targetSocket.toStdString() == edge.m_inputVariableRef)
+			{
+				// remember this matching connection
+				newCon = con;
+				break;
+			}
+		}
+		// in case we didn't find a matching connection, this will be an empty connection and we have to create a new connection now
+		if (newCon.m_sourceSocket.isEmpty()) {
+			newCon.m_name = "auto-named";
+			newCon.m_sourceSocket = QString::fromStdString(edge.m_outputVariableRef);
+			newCon.m_targetSocket = QString::fromStdString(edge.m_inputVariableRef);
+		}
+		// one last thing: we can only keep the connection in the network, if the connected blocks have
+		// a valid layout and geometry
+
+		/// \todo filter out connections to not-yet-defined blocks or outdated blocks, where the sockets are missing
+
+		connections.push_back(newCon);
+	}
+	n.m_connectors = connections;
+
+	// now process all connections and update their status based on the
+
 
 	// update network without undo-action
 	m_network = n;

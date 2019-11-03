@@ -325,6 +325,79 @@ const Project::SimulatorDef & Project::simulatorDefinition(const std::string & s
 }
 
 
+void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions,
+						  std::vector<GraphCheckErrorCodes> & validEdges) const
+{
+	validEdges.resize(m_graph.size());
+
+	// process all connectors
+	std::set<std::string> connectedInletSockets; // stores all connected inlet sockets; graphs connecting to an already connected inlet socket are treated as invalid
+	for (unsigned int i=0; i<m_graph.size(); ++i) {
+		const GraphEdge & graphEdge = m_graph[i];
+		// target socket already taken? this would be invalid
+		if (connectedInletSockets.find(graphEdge.m_outputVariableRef) != connectedInletSockets.end()) {
+			validEdges[i] = TargetSocketAlreadyConnected;
+			continue; // target socket
+		}
+		try {
+			// extract slave and variable name from graph
+			std::string sourceSlaveName;
+			std::string variableName;
+			GraphEdge::splitReference(graphEdge.m_outputVariableRef, sourceSlaveName, variableName);
+			// check if the referenced slave exists
+			const SimulatorDef & sourceSim = simulatorDefinition(sourceSlaveName);
+			// check if referenced variable exists
+			std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(sourceSim.m_pathToFMU);
+			// not found or maybe not yet read? mark connection as "undetermined"
+			if (it == modelDescriptions.end()) {
+				validEdges[i] = Undetermined;
+				continue;
+			}
+			// check if socket exists
+			const ModelDescription & modelDesc = it->second;
+			const FMIVariable & var = modelDesc.variable(variableName);
+			// check for correct type
+			if (var.m_causality != FMIVariable::C_OUTPUT) {
+				validEdges[i] = SourceSocketNotOutlet;
+				continue;
+			}
+			// all ok so far
+		} catch (...) {
+			validEdges[i] = InvalidSourceSocketName;
+		}
+		// now the same for the target
+		try {
+			// extract slave and variable name from graph
+			std::string slaveName;
+			std::string variableName;
+			GraphEdge::splitReference(graphEdge.m_inputVariableRef, slaveName, variableName);
+			// check if the referenced slave exists
+			const SimulatorDef & sim = simulatorDefinition(slaveName);
+			// check if referenced variable exists
+			std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(sim.m_pathToFMU);
+			// not found or maybe not yet read? mark connection as "undetermined"
+			if (it == modelDescriptions.end()) {
+				validEdges[i] = Undetermined;
+				continue;
+			}
+			// check if socket exists
+			const ModelDescription & modelDesc = it->second;
+			const FMIVariable & var = modelDesc.variable(variableName);
+			// check for correct type
+			if (var.m_causality != FMIVariable::C_INPUT) {
+				validEdges[i] = TargetSocketNotInlet;
+				continue;
+			}
+			// all ok so far, remember the target slot to be taken already
+			connectedInletSockets.insert(graphEdge.m_outputVariableRef);
+			validEdges[i] = NoError;
+		} catch (...) {
+			validEdges[i] = InvalidSourceSocketName;
+		}
+	}
+}
+
+
 Project::SimulatorDef::SimulatorDef() :
 	m_cycle(0)
 {
@@ -358,8 +431,24 @@ std::string Project::GraphEdge::extractSlaveName( const std::string & variableRe
 	std::vector<std::string> tokens;
 	unsigned int count = IBK::explode_in2(variableRef, tokens, '.');
 	if (count < 2)
-		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef), "[Project::GraphEdge::extractSlaveName]");
+		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef),
+							 "[Project::GraphEdge::extractSlaveName]");
 	return tokens[0];
+}
+
+
+void Project::GraphEdge::splitReference(const std::string & variableRef, std::string & slaveName, std::string & variableName) {
+	size_t dotPos = variableRef.find('.');
+	if (dotPos == std::string::npos || dotPos == 0)
+		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef),
+								 "[Project::GraphEdge::splitReference]");
+	slaveName = variableRef.substr(0, dotPos);
+	IBK::trim(slaveName);
+	variableName = variableRef.substr(dotPos+1);
+	IBK::trim(variableName);
+	if (slaveName.empty() || variableName.empty())
+		throw IBK::Exception(IBK::FormatString("Invalid syntax in graph variable reference '%1'.").arg(variableRef),
+								 "[Project::GraphEdge::splitReference]");
 }
 
 

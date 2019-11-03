@@ -10,6 +10,8 @@
 #include <IBK_Color.h>
 #include <IBK_Parameter.h>
 
+#include "MSIM_ModelDescription.h"
+
 namespace MASTER_SIM {
 
 /*! Stores content of configuration/project file. */
@@ -76,13 +78,24 @@ public:
 
 	/*! Defines an edge of the coupling graph. */
 	struct GraphEdge {
-		/*! Extracts name of output slave (everything in front of first dot). */
+		/*! Extracts name of output slave (everything in front of first dot).
+			Throws an exception in case of malformed variables refs (missing dot).
+		*/
 		std::string outputSlaveName() const { return extractSlaveName(m_outputVariableRef); }
-		/*! Extracts name of input slave (everything in front of first dot). */
+		/*! Extracts name of input slave (everything in front of first dot).
+			Throws an exception in case of malformed variables refs (missing dot).
+		*/
 		std::string inputSlaveName() const { return extractSlaveName(m_inputVariableRef); }
 
-		/*! Extracts name of slave (everything in front of first dot). */
+		/*! Extracts name of slave (everything in front of first dot).
+			Throws an exception in case of malformed variables refs (missing dot).
+		*/
 		static std::string extractSlaveName( const std::string & variableRef);
+
+		/*! Splits the variable reference into slave and variable name at the first dot.
+			Throws an exception in case of malformed variables refs (missing dot).
+		*/
+		static void splitReference(const std::string & variableRef, std::string & slaveName, std::string & variableName);
 
 		/*! Replaces slave name in variable reference with new slave name. */
 		static std::string replaceSlaveName( const std::string & variableRef, const std::string & newSlaveName);
@@ -111,8 +124,30 @@ public:
 	*/
 	void write(const IBK::Path & prjFile) const;
 
-	/*! Retrieves simulator definition for a given slave/simulator name. */
+	/*! Retrieves simulator definition for a given slave/simulator name.
+		Throws an exception, if a simulator definition with this name does not exist.
+	*/
 	const SimulatorDef & simulatorDefinition(const std::string & slaveName) const;
+
+	enum GraphCheckErrorCodes {
+		NoError,
+		TargetSocketAlreadyConnected,
+		InvalidSourceSocketName,
+		InvalidTargetSocketName,
+		SourceSocketNotOutlet,
+		TargetSocketNotInlet,
+		Undetermined // Used when one or both of the FMUs have no modelDescription yet
+	};
+
+	/*! This function takes a list of graph edges and checks if the referenced blocks exist,
+		if the referenced sockets exist in the blocks and if the inlet/outlet type matches.
+		Also, it is checked, if inlet sockets are connected several times.
+		The vector argument is resized to the number of graphs and contains one of the
+		error codes defined in GraphCheckErrorCodes.
+	*/
+	void checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription> & modelDescriptions,
+					 std::vector<GraphCheckErrorCodes> & validEdges) const;
+
 
 	// Content of project file
 
