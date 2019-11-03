@@ -363,7 +363,6 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 
 	// create undo action
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
-	/// \todo auto-create socket connections
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
 	cmd->push();
 }
