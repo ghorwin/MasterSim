@@ -67,7 +67,7 @@ public:
 	~MSIMProjectHandler();
 
 	/*! Returns whether or not a project had been created yet. */
-	bool isValid() const { return m_project != NULL; }
+	bool isValid() const { return m_project != nullptr; }
 
 	/*! Returns 'true' if some part of the project was modified.*/
 	bool isModified() const { return m_modified; }
@@ -147,7 +147,7 @@ public:
 
 		Emits updateActions() signal.
 	*/
-	void setModified(int modificationType, void * data = nullptr);
+	void setModified(unsigned int modificationType, void * data = nullptr);
 
 	/*! Returns a const reference to the internal project.
 		\warning This function throws an exception if there isn't a valid project loaded.
