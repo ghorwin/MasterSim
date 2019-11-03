@@ -459,14 +459,18 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		// one last thing: we can only keep the connection in the network, if the connected blocks have
 		// a valid layout and geometry
 
-		/// \todo filter out connections to not-yet-defined blocks or outdated blocks, where the sockets are missing
-
-		connections.push_back(newCon);
+		// does the network have the referenced blocks and sockets (the latter may not be the case, if
+		// the block hasn't been updated with the block editor yet).
+		if (n.haveSocket(newCon.m_sourceSocket, false) &&
+			n.haveSocket(newCon.m_targetSocket, true))
+		{
+			connections.push_back(newCon);
+		}
 	}
 	n.m_connectors = connections;
 
 	// now process all connections and update their status based on the
-
+	n.adjustConnectors();
 
 	// update network without undo-action
 	m_network = n;

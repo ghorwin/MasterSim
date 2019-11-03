@@ -2,11 +2,11 @@
 
 namespace MASTER_SIM {
 
-const char * const VERSION = "0.7";
+const char * const VERSION = "0.8";
 
-const char * const LONG_VERSION = "0.7.2";
+const char * const LONG_VERSION = "0.8.0";
 
-const char * const PROGRAM_NAME = "MasterSim 0.7";
+const char * const PROGRAM_NAME = "MasterSim 0.8";
 
 const unsigned int KEYWORD_INDENTATION = 0;
 
