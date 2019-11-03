@@ -297,7 +297,7 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 }
 
 
-void MSIMProjectHandler::setModified(int modificationType, void * data) {
+void MSIMProjectHandler::setModified(unsigned int modificationType, void * data) {
 	// special case:  modification type = NotModified
 	ModificationTypes modType = static_cast<ModificationTypes>(modificationType);
 	switch (modType) {
@@ -336,15 +336,15 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 	// remove superfluous blocks (only needed when someone manually edited the graph/simulator
 	// defs in project file)
 	const MASTER_SIM::Project & prj = *m_project;
-	while (n.m_blocks.size() > (int)prj.m_simulators.size()) {
+	while (n.m_blocks.size() > prj.m_simulators.size()) {
 		n.removeBlock(n.m_blocks.size()-1);
 	}
 
 	// add missing blocks - newly added blocks will be configured later on
-	while (n.m_blocks.size() < (int)prj.m_simulators.size()) {
+	while (n.m_blocks.size() < prj.m_simulators.size()) {
 		BLOCKMOD::Block b;
 		b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*6, BLOCKMOD::Globals::GridSpacing*8);
-		int blockCount = n.m_blocks.size();
+		unsigned int blockCount = n.m_blocks.size();
 		b.m_pos = QPointF(BLOCKMOD::Globals::GridSpacing*blockCount,
 						  BLOCKMOD::Globals::GridSpacing*blockCount);
 		n.m_blocks.push_back(b);

@@ -45,7 +45,7 @@ public:
 	BLOCKMOD::Block m_modifiedBlock;
 
 	/*! Index of the block in the network's block list. */
-	int				m_modifiedBlockIdx;
+	unsigned int				m_modifiedBlockIdx;
 
 private slots:
 	void on_pushButtonLayoutSockets_clicked();
