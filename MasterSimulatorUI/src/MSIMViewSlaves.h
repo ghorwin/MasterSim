@@ -84,6 +84,9 @@ private slots:
 	/*! Called from sceneManager() whenever a block or connector has been moved. */
 	void onNetworkGeometryChanged();
 
+	/*! Called from sceneManager() whenever a block has been selected. */
+	void onBlockSelected(const QString & blockName);
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
