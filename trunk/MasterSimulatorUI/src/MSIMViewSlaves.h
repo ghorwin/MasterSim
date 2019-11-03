@@ -30,7 +30,7 @@ class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
 public:
 	/*! C'tor */
-	explicit MSIMViewSlaves(QWidget *parent = 0);
+	explicit MSIMViewSlaves(QWidget *parent = nullptr);
 	/*! D'tor */
 	~MSIMViewSlaves();
 
@@ -49,7 +49,7 @@ public:
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
-	void onModified( int modificationType, void * data );
+	void onModified(unsigned int modificationType, void * data );
 
 signals:
 	/*! Emitted when a new slave has been added.

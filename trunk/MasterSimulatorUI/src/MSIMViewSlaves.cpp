@@ -49,7 +49,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->setupUi(this);
 	m_ui->verticalLayout_4->setContentsMargins(9,0,9,9);
 
-	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
+	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
+			this, SLOT(onModified(unsigned int,void*)));
 
 	// setup tables
 //	m_ui->tableWidgetFMUs->horizontalHeader()->setVisible(false);
@@ -245,7 +246,7 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 }
 
 
-void MSIMViewSlaves::onModified( int modificationType, void * /* data */ ) {
+void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */ ) {
 	switch (static_cast<MSIMProjectHandler::ModificationTypes>(modificationType)) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified : {

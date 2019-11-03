@@ -14,12 +14,12 @@ class MSIMViewConnections : public QWidget {
 	Q_OBJECT
 
 public:
-	explicit MSIMViewConnections(QWidget *parent = 0);
+	explicit MSIMViewConnections(QWidget *parent = nullptr);
 	~MSIMViewConnections();
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
-	void onModified( int modificationType, void * data );
+	void onModified(unsigned int modificationType, void * data );
 
 private slots:
 

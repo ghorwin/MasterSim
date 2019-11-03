@@ -38,7 +38,8 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
-	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
+	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
+			this, SLOT(onModified(unsigned int,void*)));
 
 	blockMySignals(this, true);
 
@@ -75,7 +76,7 @@ MSIMViewSimulation::~MSIMViewSimulation() {
 }
 
 
-void MSIMViewSimulation::onModified( int modificationType, void * /*data*/ ) {
+void MSIMViewSimulation::onModified(unsigned int modificationType, void * /*data*/ ) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SimulationSettingsModified :
