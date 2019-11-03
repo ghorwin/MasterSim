@@ -135,7 +135,7 @@ void MasterSim::openOutputFiles(bool reopen) {
 }
 
 
-void MasterSim::restoreState(double t, const IBK::Path & stateDirectory) {
+void MasterSim::restoreState(double /*t*/, const IBK::Path & /*stateDirectory*/) {
 	// all FMUs must be able to restore state!
 
 	// for all FMU instances:
@@ -148,7 +148,7 @@ void MasterSim::restoreState(double t, const IBK::Path & stateDirectory) {
 }
 
 
-void MasterSim::storeState(const IBK::Path & stateDirectory) {
+void MasterSim::storeState(const IBK::Path & /*stateDirectory*/) {
 	// all FMUs must be able to store state!
 
 	// for all FMU instances:
