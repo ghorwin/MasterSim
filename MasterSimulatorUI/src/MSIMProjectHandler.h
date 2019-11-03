@@ -172,11 +172,28 @@ public:
 	/*! Updates time stamp of the last modification of the current project, but only if project is present. */
 	void updateLastReadTime();
 
-	/*! This function is called from ViewSlaves::onModified(), whenever slave data or FMU specs have changed.
-		The function processes all slaves and associated FMU data (if read), and checks if
-		the block names and socket number/types/names match those of the FMU slave.
+	/*! This function is called whenever slave data/connections or FMU specs have changed.
+		The function first processes all defined simulator/slaves definitions and:
+		- checks if a matching block is present in the network, and if not, creates the block
+		- removes all superfluous blocks
+		- if no FMU data is available for the given simulator (missing fmu file, bad file path), the
+		  block is marked with "StateNoFMU"
+		- if FMU data has been read, compares the sockets in blocks with input/output vars from FMU def
+		- if sockets mismatch, block is marked with "StateUnsynced"
+		- if all sockets match, block is marked with "StateCorrect"
 
-		It updates the network (both in project and in sceneManager()) without creating an undo action.
+		Next, all connections in the graph are processed. For each graph connection:
+		- it is checked if both referenced blocks exist, if not, they are ignored (invalid graph entry) and
+			the corresponding expected connector in the network is marked "invalid"
+		- if referenced inlet and outlet sockets are present in the blocks and the types match,
+			the corresponding expected connector in the network is marked as "valid", otherwise as "invalid"
+
+		For each of the expected connectors in the network, it is checked, if a matching connector already exists
+		in the network (match is found when inlet and outlet sockets match). If not, it is created/updated.
+		Superfluous connectors are removed from the network.
+
+		Finally, the function updates the network (both in project and in sceneManager()) without creating an
+		undo action.
 	*/
 	void syncCoSimNetworkToBlocks();
 
