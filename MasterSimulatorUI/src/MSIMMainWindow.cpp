@@ -371,8 +371,8 @@ void MSIMMainWindow::on_actionFileOpen_triggered() {
 		QString msg;
 		extractFMUsAndParseModelDesc(msg);
 		// signal modified to all views
-		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
-		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
 	}
 }
 
@@ -424,8 +424,8 @@ void MSIMMainWindow::on_actionFileReload_triggered() {
 		QString msg;
 		extractFMUsAndParseModelDesc(msg);
 		// signal modified to all views
-		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
-		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
 	}
 }
 
@@ -555,8 +555,8 @@ void MSIMMainWindow::on_actionEditParseFMUs_triggered() {
 	dlg.exec();
 
 	// signal modified to all views
-	m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
-	m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+	m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
+	m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
 }
 
 
@@ -700,7 +700,7 @@ void MSIMMainWindow::onUpdateRecentProjects() {
 	if (m_recentProjectActions.count() != (int)MSIMSettings::instance().m_maxRecentProjects) {
 		qDeleteAll(m_recentProjectActions);
 		m_recentProjectActions.clear();
-		for (unsigned int i = 0; i < MSIMSettings::instance().m_maxRecentProjects; ++i) {
+		for (int i = 0; i < (int)MSIMSettings::instance().m_maxRecentProjects; ++i) {
 			QAction * a = new QAction(this);
 			m_recentProjectActions.push_back(a);
 			connect(m_recentProjectActions[i], SIGNAL(triggered()), this, SLOT(onActionOpenRecentFile()));
@@ -721,8 +721,8 @@ void MSIMMainWindow::onUpdateRecentProjects() {
 			m_recentProjectActions[i]->setVisible(true);
 		}
 
-		for (unsigned int i = MSIMSettings::instance().m_recentProjects.count();
-			i < MSIMSettings::instance().m_maxRecentProjects; ++i)
+		for (int i = MSIMSettings::instance().m_recentProjects.count();
+			i < (int)MSIMSettings::instance().m_maxRecentProjects; ++i)
 		{
 			m_recentProjectActions[i]->setVisible(false);
 		}
@@ -747,8 +747,8 @@ void MSIMMainWindow::onOpenProjectByFilename(const QString & filename) {
 		QString msg;
 		extractFMUsAndParseModelDesc(msg);
 		// signal modified to all views
-		m_viewConnections->onModified((int)MSIMProjectHandler::AllModified, nullptr);
-		m_viewSlaves->onModified((int)MSIMProjectHandler::AllModified, nullptr);
+		m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
+		m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
 	}
 	// if failed, no view state change needed
 }
@@ -796,6 +796,8 @@ bool MSIMMainWindow::removeDirRecursively(const QString & dirName) {
 
 
 bool MSIMMainWindow::exportProjectPackage(const QString & exportFilePath) {
+	(void)exportFilePath; // silence compiler warning
+	/// \todo Implement later
 	return true;
 }
 
@@ -803,6 +805,11 @@ bool MSIMMainWindow::exportProjectPackage(const QString & exportFilePath) {
 bool MSIMMainWindow::importProjectPackage(const QString & packageFilePath, const QString & targetDirectory,
 										 QString & projectFilePath, bool packageContainsMSIM)
 {
+	(void)packageFilePath; // silence compiler warning
+	(void)targetDirectory; // silence compiler warning
+	(void)projectFilePath; // silence compiler warning
+	(void)packageContainsMSIM; // silence compiler warning
+	/// \todo Implement later
 	return true;
 }
 

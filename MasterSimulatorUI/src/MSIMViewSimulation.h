@@ -18,12 +18,12 @@ namespace IBK {
 class MSIMViewSimulation : public QWidget {
 	Q_OBJECT
 public:
-	explicit MSIMViewSimulation(QWidget *parent = 0);
+	explicit MSIMViewSimulation(QWidget *parent = nullptr);
 	~MSIMViewSimulation();
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
-	void onModified( int modificationType, void * data );
+	void onModified(unsigned int modificationType, void * data );
 
 	void on_toolButtonStartInTerminal_clicked();
 

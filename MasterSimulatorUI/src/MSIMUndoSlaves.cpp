@@ -24,7 +24,7 @@ void MSIMUndoSlaves::undo() {
 	m_network.swap(n);
 
 	// tell project handler that everything has changed
-	MSIMProjectHandler::instance().setModified( MSIMProjectHandler::SlavesModified);
+	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::SlavesModified);
 }
 
 

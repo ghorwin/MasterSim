@@ -15,7 +15,7 @@ void MSIMUndoSimulationSettings::undo() {
 	std::swap( theProject(), m_project );
 
 	// tell project handler that everything has changed
-	MSIMProjectHandler::instance().setModified( MSIMProjectHandler::SimulationSettingsModified);
+	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::SimulationSettingsModified);
 }
 
 

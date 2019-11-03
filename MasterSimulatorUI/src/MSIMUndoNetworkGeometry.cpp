@@ -20,7 +20,7 @@ void MSIMUndoNetworkGeometry::undo() {
 	setNetwork(n); // update both project and scene manager's network objectcs
 
 	// tell project handler that geometry has changed
-	MSIMProjectHandler::instance().setModified( MSIMProjectHandler::NetworkGeometryModified);
+	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::NetworkGeometryModified);
 }
 
 
