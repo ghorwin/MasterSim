@@ -31,7 +31,7 @@ MSIMBlockEditorDialog::~MSIMBlockEditorDialog() {
 
 
 
-int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path & fmuPath,
+int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path & /*fmuPath*/,
 									 const QStringList & inletSockets, const QStringList & outletSockets)
 {
 	m_modifiedBlock = b; // create copy
@@ -45,7 +45,7 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	// determine index of block to modify
 	m_modifiedBlockIdx = n.m_blocks.size();
 	auto bit = n.m_blocks.begin();
-	for (int i=0; i<n.m_blocks.size(); ++i, ++bit) {
+	for (unsigned int i=0; i<n.m_blocks.size(); ++i, ++bit) {
 		if (&(*bit) == &b) {
 			m_modifiedBlockIdx = i;
 			break;
@@ -58,8 +58,8 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	m_ui->lineEditSocketInfo->setText(tr("%1 inlets, %2 outlets").arg(inletSockets.count()).arg(outletSockets.count()));
 
 	// determine number of block grid lines
-	int rowCount = std::floor(b.m_size.height() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
-	int colCount = std::floor(b.m_size.width() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
+	int rowCount = (int)std::floor(b.m_size.height() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
+	int colCount = (int)std::floor(b.m_size.width() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
 
 	m_ui->spinBoxRows->setValue(rowCount);
 	m_ui->spinBoxColumns->setValue(colCount);
@@ -114,7 +114,7 @@ void MSIMBlockEditorDialog::on_spinBoxColumns_valueChanged(int) {
 	int rowCount = m_ui->spinBoxRows->value();
 	int colCount = m_ui->spinBoxColumns->value();
 	if (m_blockItem != nullptr)
-		m_blockItem->resize(BLOCKMOD::Globals::GridSpacing*colCount, BLOCKMOD::Globals::GridSpacing*rowCount);
+		m_blockItem->resize((int)BLOCKMOD::Globals::GridSpacing*colCount, (int)BLOCKMOD::Globals::GridSpacing*rowCount);
 }
 
 
