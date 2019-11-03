@@ -98,7 +98,7 @@ void FileReaderSlave::instantiate() {
 }
 
 
-void FileReaderSlave::setupExperiment(double relTol, double tStart, double tEnd) {
+void FileReaderSlave::setupExperiment(double /*relTol*/, double tStart, double /*tEnd*/) {
 	m_t = tStart;
 	/// \todo check value range in file and issue warning if data is less than simulation time frame
 }
@@ -114,7 +114,7 @@ void FileReaderSlave::exitInitializationMode() {
 }
 
 
-int FileReaderSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
+int FileReaderSlave::doStep(double stepSize, bool /*noSetFMUStatePriorToCurrentPoint*/) {
 	const char * const FUNC_ID = "[FileReaderSlave::doStep]";
 	IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("Interval [%1 ... %2] with h=%3\n")
 									   .arg(m_t,22,'e',15).arg(m_t+stepSize,22,'e',15).arg(stepSize,16,'e',12),
@@ -126,7 +126,7 @@ int FileReaderSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoi
 }
 
 
-void FileReaderSlave::currentState(fmi2FMUstate * state) const {
+void FileReaderSlave::currentState(fmi2FMUstate * /*state*/) const {
 	// basically just the time point, but that's not worth saving
 }
 
