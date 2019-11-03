@@ -264,6 +264,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 						   this, &MSIMViewSlaves::onNewConnectionCreated);
 				disconnect(sceneManager, &BLOCKMOD::SceneManager::networkGeometryChanged,
 						   this, &MSIMViewSlaves::onNetworkGeometryChanged);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::newBlockSelected,
+						   this, &MSIMViewSlaves::onBlockSelected);
 			}
 			BLOCKMOD::SceneManager * newSceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
 			m_ui->blockModWidget->setScene(newSceneManager);
@@ -273,6 +275,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 					this, &MSIMViewSlaves::onNewConnectionCreated);
 			connect(newSceneManager, &BLOCKMOD::SceneManager::networkGeometryChanged,
 					this, &MSIMViewSlaves::onNetworkGeometryChanged);
+			connect(newSceneManager, &BLOCKMOD::SceneManager::newBlockSelected,
+					this, &MSIMViewSlaves::onBlockSelected);
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
 		} break;
@@ -633,4 +637,14 @@ void MSIMViewSlaves::onNetworkGeometryChanged() {
 	cmd->push();
 }
 
+
+void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
+	// find corresponding row in table widget
+	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
+		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
+			m_ui->tableWidgetSlaves->selectRow(i);
+			break;
+		}
+	}
+}
 
