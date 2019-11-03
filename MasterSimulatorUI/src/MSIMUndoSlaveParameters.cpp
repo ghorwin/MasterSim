@@ -21,7 +21,7 @@ void MSIMUndoSlaveParameters::undo() {
 	m_value.swap(currentParameterValue);
 
 	// tell project handler that everything has changed
-	MSIMProjectHandler::instance().setModified( MSIMProjectHandler::SlaveParameterModified);
+	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::SlaveParameterModified);
 }
 
 

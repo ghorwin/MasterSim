@@ -189,7 +189,7 @@ signals:
 		\param data The optional data argument (NULL if unused)
 		\sa DefaultModificationTypes
 	*/
-	void modified( int modificationType, void * data );
+	void modified(unsigned int modificationType, void * data );
 
 	/*! Emitted from closeProject(), loadProject(), saveProject() and saveWithNewFilename(), whenever
 		file name or modification state changes.

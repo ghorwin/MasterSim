@@ -24,7 +24,8 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	m_ui->setupUi(this);
 	m_ui->verticalLayout->setContentsMargins(9,0,9,9);
 
-	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(int,void*)), this, SLOT(onModified(int,void*)));
+	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
+			this, SLOT(onModified(unsigned int,void*)));
 
 	// setup tables
 	m_ui->tableWidgetConnections->verticalHeader()->setVisible(false);
@@ -80,7 +81,7 @@ MSIMViewConnections::~MSIMViewConnections() {
 }
 
 
-void MSIMViewConnections::onModified( int modificationType, void * /* data */) {
+void MSIMViewConnections::onModified(unsigned int modificationType, void * /* data */) {
 	switch ((MSIMProjectHandler::ModificationTypes)modificationType) {
 		case MSIMProjectHandler::AllModified :
 		case MSIMProjectHandler::SlavesModified : // slaves may have been renamed
