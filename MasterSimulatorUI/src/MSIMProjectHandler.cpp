@@ -437,7 +437,7 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 	for (unsigned int i=0; i<prj.m_graph.size(); ++i) {
 		const MASTER_SIM::Project::GraphEdge & edge = prj.m_graph[i];
 		// if check state of this connection is anything but NoError or Undetermined, ignore this connection
-		if (graphCheckResults[i] != MASTER_SIM::Project::NoError && graphCheckResults[i] != MASTER_SIM::Project::Undetermined)
+		if (graphCheckResults[i] != MASTER_SIM::Project::GEC_NoError && graphCheckResults[i] != MASTER_SIM::Project::GEC_Undetermined)
 			continue;
 		// search for this connection in current network
 		BLOCKMOD::Connector newCon;
