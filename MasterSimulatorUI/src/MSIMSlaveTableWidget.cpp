@@ -32,3 +32,14 @@ MSIMSlaveTableWidget::MSIMSlaveTableWidget(QWidget * parent) :
 	setItemDelegate(new MSIMSlaveItemDelegate(this));
 
 }
+
+
+void MSIMSlaveTableWidget::resizeEvent(QResizeEvent *event) {
+	// get space of first and last column
+	int column1 = horizontalHeader()->sectionSize(0);
+	int column2 = horizontalHeader()->sectionSize(1);
+	int column4 = horizontalHeader()->sectionSize(3);
+	int column3 = width()-2-column1-column2-column4;
+	horizontalHeader()->resizeSection(2, column3);
+	QTableWidget::resizeEvent(event);
+}
