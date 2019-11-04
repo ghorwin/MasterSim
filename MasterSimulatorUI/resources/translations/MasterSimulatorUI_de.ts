@@ -10,6 +10,59 @@
     </message>
 </context>
 <context>
+    <name>MSIMBlockEditorDialog</name>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="14"/>
+        <source>Edit FMU block</source>
+        <translation>FMU Blockdefinition bearbeiten</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="20"/>
+        <source>Block modeler</source>
+        <translation>Blockmodellierung</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="32"/>
+        <source>Templates</source>
+        <translation>Vorlagen</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="46"/>
+        <source>Block info</source>
+        <translation>Blockinformationen</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="54"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="64"/>
+        <source>Sockets:</source>
+        <translation>Ein- und Ausgänge:</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="78"/>
+        <source>Geometry (columns/rows)::</source>
+        <translation>Geometrie (Spalten/Zeilen):</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="99"/>
+        <source>Layout sockets</source>
+        <translation>Ein-/Ausgänge ausrichten</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.ui" line="121"/>
+        <source>Show pixmap from FMU</source>
+        <translation>Zeige Bild der FMU</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMBlockEditorDialog.cpp" line="58"/>
+        <source>%1 inlets, %2 outlets</source>
+        <translation>%1 Eingänge, %2 Ausgänge</translation>
+    </message>
+</context>
+<context>
     <name>MSIMBrowseFilenameWidget</name>
     <message>
         <location filename="../../src/MSIMBrowseFilenameWidget.cpp" line="50"/>
@@ -272,7 +325,7 @@
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="178"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="714"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="627"/>
         <source>About Qt...</source>
         <translation>Über Qt...</translation>
     </message>
@@ -288,8 +341,8 @@
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="210"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="380"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="385"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="408"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="413"/>
         <source>Reload project</source>
         <translation>Projektdatei neu laden</translation>
     </message>
@@ -363,17 +416,17 @@
         <translation>Entpackt FMUs und liest modelDescription.xml Datei ein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="160"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="173"/>
         <source>Undo</source>
         <translation>Rückgängig</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="163"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="176"/>
         <source>Redo</source>
         <translation>Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="253"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="281"/>
         <source>Reload project file</source>
         <translation>Projektdatei erneut laden</translation>
     </message>
@@ -382,223 +435,218 @@
         <translation type="vanished">Die Projektdatei wurde von einer externen Anwendung verändert. Wenn die Projektdatei erneut geladen wird, werden alle ungesicherten Änderungen verloren gehen. Veränderte Projektdatei erneut laden?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="254"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="282"/>
         <source>The project file has been modified by an external application. When reloading this project file all unsaved changes will be lost. Reload modified project file?</source>
         <translation>Die Projektdatei wurde von einer externen Anwendung verändert. Wenn die Projektdatei erneut geladen wird, werden alle ungesicherten Änderungen verloren gehen. Veränderte Projektdatei erneut laden?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="322"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="350"/>
         <source>Select project file</source>
         <translation>Projektdatei wählen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="324"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="352"/>
         <source>MasterSim Projects (*.cfg *%1);;All files (*.*)</source>
         <translation>MasterSim Projekte (*.cfg *%1);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="333"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="823"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="361"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="736"/>
         <source>File not found</source>
         <translation>Datei nicht gefunden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="334"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="362"/>
         <source>The file &apos;%1&apos; does not exist or cannot be accessed.</source>
         <translation>Die Datei &apos;%1&apos; existiert nicht oder es kann nicht darauf zugegriffen werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="380"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="408"/>
         <source>The project has not yet been saved.</source>
         <translation>Das Projekt wurde noch nicht gespeichert.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="385"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="413"/>
         <source>The project has been modified. Discard those changes?</source>
         <translation>Das Projekt wurde verändert. Diese Änderungen verwerfen?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="408"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="436"/>
         <source>Project file must be saved</source>
         <translation>Projektdatei muss gespeichert werden</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="409"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="437"/>
         <source>The project must be saved before it can be exported.</source>
         <translation>Das Projekt muss gespeichert werden, bevor es exportiert werden kann.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="422"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="450"/>
         <source>Specify MasterSim project package file</source>
         <translation>Wähle MasterSim Projektpaketdatei</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="424"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="452"/>
         <source>MasterSim Project Packages (*.msip);;All files (*.*)</source>
         <translation>MasterSim Projektpakete (*.msip);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="436"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="464"/>
         <source>Invalid file name</source>
         <translation>Ungültiger Dateiname</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="436"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="464"/>
         <source>Please enter a valid file name!</source>
         <translation>Bitte wählen Sie einen gültigen Dateinamen!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="459"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="487"/>
         <source>Missing user preferences</source>
         <translation>Fehlende Anwendereinstellungen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="459"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="487"/>
         <source>Please open the preferences dialog and specify a text editor first!</source>
         <translation>Bitte öffnen Sie den Einstellungsdialog und wählen Sie zuerst einen Texteditor!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="466"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="494"/>
         <source>Error starting external application</source>
         <translation>Fehler beim Start der externen Anwendung</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="466"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="494"/>
         <source>Text editor &apos;%1&apos; could not be started.</source>
         <translation>Der Texteditor &apos;%1&apos; konnte nicht gestartet werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="486"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="906"/>
+        <source>Open block editor</source>
+        <translation>Öffne Blockeditor</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMMainWindow.cpp" line="907"/>
+        <source>Open the block editor now to define a graphical representation of the FMU (you may skip this, since MASTERSIM also allows defining simulations without graphical schematics)?</source>
+        <translation>Öffnet den Blockeditor zur Definition der graphischen Darstellung der FMU (dieser Schritt kann übersprungen werden, da man in MASTERSIM auch Simulationen ohne graphische Schematik definieren kann)?</translation>
+    </message>
+    <message>
         <source>Reading tabulated data from &apos;%1&apos;
 </source>
-        <translation>Lese Datentabelle von &apos;%1&apos;
+        <translation type="vanished">Lese Datentabelle von &apos;%1&apos;
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="518"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="591"/>
         <source>  Variables: %1
 </source>
-        <translation>  Variablen: %1
+        <translation type="vanished">  Variablen: %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="525"/>
         <source>Error reading header from csv/tsv file (invalid format?).</source>
-        <translation>Fehler beim Lesen der Kopfzeile in der csv/tsv Datei (ungültiges Format?).</translation>
+        <translation type="vanished">Fehler beim Lesen der Kopfzeile in der csv/tsv Datei (ungültiges Format?).</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="534"/>
         <source>Extracting &apos;%1&apos;
 </source>
-        <translation>Entpacke &apos;%1&apos;
+        <translation type="vanished">Entpacke &apos;%1&apos;
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="540"/>
         <source>ERROR: FMU does not contain the file modelDescription.xml.
 </source>
-        <translation>FEHLER: FMU enthält keine modelDescription.xml.
+        <translation type="vanished">FEHLER: FMU enthält keine modelDescription.xml.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="546"/>
         <source>ERROR: Could not open modelDescription.xml.
 </source>
-        <translation>FEHLER: Konnte modelDescription.xml nicht öffnen.
+        <translation type="vanished">FEHLER: Konnte modelDescription.xml nicht öffnen.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="556"/>
         <source>ERROR: Error while extracting modelDescription.xml.
 </source>
-        <translation>FEHLER: Fehler beim Entpacken der modelDescription.xml.
+        <translation type="vanished">FEHLER: Fehler beim Entpacken der modelDescription.xml.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="571"/>
         <source>ERROR: Could not open FMU file (not a zip archive?).
 </source>
-        <translation>FEHLER: Konnte FMU Datei nicht öffnen (keine zip-Datei?).
+        <translation type="vanished">FEHLER: Konnte FMU Datei nicht öffnen (keine zip-Datei?).
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="579"/>
         <source>ERROR: Error parsing XML file. Error message:
 %1
 </source>
-        <translation>FEHLER: Fehler beim Lesen der XML Datei. Fehlermeldung:
+        <translation type="vanished">FEHLER: Fehler beim Lesen der XML Datei. Fehlermeldung:
 %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="584"/>
         <source>  Model identifiers:
 </source>
-        <translation>  Modelidentifizierung:
+        <translation type="vanished">  Modelidentifizierung:
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="586"/>
         <source>    FMI v1    : %1
 </source>
-        <translation>    FMI v1    : %1
+        <translation type="vanished">    FMI v1    : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="588"/>
         <source>    FMI v2 ME : %1
 </source>
-        <translation>    FMI v2 ME : %1
+        <translation type="vanished">    FMI v2 ME : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="590"/>
         <source>    FMI v2 CS : %1
 </source>
-        <translation>    FMI v2 CS : %1
+        <translation type="vanished">    FMI v2 CS : %1
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="601"/>
         <source>ERROR: Error parsing model description.
 </source>
-        <translation>FEHLER: Fehler beim Lesen der Modellbeschreibung.
+        <translation type="vanished">FEHLER: Fehler beim Lesen der Modellbeschreibung.
 </translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="611"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="524"/>
         <source>Extracting FMUs and parsing modelDescription.xml</source>
         <translation>Entpacke FMUs und parse modelDescription.xml</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="613"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="526"/>
         <source>All FMUs referenced in the project are being extracted, their modelDescription.xml file is read and a summary of the data is shown below:</source>
         <translation>Alle im Projekt referenzierten FMUs/Slaves werden entpackt, deren modelDescription.xml-Datei wird gelesen und eine Zusammenfassung der Daten wird unten angezeigt:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="667"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="580"/>
         <source>Setup external tool</source>
         <translation>Externes Programm einrichten</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="667"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="580"/>
         <source>Please select first the path to the external post processing in the preferences dialog!</source>
         <translation>Bitte wählen Sie zuerst den Pfad zum externen Post-Processing im Einstellungsdialog!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="699"/>
-        <location filename="../../src/MSIMMainWindow.cpp" line="706"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="612"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="619"/>
         <source>Error running PostProc</source>
         <translation>Fehler beim Start vom PostProc</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="700"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="613"/>
         <source>Could not start executable &apos;%1&apos;.</source>
         <translation>Konnte Anwendung &apos;%1&apos; nicht starten.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="707"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="620"/>
         <source>Process already running.</source>
         <translation>Prozess läuft bereits.</translation>
     </message>
@@ -643,22 +691,22 @@
         <translation type="vanished">This is the placeholder for the MasterSim aboutbox, see https://sourceforge.net/projects/mastersim.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="739"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="652"/>
         <source>Languange changed</source>
         <translation>Sprache geändert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="739"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="652"/>
         <source>Please restart the software to activate the new language!</source>
         <translation>Bitte starten Sie die Anwendung neu, um die neue Sprache zu aktivieren!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="823"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="736"/>
         <source>The file &apos;%1&apos; cannot be found or does not exist.</source>
         <translation>Die Datei &apos;%1&apos; kann nicht gefunden werden oder existiert nicht.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMMainWindow.cpp" line="849"/>
+        <location filename="../../src/MSIMMainWindow.cpp" line="762"/>
         <source>unnamed%1</source>
         <translation>Unbenannt%1</translation>
     </message>
@@ -712,58 +760,58 @@
 <context>
     <name>MSIMProjectHandler</name>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="72"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="84"/>
         <source>Save project before closing</source>
         <translation>Speichere Projekt vorm Schließen</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="73"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="85"/>
         <source>Would you like to save the project before closing it?</source>
         <translation>Möchten Sie das Projekt speichern, bevor es geschlossen wird?</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="144"/>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="183"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="156"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="195"/>
         <source>Error loading project</source>
         <translation>Fehler beim Laden des Projekts</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="145"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="157"/>
         <source>Error loading project file &apos;%1&apos;, see error log file &apos;%2&apos; for details.</source>
         <translation>Fehler beim Laden der Projektdatei &apos;%1&apos;, Details finden sich auch in der Fehler-Logdatei &apos;%2&apos;.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="184"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="196"/>
         <source>Data in project was missing/invalid, see error log &apos;%1&apos; for details.</source>
         <translation>Daten im Projekt fehlen oder sind ungültig, Details finden sich auch in der Fehler-Logdatei &apos;%1&apos;.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="223"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="235"/>
         <source>Specify project file</source>
         <translation>Wähle Projektdatei</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="225"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="237"/>
         <source>Projects (*%1);;All files (*.*)</source>
         <translation>Projekte (*%1);;Alle Dateien (*.*)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="232"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="244"/>
         <source>Invalid file name</source>
         <translation>Ungültiger Dateiname</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="232"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="244"/>
         <source>Please enter a valid file name!</source>
         <translation>Bitte wählen Sie einen gültigen Dateinamen!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="264"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="276"/>
         <source>Saving failed</source>
         <translation>Fehler beim Speichern</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMProjectHandler.cpp" line="265"/>
+        <location filename="../../src/MSIMProjectHandler.cpp" line="277"/>
         <source>Error while saving project file, see error log file &apos;%1&apos; for details.</source>
         <translation>Beim Speichern der Projektdatei sind Fehler aufgetreten, Details finden sich auch in der Fehler-Logdatei &apos;%1&apos;.</translation>
     </message>
@@ -796,12 +844,12 @@
     <message>
         <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished">Form</translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="20"/>
         <source>MasterSim project</source>
-        <translation type="unfinished"></translation>
+        <translation>MasterSim-Projekt</translation>
     </message>
     <message>
         <location filename="../../src/MSIMSimulationMonitorWidget.ui" line="42"/>
@@ -910,86 +958,86 @@
         <translation>Verknüpfe anhand des Variablennamens</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="31"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="34"/>
         <source>Output variable</source>
         <translation>Ausgangsvariable</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="31"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="34"/>
         <source>Input variable</source>
         <translation>Eingangsvariable</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="44"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="47"/>
         <source>Simulator Name</source>
         <translation>Simulatorname</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="54"/>
-        <location filename="../../src/MSIMViewConnections.cpp" line="63"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="57"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="66"/>
         <source>Slave</source>
         <translation>Slave</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="54"/>
-        <location filename="../../src/MSIMViewConnections.cpp" line="63"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="57"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="66"/>
         <source>Variable</source>
         <translation>Variable</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="54"/>
-        <location filename="../../src/MSIMViewConnections.cpp" line="63"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="57"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="66"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="344"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="347"/>
         <source>Connection error</source>
         <translation>Verknüpfungsfehler</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="344"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="347"/>
         <source>Cannot connect variables of different type.</source>
         <translation>Kann Variablen unterschiedlichen Typs nicht verknüpfen.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="362"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="366"/>
         <source>Connection added</source>
         <translation>Verknüpfung hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="382"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="388"/>
         <source>Connection removed</source>
         <translation>Verknüpfung entfernt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="472"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="478"/>
         <source>Error connecting slaves</source>
         <translation>Fehler beim Verknüpfen der Slaves</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="472"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="478"/>
         <source>Slaves could not be connected. Try analyzing FMUs first!</source>
         <translation>Slaves konnten nicht verknüpft werden. Versuche zuerst die FMUs zu analysieren!</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="477"/>
-        <location filename="../../src/MSIMViewConnections.cpp" line="494"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="483"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="500"/>
         <source>Connection result</source>
         <translation>Verknüpfungsergebnis</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="477"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="483"/>
         <source>No connections possible between slaves.</source>
         <translation>Es sind keine neuen Verknüpfungen zwischen den Slaves möglich.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="494"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="500"/>
         <source>No new connections could be made between slaves.</source>
         <translation>Zwischen den Slaves konnte keine Verknüpfung hergestellt werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewConnections.cpp" line="499"/>
+        <location filename="../../src/MSIMViewConnections.cpp" line="507"/>
         <source>Connections added</source>
         <translation>Verknüpfungen hinzugefügt</translation>
     </message>
@@ -1111,17 +1159,16 @@
         <translation>Starte Simulation</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="277"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="337"/>
         <source>Command line:</source>
         <translation>Kommandozeile:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="357"/>
         <source>Terminal program command:</source>
-        <translation>Kommando für Terminal Programm:</translation>
+        <translation type="vanished">Kommando für Terminal Programm:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="306"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="295"/>
         <source>Starts the simulation.</source>
         <translation>Startet die Simulation.</translation>
     </message>
@@ -1141,147 +1188,144 @@
         <translation>Schreibe interne Variablen als Ausgaben</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="284"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="344"/>
         <source>Verbosity/Logging detail:</source>
         <translation>Ausgabehäufigkeit/Log-Detailstufe:</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="336"/>
+        <location filename="../../src/MSIMViewSimulation.ui" line="325"/>
         <source>Show log file...</source>
         <translation>Zeige Logdatei...</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.ui" line="364"/>
         <source>Close console/terminal window on exit</source>
-        <translation>Schließe Konsolenprogramm/Terminal-Fenster nach Programmende</translation>
+        <translation type="vanished">Schließe Konsolenprogramm/Terminal-Fenster nach Programmende</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Monitor</source>
         <translation>Beobachten</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="58"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
         <source>Richardson (adjust step size)</source>
         <translation>Richardson (Zeitschrittanpassung)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="66"/>
         <source>Minimal</source>
         <translation>Minimal</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="66"/>
         <source>Normal</source>
         <translation>Normal</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="66"/>
         <source>Informative</source>
         <translation>Informativ</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="66"/>
         <source>Detailed</source>
         <translation>Detailliert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="62"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="66"/>
         <source>Developer</source>
         <translation>Entwickler</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="149"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="142"/>
         <source>Solver error</source>
         <translation>Solverfehler</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="149"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="142"/>
         <source>Cannot find solver executable &apos;%1&apos;.</source>
         <translation>Kann Ausführungsdatei &apos;%1&apos; nicht finden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="191"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="189"/>
         <source>Error running solver</source>
         <translation>Fehler beim Start des Solvers</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="192"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="190"/>
         <source>Could not start solver executable &apos;%1&apos;.</source>
         <translation>Konnte Ausführungsdatei &apos;%1&apos; nicht starten.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="227"/>
         <source>Error starting command</source>
-        <translation>Fehler beim Ausführen des Befehls</translation>
+        <translation type="vanished">Fehler beim Ausführen des Befehls</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="227"/>
         <source>On Mac, you need to copy the command line and execute the master simulator executable on a Terminal window, for now.</source>
-        <translation>Aktuell muss auf dem Mac die Kommandozeile kopiert und im Terminal ausgeführt werden.</translation>
+        <translation type="vanished">Aktuell muss auf dem Mac die Kommandozeile kopiert und im Terminal ausgeführt werden.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="293"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="302"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="311"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="323"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="332"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="341"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="350"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="359"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="368"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="377"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="395"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="413"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="431"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="449"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="458"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="476"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="494"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="512"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="530"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="548"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="568"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="577"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="310"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="319"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="328"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="340"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="349"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="358"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="367"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="376"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="385"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="394"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="412"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="430"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="448"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="466"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="475"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="493"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="511"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="529"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="547"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="565"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="585"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="594"/>
         <source>Simulation setting changed</source>
         <translation>Simulationseinstellungen verändert</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="387"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="405"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="423"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="441"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="468"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="486"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="504"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="522"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="540"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="404"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="422"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="440"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="458"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="485"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="503"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="521"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="539"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="557"/>
         <source>Invalid input</source>
         <translation>Ungültige Eingabe</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="387"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="405"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="404"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="422"/>
         <source>Time must be &gt;= 0.</source>
         <translation>Zeitpunkt muss &gt;= 0 sein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="423"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="441"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="440"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="458"/>
         <source>Tolerance must be &gt; 0.</source>
         <translation>Toleranz muss &gt; 0 sein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="468"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="486"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="504"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="522"/>
-        <location filename="../../src/MSIMViewSimulation.cpp" line="540"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="485"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="503"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="521"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="539"/>
+        <location filename="../../src/MSIMViewSimulation.cpp" line="557"/>
         <source>Step size must be &gt;= 0.</source>
         <translation>Zeitschrittlänge muss &gt;= 0 sein.</translation>
     </message>
@@ -1294,22 +1338,36 @@
         <translation>Form</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.ui" line="69"/>
+        <location filename="../../src/MSIMViewSlaves.ui" line="33"/>
         <source>Simulators/Slaves</source>
         <translation>Simulatoren/Slaves</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.ui" line="113"/>
-        <source>Del</source>
-        <translation>Entf</translation>
+        <location filename="../../src/MSIMViewSlaves.ui" line="168"/>
+        <source>Switches to connection mode.</source>
+        <translation>Wechselt in den Verbindungs-Modus.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.ui" line="124"/>
+        <location filename="../../src/MSIMViewSlaves.ui" line="171"/>
+        <source>Connect sockets...</source>
+        <translation>Verbinde Ein-/Ausgänge...</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.ui" line="184"/>
+        <source>Graphical network view</source>
+        <translation>Graphische Netzwerkdarstellung</translation>
+    </message>
+    <message>
+        <source>Del</source>
+        <translation type="vanished">Entf</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.ui" line="114"/>
         <source>Parameters</source>
         <translation>Parameter</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.ui" line="53"/>
+        <location filename="../../src/MSIMViewSlaves.ui" line="103"/>
         <source>Show FMU paths relative to project file</source>
         <translation>Zeige FMU Pfade relativ zur Projektdatei</translation>
     </message>
@@ -1322,62 +1380,197 @@
         <translation type="vanished">Vollständiger Pfad</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="51"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="68"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="51"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="68"/>
         <source>FMU</source>
         <translation>FMU</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="51"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="68"/>
         <source>Cycle Nr.</source>
         <translation>Zyklus Nr.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="99"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="108"/>
+        <source>Reading tabulated data from &apos;%1&apos;
+</source>
+        <translation>Lese Datentabelle von &apos;%1&apos;
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="138"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="233"/>
+        <source>  Variables: %1
+</source>
+        <translation>  Variablen: %1
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="142"/>
+        <source>Error reading header from csv/tsv file (invalid format?).</source>
+        <translation>Fehler beim Lesen der Kopfzeile in der csv/tsv Datei (ungültiges Format?).</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="150"/>
+        <source>Extracting &apos;%1&apos;
+</source>
+        <translation>Entpacke &apos;%1&apos;
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="156"/>
+        <source>ERROR: FMU does not contain the file modelDescription.xml.
+</source>
+        <translation>FEHLER: FMU enthält keine modelDescription.xml.
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="162"/>
+        <source>ERROR: Could not open modelDescription.xml.
+</source>
+        <translation>FEHLER: Konnte modelDescription.xml nicht öffnen.
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="172"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="194"/>
+        <source>ERROR: Error while extracting modelDescription.xml.
+</source>
+        <translation>FEHLER: Fehler beim Entpacken der modelDescription.xml.
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="214"/>
+        <source>ERROR: Could not open FMU file (not a zip archive?).
+</source>
+        <translation>FEHLER: Konnte FMU Datei nicht öffnen (keine zip-Datei?).
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="221"/>
+        <source>ERROR: Error parsing XML file. Error message:
+%1
+</source>
+        <translation>FEHLER: Fehler beim Lesen der XML Datei. Fehlermeldung:
+%1
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="226"/>
+        <source>  Model identifiers:
+</source>
+        <translation>  Modelidentifizierung:
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="228"/>
+        <source>    FMI v1    : %1
+</source>
+        <translation>    FMI v1    : %1
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="230"/>
+        <source>    FMI v2 ME : %1
+</source>
+        <translation>    FMI v2 ME : %1
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="232"/>
+        <source>    FMI v2 CS : %1
+</source>
+        <translation>    FMI v2 CS : %1
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="242"/>
+        <source>ERROR: Error parsing model description.
+</source>
+        <translation>FEHLER: Fehler beim Lesen der Modellbeschreibung.
+</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="310"/>
         <source>Select FMU</source>
         <translation>Wähle FMU</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="489"/>
+        <source>Error in Block Editor</source>
+        <translation>Fehler in Blockeditor</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="490"/>
+        <source>Cannot edit block without knownledge of inlet/outlet sockets. Must have a valid FMU with a modelDescription.xml file for this slave.</source>
+        <translation>Kann den Block nicht ohne Kenntnis der Ein- und Ausgänge bearbeiten. Eine gültige FMU mit modelDescription.xml wird für diesen Simulationsslave benötigt.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="539"/>
+        <source>Changed block definition</source>
+        <translation>Blockdefinition geändert</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="628"/>
+        <source>Connection added</source>
+        <translation>Verknüpfung hinzugefügt</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="636"/>
+        <source>Network geometry modified</source>
+        <translation>Netzwerkgeometrie verändert</translation>
     </message>
     <message>
         <source>FMU files (*.fmu)</source>
         <translation type="vanished">FMU Dateien (*.fmu)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="100"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="311"/>
         <source>Slave files (*.fmu *.tsv *.csv);;FMUs (*.fmu)</source>
         <translation>Slave/Simulator-Dateien (*.fmu *.tsv *.csv);;FMUs (*.fmu)</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="119"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="337"/>
         <source>Slave added</source>
         <translation>Slave hinzugefügt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="148"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="348"/>
+        <source>Error analyzing FMU/Slave</source>
+        <translation>Fehler bei der Analyze der FMU/des Slaves.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="348"/>
+        <source>There were errors while analizing the slave FMU or data table.</source>
+        <translation>Es gab Fehler bei der Analyze der FMU bzw. der Datentabelle.</translation>
+    </message>
+    <message>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="392"/>
         <source>Slave removed</source>
         <translation>Slave entfernt</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="165"/>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="177"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="410"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="422"/>
         <source>Invalid input</source>
         <translation>Ungültige Eingabe</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="165"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="410"/>
         <source>Slave names may not contain spaces or tabulator characters.</source>
         <translation>Slave-Namen dürfen keine Leerzeichen oder Tabulatoren enthalten.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="177"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="422"/>
         <source>Slave names must be unique identifiers.</source>
         <translation>Slave-Namen müssen eindeutige Bezeichner sein.</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMViewSlaves.cpp" line="209"/>
+        <location filename="../../src/MSIMViewSlaves.cpp" line="458"/>
         <source>Slave modified</source>
         <translation>Slave verändert</translation>
     </message>
@@ -1412,7 +1605,7 @@
     </message>
     <message>
         <location filename="../../src/MSIMWelcomeScreen.cpp" line="61"/>
-        <location filename="../../src/MSIMWelcomeScreen.cpp" line="126"/>
+        <location filename="../../src/MSIMWelcomeScreen.cpp" line="130"/>
         <source>Examples/Validation cases</source>
         <translation>Beispiele/Validierungsfälle</translation>
     </message>
@@ -1436,7 +1629,7 @@
         <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Projekt nicht zugreifbar/lesbar &lt;/font&gt;&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMWelcomeScreen.cpp" line="241"/>
+        <location filename="../../src/MSIMWelcomeScreen.cpp" line="248"/>
         <source>&lt;p&gt;&amp;nbsp;&lt;p&gt;&lt;hr&gt;&lt;h1&gt;No news today&lt;/h1&gt;&lt;p&gt;&lt;i&gt;Unable to download news content at this time.&lt;/i&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&amp;nbsp;&lt;p&gt;&lt;hr&gt;&lt;h1&gt;Heute keine Nachrichten&lt;/h1&gt;&lt;p&gt;&lt;i&gt;Kann zum aktuellen Zeitpunkt keine Neuigkeiten herunterladen.&lt;/i&gt;&lt;/p&gt;</translation>
     </message>
