@@ -336,7 +336,7 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 		const GraphEdge & graphEdge = m_graph[i];
 		// target socket already taken? this would be invalid
 		if (connectedInletSockets.find(graphEdge.m_outputVariableRef) != connectedInletSockets.end()) {
-			validEdges[i] = TargetSocketAlreadyConnected;
+			validEdges[i] = GEC_TargetSocketAlreadyConnected;
 			continue; // target socket
 		}
 		try {
@@ -350,7 +350,7 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 			std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(sourceSim.m_pathToFMU);
 			// not found or maybe not yet read? mark connection as "undetermined"
 			if (it == modelDescriptions.end()) {
-				validEdges[i] = Undetermined;
+				validEdges[i] = GEC_Undetermined;
 				continue;
 			}
 			// check if socket exists
@@ -358,12 +358,12 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 			const FMIVariable & var = modelDesc.variable(variableName);
 			// check for correct type
 			if (var.m_causality != FMIVariable::C_OUTPUT) {
-				validEdges[i] = SourceSocketNotOutlet;
+				validEdges[i] = GEC_SourceSocketNotOutlet;
 				continue;
 			}
 			// all ok so far
 		} catch (...) {
-			validEdges[i] = InvalidSourceSocketName;
+			validEdges[i] = GEC_InvalidSourceSocketName;
 		}
 		// now the same for the target
 		try {
@@ -377,7 +377,7 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 			std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(sim.m_pathToFMU);
 			// not found or maybe not yet read? mark connection as "undetermined"
 			if (it == modelDescriptions.end()) {
-				validEdges[i] = Undetermined;
+				validEdges[i] = GEC_Undetermined;
 				continue;
 			}
 			// check if socket exists
@@ -385,14 +385,14 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 			const FMIVariable & var = modelDesc.variable(variableName);
 			// check for correct type
 			if (var.m_causality != FMIVariable::C_INPUT) {
-				validEdges[i] = TargetSocketNotInlet;
+				validEdges[i] = GEC_TargetSocketNotInlet;
 				continue;
 			}
 			// all ok so far, remember the target slot to be taken already
 			connectedInletSockets.insert(graphEdge.m_outputVariableRef);
-			validEdges[i] = NoError;
+			validEdges[i] = GEC_NoError;
 		} catch (...) {
-			validEdges[i] = InvalidSourceSocketName;
+			validEdges[i] = GEC_InvalidSourceSocketName;
 		}
 	}
 }

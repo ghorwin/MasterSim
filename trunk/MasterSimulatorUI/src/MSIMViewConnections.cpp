@@ -33,13 +33,8 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QStringList headers;
 	headers << tr("Output variable") << tr("Input variable");
 	m_ui->tableWidgetConnections->setHorizontalHeaderLabels(headers);
-#if QT_VERSION < 0x050000
-	m_ui->tableWidgetConnections->horizontalHeader()->setResizeMode(0, QHeaderView::Stretch);
-	m_ui->tableWidgetConnections->horizontalHeader()->setResizeMode(1, QHeaderView::Stretch);
-#else // QT_VERSION < 0x050000
 	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-#endif // QT_VERSION < 0x050000
 
 	m_ui->tableWidgetSlaves->verticalHeader()->setVisible(false);
 	m_ui->tableWidgetSlaves->setColumnCount(1);
@@ -52,18 +47,18 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 
 	// setup tables
 	m_ui->tableWidgetOutputVariable->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetOutputVariable->setColumnCount(3);
+	m_ui->tableWidgetOutputVariable->setColumnCount(4);
 	headers.clear();
-	headers << tr("Slave") << tr("Variable") << tr("Type");
+	headers << tr("Slave") << tr("Variable") << tr("Type") << tr("Unit");
 	m_ui->tableWidgetOutputVariable->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetOutputVariable->horizontalHeader()->setSortIndicatorShown(true);
 	m_ui->tableWidgetOutputVariable->sortByColumn(0, Qt::AscendingOrder);
 
 	m_ui->tableWidgetInputVariable->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetInputVariable->setColumnCount(3);
+	m_ui->tableWidgetInputVariable->setColumnCount(4);
 	headers.clear();
-	headers << tr("Slave") << tr("Variable") << tr("Type");
+	headers << tr("Slave") << tr("Variable") << tr("Type") << tr("Unit");
 	m_ui->tableWidgetInputVariable->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetInputVariable->horizontalHeader()->setSortIndicatorShown(true);
@@ -113,13 +108,9 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
 		QString slaveName = QString::fromUtf8(simDef.m_name.c_str());
 		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsSelectable);
-		if (uncheckedSlaveNames.find(slaveName.toUtf8().data()) != uncheckedSlaveNames.end())
-			item->setCheckState(Qt::Unchecked);
-		else
-			item->setCheckState(Qt::Checked);
+		item->setFlags(Qt::ItemIsEnabled);
 		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-		m_ui->tableWidgetSlaves->setItem(i, 0, item);
+		m_ui->tableWidgetSlaves->setItem((int)i, 0, item);
 
 		m_ui->comboBoxSlave1->addItem(slaveName);
 		m_ui->comboBoxSlave2->addItem(slaveName);
@@ -148,11 +139,8 @@ void MSIMViewConnections::updateConnectionsTable() {
 	// store current sort column
 	int sortColumn = m_ui->tableWidgetConnections->horizontalHeader()->sortIndicatorSection();
 
-	std::set<std::string> checkedSlaveNames;
-	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
-		if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Checked)
-			checkedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
-	}
+	std::vector<MASTER_SIM::Project::GraphCheckErrorCodes> graphCheckResults;
+	project().checkGraphs(MSIMMainWindow::instance().modelDescriptions(), graphCheckResults);
 
 	int currentIdx = m_ui->tableWidgetConnections->currentRow();
 
@@ -162,6 +150,7 @@ void MSIMViewConnections::updateConnectionsTable() {
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
 		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
 		QTableWidgetItem * outItem = new QTableWidgetItem( QString::fromStdString(edge.m_outputVariableRef)); // no utf8 here
+		outItem->setData(Qt::UserRole, i); // also store index in global connection list
 		outItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		std::string inputSlaveName;
 		std::string outputSlaveName;
@@ -170,11 +159,10 @@ void MSIMViewConnections::updateConnectionsTable() {
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
 			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-			outItem->setData(Qt::UserRole, i); // also store index in global connection list
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
-			outItem->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
+			outItem->setToolTip(tr("Invalid variable reference or unknown slave."));
 			outItem->setBackground( QColor("#B22222") );
 			outItem->setData(Qt::UserRole+1, true);
 		}
@@ -189,25 +177,58 @@ void MSIMViewConnections::updateConnectionsTable() {
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
-			inItem->setToolTip( QString::fromStdString(ex.what())); /// \todo translation of error message to user?
+			outItem->setToolTip(tr("Invalid variable reference or unknown slave."));
 			inItem->setBackground( QColor("#B22222") );
 			inItem->setData(Qt::UserRole+1, true);
 		}
 
 		// check if both input and output slaves are selected
-		if (checkedSlaveNames.find(inputSlaveName) != checkedSlaveNames.end() &&
-			checkedSlaveNames.find(outputSlaveName) != checkedSlaveNames.end())
-		{
-			int currentRow = m_ui->tableWidgetConnections->rowCount();
-			m_ui->tableWidgetConnections->setRowCount(currentRow+1);
+		int currentRow = m_ui->tableWidgetConnections->rowCount();
+		m_ui->tableWidgetConnections->setRowCount(currentRow+1);
 
-			m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
-			m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
+		// mark items based on check results
+		QFont f;
+		f.setItalic(true);
+		switch (graphCheckResults[i]) {
+			case MASTER_SIM::Project::GEC_NoError : break; // nothing to adjust
+			case MASTER_SIM::Project::GEC_Undetermined :
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+				inItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+			break;
+			case MASTER_SIM::Project::GEC_TargetSocketNotInlet :
+				inItem->setFont(f);
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setToolTip(tr("Not an inlet socket!"));
+				outItem->setToolTip(tr("Not an inlet socket!"));
+			break;
+			case MASTER_SIM::Project::GEC_SourceSocketNotOutlet :
+				outItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setToolTip(tr("Not an outlet socket!"));
+				inItem->setToolTip(tr("Not an outlet socket!"));
+			break;
+			case MASTER_SIM::Project::GEC_TargetSocketAlreadyConnected :
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setToolTip(tr("Inlet socket is connected twice."));
+				outItem->setToolTip(tr("Inlet socket is connected twice."));
+			break;
+			default : {
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setToolTip(tr("Invalid connection"));
+				inItem->setToolTip(tr("Invalid connection"));
+			}
 		}
-		else {
-			delete outItem;
-			delete inItem;
-		}
+
+		m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
+		m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
 	}
 
 	m_ui->tableWidgetConnections->setSortingEnabled(true);
