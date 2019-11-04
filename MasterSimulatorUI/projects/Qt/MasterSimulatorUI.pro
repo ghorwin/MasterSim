@@ -43,6 +43,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMSimulationMonitorWidget.cpp \
 	../../src/MSIMSlaveBlock.cpp \
 	../../src/MSIMSlavePropertyWidget.cpp \
+	../../src/MSIMSlaveTableWidget.cpp \
 	../../src/MSIMUIConstants.cpp \
 	../../src/MSIMDirectories.cpp \
 	../../src/MSIMMainWindow.cpp \
@@ -82,6 +83,7 @@ HEADERS  += \
 	../../src/MSIMSimulationMonitorWidget.h \
 	../../src/MSIMSlaveBlock.h \
 	../../src/MSIMSlavePropertyWidget.h \
+	../../src/MSIMSlaveTableWidget.h \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMDirectories.h \
 	../../src/MSIMMainWindow.h \
