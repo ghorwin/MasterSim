@@ -111,6 +111,13 @@ void BlockItem::resize(int newWidth, int newHeight) {
 }
 
 
+QRectF BlockItem::boundingRect() const {
+	QRectF r = QGraphicsRectItem::boundingRect();
+	/// \todo Later, if we draw text annotations outside the rectangle, adjust the bounding rect here
+	return r;
+}
+
+
 // *** protected functions ***
 
 
