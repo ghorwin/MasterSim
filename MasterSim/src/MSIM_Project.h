@@ -130,13 +130,13 @@ public:
 	const SimulatorDef & simulatorDefinition(const std::string & slaveName) const;
 
 	enum GraphCheckErrorCodes {
-		NoError,
-		TargetSocketAlreadyConnected,
-		InvalidSourceSocketName,
-		InvalidTargetSocketName,
-		SourceSocketNotOutlet,
-		TargetSocketNotInlet,
-		Undetermined // Used when one or both of the FMUs have no modelDescription yet
+		GEC_NoError,
+		GEC_TargetSocketAlreadyConnected,
+		GEC_InvalidSourceSocketName,
+		GEC_InvalidTargetSocketName,
+		GEC_SourceSocketNotOutlet,
+		GEC_TargetSocketNotInlet,
+		GEC_Undetermined // Used when one or both of the FMUs have no modelDescription yet
 	};
 
 	/*! This function takes a list of graph edges and checks if the referenced blocks exist,
