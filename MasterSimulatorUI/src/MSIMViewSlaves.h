@@ -87,6 +87,8 @@ private slots:
 	/*! Called from sceneManager() whenever a block has been selected. */
 	void onBlockSelected(const QString & blockName);
 
+	void on_toolButtonPrint_clicked();
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();

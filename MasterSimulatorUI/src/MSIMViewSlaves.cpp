@@ -11,6 +11,8 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrinter>
 
 #include <qttreepropertybrowser.h>
 #include <qtvariantproperty.h>
@@ -626,3 +628,14 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 	}
 }
 
+
+void MSIMViewSlaves::on_toolButtonPrint_clicked() {
+	// open print preview dialog and print schematics
+	QPrinter prn;
+	QPrintDialog printDlg(&prn, this);
+	if (printDlg.exec() == QDialog::Accepted) {
+		QPainter painter;
+		painter.begin(&prn);
+		m_ui->blockModWidget->render(&painter);
+	}
+}
