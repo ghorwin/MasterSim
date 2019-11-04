@@ -72,7 +72,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 		// process model description and create properties for all parameters
 		for (unsigned int i=0; i<modelDesc.m_variables.size(); ++i) {
 			const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[i];
-			if (var.m_variability == "parameter" || var.m_variability == "tunable") {
+			if (var.m_causality == MASTER_SIM::FMIVariable::C_PARAMETER) {
 				QString varNameType;
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 					std::string unit = var.m_unit;
@@ -87,7 +87,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 				if (var.m_causality == MASTER_SIM::FMIVariable::C_INTERNAL)
 					varProp->setInternal(true);
 				// todo - set "default/auto-text" property propertyResultRootDir->setAttribute()
-				if (var.m_name == "ResultRootDir") {
+				if (var.m_name == "ResultsRootDir") {
 					varProp->setToolTip( tr("The directory to be used by the slave to stored output data therein.") );
 					varProp->setValueToolTip( tr("If empty, MasterSim will automatically pass the directory generated for the slave, such that output data can be stored therein.") );
 				}
