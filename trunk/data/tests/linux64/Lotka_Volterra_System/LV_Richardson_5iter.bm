@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BlockMod>
+	<!--Blocks-->
+	<Blocks>
+		<Block name="Prey">
+			<Position>0, 0</Position>
+			<Size>96, 48</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="y">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x">
+					<Position>96, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+		<Block name="Predator">
+			<Position>-16, 96</Position>
+			<Size>128, 128</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="y">
+					<Position>128, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+	</Blocks>
+	<!--Connectors-->
+	<Connectors>
+		<Connector name="auto-named">
+			<Source>Predator.y</Source>
+			<Target>Prey.y</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>-96</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>-176</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Prey.x</Source>
+			<Target>Predator.x</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>-176</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>96</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+	</Connectors>
+</BlockMod>
