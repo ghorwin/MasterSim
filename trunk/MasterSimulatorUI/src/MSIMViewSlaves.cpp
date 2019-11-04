@@ -28,7 +28,6 @@
 
 #include "MSIMProjectHandler.h"
 #include "MSIMUIConstants.h"
-#include "MSIMSlaveItemDelegate.h"
 #include "MSIMConversion.h"
 #include "MSIMMainWindow.h"
 #include "MSIMSceneManager.h"
@@ -52,28 +51,6 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
 			this, SLOT(onModified(unsigned int,void*)));
 
-	// setup tables
-//	m_ui->tableWidgetFMUs->horizontalHeader()->setVisible(false);
-//	m_ui->tableWidgetFMUs->verticalHeader()->setVisible(false);
-//	m_ui->tableWidgetFMUs->setColumnCount(1);
-	QStringList headers;
-//	headers << tr("Full path");
-//	m_ui->tableWidgetFMUs->setHorizontalHeaderLabels(headers);
-//	m_ui->tableWidgetFMUs->horizontalHeader()->setStretchLastSection(true);
-
-//	m_ui->tableWidgetSlaves->horizontalHeader()->setVisible(false);
-	m_ui->tableWidgetSlaves->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetSlaves->setColumnCount(4);
-	headers.clear();
-	headers << "" << tr("Name") << tr("FMU") << tr("Cycle Nr.");
-	m_ui->tableWidgetSlaves->setHorizontalHeaderLabels(headers);
-
-//	formatTable(m_ui->tableWidgetFMUs);
-	formatTable(m_ui->tableWidgetSlaves);
-
-	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
-	m_ui->tableWidgetSlaves->setItemDelegate(new MSIMSlaveItemDelegate(this));
-
 	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
 	m_ui->scrollAreaWidgetContents->layout()->setContentsMargins(0,0,0,0);
 	m_ui->widgetProperties->updateProperties(-1);
@@ -81,6 +58,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	// set the scene showing the network
 	m_ui->blockModWidget->setResolution(1);
 	m_ui->blockModWidget->setGridStep(BLOCKMOD::Globals::GridSpacing*10);
+	m_ui->splitter_2->setStretchFactor(1,1);
 }
 
 
