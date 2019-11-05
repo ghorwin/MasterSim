@@ -1,6 +1,20 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.8.0 (05.11.2019)
+----------------------------------------
+
+This is a major update, which first introduces graphical routing
+and a simulation network display (including printing/export to PDF).
+Also, a lot of usability features have been added to the user interface.
+
+* Feature: [Ticket #59] - Show unit of variables in connection view
+* Feature: [Ticket #38] - Add button to clear start page of recently used projects
+* Feature: [Ticket #23] - Implement slope-based error test using history information only
+* Feature: [Ticket #12] - Highlight invalid connections in the connection graph
+* Feature: [Ticket # 2] - Block-Modelling Data Structure and Interface to library
+
+
 Changelog for Version 0.7.1 (03.08.2019)
 ----------------------------------------
 
@@ -13,6 +27,7 @@ so no more running jobs in the background.
 * Feature: Ticket #54 - Open Terminal.app on MacOS when launching MasterSimulator
 * Feature: Ticket #56 - Remove target directory when running new simulation from GUI
 * Feature: Ticket #57 - Fix problem when FMU uses same value reference for several (different) variables
+
 
 Changelog for Version 0.7.0 (09.07.2019)
 ----------------------------------------
