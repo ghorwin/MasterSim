@@ -36,6 +36,7 @@ Source: VC14\Qt5Core.dll; DestDir: {app}
 Source: VC14\Qt5Gui.dll; DestDir: {app}
 Source: VC14\Qt5Network.dll; DestDir: {app}
 Source: VC14\Qt5Widgets.dll; DestDir: {app}
+Source: VC14\Qt5PrintSupport.dll; DestDir: {app}; Components: main
 Source: VC14\vcruntime140.dll; DestDir: {app}
 Source: VC14\libeay32.dll; DestDir: {app}
 Source: VC14\ssleay32.dll; DestDir: {app}
