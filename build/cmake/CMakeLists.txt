@@ -75,6 +75,7 @@ if (Qt5Widgets_INCLUDE_DIRS)
 	find_package(Qt5Xml REQUIRED)
 	find_package(Qt5Svg REQUIRED)
 	find_package(Qt5Network REQUIRED)
+	find_package(Qt5PrintSupport REQUIRED)
 
 	# when building with gcc/icc add compile flag 
 	if (NOT MSVC)
