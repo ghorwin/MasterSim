@@ -12,6 +12,48 @@ MSIMConnectionItemDelegate::MSIMConnectionItemDelegate(QObject *parent) :
 }
 
 void MSIMConnectionItemDelegate::paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const {
+	// special handling for selections
+	if (option.state & QStyle::State_Selected) {
+
+		QRect checkRect, decorationRect, displayRect;
+		doLayout(option, &checkRect, &decorationRect, &displayRect, false);
+
+		// unfortunately, the bar with the selection color has already been drawn, so we first
+		// need to undo that and overpaint with window color
+
+		painter->save();
+		painter->setBrush(option.palette.brush(QPalette::Normal, QPalette::Base));
+		painter->setPen(Qt::NoPen);
+		painter->drawRect(displayRect);
+		painter->restore();
+
+		// draw the item
+		QStyleOptionViewItem option2(option);
+		option2.state = QStyle::State_Enabled;
+		QString text = index.data().toString();
+		QColor textColor = index.data(Qt::TextColorRole).value<QColor>();
+		painter->setPen(textColor);
+		painter->drawText(displayRect.adjusted(3,0,0,0), Qt::AlignVCenter | Qt::AlignLeft, text);
+//		QColor foregroundColor = index.data(Qt::ForegroundRole).value<QColor>();
+//		option2.
+//		option2.palette.setColor(QPalette::Normal, QPalette::Text, textColor);
+//		drawDisplay(painter, option2, displayRect, text);
+//		painter->drawRect(displayRect.adjusted(0, 0, -1, -1));
+
+		QPalette p;
+//		option2.backgroundBrush = option.palette.brush(QPalette::Normal, QPalette::Window);
+//		drawBackground(painter, option2, index);
+//		QItemDelegate::paint(painter, option2, index);
+		// now overpaint a transparent selection
+		QColor selectionColor(128,128,128,64);
+		painter->setBrush(selectionColor);
+		painter->setPen(Qt::NoPen);
+		painter->drawRect(option.rect);
+	}
+	else {
+		QItemDelegate::paint(painter, option, index);
+	}
+#if 0
 	QVariant haveError = index.data(Qt::UserRole+1);
 	if (haveError.toBool()) {
 		QItemDelegate::paint(painter, option, index);
@@ -51,5 +93,7 @@ void MSIMConnectionItemDelegate::paint( QPainter * painter, const QStyleOptionVi
 		doc.drawContents(painter, clip);
 
 		painter->restore();
-	}}
+	}
+#endif
+}
 

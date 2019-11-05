@@ -21,6 +21,14 @@ public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
 	void onModified(unsigned int modificationType, void * data );
 
+
+protected:
+	/*! Adjusts table column widths. */
+	void resizeEvent(QResizeEvent *event) override;
+
+	/*! Calls resizeTableColumns() on first show. */
+	void showEvent(QShowEvent *event) override;
+
 private slots:
 
 	void on_tableWidgetSlaves_cellChanged(int row, int column);
@@ -36,6 +44,7 @@ private slots:
 private:
 	void updateConnectionsTable();
 	void updateInputOutputVariablesTables();
+	void resizeTableColumns();
 
 	Ui::MSIMViewConnections *m_ui;
 };
