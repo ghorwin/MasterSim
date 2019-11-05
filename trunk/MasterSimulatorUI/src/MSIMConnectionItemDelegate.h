@@ -7,7 +7,7 @@
 class MSIMConnectionItemDelegate : public QItemDelegate {
 	Q_OBJECT
 public:
-	explicit MSIMConnectionItemDelegate(QObject *parent = 0);
+	explicit MSIMConnectionItemDelegate(QObject *parent = nullptr);
 
 protected:
 	virtual void paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;

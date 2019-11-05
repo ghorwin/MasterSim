@@ -22,7 +22,6 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	m_ui(new Ui::MSIMViewConnections)
 {
 	m_ui->setupUi(this);
-	m_ui->verticalLayout->setContentsMargins(9,0,9,9);
 
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
 			this, SLOT(onModified(unsigned int,void*)));
@@ -42,6 +41,7 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	headers << tr("Simulator Name");
 	m_ui->tableWidgetSlaves->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetSlaves->horizontalHeader()->setStretchLastSection(true);
+
 	m_ui->tableWidgetConnections->horizontalHeader()->setSortIndicatorShown(true);
 	m_ui->tableWidgetConnections->sortByColumn(0, Qt::AscendingOrder);
 
@@ -54,6 +54,9 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetOutputVariable->horizontalHeader()->setSortIndicatorShown(true);
 	m_ui->tableWidgetOutputVariable->sortByColumn(0, Qt::AscendingOrder);
+
+	m_ui->tableWidgetOutputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
+	m_ui->tableWidgetInputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
 
 	m_ui->tableWidgetInputVariable->verticalHeader()->setVisible(false);
 	m_ui->tableWidgetInputVariable->setColumnCount(4);
@@ -68,6 +71,8 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	formatTable(m_ui->tableWidgetSlaves);
 	formatTable(m_ui->tableWidgetOutputVariable);
 	formatTable(m_ui->tableWidgetInputVariable);
+
+	resizeTableColumns();
 }
 
 
@@ -106,7 +111,7 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 	m_ui->tableWidgetSlaves->setRowCount(project().m_simulators.size());
 	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
 		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
-		QString slaveName = QString::fromUtf8(simDef.m_name.c_str());
+		QString slaveName = QString::fromStdString(simDef.m_name);
 		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
 		item->setFlags(Qt::ItemIsEnabled);
 		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
@@ -125,6 +130,19 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 
 	updateConnectionsTable();
 	updateInputOutputVariablesTables();
+	resizeTableColumns();
+}
+
+
+void MSIMViewConnections::resizeEvent(QResizeEvent *event) {
+	QWidget::resizeEvent(event);
+	resizeTableColumns();
+}
+
+
+void MSIMViewConnections::showEvent(QShowEvent *event) {
+	QWidget::showEvent(event);
+	resizeTableColumns();
 }
 
 
@@ -133,233 +151,14 @@ void MSIMViewConnections::on_tableWidgetSlaves_cellChanged(int /* row */, int /*
 }
 
 
-void MSIMViewConnections::updateConnectionsTable() {
-	blockMySignals(this, true);
-
-	// store current sort column
-	int sortColumn = m_ui->tableWidgetConnections->horizontalHeader()->sortIndicatorSection();
-
-	std::vector<MASTER_SIM::Project::GraphCheckErrorCodes> graphCheckResults;
-	project().checkGraphs(MSIMMainWindow::instance().modelDescriptions(), graphCheckResults);
-
-	int currentIdx = m_ui->tableWidgetConnections->currentRow();
-
-	m_ui->tableWidgetConnections->clearContents();
-	m_ui->tableWidgetConnections->setRowCount(0);
-	m_ui->tableWidgetConnections->setSortingEnabled(false);
-	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
-		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
-		QTableWidgetItem * outItem = new QTableWidgetItem( QString::fromStdString(edge.m_outputVariableRef)); // no utf8 here
-		outItem->setData(Qt::UserRole, i); // also store index in global connection list
-		outItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		std::string inputSlaveName;
-		std::string outputSlaveName;
-		try {
-			outputSlaveName = edge.outputSlaveName();
-			// find slave in list of slaves
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
-			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			outItem->setToolTip(tr("Invalid variable reference or unknown slave."));
-			outItem->setBackground( QColor("#B22222") );
-			outItem->setData(Qt::UserRole+1, true);
-		}
-
-		QTableWidgetItem * inItem = new QTableWidgetItem( QString::fromStdString(edge.m_inputVariableRef)); // no utf8 here
-		inItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		try {
-			inputSlaveName = edge.inputSlaveName();
-			// find slave in list of slaves
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(inputSlaveName);
-			inItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
-		}
-		catch (IBK::Exception & ex) {
-			ex.writeMsgStackToError();
-			outItem->setToolTip(tr("Invalid variable reference or unknown slave."));
-			inItem->setBackground( QColor("#B22222") );
-			inItem->setData(Qt::UserRole+1, true);
-		}
-
-		// check if both input and output slaves are selected
-		int currentRow = m_ui->tableWidgetConnections->rowCount();
-		m_ui->tableWidgetConnections->setRowCount(currentRow+1);
-
-		// mark items based on check results
-		QFont f;
-		f.setItalic(true);
-		switch (graphCheckResults[i]) {
-			case MASTER_SIM::Project::GEC_NoError : break; // nothing to adjust
-			case MASTER_SIM::Project::GEC_Undetermined :
-				outItem->setFont(f);
-				inItem->setFont(f);
-				outItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
-				inItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
-			break;
-			case MASTER_SIM::Project::GEC_TargetSocketNotInlet :
-				inItem->setFont(f);
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				inItem->setToolTip(tr("Not an inlet socket!"));
-				outItem->setToolTip(tr("Not an inlet socket!"));
-			break;
-			case MASTER_SIM::Project::GEC_SourceSocketNotOutlet :
-				outItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				outItem->setToolTip(tr("Not an outlet socket!"));
-				inItem->setToolTip(tr("Not an outlet socket!"));
-			break;
-			case MASTER_SIM::Project::GEC_TargetSocketAlreadyConnected :
-				outItem->setFont(f);
-				inItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				inItem->setToolTip(tr("Inlet socket is connected twice."));
-				outItem->setToolTip(tr("Inlet socket is connected twice."));
-			break;
-			default : {
-				outItem->setFont(f);
-				inItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				outItem->setToolTip(tr("Invalid connection"));
-				inItem->setToolTip(tr("Invalid connection"));
-			}
-		}
-
-		m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
-		m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
-	}
-
-	m_ui->tableWidgetConnections->setSortingEnabled(true);
-	m_ui->tableWidgetConnections->sortByColumn(sortColumn);
-
-	if (m_ui->tableWidgetConnections->rowCount() > 0) {
-		if (currentIdx == -1)
-			currentIdx = 0;
-		currentIdx = qMin<int>(currentIdx, m_ui->tableWidgetConnections->rowCount()-1);
-		m_ui->tableWidgetConnections->selectRow(currentIdx);
-	}
-	m_ui->toolButtonRemoveConnection->setEnabled(m_ui->tableWidgetConnections->currentRow() != -1);
-
-	blockMySignals(this, false);
-}
-
-
-void MSIMViewConnections::updateInputOutputVariablesTables() {
-	// remember select rows
-	int outputVarCurrentIdx = m_ui->tableWidgetOutputVariable->currentRow();
-	int inputVarCurrentIdx = m_ui->tableWidgetInputVariable->currentRow();
-
-	int outputSortColumn = m_ui->tableWidgetOutputVariable->horizontalHeader()->sortIndicatorSection();
-	int inputSortColumn = m_ui->tableWidgetInputVariable->horizontalHeader()->sortIndicatorSection();
-
-	m_ui->tableWidgetOutputVariable->setSortingEnabled(false);
-	m_ui->tableWidgetInputVariable->setSortingEnabled(false);
-
-	// first clear tables
-	m_ui->tableWidgetOutputVariable->clearContents();
-	m_ui->tableWidgetInputVariable->clearContents();
-	m_ui->tableWidgetOutputVariable->setRowCount(0);
-	m_ui->tableWidgetInputVariable->setRowCount(0);
-
-	// process all simulators in project
-	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
-		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
-
-		// find associated ModelDescription
-		try {
-			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(simDef.m_name);
-
-			// loop over all variables
-			for (unsigned int v=0; v<modelDesc.m_variables.size(); ++v) {
-				const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[v];
-				QTableWidget * table;
-				if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
-					table = m_ui->tableWidgetOutputVariable;
-				}
-				else if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
-					table = m_ui->tableWidgetInputVariable;
-
-					// check if this input variable is already connected
-					std::string variableRef = simDef.m_name + "." + var.m_name;
-					unsigned int e=0;
-					for (; e<project().m_graph.size(); ++e) {
-						const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[e];
-						if (edge.m_inputVariableRef == variableRef)
-							break;
-					}
-					if (e != project().m_graph.size())
-						continue; // skip this input variable
-				}
-				else continue;
-
-
-				int currentRow = table->rowCount();
-				table->setRowCount(currentRow+1);
-				QTableWidgetItem * item = new QTableWidgetItem( QString::fromUtf8(simDef.m_name.c_str()));
-				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
-				table->setItem(currentRow, 0, item);
-				item = new QTableWidgetItem( QString::fromUtf8(var.m_name.c_str()));
-				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
-				table->setItem(currentRow, 1, item);
-				item = new QTableWidgetItem( QString::fromLatin1( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
-				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
-				table->setItem(currentRow, 2, item);
-			}
-		}
-		catch (IBK::Exception &) {
-			// FMU not yet loaded?
-		}
-	}
-
-	if (m_ui->tableWidgetInputVariable->rowCount() > 0) {
-		if (inputVarCurrentIdx == -1)
-			inputVarCurrentIdx = 0;
-		inputVarCurrentIdx = qMin<int>(inputVarCurrentIdx, m_ui->tableWidgetInputVariable->rowCount()-1);
-		m_ui->tableWidgetInputVariable->selectRow(inputVarCurrentIdx);
-	}
-	if (m_ui->tableWidgetOutputVariable->rowCount() > 0) {
-		if (outputVarCurrentIdx == -1)
-			outputVarCurrentIdx = 0;
-		outputVarCurrentIdx = qMin<int>(outputVarCurrentIdx, m_ui->tableWidgetOutputVariable->rowCount()-1);
-		m_ui->tableWidgetOutputVariable->selectRow(outputVarCurrentIdx);
-	}
-
-	m_ui->toolButtonAddConnection->setEnabled( (m_ui->tableWidgetInputVariable->currentRow() != -1) &&
-											   (m_ui->tableWidgetOutputVariable->currentRow() != -1));
-
-	m_ui->tableWidgetOutputVariable->resizeColumnToContents(0);
-	m_ui->tableWidgetOutputVariable->resizeColumnToContents(2);
-	int w = m_ui->tableWidgetOutputVariable->contentsRect().width();
-	w -= m_ui->tableWidgetOutputVariable->columnWidth(0) + m_ui->tableWidgetOutputVariable->columnWidth(2);
-	w = qMax(100, w);
-	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(1, w);
-	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
-	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
-
-	m_ui->tableWidgetInputVariable->resizeColumnToContents(0);
-	m_ui->tableWidgetInputVariable->resizeColumnToContents(2);
-	w = m_ui->tableWidgetInputVariable->contentsRect().width();
-	w -= m_ui->tableWidgetInputVariable->columnWidth(0) + m_ui->tableWidgetInputVariable->columnWidth(2);
-	w = qMax(100, w);
-	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(1, w);
-
-	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
-	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
-}
-
-
 void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 	// get selected output variable and input variable
 	int outputVarCurrentIdx = m_ui->tableWidgetOutputVariable->currentRow();
 	int inputVarCurrentIdx = m_ui->tableWidgetInputVariable->currentRow();
 
-	Q_ASSERT(outputVarCurrentIdx != -1);
-	Q_ASSERT(inputVarCurrentIdx != -1);
+	// if input var index is -1, then the table widget is empty and we simply skip this
+	if (outputVarCurrentIdx == -1 || inputVarCurrentIdx == -1)
+		return;
 
 	// check for matching variable types
 	if (m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->text() !=
@@ -532,8 +331,6 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 }
 
 
-
-
 void MSIMViewConnections::on_tableWidgetOutputVariable_itemDoubleClicked(QTableWidgetItem *) {
 	on_toolButtonAddConnection_clicked();
 }
@@ -541,4 +338,300 @@ void MSIMViewConnections::on_tableWidgetOutputVariable_itemDoubleClicked(QTableW
 
 void MSIMViewConnections::on_tableWidgetInputVariable_itemDoubleClicked(QTableWidgetItem *) {
 	on_toolButtonAddConnection_clicked();
+}
+
+
+// *** private functions ***
+
+void MSIMViewConnections::updateConnectionsTable() {
+	blockMySignals(this, true);
+
+	// store current sort column
+	int sortColumn = m_ui->tableWidgetConnections->horizontalHeader()->sortIndicatorSection();
+
+	std::vector<MASTER_SIM::Project::GraphCheckErrorCodes> graphCheckResults;
+	project().checkGraphs(MSIMMainWindow::instance().modelDescriptions(), graphCheckResults);
+
+	int currentIdx = m_ui->tableWidgetConnections->currentRow();
+
+	m_ui->tableWidgetConnections->clearContents();
+	m_ui->tableWidgetConnections->setRowCount(0);
+	m_ui->tableWidgetConnections->setSortingEnabled(false);
+	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
+		const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[i];
+		QString itemName = QString::fromStdString(edge.m_outputVariableRef);
+		QTableWidgetItem * outItem = new QTableWidgetItem( itemName );
+		outItem->setData(Qt::UserRole, i); // also store index in global connection list
+		outItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		std::string inputSlaveName;
+		std::string outputSlaveName, varName;
+		try {
+			edge.splitReference(edge.m_outputVariableRef, outputSlaveName, varName);
+			// find slave in list of slaves
+			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
+			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			outItem->setToolTip(tr("Invalid variable reference or unknown slave."));
+			outItem->setBackground( QColor("#B22222") );
+			outItem->setData(Qt::UserRole+1, true);
+		}
+		// optionally add unit information
+		try {
+			// lookup variable in simulator
+			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(outputSlaveName);
+			const MASTER_SIM::FMIVariable & var = modelDesc.variable(varName);
+			if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+				QString unit = QString::fromStdString(var.m_unit);
+				if (unit.isEmpty())
+					unit = "-";
+				outItem->setText( tr("%1 [%2]").arg(itemName, unit));
+			}
+		} catch (...) {
+			// in case of missing model descriptions or invalid variable names ... do nothing here!
+		}
+
+		itemName = QString::fromStdString(edge.m_inputVariableRef);
+		QTableWidgetItem * inItem = new QTableWidgetItem( itemName);
+		inItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		try {
+			edge.splitReference(edge.m_inputVariableRef, inputSlaveName, varName);
+			// find slave in list of slaves
+			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(inputSlaveName);
+			inItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+		}
+		catch (IBK::Exception & ex) {
+			ex.writeMsgStackToError();
+			inItem->setToolTip(tr("Invalid variable reference or unknown slave."));
+			inItem->setBackground( QColor("#B22222") );
+			inItem->setData(Qt::UserRole+1, true);
+		}
+		// optionally add unit information
+		try {
+			// lookup variable in simulator
+			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(inputSlaveName);
+			const MASTER_SIM::FMIVariable & var = modelDesc.variable(varName);
+			if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+				QString unit = QString::fromStdString(var.m_unit);
+				if (unit.isEmpty())
+					unit = "-";
+				inItem->setText( tr("%1 [%2]").arg(itemName, unit));
+			}
+		} catch (...) {
+			// in case of missing model descriptions or invalid variable names ... do nothing here!
+		}
+
+		// check if both input and output slaves are selected
+		int currentRow = m_ui->tableWidgetConnections->rowCount();
+		m_ui->tableWidgetConnections->setRowCount(currentRow+1);
+
+		// mark items based on check results
+		QFont f;
+		f.setItalic(true);
+		switch (graphCheckResults[i]) {
+			case MASTER_SIM::Project::GEC_NoError : break; // nothing to adjust
+			case MASTER_SIM::Project::GEC_Undetermined :
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+				inItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+			break;
+			case MASTER_SIM::Project::GEC_TargetSocketNotInlet :
+				inItem->setFont(f);
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setToolTip(tr("Not an inlet socket!"));
+				outItem->setToolTip(tr("Not an inlet socket!"));
+			break;
+			case MASTER_SIM::Project::GEC_SourceSocketNotOutlet :
+				outItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setToolTip(tr("Not an outlet socket!"));
+				inItem->setToolTip(tr("Not an outlet socket!"));
+			break;
+			case MASTER_SIM::Project::GEC_TargetSocketAlreadyConnected :
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setToolTip(tr("Inlet socket is connected twice."));
+				outItem->setToolTip(tr("Inlet socket is connected twice."));
+			break;
+			default : {
+				outItem->setFont(f);
+				inItem->setFont(f);
+				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setToolTip(tr("Invalid connection"));
+				inItem->setToolTip(tr("Invalid connection"));
+			}
+		}
+
+		m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
+		m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
+	}
+
+	m_ui->tableWidgetConnections->setSortingEnabled(true);
+	m_ui->tableWidgetConnections->sortByColumn(sortColumn);
+
+	if (m_ui->tableWidgetConnections->rowCount() > 0) {
+		if (currentIdx == -1)
+			currentIdx = 0;
+		currentIdx = qMin<int>(currentIdx, m_ui->tableWidgetConnections->rowCount()-1);
+		m_ui->tableWidgetConnections->selectRow(currentIdx);
+	}
+	m_ui->toolButtonRemoveConnection->setEnabled(m_ui->tableWidgetConnections->currentRow() != -1);
+
+	blockMySignals(this, false);
+}
+
+
+void MSIMViewConnections::updateInputOutputVariablesTables() {
+	// remember select rows
+	int outputVarCurrentIdx = m_ui->tableWidgetOutputVariable->currentRow();
+	int inputVarCurrentIdx = m_ui->tableWidgetInputVariable->currentRow();
+
+	int outputSortColumn = m_ui->tableWidgetOutputVariable->horizontalHeader()->sortIndicatorSection();
+	int inputSortColumn = m_ui->tableWidgetInputVariable->horizontalHeader()->sortIndicatorSection();
+
+	m_ui->tableWidgetOutputVariable->setSortingEnabled(false);
+	m_ui->tableWidgetInputVariable->setSortingEnabled(false);
+
+	// first clear tables
+	m_ui->tableWidgetOutputVariable->clearContents();
+	m_ui->tableWidgetInputVariable->clearContents();
+	m_ui->tableWidgetOutputVariable->setRowCount(0);
+	m_ui->tableWidgetInputVariable->setRowCount(0);
+
+	// process all simulators in project
+	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+
+		// find associated ModelDescription
+		try {
+			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(simDef.m_name);
+
+			// loop over all variables
+			for (unsigned int v=0; v<modelDesc.m_variables.size(); ++v) {
+				const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[v];
+				QTableWidget * table;
+				if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
+					table = m_ui->tableWidgetOutputVariable;
+				}
+				else if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
+					table = m_ui->tableWidgetInputVariable;
+
+					// check if this input variable is already connected
+					std::string variableRef = simDef.m_name + "." + var.m_name;
+					unsigned int e=0;
+					for (; e<project().m_graph.size(); ++e) {
+						const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[e];
+						if (edge.m_inputVariableRef == variableRef)
+							break;
+					}
+					if (e != project().m_graph.size())
+						continue; // skip this input variable
+				}
+				else continue;
+
+
+				int currentRow = table->rowCount();
+				table->setRowCount(currentRow+1);
+				QTableWidgetItem * item = new QTableWidgetItem( QString::fromStdString(simDef.m_name));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 0, item);
+
+				item = new QTableWidgetItem( QString::fromStdString(var.m_name));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 1, item);
+
+				item = new QTableWidgetItem( QString( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 2, item);
+
+				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
+					QString unit = QString::fromStdString(var.m_unit);
+					if (unit.isEmpty())
+						unit = "-";
+					item = new QTableWidgetItem(unit);
+				}
+				else
+					item = new QTableWidgetItem("");
+				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				table->setItem(currentRow, 3, item);
+			}
+		}
+		catch (IBK::Exception &) {
+			// FMU not yet loaded?
+		}
+	}
+
+	if (m_ui->tableWidgetInputVariable->rowCount() > 0) {
+		if (inputVarCurrentIdx == -1)
+			inputVarCurrentIdx = 0;
+		inputVarCurrentIdx = qMin<int>(inputVarCurrentIdx, m_ui->tableWidgetInputVariable->rowCount()-1);
+		m_ui->tableWidgetInputVariable->selectRow(inputVarCurrentIdx);
+	}
+	if (m_ui->tableWidgetOutputVariable->rowCount() > 0) {
+		if (outputVarCurrentIdx == -1)
+			outputVarCurrentIdx = 0;
+		outputVarCurrentIdx = qMin<int>(outputVarCurrentIdx, m_ui->tableWidgetOutputVariable->rowCount()-1);
+		m_ui->tableWidgetOutputVariable->selectRow(outputVarCurrentIdx);
+	}
+
+	m_ui->toolButtonAddConnection->setEnabled( (m_ui->tableWidgetInputVariable->currentRow() != -1) &&
+											   (m_ui->tableWidgetOutputVariable->currentRow() != -1));
+
+	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
+
+	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
+	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
+}
+
+
+void MSIMViewConnections::resizeTableColumns() {
+	// the tables are sized such that the variable name column is adjusted, all other columns are
+	// set to their default sizes
+	// in case that the slave name very long and there is less 60 pix space for the variable column,
+	// we subtract a little from the first column
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(0);
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(2);
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(3);
+
+	int w = m_ui->tableWidgetOutputVariable->contentsRect().width();
+	w -= m_ui->tableWidgetOutputVariable->columnWidth(2) + m_ui->tableWidgetOutputVariable->columnWidth(3);
+	int w2 = w - m_ui->tableWidgetOutputVariable->columnWidth(0); // size of second column
+	if (w2 < 60) { // too small? space is evenly distributed between first two columns
+		w2 = w/2;
+		w = w/2;
+	}
+	else {
+		w -= w2; // w now is width of first column
+	}
+	// remaining space is to be distributed by slave and variable columns
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(0, w);
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(1, w2);
+
+	m_ui->tableWidgetInputVariable->resizeColumnToContents(0);
+	m_ui->tableWidgetInputVariable->resizeColumnToContents(2);
+	m_ui->tableWidgetInputVariable->resizeColumnToContents(3);
+	w = m_ui->tableWidgetInputVariable->contentsRect().width();
+	w -= m_ui->tableWidgetInputVariable->columnWidth(2) + m_ui->tableWidgetInputVariable->columnWidth(3);
+
+	w2 = w - m_ui->tableWidgetInputVariable->columnWidth(0); // size of second column
+	if (w2 < 60) { // too small? space is evenly distributed between first two columns
+		w2 = w/2;
+		w = w/2;
+	}
+	else {
+		w -= w2; // w now is width of first column
+	}
+	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(0, w);
+	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(1, w2);
+
 }
