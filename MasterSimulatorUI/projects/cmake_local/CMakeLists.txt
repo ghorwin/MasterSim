@@ -15,6 +15,7 @@ include_directories(
 	${Qt5Widgets_INCLUDE_DIRS}
 	${Qt5Network_INCLUDE_DIRS}
 	${Qt5Svg_INCLUDE_DIRS}
+	${Qt5PrintSupport_INCLUDE_DIRS}
 )
 
 # collect a list of all source files
@@ -46,6 +47,7 @@ if (Qt5Widgets_INCLUDE_DIRS)
 		Qt5::Widgets
 		Qt5::Svg
 		Qt5::Network
+		Qt5::PrintSupport
 	)
 
 else (Qt5Widgets_INCLUDE_DIRS)
