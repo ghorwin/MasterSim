@@ -107,6 +107,8 @@ private:
 
 	/*! Variable mapping structure, used to map exchange quantities between FMUs for the different data types. */
 	struct VariableMapping {
+		/*! Default constructor. */
+		VariableMapping() : m_scaleFactor(1.0), m_offset(0.0) {}
 		unsigned int	m_globalIndex; // matches index of VariableMapping object in m_variableMappings vector
 
 		AbstractSlave	*m_outputSlave;
@@ -114,6 +116,15 @@ private:
 
 		AbstractSlave	*m_inputSlave;
 		unsigned int	m_inputValueReference;
+
+		/*! Optional scale factor to compute variable for input.
+			inputValue = m_offset + m_scaleFactor*outputValue;
+		*/
+		double		m_scaleFactor;
+		/*! Optional offset to compute variable for input.
+			inputValue = m_offset + m_scaleFactor*outputValue;
+		*/
+		double		m_offset;
 	};
 
 	/*! This function handles the FMU unzipping and shared library loading stuff. */

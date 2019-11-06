@@ -78,6 +78,8 @@ public:
 
 	/*! Defines an edge of the coupling graph. */
 	struct GraphEdge {
+		/*! Default constructor. */
+		GraphEdge() : m_scaleFactor(1.0), m_offset(0) {}
 		/*! Extracts name of output slave (everything in front of first dot).
 			Throws an exception in case of malformed variables refs (missing dot).
 		*/
@@ -86,6 +88,11 @@ public:
 			Throws an exception in case of malformed variables refs (missing dot).
 		*/
 		std::string inputSlaveName() const { return extractSlaveName(m_inputVariableRef); }
+
+		/*! Comparison operator for graph edges. */
+		bool operator==(const GraphEdge & other) const {
+			return m_outputVariableRef == other.m_outputVariableRef && m_inputVariableRef == other.m_inputVariableRef;
+		}
 
 		/*! Extracts name of slave (everything in front of first dot).
 			Throws an exception in case of malformed variables refs (missing dot).
@@ -100,15 +107,20 @@ public:
 		/*! Replaces slave name in variable reference with new slave name. */
 		static std::string replaceSlaveName( const std::string & variableRef, const std::string & newSlaveName);
 
+
 		/*! Variable reference in simulator and value ref that exports this variable. */
 		std::string m_outputVariableRef;
 		/*! Variable reference in simulator and value ref that imports this variable. */
 		std::string m_inputVariableRef;
 
-		/*! Comparison operator for graph edges. */
-		bool operator==(const GraphEdge & other) const {
-			return m_outputVariableRef == other.m_outputVariableRef && m_inputVariableRef == other.m_inputVariableRef;
-		}
+		/*! Optional scale factor to compute variable for input.
+			inputValue = m_offset + m_scaleFactor*outputValue;
+		*/
+		double		m_scaleFactor;
+		/*! Optional offset to compute variable for input.
+			inputValue = m_offset + m_scaleFactor*outputValue;
+		*/
+		double		m_offset;
 	};
 
 	/*! Constructor. */

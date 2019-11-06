@@ -11,15 +11,18 @@
 #include "MSIMUIConstants.h"
 #include "MSIMProjectHandler.h"
 #include "MSIMMainWindow.h"
+#include "MSIMConnectionPropertiesEditDialog.h"
 
 #include "MSIMSlaveItemDelegate.h"
 #include "MSIMConnectionItemDelegate.h"
 #include "MSIMConversion.h"
 #include "MSIMUndoConnections.h"
+#include "MSIMUndoConnectionModified.h"
 
 MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 	QWidget(parent),
-	m_ui(new Ui::MSIMViewConnections)
+	m_ui(new Ui::MSIMViewConnections),
+	m_connectionPropertiesEditDialog(nullptr)
 {
 	m_ui->setupUi(this);
 
@@ -28,12 +31,13 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 
 	// setup tables
 	m_ui->tableWidgetConnections->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetConnections->setColumnCount(2);
+	m_ui->tableWidgetConnections->setColumnCount(3);
 	QStringList headers;
-	headers << tr("Output variable") << tr("Input variable");
+	headers << tr("Output variable") << tr("Input variable") << tr("Transformation");
 	m_ui->tableWidgetConnections->setHorizontalHeaderLabels(headers);
 	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
 	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+	m_ui->tableWidgetConnections->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
 	m_ui->tableWidgetSlaves->verticalHeader()->setVisible(false);
 	m_ui->tableWidgetSlaves->setColumnCount(1);
@@ -57,6 +61,7 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 
 	m_ui->tableWidgetOutputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
 	m_ui->tableWidgetInputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
+	m_ui->tableWidgetConnections->setItemDelegate(new MSIMConnectionItemDelegate(this));
 
 	m_ui->tableWidgetInputVariable->verticalHeader()->setVisible(false);
 	m_ui->tableWidgetInputVariable->setColumnCount(4);
@@ -87,6 +92,10 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 		case MSIMProjectHandler::SlavesModified : // slaves may have been renamed
 		case MSIMProjectHandler::ConnectionsModified :
 			break;
+		case MSIMProjectHandler::SingleConnectionModified :
+			updateConnectionsTable();
+			return;
+
 		default:
 			return; // nothing to do for us
 	}
@@ -422,6 +431,24 @@ void MSIMViewConnections::updateConnectionsTable() {
 			// in case of missing model descriptions or invalid variable names ... do nothing here!
 		}
 
+		QTableWidgetItem * transformItem = new QTableWidgetItem;
+		transformItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+		transformItem->setData(Qt::UserRole, i); // also store index in global connection list
+		// different cases to consider
+		if (edge.m_offset != 0.0) {
+			if (edge.m_scaleFactor != 1.0)
+				transformItem->setText(tr("input = %1 + %2*output").arg(edge.m_offset).arg(edge.m_scaleFactor));
+			else
+				transformItem->setText(tr("input = %1 + output").arg(edge.m_offset));
+		}
+		else {
+			if (edge.m_scaleFactor != 1.0)
+				transformItem->setText(tr("input = %1*output").arg(edge.m_scaleFactor));
+			else
+				transformItem->setText("---");
+		}
+
+
 		// check if both input and output slaves are selected
 		int currentRow = m_ui->tableWidgetConnections->rowCount();
 		m_ui->tableWidgetConnections->setRowCount(currentRow+1);
@@ -433,42 +460,53 @@ void MSIMViewConnections::updateConnectionsTable() {
 			case MASTER_SIM::Project::GEC_NoError : break; // nothing to adjust
 			case MASTER_SIM::Project::GEC_Undetermined :
 				outItem->setFont(f);
-				inItem->setFont(f);
 				outItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+				inItem->setFont(f);
 				inItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
+				transformItem->setFont(f);
+				transformItem->setToolTip(tr("Connection cannot be analyzed without fmus of referenced slaves."));
 			break;
 			case MASTER_SIM::Project::GEC_TargetSocketNotInlet :
 				inItem->setFont(f);
 				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Not an inlet socket!"));
 				outItem->setToolTip(tr("Not an inlet socket!"));
+				transformItem->setToolTip(tr("Not an inlet socket!"));
 			break;
 			case MASTER_SIM::Project::GEC_SourceSocketNotOutlet :
 				outItem->setFont(f);
 				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
 				outItem->setToolTip(tr("Not an outlet socket!"));
 				inItem->setToolTip(tr("Not an outlet socket!"));
+				transformItem->setToolTip(tr("Not an outlet socket!"));
 			break;
 			case MASTER_SIM::Project::GEC_TargetSocketAlreadyConnected :
 				outItem->setFont(f);
-				inItem->setFont(f);
 				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setToolTip(tr("Inlet socket is connected twice."));
+				inItem->setFont(f);
 				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Inlet socket is connected twice."));
-				outItem->setToolTip(tr("Inlet socket is connected twice."));
+				transformItem->setFont(f);
+				transformItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				transformItem->setToolTip(tr("Inlet socket is connected twice."));
 			break;
 			default : {
 				outItem->setFont(f);
-				inItem->setFont(f);
 				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
 				outItem->setToolTip(tr("Invalid connection"));
+				inItem->setFont(f);
+				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Invalid connection"));
+				transformItem->setFont(f);
+				transformItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				transformItem->setToolTip(tr("Invalid connection"));
 			}
 		}
 
 		m_ui->tableWidgetConnections->setItem(currentRow, 0, outItem);
 		m_ui->tableWidgetConnections->setItem(currentRow, 1, inItem);
+		m_ui->tableWidgetConnections->setItem(currentRow, 2, transformItem);
 	}
 
 	m_ui->tableWidgetConnections->setSortingEnabled(true);
@@ -634,4 +672,28 @@ void MSIMViewConnections::resizeTableColumns() {
 	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(0, w);
 	m_ui->tableWidgetInputVariable->horizontalHeader()->resizeSection(1, w2);
 
+}
+
+
+void MSIMViewConnections::on_tableWidgetConnections_itemDoubleClicked(QTableWidgetItem *item) {
+	if (item->column() != 2)
+		return;
+	// determine currently selected graph edge
+	unsigned int edgeIndex = item->data(Qt::UserRole).toUInt();
+
+	Q_ASSERT(edgeIndex < project().m_graph.size());
+	double offset = project().m_graph[edgeIndex].m_offset;
+	double scaleFactor = project().m_graph[edgeIndex].m_scaleFactor;
+
+	if (m_connectionPropertiesEditDialog == nullptr)
+		m_connectionPropertiesEditDialog = new MSIMConnectionPropertiesEditDialog(this);
+
+	if (m_connectionPropertiesEditDialog->edit(offset, scaleFactor)) {
+		// create edge undo action
+		MASTER_SIM::Project p = project();
+		p.m_graph[edgeIndex].m_offset = offset;
+		p.m_graph[edgeIndex].m_scaleFactor = scaleFactor;
+		MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
+		undo->push();
+	}
 }

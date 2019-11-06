@@ -111,11 +111,20 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				std::string graphEdges = line.substr(5);
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
-				if (IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens) != 2)
-					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd>', got '%1'.").arg(line), FUNC_ID);
+				IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens);
+				if (tokens.size() != 2 && tokens.size() != 4)
+					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd> [<offset> <scaleFactor>]', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
-				g.m_outputVariableRef = IBK::trim_copy(tokens[0]);
-				g.m_inputVariableRef = IBK::trim_copy(tokens[1]);
+				g.m_outputVariableRef = tokens[0];
+				g.m_inputVariableRef = tokens[1];
+				if (tokens.size() == 4) {
+					try {
+						g.m_offset = IBK::string2val<double>(tokens[2]);
+						g.m_scaleFactor = IBK::string2val<double>(tokens[3]);
+					} catch (...) {
+						throw IBK::Exception(IBK::FormatString("Invalid offset or scale factor in graph '%1'.").arg(line), FUNC_ID);
+					}
+				}
 				m_graph.push_back(g);
 				continue;
 			}
@@ -299,7 +308,11 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write graph
 	for (unsigned int i=0; i<m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_graph[i];
-		out << "graph " << edge.m_outputVariableRef << " " << edge.m_inputVariableRef << std::endl;
+		out << "graph " << edge.m_outputVariableRef << " " << edge.m_inputVariableRef;
+		if (edge.m_offset != 0.0 || edge.m_scaleFactor != 1.0) {
+			out << " " << edge.m_offset << " " << edge.m_scaleFactor;
+		}
+		out << std::endl;
 	}
 
 	// write parameters
