@@ -57,16 +57,16 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	m_ui->lineEditName->setText(b.m_name);
 	m_ui->lineEditSocketInfo->setText(tr("%1 inlets, %2 outlets").arg(inletSockets.count()).arg(outletSockets.count()));
 
+	// finally, create block item and a scene and show in graphics view
+	QGraphicsScene * scene = new QGraphicsScene(this);
+	m_ui->graphicsView->setScene(scene);
+
 	// determine number of block grid lines
 	int rowCount = (int)std::floor(b.m_size.height() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
 	int colCount = (int)std::floor(b.m_size.width() / (double)BLOCKMOD::Globals::GridSpacing + 0.5);
 
 	m_ui->spinBoxRows->setValue(rowCount);
 	m_ui->spinBoxColumns->setValue(colCount);
-
-	// finally, create block item and a scene and show in graphics view
-	QGraphicsScene * scene = new QGraphicsScene(this);
-	m_ui->graphicsView->setScene(scene);
 
 	// now auto-matically layout sockets and create missing sockets
 	m_modifiedBlock.autoUpdateSockets(m_inletSockets, m_outletSockets);
