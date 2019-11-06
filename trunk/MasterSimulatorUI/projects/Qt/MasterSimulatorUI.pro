@@ -37,6 +37,7 @@ INCLUDEPATH = \
 
 SOURCES += ../../src/main.cpp \
 	../../src/MSIMBlockEditorDialog.cpp \
+	../../src/MSIMConnectionPropertiesEditDialog.cpp \
 	../../src/MSIMGUIMessageHandler.cpp \
 	../../src/MSIMPostProcBindings.cpp \
 	../../src/MSIMSceneManager.cpp \
@@ -53,6 +54,7 @@ SOURCES += ../../src/main.cpp \
 	../../src/MSIMLanguageHandler.cpp \
 	../../src/MSIMMessageHandler.cpp \
 	../../src/MSIMDebugApplication.cpp \
+	../../src/MSIMUndoConnectionModified.cpp \
 	../../src/MSIMUndoNetworkGeometry.cpp \
 	../../src/MSIMWelcomeScreen.cpp \
 	../../src/MSIMLogWidget.cpp \
@@ -77,6 +79,7 @@ SOURCES += ../../src/main.cpp \
 
 HEADERS  += \
 	../../src/MSIMBlockEditorDialog.h \
+	../../src/MSIMConnectionPropertiesEditDialog.h \
 	../../src/MSIMGUIMessageHandler.h \
 	../../src/MSIMPostProcBindings.h \
 	../../src/MSIMSceneManager.h \
@@ -93,6 +96,7 @@ HEADERS  += \
 	../../src/MSIMLanguageHandler.h \
 	../../src/MSIMMessageHandler.h \
 	../../src/MSIMDebugApplication.h \
+	../../src/MSIMUndoConnectionModified.h \
 	../../src/MSIMUndoNetworkGeometry.h \
 	../../src/MSIMUndoSlaveParameters.h \
 	../../src/MSIMWelcomeScreen.h \
@@ -116,6 +120,7 @@ HEADERS  += \
 
 FORMS    += \
 	../../src/MSIMBlockEditorDialog.ui \
+	../../src/MSIMConnectionPropertiesEditDialog.ui \
 	../../src/MSIMMainWindow.ui \
 	../../src/MSIMSimulationMonitorWidget.ui \
 	../../src/MSIMWelcomeScreen.ui \

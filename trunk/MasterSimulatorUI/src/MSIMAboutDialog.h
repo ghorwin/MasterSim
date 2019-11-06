@@ -12,7 +12,7 @@ class MSIMAboutDialog : public QDialog {
 	Q_OBJECT
 
 public:
-	explicit MSIMAboutDialog(QWidget *parent = 0);
+	explicit MSIMAboutDialog(QWidget *parent = nullptr);
 	~MSIMAboutDialog();
 
 private:

@@ -40,8 +40,10 @@ public:
 		SlavesModified,
 		/*! Used whenever a parameter of a slave has been modified. */
 		SlaveParameterModified,
-		/*! Used whenever connections have been modified. */
+		/*! Used whenever connections have been modified (including sockets associations). */
 		ConnectionsModified,
+		/*! Only properties of a connection have been modified, but no sockets. */
+		SingleConnectionModified,
 		/*! Used when simulation settings have been modified.
 			Only updates simulation settings page, all other views remain unmodified. */
 		SimulationSettingsModified,

@@ -8,6 +8,7 @@ class MSIMViewConnections;
 }
 
 class QTableWidgetItem;
+class MSIMConnectionPropertiesEditDialog;
 
 /*! The view where connections can be defined. */
 class MSIMViewConnections : public QWidget {
@@ -15,7 +16,7 @@ class MSIMViewConnections : public QWidget {
 
 public:
 	explicit MSIMViewConnections(QWidget *parent = nullptr);
-	~MSIMViewConnections();
+	~MSIMViewConnections() override;
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
@@ -41,12 +42,16 @@ private slots:
 
 	void on_tableWidgetInputVariable_itemDoubleClicked(QTableWidgetItem *item);
 
+	void on_tableWidgetConnections_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
 	void updateConnectionsTable();
 	void updateInputOutputVariablesTables();
 	void resizeTableColumns();
 
-	Ui::MSIMViewConnections *m_ui;
+	Ui::MSIMViewConnections				*m_ui;
+
+	MSIMConnectionPropertiesEditDialog	*m_connectionPropertiesEditDialog;
 };
 
 #endif // MSIMVIEWCONNECTIONS_H

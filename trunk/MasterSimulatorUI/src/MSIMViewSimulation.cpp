@@ -117,6 +117,10 @@ void MSIMViewSimulation::onModified(unsigned int modificationType, void * /*data
 
 
 void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
+	// first move focus away from any inputs to update project data structure
+	m_ui->pushButtonShowLogfile->setFocus();
+	qApp->processEvents(); // process undo events
+
 	// first save project if modified
 	QString projectFile = MSIMProjectHandler::instance().projectFile();
 	if (MSIMProjectHandler::instance().isModified() || projectFile.isEmpty()) {
