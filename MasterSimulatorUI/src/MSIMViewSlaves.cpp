@@ -582,7 +582,7 @@ void MSIMViewSlaves::on_toolButtonPrint_clicked() {
 
 void MSIMViewSlaves::on_widgetProperties_itemChanged(QTableWidgetItem *item) {
 	// triggered when user has just changed an item
-	int currentSlaveIndex = m_ui->tableWidgetSlaves->currentRow();
+	unsigned int currentSlaveIndex = (unsigned int)m_ui->tableWidgetSlaves->currentRow();
 	const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[currentSlaveIndex];
 	std::string slaveName = simDef.m_name;
 
@@ -709,16 +709,25 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 			m_ui->widgetProperties->setRowCount(currentRow+1);
 			QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString(paraName));
 			item->setFlags(Qt::ItemIsEnabled);
+			QTableWidgetItem * valueItem = new QTableWidgetItem("");
+			valueItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable); // allow double-click to edit
+			valueItem->setToolTip(QString("start=%1").arg(QString::fromStdString(var.m_startValue)));
 			if (found) {
 				customParameters.erase(paraName);
 				item->setFont(f);
 
-				QTableWidgetItem * valueItem = new QTableWidgetItem(QString::fromStdString(para_it->second));
-				valueItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable); // allow double-click to edit
+				valueItem->setText(QString::fromStdString(para_it->second));
 				valueItem->setFont(f);
-				m_ui->widgetProperties->setItem(currentRow, 1, valueItem);
+			}
+			else {
+				valueItem->setTextColor(QColor(64,64,64));
+				QFont fi;
+				fi.setItalic(true);
+				valueItem->setFont(fi);
+				valueItem->setText(QString::fromStdString(var.m_startValue));
 			}
 			m_ui->widgetProperties->setItem(currentRow, 0, item);
+			m_ui->widgetProperties->setItem(currentRow, 1, valueItem);
 			++currentRow;
 		}
 	}
