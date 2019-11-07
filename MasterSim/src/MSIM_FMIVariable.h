@@ -15,7 +15,8 @@ public:
 		VT_BOOL,
 		VT_INT,
 		VT_STRING,
-		VT_DOUBLE
+		VT_DOUBLE,
+		NUM_VT
 	};
 
 	enum Causality {
