@@ -1,6 +1,24 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.8.1 (07.11.2019)
+----------------------------------------
+
+Only two days later the next release! Well, two small and meaningful extensions/bug fixes were
+added and also some usability upgrades. Most useful is the ability to
+define transformation rules between output and input variables (e.g. for flux sign
+inversion or unit conversion). Also important is a performance upgrade that allows 
+usage of FMUs with many (> 10000) exported parameters.
+
+* Feature: [Ticket #64] - Improve parameter editing - currently bad scalability 
+                          when importing FMUs with >10000 parameters
+* Feature: [Ticket #61] - Apply changes in simulation settings when clicking on 
+                          start button or pressing F9 for simulation start
+* Feature: [Ticket #60] - Add properties to connections, such as unit conversions 
+                          or sign inversions
+* Feature: [Ticket #55] - Detect data type of csv-input slave's variables from connection graph
+
+
 Changelog for Version 0.8.0 (05.11.2019)
 ----------------------------------------
 
