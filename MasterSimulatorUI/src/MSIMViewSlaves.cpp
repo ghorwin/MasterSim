@@ -167,11 +167,12 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 			if (unzOpenCurrentFile( zip ) == UNZ_OK) {
 				char buffer[4096];
 				int readBytes;
+				bool readError = false;
 				QByteArray byteArray;
 				do {
 					readBytes = unzReadCurrentFile(zip, buffer, 4096);
 					if (readBytes < 0) {
-						msgLog.append( tr("ERROR: Error while extracting modelDescription.xml.\n"));
+						msgLog.append( tr("ERROR: Error while extracting model.png.\n"));
 						unzCloseCurrentFile(zip);
 						unzClose( zip );
 						return false;
@@ -198,7 +199,7 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 		TiXmlDocument doc;
 		doc.Parse(fileContent.c_str(), nullptr, TIXML_ENCODING_UTF8);
 		if (doc.Error()) {
-			msgLog.append( tr("ERROR: Error parsing XML file. Error message:\n%1\n")
+			msgLog.append( tr("ERROR: Error parsing modelDescription.xml file. Error messages:\n%1\n")
 										   .arg(QString::fromUtf8(doc.ErrorDesc())));
 			return false;
 		}
@@ -219,7 +220,8 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 	}
 	catch (IBK::Exception & ex) {
 		ex.writeMsgStackToError();
-		msgLog.append( tr("ERROR: Error parsing model description.\n"));
+		msgLog.append(tr("ERROR: Error parsing modelDescription.xml file. Error messages:\n%1\n")
+			.arg(QString::fromStdString(ex.msgStack()) ) );
 		return false;
 	}
 	return true;
