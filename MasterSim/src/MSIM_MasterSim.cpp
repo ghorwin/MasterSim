@@ -106,7 +106,7 @@ void MasterSim::initialize() {
 	// setup time-stepping variables
 	m_h = m_project.m_hStart.value;
 	// special handling: when m_h == 0, automatically compute h from simulation duration
-	if (m_h == 0) {
+	if (m_h == 0.0) {
 		m_h = (m_project.m_tEnd.value - m_project.m_tStart.value)/1000;
 		IBK::IBK_Message(IBK::FormatString("\nSetting h_0 = %1 s\n").arg(m_h), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
@@ -890,7 +890,7 @@ void MasterSim::composeVariableVector() {
 		if (!IBK::string_nocase_compare(filePath.extension(),"fmu")) {
 
 			FileReaderSlave * fileReaderSlave = dynamic_cast<FileReaderSlave *>(slave);
-			IBK_ASSERT(fileReaderSlave != nullptr);
+			IBK_ASSERT(fileReaderSlave != nullptr)
 
 			// compose absolute path
 			if (!filePath.isAbsolute()) {
@@ -898,16 +898,143 @@ void MasterSim::composeVariableVector() {
 				filePath = absoluteProjectFilePath / filePath;
 			}
 
-			// search for a variable name
-			int colIndex = -1;
-			for (unsigned int i=0; i<slave->m_doubleVarNames.size(); ++i) {
-				if (varName == fileReaderSlave->m_doubleVarNames[i]) {
-					colIndex = i;
-					break;
-				}
+			// search for a variable name in the corresponding vector
+			unsigned int colIndex = (unsigned int)-1;
+			switch (inputVarRef.second->m_type) {
+				case MASTER_SIM::FMIVariable::VT_DOUBLE :
+					for (unsigned int i=0; i<fileReaderSlave->m_doubleVarNames.size(); ++i) {
+						if (varName == fileReaderSlave->m_doubleVarNames[i]) {
+							colIndex = i;
+							break;
+						}
+					}
+					if (colIndex == (unsigned int)-1) {
+						// try to find out if there is a typeless variable that we can "make" a double variable?
+						for (unsigned int i=0; i<fileReaderSlave->m_typelessVarNames.size(); ++i) {
+							if (varName == fileReaderSlave->m_typelessVarNames[i]) {
+								colIndex = i;
+								break;
+							}
+						}
+						if (colIndex == (unsigned int)-1)
+							throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name '%1' in file '%2'").arg(varName).arg(filePath), FUNC_ID);
+						// check if variable has already been assigned a type
+						if (fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::NUM_VT &&
+							fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::VT_DOUBLE)
+						{
+							throw IBK::Exception(IBK::FormatString("  Variable '%1' from csv slave has already been assigned to a type different from 'Real'")
+											 .arg(edge.m_outputVariableRef), FUNC_ID);
+						}
+						// remember variable type
+						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_DOUBLE;
+						// copy variable info to respective vector
+						fileReaderSlave->m_doubleVarNames.push_back(varName);
+						fileReaderSlave->m_doubleVarUnits.push_back(fileReaderSlave->m_typelessVarUnits[colIndex]);
+						// adjust colIndex to point to the newly registered double variable
+						colIndex = fileReaderSlave->m_doubleVarNames.size()-1;
+						fileReaderSlave->m_doubleOutputs.resize(fileReaderSlave->m_doubleVarNames.size());
+						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Real'\n")
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+					}
+				break;
+
+
+				case MASTER_SIM::FMIVariable::VT_INT :
+					for (unsigned int i=0; i<fileReaderSlave->m_intVarNames.size(); ++i) {
+						if (varName == fileReaderSlave->m_intVarNames[i]) {
+							colIndex = i;
+							break;
+						}
+					}
+					if (colIndex == (unsigned int)-1) {
+						for (unsigned int i=0; i<fileReaderSlave->m_typelessVarNames.size(); ++i) {
+							if (varName == fileReaderSlave->m_typelessVarNames[i]) {
+								colIndex = i;
+								break;
+							}
+						}
+						if (colIndex == (unsigned int)-1)
+							throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name '%1' in file '%2'").arg(varName).arg(filePath), FUNC_ID);
+						if (fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::NUM_VT &&
+							fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::VT_INT)
+						{
+							throw IBK::Exception(IBK::FormatString("  Variable '%1' from csv slave has already been assigned to a type different from 'Integer'")
+											 .arg(edge.m_outputVariableRef), FUNC_ID);
+						}
+						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_INT;
+						fileReaderSlave->m_intVarNames.push_back(varName);
+						colIndex = fileReaderSlave->m_intVarNames.size()-1;
+						fileReaderSlave->m_intOutputs.resize(fileReaderSlave->m_intVarNames.size());
+						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Integer'\n")
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+					}
+				break;
+
+
+				case MASTER_SIM::FMIVariable::VT_BOOL :
+					for (unsigned int i=0; i<fileReaderSlave->m_boolVarNames.size(); ++i) {
+						if (varName == fileReaderSlave->m_boolVarNames[i]) {
+							colIndex = i;
+							break;
+						}
+					}
+					if (colIndex == (unsigned int)-1) {
+						for (unsigned int i=0; i<fileReaderSlave->m_typelessVarNames.size(); ++i) {
+							if (varName == fileReaderSlave->m_typelessVarNames[i]) {
+								colIndex = i;
+								break;
+							}
+						}
+						if (colIndex == (unsigned int)-1)
+							throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name '%1' in file '%2'").arg(varName).arg(filePath), FUNC_ID);
+						if (fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::NUM_VT &&
+							fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::VT_BOOL)
+						{
+							throw IBK::Exception(IBK::FormatString("  Variable '%1' from csv slave has already been assigned to a type different from 'Boolean'")
+											 .arg(edge.m_outputVariableRef), FUNC_ID);
+						}
+						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_BOOL;
+						fileReaderSlave->m_boolVarNames.push_back(varName);
+						colIndex = fileReaderSlave->m_boolVarNames.size()-1;
+						fileReaderSlave->m_boolOutputs.resize(fileReaderSlave->m_boolVarNames.size());
+						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Boolean'\n")
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+					}
+				break;
+
+
+				case MASTER_SIM::FMIVariable::VT_STRING :
+					for (unsigned int i=0; i<fileReaderSlave->m_stringVarNames.size(); ++i) {
+						if (varName == fileReaderSlave->m_stringVarNames[i]) {
+							colIndex = i;
+							break;
+						}
+					}
+					if (colIndex == (unsigned int)-1) {
+						for (unsigned int i=0; i<fileReaderSlave->m_typelessVarNames.size(); ++i) {
+							if (varName == fileReaderSlave->m_typelessVarNames[i]) {
+								colIndex = i;
+								break;
+							}
+						}
+						if (colIndex == (unsigned int)-1)
+							throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name '%1' in file '%2'").arg(varName).arg(filePath), FUNC_ID);
+						if (fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::NUM_VT &&
+							fileReaderSlave->m_columnVariableTypes[colIndex] != FMIVariable::VT_STRING)
+						{
+							throw IBK::Exception(IBK::FormatString("  Variable '%1' from csv slave has already been assigned to a type different from 'String'")
+											 .arg(edge.m_outputVariableRef), FUNC_ID);
+						}
+						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_STRING;
+						fileReaderSlave->m_stringVarNames.push_back(varName);
+						colIndex = fileReaderSlave->m_stringVarNames.size()-1;
+						fileReaderSlave->m_stringOutputs.resize(fileReaderSlave->m_stringVarNames.size());
+						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'String'\n")
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+					}
+				break;
+				case MASTER_SIM::FMIVariable::NUM_VT : IBK_ASSERT(false) // must not ever happen, only to make compiler happy
 			}
-			if (colIndex == -1)
-				throw IBK::Exception(IBK::FormatString("Unknown/undefined variable name '%1' in file '%2'").arg(varName).arg(filePath), FUNC_ID);
 
 			// store values
 			varMap.m_outputSlave = slave;
@@ -931,6 +1058,7 @@ void MasterSim::composeVariableVector() {
 			case FMIVariable::VT_INT	: m_intVariableMapping.push_back(varMap); break;
 			case FMIVariable::VT_DOUBLE : m_realVariableMapping.push_back(varMap); break;
 			case FMIVariable::VT_STRING : m_stringVariableMapping.push_back(varMap); break;
+			case FMIVariable::NUM_VT : IBK_ASSERT(false) // remove compiler warning
 		}
 	}
 
