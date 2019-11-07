@@ -437,13 +437,13 @@ void MSIMViewConnections::updateConnectionsTable() {
 		// different cases to consider
 		if (edge.m_offset != 0.0) {
 			if (edge.m_scaleFactor != 1.0)
-				transformItem->setText(tr("input = %1 + %2*output").arg(edge.m_offset).arg(edge.m_scaleFactor));
+				transformItem->setText(tr("input = %L1 + %L2*output").arg(edge.m_offset).arg(edge.m_scaleFactor));
 			else
-				transformItem->setText(tr("input = %1 + output").arg(edge.m_offset));
+				transformItem->setText(tr("input = %L1 + output").arg(edge.m_offset));
 		}
 		else {
 			if (edge.m_scaleFactor != 1.0)
-				transformItem->setText(tr("input = %1*output").arg(edge.m_scaleFactor));
+				transformItem->setText(tr("input = %L1*output").arg(edge.m_scaleFactor));
 			else
 				transformItem->setText("---");
 		}
