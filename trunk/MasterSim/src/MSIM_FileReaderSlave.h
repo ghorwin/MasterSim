@@ -80,6 +80,19 @@ public:
 	*/
 	void setValue(const FMIVariable & /*var*/, const std::string & /*value*/) override {}
 
+	/*! Variables names for quantities that are not yet assigned a type (done based on connection). */
+	std::vector<std::string>	m_typelessVarNames;
+	/*! Units for quantities, to be appended when writing output files as ' [unit]' text. */
+	std::vector<std::string>	m_typelessVarUnits;
+
+	/*! After reading the csv file, this vector holds undefined type NUM_VT.
+		During connection of slaves and assigning variable mappings,
+		this vector is filled with types.
+		When evaluating the different spline data values, these types are used to identify which
+		of the m_xxxOutputs vectors to copy the data to and which columns linear interpolation need.
+	*/
+	std::vector<MASTER_SIM::FMIVariable::VarType>	m_columnVariableTypes;
+
 private:
 
 	IBK::CSVReader					*m_fileReader;

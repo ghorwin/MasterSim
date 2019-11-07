@@ -116,6 +116,9 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 			}
 
 			msgLog.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
+			for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
+				msgLog.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
+			}
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -213,9 +216,9 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 			msgLog.append( tr("    FMI v2 CS : %1\n").arg(QString::fromUtf8(modelDesc.m_csV2ModelIdentifier.c_str())));
 		msgLog.append( tr("  Variables: %1\n").arg(modelDesc.m_variables.size()));
 		// print properties of variables
-//		for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
-//			msgLog.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
-//		}
+		for (size_t i=0; i<modelDesc.m_variables.size(); ++i) {
+			msgLog.append("    " + QString::fromStdString(modelDesc.m_variables[i].toString()) + "\n");
+		}
 
 	}
 	catch (IBK::Exception & ex) {

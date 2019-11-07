@@ -35,7 +35,7 @@ FileReaderSlave::~FileReaderSlave() {
 void FileReaderSlave::instantiate() {
 	const char * const FUNC_ID = "[FileReaderSlave::instantiate]";
 
-	IBK_ASSERT(m_valueSplines.empty()); // must only be called on empty object
+	IBK_ASSERT(m_valueSplines.empty()) // must only be called on empty object
 
 	// read file
 	try {
@@ -54,7 +54,33 @@ void FileReaderSlave::instantiate() {
 	}
 
 	// setup linear splines
-	m_valueSplines.resize(m_fileReader->m_nColumns-1);
+	unsigned int varCount = m_fileReader->m_nColumns-1;
+	m_valueSplines.resize(varCount);
+	m_columnVariableTypes.resize(varCount);
+	for (unsigned int i=0; i<varCount; ++i)
+		m_columnVariableTypes[i] = MASTER_SIM::FMIVariable::NUM_VT;
+
+	// store variable names and units from captions
+	for (unsigned int i=0; i<varCount; ++i) {
+		std::string varName = m_fileReader->m_captions[i+1];
+		std::string uStr = m_fileReader->m_units[i+1];
+		if (uStr.empty())
+			uStr = "-";
+		m_typelessVarNames.push_back(varName);
+		m_typelessVarUnits.push_back(uStr);
+	}
+}
+
+
+void FileReaderSlave::setupExperiment(double /*relTol*/, double tStart, double /*tEnd*/) {
+	m_t = tStart;
+	/// \todo check value range in file and issue warning if data is less than simulation time frame
+}
+
+
+void FileReaderSlave::enterInitializationMode() {
+	const char * const FUNC_ID = "[FileReaderSlave::enterInitializationMode]";
+	// here, all columns/variables that are used in connections have been assigned a type
 
 	IBK::UnitVector timeVec;
 	timeVec.resize(m_fileReader->m_nRows);
@@ -70,42 +96,30 @@ void FileReaderSlave::instantiate() {
 	// convert to seconds
 	timeVec.convert(IBK::Unit("s"));
 
-	for (unsigned int j=0; j<m_valueSplines.size(); ++j) {
-		m_valueSplines[j] = new IBK::LinearSpline;
+	// initialize linear splines for all vectors that hold numbers
+	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
+		// for all but strings and unused variables we create linear splines
 
-		std::vector<double> y(m_fileReader->m_nRows);
-		for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
-			y[i] = m_fileReader->m_values[i][j+1];
+		if (m_columnVariableTypes[j] != FMIVariable::VT_STRING &&
+			m_columnVariableTypes[j] != FMIVariable::NUM_VT)  // mind: some columns may be unused
+		{
+			m_valueSplines[j] = new IBK::LinearSpline;
+
+			std::vector<double> y(m_fileReader->m_nRows);
+			for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
+				y[i] = m_fileReader->m_values[i][j+1];
+			}
+			try {
+				m_valueSplines[j]->setValues(timeVec.m_data, y);
+			} catch (IBK::Exception & ex) {
+				throw IBK::Exception(ex, IBK::FormatString("Invalid interpolation table data in column '%2' in file '%3'. Error during initialization of slave '%1'")
+									 .arg(m_name).arg(m_fileReader->m_captions[j+1]).arg(m_filepath), FUNC_ID);
+			}
 		}
-		try {
-			m_valueSplines[j]->setValues(timeVec.m_data, y);
-		} catch (IBK::Exception & ex) {
-			throw IBK::Exception(ex, IBK::FormatString("Invalid interpolation table data in column '%2' in file '%3'. Error during initialization of slave '%1'")
-								 .arg(m_name).arg(m_fileReader->m_captions[j+1]).arg(m_filepath), FUNC_ID);
+		else {
+			m_valueSplines[j] = nullptr;
 		}
 	}
-
-	// resize vectors - currently only double number inputs supported
-	m_doubleOutputs.resize(m_valueSplines.size());
-	for (unsigned int i=0; i<m_valueSplines.size(); ++i) {
-		std::string varName = m_fileReader->m_captions[i+1];
-		std::string uStr = m_fileReader->m_units[i+1];
-		if (uStr.empty())
-			uStr = "-";
-		m_doubleVarNames.push_back(varName);
-		m_doubleVarUnits.push_back(uStr);
-	}
-}
-
-
-void FileReaderSlave::setupExperiment(double /*relTol*/, double tStart, double /*tEnd*/) {
-	m_t = tStart;
-	/// \todo check value range in file and issue warning if data is less than simulation time frame
-}
-
-
-void FileReaderSlave::enterInitializationMode() {
-	// nothing to do
 }
 
 
@@ -140,9 +154,24 @@ void FileReaderSlave::cacheOutputs() {
 	const char * const FUNC_ID = "[FileReaderSlave::cacheOutputs]";
 	int res = fmi2OK;
 
-	// apply spline interpolation
-	for (unsigned int i=0; i<m_valueSplines.size(); ++i) {
-		m_doubleOutputs[i] = m_valueSplines[i]->value(m_t);
+	unsigned int idxDouble = 0;
+	unsigned int idxInt = 0;
+	unsigned int idxBool = 0;
+	unsigned int idxString = 0;
+	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
+		switch (m_columnVariableTypes[j]) {
+			case MASTER_SIM::FMIVariable::VT_DOUBLE :
+				m_doubleOutputs[idxDouble++] = m_valueSplines[j]->value(m_t);
+			break;
+			case MASTER_SIM::FMIVariable::VT_INT :
+				m_intOutputs[idxInt++] = m_valueSplines[j]->nonInterpolatedValue(m_t);
+			break;
+			case MASTER_SIM::FMIVariable::VT_BOOL :
+				m_boolOutputs[idxBool++] = m_valueSplines[j]->nonInterpolatedValue(m_t);
+			break;
+			case MASTER_SIM::FMIVariable::VT_STRING : break; // TODO : later store string variables
+			case MASTER_SIM::FMIVariable::NUM_VT : break; // nothing to do
+		}
 	}
 
 	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
