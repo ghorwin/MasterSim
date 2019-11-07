@@ -81,14 +81,18 @@ Push your changes to your forked github repo.
 
 1. add https://github.com/modelica/fmi-cross-check as upstream repository  (you have to do this only once)
 
+```bash
     # within the fmi-cross-check working directory
     > git remote add upstream https://github.com/modelica/fmi-cross-check
+```
 
 2. fetch changes from upstream
 3. merge upstream changes into your forked copy
 
+```bash
     > git fetch upstream
     > git merge upstream/master
+```
 
 See https://help.github.com/en/articles/syncing-a-fork for more info.
 
