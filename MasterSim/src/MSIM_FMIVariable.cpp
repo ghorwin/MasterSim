@@ -61,9 +61,29 @@ void FMIVariable::read(const TiXmlElement * element) {
 		else if (child->ValueStr() == "Boolean") {
 			m_type = VT_BOOL;
 		}
-		// if we have causality input or parameter, read start element
+		else if (child->ValueStr() == "Enumeration") {
+			m_type = VT_INT; // treat as int
+		}
+		else {
+			throw IBK::Exception(IBK::FormatString("Unknown or unsupported variable type '%1'").arg(child->ValueStr()), FUNC_ID);
+		}
+		// if we have causality input or parameter, read start values
 		if (m_causality == C_INPUT || m_causality == C_PARAMETER) {
-			m_startValue = ModelDescription::readRequiredAttribute(child, "start");
+			// work-around/special handling for enumerations without start attribute
+			if (child->ValueStr() == "Enumeration") {
+				try {
+					m_startValue = ModelDescription::readRequiredAttribute(child, "start");
+				}
+				catch (...) {
+					// missing start value for enumerations? choose 0 as index
+					IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("Missing 'start' attribute in variable of type '%1' (this is an error in the modelDescription.xml). Defaulting to 0.")
+						.arg(child->ValueStr()), IBK::MSG_WARNING, FUNC_ID, IBK::VL_INFO);
+					m_startValue = "0";
+				}
+			}
+			else {
+				m_startValue = ModelDescription::readRequiredAttribute(child, "start");
+			}
 		}
 		if (m_causality == C_INTERNAL) {
 			m_startValue = ModelDescription::readOptionalAttribute(child, "start");
