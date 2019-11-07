@@ -32,15 +32,24 @@ LicenseFile=..\..\doc\LICENSE
 Source: ..\..\bin\release\MasterSimulator.exe; DestDir: {app}
 Source: ..\..\bin\release\MasterSimulatorUI.exe; DestDir: {app}
 Source: VC14\msvcp140.dll; DestDir: {app}
+Source: VC14\vcruntime140.dll; DestDir: {app}
+
 Source: VC14\Qt5Core.dll; DestDir: {app}
 Source: VC14\Qt5Gui.dll; DestDir: {app}
 Source: VC14\Qt5Network.dll; DestDir: {app}
 Source: VC14\Qt5Widgets.dll; DestDir: {app}
-Source: VC14\Qt5PrintSupport.dll; DestDir: {app}; Components: main
-Source: VC14\vcruntime140.dll; DestDir: {app}
+Source: VC14\Qt5PrintSupport.dll; DestDir: {app}
+Source: VC14\Qt5Svg.dll; DestDir: {app}
+
 Source: VC14\libeay32.dll; DestDir: {app}
 Source: VC14\ssleay32.dll; DestDir: {app}
+Source: VC14\d3dcompiler_47.dll; DestDir: {app}
+Source: VC14\libEGL.dll; DestDir: {app}
+Source: VC14\libGLESV2.dll; DestDir: {app}
+
 Source: VC14\platforms\qwindows.dll; DestDir: {app}\platforms
+Source: VC14\styles\qwindowsvistastyle.dll; DestDir: {app}\styles
+Source: VC14\printsupport\windowsprintersupport.dll; DestDir: {app}\printsupport
 
 ; Translation files
 Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
