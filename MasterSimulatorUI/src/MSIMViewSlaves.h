@@ -24,6 +24,7 @@ namespace BLOCKMOD {
 }
 
 class MSIMBlockEditorDialog;
+class QTableWidgetItem;
 
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
@@ -89,9 +90,17 @@ private slots:
 
 	void on_toolButtonPrint_clicked();
 
+	/*! User has edited a parameter of a slave. */
+	void on_widgetProperties_itemChanged(QTableWidgetItem *item);
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
+
+	/*! Populates the slave-specific parameter table which shows all parameters set by MasterSim.
+		\param slaveIndex An index of a slave/simulator in the project. -1 means non selected/available.
+	*/
+	void updateSlaveParameterTable(unsigned int slaveIndex);
 
 	Ui::MSIMViewSlaves				*m_ui;
 

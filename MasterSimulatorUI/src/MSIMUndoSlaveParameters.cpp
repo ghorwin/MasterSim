@@ -17,7 +17,10 @@ void MSIMUndoSlaveParameters::undo() {
 
 	// retrieve previous map value
 	std::string currentParameterValue = theProject().m_simulators[m_slaveIndex].m_parameters[m_parameterName];
-	theProject().m_simulators[m_slaveIndex].m_parameters[m_parameterName] = m_value;
+	if (m_value.empty())
+		theProject().m_simulators[m_slaveIndex].m_parameters.erase(m_parameterName);
+	else
+		theProject().m_simulators[m_slaveIndex].m_parameters[m_parameterName] = m_value;
 	m_value.swap(currentParameterValue);
 
 	// tell project handler that everything has changed

@@ -39,6 +39,7 @@
 #include "MSIMUndoSlaves.h"
 #include "MSIMUndoConnections.h"
 #include "MSIMUndoNetworkGeometry.h"
+#include "MSIMUndoSlaveParameters.h"
 
 #include <MSIM_Project.h>
 
@@ -54,8 +55,13 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 			this, SLOT(onModified(unsigned int,void*)));
 
 	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
-	m_ui->scrollAreaWidgetContents->layout()->setContentsMargins(0,0,0,0);
-	m_ui->widgetProperties->updateProperties(-1);
+
+	m_ui->widgetProperties->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+	m_ui->widgetProperties->horizontalHeader()->setStretchLastSection(true);
+	m_ui->widgetProperties->verticalHeader()->setVisible(false);
+
+	formatTable(m_ui->widgetProperties);
+	updateSlaveParameterTable(-1);
 
 	// set the scene showing the network
 	m_ui->blockModWidget->setResolution(1);
@@ -170,7 +176,6 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 			if (unzOpenCurrentFile( zip ) == UNZ_OK) {
 				char buffer[4096];
 				int readBytes;
-				bool readError = false;
 				QByteArray byteArray;
 				do {
 					readBytes = unzReadCurrentFile(zip, buffer, 4096);
@@ -267,7 +272,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 		} break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
-			m_ui->widgetProperties->updateProperties( m_ui->tableWidgetSlaves->currentRow() );
+			updateSlaveParameterTable( m_ui->tableWidgetSlaves->currentRow() );
 			return;
 
 		case MSIMProjectHandler::ProjectPathModified :
@@ -452,7 +457,7 @@ void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 
 void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
 	// update property browser for currently selected slave
-	m_ui->widgetProperties->updateProperties(currentRow);
+	updateSlaveParameterTable(currentRow);
 }
 
 
@@ -526,6 +531,73 @@ void MSIMViewSlaves::onBlockEditingCompleted() {
 }
 
 
+void MSIMViewSlaves::onNewConnectionCreated() {
+	// get the last connection made from network
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
+	const BLOCKMOD::Connector & con = n.m_connectors.back();
+
+	MASTER_SIM::Project::GraphEdge edge;
+	edge.m_outputVariableRef = con.m_sourceSocket.toStdString();
+	edge.m_inputVariableRef = con.m_targetSocket.toStdString();
+
+	MASTER_SIM::Project p = project();
+	p.m_graph.push_back(edge);
+
+	// add undo action for new connection
+	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
+	cmd->push();
+}
+
+
+void MSIMViewSlaves::onNetworkGeometryChanged() {
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
+	// add undo action
+	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
+	cmd->push();
+}
+
+
+void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
+	// find corresponding row in table widget
+	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
+		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
+			m_ui->tableWidgetSlaves->selectRow(i);
+			break;
+		}
+	}
+}
+
+
+void MSIMViewSlaves::on_toolButtonPrint_clicked() {
+	// open print preview dialog and print schematics
+	QPrinter prn;
+	QPrintDialog printDlg(&prn, this);
+	if (printDlg.exec() == QDialog::Accepted) {
+		QPainter painter;
+		painter.begin(&prn);
+		m_ui->blockModWidget->render(&painter);
+	}
+}
+
+
+void MSIMViewSlaves::on_widgetProperties_itemChanged(QTableWidgetItem *item) {
+	// triggered when user has just changed an item
+	int currentSlaveIndex = m_ui->tableWidgetSlaves->currentRow();
+	const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[currentSlaveIndex];
+	std::string slaveName = simDef.m_name;
+
+	QString varName = m_ui->widgetProperties->item(item->row(), 0)->text();
+
+	// create an undo-action for modifying a slave parameter
+	MSIMUndoSlaveParameters * undo = new MSIMUndoSlaveParameters(tr("Parameter/variable '%1.%2' modified.")
+																 .arg(QString::fromStdString(slaveName), varName),
+																 currentSlaveIndex, varName.toStdString(), item->text().toStdString());
+	undo->push();
+}
+
+
+
+
 // *** private functions ***
 
 void MSIMViewSlaves::updateSlaveTable() {
@@ -591,56 +663,86 @@ void MSIMViewSlaves::updateSlaveTable() {
 		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
 		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
 	}
+	else {
+		currentSlaveIdx = -1;
+	}
 
 	blockMySignals(this, false);
-	m_ui->widgetProperties->updateProperties(currentSlaveIdx);
+	updateSlaveParameterTable(currentSlaveIdx);
 }
 
 
-void MSIMViewSlaves::onNewConnectionCreated() {
-	// get the last connection made from network
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
-	const BLOCKMOD::Connector & con = n.m_connectors.back();
+void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
+	// remember current selection
+	int selectedRow = m_ui->widgetProperties->currentRow();
 
-	MASTER_SIM::Project::GraphEdge edge;
-	edge.m_outputVariableRef = con.m_sourceSocket.toStdString();
-	edge.m_inputVariableRef = con.m_targetSocket.toStdString();
+	m_ui->widgetProperties->blockSignals(true);
+	m_ui->widgetProperties->clearContents();
+	if (slaveIndex == (unsigned int)-1) {
+		m_ui->widgetProperties->blockSignals(false);
+		return;
+	}
+	// look up slave
+	Q_ASSERT(project().m_simulators.size() > slaveIndex);
+	const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[slaveIndex];
+	// and try to look up modelDescription
+	IBK::Path fmuFullPath = simDef.m_pathToFMU;
+	fmuFullPath = fmuFullPath.absolutePath(); // we compare by absolute path with removed /../../ etc.
+	const std::map<IBK::Path, MASTER_SIM::ModelDescription>	& modelDescriptions = MSIMMainWindow::instance().modelDescriptions();
+	std::map<IBK::Path, MASTER_SIM::ModelDescription>::const_iterator it = modelDescriptions.find(fmuFullPath);
 
-	MASTER_SIM::Project p = project();
-	p.m_graph.push_back(edge);
+	std::map<std::string, std::string> customParameters = simDef.m_parameters;
 
-	// add undo action for new connection
-	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection added"), p, n);
-	cmd->push();
-}
+	int currentRow = 0;
+	QFont f;
+	f.setBold(true);
+	if (it != modelDescriptions.end()) {
+		for (const MASTER_SIM::FMIVariable & var : it->second.m_variables) {
+			if (var.m_causality != MASTER_SIM::FMIVariable::C_PARAMETER)
+				continue;
+			// show parameter name and given unit
+			std::string paraName = var.m_name;
+			std::map<std::string, std::string>::const_iterator para_it = simDef.m_parameters.begin();
+			while (para_it != simDef.m_parameters.end() && para_it->first != paraName)
+				++para_it;
+			bool found = (para_it != simDef.m_parameters.end());
+			m_ui->widgetProperties->setRowCount(currentRow+1);
+			QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString(paraName));
+			item->setFlags(Qt::ItemIsEnabled);
+			if (found) {
+				customParameters.erase(paraName);
+				item->setFont(f);
 
-
-void MSIMViewSlaves::onNetworkGeometryChanged() {
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
-	// add undo action
-	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
-	cmd->push();
-}
-
-
-void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
-	// find corresponding row in table widget
-	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
-		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
-			m_ui->tableWidgetSlaves->selectRow(i);
-			break;
+				QTableWidgetItem * valueItem = new QTableWidgetItem(QString::fromStdString(para_it->second));
+				valueItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsEditable); // allow double-click to edit
+				valueItem->setFont(f);
+				m_ui->widgetProperties->setItem(currentRow, 1, valueItem);
+			}
+			m_ui->widgetProperties->setItem(currentRow, 0, item);
+			++currentRow;
 		}
 	}
-}
 
+	// show remaining parameters that are specified in simulator
+	f.setItalic(true);
+	f.setBold(false);
+	for (auto m : customParameters) {
+		m_ui->widgetProperties->setRowCount(currentRow+1);
+		QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString(m.first));
+		item->setFlags(Qt::ItemIsEnabled);
+		item->setFont(f);
+		m_ui->widgetProperties->setItem(currentRow, 0, item);
+		item = new QTableWidgetItem(QString::fromStdString(m.second));
+		item->setFlags(Qt::ItemIsEnabled);
+		item->setFont(f);
+		m_ui->widgetProperties->setItem(currentRow, 1, item);
+		++currentRow;
+	}
+	m_ui->widgetProperties->blockSignals(false);
 
-void MSIMViewSlaves::on_toolButtonPrint_clicked() {
-	// open print preview dialog and print schematics
-	QPrinter prn;
-	QPrintDialog printDlg(&prn, this);
-	if (printDlg.exec() == QDialog::Accepted) {
-		QPainter painter;
-		painter.begin(&prn);
-		m_ui->blockModWidget->render(&painter);
+	// reselect item that was selected/current before updating the table
+	if (selectedRow < m_ui->widgetProperties->rowCount()) {
+		m_ui->widgetProperties->setCurrentCell(selectedRow, 1);
 	}
 }
+

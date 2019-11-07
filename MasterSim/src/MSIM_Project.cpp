@@ -144,10 +144,11 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				value = IBK::replace_string(value, "\\n", "\n");
 				IBK::trim(paraString);
 				// extract slave name
-				if (IBK::explode(parameter, tokens, ".", IBK::EF_TrimTokens) != 2)
+				std::size_t dotPos = parameter.find('.');
+				if (dotPos == std::string::npos)
 					throw IBK::Exception(IBK::FormatString("Expected parameter variable name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
-				std::string slaveName = tokens[0];
-				parameter = tokens[1];
+				std::string slaveName = parameter.substr(0, dotPos);
+				parameter = parameter.substr(dotPos+1);
 				// add paramter to slave
 				unsigned int s=0;
 				for (; s<m_simulators.size(); ++s) {

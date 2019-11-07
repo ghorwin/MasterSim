@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1026</width>
-    <height>614</height>
+    <height>609</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,29 +124,30 @@
       </widget>
       <widget class="QGroupBox" name="groupBox">
        <property name="title">
-        <string>Parameters</string>
+        <string>Parameters adjusted in the slave (double-click on table to edit)</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_4">
         <item>
-         <widget class="QScrollArea" name="scrollArea">
-          <property name="widgetResizable">
+         <widget class="QTableWidget" name="widgetProperties">
+          <property name="alternatingRowColors">
            <bool>true</bool>
           </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>576</width>
-             <height>124</height>
-            </rect>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::NoSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <column>
+           <property name="text">
+            <string>Parameter</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="MSIMSlavePropertyWidget" name="widgetProperties" native="true"/>
-            </item>
-           </layout>
-          </widget>
+          </column>
+          <column>
+           <property name="text">
+            <string>Value</string>
+           </property>
+          </column>
          </widget>
         </item>
        </layout>
@@ -231,12 +232,6 @@
    <class>BLOCKMOD::ZoomMeshGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header location="global">BM_ZoomMeshGraphicsView.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>MSIMSlavePropertyWidget</class>
-   <extends>QWidget</extends>
-   <header>MSIMSlavePropertyWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
