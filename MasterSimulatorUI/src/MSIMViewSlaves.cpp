@@ -678,6 +678,7 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 
 	m_ui->widgetProperties->blockSignals(true);
 	m_ui->widgetProperties->clearContents();
+	m_ui->widgetProperties->setRowCount(0);
 	if (slaveIndex == (unsigned int)-1) {
 		m_ui->widgetProperties->blockSignals(false);
 		return;
@@ -724,7 +725,21 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 				QFont fi;
 				fi.setItalic(true);
 				valueItem->setFont(fi);
-				valueItem->setText(QString::fromStdString(var.m_startValue));
+				// special handling for result root dir
+				if (paraName == "ResultsRootDir") {
+					IBK::Path msimProjectPath(MSIMProjectHandler::instance().projectFile().toStdString());
+					if (msimProjectPath.isValid()) {
+						msimProjectPath = msimProjectPath.parentPath();
+						IBK::Path slaveRootDir = msimProjectPath / "slaves" / simDef.m_name;
+						valueItem->setText(QString::fromStdString(slaveRootDir.str()));
+						valueItem->setToolTip(QString::fromStdString(slaveRootDir.str()));
+					}
+					else {
+						valueItem->setText(tr("Project needs to be saved first."));
+					}
+				}
+				else
+					valueItem->setText(QString::fromStdString(var.m_startValue));
 			}
 			m_ui->widgetProperties->setItem(currentRow, 0, item);
 			m_ui->widgetProperties->setItem(currentRow, 1, valueItem);
