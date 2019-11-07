@@ -66,6 +66,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 		return;
 	}
 
+	m_propertyEditor->setFixHeightToContents(false);
 	// now update the property edits
 	try {
 		const MASTER_SIM::ModelDescription & modelDesc = *modelDescPtr;
@@ -114,6 +115,7 @@ void MSIMSlavePropertyWidget::updateProperties(int selectedSlave) {
 		m_propertyEditor->clear();
 		m_propertyEditor->setEnabled(false);
 	}
+	m_propertyEditor->setFixHeightToContents(true);
 }
 
 
