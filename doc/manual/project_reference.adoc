@@ -1,0 +1,293 @@
+:imagesdir: ./images
+= Project File Format
+
+_MasterSim_ uses a single project file that describes a simulation scenario. This project file has the extension `msim` and contains all data to perform a simulation.
+
+A second file with same name and extension `bm` may be present in the same location as the project file. This contains the graphical representation of the simulation scenario. Since the graphical network display is _purely optional_, the `bm` file can be omitted/ignored/deleted at will.
+
+[NOTE]
+====
+.Future development work
+
+Currently, research is underway within the Modelica Association Project SSP https://modelica.org/projects[System Structure and Parameterization of Components for Virtual System Design] to define a standard for describing simulation scenarios. In due time, when the specs are complete enough, this master simulator may support this file standard, at least for exporting and importing such data. Such a file actually merges description of the FMU connection topology and its (still optional) graphical representation into one file. However, similar to FMUs this file format is actually a zip-compressed folder structure and hence SSP-project files may no longer effectively been used in version control systems. Here, the ASCII format of the current `msim` and `bm` files is very convenient and useful.
+====
+
+
+= The _MasterSim_ project file format
+
+The format is a plain-text format (UTF8-encoded) with the following content:
+
+.Example MasterSim project file
+----
+# Created:	Di. Aug. 14 17:02:20 2018
+# LastModified:	Di. Aug. 14 17:02:20 2018
+
+# Project file example for iterating GaussSeidel with time step adjustment
+#
+# No error test included, time step adjustment based on convergence failures.
+tStart                   0 s
+tEnd                     12 s
+hMax                     30 min
+hMin                     1e-06 s
+hFallBackLimit           0.001 s
+hStart                   1e-07 s
+hOutputMin               0.12 s
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   0.01
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   yes
+
+simulator 0 0 Part1 #ff447cb4 "fmus/simx/Part1.fmu"
+simulator 1 1 Part2 #ffc38200 "fmus/simx/Part2.fmu"
+simulator 2 1 Part3 #ffff0000 "fmus/simx/Part3.fmu"
+
+graph Part1.x2 Part2.x2
+graph Part1.x1 Part2.x1
+graph Part2.x3 Part3.x3
+graph Part3.x4 Part2.x4
+
+parameters Part1.para1  14.3
+----
+
+Each line defines a different property. Tokens in each line are separated by whitespaces (tabs or spaces). Lines beginning with a hash character # are comment and ignored. 
+
+[#screenshot_project_properties]
+.Project properties shown on the welcome page
+image::welcome_page_project_properties.png[Project properties shown on the welcome page]
+
+All comment lines before the first actual input line are recognized as the header lines. In these lines the keywords `Created:` and `LastModified:` are expected to be followed by a more or less meaningful (but not standardized) date/time string to be shown in the user interface. Other header lines are treated as project description, show in the project summary on the welcome page of the graphical user interface (see Figure <<screenshot_project_properties>>).
+
+
+[NOTE]
+====
+Past the header with the description, the order of the entries/lines in the file is arbitrary.
+====
+
+== Simulator settings
+
+Below is a short description of the different parameters. For details on where there are used and what influence they have, see section <<MasterSim_manual.adoc#truemaster_algorithms, Master Algorithms>>.
+
+Time step related options:
+
+- *tStart* - start time point of simulation, should be zero
+- *tEnd* - end time of simulation, must be > *tStart*
+- *hMax* - maximum time step size 
+- *hMin* - lower limit of time step in adaptive-time-step mode, if time step is reduced below this limit, master stops
+- *hFallBackLimit* - for Gauss-Seidel with time step adjustment: when time step drops below this limit, non-iterating Gauss-Seidel is used (to compensate for discontinous outputs), should be > *hMin*
+- *hStart* - initial time step, will be use as constant step size when not in adaptive-time-step mode
+-  *hOutputMin* - minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
+- *adjustStepSize* - enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP* setting *adjustStepSize* to false is an error
+
+*MasterMode* one of:
+
+-       GAUSS_JACOBI - Gauss-Jacobi algorithm (non-iterative)
+-       GAUSS_SEIDEL - Gauss-Seidel algorithm (iterative or non-iterative depending on *it_max_steps*)
+-       NEWTON - Newton algorithm with difference-quotient approximation to Jacobi matrix
+
+Iteration and convergence parameters:
+
+- *maxIterations* - max. number of iterations, if == 1 no iteration is done
+- *absTol* - absolute tolerance for convergence test
+- *relTol* - relative tolerance for convergence test
+
+*ErrorControlMode* one of:
+
+- *NONE* - no error checking and adjustment
+- *CHECK* - only error checking, protocols time and magnitude of exceeded error limit
+- *ADAPT_STEP* - implicitely enables adaptive-time-step mode and adjusts time step when error limit is exceeded
+
+=== Advanced settings
+The following settings are mostly needed for use with cross-check procedure.
+
+- *preventOversteppingOfEndTime* - even for constant-step FMUs, truncate the final step to hit the end time point exactly (needed for some FMUs who have strict end time checking)
+- *writeInternalVariables* - Also writes variables with local/internal causality (when set to *no*, only variables with causality _output_ are written)
+Depending on the selection options, certain capabilities are required on the FMUs, see [wiki:MathAlgorithms].
+
+
+== Simulator/Slave Definitions
+
+Each slave is defined by:
+
+----
+simulator  <priority> <cycle>  <slave-name> <html-color-code> <path/to/fmu-file>
+----
+
+The *priority* is used to select order of execution within a cycle (for Gauss-Seidel). The *cycle* indicates whether slave belongs to a cycle with other FMUs. *slave-name* must be a unique identifier for the slave (see discussion in section <<MasterSim_manual.adoc#truemaster_algorithms, Master Algorithms>>).
+
+[IMPORTANT]
+====
+Slave names *must not* contain spaces or dots. If a slave name contains a space or a dot, the parser of the project file will state that the simulator definition line is invalid.
+====
+
+The *html-color-code* is a typical html color definition, beginning with a hash character and then either 8 or 6 characters, for example: `#ff00ff00` or `#00ff00` for green. In the 8 character format, the first hex number is the alpha value (opaqueness - ff = fully opaque, 0 = fully transparent). Currently, there is no use for this value in the user interface, so the 6 character variant is the typical choice.
+
+Last argument in the line is the file path reference to the actual FMU file. The path to FMU file must be enclosed in double-quotes, if path or filename contains spaces. The path can be absolute or relative to the `msim` project file. Several slaves can be instantiated from the same FMU file (if the FMU supports this feature). In this case, several simulator lines reference the same FMU file path.
+
+=== CSV FileReader Slaves
+
+Instead of an FMU, you can also reference a data file (extension `tsv` or `csv`). In this case, _MasterSim_ will instantiate FileReader slaves and the data in the file is treated just an FMU that provides only output, but has no input and no parameters.
+
+_MasterSim_ actually supports two flavors of csv files. In both variants, numbers are always written in *english number notation*. The file parser first attempts to use the tab-separated value flavor by splitting the first two lines at the tab characters. If this yields more than two columns and the same nummber of columns in both lines (the header and first data line), a tab-separated csv/tsv flavour is assumed. Otherwise, the Excel-type quoted-csv flavour is assumed.
+
+==== Tab-separated values
+
+The format of such an input file follows the same conventions as the file format supported by https://bauklimatik-dresden.de/postproc[PostProc2].
+
+The file starts with a single line (the header), identifying variable name and unit in format like:
+
+    Time [<time unit>] <tab> <var1 name> [<unit>] <tab> <var2 name> [<unit>]
+
+where `<tab>` is the tabulator character.
+
+    Time [d]  <tab>  T_lab [C]  <tab>  T_sample [C]  <tab>  RH_lab [%]
+
+Example file:
+
+    Time [h]     T_lab [C]     T_sample [C]     RH_lab [%]
+    0            20            20.2             46
+    0.5          20.1          20.3             43
+    1.0          22            25               40
+    3.0          19            15               65
+
+The variable names are the strings in the header line excluding the units (if given). In the example above, the file would provide output variables of with names **T_lab**, **T_sample** and **TH_lab**.
+
+[TIP]
+====
+A file with this format is automatically obtained if a table with such data is copied & pasted from Libreoffice-Calc/Excel/... into a plain text editor.
+====
+
+==== Comma-separated with quotes
+
+In such a file the separation character is the , (comma), and values are quoted using double-quotes. For example:
+
+    "time","T_lab [C]","T_sample [C]","RH_lab [%]"
+    "0","20","20.2","46"
+    "0.5","20.1","20.3","43"
+    "1.0","22","25","40"
+
+=== Time points and time unit 
+
+The time points can be spaced at arbitrary intervals. _MasterSim_ currently expects simulations to run in seconds as base time unit. That means, internally, variables are exchanged matching a simulation time in seconds. When an input file defines a different unit for time, _MasterSim_ converts these times into seconds.
+
+The following time units are recognized by MasterSim:
+
+* ms - milliseconds
+* s - seconds
+* min - minutes
+* h - hours
+* d - days
+* a - years (regular years, 365 regular days, no leap year/day)
+
+[NOTE]
+====
+.Default time unit is seconds
+In case of missing time unit in the header of the first column, _MasterSim_ currently implies unit **seconds** (s).
+====
+
+=== Interpretation of data provided in FileReader slaves
+
+Variables without given units, i.e. the [...] is missing in the column captions, are assigned an unknown/undefined unit '-'.
+
+[IMPORTANT]
+====
+The variables exported from such a FileReaader slave have not yet data types assigned. During the initialization, _MasterSim_ looks at the connections made to FileReader slave output variables and assigns data types to the variables based on the _connected input variable_.
+====
+
+During simulation, when the FileReader slave is asked to provide a value for a variable, the following rules apply.
+
+For *Boolean*, *Integer* and *Enumeration* values no interpolation is done. Values are returned constant until the value is defined to change. Example:
+
+----
+Time [s]   Value [-]
+ 1         4
+ 3         4 <1>
+ 3         7 <2>
+ 6         4
+----
+<1> Value at end of interval ending at time 3
+<2> Value at begin of interval beginning at time 3, this value shall be used from t>=3.
+
+Evaluation of these values yields:
+
+ v(1) = 4
+ v(2) = 4
+ v(2.99999) = 4
+ v(3) = 7
+ v(4) = 7
+ v(5.99999) = 7
+ v(6) = 4
+
+Thus, the line `3     4` could have been omitted from the file.
+
+*Real* values are linearly interpolated. For the data example above, real values would be evaluated as follows:
+
+----
+ v(1) = 4
+ v(2) = 4
+ v(2.99999) = 4 <1>
+ v(3) = 7
+ v(4) = 6 <2>
+ v(5.99999) = 4.00001
+ v(6) = 4
+----
+<1> Internally, the line `3   4` is changed into `2.9999999999     4`, thus all values requested at t < 2.9999999999 are evaluated as linearly interpolated values between v(1)=4 and v(2.9999999999) = 4.
+<2> The linear interpolation between values v(3)=7 and v(6)=4 at t=4 yields 6.
+
+Naturally, for *string* parameters linear interpolation is not possible, thus they are handled similarly as *integer* values.
+
+[TIP]
+====
+If you use an adaptive step algorithm in _MasterSim_, you should set the maximum time step/communication interval length to a value that is less than your smallest time interval in your FileReader slave input file. Otherwise, _MasterSim_ may adjust time steps to a larger value and jump over an interval/value, hereby missing information and likely generating wrong results. For example: if you work with hourly climatic data, choose 30 minutes as maximum communication interval length.
+====
+
+== Connection graph 
+
+The connection graph defines data exchange between slaves. Each graph definition line defines the data transfer from one output variable to one input variable.
+
+Definition syntax:
+
+----  
+graph <outputvar> <inputvar> [<offset> <scale factor>]
+----
+
+Output and input variables are composed of slave name and variable name:
+
+----
+graph <slave-name>.<variable-name> <slave-name>.<variable-name>  [<offset> <scale factor>]
+----
+
+The offset and scale factor define a transformation operation between the output variable and the value given to the input variable. If such a transformation is assigned to a connection, always both values must be present.
+
+
+
+=== FMU Parameters
+
+You can set parameters of FMUs (or more specifically of the individual FMU slaves/instances) by using the `parameter` keyword.
+
+     parameter <slave-name>.<variable-name> <value>
+
+For boolean parameters you have to specify `true` (case-sensitive!) for *true*, or any other value (for example `false`) for *false*.
+
+For string parameters, everything after the variable name is taken as string (until end of line). Example:
+
+     parameter building_model.projectFile C:\\My projects\\p2\\This tall building.project
+     
+Whitespaces can be included, but backspaces need to be encoded as "\\". Line breaks have to be encoded with "\n" and , as in the following example:
+
+     parameter building_model.configPara First line\n    Some more lines with indentation\nlast line.
+
+Will set the string:
+
+    First line
+        Some more lines with indentation
+    last line
+
+as parameter.
+
+== CSV-input file format for FileReader slaves
+
+
