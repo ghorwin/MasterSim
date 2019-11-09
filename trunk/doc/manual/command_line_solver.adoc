@@ -1,4 +1,4 @@
-= _MasterSim_ command line program
+= _MasterSimulator_ command line program
 
 The actual simulation is done by the `MasterSimulator` command line program. It basically performs the following steps:
 
@@ -162,7 +162,7 @@ Unfortunately, the FMU standard does not provide an option, to officially set su
 Of course, as with any parameter, you can set manually a value for this parameter.
 
 
-== _MasterSim_ output
+== Simulation output
 
 === Slave output values
 
@@ -186,7 +186,7 @@ Time [s] 	slave1.h [-] 	slave1.v [-]
 0.0040000000000002	0.99992153962	-0.039240000000001
 ----
 
-The file format corresponds to that of the csv-files used as FileReader-slaves, see section <<project_reference.adoc#truecsv_input_file_format_for_filereader_slaves,CSV-input file format for FileReader slaves>>, with:
+The file format corresponds to that of the csv-files used as FileReader-slaves, see section <<project_reference.adoc#truecsv_filereader_slaves,CSV-input file format for FileReader slaves>>, with:
 
 - tabulator separated columns,
 - numbers written in english number format, and
