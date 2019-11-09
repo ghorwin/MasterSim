@@ -1,5 +1,5 @@
 :imagesdir: ./images
-= Project File Format
+= Project file format
 
 _MasterSim_ uses a single project file that describes a simulation scenario. This project file has the extension `msim` and contains all data to perform a simulation.
 
@@ -11,9 +11,6 @@ A second file with same name and extension `bm` may be present in the same locat
 
 Currently, research is underway within the Modelica Association Project SSP https://modelica.org/projects[System Structure and Parameterization of Components for Virtual System Design] to define a standard for describing simulation scenarios. In due time, when the specs are complete enough, this master simulator may support this file standard, at least for exporting and importing such data. Such a file actually merges description of the FMU connection topology and its (still optional) graphical representation into one file. However, similar to FMUs this file format is actually a zip-compressed folder structure and hence SSP-project files may no longer effectively been used in version control systems. Here, the ASCII format of the current `msim` and `bm` files is very convenient and useful.
 ====
-
-
-= The _MasterSim_ project file format
 
 The format is a plain-text format (UTF8-encoded) with the following content:
 
@@ -268,26 +265,139 @@ The offset and scale factor define a transformation operation between the output
 
 You can set parameters of FMUs (or more specifically of the individual FMU slaves/instances) by using the `parameter` keyword.
 
-     parameter <slave-name>.<variable-name> <value>
+Definition syntax:
 
-For boolean parameters you have to specify `true` (case-sensitive!) for *true*, or any other value (for example `false`) for *false*.
+----
+parameter <slave-name>.<variable-name> <value>
+----
 
-For string parameters, everything after the variable name is taken as string (until end of line). Example:
+For *boolean* parameters you have to specify `true` (case-sensitive!) for *true*, or any other value (for example `false`) for *false*.
 
-     parameter building_model.projectFile C:\\My projects\\p2\\This tall building.project
-     
-Whitespaces can be included, but backspaces need to be encoded as "\\". Line breaks have to be encoded with "\n" and , as in the following example:
+Values for *Real* parameters are expected in the unit defined for the respective parameter in the `modelDescription.xml` file. Unit conversion is *not* supported here.
 
-     parameter building_model.configPara First line\n    Some more lines with indentation\nlast line.
+For *string* parameters, everything after the variable name is taken as string (until end of line). Example:
+
+ parameter building_model.projectFile C:\\My projects\\p2\\This tall building.project
+
+Whitespaces can be included, but backspaces need to be encoded as `\\`. Line breaks have to be encoded with `\n`, as in the following example:
+
+ parameter building_model.configPara First line\n    Some more lines with indentation\nlast line.
 
 Will set the string:
 
-    First line
-        Some more lines with indentation
-    last line
+ First line
+     Some more lines with indentation
+ last line
 
-as parameter.
+[NOTE]
+====
+Because of the rather simple string encoding, you cannot define a string that starts with a whitespace character.
+====
 
-== CSV-input file format for FileReader slaves
 
 
+== BlockMod - Network Representation File Format
+
+The `bm` file is a simple xml file and describes the graphical layout and visualization of the modeled simulation scenario.
+
+A simple network like
+
+.Example for a simple graphical representation of a network
+image::bm_network_example.png[Blockmod Network Example]
+
+is defined in the following BlockMod network representation file:
+
+[source,xml]
+.Blockmod network representation file
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<BlockMod>
+	<!--Blocks-->
+	<Blocks>
+		<Block name="Part2">
+			<Position>224, -160</Position>
+			<Size>64, 64</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x1">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x2">
+					<Position>0, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x4">
+					<Position>0, 48</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x3">
+					<Position>64, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+		<Block name="Part3">
+			<Position>352, -160</Position>
+			<Size>96, 32</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x3">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x4">
+					<Position>96, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+	</Blocks>
+	<!--Connectors-->
+	<Connectors>
+		<Connector name="new connector">
+			<Source>Part2.x3</Source>
+			<Target>Part3.x3</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Part3.x4</Source>
+			<Target>Part2.x4</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>80</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>-288</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>-48</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+	</Connectors>
+</BlockMod>
+----
+
+The format is pretty self-explanatory.
+
+[TIP]
+====
+https://github.com/ghorwin/BlockMod[BlockMod] is an open source library for modeling such networks.
+====
