@@ -5,7 +5,7 @@ v0.8.1, Nov 2019
 :Author Initials: AN
 :toc:
 :toclevels: 3
-:icons:
+:icons: font
 :imagesdir: ./images
 :numbered:
 :website: https://bauklimatik-dresden.de/mastersim
