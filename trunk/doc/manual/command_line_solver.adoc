@@ -131,13 +131,16 @@ When a _MasterSim_ project references several FMUs with same base name, which ar
 [source,python]
 ------
 slave1 : /path/to/fmus/s1.fmu
-slave2 : /path/to/fmus/s1.fmu                # <-- second instance of same FMU
-slave3 : /path/other/project/fmus/s1.fmu     # <-- different FMU with same basename
+slave2 : /path/to/fmus/s1.fmu                # <1>
+slave3 : /path/other/project/fmus/s1.fmu     # <2>
 
 # _MasterSim_ generates directories
 .../fmus/s1
-.../fmus/s1_2                                # <-- suffix _2 _3 etc. is added by MasterSim
+.../fmus/s1_2                                # <3> 
 ------
+<1> second instance of same FMU
+<2> different FMU with same basename
+<3> suffix 2 and 3 etc. is added by _MasterSim_
 
 Basically, each 'fmu' file is only extracted once.
 [TIP]
@@ -161,8 +164,76 @@ Of course, as with any parameter, you can set manually a value for this paramete
 
 == _MasterSim_ output
 
+=== Slave output values
 
-=== Final statistics/summary ===
+_MasterSim_ creates two result files within the `results` subdirectory.
+
+`values.csv`:: Number outputs of all output variables of all slaves (whether they are connected or not).
+`strings.csv`:: Values of all output variables of type string of all slaves.
+
+and depending on whether _synonymous variables_ are defined in the ModelDescription (see below), the file `synonymous_variables.txt`.
+
+String output files are only generated when outputs of this type are generated. CSV files use tab chars as separators. First column is always the time point, the column header indicates the time unit.
+
+Example `values.csv` file:
+
+----
+Time [s] 	slave1.h [-] 	slave1.v [-]
+0	1	0
+0.001	0.999995099905	-0.0098100000000001
+0.0019999999999999	0.99998038981	-0.019619999999999
+0.0030000000000001	0.999955869715	-0.029430000000002
+0.0040000000000002	0.99992153962	-0.039240000000001
+----
+
+The file format corresponds to that of the csv-files used as FileReader-slaves, see section <<project_reference.adoc#truecsv_input_file_format_for_filereader_slaves,CSV-input file format for FileReader slaves>>, with:
+
+- tabulator separated columns,
+- numbers written in english number format, and
+- a single header line identifying the variables.
+
+The FMI variable names are prefixed with the corresponding slave name. The units are given in brackets and for unitless integer and boolean data types, the unit [-] is used.
+
+==== Synonymous variables
+
+Some FMUs (i.e. those generated from Modelica models) may have several (internal) variables that share the same value reference. This happens, when the symbolic analysis of the Modelica model has identified those variables as the same. In this case, MasterSim does not write duplicate output variables (would be a waste of harddrive space and simulation time, see ticket #47), but instead create a file `synonymous_variables.txt` with a table of synonymous variables.
+
+The table is written as plain text file with tab-separated columns:
+
+1. fmu filename (currently, only the file name is written  - in case that the _same filename_ with _different file paths_ is being used, this may need to be changed)
+2. the name of the variable that appears in the `values.csv` file
+3. the synonymous variable, that is not written into the output file, since it has the same value anyway
+
+Example for `synonymous_variables.txt` file:
+
+----
+ControlledTemperature.fmu	heatCapacitor.T	heatCapacitor.port.T
+ControlledTemperature.fmu	heatCapacitor.T	heatingResistor.T_heatPort
+ControlledTemperature.fmu	heatCapacitor.T	heatingResistor.heatPort.T
+ControlledTemperature.fmu	heatCapacitor.T	temperatureSensor.port.T
+ControlledTemperature.fmu	heatCapacitor.T	thermalConductor.port_a.T
+ControlledTemperature.fmu	heatingResistor.p.v	heatingResistor.v
+ControlledTemperature.fmu	heatingResistor.p.v	idealSwitch.n.v
+ControlledTemperature.fmu	constantVoltage.i	constantVoltage.n.i
+ControlledTemperature.fmu	constantVoltage.i	constantVoltage.p.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.n.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.p.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.n.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.p.i
+ControlledTemperature.fmu	heatingResistor.LossPower	heatingResistor.heatPort.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.port_a.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.port_b.Q_flow
+ControlledTemperature.fmu	onOffController.reference	ramp.y
+ControlledTemperature.fmu	onOffController.u	temperatureSensor.T
+ControlledTemperature.fmu	idealSwitch.control	logicalNot.y
+ControlledTemperature.fmu	logicalNot.u	onOffController.y
+----
+
+
+=== Final statistics/summary
 
 _MasterSim_ contains internal profiling functions that monitor the evaluation times of various parts of the software. Also, execution counts for different critical functions are shown.
 
@@ -220,13 +291,15 @@ Convergence iteration limit exceeded:: Number of times an iterative master algor
 
 Error test time and failure count:: Number of times the error test failed (`ErrorTestFails`) and overall time needed for performing error tests, including the time for resetting FMU states and re-evaluating steps (`ErrorTestTime`). Only applies to master algorithms with enabled error control (Richardson-variants).
 
-For each slave individually: This lines show the time taken in the function calls to `doStep()`, `getState()` and `setState()` for this slave and the respective call count. Mind, these functions are called both by the master algoritm and by the error test (if enabled).
+The remaining lines show timings and counters for each slave individually.  This lines show the time taken in the function calls to `doStep()`, `getState()` and `setState()` for this slave and the respective call count. The state-related functions are only used by iterative master algorithms, when the FMUs support FMI 2.0 features. Mind, these functions are called both by the master algoritm and by the error test (if enabled).
 
-.Some general notes
+*Output writing* and *Master-Algorithm* are the major two components of the MasterSimulator program, so there times should sum up close to the total wall clock time.
 
-*Output writing* and *Master-Algorithm* are the major two components of the master algorithm, so they should sum up close to the total wall clock time.
-
-The third column contains counters. The counter for Master-Algorithm is the number of times the master algorithm takes a step, so it's the total step count. Re-tries and iterations *within* the master algorithm are not counted here.
+The third column in the screenlog-statistics contains counters. The counter for Master-Algorithm is the number of times the master algorithm takes a step, so that's the total step count. Re-tries and iterations _within_ the master algorithm are not counted here.
 
 The last section of the statistics lists timings and counters for individual FMU slaves and the most relevant functions.
 
+[TIP]
+====
+You may use these profiling values to tune your simulation and identify, in case of very slow simulations, which of the FMUs is taking up most of the time. Also, it helps identifying if one of the fast functions (get and set state) are taking way too much time.
+====
