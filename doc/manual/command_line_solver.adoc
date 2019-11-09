@@ -1,16 +1,16 @@
-= MasterSimulator command line program
+= _MasterSim_ command line program
 
 The actual simulation is done by the `MasterSimulator` command line program. It basically performs the following steps:
 
-1. It will only read the msim project file (the network representation file is ignord). 
-2. Then, a subdirectory for this simulation test case is created (path can be adjusted, see `working-dir` command line options below). 
-3. The FMUs are extracted (can be skipped of already extracted, see command line options below)
+1. Read the msim project file (the network representation file is ignored, since it only contains visual information). 
+2. Then, a working directory for this simulation test case is created (path can be adjusted, see `--working-dir` command line option below). 
+3. The FMUs are extracted (can be skipped if already extracted, see command line option `--skip-unzip` below)
 4. The simulation is run as defined in the project file
 
 
-.Using MasterSim in a scripted environment
+.Using _MasterSim_ in a scripted environment
 ***************
-Since the MasterSim project file is plain text and the solver can be started on the command line, it is possible to use MasterSim in a scripted environment and automated processes (e.g. for optimization calculations).
+Since the _MasterSim_ project file is plain text and the solver can be started on the command line, it is possible to use _MasterSim_ in a scripted environment and automated processes (e.g. for optimization calculations).
 ***************
 
 
@@ -47,6 +47,7 @@ If no working directory is given, the directory path is generated from the proje
 
 [source,bash]
 -------------
+# path to project file
 /simulations/myScenario.msim
 
 # outputs will be written to
@@ -95,11 +96,37 @@ When running the master simulator a working directory will be created. By defaul
 
 The base directory name, here `simProject` may be changed by using the `--working-directory` command line argument.
 
+=== Directory `log`
+
+This directory contains three files:
+
+`progress.txt`:: contains overall simulation progress
+`screenlog.txt`:: contains the output of _MasterSim_ written to the console window with the requested verbosity level (during initialization, always detailed output is written to the logfile, even if nothing is written on the screen due to low verbosity level)
+`summary.txt`:: after the simulation has completed _successfully_, this file contains a summary of the relevant solver/algorithm statistics.
+
+The format of the `progress.txt` is fairly simple:
+
+----
+   Simtime [s] 	   Realtime [s]	 Percentage [%]
+            600	       0.000205	         0.0019
+           1200	        0.00023	         0.0038
+           1800	       0.000251	         0.0057
+           2400	       0.000271	         0.0076
+            ...             ...             ...
+----
+
+The file has three columns, separated by a Tab character. The file is written and updated during the simulation run and can be used by other tools to pick up the overall progress and generate progress diagrams (speed/percentage etc.)
+
+The meaning of the different values in the `summary.txt` are explained in section.
+
+
+
+
 === Directory `fmus`
 
 Inside this directory, the imported FMUs are extracted, each in a subdirectory with basename of the FMU (`part1.fmu` -> `part1`).
 
-When a MasterSim project references several FMUs with same base name, which are for example in different subdirectories, then it will adjust the extraction path name. Example:
+When a _MasterSim_ project references several FMUs with same base name, which are for example in different subdirectories, then it will adjust the extraction path name. Example:
 
 [source,python]
 ------
@@ -107,7 +134,7 @@ slave1 : /path/to/fmus/s1.fmu
 slave2 : /path/to/fmus/s1.fmu                # <-- second instance of same FMU
 slave3 : /path/other/project/fmus/s1.fmu     # <-- different FMU with same basename
 
-# mastersim generates directories
+# _MasterSim_ generates directories
 .../fmus/s1
 .../fmus/s1_2                                # <-- suffix _2 _3 etc. is added by MasterSim
 ------
@@ -116,9 +143,9 @@ Basically, each 'fmu' file is only extracted once.
 [TIP]
 ====
 .Skipping the FMU extraction step
-MasterSim provides the command line option `--skip-unzip`, that is very useful for fixing FMUs with errors in the `modelDescription.xml` or missing resources. If such an FMU is encountered, you can ran MasterSimulator once to extract the FMUs into the directory, then edit/adjust the bad files in the respective extraction directory and afterwards run the simulation again with `--skip-unzip`. MasterSim will now directly read the (modified) files and you can save yourself the hassle of zipping and renaming the FMU. Also, you can keep the `modelDescription.xml` opened in the editor and quickly iterate through the edit-and-test-run procedure, until everything works.
+MasterSim provides the command line option `--skip-unzip`, that is very useful for fixing FMUs with errors in the `modelDescription.xml` or missing resources. If such an FMU is encountered, you can ran MasterSimulator once to extract the FMUs into the directory, then edit/adjust the bad files in the respective extraction directory and afterwards run the simulation again with `--skip-unzip`. _MasterSim_ will now directly read the (modified) files and you can save yourself the hassle of zipping and renaming the FMU. Also, you can keep the `modelDescription.xml` opened in the editor and quickly iterate through the edit-and-test-run procedure, until everything works.
 
-See also <<development_help.adoc#_modifyingfixing_fmu_content,Modifying/fixing FMU content>>.
+See also section <<development_help.adoc#_modifyingfixing_fmu_content,Modifying/fixing FMU content>>.
 ====
 
 
@@ -128,6 +155,78 @@ Often, non-trivial simulation slaves write their own output files, instead of pu
 
 Since a slave FMU may be instantiated several times, hard-coding output paths inside the FMU is generally a bad idea (though still current practice). Also, writing outputs into the current working directory is not too smart either, since the working directory would have to be changed by the master between calls to FMUs, and this is best avoided.
 
-Unfortunately, the FMU standard does not provide the 
-The output directory for slaves is only created by slaves who support a parameter that allows specification of such output directory.
+Unfortunately, the FMU standard does not provide an option, to officially set such a result directory. _MasterSim_ handles this by setting the slave-specific directory path in a string parameter named *ResultsRootDir*, if the FMU declares such a parameter. If there is no value set in the project file for this parameter, then _MasterSim_ will set the path generated for the slave in the working directory. The FMU can rely on the path being created by _MasterSim_ and being writable.  
+Of course, as with any parameter, you can set manually a value for this parameter.
+
+
+== _MasterSim_ output
+
+
+=== Final statistics/summary ===
+
+_MasterSim_ contains internal profiling functions that monitor the evaluation times of various parts of the software. Also, execution counts for different critical functions are shown.
+
+The statistics is printed on the console window (for verbosity level > 0) and in the log file `screenlog.txt` in the following format:
+
+------
+Solver statistics
+------------------------------------------------------------------------------
+Wall clock time                            =   78.044 ms  
+------------------------------------------------------------------------------
+Output writing                             =   76.767 ms  
+Master-Algorithm                           =    0.666 ms         324
+Convergence failures                       =                      41
+Convergence iteration limit exceeded       =                      41
+Error test time and failure count          =    0.214 ms          85
+------------------------------------------------------------------------------
+Part1                               doStep =    0.101 ms        1229
+                                  getState =    0.070 ms        1116
+                                  setState =    0.020 ms         509
+Part2                               doStep =    0.079 ms        1496
+                                  getState =    0.039 ms        1116
+                                  setState =    0.024 ms         776
+Part3                               doStep =    0.071 ms        1496
+                                  getState =    0.038 ms        1116
+                                  setState =    0.040 ms         776
+------------------------------------------------------------------------------
+------
+
+Also, the same statistics information is printed into the `summary.txt` log file, in a more _machine-friendly_ format (with timings always in *seconds*):
+
+------
+WallClockTime=0.078044
+FrameworkTimeWriteOutputs=0.076767
+MasterAlgorithmSteps=324
+MasterAlgorithmTime=0.000666
+ConvergenceFails=41
+ConvergenceIterLimitExceeded=41
+ErrorTestFails=85
+ErrorTestTime=0.000214
+Slave[1]Time=0.000191
+Slave[2]Time=0.000142
+Slave[3]Time=0.000149
+------
+
+
+Wall clock time:: total simulation time spend after initialization. Time for unzipping and loading of shared libraries is excluded (`WallClockTime`).
+
+Output writing:: time spent in writing output files and computing values related to such outputs (`FrameworkTimeWriteOutputs`)
+
+Master-Algorithm:: Time spent in the actual master algorithm (`MasterAlgorithmTime`) and number of calls to the algorithm and overall time steps taken (`MasterAlgorithmSteps`)
+
+Convergence failures:: Number of times an iterative master algorithm failed to converge within the allowed number of iterations or diverged. Only applies to iterative master algorithms (`ConvergenceFails`)
+
+Convergence iteration limit exceeded:: Number of times an iterative master algorithm failed to converge within the allowed number of iterations (should be less or equal to convergence failure count). Only applies to iterative master algorithms (`ConvergenceIterLimitExceeded`)
+
+Error test time and failure count:: Number of times the error test failed (`ErrorTestFails`) and overall time needed for performing error tests, including the time for resetting FMU states and re-evaluating steps (`ErrorTestTime`). Only applies to master algorithms with enabled error control (Richardson-variants).
+
+For each slave individually: This lines show the time taken in the function calls to `doStep()`, `getState()` and `setState()` for this slave and the respective call count. Mind, these functions are called both by the master algoritm and by the error test (if enabled).
+
+.Some general notes
+
+*Output writing* and *Master-Algorithm* are the major two components of the master algorithm, so they should sum up close to the total wall clock time.
+
+The third column contains counters. The counter for Master-Algorithm is the number of times the master algorithm takes a step, so it's the total step count. Re-tries and iterations *within* the master algorithm are not counted here.
+
+The last section of the statistics lists timings and counters for individual FMU slaves and the most relevant functions.
 
