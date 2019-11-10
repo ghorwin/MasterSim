@@ -11,39 +11,9 @@ v0.8.1, Nov 2019
 :website: https://bauklimatik-dresden.de/mastersim
 :source-highlighter: rouge
 
-== Introduction and basic concepts
 
-== Master Algorithms
-
-A _master algorithm_ is basically the mathematical procedure to advance the coupled simulation by one step forward. Such a co-simulation naster algorithm has a characteristic set of rules on how to retrieve values from one FMU, when and how these values are passed on to other FMUs, whether this procedure is repeated and the criteria for convergence of iterations.
-
-_MasterSim_ implements several standard algorithms.
-
-=== Gauss-Jacobi ===
-
-=== Gauss-Seidel ===
-
-=== Newton ===
-
-
-== Error control and time step adjustment
-
-[TIP]
-====
-If you use an adaptive step algorithm in _MasterSim_, you should set a minimim time step/fallback time step that is *larger* than your "small change step". Otherwise, MasterSim may try to resolve the dynamics of the step change by adjusting the time steps to extremely small values.
-====
-
-
-== Graphical User Interface
-
-
-[[img_schematics_view]]
-.Schematics view with connected networks
-image::MasterSim_0_8_0_network_schematics.png[scaledwidth="75%",alt="Schematics view"]
-
-
-
-
+include::basic_concepts.adoc[leveloffset=+1]
+include::graphical_user_interface.adoc[leveloffset=+1]
 include::command_line_solver.adoc[leveloffset=+1]
 include::project_reference.adoc[leveloffset=+1]
 include::development_help.adoc[leveloffset=+1]
