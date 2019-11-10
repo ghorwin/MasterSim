@@ -1,0 +1,11 @@
+:imagesdir: ./images
+= Graphical User Interface
+
+_MasterSim_ has a fairly convenient graphical user interface to define and adjust _simulation scenarios_. With _simulation scenario_ I mean the definition of which FMUs to import and instantiate as slave (or slaves), how to connect output and input variables, and all properties related to calculation algorithms. Basically, everything that is needed to run a co-simulation.
+
+The user interface assists in generating 
+
+[[img_schematics_view]]
+.Schematics view with connected networks
+image::MasterSim_0_8_0_network_schematics.png[scaledwidth="75%",alt="Schematics view"]
+
