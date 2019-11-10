@@ -191,7 +191,7 @@ Variables without given units, i.e. the [...] is missing in the column captions,
 
 [IMPORTANT]
 ====
-The variables exported from such a FileReaader slave have not yet data types assigned. During the initialization, _MasterSim_ looks at the connections made to FileReader slave output variables and assigns data types to the variables based on the _connected input variable_.
+The variables exported from such a FileReader slave have not yet data types assigned. During the initialization, _MasterSim_ looks at the connections made to FileReader slave output variables and assigns data types to the variables based on the _connected input variable_.
 ====
 
 During simulation, when the FileReader slave is asked to provide a value for a variable, the following rules apply.
@@ -259,6 +259,21 @@ graph <slave-name>.<variable-name> <slave-name>.<variable-name>  [<offset> <scal
 
 The offset and scale factor define a transformation operation between the output variable and the value given to the input variable. If such a transformation is assigned to a connection, always both values must be present.
 
+The following transformation equation is applied:
+
+  input = offset + scale * output
+
+If, for example, an FMU slave 'Sensor' delivers a temperature in Kelvin, and another FMU slave 'Heater' takes a temperature in degree Celsius, you could define the connection as follows:
+
+ graph  Sensor.temperature  Heater.temperature  -273.15  1
+ 
+which will result in 
+
+ input (in C) = -273.15 + 1 * output (in K)
+ 
+Similarly, you can invert the sign of a connection, when you, for example, connect heat or mass flows across pipes. Suppose heat flow is defined positively into a surface and you connect 'SurfaceA.HeatFlow' and 'SurfaceB.HeatFlow', the connection with sign inversion is defined as:
+
+ graph  SurfaceA.HeatFlow  SurfaceB.HeatFlow  0  -1
 
 
 === FMU Parameters
@@ -272,6 +287,8 @@ parameter <slave-name>.<variable-name> <value>
 ----
 
 For *boolean* parameters you have to specify `true` (case-sensitive!) for *true*, or any other value (for example `false`) for *false*.
+
+For *integer* values you specify simply the value as number.
 
 Values for *Real* parameters are expected in the unit defined for the respective parameter in the `modelDescription.xml` file. Unit conversion is *not* supported here.
 
