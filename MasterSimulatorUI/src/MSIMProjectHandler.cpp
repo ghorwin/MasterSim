@@ -534,6 +534,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 				network = BLOCKMOD::Network();
 			}
 			// now check, if the network contains blocks that do not match slave names
+			std::list<BLOCKMOD::Block> checkedBlocks; // this list will hold all blocks that have matching simulators
 			for (BLOCKMOD::Block & b : network.m_blocks) {
 				std::vector<MASTER_SIM::Project::SimulatorDef>::const_iterator it;
 				for ( it = m_project->m_simulators.begin(); it != m_project->m_simulators.end(); ++it) {
@@ -541,11 +542,17 @@ bool MSIMProjectHandler::read(const QString & fname) {
 						break;
 				}
 				if (it == m_project->m_simulators.end()) {
-					IBK::IBK_Message(IBK::FormatString("Invalid block in network representation file '%1'.")
-									 .arg(bmPath), IBK::MSG_ERROR, FUNC_ID);
-					network = BLOCKMOD::Network();
+					IBK::IBK_Message(IBK::FormatString("Invalid block '%1' in network representation file '%2'.")
+									 .arg(b.m_name.toStdString()).arg(bmPath), IBK::MSG_ERROR, FUNC_ID);
+					continue; // skip block
 				}
+				checkedBlocks.push_back(b);
 			}
+			// swap out block with checkedBlocks
+			network.m_blocks.swap(checkedBlocks);
+
+			checkedBlocks.clear(); // start over with empty list, now create list of blocks that matches the list
+								   // of simulators
 			// add dummy blocks for each simulator, that is not yet in the network
 			for (MASTER_SIM::Project::SimulatorDef & simdef : m_project->m_simulators) {
 				// look for existing block
@@ -561,9 +568,14 @@ bool MSIMProjectHandler::read(const QString & fname) {
 
 					b.m_size = QSizeF(BLOCKMOD::Globals::GridSpacing*5,
 								 BLOCKMOD::Globals::GridSpacing*10);
-					network.m_blocks.push_back(b);
+					checkedBlocks.push_back(b);
+				}
+				else {
+					checkedBlocks.push_back(*it);
 				}
 			}
+			// swap out block with checkedBlocks
+			network.m_blocks.swap(checkedBlocks); // we now have as many blocks as simulators, and correct existing blocks are kept in sync with slaves
 		}
 
 		m_network = network; // data is copied into project's own network
