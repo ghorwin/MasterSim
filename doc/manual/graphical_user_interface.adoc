@@ -3,9 +3,105 @@
 
 _MasterSim_ has a fairly convenient graphical user interface to define and adjust _simulation scenarios_. With _simulation scenario_ I mean the definition of which FMUs to import and instantiate as slave (or slaves), how to connect output and input variables, and all properties related to calculation algorithms. Basically, everything that is needed to run a co-simulation.
 
-The user interface assists in generating 
+== Welcome page
 
-[[img_schematics_view]]
-.Schematics view with connected networks
-image::MasterSim_0_8_0_network_schematics.png[scaledwidth="75%",alt="Schematics view"]
+The software starts with a welcome page, which basically shows a list of recently used projects and some webbases news (those are pulled from the file https://bauklimatik-dresden.de/downloads/mastersim/news.html which is updated whenever a new release or feature is available).
+
+.Welcome page with recently used projects and webbased news
+image::gui_welcome_page.png[pdfwidth="75%", alt="Welcome page"]
+
+[horizontal]
+*(1)*:: Short description of the project . This description is taken from the project file header comment lines (see <<_project_file_format, Project file format>>).
+
+
+== Tool bar and useful keyboard shortcuts
+
+As soon as a project is created/opened, one of the project content views is shown, and a tool bar is shown to the left side of the program. The icons of the tool bar have the following functionality (also indicated by a tool tip when hovering with the mouse cursor over the button):
+
+[horizontal]
+Programm{nbsp}Information:: Shows program info
+Create new:: Creates a new project (shortcut *Ctrl + N*)
+Open project:: Opens a `*.msim` project file (shortcut *Ctrl + O*)
+Save project:: Saves the current project (shortcut *Ctrl + S*) (also saves the network representation)
+Open PostProc:: Opens the post processing tool specified in the preferences dialog. While I would recommend to use https://bauklimatik-dresden.de/postproc[PostProc 2], you can start here any other postproc software, or even an automated analysis script. Simple set the appropriate command line in the preferences dialog.
+FMU Analysis:: _MasterSim_ will unzip all referenced FMUs and read their model description files. It also updates the graphical schematics and connection views, if FMU interfaces have changed. Also, the property table is updated. Use this feature if you have updated an FMU in the file system and want to reflect those changes in the _MasterSim_ user interface (alternatively, simply reload the project).
+Slave definition view:: Switches to the <<_slaves_definition_view,Slaves definition view>>. Here you define which FMUs are important, and assign parameter values to slaves. Also, you can design a graphic representation of the network.
+Connection view:: Switches to the <<_connection_view,Connection view>>. Here you can manage the connections between slaves and assign special attributes (transformations) between connections.
+Simulation settings view:: Switches to the <<_simulation_settings_view,Simulation settings view>>. All simulation parameters and numerical algorithm options are specified here. Also, the actual simulation is started from this view.
+Undo/Redo:: The next two buttons control the undo/redo functionality of the unse interface. All changes made to the project can be reverted and re-done (shortcuts are *Ctrl + Z* for undo, and *Ctrl + Shift + Z* for redo).
+Language switch:: The next buttons opens a context menu with language selection. You need to restart the application to activate the newly selected language.
+Quit:: Close the software. If the project has been changed, user is queried to save or discard the changes.
+
+=== Useful shortcuts
+
+Here's a list of useful program-wide shortcuts:
+
+.Program wide shortcuts
+[width="100%",cols="20%,80%"]
+|====================
+|*Ctrl + N*| create new project
+|*Ctrl + O*| load project
+|*Ctrl + S*| save project
+|*Ctrl + Shift + S*| save project with new filename
+|*Ctrl + Z*| undo
+|*Ctrl + Shift + Z* | redo
+|*F2* | open project file in text editor
+|*F9* | start simulation (can be used from any view, no need to switch to simulation settings view first!)
+|====================
+
+== Slaves definition view
+
+The input of the simulation scenario is split into three views. Setting up a simulation starts with importing slaves. So, the first (and most important) view is the slave definition view.
+
+.Slave definition view shows list of imported FMUs, assigned slave ID names and an optional graphical representation
+image::gui_slave_view.png[pdfwidth=75%]
+
+Items of the view:
+[horizontal]
+*(1)*:: Adds a new slave by selecting an FMU file (`*.fmu`) or a file reader slave (`csv` or `tsv` file, see section <<_csv_filereader_slaves,CSV FileReader Slaves>>)
+*(2)*:: Removes the currently selected slaves (and all connections made to it)
+*(3)*:: Double-click to change color of slave (colour is used to identify slave in connection view)
+*(4)*:: ID name of slave. By default _MasterSim_ assigns the basename of the fmu file path. Double-click on the cell to change the same. Mind: slave ID names must be unique within a simulation scenario.
+*(5)*:: Path to FMU file, either absolute path or relative to current _MasterSim_ project file, depending in the checkbox _"Show FMU paths relative to project file"_. Also, the project must have been saved, before relative paths can be shown.
+*(6)*:: Defines in which cycle the FMU is to be calculated (by default, all slaves are in cycle 0 and thus all are assumed to be coupled). See description of <<_master_algorithms,master algorithms>>.
+*(7)*:: Activate graphical connection mode (see discussion below). When this mode is active, you can drag a new connection from an output to inlet socket in the network.
+*(8)*:: Print network schematics to printer or pdf file.
+*(9)*:: This is the graphical network schematics - purely optional, but helps to understand what you are doing.
+
+=== Adding slaves
+
+New slaves are added by selecting `fmu` or  `csv` or `tsv` files. _MasterSim_ automatically uses the basename of the selected file as ID name for the slave. If already such an ID name exists, _MasterSim_ appends a number to the basename. In any case, slave ID names must be unique within the project.
+
+=== Network view
+
+The network view *(9)* shows a simple schematic of all FMU slaves and their connections. This network view is optional and not really needed for the simulation. Still, a visual representation of the simulation scenario is important for communication.
+
+TIP: You can zoom in and out of the network view by using the mouse scroll button. The scene is zoomed in at the position of the mouse cursor.
+
+==== Creating connections in network view
+You can create new connections between slave's outputs and inputs by first putting the network in _connection mode_ by pressing button *(7)*. When in connection mode, the cursor inside the network view window changes to a cross. You can then move the mouse over an outlet socket (triangle), _press and hold_ the mouse button and drag the connection to a _free_ inlet socket (empty semi-circle). Once the connection has been made, connection mode is disabled again and blocks and connectors can be moved around. 
+
+TIP: You can leave _connection mode_ by pressing right-click. 
+
+Connections between slaves can be defined more conveniently in the <<_connection_view,Connection view>> (which is also more efficient when making many connections, compared to manually dragging the connections with the mouse).
+
+==== Block states
+
+Because _MasterSim_ only references FMUs, their actual content (i.e. interface properties from `modelDescription.xml`) is only known when they are imported. The FMU import and analysis step is done automatically, when a project is opened and when a new FMU slave is added.
+
+When importing an FMU the user interface will attempt to unzip the FMU archive and analyse its content. If the `modelDescription.xml` file could be read correctly, _MasterSim_ will offer to open the block editor. Inside the editor you can define the basic geometry of the block (slave representation) and the layout of the sockets (the positions of inlet and outlet variables). You can ignore this request and leave the FMU visual representation undefined. Basically, an FMU can have three states that are visualized differently in the UI:
+
+
+
+
+
+
+== Connection view
+
+In this view you can connect slaves by mapping output to input variables.
+
+== Simulation settings view
+
+All settings that control the actual co-simulation algorithm are defined here.
+
 

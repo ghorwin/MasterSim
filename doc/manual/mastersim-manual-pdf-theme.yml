@@ -1,0 +1,33 @@
+extends: default
+base:
+  font-size: 11
+
+toc:
+  font-size: 10
+  
+heading:
+  h1-font-size: $base-font-size * 2.2
+  h2-font-size: $base-font-size * 1.5
+  h3-font-size: $base-font-size * 1.2
+
+title-page:
+  authors:
+    content:
+      name_only: "{author}"
+      with_email: "{author} <{email}>"
+
+page:
+  margin: [0.5in, 0.67in, 1.4in, 0.67in]
+#  margin: [0.5in, 0.67in, 1in, 0.67in]
+  
+footer:
+  height: 0.75in
+  line-height: 1
+  recto:
+    left:
+      content: '_MasterSim {revnumber}, {revdate}_'
+    right:
+      content: '{section-or-chapter-title} | *{page-number}*'
+  verso:
+    left:
+      content: '*{page-number}* | {section-or-chapter-title}'

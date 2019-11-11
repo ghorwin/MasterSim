@@ -6,7 +6,7 @@ _MasterSim_ is a co-simulation master program that supports FMI co-simulation. I
 Basically, _MasterSim_ couples different simulation models and exchanges data between simulation slaves at runtime. The following Figure illustrates the program organisation and the basic data flow.
 
 .Data flow and file usage diagram
-image::DataFlowDiagram.png[Data flow diagram,pdfwidth=60%]
+image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
 
 == Program parts
 _MasterSim_ consists of a two parts:
@@ -18,7 +18,7 @@ The GUI makes it very easy to generate, adjust, modify simulation projects. A si
 
 The simulation is executed by the command line program _MasterSimulator_, which reads the project file, imports referenced FMUs and run the simulation. The generated results, both from _MasterSimulator_ itself and possibly from slaves are then used by any post processing tool (like https://bauklimatik-dresden.de/postproc[PostProc 2]) to visualize and analize results.
 
-The separation between user interface and actual simulator makes it very easy to use _MasterSim_ in a scripted environment, or for systematic variant analysis as described below in section <<Workflows>>.
+The separation between user interface and actual simulator makes it very easy to use _MasterSim_ in a scripted environment, or for systematic variant analysis as described below in section <<_workflows,Workflows>>.
 
 == Supported FMU types
 
@@ -45,21 +45,24 @@ For 32-bit FMUs use a 32-bit build, for 64-bit FMUs use a 64-Bit version. Mixed 
 - includes instrumentation to retrieve counters and timers for benchmarking performance of master algorithms and FMUs
 - code tailored for master algorithm debugging - all variables in type-specific arrays for _easy analysis in debugger_
 
-See chapter <<development_help.adoc, Features assisting in FMU development and debugging>> for details about functionality that are particularly important for FMU developers and for debugging problems with the co-simulation.
+See chapter <<_features_assisting_in_fmu_development_and_debugging, Features assisting in FMU development and debugging>> for details about functionality that are particularly important for FMU developers and for debugging problems with the co-simulation.
 
 == Terminology
 
 The following terms are used in the manual and also in the naming of classes/variables:
 
+[horizontal]
 FMU:: describes the fmu archive including model description and shared libraries
 slave/simulator:: describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability *canBeInstantiatedOnlyOncePerProcess* is set to true
 master:: describes the overall simulation control framework that does all the administrative work
+simulation scenario/system:: defines a set of slaves and their connections (data exchange), as well as other properties such as start and end time, algorithm options, output settings
+graph network:: another description for the topology of interconnected slaves
 master algorithm:: describes the implementation of a mathematical algorithms that advances the coupled simulation in time; may include an iteration scheme
 error control:: means local error check (step-by-step based), used for time step adjustment scheme
-master time:: time of master simulation, starts with 0; unit is not strictly defined (needs to be common agreement between FMUs, typically in seconds, with exception of using file reader slaves, see section <<project_reference.adoc#_csv_filereader_slaves,CSV FileReader Slaves>>).
+master time:: time of master simulation, starts with 0; unit is not strictly defined (needs to be common agreement between FMUs, typically in seconds, with exception of using file reader slaves, see section <<_csv_filereader_slaves,CSV FileReader Slaves>>).
 current (master) time:: the time that the master state is at, changes *only* at end of successful `doStep()` or  `restoreState()` calls.
 
-
+[#_workflows]
 == Workflows
 
 As with any other simulation models, most workflows involve a variant analysis. In the context of co-simulation, such variants are often created by modifying FMUs and their paramters. _MasterSim_ includes functionality to streamline such workflows.
@@ -67,7 +70,7 @@ As with any other simulation models, most workflows involve a variant analysis. 
 [TIP]
 ====
 Many workflows involve repeated execution of _MasterSim_ with little or no modifications in the project file. Sometimes it is very convenient to use the same project file and modify it, but specify a different working directory (where outputs are stored), so that the results of different variants can be compared +
-(see `--working-dir` command line argument described in section <<command_line_solver.adoc#trueworkingoutput_directory, Working/output directory>>).
+(see `--working-dir` command line argument described in section <<_workingoutput_directory, Working/output directory>>).
 ====
 
 === Only published parameters of FMUs are modified
