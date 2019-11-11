@@ -78,10 +78,12 @@ The network view *(9)* shows a simple schematic of all FMU slaves and their conn
 
 TIP: You can zoom in and out of the network view by using the mouse scroll button. The scene is zoomed in at the position of the mouse cursor.
 
+The network shows *_blocks_* (matching the simulators/slaves) and on each of the blocks one or more *_sockets_*. Sockets indicate input/output variables of each simulation slave.
+
 ==== Creating connections in network view
 You can create new connections between slave's outputs and inputs by first putting the network in _connection mode_ by pressing button *(7)*. When in connection mode, the cursor inside the network view window changes to a cross. You can then move the mouse over an outlet socket (triangle), _press and hold_ the mouse button and drag the connection to a _free_ inlet socket (empty semi-circle). Once the connection has been made, connection mode is disabled again and blocks and connectors can be moved around. 
 
-TIP: You can leave _connection mode_ by pressing right-click. 
+TIP: You can leave _connection mode_ by pressing right-click in the network view. 
 
 Connections between slaves can be defined more conveniently in the <<_connection_view,Connection view>> (which is also more efficient when making many connections, compared to manually dragging the connections with the mouse).
 
@@ -91,8 +93,17 @@ Because _MasterSim_ only references FMUs, their actual content (i.e. interface p
 
 When importing an FMU the user interface will attempt to unzip the FMU archive and analyse its content. If the `modelDescription.xml` file could be read correctly, _MasterSim_ will offer to open the block editor. Inside the editor you can define the basic geometry of the block (slave representation) and the layout of the sockets (the positions of inlet and outlet variables). You can ignore this request and leave the FMU visual representation undefined. Basically, an FMU can have three states that are visualized differently in the UI:
 
+image::bm_block_states.png[Block states]
+
+[horizontal]
+*(1)*:: The referenced `fmu` file does not exist or cannot be read (not a zip archive, cannot be extracted, doesn't contain a `modelDescription.xml` file, or not a valid file, ... many things can go wrong here)
+*(2)*:: The model description has been parsed successfully for this slave, but the block definition doesn't match the interface (yet). Typically, when an FMU has been imported the first time, the corresponding block definition does not yet have any sockets defined or layed out, so simply a red box is shown. You can *double-click* on such a box to open the block editor.
+*(3)*:: The block has been defined and the sockets match those indicated by the model description (in name and inlet/outlet type).
 
 
+=== Block editor
+
+The block editor allows you to define the basic, rectangular shape of your FMU and to layout your sockets.
 
 
 
