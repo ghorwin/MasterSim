@@ -1,7 +1,7 @@
 MasterSim User Guide
 ====================
 Andreas Nicolai <andreas.nicolai@tu-dresden.de>
-v0.8.1, Nov 2019
+v0.8.2, Nov 2019
 :Author Initials: AN
 :toc:
 :toclevels: 3
@@ -10,6 +10,7 @@ v0.8.1, Nov 2019
 :numbered:
 :website: https://bauklimatik-dresden.de/mastersim
 :source-highlighter: rouge
+:title-page:
 
 
 include::basic_concepts.adoc[leveloffset=+1]
