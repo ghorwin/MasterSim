@@ -10,6 +10,7 @@ v0.8.2, Nov 2019
 :numbered:
 :website: https://bauklimatik-dresden.de/mastersim
 :source-highlighter: rouge
+:rouge-style: custom
 :title-page:
 
 
