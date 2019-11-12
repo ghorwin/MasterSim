@@ -1,4 +1,4 @@
-= _MasterSimulator_ command line program
+= _MasterSimulator_ - the command line program
 
 The actual simulation is done by the `MasterSimulator` command line program. It basically performs the following steps:
 
