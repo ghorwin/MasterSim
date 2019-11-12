@@ -55,14 +55,13 @@ The following terms are used in the manual and also in the naming of classes/var
 FMU:: describes the fmu archive including model description and shared libraries
 slave/simulator:: describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability *canBeInstantiatedOnlyOncePerProcess* is set to true
 master:: describes the overall simulation control framework that does all the administrative work
-simulation scenario/system:: defines a set of slaves and their connections (data exchange), as well as other properties such as start and end time, algorithm options, output settings
+simulation scenario:: defines a set of slaves and their connections (data exchange), as well as other properties such as start and end time, algorithm options, output settings; alternatively called *system*
 graph network:: another description for the topology of interconnected slaves
 master algorithm:: describes the implementation of a mathematical algorithms that advances the coupled simulation in time; may include an iteration scheme
 error control:: means local error check (step-by-step based), used for time step adjustment scheme
 master time:: time of master simulation, starts with 0; unit is not strictly defined (needs to be common agreement between FMUs, typically in seconds, with exception of using file reader slaves, see section <<_csv_filereader_slaves,CSV FileReader Slaves>>).
 current (master) time:: the time that the master state is at, changes *only* at end of successful `doStep()` or  `restoreState()` calls.
 
-[#_workflows]
 == Workflows
 
 As with any other simulation models, most workflows involve a variant analysis. In the context of co-simulation, such variants are often created by modifying FMUs and their paramters. _MasterSim_ includes functionality to streamline such workflows.
@@ -95,13 +94,21 @@ When the variable type changes of an input/output variable, so that an invalid c
 
 A _master algorithm_ is basically the mathematical procedure to advance the coupled simulation by one step forward. Such a co-simulation naster algorithm has a characteristic set of rules on how to retrieve values from one FMU, when and how these values are passed on to other FMUs, whether this procedure is repeated and the criteria for convergence of iterations.
 
-_MasterSim_ implements several standard algorithms.
+_MasterSim_ implements several standard algorithms. All have some general properties in common.
+
+
+The simulation time is expected to be in seconds in the user interface. That means, if you specify an end time point of `1 h`, the master will send 3600 as time in the last `doStep()` call. If you specify a start time different from 0, the master simulator will start its first communication interval at this time (the slave needs to process the `setupExperiment()` call correctly and initialize the slave to the start time point).
+
 
 === Gauss-Jacobi ===
 
 === Gauss-Seidel ===
 
 === Newton ===
+
+== Time step adjustment
+
+This flag is needed for certain FMUs, which include a test against surpassing the end simulation time. This is in some cases related to time series parameters, that only last until exactly the simulation end time. Another problem is also, that rounding errors can add to a very small overshooting of the end time point. Nevertheless, well-behaving FMUs should handle overstepping gracefully. Yet, to avoid an FMU error and abort of the simulation, _MasterSim_ can adjust the last communcation interval's size such, that exactly the end time of the simulation is given to the FMU. If this flag is enabled, the last interval's step size may be adjusted, even though time step adjustment is generally disabled by flag *(7)*.
 
 
 == Error control and time step adjustment

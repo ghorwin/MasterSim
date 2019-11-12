@@ -8,7 +8,7 @@ _MasterSim_ has a fairly convenient graphical user interface to define and adjus
 The software starts with a welcome page, which basically shows a list of recently used projects and some webbases news (those are pulled from the file https://bauklimatik-dresden.de/downloads/mastersim/news.html which is updated whenever a new release or feature is available).
 
 .Welcome page with recently used projects and webbased news
-image::gui_welcome_page.png[pdfwidth="75%", alt="Welcome page"]
+image::gui_welcome_page.png[alt="Welcome page"]
 
 [horizontal]
 *(1)*:: Short description of the project . This description is taken from the project file header comment lines (see <<_project_file_format, Project file format>>).
@@ -54,23 +54,39 @@ Here's a list of useful program-wide shortcuts:
 The input of the simulation scenario is split into three views. Setting up a simulation starts with importing slaves. So, the first (and most important) view is the slave definition view.
 
 .Slave definition view shows list of imported FMUs, assigned slave ID names and an optional graphical representation
-image::gui_slave_view.png[pdfwidth=75%]
+image::gui_slave_view.png[alt="Slave view"]
 
 Items of the view:
 [horizontal]
-*(1)*:: Adds a new slave by selecting an FMU file (`*.fmu`) or a file reader slave (`csv` or `tsv` file, see section <<_csv_filereader_slaves,CSV FileReader Slaves>>)
-*(2)*:: Removes the currently selected slaves (and all connections made to it)
-*(3)*:: Double-click to change color of slave (colour is used to identify slave in connection view)
-*(4)*:: ID name of slave. By default _MasterSim_ assigns the basename of the fmu file path. Double-click on the cell to change the same. Mind: slave ID names must be unique within a simulation scenario.
-*(5)*:: Path to FMU file, either absolute path or relative to current _MasterSim_ project file, depending in the checkbox _"Show FMU paths relative to project file"_. Also, the project must have been saved, before relative paths can be shown.
-*(6)*:: Defines in which cycle the FMU is to be calculated (by default, all slaves are in cycle 0 and thus all are assumed to be coupled). See description of <<_master_algorithms,master algorithms>>.
-*(7)*:: Activate graphical connection mode (see discussion below). When this mode is active, you can drag a new connection from an output to inlet socket in the network.
-*(8)*:: Print network schematics to printer or pdf file.
-*(9)*:: This is the graphical network schematics - purely optional, but helps to understand what you are doing.
+(1):: Adds a new slave by selecting an FMU file (`*.fmu`) or a file reader slave (`csv` or `tsv` file, see section <<_csv_filereader_slaves,CSV FileReader Slaves>>)
+(2):: Removes the currently selected slaves (and all connections made to it)
+(3):: Double-click to change color of slave (colour is used to identify slave in connection view)
+(4):: ID name of slave. By default _MasterSim_ assigns the basename of the fmu file path. Double-click on the cell to change the same. Mind: slave ID names must be unique within a simulation scenario.
+(5):: Path to FMU file, either absolute path or relative to current _MasterSim_ project file, depending in the checkbox _"Show FMU paths relative to project file"_. Also, the project must have been saved, before relative paths can be shown.
+(6):: Defines in which cycle the FMU is to be calculated (by default, all slaves are in cycle 0 and thus all are assumed to be coupled). See description of <<_master_algorithms,master algorithms>>.
+(7):: Activate graphical connection mode (see discussion below). When this mode is active, you can drag a new connection from an output to inlet socket in the network.
+(8):: Print network schematics to printer or pdf file.
+(9):: This is the graphical network schematics - purely optional, but helps to understand what you are doing.
 
 === Adding slaves
 
 New slaves are added by selecting `fmu` or  `csv` or `tsv` files. _MasterSim_ automatically uses the basename of the selected file as ID name for the slave. If already such an ID name exists, _MasterSim_ appends a number to the basename. In any case, slave ID names must be unique within the project.
+
+TIP: You can import the same FMU several times, unless the FMU has the capability flag *canBeInstantiatedOnlyOncePerProcess* set to _false_. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU. 
+
+=== Slave properties/parameter values
+
+Below the table with imported slaves is a list of parameters published by the FMU. The list is specific to the _currently selected_ slave. A simulator slave can be selected in the slave table or by clicking on a block in the network view.
+
+.Table with slave-specific parameter values
+image::gui_slave_view_properties.png[alt="Slave parameter table"]
+
+[horizontal]
+(1):: Black and bold fonts indicate, that this parameter has been modified/set to a specific value. Gray italic text shows the default, unmodified value.
+(2):: Hovering with the mouse over a parameter value will show a tool tip with the default parameter. This can be used to see the default value in the case that a parameter was modified.
+(3):: Parameters written in bold face and black are set by _MasterSim_ (during initialization).
+
+Parameters can be edited by *double-clicking* on the value cell and entering a value. Clearing the content of the cell will reset the parameter to its default value. 
 
 === Network view
 
@@ -78,7 +94,7 @@ The network view *(9)* shows a simple schematic of all FMU slaves and their conn
 
 TIP: You can zoom in and out of the network view by using the mouse scroll button. The scene is zoomed in at the position of the mouse cursor.
 
-The network shows *_blocks_* (matching the simulators/slaves) and on each of the blocks one or more *_sockets_*. Sockets indicate input/output variables of each simulation slave.
+The network shows *_blocks_* (matching the simulators/slaves) and on each of the blocks one or more *_sockets_*. Sockets indicate input/output variables of each simulation slave. Blocks are shown in different colors, indicating the individual <<_block_states,block states>>.
 
 ==== Creating connections in network view
 You can create new connections between slave's outputs and inputs by first putting the network in _connection mode_ by pressing button *(7)*. When in connection mode, the cursor inside the network view window changes to a cross. You can then move the mouse over an outlet socket (triangle), _press and hold_ the mouse button and drag the connection to a _free_ inlet socket (empty semi-circle). Once the connection has been made, connection mode is disabled again and blocks and connectors can be moved around. 
@@ -93,26 +109,104 @@ Because _MasterSim_ only references FMUs, their actual content (i.e. interface p
 
 When importing an FMU the user interface will attempt to unzip the FMU archive and analyse its content. If the `modelDescription.xml` file could be read correctly, _MasterSim_ will offer to open the block editor. Inside the editor you can define the basic geometry of the block (slave representation) and the layout of the sockets (the positions of inlet and outlet variables). You can ignore this request and leave the FMU visual representation undefined. Basically, an FMU can have three states that are visualized differently in the UI:
 
-image::bm_block_states.png[Block states]
+.Different states of blocks and their visual appearance
+image::bm_block_states.png[alt="Block states"]
 
 [horizontal]
-*(1)*:: The referenced `fmu` file does not exist or cannot be read (not a zip archive, cannot be extracted, doesn't contain a `modelDescription.xml` file, or not a valid file, ... many things can go wrong here)
-*(2)*:: The model description has been parsed successfully for this slave, but the block definition doesn't match the interface (yet). Typically, when an FMU has been imported the first time, the corresponding block definition does not yet have any sockets defined or layed out, so simply a red box is shown. You can *double-click* on such a box to open the block editor.
-*(3)*:: The block has been defined and the sockets match those indicated by the model description (in name and inlet/outlet type).
+(1):: The referenced `fmu` file does not exist or cannot be read (not a zip archive, cannot be extracted, doesn't contain a `modelDescription.xml` file, or not a valid file, ... many things can go wrong here)
+(2):: The model description has been parsed successfully for this slave, but the block definition doesn't match the interface (yet). Typically, when an FMU has been imported the first time, the corresponding block definition does not yet have any sockets defined or layed out, so simply a red box is shown. You can *double-click* on such a box to open the block editor.
+(3):: The block has been defined and the sockets match those indicated by the model description (in name and inlet/outlet type).
 
 
 === Block editor
 
-The block editor allows you to define the basic, rectangular shape of your FMU and to layout your sockets.
+The block editor allows you to define the basic, rectangular shape of your FMU and to layout your sockets. The block editor is opened either directly after an FMU has been imported, or when *double-clicking* on a block in the network view.
 
+.Editor for block geometry and socket layout
+image::bm_block_editor.png[alt="Block Editor"]
+
+[horizontal]
+(1):: Slave ID name
+(2):: Shows number of published input and output variables
+(3):: If checked, the FMU archive is searched for the image file `model.png` (should be besides `modelDescription.xml` file in root directory of FMU archive), and if present, the image is shown scaled to the block size
+(4):: Here, you can define the width and height of the block in grid lines
+(5):: This button will automatically lay out the sockets. Inputs are aligned to the left and top side. Outputs are aligned at the right and bottom side. If there is not enough space for all sockets, the remaining sockets are placed over each other.
+(6):: Indicates an inlet socket (input variable)
+(7):: Indicates an outlet socket (output variable)
+
+TIP: In one of the next program versions, it will be possible to store block appearances as templates for future use of similar/same FMUs. For now, you have to configure the block every time you import an FMU. Also, advanced customization and custom socket locations is not yet implemented.
 
 
 == Connection view
 
 In this view you can connect slaves by mapping output to input variables.
 
+.Connection view with published input and output variables for all slaves and defined connections
+image::gui_connection_view.png[alt="Connection view"]
+
+[horizontal]
+(1):: Shows all published output variables of all slaves.
+(2):: Shows input variables of all slaves, that have *not* been connected, yet.
+(3):: Select first an output variable and the input variable, that should be connected to the output, then press this button to create the connection.
+(4):: Here, you can create multi connections between two slaves based on variable names (see explanation below)
+(5):: This removes the currently selected connection in table (6)
+(6):: Shows all connections already made.
+(7):: Table with all slaves and their colors (to assist in identifying variables by colour)
+
+=== Auto-connection feature
+
+This feature is very helpful if FMUs are coupled, where output and input variables of two slaves have the same name. This is particularly helpful, if you have to connect many input and output variables between two slaves. If you create one FMU such, that variable names match the other side, you can use the following procedure:
+
+. in the combo boxes select the slaves to be connected
+. press the connection button
+
+A connection is created, when:
+
+- the variable name matches
+- the variable data type matches
+- one variable has causality _input_, and the other has causality _output_
+
+.Auto-connection of two slaves
+====
+1. slave1 publishes:
+  - Room1.Temperature (real, output)
+  - Room1.HeatingPower (real, input)
+  - Room1.OperativeTemperature (real, output)
+2. slave2 publishes:
+  - Room1.Temperature (real, input)
+  - Room1.HeatingPower (real, output)
+  - Room2.OperatingTemperature (real, input)
+
+Auto-connection creates:
+
+- slave1.Room1.Temperature  -> slave2.Room1.Temperature
+- slave1.Room1.HeatingPower -> slave2.Room1.HeatingPower
+
+Third connection is not made, since _Room1.OperativeTemperature_ does not match _Room2.OperatingTemperature_.
+====
+
+
 == Simulation settings view
 
-All settings that control the actual co-simulation algorithm are defined here.
+All settings that control the actual co-simulation algorithm are defined here. Detailed description of the settings and their usage is given in section <<_master_algorithms, Master Algrithms>>.
 
+TIP: Section <<_simulator_settings, Project file reference - Simulator settings>> describes the corresponding  entries in the _MasterSim_ project file.
 
+.Simulation settings and simulation start view
+image::gui_simulation_settings_view.png[alt="Simulation view"]
+
+[horizontal]
+(1):: Here you can define the start and end time point of the simulation.
+(2):: The initial communication interval size. When time step adustment *(7)* is disabled, this communication interval size will be used until the end simulation time has been reached.
+(3):: Selection of the master algorithm
+(4):: Maximum number of iterations, 1 disables iteration
+(5):: The relative and absolute tolerances are used for converence check of iterative algorithms and, if enabled, for local error checking and time step adjustment.
+(6):: Here you can select an error control method, see section <<error_control_and_time_step_adjustment,Error control and time step adjustment>>.
+(7):: If checked, _MasterSim_ will adjust the time step, requires FMUs to support the *canHandleVariableCommunicationStepSize* capability
+(8):: These three parameters control how the time step is adjusted in case of converence/error test failures.
+(9):: If checked, _MasterSim_ will adjust the step size of the last interval such, that is gives _exactly_ the end time point of the simulation as end of the last communication interval, regardless of flag *(7)* (see discussion in section <<_time_step_adjustment, Time step adjustment>>).
+(10):: Defines the minimum interval that needs to pass before a new output is written. Helps to reduce amount of outputs in case of variable time steps when these time steps can become much smaller than a meaningful output grid.
+(11):: If checked, _MasterSim_ also writes the values of internal variables to the output files, otherwise only variables of causality _output_. Useful mainly for debugging/FMU analysis, or to obtain internal values that are not written to output files by the FMU itself. 
+(12):: Lets you control the verbosity level of the console solver output (see <<_command_line_arguments, Command line arguments>>)
+(13):: Command line that is used to run the simulator. Can be copied into a shell script or batch file for automated processing.
+(14):: The big fat start button. *Ready, Steady, Go!*
