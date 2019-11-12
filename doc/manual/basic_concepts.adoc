@@ -72,13 +72,25 @@ Many workflows involve repeated execution of _MasterSim_ with little or no modif
 (see `--working-dir` command line argument described in section <<_workingoutput_directory, Working/output directory>>).
 ====
 
+=== Initial setup of simulation scenario
+
+Straight forward procedure:
+
+. import all FMUs and assign slave ID names
+. (optional) specify parameter values for slaves
+. (optional) define graphical representation of slaves
+. connect output and input variables 
+. set simulation parameters
+. run simulation
+. inspect results
+
 === Only published parameters of FMUs are modified
 
 Extremely simple case and, if supported by FMUs, definitely best-practice. In _MasterSim_ only the value assigned to a published parameter needs to be changed (can be done also directly in the project file, e.g. with scripts) and the simulation can be repeated.
 
 === FMUs change internal behavior, but do not change interface
 
-This is the most typical case. Here, the input and output variable names and types remain unchanged and also the published parameters remain the same. Since _MasterSim_ only references FMUs, in such cases the FMU files can simply be replaced and without any further changes the simulator can be started.
+This is the most typical case. Here, the input and output variable names and types remain unchanged and also the published parameters remain the same. Yet, the internal behavior of the model changes due to adjustment of internal model behavior, after which the FMUs are exported. Since _MasterSim_ only references FMUs, in such cases the FMU files can simply be replaced and without any further changes the simulator can be started.
 
 === FMUs change parameters, but do not change inputs/outputs
 
@@ -118,3 +130,4 @@ This flag is needed for certain FMUs, which include a test against surpassing th
 If you use an adaptive step algorithm in _MasterSim_, you should set a minimim time step/fallback time step that is *larger* than your "small change step". Otherwise, MasterSim may try to resolve the dynamics of the step change by adjusting the time steps to extremely small values.
 ====
 
+---

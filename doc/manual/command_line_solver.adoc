@@ -303,3 +303,5 @@ The last section of the statistics lists timings and counters for individual FMU
 ====
 You may use these profiling values to tune your simulation and identify, in case of very slow simulations, which of the FMUs is taking up most of the time. Also, it helps identifying if one of the fast functions (get and set state) are taking way too much time.
 ====
+
+---
