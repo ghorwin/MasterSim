@@ -37,16 +37,18 @@ Quit:: Close the software. If the project has been changed, user is queried to s
 Here's a list of useful program-wide shortcuts:
 
 .Program wide shortcuts
-[width="100%",cols="20%,80%"]
+[width="100%",cols="20%,40%,40%",options="header"]
 |====================
-|*Ctrl + N*| create new project
-|*Ctrl + O*| load project
-|*Ctrl + S*| save project
-|*Ctrl + Shift + S*| save project with new filename
-|*Ctrl + Z*| undo
-|*Ctrl + Shift + Z* | redo
-|*F2* | open project file in text editor
-|*F9* | start simulation (can be used from any view, no need to switch to simulation settings view first!)
+| Windows/Linux | MacOS | Command
+|*Ctrl + N*| *⌘ + N* | create new project
+|*Ctrl + O*| *⌘ + O* | load project
+|*Ctrl + S*| *⌘ + S* | save project
+|*Ctrl + Shift + S*| *⌘ + Shift + S* | save project with new filename
+|*Ctrl + Z*| *⌘ + Z* | undo
+|*Ctrl + Shift + Z* |*⌘ + Shift + Z* |  redo
+|*F2* | *F2* | open project file in text editor
+|*F9* | *F9* | start simulation (can be used from any view, no need to switch to simulation settings view first!)
+|  | *⌘ + .* | Open preferences dialog
 |====================
 
 == Slaves definition view
@@ -210,3 +212,16 @@ image::gui_simulation_settings_view.png[alt="Simulation view"]
 (12):: Lets you control the verbosity level of the console solver output (see <<_command_line_arguments, Command line arguments>>)
 (13):: Command line that is used to run the simulator. Can be copied into a shell script or batch file for automated processing.
 (14):: The big fat start button. *Ready, Steady, Go!*
+
+
+== Preferences Dialog
+
+The preferences dialog, opened from the main menu or via application shortcut, currently provides configuration options for the text editor (used to edit the project file with the short cut *F2*) and the post processing executable.
+
+.Preference dialog with input options for text editor and post-processing executable
+image::gui_preferences_tools.png[alt="Preferences dialog"]
+
+
+TIP: When you edit a project file in the external text editor and save the file, the next time you bring the _MasterSim_ user interface into focus, it will prompt to re-load the modified project.
+
+---

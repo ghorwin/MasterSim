@@ -19,7 +19,6 @@ title-page:
 
 page:
   margin: [0.5in, 0.67in, 1.4in, 0.67in]
-#  margin: [0.5in, 0.67in, 1in, 0.67in]
 
 image:
   align: center
@@ -35,3 +34,7 @@ footer:
   verso:
     left:
       content: '*{page-number}* | {section-or-chapter-title}'
+
+thematic-break:
+  margin-bottom: 50
+  

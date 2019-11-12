@@ -418,9 +418,11 @@ is defined in the following BlockMod network representation file:
 </BlockMod>
 ----
 
-The format is pretty self-explanatory.
+The format is pretty self-explanatory. The first and last segment are defined automatically depending on the socket position on the block and are hence not stored in the network representation file.
 
 [TIP]
 ====
-https://github.com/ghorwin/BlockMod[BlockMod] is an open source library for modeling such networks.
+https://github.com/ghorwin/BlockMod[BlockMod] is an open source library for modeling such networks. The wiki page of the project contains more in-depth information on the data format and functionality.
 ====
+
+---
