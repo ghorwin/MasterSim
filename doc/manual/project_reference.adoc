@@ -66,43 +66,49 @@ Past the header with the description, the order of the entries/lines in the file
 
 == Simulator settings
 
-Below is a short description of the different parameters. For details on where there are used and what influence they have, see section <<MasterSim_manual.adoc#truemaster_algorithms, Master Algorithms>>.
+Below is a short description of the different parameters with a format description and what values are needed. For details on where there are used and what influence they have, see section <<_master_algorithms, Master Algorithms>>.
+
+Parameters are given as numbers followed by a unit, except for counters (iteration limit) or tolerances (which are unitless anyway).
 
 Time step related options:
 
-- *tStart* - start time point of simulation, should be zero
-- *tEnd* - end time of simulation, must be > *tStart*
-- *hMax* - maximum time step size 
-- *hMin* - lower limit of time step in adaptive-time-step mode, if time step is reduced below this limit, master stops
-- *hFallBackLimit* - for Gauss-Seidel with time step adjustment: when time step drops below this limit, non-iterating Gauss-Seidel is used (to compensate for discontinous outputs), should be > *hMin*
-- *hStart* - initial time step, will be use as constant step size when not in adaptive-time-step mode
--  *hOutputMin* - minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
-- *adjustStepSize* - enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP* setting *adjustStepSize* to false is an error
+[horizontal]
+tStart:: start time point of simulation
+tEnd:: end time of simulation, must be > *tStart*
+hMax:: maximum time step size 
+hMin:: lower limit of time step in adaptive-time-step mode, if time step is reduced below this limit, master stops
+hFallBackLimit:: for Gauss-Seidel with time step adjustment: when time step drops below this limit, non-iterating Gauss-Seidel is used (to compensate for discontinous outputs), should be > *hMin*
+hStart:: initial time step, will be use as constant step size when not in adaptive-time-step mode
+hOutputMin:: minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
+adjustStepSize:: enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP*, disablin *adjustStepSize* is an error
 
-*MasterMode* one of:
-
--       GAUSS_JACOBI - Gauss-Jacobi algorithm (non-iterative)
--       GAUSS_SEIDEL - Gauss-Seidel algorithm (iterative or non-iterative depending on *it_max_steps*)
--       NEWTON - Newton algorithm with difference-quotient approximation to Jacobi matrix
+*MasterMode* is one of:
+[horizontal]
+GAUSS_JACOBI:: Gauss-Jacobi algorithm (non-iterative)
+GAUSS_SEIDEL:: Gauss-Seidel algorithm (iterative or non-iterative depending on *it_max_steps*)
+NEWTON:: Newton algorithm with difference-quotient approximation to Jacobi matrix
 
 Iteration and convergence parameters:
+[horizontal]
+maxIterations:: max. number of iterations, if == 1 no iteration is done
+absTol:: absolute tolerance for convergence test
+relTol:: relative tolerance for convergence test
 
-- *maxIterations* - max. number of iterations, if == 1 no iteration is done
-- *absTol* - absolute tolerance for convergence test
-- *relTol* - relative tolerance for convergence test
+*ErrorControlMode* is one of:
+[horizontal]
+NONE:: no error checking and adjustment
+CHECK:: - only error checking, protocols time and magnitude of exceeded error limit
+ADAPT_STEP:: implicitely enables adaptive-time-step mode and adjusts time step when error limit is exceeded
 
-*ErrorControlMode* one of:
-
-- *NONE* - no error checking and adjustment
-- *CHECK* - only error checking, protocols time and magnitude of exceeded error limit
-- *ADAPT_STEP* - implicitely enables adaptive-time-step mode and adjusts time step when error limit is exceeded
 
 === Advanced settings
 The following settings are mostly needed for use with cross-check procedure.
 
-- *preventOversteppingOfEndTime* - even for constant-step FMUs, truncate the final step to hit the end time point exactly (needed for some FMUs who have strict end time checking)
-- *writeInternalVariables* - Also writes variables with local/internal causality (when set to *no*, only variables with causality _output_ are written)
-Depending on the selection options, certain capabilities are required on the FMUs, see [wiki:MathAlgorithms].
+[horizontal]
+preventOversteppingOfEndTime:: even for constant-step FMUs, truncate the final step to hit the end time point exactly (needed for some FMUs who have strict end time checking)
+writeInternalVariables:: Also writes variables with local/internal causality (when set to *no*, only variables with causality _output_ are written)
+
+Depending on the selected options, certain capabilities must be supported by the FMUs, see section <<_master_algorithms, Master Algorithms>>.
 
 
 == Simulator/Slave Definitions
