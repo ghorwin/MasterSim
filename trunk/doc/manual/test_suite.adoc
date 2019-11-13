@@ -1,92 +1,51 @@
 = Test Suite Concept
 
-Tests are used to check whether all algorithms works as expected and how performant they are.
+The _MasterSim_ repository includes a subdirectory `data/tests` with a regression test suite. These tests are used to check whether all algorithms work as expected and whether changes in the code base accidentally break something.
 
-Things to Test
---------------------
-- different mathematical constructs expressed by sets of interconnected FMUs, the *Test Cases*
-- different FMU generators (from Modelica world: SimulationX, Dymola, JModelica)
-- different compilers (on Windows VC10 and MinGW)
-- different operation systems (Linux, MacOS, Windows)
+_MasterSim_ is also run through the FMI cross-checking tests. The files and scripts related to those tests are in the subdirectory `cross-check`.
 
-== Test Cases
-
-see [Test Case Description](TestDescriptions)
-
-Directory Structure
----------------------------
+== Regression Test Directory Structure
 
     /data/tests                     - root directory for tests
     /data/tests/<platform>/<test>   - base directory for a single test case
 
-`platform` is (currently) one of:
-
-* linux64
-* win32
+`platform` is (currently) one of: `linux64`, `win32`,`win64` and `darwin64`
 
 Each test case has a set of subdirectories:
 
     fmus                 - holds fmu archives needed for the test
-    descriptions         - (mathematical) description of test problem
-    reference_Modelica   - reference model in Modelica (it is possible to have
-                           different model variants or Modelica models) and 
-                           reference solutions
-    results              - a directory with results and discussions    
-
-Providing correct reference values with Modelica models (in subdirectory reference_Modelica) is just one way. Alternatively, other directories with reference results may be added (pure C/C++ implementations or analytical solutions, of available).
-
-Naming Convention for Test Projects
-----------------------------------------------------
-
-Within the test case directory, the project files shall be named such that variants can be easily distingished. For example, if different variants of the same model are solved with different parameters, a suitable naming convention is:
-
-    <ProjectName>_<MasterAlgorithm>_<AlgorithmParameters>.msim
-
-With the following Master Algorithms:
-
-- *GaussJacobi*      (always non-iterative)
-- *GaussSeidelNonIterative*
-- *GaussSeidelIterative*
-- *Newton*             (always iterative)
-
-Example:
-
-    Math003_GaussSeidel_1iters_fixedStep.msim
-    Math003_GaussJacobi_1iters_fixedStep.msim
-   
-After the master algorithm keyword, there can more tokens describing the relevant algorithm options. 
-
-If different FMU generators are to be tested, the project files can be distinguished by using a keyword for the generating tool.
-
-Example:
-
-    Math003_SimX.msim
-    Math003_OpenModelica.msim
-
-With the following tool keywords:
-
-- *OpenModelica*
-- *SimX*
-- *Dymola*
-- *JModelica*
-
-Adding platform identifiers is normally not necessary, since the test directory structure already contains the platform indication.
+    description          - (mathematical) description of the test problem
 
 
-#### Cross-Checking Rules and FMI Standard.org Listing
+== Cross-Checking Rules and FMI Standard.org Listing
 
 
 
+== Ways to generate test FMUs
 
-## Steps to export an FMU from OpenModelica
+=== Custom C++ FMUs
 
-### Create Modelica Model
+A convenient way to get simple, very specific test FMUs is the use of the https://github.com/ghorwin/FMICodeGenerator[FMI Code Generator] tool. Its a python tool with graphical interface where FMU variables and properties can be defined. With that information, the code generator creates a source code directory with template code and related build scripts - such that it is very easy to handcraft own FMUs. See documentation/tutorial on the github page.
 
-Create a modelica model, annotate variables to be used as output quantities with keyword 'output'.
+=== FMUs exported from SimulationX
+
+Requires a suitable license. Exporting FMUs from SimX is very easy, but limited to the Windows platform.
+
+=== FMUs exported from OpenModelica
+
+OpenModelica can export FMUs as well. Here are the steps to generate such an FMU.
+
+==== Create Modelica Model
+
+Create a modelica model. 
+[IMPORTANT]
+====
+Annotate variables to be used as output quantities with keyword `output`.
+====
 
 For example:
 
-[source,modelica]
+[source,c++]
 ----
 model BouncingBall "The 'classic' bouncing ball model"
   type Height=Real(unit="m");
@@ -117,7 +76,7 @@ end BouncingBall;
 ----
 
 
-=== Generate FMU manually
+==== Variant 1: Generate FMU manually
 
 First open OMShell, then type the following commands to load the model and generate a co-simulation FMU:
 
@@ -128,7 +87,7 @@ First open OMShell, then type the following commands to load the model and gener
 "/tmp/OpenModelica/BouncingBall.fmu"
 ----    
     
-The output indicates the the FMU file `/tmp/OpenModelica/BouncingBall.fmu` has been successfully created.
+The output indicates that the FMU file `/tmp/OpenModelica/BouncingBall.fmu` has been successfully created.
 
 For Version 2.0 of FMI standard use:
 
@@ -137,7 +96,7 @@ For Version 2.0 of FMI standard use:
 >> translateModelFMU(BouncingBall, fmuType="cs", version="2.0")
 ----
 
-=== Script-based automatic FMU generation
+==== Variant 2: Script-based automatic FMU generation
 
 Create a script file (`createFMU.mos`)  with the following content:
 
