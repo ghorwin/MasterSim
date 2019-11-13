@@ -72,9 +72,9 @@ Many workflows involve repeated execution of _MasterSim_ with little or no modif
 (see `--working-dir` command line argument described in section <<_workingoutput_directory, Working/output directory>>).
 ====
 
-=== Initial setup of simulation scenario
+=== Initial setup of a simulation scenario
 
-Straight forward procedure:
+This is a straight-forward procedure:
 
 . import all FMUs and assign slave ID names
 . (optional) specify parameter values for slaves
@@ -90,7 +90,7 @@ Extremely simple case and, if supported by FMUs, definitely best-practice. In _M
 
 === FMUs change internal behavior, but do not change interface
 
-This is the most typical case. Here, the input and output variable names and types remain unchanged and also the published parameters remain the same. Yet, the internal behavior of the model changes due to adjustment of internal model behavior, after which the FMUs are exported. Since _MasterSim_ only references FMUs, in such cases the FMU files can simply be replaced and without any further changes the simulator can be started.
+This is the most typical case. Here, the input and output variable names and types remain unchanged and also the published parameters remain the same. Yet, the internal behavior of the model changes due to adjustment of internal model behavior, after which the FMU is exported again. Since _MasterSim_ only references FMUs, in such cases the FMU files can simply be replaced and without any further changes the simulator can be started.
 
 === FMUs change parameters, but do not change inputs/outputs
 
