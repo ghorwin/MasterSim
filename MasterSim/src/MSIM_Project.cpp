@@ -302,7 +302,11 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write simulators
 	for (unsigned int i=0; i<m_simulators.size(); ++i) {
 		const SimulatorDef & simDef = m_simulators[i];
-		out << "simulator " << i << " " << simDef.m_cycle << " " << simDef.m_name << " " << simDef.m_color.toHtmlString() << " \"" << simDef.m_pathToFMU.str() << "\"" << std::endl;
+		unsigned int res = simDef.m_color.toQRgb();
+		res &= 0x00FFFFFF;
+		std::stringstream cstr;
+		cstr << std::hex << std::setw(6) << std::setfill('0') << res;
+		out << "simulator " << i << " " << simDef.m_cycle << " " << simDef.m_name << " #" << cstr.str() << " \"" << simDef.m_pathToFMU.str() << "\"" << std::endl;
 	}
 	out << std::endl;
 
