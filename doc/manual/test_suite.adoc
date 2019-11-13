@@ -4,22 +4,68 @@ The _MasterSim_ repository includes a subdirectory `data/tests` with a regressio
 
 _MasterSim_ is also run through the FMI cross-checking tests. The files and scripts related to those tests are in the subdirectory `cross-check`.
 
-== Regression Test Directory Structure
+== Regression tests
+
+=== Directory structure
 
     /data/tests                     - root directory for tests
-    /data/tests/<platform>/<test>   - base directory for a single test case
+    /data/tests/<platform>/<test>   - base directory for a test suite
 
 `platform` is (currently) one of: `linux64`, `win32`,`win64` and `darwin64`
 
-Each test case has a set of subdirectories:
+Each _test suite_ has a set of subdirectories:
 
     fmus                 - holds fmu archives needed for the test
     description          - (mathematical) description of the test problem
 
+Within a _test suite_ different similar _test cases_ with modified parameters or adjusted solver settings can be stored. _Test cases_ are grouped in test suites mostly when they use the same FMUs or other input files.
+
+For each _test case_ a _MasterSim_ project file exists with the extension `msim`. The script that runs the test cases processes all `msim` files found in the subdirectory structure below the current platform.
+
+For a test case to pass the check, a set of reference results must be present, stored in a subdirectory with name 
+
+    <project_file_without_extension>.<compiler>_<platform>
+    
+For example:
+
+    FeedthroughTest.gcc_linux
+    FeedthroughTest.vc14_win64
+
+These directories are basically renamed working directories after a simulation run, where everything except `summary.txt` and `values.csv` has been removed.
+
+=== Running the tests
+
+The tests are run automatically after building with the build scripts. Otherwise run the appropriate script:
+
+- `build/cmake/run_tests_win32.bat`
+- `build/cmake/run_tests_win64.bat`
+- `build/cmake/run_tests.sh`
+
+=== Updating reference results
+
+From within a test directory, call the script `update_reference_results.py` with the directory suffix as argument.
+
+For example, from within:
+
+    data/tests/linux64/Math_003_control_loop
+    
+call:
+
+[source,bash]
+-----
+> ../../../../scripts/TestSuite/update_reference_results.py gcc_linux
+-----
+
+which will update all reference results in this directory. If you want to process/update the reference results of several test suites, execute the following script from one directory up, for example from `data/tests/linux64`:
+
+[source,bash]
+-----
+> ../../../scripts/TestSuite/update_reference_results_in_subdirs.py gcc_linux
+-----
 
 == Cross-Checking Rules and FMI Standard.org Listing
 
-
+See documentation in subdirectory `cross-check`.
 
 == Ways to generate test FMUs
 
@@ -121,3 +167,4 @@ Run the script via:
 > omc createFMU.mos
 ----
 
+---

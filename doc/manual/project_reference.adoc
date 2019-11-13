@@ -119,7 +119,7 @@ Each slave is defined by:
 simulator  <priority> <cycle>  <slave-name> <html-color-code> <path/to/fmu-file>
 ----
 
-The *priority* is used to select order of execution within a cycle (for Gauss-Seidel). The *cycle* indicates whether slave belongs to a cycle with other FMUs. *slave-name* must be a unique identifier for the slave (see discussion in section <<MasterSim_manual.adoc#truemaster_algorithms, Master Algorithms>>).
+The *priority* is used to select order of execution within a cycle (for Gauss-Seidel). The *cycle* indicates whether slave belongs to a cycle with other FMUs. *slave-name* must be a unique identifier for the slave (see discussion in section <<_master_algorithms, Master Algorithms>>).
 
 [IMPORTANT]
 ====
