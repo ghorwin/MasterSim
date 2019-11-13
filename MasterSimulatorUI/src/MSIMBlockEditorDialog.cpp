@@ -76,7 +76,7 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 		m_modifiedBlock.m_properties.remove("Pixmap");
 	else
 		m_modifiedBlock.m_properties["Pixmap"] = QVariant(p);
-	m_modifiedBlock.m_properties["ShowPixmap"] = m_ui->checkBoxShowFMUPixmap->isChecked();
+	m_ui->checkBoxShowFMUPixmap->setChecked( m_modifiedBlock.m_properties.value("ShowPixmap").toBool() );
 
 	// TODO : use different block item?
 	m_blockItem = new BLOCKMOD::BlockItem(&m_modifiedBlock);
