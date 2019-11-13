@@ -408,6 +408,14 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		else {
 			// check that block socket names match those of the inputs and outputs
 			b.m_properties["state"] = MSIMSlaveBlock::StateCorrect;
+			// if block has ShowPixmap property set, try to load the pixmap from file
+			if (b.m_properties.contains("ShowPixmap") && b.m_properties.value("ShowPixmap").toBool()) {
+				QPixmap p = MSIMMainWindow::instance().modelPixmap(b.m_name.toStdString());
+				if (p.isNull())
+					b.m_properties.remove("Pixmap");
+				else
+					b.m_properties["Pixmap"] = QVariant(p);
+			}
 		}
 	}
 
