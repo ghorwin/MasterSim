@@ -174,7 +174,7 @@ bool string_nocase_compare(const std::string& lhs, const std::string& rhs) {
 #if defined(_MSC_VER)
 	while (::tolower(*s1++)==::tolower(*s2++) && --n);
 #else
-	while (std::tolower(*s1++)==std::tolower(*s2++) && --n) {};
+	while (std::tolower(*s1++)==std::tolower(*s2++) && --n) {}
 #endif
 	return n==0;
 }
@@ -187,7 +187,7 @@ bool string_nocase_less(const std::string& lhs, const std::string& rhs) {
 #if defined(_MSC_VER)
 	while (::tolower(*s1++)==::tolower(*s2++) && --n);
 #else
-	while (std::tolower(*s1++)==std::tolower(*s2++) && --n) {};
+	while (std::tolower(*s1++)==std::tolower(*s2++) && --n) {}
 #endif
 	if (n==0)
 		return rhs.size() > lhs.size();
@@ -224,7 +224,7 @@ std::size_t string_nocase_find(const std::string& str, const std::string& substr
 #endif
 			if (!size2) return pos;
 			s2 = substr.data(); // prepare for next trial
-		};
+		}
 		++s1;
 		++pos;
 	}
@@ -307,7 +307,17 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 	tokens.clear();
 	std::string tmp;
 
+	bool inQuotes = false;
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
+		if (explodeFlags & EF_UseQuotes) {
+			// if we find a quotation char - currently hardcoded to be " - we do not search for delimiters if inside the quotes
+			if (*it == '"')
+				inQuotes = !inQuotes;
+			if (inQuotes) {
+				tmp += *it;
+				continue;
+			}
+		}
 		bool delim_found = false;
 		for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
 			if (*it==*tit) {

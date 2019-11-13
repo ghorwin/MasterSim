@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <cstdio>
+#include <fstream>
 
 #include "MSIM_FMU.h"
 
@@ -37,8 +38,15 @@ void FileReaderSlave::instantiate() {
 
 	IBK_ASSERT(m_valueSplines.empty()) // must only be called on empty object
 
+	bool tabFormat = false;
+
 	// read file
 	try {
+		tabFormat = IBK::CSVReader::haveTabSeparationChar(m_filepath);
+		if (tabFormat)
+			m_fileReader->m_separationCharacter = '\t';
+		else
+			m_fileReader->m_separationCharacter = ',';
 		m_fileReader->read(m_filepath, false, true);
 		// special convention: no time unit, assume "s" seconds
 		if (m_fileReader->m_units.size() > 0 && m_fileReader->m_units[0].empty())
@@ -100,17 +108,40 @@ void FileReaderSlave::enterInitializationMode() {
 	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
 		// for all but strings and unused variables we create linear splines
 
-		if (m_columnVariableTypes[j] != FMIVariable::VT_STRING &&
-			m_columnVariableTypes[j] != FMIVariable::NUM_VT)  // mind: some columns may be unused
+		FMIVariable::VarType vt = m_columnVariableTypes[j];
+		if (vt != FMIVariable::VT_STRING &&
+			vt != FMIVariable::NUM_VT)  // mind: some columns may be unused
 		{
 			m_valueSplines[j] = new IBK::LinearSpline;
 
-			std::vector<double> y(m_fileReader->m_nRows);
+			std::vector<double> tVec;
+			std::vector<double> yVec;
 			for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
-				y[i] = m_fileReader->m_values[i][j+1];
+				switch (vt) {
+					case FMIVariable::VT_BOOL :
+					case FMIVariable::VT_INT : 	{
+						if (tVec.empty()) {
+							tVec.push_back(timeVec.m_data[i]);
+							yVec.push_back(m_fileReader->m_values[i][j+1]);
+						}
+						else {
+							// for discrete data, we overwrite previously stored time points with new values
+							if (tVec.back() == timeVec.m_data[i]) // same time point
+								yVec.back() = m_fileReader->m_values[i][j+1]; // overwrite values
+						}
+					} break;
+
+					case FMIVariable::VT_DOUBLE : {
+						tVec.push_back(timeVec.m_data[i]);
+						yVec.push_back(m_fileReader->m_values[i][j+1]);
+					} break;
+
+					default:; // nothing to do, already filtered out before
+				}
+
 			}
 			try {
-				m_valueSplines[j]->setValues(timeVec.m_data, y);
+				m_valueSplines[j]->setValues(tVec, yVec);
 			} catch (IBK::Exception & ex) {
 				throw IBK::Exception(ex, IBK::FormatString("Invalid interpolation table data in column '%2' in file '%3'. Error during initialization of slave '%1'")
 									 .arg(m_name).arg(m_fileReader->m_captions[j+1]).arg(m_filepath), FUNC_ID);
