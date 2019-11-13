@@ -1,5 +1,5 @@
 # Created:	So. Nov. 3 05:14:09 2019
-# LastModified:	So. Nov. 3 20:57:22 2019
+# LastModified:	Mi. Nov. 13 18:08:17 2019
 
 # Project file example for non-iterating GaussJacobi.
 #
@@ -25,9 +25,9 @@ ErrorControlMode         NONE
 maxIterations            1
 writeInternalVariables   no
 
-simulator 0 0 Part1 #ff447cb4 "fmus/IBK/Part1.fmu"
-simulator 1 1 Part2 #ffc38200 "fmus/IBK/Part2.fmu"
-simulator 2 1 Part3 #ffff0000 "fmus/IBK/Part3.fmu"
+simulator 0 0 Part1 #447cb4 "fmus/IBK/Part1.fmu"
+simulator 1 1 Part2 #c38200 "fmus/IBK/Part2.fmu"
+simulator 2 1 Part3 #ff0000 "fmus/IBK/Part3.fmu"
 
 graph Part1.x1 Part2.x1
 graph Part1.x2 Part2.x2

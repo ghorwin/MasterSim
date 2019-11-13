@@ -1,5 +1,5 @@
 # Created:	Mi. Nov. 13 10:22:59 2019
-# LastModified:	Mi. Nov. 13 14:24:58 2019
+# LastModified:	Mi. Nov. 13 18:11:15 2019
 
 # Test case to check if output values from one FMU are correctly
 # transferred to the next FMU, and whether the data types are handled

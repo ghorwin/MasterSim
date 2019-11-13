@@ -1,5 +1,5 @@
 # Created:	Mi. Nov. 13 10:22:59 2019
-# LastModified:	Mi. Nov. 13 12:54:48 2019
+# LastModified:	Mi. Nov. 13 18:07:38 2019
 
 # Test case to check if output values from one FMU are correctly
 # transferred to the next FMU, and whether the data types are handled
@@ -24,8 +24,8 @@ ErrorControlMode         NONE
 maxIterations            1
 writeInternalVariables   no
 
-simulator 0 0 Generator #ff6a5acd "fmus/IBK/FourVars.fmu"
-simulator 1 0 FeedThrough #ff9400d3 "fmus/IBK/FourVarsFeedThrough.fmu"
+simulator 0 0 Generator #6a5acd "fmus/IBK/FourVars.fmu"
+simulator 1 0 FeedThrough #9400d3 "fmus/IBK/FourVarsFeedThrough.fmu"
 
 graph Generator.VBool FeedThrough.InBool
 graph Generator.VInteger FeedThrough.InInteger
