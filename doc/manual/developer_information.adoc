@@ -1,10 +1,15 @@
 = Developer information
 
+[NOTE]
+====
+The information provided in this chapter will eventually be moved into the _MasterSim Developers Guide_.
+====
+
 == Building the Library and Executables
 
 === Building on the command line
 
-On **Linux/Mac**:
+==== Linux/MacOS
 
 [source,bash]
 -----
@@ -14,28 +19,40 @@ cd build/cmake
 
 In case of missing dependencies (zlib is required) you may want to install the corresponding development packages.
 
-On **Windows** convenience scripts are included for building with Visual Studio 2015 and Qt5 (for the user interface of MasterSim). Other compilers such as MinGw work as well, but file paths need to be configured manually.
+==== Windows
+Convenience scripts are included for building with Visual Studio 2015 and Qt5 (for the user interface of _MasterSim_). Other compilers such as MinGw work as well, but file paths need to be configured manually.
 
-On Windows, it is expected that Qt is installed in the following location:
+The files are located in the `build/cmake` directory:
 
 -----
-c:\Qt\5.7.0_VC14\5.7\msvc2015\
-c:\Qt\5.7.0_VC14\5.7\msvc2015_64\
+build\cmake\build_VC.bat <1>
+build\cmake\build_VC_x64.bat <2>
 -----
+<1> for x86 builds
+<2> for x64 builds
+
+For the scripts to work, Qt must be installed in the following location:
+
+-----
+c:\Qt\5.11.3\msvc2015 <1>
+c:\Qt\5.11.3\msvc2015_64 <2>
+-----
+<1> for x86 builds
+<2> for x64 builds
 
 and **jom.exe** is found at:
 
 -----
-c:\Qt\5.7.0_VC14\Tools\QtCreator\bin\jom.exe
+c:\Qt\Tools\QtCreator\bin\jom.exe
 -----
-    
-If installed elsewhere, the environment variables `JOM_PATH` and `CMAKE_PREFIX_PATH` can be set alternatively (see build-batch files).
+
+Also, `cmake` must be in the path. If installed elsewhere, the environment variables `JOM_PATH` and `CMAKE_PREFIX_PATH` can be set alternatively (see build-batch files).
 
 With this setup, you can now build either in 32-bit or 64-bit mode:
 
 [source,batch]
 -----
-cd build/cmake
+cd build\cmake
 build_VC14.bat
 -----
 
@@ -43,13 +60,35 @@ or
 
 [source,batch]
 -----
-cd build/cmake
+cd build\cmake
 build_VC14_x64.bat
 -----
 
 For different Visual Studio versions or MinGW copy batch file and edit path constants. You may also want to edit these batch files if you have different installation paths.
 
-== Development
+=== External Libraries
+
+The _MasterSim_ library and the simulator projects depend on the following external/third-party libraries (except for Qt, all are included in the source code repository, so it is not necessary to install these libraries separately):
+
+**MasterSimulator** and **MasterSimulatorUI**
+
+- IBK library (from IBK, TU Dresden, Germany)
+- IBKMK library (from IBK, TU Dresden, Germany), subset of the math-kernel library from IBK
+- TiCPP library (adapted version provided by IBK, TU Dresden, Germany)
+- minizip and zlib for unzipping FMUs
+
+only **MasterSimulatorUI**
+
+- https://www.qt.io/developers[Qt 5 Library]
+- https://github.com/ghorwin/BlockMod[BlockMod library] (from IBK, TU Dresden, Germany, hosted on github)
+
+The release-versions of the libraries (with the exception of Qt) are located in the sub-directory `third-party`.
+
+WARNING: The libraries in the third-party subdir are way outdated. Please only use the source code in the `externals` subdirectory of the repository.
+
+
+
+== Development environments and project/session files
 
 === Qt Creator
 
@@ -89,16 +128,13 @@ You can re-use the `build.bat` or `built_x64.bat` files for that purpose. Open a
 
 ==== Prepared VC project files
 
-You can also open the VC solution files in `build/VC14`.
-**Note**: You have to build first the cmake to configure the zlib zconf.h file!
-
-
+You can also open the VC solution files in `build\VC14\MasterSim.sln`.
+**Note**: You have to build first the cmake to configure the zlib `zconf.h` file!
 
 
 == Linux development hassles and tricks
 
-
-Some notes on unexpected difficulties while creating this master simulator and development helping tools/tricks:
+Here are some notes collected when I encountered some unexpected difficulties while creating this master simulator:
 
 === Checking symbols in shared libraries
 
@@ -115,25 +151,23 @@ objdump -t <shared_library> | grep fmi2
 -----
 
 
-=== Linking shared libraries with static members (that occur in executable as well)
+=== Linking shared libraries with static members (that occurs in executable as well)
 
 **Problem:** Source of the problem: both FMU and master use IBK library, which in turn has static members/singletons (e.g. message handler). When linking FMU to exe, during cleanup at exit of main the destructor of the singleton object is called twice, causing a segfault.
 
 **Solution:**
-None yet, appears to work after "duplicate so import check" added.
+None yet, appears to work after "duplicate so-import check" added.
 
 
-== FMU Debugging with MasterSim
+=== FMU Debugging with MasterSim
 
-
-=== Linux with Qt Creator
 
 Assuming you develop the shared FMU library with Qt Creator, you can follow this procedure:
 
 1. build your FMU either in debug more or release-with-debug-symbols, you can use also an external build tool chain, for example cmake
 2. compose your FMU and zip it into the fmu archive (you need to do this only once); MIND: the shared library within the FMU must be the one created by Qt Creator.
 3. create your msim test project
-4. in Qt Creator, open and activate the MasterSimulator project, select the msim project as command line argument and start debugging - it will extract the fmus and attach load the shared library functions
+4. in Qt Creator, open and activate the MasterSimulator project, select the msim project as command line argument and start debugging - it will extract the fmus and attach to the shared library functions
 
 You can now either debug and step into the FMU fmi2xxx functions, or open the source files that you used for creating the FMU and set breakpoints. Qt Creator will automatically pick that up and you can debug/step through the master and the FMUs alike.
 
@@ -145,4 +179,80 @@ You can now either debug and step into the FMU fmi2xxx functions, or open the so
 4. The FMU file is renamed to `Test.so` and copied into the extracted fmu directory, hereby overwriting the statically linked FMU
 5. The library search path to the other dynamic libraries that `libTest.so.2.0.1` links to is added to the MasterSim's project environment `LD_LIBRARY_PATH` variable
 6. `MasterSimulator` is started in debugging mode using the `--skip-unzip` command line option 
+
+
+== Inside MasterSim
+
+=== Data Types
+
+In simulations with mixed FMUs (v1 and v2) data types should match. Also, the default type-headers are the same for both versions.
+
+Intendet platform for this master is Desktop systems (32bit/64bit), therefore all data types seen by the master algorithms are mapped to:
+
+* `fmi2Boolean` (`bool` in scalar interface functions)
+* `int`
+* `double`
+* `std::string`
+
+
+=== Connection Graph and Variable Mapping
+
+Variables can be uniquely identified by 
+
+    <slave-name>.<variable-name>
+ 
+and a graph may be defined by:
+
+    A.x1         B.u1
+    A.d1         C.du1
+    B.x1         C.u1
+    B.x2         A.u2
+    C.x1         A.u1
+
+First colum are output variables, second column are connected input variables. x are of type real, d of type integer.
+
+Each slave holds for each data type a vector of output values (bool, int, real/double, string).
+The master also holds for each data type a vector of connection variables. 
+
+A mapping of variables from local slave storage to global vector and from global vector to input is done with a mapping table for each data type individually: 
+
+**Output mapping - Type Real**
+
+
+[width="100%",options="header"]
+|====================
+| Slave | VariableName | global index | local index
+|A      | x1       | 0 | 0
+|B      | x1       | 1 | 0
+|B      | x2       | 2 | 1
+|C      | x1       | 3 | 0
+|====================
+
+The transfer from local to global data storage is then a simple algorithm:
+
+    loop connectedVariableIndexes:
+        copy(localArray[localIndex], globalArray[globalIndex])
+        
+In case of slave B the array connectedVariableIndexes will be [0, 1].
+
+**Input mapping - Type Real**
+
+For input variables a similar mapping exists. Each slave does not have an input variable cache, instead variables are set individually (see also Newton algorithm and Jacobian generation via DQ algorithm).
+
+
+[width="100%",options="header"]
+|====================
+| Slave | VariableName | global index | local value reference
+|B      | u1       | 0 | 55
+|C      | u1       | 1 | 348432
+|A      | u2       | 2 | 122
+|A      | u1       | 3 | 321
+|====================
+
+Input and output mappings are combined into a single table RealVariableMappings.
+
+**Note**: An output of a slave may be directly connected to any of its own input variables, for example:
+
+    fmu1.var2   fmu1.var15
+
 

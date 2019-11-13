@@ -13,6 +13,21 @@ image::gui_welcome_page.png[alt="Welcome page"]
 [horizontal]
 *(1)*:: Short description of the project . This description is taken from the project file header comment lines (see <<_project_file_format, Project file format>>).
 
+[TIP]
+====
+The thumbnails shown on the welcome page are generated/updated when the project is saved. The files are placed inside the user's home directory:
+
+- on Windows in `%APPDATA\Roaming\MasterSim\thumbs`, and
+- on Linux/MacOS in `~/.local/share/MasterSim`
+
+and the image file is named like the project file with appended `png` extension.
+====
+
+
+=== Examples
+
+When opening an example from the welcome page / example page, you are prompted to save the project first in a custom location (examples are distributed in the installation directory, which is usually read-only).
+
 
 == Tool bar and useful keyboard shortcuts
 
@@ -212,6 +227,13 @@ image::gui_simulation_settings_view.png[alt="Simulation view"]
 (12):: Lets you control the verbosity level of the console solver output (see <<_command_line_arguments, Command line arguments>>)
 (13):: Command line that is used to run the simulator. Can be copied into a shell script or batch file for automated processing.
 (14):: The big fat start button. *Ready, Steady, Go!*
+
+
+When you start the simulation, a console window will appear with progress/warning/error message output of the running simulation. Since some simulations can be very fast, after about 2 seconds the log windows is shown with the current screenlog's content.
+[CAUTION]
+====
+Mind, that the simulation may still be running in the background, even if the log window is already shown. If you start the simulation several times, you will spawn multiple simulation processes in parallel. This would just be a waste, since the simulations would write into the same directories and overwrite each other's files.
+====
 
 
 == Preferences Dialog
