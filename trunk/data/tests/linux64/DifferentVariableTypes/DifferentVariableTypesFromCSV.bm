@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BlockMod>
+	<!--Blocks-->
+	<Blocks>
+		<Block name="Generator">
+			<Position>-64, -32</Position>
+			<Size>128, 80</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="boolvar">
+					<Position>128, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="intvar">
+					<Position>128, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="realvar">
+					<Position>128, 48</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+		<Block name="FeedThrough">
+			<Position>304, -32</Position>
+			<Size>176, 80</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="InBool">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="InInteger">
+					<Position>0, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="InString">
+					<Position>0, 48</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="InReal">
+					<Position>0, 64</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="OutBool">
+					<Position>176, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="OutInteger">
+					<Position>176, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="OutString">
+					<Position>176, 48</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="OutReal">
+					<Position>176, 64</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+	</Blocks>
+	<!--Connectors-->
+	<Connectors>
+		<Connector name="auto-named">
+			<Source>Generator.realvar</Source>
+			<Target>FeedThrough.InReal</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>64</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>16</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>112</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Generator.boolvar</Source>
+			<Target>FeedThrough.InBool</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>176</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Generator.intvar</Source>
+			<Target>FeedThrough.InInteger</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>176</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+	</Connectors>
+</BlockMod>
