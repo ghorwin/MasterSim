@@ -46,7 +46,7 @@ MSIMPreferencesDialog::MSIMPreferencesDialog(QWidget * parent) :
 
 	/// \todo Qt Support: Column size of icon list view matching text width of icons...
 
-	setMinimumSize(750,670);
+//	setMinimumSize(750,670);
 }
 
 
