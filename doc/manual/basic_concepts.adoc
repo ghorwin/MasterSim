@@ -194,8 +194,6 @@ The paper can be downloaded from the MASTERSIM Webpage -> documentation section.
 Meaningful Combinations of Algorithms
 ---------------------------------------------------------
 
-See [wiki:MasterSimProjectFileFormat] for options to configure the following algorithmic combinations.
-
 ### 1. Gauss-Jacobi (non-iterating, no error test) ###
 
 * works with FMI v1 and v2

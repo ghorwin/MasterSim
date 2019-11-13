@@ -18,5 +18,7 @@ include::basic_concepts.adoc[leveloffset=+1]
 include::graphical_user_interface.adoc[leveloffset=+1]
 include::command_line_solver.adoc[leveloffset=+1]
 include::project_reference.adoc[leveloffset=+1]
+include::test_suite.adoc[leveloffset=+1]
 include::development_help.adoc[leveloffset=+1]
+include::developer_information.adoc[leveloffset=+1]
 
