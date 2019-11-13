@@ -170,9 +170,9 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 		return;
 
 	// check for matching variable types
-	if (m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->text() !=
-		m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 2)->text())
-	{
+	MASTER_SIM::FMIVariable::VarType vtOut = (MASTER_SIM::FMIVariable::VarType)m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->data(Qt::UserRole).toInt();
+	MASTER_SIM::FMIVariable::VarType vtIn = (MASTER_SIM::FMIVariable::VarType)m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 2)->data(Qt::UserRole).toInt();
+	if (vtOut != vtIn && vtOut != MASTER_SIM::FMIVariable::NUM_VT) {
 		QMessageBox::critical(this, tr("Connection error"), tr("Cannot connect variables of different type."));
 		return;
 	}
@@ -408,7 +408,6 @@ void MSIMViewConnections::updateConnectionsTable() {
 			edge.splitReference(edge.m_inputVariableRef, inputSlaveName, varName);
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(inputSlaveName);
-			inItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -421,6 +420,7 @@ void MSIMViewConnections::updateConnectionsTable() {
 			// lookup variable in simulator
 			const MASTER_SIM::ModelDescription & modelDesc = MSIMMainWindow::instance().modelDescription(inputSlaveName);
 			const MASTER_SIM::FMIVariable & var = modelDesc.variable(varName);
+			inItem->setData(Qt::UserRole+1, var.m_type);
 			if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 				QString unit = QString::fromStdString(var.m_unit);
 				if (unit.isEmpty())
@@ -586,6 +586,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 				table->setItem(currentRow, 1, item);
 
 				item = new QTableWidgetItem( QString( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
+				item->setData(Qt::UserRole, var.m_type);
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
 				table->setItem(currentRow, 2, item);
