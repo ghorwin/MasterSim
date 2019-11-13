@@ -85,7 +85,11 @@ int MSIMBlockEditorDialog::editBlock(const BLOCKMOD::Block & b, const IBK::Path 
 	m_blockItem->setFlags(QGraphicsItem::GraphicsItemFlags());
 	m_ui->graphicsView->scene()->addItem(m_blockItem);
 
-	return exec();
+	int res = exec();
+	delete m_blockItem;
+	m_blockItem = nullptr;
+
+	return res;
 }
 
 

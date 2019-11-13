@@ -1,0 +1,34 @@
+# Created:	Mi. Nov. 13 10:22:59 2019
+# LastModified:	Mi. Nov. 13 12:54:48 2019
+
+# Test case to check if output values from one FMU are correctly
+# transferred to the next FMU, and whether the data types are handled
+# correctly.
+#
+# The use of GAUSS-JACOBOI algorithm will cause changes in the
+# second slave to appear one step later than they were changed in the first.
+
+tStart                   0 a
+tEnd                     20 s
+hMax                     30 min
+hMin                     1e-05 s
+hFallBackLimit           0.001 s
+hStart                   0.5 s
+hOutputMin               0.5 s
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-05
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   no
+
+simulator 0 0 Generator #ff6a5acd "fmus/IBK/FourVars.fmu"
+simulator 1 0 FeedThrough #ff9400d3 "fmus/IBK/FourVarsFeedThrough.fmu"
+
+graph Generator.VBool FeedThrough.InBool
+graph Generator.VInteger FeedThrough.InInteger
+graph Generator.VString FeedThrough.InString
+graph Generator.VReal FeedThrough.InReal
+
