@@ -1,0 +1,23 @@
+# Created:	Mi. Nov. 13 10:22:59 2019
+# LastModified:	Mi. Nov. 13 10:26:21 2019
+
+tStart                   0 a
+tEnd                     20 s
+hMax                     30 min
+hMin                     1e-05 s
+hFallBackLimit           0.001 s
+hStart                   1 s
+hOutputMin               1 s
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-05
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   no
+
+simulator 0 0 FourVars #ff6a5acd "fmus/IBK/FourVars.fmu"
+simulator 1 0 FourVars_2 #fffa8072 "fmus/IBK/FourVars.fmu"
+
+
