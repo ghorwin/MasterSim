@@ -102,6 +102,56 @@ const Network & SceneManager::network() const {
 }
 
 
+QPixmap SceneManager::generatePixmap(QSize targetSize) {
+	// compute current scene rect
+	QRectF r = itemsBoundingRect();
+
+	double eps = 1.01;
+	int borderSize = 10;
+	int m;
+
+	int w = targetSize.width();
+	int h = targetSize.height();
+
+	QRectF sourceRect;
+
+	// the bigger of the scales determines the layout
+	// if the scene rect is more wide than high, we use
+	// x as scale, otherwise the height.
+	if (r.width() > r.height()) {
+		m = r.width();
+		// also, we adjust the target height to the aspect ratio
+		targetSize.setHeight( r.height()/r.width()*w + 2*borderSize);
+		h = targetSize.height() + 2*borderSize;
+
+		sourceRect = QRectF(r.center().x() - 0.5*m*eps,
+						  r.center().y() - 0.5*r.height()*eps,
+						  eps*m, eps*r.height());
+	}
+	else {
+		m = r.height();
+		sourceRect = QRectF(r.center().x() - 0.5*m*eps,
+							  r.center().y() - 0.5*m*eps,
+							  eps*m, eps*m);
+	}
+
+	// set the target rectangle within the thumbnail pixmap
+	QRectF targetRect(borderSize, borderSize,
+					  w-2*borderSize, h-2*borderSize);
+
+	// Define source rectangle and enlarge source rect a little to include boundary lines which
+	// would otherwise be clipped during pixel based rendering
+
+	QPixmap pm(targetSize);
+	pm.fill(Qt::white);
+
+	QPainter painter(&pm);
+	this->render(&painter, targetRect, sourceRect);
+
+	return pm;
+}
+
+
 const BlockItem * SceneManager::blockItemByName(const QString & blockName) const {
 	for (BlockItem* item : m_blockItems) {
 		if (item->m_block->m_name == blockName)

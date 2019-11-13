@@ -3,7 +3,7 @@
 	<!--Blocks-->
 	<Blocks>
 		<Block name="Generator">
-			<Position>-64, -32</Position>
+			<Position>-16, -32</Position>
 			<Size>128, 80</Size>
 			<!--Sockets-->
 			<Sockets>
@@ -89,7 +89,7 @@
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>112</Offset>
+					<Offset>64</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Vertical</Orientation>
@@ -108,7 +108,7 @@
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>176</Offset>
+					<Offset>128</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
@@ -123,7 +123,7 @@
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>176</Offset>
+					<Offset>128</Offset>
 				</Segment>
 			</Segments>
 		</Connector>

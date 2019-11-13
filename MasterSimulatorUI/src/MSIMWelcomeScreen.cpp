@@ -108,7 +108,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 			QFileInfo thumbFileInfo(thumbPath);
 			// check if file exists
 			if (thumbFileInfo.exists())
-				thumbPath = "<a href=\"project:${PROJECT_FULL_PATH}\"><img src=\"" + thumbFileInfo.absoluteFilePath() + "\"></img></a>&nbsp;";
+				thumbPath = "<a href=\"project:${PROJECT_FULL_PATH}\"><img src=\"" + thumbFileInfo.absoluteFilePath() + "\"></a>&nbsp;";
 			else
 				thumbPath = "&nbsp;";
 			thumbPath = thumbPath.replace("${PROJECT_FULL_PATH}", finfo.filePath());

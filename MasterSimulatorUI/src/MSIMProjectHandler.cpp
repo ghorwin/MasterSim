@@ -620,9 +620,16 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 	file.close();
 
 	try {
-		// filename is converted to utf8 before calling write
-		IBK::Path fpath = IBK::Path(fname.toUtf8().data());
 
+		// save thumbnail of project scematics
+		QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + QFileInfo(projectFile() + ".png").fileName();
+		QFileInfo thumbDir(thumbPath);
+		if (!thumbDir.dir().exists())
+			QDir().mkpath(thumbDir.dir().absolutePath());
+		QPixmap p = m_sceneManager->generatePixmap(QSize(300,300));
+		p.save(thumbPath);
+
+		IBK::Path fpath = IBK::Path(fname.toStdString());
 		// create a copy of the project file
 		MASTER_SIM::Project pCopy = *m_project;
 

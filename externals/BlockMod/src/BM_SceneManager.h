@@ -71,6 +71,10 @@ public:
 	*/
 	const Network & network() const;
 
+	/*! Generates a pixmap from the current scene rect.
+		Aspect ratio is kept, and the image is fitted into the selected target size.
+	*/
+	QPixmap generatePixmap(QSize targetSize);
 
 	// query functions
 
@@ -196,7 +200,6 @@ public:
 		Index must be a valid, otherwise an exception is thrown.
 	*/
 	void removeConnector(unsigned int connectorIndex);
-
 
 
 signals:
