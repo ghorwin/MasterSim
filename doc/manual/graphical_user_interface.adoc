@@ -167,7 +167,7 @@ image::gui_connection_view.png[alt="Connection view"]
 (3):: Select first an output variable and the input variable, that should be connected to the output, then press this button to create the connection.
 (4):: Here, you can create multi connections between two slaves based on variable names (see explanation below)
 (5):: This removes the currently selected connection in table (6)
-(6):: Shows all connections already made.
+(6):: Shows all connections already made. *Double-click* on last column to assign transformation operations.
 (7):: Table with all slaves and their colors (to assist in identifying variables by colour)
 
 === Auto-connection feature
@@ -202,6 +202,10 @@ Auto-connection creates:
 Third connection is not made, since _Room1.OperativeTemperature_ does not match _Room2.OperatingTemperature_.
 ====
 
+=== Assigning transformation operations to a connection
+
+If you want to do unit conversion or other transformations (sign inversion, scaling) between output variables and input variables, you can *double-click* on the third column in table *(6)*, to open a dialog for editing transformation factors and offsets. See section <<_connection_graph,Connection graph>> for a detailed description.
+
 
 == Simulation settings view
 
@@ -218,7 +222,7 @@ image::gui_simulation_settings_view.png[alt="Simulation view"]
 (3):: Selection of the master algorithm
 (4):: Maximum number of iterations, 1 disables iteration
 (5):: The relative and absolute tolerances are used for converence check of iterative algorithms and, if enabled, for local error checking and time step adjustment.
-(6):: Here you can select an error control method, see section <<error_control_and_time_step_adjustment,Error control and time step adjustment>>.
+(6):: Here you can select an error control method, see section <<_error_control_and_time_step_adjustment,Error control and time step adjustment>>.
 (7):: If checked, _MasterSim_ will adjust the time step, requires FMUs to support the *canHandleVariableCommunicationStepSize* capability
 (8):: These three parameters control how the time step is adjusted in case of converence/error test failures.
 (9):: If checked, _MasterSim_ will adjust the step size of the last interval such, that is gives _exactly_ the end time point of the simulation as end of the last communication interval, regardless of flag *(7)* (see discussion in section <<_time_step_adjustment, Time step adjustment>>).

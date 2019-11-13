@@ -110,16 +110,17 @@ Basic steps: Open a console window, setup VC build environment and all required 
 
 You can re-use the `build.bat` or `built_x64.bat` files for that purpose. Open a command line window and change into the directory `build/cmake`.
 
-1. start either  `build.bat` or `built_x64.bat` and press Ctrl+C once building starts.
-2. leave subdirectory and create a new subdirectory vc:
-
+. start either  `build.bat` or `built_x64.bat` and press Ctrl+C once building starts.
+. leave subdirectory and create a new subdirectory vc:
++
 [source,batch]
 -----
 > mkdir vc
 > cd vc
 -----
 
-3. open cmake gui, given the parent directory as source dir and select a Visual Studio build generator
+. open cmake gui, given the parent directory as source dir and select a Visual Studio build generator
+
 
 [source,batch]
 -----
@@ -254,5 +255,4 @@ Input and output mappings are combined into a single table RealVariableMappings.
 **Note**: An output of a slave may be directly connected to any of its own input variables, for example:
 
     fmu1.var2   fmu1.var15
-
 

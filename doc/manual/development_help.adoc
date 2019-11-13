@@ -1,114 +1,14 @@
 = Features assisting in FMU development and debugging
 
+This section describes some of the features of _MasterSim_, that are particularly useful for developers of own FMUs or to identify calculation problems with third-party FMUs.
+
+
 == Modifying/fixing FMU content
 
+If an FMU has an invalid `modelDescription.xml` file, the process of unpacking the FMU, fixing the file, packing the FMU again and re-trying the simulation with a co-simulation master may be time consuming. With _MasterSim_ you run the simulation once and get the FMU extracted in the respective `fmus` subdir. There, you can inspect all files and fix errors, or add missing files. 
 
-
-FMU Import
----------------
-
-While two library exist for importing FMUs (FMILibrary and FMI++), neither works sufficiently well in this context. FMILibrary has build and linker issues on  Linux/MacOS, FMI++ does not support importing FMUs for CoSimulation v.2.
-
-Since the master only needs importing functionality, the most straight-forward way of handling this is creating the importing functionality manually with focus on these tasks:
-
-* unzipping FMUs (done with the miniunzip library function)
-* reading ModelDescription.xml
-* loading dynamic libraries and importing function pointers (platform specific, for Windows and Mac/Linux)
-* wrapping calls to FMUs so that the master algorithms can work with more convenience interface in addition to the native fmi interface functions
-
-For interfacing with the shared library/DLL of an FMU the function pointers and callback functions are needed. The callback functions are typically independent of the individual FMU or slave and are defined just once for FMI1 and FMI2 within the model manager.
-
-The function pointers are specific to each loaded dynamic library (FMU), as is the ModelDescription. So an FMU is defined in code by these properties:
-
-* path to the FMU and unzip directory
-* function pointers
-* model description context
-
-This is all stored in the class FMU.
-
-### FMU Unzipping / Debugging Features ###
-
-Default behavior for the master simulator would be to unzip all referenced FMU files. However, for debugging purposes it may be meaningful to skip the unzipping part and tell the master to use already unzipped FMUs. In this case, the master shall try to read the modelDescription.xml file in the location where it would reside after unzipping.
-
-This functionality is triggered by the command line argument *skip-unzip* [see command line arguments](CommandLineArguments). This is particularly useful if you want to try out different options in the `modelDescription.xml` file without extracting/compressing the FMU archive always.
-
-#### FMU unzip path ####
-
-By default, FMUs will be unzipped in a path relative to the working directory with the path name uniquely generated from FMU file name and in case of ambiguity an additional counter. Basically, for each FMU to unzip, a path is generated. If another FMU with same filename (but maybe different relative/absolute path) has been extracted before, the FMU path get's formed with mask
-
-    <working-dir>/fmus/<filename-without-fmu-extension>_<counter>
-  
-where the counter is increased until a unique file path has been found.  
-
-The user may want to override this by specifying an unzip directory for one ore more FMUs. This should best be done in the master project file as optional meta-data. Error checking has to be done to prevent a user from overriding a path of other FMUs.
-
-### FMU Slave Working Directories ###
-
-Each instance of an FMU is called a simulation *slave*. From a single FMU-archive several instances can be created. Therefore, the working directory for a simulation slave is different than the extraction/unzip directory of an FMU file.
-
-Within the master, the file path to each slave's working directory is generated from the unique simulation slave name, defined in the master file.
-
-Since slave names must be unique, the corresponding file paths will be unique as well. 
-
-    <working-dir>/slaves/<slave-name>
- 
-The names of the slaves must follow the rules that apply for generating file names. The generated directory name is passed to each slave via parameter, which requires the FMU to support such an output file path parameter.
-
-#### Time unit handling ####
-
-Master time (and time send to FMUs) is not fixed to any scientific unit. Therefore, any output by the master referring to time points will just use this anonymous time stamp. However, for practical reasons, it is difficult to interpret an error occurring at time t=1284382.21.
-
-Inside the master code, all time output is formatted in a time-distance-format function that can be configured to use anonymous time stamps or interpret master time as time offset in seconds. Further, it can be used to configure a reference time that gets added to the master time (offset) in order to get meaningful local time stamps.
-
-**Concept**:
-The unit used by the master (and agreed on by all slaves used in the same scenario) can be specified by a project file parameter. Then, prior to outputs the master time is being converted from this given unit to seconds before any output happens.
+Next time you run _MasterSimulator_, pass the command line option `--skip-unzip` and _MasterSim_ will skip over the unzip step and directly access the files in the extraction directory.
 
 
 
-
-# Custom Features #
-
-## ResultsRootDir parameter ##
-Whenever an FMU has a string parameter with name `ResultsRootDir` defined, the parameter is set automatically to the file location described above, unless user has specified the parameter manually.
-
-## Simulation time reference time/date ##
-
-Whenever and FMU has a string parameter with name `ReferenceTimeStamp` defined, the master sets the reference time/date automatically and consistently among FMUs.
-
-TODO: Determine and fix format for time stamp
-
-
-# Scientific Publications #
-
-* Nicolai, A.: *Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM*, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735
-> This publication (in german) analyses a test case using different algorithms and parameters and discusses obtained results (and errors) in detail.
-
-* Nicolai, A.: *Robust and accurate co-simulation master algorithms applied to FMI slaves with discontinuous signals using FMI 2.0 features*, Proceedings of the 13th International Modelica Conference, 2019, https://modelica.org/events/modelica2019/proceedings/html/papers/Modelica2019paperP04.pdf
-> A discussion of the slope-based error test procedure and a best-practice approach on adapting time steps with FMI v2.0 features.
-
-* Schierz T., Arnold M., and Clauß C.; *Co-simulation with communication step size control in an fmi-compatible master algorithm*, In 9th International Modelica Conference 2012, Modelica Association, 2012
-> This publication discusses the local error estimation technique and time step adjustment algorithm implemented in MasterSim.
-
-
-# Algorithm ideas/concepts #
-
-### Compacting output files ###
-
-Outputs could be filtered further (to reduce disk usage), when *nothing much has changed.* This requires an additional test so that outputs will only be written, when:
-
-- - the differences between computed values and interpolated values differ too much so that the *last* interval is written.
-
-This  algorithm can be done individually for each output quantity, resulting in output files with different time points (but best accuracy). The idea is that when analyzing output data, typically plots are generated with polygons through data points which implies linear interpolation on all points between output data samples. However, when three data samples are aligned such, that the middle one lies close enough to the interpolated value, this output can be skipped.
-
-Algorithm looks like that:
-
-- keep current and last data samples to write (tp_1, v_1), (tp_2, v_2)
-- obtain new output (tp_3, v_3)
-- compute interpolated value at tp_2 using v_1 and v_3 --> v_2intp
-- compare old with new interpolated value: 
-
-     abs((v_2- v_2intp)/(max(v_2, v_2intp)+eps)) > threshold
-     
-- If threshold is exceeded, store tp_2,v_2 into file, move values 2 -> 1.
-- move sample 3 -> sample 2
-
+---
