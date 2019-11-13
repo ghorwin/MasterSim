@@ -128,6 +128,10 @@ void FileReaderSlave::enterInitializationMode() {
 							// for discrete data, we overwrite previously stored time points with new values
 							if (tVec.back() == timeVec.m_data[i]) // same time point
 								yVec.back() = m_fileReader->m_values[i][j+1]; // overwrite values
+							else {
+								tVec.push_back(timeVec.m_data[i]);
+								yVec.push_back(m_fileReader->m_values[i][j+1]);
+							}
 						}
 					} break;
 

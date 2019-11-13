@@ -136,6 +136,7 @@ const char *FMIVariable::varType2String(VarType t) {
 		case VT_INT : return "Integer";
 		case VT_DOUBLE : return "Real";
 		case VT_STRING : return "String";
+		case NUM_VT : return "Undetermined";
 	}
 	return "undefined";
 }
