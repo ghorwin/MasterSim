@@ -58,6 +58,9 @@ public:
 	*/
 	void read(const IBK::Path & filename, bool headerOnly = false, bool extractUnits = false);
 
+	/*! Utility function to test if a file has tab-separated values or is written in Excel flavor, with , and quotation characters. */
+	static bool haveTabSeparationChar(const IBK::Path & filename);
+
 	/*! Separation character for different tabulator columns. */
 	char								m_separationCharacter;
 	/*! Tabulator captions: columns of the first line. */
