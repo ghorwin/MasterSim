@@ -1,5 +1,5 @@
 # Created:	Fr. Juli 12 18:21:52 2019
-# LastModified:	Fr. Juli 12 18:21:52 2019
+# LastModified:	Mi. Nov. 13 18:08:07 2019
 
 tStart                   0 a
 tEnd                     100 s
@@ -9,6 +9,7 @@ hFallBackLimit           1e-10 s
 hStart                   0.1 s
 hOutputMin               0.01 s
 adjustStepSize           yes
+preventOversteppingOfEndTime yes
 absTol                   1e-06
 relTol                   1e-06
 MasterMode               GAUSS_SEIDEL
@@ -16,8 +17,8 @@ ErrorControlMode         STEP_DOUBLING
 maxIterations            1
 writeInternalVariables   no
 
-simulator 0 0 Prey #ffff8c00 "fmus/IBK/Prey.fmu"
-simulator 1 0 values #ff008000 "values.csv"
+simulator 0 0 Prey #ff8c00 "fmus/IBK/Prey.fmu"
+simulator 1 0 values #008000 "values.csv"
 
 graph values.Predator.y Prey.y
 

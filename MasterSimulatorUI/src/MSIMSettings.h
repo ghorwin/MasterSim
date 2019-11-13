@@ -144,6 +144,7 @@ public:
 	/*! Maximum number of undo steps. */
 	unsigned int				m_maxNumUNDOSteps;
 
+	/*! Size of the thumb nail images shown on the welcome page. */
 	unsigned int				m_thumbNailSize;
 
 	/*! The file last opened in the UI.
