@@ -1,0 +1,7 @@
+time [s]	boolvar	intvar	realvar [-]
+0	0	3	0
+2	1	6	6
+4	1	6	6
+5	1	6	4
+5	0	4	4
+7	0	2	1
