@@ -120,7 +120,7 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 				v.m_name = reader.m_captions[i];
 				IBK::trim(v.m_name, " \t\r\"");
 				v.m_unit = reader.m_units[i];
-				v.m_type = MASTER_SIM::FMIVariable::VT_DOUBLE;
+				v.m_type = MASTER_SIM::FMIVariable::NUM_VT; // unassigned variable type
 				v.m_varIdx = i;
 				v.m_causality = MASTER_SIM::FMIVariable::C_OUTPUT;
 				v.m_variability = "continuous";
