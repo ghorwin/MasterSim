@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+	fmiVersion="2.0"
+	modelName="FourVars"
+	guid="{faefe3f0-05f4-11ea-ad3f-48a4728dac0c}"
+	version="1.0.0"
+	author="not specified"
+	copyright="not specified"
+	license="not specified"
+	description="FMU that has four output variables, each with a different data type."
+	generationTool="ghorwin/FMICodeGenerator@github - C++ Code using FMI support functions from IBK@TU Dresden"
+	generationDateAndTime="2019-11-13T10:07:12Z"
+	variableNamingConvention="structured"
+	numberOfEventIndicators="0">
+
+	<!-- The following properties are the defaults and can be omitted
+		needsExecutionTool="false"
+		canBeInstantiatedOnlyOncePerProcess="false"
+		providesDirectionalDerivative="false"
+
+		CoSim only:
+		canRunAsynchronuously = "false"
+
+	-->
+
+	<ModelExchange
+		modelIdentifier="FourVars"
+		completedIntegratorStepNotNeeded="true"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<CoSimulation
+		modelIdentifier="FourVars"
+		canHandleVariableCommunicationStepSize="true"
+		canInterpolateInputs="false"
+		maxOutputDerivativeOrder="0"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<LogCategories>
+		<Category name="logStatusWarning" />
+		<Category name="logStatusError" />
+		<Category name="logAll" />
+		<Category name="logFmi2Call" />
+	</LogCategories>
+
+	<DefaultExperiment startTime="0.0" stopTime="10.0" tolerance="1e-06"/>
+
+	<ModelVariables>
+
+		<!-- For input variables we need to give a 'start' attribute -->
+		<!-- For output variables with initial="exact" we need to give a 'start' attribute -->
+		
+
+		<!-- Index of variable = "1" -->
+		<ScalarVariable
+			name="VBool"
+            description="Boolean value, changes value at t = 10"
+			valueReference="1"
+			variability="discrete"
+			causality="output"
+			initial="calculated">
+			<Boolean/>
+		</ScalarVariable>		
+		
+
+		<!-- Index of variable = "2" -->
+		<ScalarVariable
+			name="VInteger"
+            description="Integer value, changes value every second"
+			valueReference="2"
+			variability="discrete"
+			causality="output"
+			initial="calculated">
+			<Integer/>
+		</ScalarVariable>		
+		
+
+		<!-- Index of variable = "3" -->
+		<ScalarVariable
+			name="VString"
+            description="String variable, changes value at t = 5"
+			valueReference="3"
+			variability="discrete"
+			causality="output"
+			initial="calculated">
+			<String/>
+		</ScalarVariable>		
+		
+
+		<!-- Index of variable = "4" -->
+		<ScalarVariable
+			name="VReal"
+            description="Floating point value, return v = t*t"
+			valueReference="4"
+			variability="continuous"
+			causality="output"
+			initial="calculated">
+			<Real unit="-"/>
+		</ScalarVariable>		
+		
+
+	</ModelVariables>
+
+	<ModelStructure>
+		<Outputs>
+			<!-- dependencies must be defined for all output quantities. 'dependencyKind' is only needed
+				when some dependencies are constant factors or parameters.
+			-->
+			
+			<Unknown index="1" dependencies=""/>
+		
+			<Unknown index="2" dependencies=""/>
+		
+			<Unknown index="3" dependencies=""/>
+		
+			<Unknown index="4" dependencies=""/>
+		
+
+		</Outputs>
+	</ModelStructure>
+
+</fmiModelDescription>
+
