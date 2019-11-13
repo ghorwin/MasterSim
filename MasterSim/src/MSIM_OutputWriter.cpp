@@ -232,7 +232,6 @@ void OutputWriter::setupProgressReport() {
 #else
 	m_progressOutputs = new std::ofstream(progressOutputFilename.c_str());
 #endif
-	*m_progressOutputs << "Time\t Percentage completed [%]" << std::endl;
 
 	/// \todo For restart, add elapsed seconds + simtime
 	m_progressFeedback.setup(m_progressOutputs, m_project->m_tStart.value, m_project->m_tEnd.value, m_projectFile, 0, 0);
