@@ -55,6 +55,46 @@ using namespace std;
 
 namespace IBK {
 
+bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
+	const char * const FUNC_ID = "[CSVReader::haveTabSeparationChar]";
+	// first detect file format
+	bool tabFormat = true;
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+			std::ifstream in(filename.wstr().c_str());
+	#else
+			std::string filenameAnsi = IBK::WstringToANSI(filename.wstr(), false);
+			std::ifstream in(filenameAnsi.c_str());
+	#endif
+#else // _WIN32
+		std::ifstream in(filename.c_str());
+#endif
+	if (!in)
+		throw IBK::Exception( IBK::FormatString("File doesn't exist or cannot open/access file."), FUNC_ID);
+
+	// now try to read at least two lines of data
+	std::string line1, line2;
+	if (!std::getline(in, line1) || !std::getline(in,line2))
+		throw IBK::Exception( IBK::FormatString("Error reading first two lines of data file."), FUNC_ID);
+	// try to split both files at tab characters
+	std::vector<std::string> tokens1, tokens2;
+	IBK::explode(line1, tokens1, "\t", IBK::EF_NoFlags);
+	IBK::explode(line2, tokens2, "\t", IBK::EF_NoFlags);
+	if (tokens1.size() < 2 || tokens1.size() != tokens2.size()) {
+		// try tab format
+		IBK::explode(line1, tokens1, ",", IBK::EF_UseQuotes);
+		IBK::explode(line2, tokens2, ",", IBK::EF_UseQuotes);
+		// still no luck?
+		if (tokens1.size() < 2 || tokens1.size() != tokens2.size()) {
+			throw IBK::Exception( IBK::FormatString("Unable to determine csv flavour - inconsistent delimiters or missing/wrong quotation charactors (or only one column?)."), FUNC_ID);
+		}
+		tabFormat = false;
+	}
+
+	return tabFormat;
+}
+
+
 void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUnits) {
 	const char * const FUNC_ID = "[CSVReader::read]";
 	try {
@@ -73,7 +113,12 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 
 		std::string line;
 		std::getline(in, line);
-		IBK::explode(line, m_captions, m_separationCharacter);
+		std::string sepChars;
+		sepChars.push_back(m_separationCharacter);
+		if (m_separationCharacter == ',')
+			IBK::explode(line, m_captions, sepChars, IBK::EF_UseQuotes);
+		else
+			IBK::explode(line, m_captions, sepChars, IBK::EF_NoFlags);
 		m_nColumns = (unsigned int)m_captions.size();
 		m_nRows = 0;
 		m_units.clear();
@@ -85,7 +130,7 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 				if (pos != std::string::npos && pos != std::string::npos && pos < pos2) {
 					m_units.push_back(c.substr(pos+1, pos2-pos-1));
 					m_captions[i] = c.substr(0, pos);
-					IBK::trim(m_captions[i]);
+					IBK::trim(m_captions[i], " \t\r\"");
 				}
 				else
 					m_units.push_back(""); // no unit
@@ -99,7 +144,14 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 			if (line.empty() || line.find_first_not_of("\n\r\t ") == std::string::npos)
 				continue;
 			std::vector<std::string> tokens;
-			IBK::explode(line, tokens, m_separationCharacter);
+			if (m_separationCharacter == ',') {
+				IBK::explode(line, tokens, sepChars, IBK::EF_UseQuotes);
+				for (unsigned int i=0; i<tokens.size(); ++i) {
+					IBK::trim(tokens[i], " \t\r\"");
+				}
+			}
+			else
+				IBK::explode(line, tokens, sepChars, IBK::EF_NoFlags);
 			// error: wrong column size
 			if(tokens.size() != m_nColumns) {
 				throw IBK::Exception(IBK::FormatString("Wrong number of columns in line #%1!")

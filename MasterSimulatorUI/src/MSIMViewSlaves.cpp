@@ -93,7 +93,12 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 		// attempt to read the file as csv/tsv file
 		msgLog.append( tr("Reading tabulated data from '%1'\n").arg(QString::fromStdString(fmuFilePath.str())));
 		try {
+			bool tabFormat = IBK::CSVReader::haveTabSeparationChar(fmuFilePath);
 			IBK::CSVReader reader;
+			if (tabFormat)
+				reader.m_separationCharacter = '\t';
+			else
+				reader.m_separationCharacter = ',';
 			reader.read(fmuFilePath, true, true); // only read header
 
 			// special convention: no time unit, assume "s" seconds
@@ -113,6 +118,7 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 				// get quantity
 				MASTER_SIM::FMIVariable v;
 				v.m_name = reader.m_captions[i];
+				IBK::trim(v.m_name, " \t\r\"");
 				v.m_unit = reader.m_units[i];
 				v.m_type = MASTER_SIM::FMIVariable::VT_DOUBLE;
 				v.m_varIdx = i;
