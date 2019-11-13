@@ -288,6 +288,21 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 	updateSlaveTable();
 }
 
+template <typename iterator, typename const_iterator>
+std::string pickSlaveName(const std::string& basename, iterator first, const_iterator last) {
+	if (first==last) return basename;
+	std::string basename_mod = basename;
+	std::string name;
+	int i=0;
+	do {
+		std::stringstream namestrm;
+		if (++i==1)  namestrm << basename_mod;
+		else         namestrm << basename_mod << "_" << i;
+		name = namestrm.str();
+	} while (std::find(first, last, name)!=last);
+	return name;
+}
+
 
 void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// open file dialog and let user select FMU file
@@ -312,7 +327,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// create simulator definition
 	MASTER_SIM::Project::SimulatorDef simDef;
 	simDef.m_name = finfo.baseName().toStdString(); // disambiguity?
-	simDef.m_name = IBK::pick_name(simDef.m_name, p.m_simulators.begin(), p.m_simulators.end());
+	simDef.m_name = pickSlaveName(simDef.m_name, p.m_simulators.begin(), p.m_simulators.end());
 	simDef.m_pathToFMU = fname.toStdString();
 	p.m_simulators.push_back(simDef);
 
@@ -587,6 +602,9 @@ void MSIMViewSlaves::on_widgetProperties_itemChanged(QTableWidgetItem *item) {
 	std::string slaveName = simDef.m_name;
 
 	QString varName = m_ui->widgetProperties->item(item->row(), 0)->text();
+
+	// replace spaces with _
+	varName = varName.trimmed().replace(' ', '_');
 
 	// create an undo-action for modifying a slave parameter
 	MSIMUndoSlaveParameters * undo = new MSIMUndoSlaveParameters(tr("Parameter/variable '%1.%2' modified.")
