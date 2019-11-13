@@ -1,6 +1,10 @@
 # Created:	Mi. Nov. 13 10:22:59 2019
 # LastModified:	Mi. Nov. 13 10:26:21 2019
 
+# This test case demonstrates the handling and the output of two slaves
+# that each provide 4 output values with all different types.
+# The test case is used to check for correct output in the values.csv file.
+
 tStart                   0 a
 tEnd                     20 s
 hMax                     30 min
