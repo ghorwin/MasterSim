@@ -95,6 +95,9 @@ void OutputWriter::openOutputFiles(bool reopen) {
 
 	// now value outputs (boolean, integer and real)
 	descriptions = IBK::FormatString("Time [%1]").arg(m_project->m_outputTimeUnit.name()).str();
+	std::string boolDescriptions;
+	std::string intDescriptions;
+	std::string realDescriptions;
 	int outputVars = 0;
 	// collect variable references from all slaves
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
@@ -103,7 +106,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop all boolean variables in slave
 		for (unsigned int v=0; v<slave->m_boolVarNames.size(); ++v) {
 			std::string flatName = slave->m_name + "." + slave->m_boolVarNames[v];
-			descriptions += " \t" + flatName + " [-]"; // booleans are unit-less
+			boolDescriptions += " \t" + flatName + " [-]"; // booleans are unit-less
 			m_boolOutputMapping.push_back( std::make_pair(slave, v));
 			++outputVars;
 		}
@@ -111,7 +114,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop all integer variables in slave
 		for (unsigned int v=0; v<slave->m_intVarNames.size(); ++v) {
 			std::string flatName = slave->m_name + "." + slave->m_intVarNames[v];
-			descriptions += " \t" + flatName + " [-]"; // ints are unit-less
+			intDescriptions += " \t" + flatName + " [-]"; // ints are unit-less
 			m_intOutputMapping.push_back( std::make_pair(slave, v));
 			++outputVars;
 		}
@@ -119,7 +122,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		// loop all real variables in slave
 		for (unsigned int v=0; v<slave->m_doubleVarNames.size(); ++v) {
 			std::string flatName = slave->m_name + "." + slave->m_doubleVarNames[v] + " [" + slave->m_doubleVarUnits[v] + "]";
-			descriptions += " \t" + flatName;
+			realDescriptions += " \t" + flatName;
 			m_realOutputMapping.push_back( std::make_pair(slave, v));
 			++outputVars;
 		}
@@ -173,7 +176,11 @@ void OutputWriter::openOutputFiles(bool reopen) {
 			m_valueOutputs = new std::ofstream(outputFilename.c_str());
 #endif
 			// write first line
-			*m_valueOutputs << descriptions << std::endl;
+			*m_valueOutputs << descriptions // XXX needs to be same order as we write the data
+				<< boolDescriptions
+				<< intDescriptions
+				<< realDescriptions
+				<< std::endl;
 		}
 		m_valueOutputs->precision(14);
 	}
