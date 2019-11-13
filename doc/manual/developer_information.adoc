@@ -1,0 +1,148 @@
+= Developer information
+
+== Building the Library and Executables
+
+=== Building on the command line
+
+On **Linux/Mac**:
+
+[source,bash]
+-----
+cd build/cmake
+./build.sh
+-----
+
+In case of missing dependencies (zlib is required) you may want to install the corresponding development packages.
+
+On **Windows** convenience scripts are included for building with Visual Studio 2015 and Qt5 (for the user interface of MasterSim). Other compilers such as MinGw work as well, but file paths need to be configured manually.
+
+On Windows, it is expected that Qt is installed in the following location:
+
+-----
+c:\Qt\5.7.0_VC14\5.7\msvc2015\
+c:\Qt\5.7.0_VC14\5.7\msvc2015_64\
+-----
+
+and **jom.exe** is found at:
+
+-----
+c:\Qt\5.7.0_VC14\Tools\QtCreator\bin\jom.exe
+-----
+    
+If installed elsewhere, the environment variables `JOM_PATH` and `CMAKE_PREFIX_PATH` can be set alternatively (see build-batch files).
+
+With this setup, you can now build either in 32-bit or 64-bit mode:
+
+[source,batch]
+-----
+cd build/cmake
+build_VC14.bat
+-----
+
+or
+
+[source,batch]
+-----
+cd build/cmake
+build_VC14_x64.bat
+-----
+
+For different Visual Studio versions or MinGW copy batch file and edit path constants. You may also want to edit these batch files if you have different installation paths.
+
+== Development
+
+=== Qt Creator
+
+Development with Qt Creator is encouraged and project files are provided. Individual project files are in subdirectories 
+
+    <library/app>/projects/Qt/<library/app>.pro
+    
+Executables are placed in 
+
+    bin/debug        - output path for development with Qt Creator
+    bin/release      - default output path for cmake-builds
+
+=== Visual Studio
+
+==== CMake-generated VC project files
+The simplest variant that should always work is to use CMake-generated VC project files and solution.
+
+Basic steps: Open a console window, setup VC build environment and all required paths, then use cmake with the Visual Studio makefile generator.
+
+You can re-use the `build.bat` or `built_x64.bat` files for that purpose. Open a command line window and change into the directory `build/cmake`.
+
+1. start either  `build.bat` or `built_x64.bat` and press Ctrl+C once building starts.
+2. leave subdirectory and create a new subdirectory vc:
+
+[source,batch]
+-----
+> mkdir vc
+> cd vc
+-----
+
+3. open cmake gui, given the parent directory as source dir and select a Visual Studio build generator
+
+[source,batch]
+-----
+> cmake-gui ..
+-----
+
+==== Prepared VC project files
+
+You can also open the VC solution files in `build/VC14`.
+**Note**: You have to build first the cmake to configure the zlib zconf.h file!
+
+
+
+
+== Linux development hassles and tricks
+
+
+Some notes on unexpected difficulties while creating this master simulator and development helping tools/tricks:
+
+=== Checking symbols in shared libraries
+
+[source,bash]
+-----
+objdump -t <shared_library>
+-----
+    
+To get all fmi2  functions
+
+[source,bash]
+-----
+objdump -t <shared_library> | grep fmi2
+-----
+
+
+=== Linking shared libraries with static members (that occur in executable as well)
+
+**Problem:** Source of the problem: both FMU and master use IBK library, which in turn has static members/singletons (e.g. message handler). When linking FMU to exe, during cleanup at exit of main the destructor of the singleton object is called twice, causing a segfault.
+
+**Solution:**
+None yet, appears to work after "duplicate so import check" added.
+
+
+== FMU Debugging with MasterSim
+
+
+=== Linux with Qt Creator
+
+Assuming you develop the shared FMU library with Qt Creator, you can follow this procedure:
+
+1. build your FMU either in debug more or release-with-debug-symbols, you can use also an external build tool chain, for example cmake
+2. compose your FMU and zip it into the fmu archive (you need to do this only once); MIND: the shared library within the FMU must be the one created by Qt Creator.
+3. create your msim test project
+4. in Qt Creator, open and activate the MasterSimulator project, select the msim project as command line argument and start debugging - it will extract the fmus and attach load the shared library functions
+
+You can now either debug and step into the FMU fmi2xxx functions, or open the source files that you used for creating the FMU and set breakpoints. Qt Creator will automatically pick that up and you can debug/step through the master and the FMUs alike.
+
+==== Example when debugging separate FMU project which is statically built on release but dynamically linked to other libs during development
+
+1. The FMU is created (first with the statically linked FMU `Test.so`) and the MasterSim project is set up
+2. MasterSim is run once and the directory structure is created, the FMU is extracted and started without debugger attached.
+3. Now in  Qt Creator the  FMU development project builds `libTest.so.2.0.1` which links to other dynamic libraries in the development directory.
+4. The FMU file is renamed to `Test.so` and copied into the extracted fmu directory, hereby overwriting the statically linked FMU
+5. The library search path to the other dynamic libraries that `libTest.so.2.0.1` links to is added to the MasterSim's project environment `LD_LIBRARY_PATH` variable
+6. `MasterSimulator` is started in debugging mode using the `--skip-unzip` command line option 
+

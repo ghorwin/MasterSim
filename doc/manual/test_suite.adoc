@@ -1,0 +1,164 @@
+= Test Suite Concept
+
+Tests are used to check whether all algorithms works as expected and how performant they are.
+
+Things to Test
+--------------------
+- different mathematical constructs expressed by sets of interconnected FMUs, the *Test Cases*
+- different FMU generators (from Modelica world: SimulationX, Dymola, JModelica)
+- different compilers (on Windows VC10 and MinGW)
+- different operation systems (Linux, MacOS, Windows)
+
+== Test Cases
+
+see [Test Case Description](TestDescriptions)
+
+Directory Structure
+---------------------------
+
+    /data/tests                     - root directory for tests
+    /data/tests/<platform>/<test>   - base directory for a single test case
+
+`platform` is (currently) one of:
+
+* linux64
+* win32
+
+Each test case has a set of subdirectories:
+
+    fmus                 - holds fmu archives needed for the test
+    descriptions         - (mathematical) description of test problem
+    reference_Modelica   - reference model in Modelica (it is possible to have
+                           different model variants or Modelica models) and 
+                           reference solutions
+    results              - a directory with results and discussions    
+
+Providing correct reference values with Modelica models (in subdirectory reference_Modelica) is just one way. Alternatively, other directories with reference results may be added (pure C/C++ implementations or analytical solutions, of available).
+
+Naming Convention for Test Projects
+----------------------------------------------------
+
+Within the test case directory, the project files shall be named such that variants can be easily distingished. For example, if different variants of the same model are solved with different parameters, a suitable naming convention is:
+
+    <ProjectName>_<MasterAlgorithm>_<AlgorithmParameters>.msim
+
+With the following Master Algorithms:
+
+- *GaussJacobi*      (always non-iterative)
+- *GaussSeidelNonIterative*
+- *GaussSeidelIterative*
+- *Newton*             (always iterative)
+
+Example:
+
+    Math003_GaussSeidel_1iters_fixedStep.msim
+    Math003_GaussJacobi_1iters_fixedStep.msim
+   
+After the master algorithm keyword, there can more tokens describing the relevant algorithm options. 
+
+If different FMU generators are to be tested, the project files can be distinguished by using a keyword for the generating tool.
+
+Example:
+
+    Math003_SimX.msim
+    Math003_OpenModelica.msim
+
+With the following tool keywords:
+
+- *OpenModelica*
+- *SimX*
+- *Dymola*
+- *JModelica*
+
+Adding platform identifiers is normally not necessary, since the test directory structure already contains the platform indication.
+
+
+#### Cross-Checking Rules and FMI Standard.org Listing
+
+
+
+
+## Steps to export an FMU from OpenModelica
+
+### Create Modelica Model
+
+Create a modelica model, annotate variables to be used as output quantities with keyword 'output'.
+
+For example:
+
+[source,modelica]
+----
+model BouncingBall "The 'classic' bouncing ball model"
+  type Height=Real(unit="m");
+  type Velocity=Real(unit="m/s");
+  parameter Real e=0.8 "Coefficient of restitution";
+  parameter Height h0=1.0 "Initial height";
+  output Height h "Height";
+  output Velocity v(start=0.0, fixed=true) "Velocity";
+  output Integer bounceCounter(start=0);
+  output Boolean falling;
+initial equation
+  h = h0;
+equation
+  v = der(h);
+  der(v) = -9.81;
+  if v < 0 then
+    falling = true;
+  else
+    falling = false;
+  end if;
+  when h<0 then
+    reinit(v, -e*pre(v));
+    bounceCounter = pre(bounceCounter) + 1;
+  end when;
+annotation(
+    experiment(StartTime = 0, StopTime = 5, Tolerance = 1e-6, Interval = 0.01));
+end BouncingBall;
+----
+
+
+=== Generate FMU manually
+
+First open OMShell, then type the following commands to load the model and generate a co-simulation FMU:
+
+[source,bash]
+----
+>> loadFile("/path/to/modelica/models/BouncingBall/BouncingBall.mo")
+>> translateModelFMU(BouncingBall, fmuType="cs")
+"/tmp/OpenModelica/BouncingBall.fmu"
+----    
+    
+The output indicates the the FMU file `/tmp/OpenModelica/BouncingBall.fmu` has been successfully created.
+
+For Version 2.0 of FMI standard use:
+
+[source,bash]
+----
+>> translateModelFMU(BouncingBall, fmuType="cs", version="2.0")
+----
+
+=== Script-based automatic FMU generation
+
+Create a script file (`createFMU.mos`)  with the following content:
+
+[source,c++]
+----
+loadModel(Modelica, {"3.2.1"}); getErrorString();
+loadModel(Modelica_DeviceDrivers); getErrorString();
+
+setLanguageStandard("3.3"); getErrorString();
+
+cd("./fmus");
+loadFile("../reference_Modelica/BouncingBall.mo"); getErrorString();
+
+setDebugFlags("backenddaeinfo");getErrorString();
+translateModelFMU(BouncingBall, fmuType="cs"); getErrorString();
+----
+
+Run the script via:
+
+[source,bash]
+----
+> omc createFMU.mos
+----
+
