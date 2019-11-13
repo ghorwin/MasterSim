@@ -17,9 +17,11 @@
 #include "MSIMConversion.h"
 #include "MSIMLanguageHandler.h"
 #include "MSIMUIConstants.h"
+#include "MSIMProjectHandler.h"
 
 extern const char * const HTML_TEMPLATE;
 extern const char * const RECENT_PROJECT_TABLE_TEMPLATE;
+extern const char * const EXAMPLE_PROJECT_TABLE_TEMPLATE;
 
 MSIMWelcomeScreen::MSIMWelcomeScreen(QWidget *parent) :
 	QWidget(parent),
@@ -130,7 +132,11 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 		QString recentProjects = "<h1>" + tr("Examples/Validation cases") + "</h1><p>\n";
 
 		// process all files in examples directory
+#ifdef IBK_DEPLOYMENT
 		QDir examplesDir(MSIMDirectories::resourcesRootDir() + "/examples");
+#else
+		QDir examplesDir(MSIMDirectories::resourcesRootDir() + "/../../data/examples");
+#endif
 		QStringList exampleFiles;
 		MSIMSettings::recursiveSearch(examplesDir, exampleFiles, QStringList() << "msim");
 
@@ -138,13 +144,33 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 		foreach (QString fname, exampleFiles) {
 			MASTER_SIM::Project pro;
 			try {
-				pro.read(IBK::Path(fname.toUtf8().data()), true);
-				QString recentProjectTable = RECENT_PROJECT_TABLE_TEMPLATE;
+				pro.read(IBK::Path(fname.toStdString()), true);
+				QString recentProjectTable = EXAMPLE_PROJECT_TABLE_TEMPLATE;
 				QFileInfo finfo(fname);
 				recentProjectTable = recentProjectTable.replace("${PROJECT_FILENAME}", finfo.fileName());
 				recentProjectTable = recentProjectTable.replace("${PROJECT_FULL_PATH}", finfo.filePath());
 
-				QString description = utf82QString(pro.m_comment);
+				QString description;
+				QString created;
+				if (pro.m_created.empty())
+					created = "---";
+				else
+					created = utf82QString(pro.m_created);
+				QString lastModified;
+				if (pro.m_lastEdited.empty())
+					lastModified = "---";
+				else
+					lastModified = utf82QString(pro.m_lastEdited);
+				QString comment = utf82QString(pro.m_comment);
+				comment.replace("\r\n", "<br>");
+				comment.replace("\n", "<br>");
+				comment.replace("# ", "");
+				comment.replace("<br>#", "<br>");
+				description = tr("<i>Created: %1, Last modified: %2</i><p><br><span style=\"font-family:monospace;font-size:small;\">%3</span>")
+									  .arg(created)
+									  .arg(lastModified)
+									  .arg(comment);
+
 				recentProjectTable = recentProjectTable.replace("${PROJECT_DESCRIPTION}", description);
 
 				// open thumbnail image for this project
@@ -193,6 +219,14 @@ void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 		QString fname = link.toString();
 		fname = fname.right(fname.length()-8);
 		emit openProject(fname);
+		return;
+	}
+	else if (link.toString().startsWith("example:")) {
+		QString fname = link.toString();
+		fname = fname.right(fname.length()-8);
+		emit openProject(fname);
+		// afterwards clear file name in project handler, so that user needs to save the file again
+		MSIMProjectHandler::instance().saveWithNewFilename(this);
 		return;
 	}
 	else if (link.toString().toLower().startsWith("projectremove:")) {
@@ -326,4 +360,12 @@ const char * const RECENT_PROJECT_TABLE_TEMPLATE =
 		"<br>\n"
 		"\n";
 
+const char * const EXAMPLE_PROJECT_TABLE_TEMPLATE =
+		"<table border=\"0\" cellspacing=\"2\" cellpadding=\"0\">\n"
+		"<tr valign=center><th width=\"${THUMBNAILSIZE}\" rowspan=\"3\">${IMG_FILENAME}</th><th align=left>${PROJECT_FILENAME}</th></tr>\n"
+		"<tr valign=center><td align=left><a href=\"example:${PROJECT_FULL_PATH}\">${PROJECT_FULL_PATH}</a></td></tr>\n"
+		"<tr valign=top><td align=justify>${PROJECT_DESCRIPTION}</td></tr>\n"
+		"</table>\n"
+		"<br>\n"
+		"\n";
 
