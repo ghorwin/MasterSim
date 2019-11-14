@@ -27,7 +27,7 @@ The separation between user interface and actual simulator makes it very easy to
 
 No asynchronous FMU types supported.
 
-On Linux and Mac, MasterSim is typically only built as 64-bit application. On Windows, MasterSim is available as 32-bit and 64-bit application.
+On Linux and MacOS _MasterSim_ is typically only built as 64-bit application. On Windows, MasterSim is available as 32-bit and 64-bit application.
 
 [IMPORTANT]
 ====
@@ -46,6 +46,10 @@ For 32-bit FMUs use a 32-bit build, for 64-bit FMUs use a 64-Bit version. Mixed 
 - code tailored for master algorithm debugging - all variables in type-specific arrays for _easy analysis in debugger_
 
 See chapter <<_features_assisting_in_fmu_development_and_debugging, Features assisting in FMU development and debugging>> for details about functionality that are particularly important for FMU developers and for debugging problems with the co-simulation.
+
+=== Special features of _MasterSim_
+
+There is one specific feature of _MasterSim_ that is helpful for using FMUs that write their own output data. To provide a writable, _slave-specific_ output directory to each slave, _MasterSim_ sets the parameter `ResultsRootDir` (typically with value reference 42) in each slave to this directory. As long as a slave defines such a parameter, the FMU code can rely on getting a valid directory to write its data into. See also section <<_directory_slaves, Directory 'slaves'>>.
 
 == Terminology
 
@@ -110,13 +114,83 @@ _MasterSim_ implements several standard algorithms. A detailed discussion of the
 
 Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
 
-=== Common principles
+=== Basic calculation algorithm
 
-All have some general properties in common.
+.Calculation algorithm overview
+image::calculation_overview.png[alt="Calculation overview"]
 
 
+As you can see from the figure, _MasterSim_ has the following main building blocks:
 
-The simulation time is expected to be in seconds in the user interface. That means, if you specify an end time point of `1 h`, the master will send 3600 as time in the last `doStep()` call. If you specify a start time different from 0, the master simulator will start its first communication interval at this time (the slave needs to process the `setupExperiment()` call correctly and initialize the slave to the start time point).
+- initialization (reading project file, extracting FMUs, checking...)
+- initial conditions
+- time step adjustment loop
+- master algorithm (i.e. attempt to take a step)
+- error checking
+- output writing when scheduled
+
+These building blocks are described below in more detail.
+
+=== Initialization
+
+Upon start of the actual simulation (the command line program _MasterSimulator_, see section <<_command_line_arguments, Command line arguments>> for details on running the program), the working directory structure is being created and the log file writing is started.  
+
+Then, the project file is read and all referenced FMUs are extracted. If CSV files are referenced (see section <<_csv_filereader_slaves, CSV FileReader Slaves>>), these files are parsed and prepared for calculation. 
+
+TIP: Extraction of FMU archives can be skipped with the command line option `--skip-unzip` (see section <<_modifyingfixing_fmu_content, Modifying/fixing FMU content>>).
+
+As first step of the actual co-sim initialzation, all the FMU slaves are being instantiated and their `init()` functions are called. This is followed by a collection of all exchange variables and creation of the variable mappings.
+
+Any error encountered during the initialization results in an abort of the simulator.
+
+=== Initial conditions
+
+The first task of the simulator is to get all slaves to have consistent initial values. This is already a non-trivial task and not guaranteed to succeed in all cases. The only procedure that can be employed for FMI 1 and FMI 2 slaves is to iteratively get and set output and input variables in all slaves in an iterative manner, until no changes are observed.
+
+The algorithm in _MasterSim_ is:
+
+----
+loop over all slaves:
+  - call setupExperiment() in current slave
+  - set all variables of causality INPUT or PARAMETER to their
+    default values as given in the modelDescription.xml
+  - set all parameters to the value specified in the project file (if values are assigned)
+
+for FMI 2: tell all slaves to enterInitializationMode()
+
+loop 3 iterations:
+  loop over all slaves:
+    get all outputs from current slave and store in global variable mapping
+  loop over all slaves:
+    set all input variables with values from global variable mapping
+
+for FMI 2: tell all slaves to exitInitializationMode()
+----
+
+Note, the initial calculation algorithm is actually a Gauss-Jacobi algorithm, and as such not overly stable or efficient. 
+
+[CAUTION]
+====
+If you have more than 3 slaves connected in a sequence with direct feed through of variable inputs to outputs, for example when outputs are related to inputs via algebraic relations, the 3 iterationns of the Gauss-Jacobi algorithm may not be enough to properly initialize all slaves.
+
+However, due to an unclear specification in the FMI standard, it is not required by co-simulation slaves, to update their output state whenever input changes. Most FMUs actually only update output values in a call to `doStep()`. Therefore, with the current standard it is not possible to distinguish between a direct algebraic relation between outputs and inputs *without call* to `doStep()` and *with a call* to `doStep()`.
+
+_MasterSim_ chooses to adopt the FMI 1.0 functionality, i.e. no iteration over steps, and only to sync inputs and outputs under the assumption, that outputs won't change (for most FMUs anyway), when inputs are set to different values. Under this assumption, 3 iterations are always enough.
+====
+
+=== Simulation start and end time
+
+_MasterSim_ treats simulation time in _seconds_. 
+
+TIP: If the coupled FMUs use a different time unit (i.e. years), simply use seconds in the user interface and project file and interpret the values as years.
+
+The simulation time is entered in seconds (or any other supported unit that can be converted to seconds) in the user interface and project file. During the simulation, all time entries (start and end time, and time step sizes and size limits) are first converted to seconds and then used afterwards without any further unit conversion.
+
+For example, if you specify an end time point of `1 h`, the master will run until simulation time 3600, which will then be sent as _communication interval end time_ in the last `doStep()` call. 
+
+The overall simulation time interval is passed to the slaves in the `setupExperiment()` call.
+
+If you specify a start time different from 0, the master simulator will start its first communication interval at this time (the slave needs to process the `setupExperiment()` call correctly and initialize the slave to the start time point).
 
 
 === Gauss-Jacobi ===

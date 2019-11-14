@@ -63,12 +63,13 @@ Verbosity level of 0 disables pretty much all output, verbosity level 1 is the d
 [NOTE]
 ====
 The log file verbosity is always set to 3 during initialization and reset to the default value of 1 or command line value during simulation (to avoid slowdown of the simulation due to excessive output writing).
-
 ====
 
 === Windows specific options
 
 By default, the console window (on Windows) stays open at the end of the simulation unless the `-x` command line flag is passed.
+
+
 
 == Structure and content of the working directory
 
@@ -119,9 +120,6 @@ The file has three columns, separated by a Tab character. The file is written an
 
 The meaning of the different values in the `summary.txt` are explained in section.
 
-
-
-
 === Directory `fmus`
 
 Inside this directory, the imported FMUs are extracted, each in a subdirectory with basename of the FMU (`part1.fmu` -> `part1`).
@@ -158,8 +156,17 @@ Often, non-trivial simulation slaves write their own output files, instead of pu
 
 Since a slave FMU may be instantiated several times, hard-coding output paths inside the FMU is generally a bad idea (though still current practice). Also, writing outputs into the current working directory is not too smart either, since the working directory would have to be changed by the master between calls to FMUs, and this is best avoided.
 
-Unfortunately, the FMU standard does not provide an option, to officially set such a result directory. _MasterSim_ handles this by setting the slave-specific directory path in a string parameter named *ResultsRootDir*, if the FMU declares such a parameter. If there is no value set in the project file for this parameter, then _MasterSim_ will set the path generated for the slave in the working directory. The FMU can rely on the path being created by _MasterSim_ and being writable.  
+Unfortunately, the FMU standard does not provide an option, to officially set such a result directory. _MasterSim_ handles this by setting the slave-specific directory path in a string parameter named `ResultsRootDir`, if the FMU declares such a parameter. If there is no value set in the project file for this parameter, then _MasterSim_ will set the path generated for the slave in the working directory. The FMU can rely on the path being created by _MasterSim_ and being writable.  
 Of course, as with any parameter, you can set manually a value for this parameter.
+
+
+== Return codes of _MasterSimulator_ program
+
+_MasterSimulator_ returns:
+
+[horizontal]
+0:: upon success
+1:: upon failure (anything from bad or missing FMUs, or errors during calculation, ...),  `screenlog.txt` will contain details.
 
 
 == Simulation output
