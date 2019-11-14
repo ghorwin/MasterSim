@@ -34,7 +34,7 @@ On Linux and MacOS _MasterSim_ is typically only built as 64-bit application. On
 For 32-bit FMUs use a 32-bit build, for 64-bit FMUs use a 64-Bit version. Mixed FMU platform types (32-Bit and 64-Bit) are not supported.
 ====
 
-== Design Criteria/Key Features
+== Design criteria/key features
 
 - cross-platform: Windows, MacOS, Linux
 - no dependency on externally installed libraries, all source included in release, especially no dependency on FMI support libraries (exception: standard C++, and the Qt 5 libraries); checking out source code and building it should be easy (also packaging for different platforms)
@@ -106,21 +106,9 @@ When an imported FMU changes part of its interface (e.g. input or output variabl
 
 When the variable type changes of an input/output variable, so that an invalid connection is created (or the causality changes), then the user interface may not directly show the invalid connection. However, during initialization, the _MasterSimulator_ command line program will flag that error and abort.
 
-== Master Algorithms
+== Simulation algorithm overview
 
-A _master algorithm_ is basically the mathematical procedure to advance the coupled simulation by one step forward. Such a co-simulation naster algorithm has a characteristic set of rules on how to retrieve values from one FMU, when and how these values are passed on to other FMUs, whether this procedure is repeated and the criteria for convergence of iterations.
-
-_MasterSim_ implements several standard algorithms. A detailed discussion of the different algorithms and how the choice of algorithm and parameters affect results can be found in the following publication:
-
-Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
-
-=== Basic calculation algorithm
-
-.Calculation algorithm overview
-image::calculation_overview.png[alt="Calculation overview"]
-
-
-As you can see from the figure, _MasterSim_ has the following main building blocks:
+_MasterSim_ has the following main building blocks:
 
 - initialization (reading project file, extracting FMUs, checking...)
 - initial conditions
@@ -131,7 +119,7 @@ As you can see from the figure, _MasterSim_ has the following main building bloc
 
 These building blocks are described below in more detail.
 
-=== Initialization
+== Initialization
 
 Upon start of the actual simulation (the command line program _MasterSimulator_, see section <<_command_line_arguments, Command line arguments>> for details on running the program), the working directory structure is being created and the log file writing is started.  
 
@@ -139,7 +127,7 @@ Then, the project file is read and all referenced FMUs are extracted. If CSV fil
 
 TIP: Extraction of FMU archives can be skipped with the command line option `--skip-unzip` (see section <<_modifyingfixing_fmu_content, Modifying/fixing FMU content>>).
 
-As first step of the actual co-sim initialzation, all the FMU slaves are being instantiated and their `init()` functions are called. This is followed by a collection of all exchange variables and creation of the variable mappings.
+As first step of the actual co-sim initialzation all the FMU slaves are being instantiated (dynamic libraries are loaded and symbols are imported, afterwards `fmiInstantiateSlave()` or `fmi2Instantiate()` are called for FMI 1.0 and FMI 2.0 slaves, respectively). This is followed by a collection of all exchange variables and creation of the variable mappings.
 
 Any error encountered during the initialization results in an abort of the simulator.
 
@@ -158,7 +146,7 @@ loop over all slaves:
 
 for FMI 2: tell all slaves to enterInitializationMode()
 
-loop 3 iterations:
+loop with 3 iterations:
   loop over all slaves:
     get all outputs from current slave and store in global variable mapping
   loop over all slaves:
@@ -188,29 +176,135 @@ The simulation time is entered in seconds (or any other supported unit that can 
 
 For example, if you specify an end time point of `1 h`, the master will run until simulation time 3600, which will then be sent as _communication interval end time_ in the last `doStep()` call. 
 
-The overall simulation time interval is passed to the slaves in the `setupExperiment()` call.
+The overall simulation time interval is passed to the slaves in the `setupExperiment()` call. If you specify a start time different from 0, the master simulator will start its first communication interval at this time (the slave needs to process the `setupExperiment()` call correctly and initialize the slave to the start time point).
 
-If you specify a start time different from 0, the master simulator will start its first communication interval at this time (the slave needs to process the `setupExperiment()` call correctly and initialize the slave to the start time point).
+[WARNING]
+====
+The correct handling of the start time is important for all FMUs that implement some form of balancing or integration.
+====
 
+The end time of the simulation is also passed to the FMU via the `setupExperiment()` call (the argument `stopTimeDefined` is always set to `fmiTrue` by _MasterSim_).
 
-=== Gauss-Jacobi ===
-
-=== Gauss-Seidel ===
-
-=== Newton ===
 
 == Time step adjustment
 
-This flag is needed for certain FMUs, which include a test against surpassing the end simulation time. This is in some cases related to time series parameters, that only last until exactly the simulation end time. Another problem is also, that rounding errors can add to a very small overshooting of the end time point. Nevertheless, well-behaving FMUs should handle overstepping gracefully. Yet, to avoid an FMU error and abort of the simulation, _MasterSim_ can adjust the last communcation interval's size such, that exactly the end time of the simulation is given to the FMU. If this flag is enabled, the last interval's step size may be adjusted, even though time step adjustment is generally disabled by flag *(7)*.
+Once the simulation is completed, the solver enters the time step adjustment loop. If time step adjustment is disabled via flag *adjustStepSize* (see <<_simulator_settings, Simulator settings>>), the loop content will only be executed once. For FMI 1.0 slaves, or FMI 2.0 slaves without capability for storing/restoring slave states, iteration is also not possible (actually, requesting an iterative algorithm for such slaves will trigger an error during initialzation).
 
+Within the loop, the selected _master algorithm_ tries to take a single step with the currently proposed time step size (for constant step methods, the *hStart* parameter is used). The _master algorithm_ may involve iterative evaluation of slaves (see below).
 
-== Error control and time step adjustment
+For iterative master algorithms, it may be possible that the method does not converge within the given iteration limit (see parameter *maxIterations*). 
+
+=== Time step reduction when algorithm did not converge
+
+If the algorithm did not converge within the given iteration limit, the communication  step size is reduced by factor 5:
+
+  h_new = h/5
+
+The factor 5 is selected such, that the time step size can be quickly reduced. For example, when a discontinuity is encountered (e.g. triggered through step-wise change of discrete signals) the simulator must reduce the time step very quickly to a small value, to step over the step change. 
+
+The step size is then compared with the lower communication step limit (parameter *hMin*). This is necessary to prevent the simulation to get stuck with extremely low time steps. If the step size would be reduced below the *hMin* value, the simulation **will be aborted** with an error message.
+
+In some cases, the interaction between two slaves may prevent any master algorithm to converge (even the Newton algorithm). Still, in these cases the remaining error may be insignificant and the simulation can tip-toe with small steps over the problematic time and increase steps afterwards. For such cases, you can specifiy the parameter *hFallBackLimit*, which must be larger than *hMin*. If h is reduced to a value below this _acceptable_ communication step size, the master algorithms will return succesfully after all iterations have been done. Thus, the step is treated as _converged_ and the simulation progresses to the next interval.
+
+The publication mentioned above illustrates the behavior of the simulation using these parameters.
+
+=== Error control and time step adjustment
+
+If an error test method (*ErrorControlMode*) is set, a converged step is followed by a local error check. Currently, this error check is based on the step-doubling technique and as such can only be applied if the slaves support FMI 2.0 setting/getting of state functionality.
+
+Basically, the check is done as follows:
+
+-----
+- reset slave state to begin of current communication interval
+- take two steps (with full master algorithm per step)
+- compute error criteria 1 and 2
+- reset states back to state after first master algorithm
+-----
+[NOTE]
+====
+So, the error test requires two more runs of the _master algorithm_ per communication step. For iterative master algorithms, or the Newton algorithm, the overhead for error tests can be significant.
+====
+
+The mathematical formulas and calculation details of the error check are documented in publication: 
+
+Nicolai, A.: _Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System_ (see https://bauklimatik-dresden.de/mastersim/documentation.php[MasterSim Documentation Webpage]).
+
+The error check uses the parameters `relTol` and `absTol` to determine an acceptable difference between the full and half-step (or their slopes). Depending on the local error estimate, two options exist:
+
+- the local error estimate is small enough and the time step will be enlarged,
+- the error check failed; the step size will be removed and the entire communication step will be repeated
 
 [TIP]
 ====
-If you use an adaptive step algorithm in _MasterSim_, you should set a minimim time step/fallback time step that is *larger* than your "small change step". Otherwise, MasterSim may try to resolve the dynamics of the step change by adjusting the time steps to extremely small values.
+If you use an error checking algorithm in _MasterSim_, you should set a fallback time step limit. Otherwise, _MasterSim_ may try to resolve the dynamics of the step change by adjusting the time steps to extremely small values.
 ====
 
+
+== Master algorithms
+
+A _master algorithm_ is basically the mathematical procedure to advance the coupled simulation by one step forward. Such a co-simulation master algorithm has a characteristic set of rules on how to retrieve values from one FMU, when and how these values are passed on to other FMUs, whether this procedure is repeated and the criteria for convergence of iterations.
+
+_MasterSim_ implements several standard algorithms. A detailed discussion of the different algorithms and how the choice of algorithm and parameters affect results can be found in the following publication:
+
+Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
+
+=== Gauss-Jacobi ===
+
+Basic algorithm:
+
+-----
+loop over all slaves:
+  retrieve all output values
+
+loop over all slaves:
+  set all input values
+  tell slave to take a step
+-----
+
+Gauss-Jacobi is always done without iteration (wouldn't make sense with iteration).
+
+
+=== Gauss-Seidel ===
+
+Basic algorithm:
+
+-----
+iteration loop:
+  loop over all slaves:
+    set input values for slave from global variable list
+    tell slave to take a step
+    retrieve output from current slave
+    update global variable list
+  perform convergence check
+-----
+
+=== Newton ===
+
+Basic algorithm:
+
+-----
+iteration loop:
+  in first iteration, compute Newton matrix via difference-quotient approximation
+
+  loop over all slaves:
+    set all input values
+    tell slave to take a step
+  
+  loop over all slaves:
+    retrieve all output values
+
+  solve equation system
+  compute modifications of variables
+  
+  perform convergence check
+-----
+
+
+== Output writing
+
+Outputs are written after each completed step, but only if the time since last output writing is at least as long as defined in parameter *hOutputMin*.
+
+TIP: If you really want outputs after each internal step, set *hOutputMin* to 0.
 
 
 ---
