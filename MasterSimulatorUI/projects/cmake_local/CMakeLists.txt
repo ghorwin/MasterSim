@@ -7,7 +7,6 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../src			# needed so that ui-generated header files find our own headers
 	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/BlockMod/src
-	${PROJECT_SOURCE_DIR}/../../../externals/QtPropertyBrowser/src
 	${PROJECT_SOURCE_DIR}/../../../MasterSim/src
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
@@ -100,7 +99,6 @@ endif( UNIX )
 target_link_libraries( ${PROJECT_NAME} 
 	MasterSim
 	BlockMod
-	QtPropertyBrowser
 	IBKMK
 	IBK
 	TiCPP
