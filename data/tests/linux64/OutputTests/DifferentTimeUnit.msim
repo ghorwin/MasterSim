@@ -1,0 +1,23 @@
+# Created:	Do. Nov. 14 10:02:58 2019
+# LastModified:	Do. Nov. 14 10:15:32 2019
+
+tStart                   0 a
+tEnd                     10 s
+hMax                     30 min
+hMin                     1e-05 s
+hFallBackLimit           0.001 s
+hStart                   0.1 s
+hOutputMin               0.1 s
+outputTimeUnit           min
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-05
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   no
+
+simulator 0 0 Part1 #4682b4 "../Math_003_control_loop/fmus/IBK/Part1.fmu"
+
+
