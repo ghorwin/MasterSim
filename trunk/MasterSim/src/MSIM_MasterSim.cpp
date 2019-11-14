@@ -684,6 +684,9 @@ void MasterSim::initialConditions() {
 
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message("Setting up experiment (calling initializeSlave()/setupExperiment() in slaves)\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+
+	m_t = m_project.m_tStart.value; // set start time
+
 	// enter initialization mode
 	for (unsigned int i=0; i<m_slaves.size(); ++i) {
 		AbstractSlave * slave = m_slaves[i];
