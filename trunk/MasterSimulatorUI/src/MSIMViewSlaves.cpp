@@ -14,10 +14,6 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 
-#include <qttreepropertybrowser.h>
-#include <qtvariantproperty.h>
-#include <QPW_VariantPropertyManager.h>
-
 #include <unzip.h>
 #include <tinyxml.h>
 
