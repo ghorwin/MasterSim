@@ -20,7 +20,7 @@ Project::Project() :
 	m_hMin("hMin", 1e-5, "s"),
 	m_hMax("hMax", 30, "min"),
 	m_hStart("hStart", 10, "min"),
-	m_masterMode(MM_GAUSS_JACOBI),
+	m_masterMode(MM_GAUSS_SEIDEL),
 	m_errorControlMode(EM_NONE),
 	m_adjustStepSize(false),
 	m_preventOversteppingOfEndTime(true),
