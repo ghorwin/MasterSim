@@ -363,7 +363,7 @@ void Project::checkGraphs(const std::map<IBK::Path, MASTER_SIM::ModelDescription
 	for (unsigned int i=0; i<m_graph.size(); ++i) {
 		const GraphEdge & graphEdge = m_graph[i];
 		// target socket already taken? this would be invalid
-		if (connectedInletSockets.find(graphEdge.m_outputVariableRef) != connectedInletSockets.end()) {
+		if (connectedInletSockets.find(graphEdge.m_inputVariableRef) != connectedInletSockets.end()) {
 			validEdges[i] = GEC_TargetSocketAlreadyConnected;
 			continue; // target socket
 		}
