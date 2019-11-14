@@ -133,7 +133,7 @@ You can also open the VC solution files in `build\VC14\MasterSim.sln`.
 **Note**: You have to build first the cmake to configure the zlib `zconf.h` file!
 
 
-== Linux development hassles and tricks
+== Helpful stuff related to development on Linux 
 
 Here are some notes collected when I encountered some unexpected difficulties while creating this master simulator:
 
@@ -152,7 +152,7 @@ objdump -t <shared_library> | grep fmi2
 -----
 
 
-=== Linking shared libraries with static members (that occurs in executable as well)
+=== Linking shared libraries with static members (that occurs in executables as well)
 
 **Problem:** Source of the problem: both FMU and master use IBK library, which in turn has static members/singletons (e.g. message handler). When linking FMU to exe, during cleanup at exit of main the destructor of the singleton object is called twice, causing a segfault.
 
@@ -160,8 +160,7 @@ objdump -t <shared_library> | grep fmi2
 None yet, appears to work after "duplicate so-import check" added.
 
 
-=== FMU Debugging with MasterSim
-
+=== FMU Debugging
 
 Assuming you develop the shared FMU library with Qt Creator, you can follow this procedure:
 
@@ -172,10 +171,10 @@ Assuming you develop the shared FMU library with Qt Creator, you can follow this
 
 You can now either debug and step into the FMU fmi2xxx functions, or open the source files that you used for creating the FMU and set breakpoints. Qt Creator will automatically pick that up and you can debug/step through the master and the FMUs alike.
 
-==== Example when debugging separate FMU project which is statically built on release but dynamically linked to other libs during development
+==== Example when debugging separate FMU project which is statically built in release mode, but dynamically linked to other libs during development
 
 1. The FMU is created (first with the statically linked FMU `Test.so`) and the MasterSim project is set up
-2. MasterSim is run once and the directory structure is created, the FMU is extracted and started without debugger attached.
+2. _MasterSim_ is run once and the directory structure is created, the FMU is extracted and started without debugger attached.
 3. Now in  Qt Creator the  FMU development project builds `libTest.so.2.0.1` which links to other dynamic libraries in the development directory.
 4. The FMU file is renamed to `Test.so` and copied into the extracted fmu directory, hereby overwriting the statically linked FMU
 5. The library search path to the other dynamic libraries that `libTest.so.2.0.1` links to is added to the MasterSim's project environment `LD_LIBRARY_PATH` variable
