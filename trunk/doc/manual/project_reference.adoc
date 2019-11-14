@@ -73,16 +73,20 @@ Parameters are given as numbers followed by a unit, except for counters (iterati
 Time step related options:
 
 [horizontal]
-tStart:: start time point of simulation
-tEnd:: end time of simulation, must be > *tStart*
-hMax:: maximum time step size 
-hMin:: lower limit of time step in adaptive-time-step mode, if time step is reduced below this limit, master stops
-hFallBackLimit:: for Gauss-Seidel with time step adjustment: when time step drops below this limit, non-iterating Gauss-Seidel is used (to compensate for discontinous outputs), should be > *hMin*
-hStart:: initial time step, will be use as constant step size when not in adaptive-time-step mode
-hOutputMin:: minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
-adjustStepSize:: enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP*, disablin *adjustStepSize* is an error
+tStart:: (_default=0 s_) start time point of simulation
+tEnd:: (_default=1 a_) end time of simulation, must be > *tStart*
+hMax:: (_default=30 min_) maximum time step size 
+hMin:: (_default=1e-5 s_) lower limit of time step in adaptive-time-step mode, if time step is reduced below this limit, master stops
+hFallBackLimit:: (_default=1e-3 s_) for Gauss-Seidel with time step adjustment: when time step drops below this limit, non-iterating Gauss-Seidel is used (to compensate for discontinous outputs), should be > *hMin*
+hStart:: (_default=10 min_) initial time step, will be use as constant step size when not in adaptive-time-step mode.
++
+TIP: If *hStart* is set to 0 in the project file, it will be computed to be 1/1000 of the simulation duration defined by (*tEnd - tStart*).
 
-*MasterMode* is one of:
+hOutputMin:: (_default=10 min_) minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
+outputTimeUnit:: (_default=s_) The unit to be used in for the time column (the first column) of output files
+adjustStepSize:: (_default=false_) enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP*, disablin *adjustStepSize* is an error
+
+*MasterMode* (_default=GAUSS_SEIDEL_) is one of:
 [horizontal]
 GAUSS_JACOBI:: Gauss-Jacobi algorithm (non-iterative)
 GAUSS_SEIDEL:: Gauss-Seidel algorithm (iterative or non-iterative depending on *it_max_steps*)
@@ -90,14 +94,16 @@ NEWTON:: Newton algorithm with difference-quotient approximation to Jacobi matri
 
 Iteration and convergence parameters:
 [horizontal]
-maxIterations:: max. number of iterations, if == 1 no iteration is done
-absTol:: absolute tolerance for convergence test
-relTol:: relative tolerance for convergence test
+maxIterations:: (_default=1=disabled_) max. number of iterations, if == 1 no iteration is done
+absTol:: (_default=1e-5_) absolute tolerance for convergence/error test
+relTol:: (_default=1e-6_) relative tolerance for convergence/error test
 
-*ErrorControlMode* is one of:
+*ErrorControlMode* (_default=NONE=disabled_) is one of:
 [horizontal]
 NONE:: no error checking and adjustment
-CHECK:: - only error checking, protocols time and magnitude of exceeded error limit
+CHECK:: - only error checking, protocols time and magnitude of exceeded error limit. Also works with FMI 1 (by using the data of the last two steps).
++
+WARNING: Not implemented, yet. Do not use!
 ADAPT_STEP:: implicitely enables adaptive-time-step mode and adjusts time step when error limit is exceeded
 
 
@@ -105,8 +111,8 @@ ADAPT_STEP:: implicitely enables adaptive-time-step mode and adjusts time step w
 The following settings are mostly needed for use with cross-check procedure.
 
 [horizontal]
-preventOversteppingOfEndTime:: even for constant-step FMUs, truncate the final step to hit the end time point exactly (needed for some FMUs who have strict end time checking)
-writeInternalVariables:: Also writes variables with local/internal causality (when set to *no*, only variables with causality _output_ are written)
+preventOversteppingOfEndTime:: (_default=true_) even for constant-step FMUs, truncate the final step to hit the end time point exactly (needed for some FMUs who have strict end time checking)
+writeInternalVariables:: (_default=false_) Also writes variables with local/internal causality (when set to *no*, only variables with causality _output_ are written)
 
 Depending on the selected options, certain capabilities must be supported by the FMUs, see section <<_master_algorithms, Master Algorithms>>.
 
