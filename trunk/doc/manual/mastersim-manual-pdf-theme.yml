@@ -4,7 +4,10 @@ base:
 
 toc:
   font-size: 10
-  
+
+toc-h2:
+  font-style: bold
+
 heading:
   h1-font-size: $base-font-size * 2.2
   h2-font-size: $base-font-size * 1.6
