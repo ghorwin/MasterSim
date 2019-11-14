@@ -219,6 +219,9 @@ public:
 	std::map<int,int>				m_integerVar;
 	std::map<int,std::string>		m_stringVar;
 
+	/*! Start time point as set in setupExperiment(). */
+	double							m_tStart;
+	
 	/*! Time point in [s] received by last call to fmi2SetTime(). */
 	double							m_tInput;
 
