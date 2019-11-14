@@ -11,7 +11,8 @@ The software starts with a welcome page, which basically shows a list of recentl
 image::gui_welcome_page.png[alt="Welcome page"]
 
 [horizontal]
-*(1)*:: Short description of the project . This description is taken from the project file header comment lines (see <<_project_file_format, Project file format>>).
+(1):: Thumbnail with a preview of the simulation scenario
+(2):: Short description of the project . This description is taken from the project file header comment lines (see <<_project_file_format, Project file format>>).
 
 [TIP]
 ====
@@ -84,6 +85,8 @@ Items of the view:
 (7):: Activate graphical connection mode (see discussion below). When this mode is active, you can drag a new connection from an output to inlet socket in the network.
 (8):: Print network schematics to printer or pdf file.
 (9):: This is the graphical network schematics - purely optional, but helps to understand what you are doing.
+
+TIP: If you want to rearrange several blocks at the same time, you can select multiple blocks by *Ctrl + Click* on a block. If you move one of the selected blocks now, the other selected blocks will be moved as well.
 
 === Adding slaves
 

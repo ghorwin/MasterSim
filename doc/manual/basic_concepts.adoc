@@ -248,7 +248,7 @@ _MasterSim_ implements several standard algorithms. A detailed discussion of the
 
 Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
 
-=== Gauss-Jacobi ===
+=== Gauss-Jacobi
 
 Basic algorithm:
 
@@ -261,10 +261,14 @@ loop over all slaves:
   tell slave to take a step
 -----
 
-Gauss-Jacobi is always done without iteration (wouldn't make sense with iteration).
+Gauss-Jacobi is always done without iteration. As shown in the publication (see above), it really doesn't make sense to use iteration.
 
+[NOTE]
+====
+Instead of using a communication step of 10 seconds and allow for 2 iterations of Gauss-Jacobi, it is more efficient to disable iteration (setting *maxIterations=1*) and restrict the communication step size to 5 seconds. The effort for the simulation will be exactly the same, yet the simulation will be more accurate (and more stable) with the 5 seconds communication interval.
+====
 
-=== Gauss-Seidel ===
+=== Gauss-Seidel
 
 Basic algorithm:
 
@@ -278,7 +282,23 @@ iteration loop:
   perform convergence check
 -----
 
-=== Newton ===
+==== Cycles
+
+_MasterSim_ includes a feature that reduces the calculation effort when many FMUs are involved and not all are directly coupled. The following figure shows a simulation scenario where calculation can be done in three stages.
+
+.Cycles in iterative algorithms
+image::algorithm_cycles.png[alt="Cycles in iterative algorithms"]
+
+[horizontal]
+(1):: This FMU only generates output and can be evaluated first and only once in the Gauss-Seidel algorithm.
+(2):: These two FMUs exchange values, they are in a _cycle_. If the Gauss-Seidel algorithm is executed with iteration enabled, only these two FMUs need to be updated and need to exchange values, since they do not require input from the other FMUs (except for the first one, whose output variables are already known).
+(3):: The last two FMUs are also coupled in a cycle, but only to each other. They are iterated in the last stage/cycle. Since the results of the other three FMUs are already computed and known, again only two FMUs need to be in a cycle.
+
+Restricting the number of FMUs in a cycle not only reduces overall effort, but also takes into account the stiffness of the coupling. In one cycle, FMUs may be loosely coupled, and convergence is achieved in 2 or 3 iterations. In other cycles, FMUs may be coupled in a non-linear realtion or react more sensitive to input value changes (= stiff coupling), and 10 or more iterations may be needed. This, separating the cycles can significantly reduce computational effort in a Gauss-Seidel method.
+
+Each FMU can be assigned a cycle, which are numbered (beginning with 0) and executed in the order of the cycle number (see simulator definition in section <<_simulatorslave_definitions, Simulator/Slave Definitions>>).
+
+=== Newton
 
 Basic algorithm:
 
@@ -299,6 +319,9 @@ iteration loop:
   perform convergence check
 -----
 
+Cycles are handled just the same as with Gauss-Seidel.
+
+NOTE: In the case that only a single FMU is inside a cycle, the Newton master algorithm will just evaluate this FMU once and treat the results as already converged. Of course, in this case no Newton matrix is needed and composed. However, in the (rare) case, that such an FMU connects input values to _its own outputs_ this may lead to problems, since potentially invalid FMU conditions are accepted.
 
 == Output writing
 

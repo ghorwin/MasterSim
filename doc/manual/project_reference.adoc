@@ -127,16 +127,22 @@ Each slave is defined by:
 simulator  <priority> <cycle>  <slave-name> <html-color-code> <path/to/fmu-file>
 ----
 
-The *priority* is used to select order of execution within a cycle (for Gauss-Seidel). The *cycle* indicates whether slave belongs to a cycle with other FMUs. *slave-name* must be a unique identifier for the slave (see discussion in section <<_master_algorithms, Master Algorithms>>).
+The *cycle* indicates whether slave belongs to a cycle with other FMUs. *slave-name* must be a unique identifier for the slave (see discussion in section <<_master_algorithms, Master Algorithms>>).
+
+NOTE: The *priority* is used to select order of execution within a cycle (for Gauss-Seidel). However, this feature is currently not implemented and slaves within the same cycle are evaluated in the order they are defined.
+
+The slave/simulator name is a unique identifier of the FMU instance.
 
 [IMPORTANT]
 ====
-Slave names *must not* contain spaces or dots. If a slave name contains a space or a dot, the parser of the project file will state that the simulator definition line is invalid.
+Slave names *must not* contain spaces or dots. If a slave name contains a space or a dot, the parser of the project file will state that the simulator definition line is invalid. Also, slave names are used for directory names (target directories for slave-specific output). Hence, they must not contain characters that are not allowed in file system names.
 ====
+
+
 
 The *html-color-code* is a typical html color definition, beginning with a hash character and then either 8 or 6 characters, for example: `#ff00ff00` or `#00ff00` for green. In the 8 character format, the first hex number is the alpha value (opaqueness - ff = fully opaque, 0 = fully transparent). Currently, there is no use for this value in the user interface, so the 6 character variant is the typical choice.
 
-Last argument in the line is the file path reference to the actual FMU file. The path to FMU file must be enclosed in double-quotes, if path or filename contains spaces. The path can be absolute or relative to the `msim` project file. Several slaves can be instantiated from the same FMU file (if the FMU supports this feature). In this case, several simulator lines reference the same FMU file path.
+Last argument in the line is the file path reference to the actual FMU file. The path to FMU file must be enclosed in double-quotes, if the path or filename contains spaces. The path can be absolute or relative to the `msim` project file. Several slaves can be instantiated from the same FMU file (if the FMU supports this feature). In this case, several simulator lines reference the same FMU file path.
 
 === CSV FileReader Slaves
 
@@ -205,11 +211,12 @@ Variables without given units, i.e. the [...] is missing in the column captions,
 
 [IMPORTANT]
 ====
-The variables exported from such a FileReader slave have not yet data types assigned. During the initialization, _MasterSim_ looks at the connections made to FileReader slave output variables and assigns data types to the variables based on the _connected input variable_.
+The variables exported from such a FileReader slave have not yet data types assigned. During the initialization, _MasterSim_ looks at the connections made to FileReader slave variables and assigns data types to the variables based on the _connected input variable_.
 ====
 
 During simulation, when the FileReader slave is asked to provide a value for a variable, the following rules apply.
 
+==== *Boolean*, *Integer* and *Enumeration* values
 For *Boolean*, *Integer* and *Enumeration* values no interpolation is done. Values are returned constant until the value is defined to change. Example:
 
 ----
@@ -234,19 +241,23 @@ Evaluation of these values yields:
 
 Thus, the line `3     4` could have been omitted from the file.
 
+==== Real values
+
 *Real* values are linearly interpolated. For the data example above, real values would be evaluated as follows:
 
 ----
  v(1) = 4
  v(2) = 4
- v(2.99999) = 4 <1>
+ v(2.99999) = 6.99999 <1>
  v(3) = 7
  v(4) = 6 <2>
  v(5.99999) = 4.00001
  v(6) = 4
 ----
-<1> Internally, the line `3   4` is changed into `2.9999999999     4`, thus all values requested at t < 2.9999999999 are evaluated as linearly interpolated values between v(1)=4 and v(2.9999999999) = 4.
+<1> When duplicate time points are found, the second overwrites the first, so that the line `3   4` is ignored. Hence, evaluation of values in the interval 2...3 is also done with linear interpolation.
 <2> The linear interpolation between values v(3)=7 and v(6)=4 at t=4 yields 6.
+
+TIP: If you want to emulate step functions with *Real* values, just use a very short change interval, for example `v(1) = 4; v(2.9999) = 4; v(3) = 7`. _MasterSim_ will still see the linear slope between t=2.9999 and 3, but that may be insignificant to the results.
 
 Naturally, for *string* parameters linear interpolation is not possible, thus they are handled similarly as *integer* values.
 
