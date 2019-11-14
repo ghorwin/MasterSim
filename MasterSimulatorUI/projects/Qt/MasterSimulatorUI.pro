@@ -59,7 +59,6 @@ SOURCES += \
 	../../src/MSIMSimulationMonitorWidget.cpp \
 	../../src/MSIMSlaveBlock.cpp \
 	../../src/MSIMSlaveItemDelegate.cpp \
-	../../src/MSIMSlavePropertyWidget.cpp \
 	../../src/MSIMSlaveTableWidget.cpp \
 	../../src/MSIMUIConstants.cpp \
 	../../src/MSIMUndoCommandBase.cpp \
@@ -73,7 +72,7 @@ SOURCES += \
 	../../src/MSIMViewConnections.cpp \
 	../../src/MSIMViewSimulation.cpp \
 	../../src/MSIMViewSlaves.cpp \
-	../../src/MSIMWelcomeScreen.cpp 
+	../../src/MSIMWelcomeScreen.cpp
 
 HEADERS  += \
 	../../src/MSIMAboutDialog.h \
@@ -100,7 +99,6 @@ HEADERS  += \
 	../../src/MSIMSimulationMonitorWidget.h \
 	../../src/MSIMSlaveBlock.h \
 	../../src/MSIMSlaveItemDelegate.h \
-	../../src/MSIMSlavePropertyWidget.h \
 	../../src/MSIMSlaveTableWidget.h \
 	../../src/MSIMUIConstants.h \
 	../../src/MSIMUndoCommandBase.h \
