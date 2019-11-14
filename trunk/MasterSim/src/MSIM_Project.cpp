@@ -162,11 +162,12 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				continue;
 			}
 
-			if (line.find("output") == 0) {
+			/// \todo Implement support for output filter
+			if (line.find("outputOnly") == 0) {
 				std::string outputVarString = line.substr(6);
 				IBK::trim(outputVarString);
 				if (outputVarString.empty())
-					throw IBK::Exception(IBK::FormatString("Expected format 'output <flat name>', got '%1'").arg(line), FUNC_ID);
+					throw IBK::Exception(IBK::FormatString("Expected format 'outputOnly <flat variable name>', got '%1'").arg(line), FUNC_ID);
 				m_outputFilter.insert(outputVarString);
 				continue;
 			}
@@ -192,6 +193,14 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				if (!m_hStart.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
 			} else if (keyword == "hOutputMin") {
 				if (!m_hOutputMin.set(keyword, value)) throw IBK::Exception( IBK::FormatString("Invalid format of parameter in line '%1'.").arg(line), FUNC_ID);
+			} else if (keyword == "outputTimeUnit") {
+				try {
+					m_outputTimeUnit = IBK::Unit(value);
+					double t=2;
+					IBK::UnitList::instance().convert(m_outputTimeUnit, IBK::Unit("s"),t); // test convert to seconds
+				} catch (...) {
+					throw IBK::Exception( IBK::FormatString("Invalid outputTimeUnit '%1' or cannot be converted to 's' .").arg(value), FUNC_ID);
+				}
 			}
 			else if (keyword == "adjustStepSize")
 				m_adjustStepSize = (value == "true" || value == "yes" || value == "1");
@@ -277,6 +286,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	if (!m_hFallBackLimit.empty())		writeParameter(m_hFallBackLimit, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_hStart.empty())		writeParameter(m_hStart, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
 	if (!m_hOutputMin.empty())		writeParameter(m_hOutputMin, out, KEYWORD_INDENTATION, KEYWORD_WIDTH);
+	out << std::setw(KEYWORD_WIDTH) << std::left << "outputTimeUnit" << " " << m_outputTimeUnit << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "adjustStepSize" << " " << (m_adjustStepSize ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "preventOversteppingOfEndTime" << " " << (m_preventOversteppingOfEndTime ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "absTol" << " " << m_absTol << std::endl;
