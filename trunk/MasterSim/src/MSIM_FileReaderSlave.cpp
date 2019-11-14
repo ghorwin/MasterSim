@@ -114,35 +114,23 @@ void FileReaderSlave::enterInitializationMode() {
 		{
 			m_valueSplines[j] = new IBK::LinearSpline;
 
+			// handle duplicate time points in input file
 			std::vector<double> tVec;
 			std::vector<double> yVec;
 			for (unsigned int i=0; i<m_fileReader->m_nRows; ++i) {
-				switch (vt) {
-					case FMIVariable::VT_BOOL :
-					case FMIVariable::VT_INT : 	{
-						if (tVec.empty()) {
-							tVec.push_back(timeVec.m_data[i]);
-							yVec.push_back(m_fileReader->m_values[i][j+1]);
-						}
-						else {
-							// for discrete data, we overwrite previously stored time points with new values
-							if (tVec.back() == timeVec.m_data[i]) // same time point
-								yVec.back() = m_fileReader->m_values[i][j+1]; // overwrite values
-							else {
-								tVec.push_back(timeVec.m_data[i]);
-								yVec.push_back(m_fileReader->m_values[i][j+1]);
-							}
-						}
-					} break;
-
-					case FMIVariable::VT_DOUBLE : {
+				if (tVec.empty()) {
+					tVec.push_back(timeVec.m_data[i]);
+					yVec.push_back(m_fileReader->m_values[i][j+1]);
+				}
+				else {
+					// we overwrite previously stored time points with new values
+					if (tVec.back() == timeVec.m_data[i]) // same time point
+						yVec.back() = m_fileReader->m_values[i][j+1]; // overwrite values
+					else {
 						tVec.push_back(timeVec.m_data[i]);
 						yVec.push_back(m_fileReader->m_values[i][j+1]);
-					} break;
-
-					default:; // nothing to do, already filtered out before
+					}
 				}
-
 			}
 			try {
 				m_valueSplines[j]->setValues(tVec, yVec);
