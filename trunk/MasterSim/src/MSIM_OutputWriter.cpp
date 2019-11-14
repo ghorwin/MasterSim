@@ -9,6 +9,7 @@
 #include <IBK_FormatString.h>
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
+#include <IBK_UnitList.h>
 
 #include "MSIM_AbstractSlave.h"
 #include "MSIM_FMUSlave.h"
@@ -281,7 +282,11 @@ void OutputWriter::appendOutputs(double t) {
 	}
 
 	// value outputs
-	*m_valueOutputs << t;
+
+	// perform time unit conversion
+	double tOut = t;
+	IBK::UnitList::instance().convert(IBK::Unit("s"), IBK::Unit(m_project->m_outputTimeUnit), tOut);
+	*m_valueOutputs << tOut;
 
 	// booleans
 	for (std::vector< std::pair<const AbstractSlave*, unsigned int> >::const_iterator it = m_boolOutputMapping.begin();
