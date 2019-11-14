@@ -155,13 +155,14 @@ void fmi2FreeInstance(void* c) {
 
 
 // Overrides project settings?
-fmi2Status fmi2SetupExperiment(void* c, int, double, double,
+fmi2Status fmi2SetupExperiment(void* c, int, double, double startTime,
 							   int, double)
 {
 	InstanceData * modelInstance = static_cast<InstanceData*>(c);
 	FMI_ASSERT(modelInstance != NULL);
 	modelInstance->logger(fmi2OK, "logAll", "fmi2SetupExperiment: Call of setup experiment.");
-	// transfer experiment specs to Therakles
+	// remember start time
+	modelInstance->m_tStart = startTime;
 	return fmi2OK;
 }
 
