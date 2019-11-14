@@ -1,6 +1,27 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.8.2 (14.11.2019)
+----------------------------------------
+
+It is done. 60 pages of user manual in one week! Thanks to Asciidoctor even
+with a decent layout. And, interestingly, by documenting all the features
+very neatly, quite a few bugs appeared (and where fixed right away):
+
+* Feature:              - Welcome page shows thumbnails of simulation scenarios
+* Bugfix:  [Ticket #73] - Pass start time via setupExperiment() to slaves
+* Bugfix:  [Ticket #72] - Fix unit conversion in output files
+* Bugfix:  [Ticket #71] - Block network does not remember to show model.png image from FMU as block image
+* Bugfix:  [Ticket #70] - Fix evaluation for file reader slaves and bool/​int/​enum values
+* Feature: [Ticket #69] - Add support for csv excel export flavor
+* Feature: [Ticket #67] - Write html color codes in project file in 6 digit form when alpha=ff
+* Bugfix:  [Ticket #66] - Fix header of progress.txt
+* Bugfix:  [Ticket #65] - MasterSim UI should check for valid slave names (no spaces!)
+* Bugfix:  [Ticket #62] - results (values) are written in the wrong order.
+
+The documentation is available on https://bauklimatik-dresden.de/mastersim/documentation.php.
+
+
 Changelog for Version 0.8.1 (07.11.2019)
 ----------------------------------------
 
