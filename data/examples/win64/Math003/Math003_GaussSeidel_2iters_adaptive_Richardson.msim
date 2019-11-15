@@ -1,0 +1,41 @@
+# Created:	Di. Aug. 14 17:01:42 2018
+# LastModified:	Do Nov 14 18:44:40 2019
+
+# Validation test case with 3 FMUs, where two of them are coupled in a cycle.
+# This test case variant uses iterating Gauss-Seidel with time step adjustment
+# based on Richardson-Extrapolation error test. Time step adjustment is done 
+# based on convergence failures and error test.
+#
+# Detailed documentation of the test case can be found in the publication:
+#
+# Nicolai, A.; Co-Simulations-Masteralgorithmen - Analyse und Details der 
+# Implementierung am Beispiel des Masterprogramms MASTERSIM, 2018, 
+# Qucosa, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735.
+
+
+tStart                   0 s
+tEnd                     10 s
+hMax                     0.14 s
+hMin                     1e-05 s
+hFallBackLimit           0.0001 s
+hStart                   0.14 s
+hOutputMin               1e-05 s
+outputTimeUnit           s
+adjustStepSize           yes
+preventOversteppingOfEndTime yes
+absTol                   1e-05
+relTol                   0.0001
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         STEP_DOUBLING
+maxIterations            2
+writeInternalVariables   no
+
+simulator 0 0 Part1 #447cb4 "fmus/IBK/Part1.fmu"
+simulator 1 1 Part2 #c38200 "fmus/IBK/Part2.fmu"
+simulator 2 1 Part3 #ff0000 "fmus/IBK/Part3.fmu"
+
+graph Part1.x2 Part2.x2
+graph Part1.x1 Part2.x1
+graph Part2.x3 Part3.x3
+graph Part3.x4 Part2.x4
+

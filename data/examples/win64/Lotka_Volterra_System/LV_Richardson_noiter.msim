@@ -1,0 +1,32 @@
+# Created:	Mi. Aug. 22 13:03:50 2018
+# LastModified:	Fr Nov 15 11:42:12 2019
+
+# The test case is based on the Lotka-Volterra example from
+# Tiller, M; Modelica by Example, http://book.xogeny.com.
+#
+# Basically, a predator species eats the prey species and
+# the model predicts how that impacts the population of both species.
+
+tStart                   0 a
+tEnd                     100 s
+hMax                     10 s
+hMin                     1e-08 s
+hFallBackLimit           1e-10 s
+hStart                   0.1 s
+hOutputMin               0.01 s
+outputTimeUnit           s
+adjustStepSize           yes
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-06
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         STEP_DOUBLING
+maxIterations            1
+writeInternalVariables   no
+
+simulator 0 0 Prey #ff8c00 "fmus/IBK/Prey.fmu"
+simulator 1 0 Predator #008000 "fmus/IBK/Predator.fmu"
+
+graph Predator.y Prey.y
+graph Prey.x Predator.x
+
