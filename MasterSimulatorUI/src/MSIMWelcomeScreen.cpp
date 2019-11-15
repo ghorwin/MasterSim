@@ -180,7 +180,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 				QPixmap p;
 				// check if file exists
 				if (thumbFileInfo.exists() && p.load(thumbPath)) {
-					thumbPath = "<a href=\"project:${PROJECT_FULL_PATH}\"><img src=\"" + thumbFileInfo.absoluteFilePath() + "\"></img></a>&nbsp;";
+					thumbPath = "<a href=\"example:${PROJECT_FULL_PATH}\"><img src=\"" + thumbFileInfo.absoluteFilePath() + "\"></img></a>&nbsp;";
 					thumbPath = thumbPath.replace("${PROJECT_FULL_PATH}", finfo.filePath());
 					recentProjectTable = recentProjectTable.replace("${THUMBNAILSIZE}", QString("%1").arg(p.width()));
 				}
