@@ -56,10 +56,14 @@ Source: VC14_x64\printsupport\windowsprintersupport.dll; DestDir: {app}\printsup
 ; Translation files
 Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
 
-Source: ..\..\doc\LICENSE ; DestDir: {app}\resources;
-
 ; Documentation
-;Source: ..\..\doc\manual\MasterSimulator_Manual.pdf; DestDir: {app}; DestName: MasterSimulator ${Version} Manual.pdf
+;Source: ..\..\doc\manual\MasterSim_manual.pdf; DestDir: {app}; DestName: MasterSimulator ${Version} Manual.pdf
+
+; Examples
+Source: ..\..\data\examples\win64\*; DestDir: {app}\resources\examples; Flags: recursesubdirs
+
+; Auxiliary files
+Source: ..\..\doc\LICENSE ; DestDir: {app}\resources;
 
 
 [InstallDelete]
