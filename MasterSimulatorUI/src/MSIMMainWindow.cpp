@@ -210,8 +210,14 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	if (!MSIMSettings::instance().m_initialProjectFile.isEmpty()) {
 		// try to load the project - silently
 		m_projectHandler.loadProject(this, MSIMSettings::instance().m_initialProjectFile, false);
-		if (m_projectHandler.isValid())
+		if (m_projectHandler.isValid()) {
 			saveThumbNail();
+			QString msg;
+			extractFMUsAndParseModelDesc(msg);
+			// signal modified to all views, since now the model descriptions ought to be available
+			m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
+			m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
+		}
 	}
 
 }
