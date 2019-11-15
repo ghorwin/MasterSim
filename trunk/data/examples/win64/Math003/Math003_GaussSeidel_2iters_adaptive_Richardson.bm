@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BlockMod>
+	<!--Blocks-->
+	<Blocks>
+		<Block name="Part1">
+			<Position>-32, 176</Position>
+			<Size>96, 48</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x1">
+					<Position>96, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+				<Socket name="x2">
+					<Position>96, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+		<Block name="Part2">
+			<Position>176, 176</Position>
+			<Size>96, 64</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x1">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x2">
+					<Position>0, 32</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x4">
+					<Position>0, 48</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x3">
+					<Position>96, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+		<Block name="Part3">
+			<Position>320, 176</Position>
+			<Size>96, 32</Size>
+			<!--Sockets-->
+			<Sockets>
+				<Socket name="x3">
+					<Position>0, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>true</Inlet>
+				</Socket>
+				<Socket name="x4">
+					<Position>96, 16</Position>
+					<Orientation>Horizontal</Orientation>
+					<Inlet>false</Inlet>
+				</Socket>
+			</Sockets>
+		</Block>
+	</Blocks>
+	<!--Connectors-->
+	<Connectors>
+		<Connector name="auto-named">
+			<Source>Part1.x2</Source>
+			<Target>Part2.x2</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>48</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Part1.x1</Source>
+			<Target>Part2.x1</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>48</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Part2.x3</Source>
+			<Target>Part3.x3</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>0</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>-16</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+		<Connector name="auto-named">
+			<Source>Part3.x4</Source>
+			<Target>Part2.x4</Target>
+			<!--Connector segments (between start and end lines)-->
+			<Segments>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>64</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>-304</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>-32</Offset>
+				</Segment>
+			</Segments>
+		</Connector>
+	</Connectors>
+</BlockMod>
