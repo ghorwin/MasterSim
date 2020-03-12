@@ -2,16 +2,21 @@
 
 Written in 'AsciiDoctor'
 
+See: _https://asciidoctor.org_
 
-## Install (Linux)
+## Install (Linux/Ubuntu)
 
-sudo apt install asciidoctor 
+```bash
+> sudo apt install asciidoctor 
 
-Install ruby, and then:
+# Install ruby, and then:
 
-sudo gem install asciidoctor-pdf --pre
-sudo gem install rouge
+> sudo gem install asciidoctor-pdf --pre
+> sudo gem install rouge
 
+# Install rouge syntax highlighter extension
+> sudo gem install asciidoctor-rouge
+```
 
 ## Generating Documentation
 
@@ -23,6 +28,21 @@ sudo gem install rouge
 # pdf export
 > asciidoctor-pdf MasterSim_manual.adoc
 ```
+
+PDF-Export using custom theme:
+
+```bash
+echo '*** Generating pdf ***'
+asciidoctor-pdf -a pdf-theme=mastersim-manual-pdf-theme.yml MasterSim_manual.adoc
+```
+
+PDF-Export using rouge syntax highlighter
+
+```bash
+echo '*** Generating pdf ***'
+asciidoctor-pdf -a pdf-theme=mastersim-manual-pdf-theme.yml -r ./rouge_theme.rb MasterSim_manual.adoc
+```
+
 
 ## Writing notes
 
