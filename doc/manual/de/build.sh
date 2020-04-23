@@ -7,5 +7,5 @@ asciidoctor-pdf -a pdf-theme=mastersim-manual-pdf-theme.yml -r ./rouge_theme.rb 
 
 mv MasterSim_manual.html ../MasterSim_manual_de.html
 mv MasterSim_manual.pdf ../MasterSim_manual_de.pdf
-cp images/* ../images/*
+cp images/* ../images
 
