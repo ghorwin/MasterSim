@@ -1,10 +1,11 @@
-MasterSim User Guide
-====================
+MasterSim Benutzerhandbuch
+==========================
 Andreas Nicolai <andreas.nicolai@tu-dresden.de>
 v0.8.2, Nov 2019
 :Author Initials: AN
 :toc:
 :toclevels: 3
+:toc-title: Inhaltsverzeichnis
 :icons: font
 :imagesdir: ./images
 :numbered:
