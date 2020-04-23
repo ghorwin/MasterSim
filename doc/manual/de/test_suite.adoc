@@ -1,0 +1,170 @@
+= Konzept zur Testfolge
+
+Die _MasterSim_-Quelle enthält ein Unterverzeichnis `Daten/Tests` mit einer Regressionstestfolge. Diese Tests werden genutzt, um zu prüfen, ob alle Algorithmen wie erwartet arbeiten und ob die Änderungen der  Code-Basis versehentlich etwas kaputtmachen. 
+
+_MasterSim_ durchläuft ebenso die FMU-Mehrfachprüfung. Die Dateien und Skripte, die mit diesem Test in Verbindung stehen, befinden sich im Unterverzeichnis `cross-check`.
+
+== Regressionstest
+
+=== Verzeichnisstruktur
+
+    /data/tests                     - root directory for tests
+    /data/tests/<platform>/<test>   - base directory for a test suite
+
+Die `Plattform` ist (gegenwärtig) eine von: `linux64`, `win32`,`win64` und `darwin64`
+
+Jede _Testfolge_ hat eine Reihe von Unterverzeichnissen:
+
+    fmus                 - enthält für den Test benötigte FMU-Archive
+    description          - (mathematische) Beschreibung des Test-Problems
+
+Innerhalb der _Testfolge_ können verschiedene ähnliche _Testfälle_ mit modifizierten Parametern oder angepassten Problemlösungs-Szenarien gespeichert sein. _Testfälle_ werden in der Regel als Testfolgen gruppiert, wenn sie die selben FMUs oder andere Eingangsdateien benutzen. 
+
+Für jeden _Testfall_ existiert eine _MasterSim_-Projektdatei mit der Erweiterung `msim`. Das Skript, welches die Testfälle durchführt, verarbeitet alle `msim`-Dateien, die in der Unterverzeichnisstruktur unter der aktuellen Plattform gefunden werden.
+
+Um die Überprüfung in einem Testfall zu bestehen, muss eine Reihe von Referenzergebnissen vohanden sein, die in einem Unterverzeichnis mit folgendem Namen gespeichert sind: 
+
+    <project_file_without_extension>.<compiler>_<platform>
+    
+Zum Beispiel:
+
+    FeedthroughTest.gcc_linux
+    FeedthroughTest.vc14_win64
+
+Diese Verzeichnisse sind grundsätzlich nach einer durchlaufenen Simulation umbenannte Arbeitsverzeichnisse, in denen alles außer `summary.txt` und `values.csv` beseitigt worden ist.
+
+=== Durchlauf der Tests
+
+Die Tests laufen automatisch ab nach der Errichtung mit den Aufbauskripts. Ansonsten läuft ein geeignetes Skript:
+
+- `build/cmake/run_tests_win32.bat`
+- `build/cmake/run_tests_win64.bat`
+- `build/cmake/run_tests.sh`
+
+=== Aktualisierung der Referenzergebnisse
+
+Aus dem Inneren ruft das Skript ein Testverzeichnis auf: `update_reference_results.py` mit der Verzeichnisendung als Argument.
+
+Zum Beispiel von innen:
+
+    data/tests/linux64/Math_003_control_loop
+    
+ruft auf:
+
+[source,bash]
+-----
+> ../../../../scripts/TestSuite/update_reference_results.py gcc_linux
+-----
+
+welches alle Referenzergebnisse in diesem Verzeichnis aktualisieren wird. Falls Sie die Referenzergebnisse einiger Testfolgen bearbeiten/aktualisieren wollen, führen Sie das folgende Skript aus einem der oberen Verzeichnisse durch, zum Beispiel von: `data/tests/linux64`:
+
+[source,bash]
+-----
+> ../../../scripts/TestSuite/update_reference_results_in_subdirs.py gcc_linux
+-----
+
+== Regeln für Gegenproben und die Liste der FMI Standard.org
+
+Siehe Dokumentation im Unterverzeichnis `cross-check`.
+
+== Der Weg um Test-FMUs zu generieren
+
+=== Der Gebrauch von C++ - FMUs
+
+Ein geeigneter Weg, um ein einfaches, sehr spezielles Test-FMU zu erhalten, ist der Gebrauch des https://github.com/ghorwin/FMICodeGenerator[FMI Code Generator]-Werkzeugs. Es ist ein Python-Werkzeug, mit einer grafischen Benutzeroberfläche, auf der FMU-Variablen und -Eigenschaften festgelegt werden können. Mit dieser Information erstellt der Code-Generator ein Quellcodeverzeichnis mit einem Vorlagen-Code und verbundenen Aufbauskripts - sodass es sehr einfach ist, eigene FMUs herzustellen. Siehe Dokumentation /Tutorial auf der Github-Seite.
+
+=== FMUs, die von der SimulationsX exportiert werden. 
+
+Benötigt eine passende Lizenz. Das Exportieren von FMUs aus SimX ist sehr einfach, aber für die Windows-Plattform beschränkt.
+
+=== Von OpenModelica exportierte FMUs
+
+OpenModelica kann ebenso FMUs exportieren. Hier folgen die Schritte, um so ein FMU herzustellen.
+
+==== Erstellen eines Modelica Modells
+
+Erstellen eines Modelica Modells. 
+[IMPORTANT]
+====
+Annotieren Sie Variablen, die als Ausgangsgröße genutzt werden mit dem Stichwort `output`.
+====
+
+Zum Beispiel:
+
+[source,c++]
+----
+model BouncingBall "The 'classic' bouncing ball model"
+  type Height=Real(unit="m");
+  type Velocity=Real(unit="m/s");
+  parameter Real e=0.8 "Coefficient of restitution";
+  parameter Height h0=1.0 "Initial height";
+  output Height h "Height";
+  output Velocity v(start=0.0, fixed=true) "Velocity";
+  output Integer bounceCounter(start=0);
+  output Boolean falling;
+initial equation
+  h = h0;
+equation
+  v = der(h);
+  der(v) = -9.81;
+  if v < 0 then
+    falling = true;
+  else
+    falling = false;
+  end if;
+  when h<0 then
+    reinit(v, -e*pre(v));
+    bounceCounter = pre(bounceCounter) + 1;
+  end when;
+annotation(
+    experiment(StartTime = 0, StopTime = 5, Tolerance = 1e-6, Interval = 0.01));
+end BouncingBall;
+----
+
+
+==== Variante 1: Das FMU manuell erstellen
+
+Öffnen Sie zunächst OMShell, tippen Sie dann die folgenden Befehle, um das Modell zu laden und erzeugen Sie ein Co-Simulations-FMU:
+
+[source,bash]
+----
+>> loadFile("/path/to/modelica/models/BouncingBall/BouncingBall.mo")
+>> translateModelFMU(BouncingBall, fmuType="cs")
+"/tmp/OpenModelica/BouncingBall.fmu"
+----    
+    
+Der Output lässt vermuten, dass die FMU-Datei `/tmp/OpenModelica/BouncingBall.fmu` erfolgreich erstellt wurde.
+
+Für Version 2.0 des FMI-Standard-Gebrauchs:
+
+[source,bash]
+----
+>> translateModelFMU(BouncingBall, fmuType="cs", version="2.0")
+----
+
+==== Variante 2: Skript-basierte automatische FMU-Erzeugung
+
+Erstellen Sie eine Skript-Datei (`createFMU.mos`) mit dem folgenden Inhalt:
+
+[source,c++]
+----
+loadModel(Modelica, {"3.2.1"}); getErrorString();
+loadModel(Modelica_DeviceDrivers); getErrorString();
+
+setLanguageStandard("3.3"); getErrorString();
+
+cd("./fmus");
+loadFile("../reference_Modelica/BouncingBall.mo"); getErrorString();
+
+setDebugFlags("backenddaeinfo");getErrorString();
+translateModelFMU(BouncingBall, fmuType="cs"); getErrorString();
+----
+
+Lassen Sie das Skript laufen, mittels: 
+
+[source,bash]
+----
+> omc createFMU.mos
+----
+
+---

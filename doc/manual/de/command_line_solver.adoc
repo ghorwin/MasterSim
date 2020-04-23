@@ -1,0 +1,329 @@
+= _MasterSimulator_ - Das Befehlszeilen-Programm
+
+Die gegenwärtige Simulation wird mit dem Befehlszeilen-Programm von `MasterSimulator` ausgeführt. Es wird grundsätzlich in folgenden Schritten ausgeführt:
+
+1. Es liest die msim-Projektdatei (die Netzwerkdarstellung wird ignoriert, da sie nur visuelle Informationen enthält). 
+2. Danach wird ein Arbeitsverzeichnis für den Simulations-Testfall erzeugt (der Pfad kann angepasst werden, siehe: `--working-dir`-Befehlzeilen-Option unten). 
+3. Die FUMs werden extrahiert (dies kann übersprungen werden, wenn es fertig extrahiert ist, siehe Befehlszeilen-Option `--skip-unzip` unten)
+4. Die Simulation läuft, wie in der Projekt-Datei festgelegt, ab
+
+
+.Benutzen von _MasterSim_ in einer verschriftlichten Umgebung
+***************
+Da die _MasterSim_-Projekt-Datei ein einfacher Text ist und der Auflöser durch die Befehlszeile gestartet werden kann, ist es möglich, _MasterSim_ in einer verschriftlichten Umgebung und in automatisierten Prozessen zu nutzen (z. B. für optimierte Berechnungen).
+***************
+
+
+== Befehlszeilenargumente
+
+Allgemeine Syntax für das MasterSimulator-Befehlszeilen-Werkzeug:
+
+TODO: Korrektur Original: main page?
+
+--------------
+Syntax: MasterSimulator [flags] [options] <project file>
+
+Markierungen:
+  --help            Druckt die Hilfsseite.
+  --man-page        Druckt die Hauptseite (Quellversion) des stündlichen Ausgangs.
+  --cmd-line        Druckt die Befehlszeile wie sie vom Befehlszeilen-Syntaxanalysierer verstanden wurde.
+  --options-left    Druckt alle Optionen, die dem Befehszeilen-Syntaxanalysierer unbekannt sind.
+  -v, --version     Zeigt die Versionsinformation.
+  -x, --close-on-exit  Schließt das Konsolenfenster nach dem Beenden der Simulation.
+  -t, --test-init   Startet die Initialisierung und stoppt sie direkt danach.
+  --skip-unzip      Entpackt nicht die FMUs und erwartet sie nicht entpackt im Extraktionsverzeichnis.
+
+Optionen:
+  --verbosity-level=<0..4>
+                    Level für Ausgangsdetails (0-4).
+  --working-dir=<working-directory>
+                    Arbeitsverzeichnis für den Master.
+--------------
+
+=== Arbeits- und Ausgangsverzeichnis
+
+Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad vom Projektdatei-Pfad erzeugt mit beseitigten Erweiterungen. Zum Beispiel:
+
+[source,bash]
+-------------
+# Pfad zur Projektdatei
+/simulations/myScenario.msim
+
+# Ausgänge werden hier vermerkt
+/simulations/myScenario/...
+-------------
+
+Im Bereich <<Struktur_und_Inhalt_des_Arbeitsverzeichnis, Struktur und Inhalt des Inhaltsverzeichnis>> wird der Inhalt des Arbeitsverzeichnisses erklärt.
+
+TODO: sinnvolle Übersetzung für verbosity
+
+=== Wortarten der Konsole und des Protokolldatei-Ausgangs
+MasterSimulator schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailgenauigkeit wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der durch den Master erzeugten Fehlinformationen einschränkt. 
+
+Das Niveau der verbosity auf 0 ermöglicht so ziemlich jede Ausgabe, das verbosity-Niveau auf 1 ist der Standard mit einem normalen Fortschrittsnachrichtenausgang. Nutzen Sie ein höheres verbosity-Level, wenn das Ziel die Fehlersuche ist, oder um Fehler einzugrenzen.
+[NOTE]
+====
+Die verbosity der Protokolldatei ist während der Initialisierung immer auf 3 gesetzt und während der Simulation zurückgesetzt auf den Standardwert 1 oder den Befehlszeilenwert (um eine Verlangsamung der Simulation aufgrund des exzessiven Ausgabeschreibens zu vermeiden).
+====
+
+=== Spezielle Optionen bei Windows
+
+Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen, sofern nicht die `-x`-Befehlszeilen-Markierung angegeben wurde.
+
+
+
+== Struktur und Inhalt des Arbeitsverzeichnis
+
+Im Standard wird die folgende Verzeichnisstruktur genutzt. Angenommen es gibt eine Projekt-Datei `simProject.msim`, die für die Beschreibung des Simulationsszenario 2 bereitgestellte FMUs `part1.fmu` und `part2.fmu` nutzt, welche innerhalb des Projekts jeweils als Simulations-Slaves *P1* und *P2* Bezug nehmen. Nehmen wir an, diese Dateien sind in einem Unterverzeichnis verortet:
+
+-----
+/sim_projects/pro1/simProject.msim
+/sim_projects/pro1/fmus/part1.fmu
+/sim_projects/pro1/fmus/part2.fmu
+-----
+
+Während des Betriebs des Master-Simulators wird ein Arbeitsverzeichnis erstellt. Standardmäßig entspricht der Dateipfad zu diesem Arbeitsverzeichnis dem Projekt-Dateinamen ohne weitere Anhänge.
+
+-----
+/sim_projects/pro1/simProject/             - working directory
+/sim_projects/pro1/simProject/log/         - log and statistic files
+/sim_projects/pro1/simProject/fmus/        - unzipped fmu subdirectories
+/sim_projects/pro1/simProject/fmus/part1   - unzipped part1.fmu
+/sim_projects/pro1/simProject/fmus/part2   - unzipped part2.fmu
+/sim_projects/pro1/simProject/slaves/      - output/working directory for fmu slaves
+/sim_projects/pro1/simProject/slaves/P1    - output directory for slave P1
+/sim_projects/pro1/simProject/slaves/P2    - output directory for slave P2
+/sim_projects/pro1/simProject/results/     - base directory for simulation results
+-----
+
+Der Basisname des Verzeichnis, hier `simProject` kann geändert werden, indem das Befehlszeilenargument `--working-directory` genutzt wird.
+
+=== Verzeichnis `log`
+
+TODO: verbosity level?
+
+
+Dieses Verzeichnis beinhaltet 3 Dateien:
+
+`progress.txt`:: beinhaltet den gesamten Simulations-Fortschritt
+`screenlog.txt`:: beinhaltet die Ausgabe von _MasterSim_, geschrieben im Konsolenfenster mit dem erforderlichen Umfang an Worten (während der Initialisierung wird immer eine detaillierte Ausgabe an die Log-Datei geschrieben, selbst wenn auf dem Bildschirm nichts zu schreiben notwendig ist bei einer geringen Wortanzahl)
+`summary.txt`:: nachdem die Simulation _erfolgreich_ vollendet ist, beinhaltet diese Datei eine Zusammenfassung der relevanten Lösungs- und Algorithmusstatistiken.
+
+Das Format des `progress.txt` ist recht simpel:
+
+----
+   Simtime [s] 	   Realtime [s]	 Percentage [%]
+            600	       0.000205	         0.0019
+           1200	        0.00023	         0.0038
+           1800	       0.000251	         0.0057
+           2400	       0.000271	         0.0076
+            ...             ...             ...
+----
+
+TODO: Korrektur Original (s.u.): Tab groß? 
+
+Die Datei besitzt 3 Spalten, getrennt durch ein Tabulatorzeichen. Die Datei wird bei laufender Simulation geschrieben und aktualisiert und kann von anderen Werkzeugen genutzt werden, um den Gesamtfortschritt aufzugreifen und Fortschrittsdiagramme zu erzeugen. (Geschwindigkeit/Prozentsatz etc.)
+
+Die Bedeutung der verschiedenen Werte im `summary.txt` werden im Abschnitt erklärt.
+
+TODO: Original s.o.: welcher Abschnitt?
+
+=== Verzeichnis `fmus`
+
+Innerhalb dieses Verzeichnisses werden die importierten FMUs extrahiert, jedes in ein Unterverzeichnis mit dem Basisnamen des FMU (`part1.fmu` -> `part1`).
+
+Wenn ein _MasterSim_-Projekt auf verschiedene FMUs desselben Basisnamen Bezug nimmt, welche zum Beispiel in verschiedenen Unterverzeichnissen stehen, wird es den Pfadnamen anpassen. Beispiel: 
+
+[source,python]
+------
+slave1 : /path/to/fmus/s1.fmu
+slave2 : /path/to/fmus/s1.fmu                # <1>
+slave3 : /path/other/project/fmus/s1.fmu     # <2>
+
+# _MasterSim_ erzeugt Verzeichnisse
+.../fmus/s1
+.../fmus/s1_2                                # <3> 
+------
+<1> zweite Realisierung des gleichen FMU
+<2> anderes FMU mit gleichem Basisnamen
+<3> Anhang 2 und 3 ist durch _MasterSim_ zugefügt
+
+Grundsätzlich wird jede FMU-Datei nur einmal ausgewählt.
+[TIP]
+====
+.Überspringen des FMU-Extraktions-Schritts
+MasterSim unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr nützlich ist, um fehlerhafte FMUs im `modelDescription.xml` oder fehlende Ressourcen zu reparieren. Wenn solch ein FMU auftaucht, können Sie MasterSimulater einmal durchlaufen lassen, um die FMUs ins Verzeichnis zu extrahieren, dann die schlechten Dateien im jeweiligen extrahierten Verzeichnis überarbeiten/anpassen und danach die Simulation noch einmal mit `--skip-unzip` durchlaufen lassen. _MasterSim_ wird nun die (veränderten) Dateien direkt lesen und Sie können sich selbst die Mühe des Komprimierens und Umbenennens der FMUs sparen. Ebenso können Sie die `modelDescription.xml` im Editor geöffnet lassen und durch die Editions- und Test-Lauf-Prozedur schnell wiederholen, bis alles funktioniert.
+
+Siehe außerdem Abschnitt <<_ModifikationFixierung_des_FMU_Inhalts,Modifikation/Fixierung des FMU-Inhalts>>.
+====
+
+
+=== Verzeichnis `Slaves`
+
+Oft schreiben nicht-triviale Simulations-Slaves ihre eigenen Ausgabe-Dateien, anstatt die gesamten Ausgabedaten per FMI-Ausgabevariablen zum Master zu verschieben. In Fällen in denen PDEs gelöst werden und tausende Variablen erzeugt werden, könnte dies tatsächlich nicht möglich sein.
+
+Da ein Slave-FMU mehrere Male realisiert werden kann, ist die feste Programmierung eines Ausgabepfads innerhalb des FMU im Allgemeinen keine gute Idee (obgleich gegenwärtig noch immer Praxis). Ausgaben ins gegenwärtige Arbeitsverzeichnis zu schreiben ist ebenso ungeschickt, da das Arbeitsverzeichnis zwischen den Aufrufen der FMUs eventuell durch den Master geändert werden muss - und dies wird am besten vermieden.
+
+Leider unterstützt der FMU-Standard keine Option, ein solches offizielles Ergebnis-Verzeichnis festzulegen. _MasterSim_ löst dies, indem es Slave-spezifische Verzeichnispfade in einem Reihenparameter, genannt `ResultsRootDir`, einführt, falls das FMU einen solchen Parameter angibt. Wenn keine Wertemenge in der Projekt-Datei für diesen Parameter festgelegt ist, wird _MasterSim_ den für den Slave erzeugten Pfad im Arbeitsverzeichnis fixieren. Das FMU kann auf den von _MasterSim_ kreierten Pfad gestützt und beschreibbar sein. 
+Natürlich, wie bei jedem Parameter, können Sie manuell einen Wert für diesen Parameter setzen.
+
+
+== Rückkehr-Codes des _MasterSimulator_ -Programms
+
+_MasterSimulator_ setzt zurück:
+
+[horizontal]
+0:: auf Erfolg
+1:: auf Fehler (alles von schlechten oder fehlenden FMUs, oder Fehlern während der Berechnung,...),  `screenlog.txt` wird Details beinhalten.
+
+
+== Simulationsausgabe
+
+=== Slave-Ausgabewerte
+
+_MasterSim_ kreiert zwei Ergebnisdateien innerhalb des `results`-Unterverzeichnis.
+
+`values.csv`:: Anzahl-Ausgabe aller Ausgabevariablen von allen Slaves (egal, ob sie verbunden sind oder nicht).
+`strings.csv`:: Werte aller Ausgabevariablen der Typenreihen aller Slaves.
+
+TODO: Korrektur im Original s.u.: Wo beginnt der folgende Satz?
+
+und hängt davon ab, ob _synonyme Variablen_ in der ModelDescription (siehe unten) definiert sind, die Datei `synonymous_variables.txt`.
+
+TODO: "type" lieber generell mit Modell übersetzen?
+Korrektur Original s.u. 2 mal "generates" klingt nicht gut
+
+Reihen-Ausgabe-Dateien werden nur erzeugt, wenn die Ausgabe dieser Typen erstellt wird. CSV-Dateien nutzen Tabulatorzeichen als Trennzeichen. In der ersten Spalte steht immer der Zeitpunkt, der Spaltenkopf gibt die Zeiteinheit an.
+
+Beispiel `values.csv`-Datei:
+
+----
+Time [s] 	slave1.h [-] 	slave1.v [-]
+0	1	0
+0.001	0.999995099905	-0.0098100000000001
+0.0019999999999999	0.99998038981	-0.019619999999999
+0.0030000000000001	0.999955869715	-0.029430000000002
+0.0040000000000002	0.99992153962	-0.039240000000001
+----
+
+Das Dateiformat entspricht denen der csv-Dateien, die als Datei-lese-Slaves genutzt werden, siehe Abschnitt <<_csv_filereader_slaves,CSV-FileReader-Slaves>>, mit:
+
+- durch Tabulatoren getrennte Spalten,
+- Nummern sind im englischen Nummernformat geschrieben, und 
+- eine einzelne Überschrift bestimmt die Variablen.
+
+Den FMI- Variablennamen sind die entsprechenden Slave-Namen vorangestellt. Die Einheiten sind in Klammern angegeben und für einheitslose ganzzahlige und boolesche Datentypen, wird die Einheit [-] genutzt. 
+
+==== Synonyme Variablen
+
+Einige  FMUs (d.h. solche, die von Modelica Modellen erstellt wurden) können verschiedene (interne) Variblen aufweisen, welche den selben Referenzwert teilen. Das passiert, wenn die symbolische Analyse des Modelica Modells diese Variablen als die selben erkennen konnte. In diesem Fall, schreibt MasterSim keine duplizierte Ausgabevariable (dies wäre eine Verschwendung von Festplattenkapazitäten und Simulationszeit, siehe Ticket #47), sondern erstellt eine Datei `synonymous_variables.txt` mit einer Tabelle synonymer Variablen.
+
+
+TODO: Korr.Orig. s.u.: Warum hier "fmu" klein, sonst immer in großen Lettern
+
+Die Tabelle wird als einfache Textdatei geschrieben mit durch Tabs getrennte Spalten: 
+1. fmu-Dateiname (gegenwärtig wird nur der Dateiname geschrieben - im Fall, dass der _gleiche Dateiname_ mit _unterschiedlichen Dateipfaden_ genutzt wird, muss dies geändert werden)
+2. der Name der Variablen, erscheint in der `values.csv`-Datei
+3. die synonyme Variable, die nicht in die Ausgabedatei geschrieben wird, da es ohnehin den gleichen Wert hat. 
+Ein Beispiel für eine `synonymous_variables.txt`-Datei:
+
+----
+ControlledTemperature.fmu	heatCapacitor.T	heatCapacitor.port.T
+ControlledTemperature.fmu	heatCapacitor.T	heatingResistor.T_heatPort
+ControlledTemperature.fmu	heatCapacitor.T	heatingResistor.heatPort.T
+ControlledTemperature.fmu	heatCapacitor.T	temperatureSensor.port.T
+ControlledTemperature.fmu	heatCapacitor.T	thermalConductor.port_a.T
+ControlledTemperature.fmu	heatingResistor.p.v	heatingResistor.v
+ControlledTemperature.fmu	heatingResistor.p.v	idealSwitch.n.v
+ControlledTemperature.fmu	constantVoltage.i	constantVoltage.n.i
+ControlledTemperature.fmu	constantVoltage.i	constantVoltage.p.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.n.i
+ControlledTemperature.fmu	constantVoltage.i	heatingResistor.p.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.n.i
+ControlledTemperature.fmu	constantVoltage.i	idealSwitch.p.i
+ControlledTemperature.fmu	heatingResistor.LossPower	heatingResistor.heatPort.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.port_a.Q_flow
+ControlledTemperature.fmu	fixedTemperature.port.Q_flow	thermalConductor.port_b.Q_flow
+ControlledTemperature.fmu	onOffController.reference	ramp.y
+ControlledTemperature.fmu	onOffController.u	temperatureSensor.T
+ControlledTemperature.fmu	idealSwitch.control	logicalNot.y
+ControlledTemperature.fmu	logicalNot.u	onOffController.y
+----
+
+
+=== Finale Statistik/Zusammenfassung
+
+_MasterSim_ beinhaltet interne Profilierungsfunktionen, welche die Evaluierungszeiten der verschiedenen Teile der Software überwachen. Ebenso werden Ausführungsgrafen für unterschiedliche entscheidende Funktionen gezeigt. 
+Die Statistik wird ins Konsolenfenster kopiert (für das Wortartlevel > 0) und in der Log-Datei `screenlog.txt` im folgenden Format:
+
+------
+Solver-Statistiken
+------------------------------------------------------------------------------
+Wanduhrzeit                            =   78.044 ms  
+------------------------------------------------------------------------------
+Ausgabenschreibung                             =   76.767 ms  
+Master-Algorithmus                           =    0.666 ms         324
+Annäherungsfehler                       =                      41
+Annäherung an überschrittene Wiederholungsobergrenze =                      41
+Fehlermesszeit und gezählte Fehler          =    0.214 ms          85
+------------------------------------------------------------------------------
+Teil1                               doStep =    0.101 ms        1229
+                                  getState =    0.070 ms        1116
+                                  setState =    0.020 ms         509
+Teil2                               doStep =    0.079 ms        1496
+                                  getState =    0.039 ms        1116
+                                  setState =    0.024 ms         776
+Teil3                               doStep =    0.071 ms        1496
+                                  getState =    0.038 ms        1116
+                                  setState =    0.040 ms         776
+------------------------------------------------------------------------------
+------
+
+Ebenso wird dieselbe statistische Information in die `summary.txt`-Logsdatei kopiert, in ein eher _maschinenfreundliches_ Format (mit Zeitangaben immer in *Sekunden*):
+
+TODO: Übersetzten oder lieber nicht, da es im Programm selbst auch so angezeigt werden wird?
+
+------
+WallClockTime=0.078044
+FrameworkTimeWriteOutputs=0.076767
+MasterAlgorithmSteps=324
+MasterAlgorithmTime=0.000666
+ConvergenceFails=41
+ConvergenceIterLimitExceeded=41
+ErrorTestFails=85
+ErrorTestTime=0.000214
+Slave[1]Time=0.000191
+Slave[2]Time=0.000142
+Slave[3]Time=0.000149
+------
+
+
+Wall clock time:: gesamte Simulationszeit, die nach der Initialisierung aufgebracht wurde. Die Dauer für Entpacken und Laden der geteilten Bibliothek wird nicht einbezogen (`WallClockTime`)
+
+Output writing:: Zeit, die für das Schreiben von Ausgabedateien und das Berechnen damit zusammnenhängender Werte gebraucht wurde. (`FrameworkTimeWriteOutputs`)
+
+Master-Algorithm:: Zeit, die für den eigentlichen Master-Algorithmus (`MasterAlgorithmTime`) und die Anzahl der Aufrufe des Algorithmus und die gesamten genutzten Zeitschritte aufgewendet wurde. (`MasterAlgorithmSteps`)
+
+Convergence failures:: Anzahl der Zeiten, die ein wiederholender Master-Algorithmus scheitert, sich innerhalb der erlaubten Anzahl an Wiederholungen anzunähern oder abweicht. Dies gilt einzig für sich wiederholende Master-Algorithmen. (`ConvergenceFails`)
+
+Convergence iteration limit exceeded:: Zeiten, die ein sich wiederholender Master-Algorithmus scheitert, sich innerhalb der erlaubten Anzahl an Wiederholungen anzunähern (sie sollte weniger oder gleich der Anzahl der Annäherungsfehler sein). Dies gilt einzig für sich wiederholende Master-Algorithmen. (`ConvergenceIterLimitExceeded`)
+
+Error test time and failure count:: Anzahl der Zeit, in der der Fehlertext scheitert (`ErrorTestFails`) und die insgesamt genutzte Zeit, um die Fehlertests durchzuführen, inklusive der Zeit, um den FMU-Status zurückzusetzen und für Schritte der Neubewertung. (`ErrorTestTime`). Dies gilt nur für Master-Algorithmen mit aktivierter Fehlerkontrolle (Richardson-Varianten).
+
+Die übrigen Linien zeigen Zeiten und Zählungen individuell für jeden Slave. Diese Linien zeigen die genutzte Zeit in den Funktionsaufrufen bis `doStep()`, `getState()` und `setState()` für diesen Slave und die jeweilige Aufrufzählung. Die den Status betreffenden Funktionen werden nur für sich wiederholende Master-Algorithmen genutzt, wenn die FMUs FMI-2.0-Merkmale unterstützen. Bedenken Sie, dass diese Funktionen sowohl vom Master-Algorithmus als auch vom Fehlertest aufgerufen werden (wenn möglich).
+
+*Ausgabe-Scheiben* und *Master-Algorithmus* sind die beiden Hauptkomponenten des MasterSimulator-Pogramms, sodass ihre addierten Zeiten nahe der Wanduhrzeit liegen sollten.
+
+Die dritte Spalte in der Bildschirm-Datei-Statistik beinhaltet Zähler. Der Zähler für den Master-Algorithmus ist die Anzahl der Zeit, in welcher der Master-Algorithmus einen Schritt macht. Damit ist dies die gesamte Zählung der Schritte. Neuversuche und Wiederholungen _innerhalb_ des Master-Algorithmus werden hier nicht beachtet.
+
+Der letzte Abschnitt der Statistik listet Zeiten und Zähler für individuelle FMU-Slaves und die meisten relevanten Funktionen.
+
+[TIP]
+====
+Sie sollten diese Profilierungswerte nutzen, um die Simulation abzustimmen und, im Fall einer sehr langsamen Simulation, herausfiltern, welche FMUs die meiste Zeit benötigen. Ebenso helfen sie bei der Identifikation, falls eine der schnellen Funktionen (den Status zu setzen und zu erhalten) zu viel Zeit verbraucht. 
+====
+
+---

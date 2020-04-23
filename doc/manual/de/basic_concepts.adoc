@@ -1,0 +1,353 @@
+:imagesdir: ./images
+= Einführung und Grundbegriffe
+
+_MasterSim_ ist ein Co-Simulations-Masterprogramm, dass eine FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, unter der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
+
+Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während der Laufzeit aus. Die folgende Grafik illustriert die Programmfunktion und ihren elementaren Ablauf.
+
+.Diagramm über den Datenfluss und die Dateienanwendung
+image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
+
+== Die Teile des Programms
+_MasterSim_ besteht aus zwei Teilen:
+
+a. einer grafischen Benutzeroberfläche (GUI) und
+b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeilen
+
+Das GUI macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der Grafischen Darstellung. Letzteres ist optional und nicht notwendig für die Simulation. 
+Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, ausgewiesene FMUs importiert und die Simulation umsetzt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen möglicher anderer Slaves werden dann von allen weiterverarbeitenden Werkzeugen genutzt (z. B. https://bauklimatik-dresden.de/postproc[PostProc 2]), um die Ergebnisse zu visualisieren und zu analysieren.
+
+Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<_workflows,Workflows>> beschrieben wird.
+
+== Unterstützte FMU - Varianten
+
+- FMI für die Co-Simulation in der Version 1
+- FMI für die Co-Simulation in der Version 2, inklusive der Unterstützung für abbauende/aufbauende Status
+
+Es werden keine asynchronen FMU-Varianten unterstützt.
+
+Typischerweise ist  _MasterSim_  für Linux und MacOS nur als 64-Bit-Anwendung verfügbar. Für Windows ist  _MasterSim_ auch als  32-Bit und 64-Bit-Anwendung vorhanden.
+
+[IMPORTANT]
+====
+Nutzen Sie für 32-Bit-FMUs eine 32-Bit-Version, für 64-Bit-FMUs eine mit 64 Bit. Gemischte FMU-Plattform-Typen (32 Bit und 64 Bit) werden nicht unterstützt.
+====
+
+== Konstruktionskriterien/ Schwerpunkte
+
+- Betriebssystemübergreifend: Windows, MacOS, Linux
+- keine Abhängigkeit von extern installierten Datenbanken, alle Quellen sind in der Version enthalten, insbesondere keine Abhängigkeit von FMI-unterstützenden Datenbanken (Ausnahme: Standard C++, und die Qt-5-Datenbanken); das Ausgliedern und Erstellen von Quell-Codes sollte leicht sein (ebenso das Packen für andere Plattformen) 
+- vollständige, in die _MasterSim_-Datenbank eingebettete Master-Funktionalität, nutzbar über das Kommandozeilen-Werkzeug und das Programm GUI 
+- eingebettete Nachrichtenverarbeitung, um GUI-Einbindung und Log-Datei-Support zu unterstützen, keine direkten `printf()`- oder `std::cout´ -Ausführungen 
+- unterstützt FMU-Fehlerbehebung: kann das Entpacken deaktivieren (ständig: dll/so/dylib-Dateien), der Quellzugriff erlaubt die Fehlersuche während des Ladens von gemeinsam genutzten Datenbanken und angefügten Fehlersuchprogrammen
+- High-Level- C++-Code (lesbar und wartungsfreundlich) 
+
+TODO: readable Korrektur im Original
+
+- enthält Instrumente, um Zähler und Timer für den Leistungsvergleich von Master-Algorithmen und FMU wiederherzustellen
+- der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen der typspezifischen Datenfelder im  _easy analysis in debugger_
+
+Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Problemen der Fehlerbeseitigung von Co-Simulationen wichtig sind, lesen Sie bitte das Kapitel <<_assistenzfunktionen_für_fmu_entwicklung_und_fehlerbeseitigung, Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung>>.
+
+=== Besondere Funktionen von _MasterSim_
+
+Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich ist, um FMUs zu benutzen, die ihre eigenen Ausgabedaten verfassen. Um ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis für jeden Slave zur Verfügung zu stellen, setzt _MasterSim_ den Parameter `ResultsRootDir` (normalerweise mit dem Referenzwert 42) für jeden Slave in diesem Verzeichnis. So lange ein Slave einen solchen Parameter definiert, besitzt der FMU-Code ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten. Siehe auch unter <<_verzeichnis_slaves, Verzeichnis 'Slaves'>>.
+
+== Terminologie
+
+Die folgenden Begriffe werden sowohl im Handbuch als auch in der Benennung von Klassen/Variablen genutzt:
+
+[horizontal]
+FMU:: beschreibt das FMU-Archiv inklusive der Modellbeschreibung und der gemeinsamen Datenbanken 
+Slave/Simulator:: beschreibt ein Simulationsmodell, dass durch ein FMU realisiert/erstellt wird; dabei können mehrere Slaves durch ein einziges FMU realisiert werden, falls die Fähigkeit *canBeInstantiatedOnlyOncePerProcess* richtig eingestellt ist
+Master:: beschreibt den gesamten Rahmen der Simulationskontrolle, der die generelle Verwaltungsarbeit übernimmt
+Simulationsszenario:: definiert eine Reihe von Slaves und deren Verbindungen (Datenaustausch) ebenso gut wie andere Eigenschaften, wie z.B. Start- und Endzeit, algorithmische Optionen, Output-Einstellungen; alternativ *system* genannt
+Grafiknetzwerk:: eine andere Beschreibung für die räumliche Struktur miteinander verbundener Slaves
+Masteralgorithmus:: beschreibt die Implementierung eines mathematischen Algorithmus, der die gekoppelte Simulation zeitgleich fördert; kann ein Wiederholungs-Programm enthalten
+Fehlerkontrolle:: meint eine lokale Fehlerüberprüfung (Schritt-für-Schritt), genutzt als schrittweises Korrekturschema
+Masterzeit:: der Zeitpunkt der Mastersimulation startet mit 0; die Maßeinheit ist nicht strikt definiert (es muss eine gemeinsame Festlegung zwischen FMUs geben, normalerweise in Sekunden; Ausnahme: wenn Datei-Lese-Slaves verwendet werden; siehe Abschnitt <<_csv_filereader_slaves,CSV-FileReader-Slaves>>).
+Gegenwärtige (Master-)Zeit:: die Zeit, in der der Master-Status eingeschaltet ist; ändert sich *einzig* am Ende eines erfolgreichen `doStep()`- oder  `restoreState()`- Aufrufs.
+
+== Arbeitsablauf
+
+Wie alle anderen Simulationsmodelle, beinhalten die meisten Arbeitsabläufe eine Variantenanlyse. Im Kontext der Co-Simulation werden solche Varianten häufig durch die Modifizierung von FMUs und ihrer Parameter erzeugt. _MasterSim_ enthält Funktionen, um diesen Arbeitsprozess zu optimieren.
+
+[TIP]
+====
+Viele Arbeitsabläufe beinhalten mehrfache Ausführungen von _MasterSim_ mit kleinen oder keinen Modifikationen in der Projektdatei. Manchmal ist ist es sehr komfortabel, die selbe Projektdatei zu nutzen und zu verändern, aber ein anderes Arbeitsverzeichnis (in dem Ausgänge gespeichert werden) zu bestimmen, damit das Resultat verschiedener Varianten verglichen werden kann. +
+(Siehe das `--working-dir`-Befehlszeilenargument, beschrieben in Abschnitt <<_arbeits-und_ausgangsverzeichnis, Arbeits-und Ausgangsverzeichnis>>).
+====
+
+=== Ersteinrichtung eines Simulationsszenarios
+
+Das ist die einfache Vorgehensweise:
+
+TODO: Sie oder du?
+
+. Importieren Sie alle FMUs und weisen Sie Slave-ID-Namen zu.
+. (optional) Legen Sie Parametermeterwerte für die Slaves fest.
+. (optional) Definieren Sie die grafische Darstellung der Slaves.
+. Verbinden Sie die Ausgangs- und Eingangsgrößen.
+. Bestimmen Sie die Simulationsparameter.
+. Führen Sie eine Simulation durch.
+. Prüfen Sie die Ergebnisse.
+
+=== Nur publizierte FMU-Parameter sind modifiziert
+
+Ein sehr einfacher Fall und, wenn von FMUs unterstützt, durchaus eine bewährte Methode. In _MasterSim_ müssen nur die den publizierten Parametern zugewiesenen Werte geändert werden (dies kann auch direkt in der Projekt-Datei getan werden, z. B. mittels Skript) und die Simulation kann wiederholt werden.
+
+=== FMUs ändern das interne Verhalten, aber nicht die Oberfläche
+
+Dies ist am häufigsten der Fall. Hier bleiben die Namen der Eingangs- und Ausgangsgrößen unverändert. Auch die publizierten Parameter bleiben gleich. Jedoch ändert sich das interne Verhalten der Betriebsart aufgrund der Anpassung des internen Modellverhaltens, wonach das FMU nochmals exportiert wurde. Da _MasterSim_ nur noch auf FMUs Bezug nimmt, können FMU-Dateien in solchen Fällen einfach ersetzt und der Simulator ohne weitere Anpassungen gestartet werden.
+
+=== FMUs ändern Parameter aber nicht die Ein- und Ausgangsgrößen
+
+In dieser Situation, in der ein Parameter in _MasterSim_ konfiguriert worden ist, der nicht länger existiert (oder dessen Name geändert wurde), muss die entsprechende Definition in der Projekt-Datei geändert oder von der Benutzeroberfläche entfernt werden.
+
+=== FMUs ändern die Oberfläche
+
+Wenn eine importierte FMU einen Teil ihrer Oberfläche ändert (z. B. sind Ein- oder Ausgangsgrößen modifiziert), dann wird dies in der Benutzeroberfläche durch Hervorhebung der falschen Verbindungen angezeigt.  Wenn nur der Teil einer Größe verändert wurde, editieren Sie am besten die Projekt-Datei und benennen dort die Größenbezeichnung um. Ansonsten einfach die Verbindung entfernen und eine neue schaffen.
+
+Wenn sich der Variablentyp in eine Eingangs-/Ausgangsgröße ändert, sodass eine ungültige Verbindung entsteht (oder die Kausalität geändert wird), dann zeigt die Benutzeroberfläche die ungültige Verbindung nicht unbedingt direkt an. Allerdings wird das Befehlszeilenprogramm des  _MasterSimulator_ den Fehler während der Initialisierung anzeigen und abbrechen. 
+
+== Ein Überblick über den Simulations-Algorithmus
+
+_MasterSim_ hat folgende zentrale Bausteine:
+
+- Initialisierung (Lesen der Projekt-Datei, Extraktion von FMUs, Überprüfung ...)
+- Ausgangsbedingungen
+- Korrekturschleife während der Laufzeit 
+- Master-Algorithmus (d.h. er versucht Maßnahmen zu ergreifen)
+- Fehleranalyse
+- Ausgangsschreiben nach Festlegung
+
+Diese Bausteine werden nachfolgend näher erläutert.
+
+== Initialisierung
+
+Zu Beginn der aktuellen Simulation (das Befehlszeilenprogramm _MasterSimulator_, siehe Abschnitt <<_befehlszeilen_argumente_line_arguments, Befehlszeilen-Argumente >> für Details zum Betrieb) wird die Struktur des Arbeitsverzeichnisses erzeugt und das Schreiben der Log-Datei gestartet.  
+
+Danach wird die Projekt-Datei gelesen und alle diesbezüglichen FMUs werden ausgewählt. Wenn Verweise auf CSV-Dateien auftauchen (siehe Abschnitt <<_csv_filereader_slaves, CSV-FileReader-Slaves>>), sind diese Dateien gegliedert und für Kalkulationen eingerichtet.
+
+TIP: Auszüge aus dem FMU-Archiv können mit der Befehlszeilen-Option `--skip-unzip` (siehe Abschnitt <<_modifikationfixierung_des_fmu_inhalts, Modifikation/Fixierung des FMU-Inhalts>>) übersprungen werden.
+
+TODO: library = Datenbank?
+
+Als erster Schritt der aktuellen Co-Sim-Initialisierung werden alle FMU-Slaves realisiert (dynamische Datenbanken werden geladen und Symbole importiert, danach wird `fmiInstantiateSlave()` oder `fmi2Instantiate()` aufgerufen für jeweils FMI 1.0- und FMI 2.0-Slaves). Es folgt eine Sammlung aller Austauschvariablen und das Erstellen einer variablen Kartierung.
+
+
+Jeder während der Initialisierung aufgedeckte Fehler führt zu einem Abbruch des Simulators.
+
+=== Ausgangsbedingungen
+
+Die erste Aufgabe des Simulators ist es, für alle Slaves konsistente Anfangswerte zu schaffen. Das ist eine bereits nicht unbedeutende Aufgabe und nicht in allen Fällen ist der Erfolg garantiert. Der einzige Vorgang, für den FMI-1- und FMI-2-Slaves zum Einsatz kommen können, ist der, schrittweise die Eingangs- und Ausgangsgrößen in allen Slaves zu erhalten und zu setzen, in wiederholender Weise, bis keine Änderungen mehr beobachtet werden. 
+
+TODO: sinnvolle Übersetzung "loop over" ?
+
+Der Algorithmus in _MasterSim_ ist:
+
+----
+Lassen Sie alle Slaves folgende Schritte durchlaufen:
+  - rufen Sie setupExperiment() für den aktuellen Slave auf
+  - setzen Sie alle Variablen der Kausalitäten EINGANG oder PARAMETER auf ihre normalen Werte, wie sie in bei modelDescription.xml gegeben sind
+  - setzen Sie alle Parameter auf den in der Projektdatei spezialisierten Wert (falls Werte zugewiesen worden) 
+
+für FMI 2: befehlen Sie allen Slaves: enterInitializationMode()
+
+ein Zyklus  mit drei Wiederholungen:
+  lassen Sie alle Slaves folgende Schritte durchlaufen:
+    nehmen Sie alle Ausgänge der aktuellen Slaves und speichern Sie sie in der umfassenden Variablen-Abbildung
+  lassen Sie alle SLaves folgende Schritte durchlaufen:
+    setzen Sie für alle Eingangsvariablen Werte aus der umfassenden Variablen-Abbildung ein
+
+für FMI 2: befehlen Sie allen Slaves: exitInitializationMode()
+----
+
+Beachten Sie: Der anfängliche Berechnungsalgorithmus ist derzeit ein Gauss-Jacobi-Algorithmus und als solcher nicht übermäßig stabil oder effizient. 
+
+TODO: Fehler im Original: iterations
+
+[CAUTION]
+====
+Wenn Sie mehr als 3 Slaves in einer Sequenz mit direkter Zufuhr von variablen Ein- zu Ausgängen verbunden haben, z. B. wenn die Ausgänge den Eingängen via Algebraischer Verbindungen zugeordnet sind, werden die 3 Wiederholungen des Gauss-Jacobi-Algorithmus eventuell nicht genügen, um alle Slaves korrekt zu initialisieren.
+
+Dennoch, der Anteil an einer uneindeutigen Angabe im FMI-Standard, wird von  Co-Simulations-Slaves nicht eingefordert, um deren Ausgangsstatus zu aktualisieren, wann immer sich die Zufuhr ändert. Die meisten FMUs aktualisieren ihre Ausgangswerte tatsächlich erst nach der Aufforderung `doStep()`. Daher  ist es mit dem gegenwärtigen Standard nicht möglich, zwischen den direkten mathematischen Beziehungen von Aus- und Eingängen zu unterscheiden: *without call* zu `doStep()` und *with a call* zu `doStep()`.
+
+_MasterSim_ zieht es vor, die Funktionalität von FMI 1.0 zu übernehmen (d. h. keine schrittweise Wiederholung), nur um Ein- und Ausgänge zu synchronisieren, unter der Voraussetzung, dass die Ausgänge sich nicht ändern (für die meisten FMUs sowieso), wenn die Eingänge auf andere Werte eingestellt sind. Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
+====
+
+TODO: Übersetzen von input/output sinnvoll?; communication=Datenübertragung?
+
+=== Start- und Endzeit der Simulation
+
+_MasterSim_ betrachtet die Simulationszeit in _Sekunden_. 
+
+TIP: Wenn die gekoppelten FMUs eine unterschiedliche Zeiteinheit verwenden (d. h. Jahre), benutzen Sie einfach Sekunden auf der Benutzeroberfläche und der Projektdatei und interpretieren die Werte als Jahre.
+
+Die Simulationszeit ist auf der Benutzeroberfläche und der Projektdatei in Sekunden eingetragen (oder irgend einer anderen unterstützten Einheit, die in Sekunden umgewandelt werden kann). Während der Simulation werden alle erfassten Zeiten (Start- und Endzeit und die Zeitstufengrößen und Größenbegrenzung) zuerst in Sekunden umgewandelt und danach ohne irgend eine weitere Einheitenumrechnung benutzt.
+
+Beispiel: Wenn Sie einen Endzeitpunkt auf '1 h' festlegen, wird der Master bis zur Simultionszeit '3600' laufen, welche dann als _Datenübertragungsintervall der Endzeit_ im letzten `doStep()`-Aufruf gesendet wird. 
+
+Das gesamte Simulationszeit-Intervall wird an die Slaves im `setupExperiment()`-Aufruf weitergegeben. Wenn Sie die Startzeit anders als mit 0 festlegen, wird der Master-Simulator sein erstes Mitteilungsintervall zu diesem Zeitpunkt starten (der Slave braucht dies, um den `setupExperiment()`-Aufruf korrekt zu verarbeiten und den Slave zum Startzeitpunkt zu initialisieren).
+
+[WARNING]
+====
+Der korrekte Umgang mit der Startzeit ist wichtig für alle FMUs, die eine Form der Bilanzierung oder Integration durchführen.
+====
+
+Die Endzeit der Simulation wird zum FMU auch per `setupExperiment()`-Aufruf (das Argument `stopTimeDefined` ist durch _MasterSim_ immer auf `fmiTrue` gesetzt) überführt.
+
+TODO: Übersetzung Solver sinnvoll?
+
+== Die Umstellung der Zeitschritte
+
+Irgendwann ist die Simulation abgeschlossen, der Solver gibt den Zyklus der umgestellten Zeitschritte an. Wenn die Umstellung der Zeitschritte über die Markierung *adjustStepSize* (siehe <<_simulator_settings, Simulator settings>>) gesperrt ist, wird die Wiederholung des Inhalts nur einmal ausgeführt. Für FMI-1.0-Slaves oder FMI-2.0-Slaves ohne die Fähigkeit zur Speicherung/Wiederherstellung des Slave-Status, ist die Wiederholung ebenfalls nicht möglich (tatsächlich löst das Abfragen eines Wiederholungs-Algorithmus für diese Slaves einen Fehler während der Initialisierung aus).
+
+Innerhalb des Zyklus versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße (für eine konstante Schrittmethode, wird der *hStart*-Parameter genutzt)zu machen. Der _Master-Algorithmus_ involviert eventuell eine wiederholende Auswertung der Slaves (siehe unten).
+
+Für einen sich wiederholenden Master-Algorithmus ist es vielleicht möglich, dass die Methode nicht innerhalb des gegebenen Limits konvergiert (siehe Parameter *maxIterations*). 
+
+TODO: time step übersetzen?
+
+=== Zeitschritt-Verringerung, wenn der Algorithmus nicht konvergiert
+
+Wenn der Algorithmus nicht innerhalb des vorgegebenen Wiederholungslimits konvergiert, wird die Datenübertragung der Schrittgröße um den Faktor 5 reduziert:
+
+  h_new = h/5
+
+Der Faktor 5 ist so ausgewählt, dass die Zeitschrittgröße schnell reduziert werden kann. Zum Beispiel, wenn eine Unterbrechung auftritt (z. B. ausgelöst durch eine schrittweise Änderung diskreter Signale) muss der Simulator die Zeitschritte schnell auf einen niedrigen Wert reduzieren, um die Schrittänderung zu überspringen.
+
+Die Schrittgröße ist dann vergleichbar mit den Schritten des niedrigeren Datenübertragungs-Limits (Parameter *hMin*). Dies ist notwendig, um zu verhindern, dass die Simulation in extrem langsamen Zeitschritten stecken bleibt. Wenn die Schrittgröße unter den Wert von *hMin* reduziert würde, würde bei der Simulation die Fehlermeldung **wird abgebrochen** auftreten.
+
+In manchen Fällen kann die Interaktion zwischen zwei Slaves das Konvergieren jedweder Master-Algorithmen verhindern (sogar den Newton-Algorithmus). Dennoch kann in diesen Fällen der verbleibende Fehler unerheblich sein und die Simulation kann in kleinen Schritten langsam über die problematische Zeit hinweggehen und danach die Schritte vergrößern. In diesen Fällen können Sie den Parameter *hFallBackLimit* festlegen, welcher größer sein muss als *hMin*. Wenn 'h' auf einen Wert unter diese _zulässige_ Mitteilungs-Schrittgröße reduziert ist, wird der Master-Algorithmus erfolgreich zurückkehren, nachdem alle Wiederholungen ausgeführt worden sind. Demnach wird der Schritt als _sich angenähert_ behandelt und die Simulation geht zum nächsten Intervall weiter.
+
+TODO: Fehler Original s.o. tiptoe; acceptable
+
+Die oben angeführte Publikation illustriert das Verhalten der Simulation beim Benutzen der Parameter. 
+
+=== Fehlerkontrolle und Zeitschritt-Regulierung
+
+Wenn eine Fehlertestmethode (*ErrorControlMode*) festgelegt ist, folgt einem konvergierendem Schritt eine lokale Fehlersuche. Derzeit basiert diese Fehlerprüfung auf der Schritt-Verdopplungs-Technik und kann als solche nur eingesetzt werden, wenn die Slaves FMI-2.0-Setzung/-Erhaltung der Statusfunktion unterstützen.
+
+Grundsätzlich läuft der Test folgendermaßen ab: 
+
+-----
+- Setzten Sie den Slave-Status zurück, um den Lauf des Kommunikationsintervalls zu starten.
+- Nehmen Sie zwei Schritte (mit dem vollen Master-Algorithmus pro Schritt)
+- Berechnen Sie Fehlerkriterien 1 und 2
+- Setzen Sie den Status zurück zum Status nach dem ersten Master-Algorithmus
+-----
+[NOTE]
+====
+Also, der Fehlertest benötigt zwei weitere Durchgänge des _Master-Algorithmus_ per Datenübertragung. Für wiederholende Master-Algorithmen oder den Newton-Algorithmus kann der Aufwand für den Fehlertest erheblich sein.
+====
+
+Die mathematischen Formeln und detaillierte Berechnungen des Fehlertests sind in der folgenden Publikation dokumentiert:  
+
+Nicolai, A.: _Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System_ (siehe https://bauklimatik-dresden.de/mastersim/documentation.php[MasterSim Documentation Webpage]).
+
+Die Fehlersuche nutzt die Parameter `relTol` und `absTol` um die akzeptable Differenz zwischen Voll- und Halbschritt einzugrenzen (oder deren Neigung). Abhängig von der lokalen Fehlerschätzung, existieren zwei Optionen:
+
+- die lokale Fehlerschätzung ist klein genug und der Zeitschritt wird vergrößert, 
+- die Fehlersuche scheitert; die Schrittgröße wird entfernt und die gesamte Datenübertragung wird wiederholt werden. 
+
+[TIP]
+====
+Wenn Sie einen Fehlersuche-Algorithmus in _MasterSim_ benutzen, sollten Sie ein Zeitschrittlimit für den Rückzug setzen. Andernfalls könnte _MasterSim_ versuchen, die Dynamiken der Schrittänderung zu beseitigen, indem es die Zeitschritte auf extrem niedrige Werte justiert. 
+====
+
+
+== Master-Algorithmen
+
+Ein _Master-Algorithmus_ ist grundsätzlich die mathematische Prozedur, um die gekoppelte Simulation einen Schritt voran zu bringen. Solch ein Co-Simulations-Master-Algorithmus verfügt über ein charakteristisches Set an Regeln, um Werte von einem FMU abzurufen, wann und wie diese Werte an andere FMUs überführt werden und die Kriterien des Konvergierens von Wiederholungen. 
+
+_MasterSim_ führt mehrere Standard-Algorithmen durch. Eine detaillierte Diskussion über die unterschiedlichen Algorithmen und wie die Wahl von Algorithmen und Parametern Ergebnisse beeinflusst, kann in der folgenden Publikation nachgelesen werden: 
+
+Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
+
+=== Gauss-Jacobi
+
+Basis-Algorithmus:
+
+-----
+alle Slaves sollen folgende Schritte durchlaufen:
+wiederholen aller Ausgangswerte
+  
+
+alle Slaves sollen folgende Schritte durchlaufen:
+  setzen aller Eingangswerte
+  dem Slave sagen. einen Schritt zu tun
+-----
+
+Gauss-Jacobi ist ohne Wiederholung fertig ausgeführt. Wie in der Publikation gezeigt (siehe oben), ergibt es wirklich keinen Sinn, eine Wiederholung zu nutzen. 
+
+[NOTE]
+====
+Anstatt einen Schritt zur Datenübertragung für 10 Sekunden zu nutzen und Gauss-Jacobi für 2 Wiederholungen zu nutzen, ist es effizienter Wiederholungen zu deaktivieren (festlegen von *maxIterations=1*) und die Größe der Datenübertragungsschritte auf 5 Sekunden zu begrenzen. Der Aufwand für die Simultion ist exakt der gleiche, jedoch läuft die Simulation akkurater ab (und stabiler) mit dem 5-sekündigem Datenübertragungsintervall.
+====
+
+=== Gauss-Seidel
+
+Basis-Algorithmus:
+
+-----
+Wiederholungsschleife:
+  Durchlaufstationen aller Slaves:
+    setzen der Eingangswerte für Slaves aus der globalen Werteliste
+    den Slave veranlassen, einen Schritt zu tun
+    wiederherstellen des Ausgangs aus dem gegenwärtigen Slave
+    Erneuern der globalen Variablenliste
+  eine konvergierende Prüfung durchführen
+-----
+
+==== Zyklen
+
+_MasterSim_ enthält eine Funktion, die die Rechenleistung reduziert, wenn viele FMUs involviert sind und nicht alle direkt miteinander verbunden sind. Die folgende Figur zeigt ein Simulationsszenario, in dem die Berechnung in Stufen ausgeführt werden kann.
+
+.Zyklen in sich wiederholenden Algorithmen
+image::algorithm_cycles.png[alt="Cycles in iterative algorithms"]
+
+[horizontal]
+(1):: Dieses FMU erzeugt nur Ausgänge und kann nur ein einziges Mal im Gauss-Seidel-Algorithmus untersucht werden.
+(2):: Diese zwei FMUs tauschen Werte aus, sie sind in einem _Zyklus_. Wenn der Gauss-Seidel-Algorithmus mit aktivierter Wiederholung ausgeführt wird, brauchen nur diese beiden FMUs aktualisiert werden und sie müssen Werte austauschen, denn sie erfordern keinen Eingang von anderen FMUs (außer für das Erste, dessen Ausgangsvariablen sind bereits bekannt).
+(3):: Die letzten beiden FMUs sind auch in einem Zyklus gekoppelt, aber nur miteinander. Sie werden in der letzten Phase/Zyklus wiederholt. Bis die Ergebnisse der anderen drei FMUs berechnet worden und bekannt sind, müssen wieder nur drei FMUs im Zyklus sein. 
+
+TODO: Korrektur Original: relation
+
+Die Anzahl an FMUs in einem Zyklus zu begrenzen, reduziert nicht nur den gesamten Aufwand, sondern berücksichtigt auch die Starre der Kopplung. In einem Zyklus können die FMUs nur lose miteinander verbunden sein und die Konvergenz ist mit 2 oder 3 Wiederholungen erreicht. In anderen Zyklen können die FMUs in einer nicht linearen Verbindung gekoppelt sein oder sensibler auf Änderungen der Eingangswerte reagieren (= starre Kopplung) und zehn oder mehr Wiederholungen können benötigt werden. Dieses, das Vereinzeln der Zyklen, kann die Rechenleistung bei der Gauss-Seidel signifikant reduzieren.
+
+Jedes FMU kann einem Zyklus zugewiesen sein, welcher nummeriert ist (Beginn bei 0) und in der Reihenfolge der Zyklusnummer ausgeführt wird (siehe Simulatordefinition im Abschnitt <<_Simulator-Slave-Definitionen, Simulator-/Slave- Definitionen>>).
+
+=== Newton
+
+Basis-Algorithmus:
+
+-----
+Wiederholungsschleife:
+  Berechnen Sie in der ersten Wiederholung die Newtonmatrix via Angleichung des  Differenzquotienten
+
+  Lassen sie alle Slaves Folgendes durchlaufen:
+    Legen Sie alle Eingangswerte fest
+    Befehlen Sie dem Slave, einen Schritt zu machen
+  
+  Lassen alle Slaves Folgendes durchlaufen:
+    Rufen Sie alle Ausgangswerte ab
+
+  Lösen Sie das Gleichungssystem
+  Berechnen Sie die Abweichung der Variablen
+  
+  Führen Sie einen Konvergenz-Test durch
+-----
+
+Zyklen werden genauso behandelt wie mit dem Gauss-Seidel.
+
+NOTE: Für den Fall, dass nur ein einziger FMU innerhalb des Zyklus ist, wird der Newton-Master-Algorithmus dieses FMU nur einmal auswerten und die Ergebnisse als bereits konvergiert behandeln. Natürlich wird in diesem Fall keine Newton-Matrix benötigt und verfasst. Allerdings wird es in dem (seltenen) Fall, dass ein solches FMU seine Eingangswerte mit _seinen eigenen Ausgängen_ verbindet, vielleicht zu Problemen führen, bis die potentiell ungültigen FMU-Bedingungen akzeptiert werden.
+
+== Ausgänge schreiben
+
+Ausgänge werden nach jedem vollendeten Schritt geschrieben, aber nur, wenn die Zeitspanne seit dem letzten Ausgangs-Schreiben mindestens so lang ist wie im Parameter *hOutputMin* festgelegt.
+
+TIP: Wenn Sie Ausgänge wirklich nach jedem internen Schritt haben wollen, setzten Sie *hOutputMin* auf 0.
+
+
+---
