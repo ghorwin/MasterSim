@@ -1,0 +1,255 @@
+= Informationen für Entwickler
+
+[NOTE]
+====
+Die in diesem Kapitel zur Verfügung gestellten Informationen werden eventuell in den _MasterSim Developers Guide_ verschoben.
+====
+
+== Erstellen von Bibliotheken und ausführbaren Programmen
+
+=== Erstellen durch die Befehlszeile
+
+==== Linux/MacOS
+
+[source,bash]
+-----
+cd build/cmake
+./build.sh
+-----
+
+Im Falle fehlender Abhängigkeiten (verlangt zlib) wollen Sie vielleicht die zugehörigen Entwicklungspakete installieren.
+
+==== Windows
+Es sind komfortable Skripte für die Errichtung mit Visual Studio 2015 und Qt5 (für die Benutzeroberfläche von _MasterSim_) enthalten. Andere Kompilierer, wie MinGw, arbeiten genauso gut, die Dateienpfade müssen allerdings manuell konfiguriert werden.
+
+Die Dateien sind im `build/cmake`-Verzeichnis verortet:
+
+-----
+build\cmake\build_VC.bat <1>
+build\cmake\build_VC_x64.bat <2>
+-----
+<1> for x86 builds
+<2> for x64 builds
+
+Damit die Skripte funktionieren, muss Qt am folgenden Ort installiert sein:
+
+-----
+c:\Qt\5.11.3\msvc2015 <1>
+c:\Qt\5.11.3\msvc2015_64 <2>
+-----
+<1> für Aufbauten x86 
+<2> für Aufbauten x64 
+
+und **jom.exe** findet man unter:
+
+-----
+c:\Qt\Tools\QtCreator\bin\jom.exe
+-----
+
+ `cmake` muss ebenso im Pfad vorhanden sein. Wenn es irgendwo anders installiert ist, können alternativ die Umgebungsvariablen `JOM_PATH` und `CMAKE_PREFIX_PATH` gesetzt werden (siehe Aufbau-Batch-Dateien). 
+ 
+Mit dieser Konfiguration können Sie nun entweder im 32-bit- oder 64-bit-Modus weiter bauen:
+
+[source,batch]
+-----
+cd build\cmake
+build_VC14.bat
+-----
+
+oder:
+
+[source,batch]
+-----
+cd build\cmake
+build_VC14_x64.bat
+-----
+
+Für unterschiedliche Visual-Studio-Versionen oder MinGW kopieren Sie die Batch-Datei und bearbeiten die Pfadgrößen. Eventuell wollen Sie auch diese Batch-Dateien überarbeiten, wenn sie verschiedene Installationspfade haben.
+
+=== Externe Bibliotheken
+
+Die _MasterSim_-Bibliothek und die Simulationsprojekte unterscheiden sich durch die folgenden externen/dritten Bibliotheken (außer für Qt sind alle im Quell-Code-Speicher enthalten, somit ist es nicht notwendig, diese Bibliotheken separat zu installieren):  
+
+**MasterSimulator** und **MasterSimulatorUI**
+
+- IBK-Bibliothek (von IBK, TU Dresden, Germany)
+- IBKMK-Bibliothek (von IBK, TU Dresden, Germany), Untergruppe der Mathe-Kernel-Bibliothek der IBK
+- TiCPP-Bibliothek (eine angepasste Version, angeboten von IBK, TU Dresden, Germany)
+- Minizip and zlib zum Entpacken von FMUs
+
+nur **MasterSimulatorUI**
+
+- https://www.qt.io/developers[Qt 5 Library]
+- https://github.com/ghorwin/BlockMod[BlockMod library] (von IBK, TU Dresden, Germany, untergebracht in github)
+
+Die frei verfügbare Version der Bibliotheken (mit Ausnahme von Qt) sind im Unterverzeichnis `third-party` verortet.
+
+WARNING: Die Bibliotheken in einem dritten Unterverzeichnis sind möglicherweise veraltet. Nutzen Sie bitte nur den Quell-Code im `externals`-Unterverzeichnis des Speicherortes.
+
+== Entwicklungsumgebungen und Projekt-/Sitzungsdateien 
+
+=== Qt Creator
+
+Die Entwicklung mit Qt Creator wird unterstützt und Projektdateien stehen zur Verfügung. Individuelle Projektdateien befinden sich in Unterverzeichnissen:
+
+    <library/app>/projects/Qt/<library/app>.pro
+    
+Ausführbare Programme sind verortet in: 
+
+    bin/debug        - Ausgabepfad für Entwicklungen mit dem Qt-Erschaffer
+    bin/release      - standardisierter Ausgabepfad für Cmake-Bildung
+
+=== Visuelles Studio
+
+==== CMake-erstellte VC-Projektdateien
+Die einfachste Variante, die immer funktionieren sollte, ist die CMake-erzeugte VC-Projektdatei und Problemlösung zu verwenden.
+
+Basisschritte: Öffnen Sie ein Konsolenfenster, die Installation des VC-Umgebungsaufbau und alle erforderlichen Pfade, nutzen Sie dann CMake mit dem Visual Studio Erstellungsdatei-Generator.
+
+Sie können die `build.bat`- oder `built_x64.bat`-Dateien für diesen Zweck wiederverwenden. Öffnen Sie ein Befehlszeilenfenster und ändern dies in das Verzeichnis `build/cmake`.
+
+. starten Sie entweder `build.bat` oder `built_x64.bat` und drücken Sie Ctrl+C, wenn der Aufbau startet.
+. Verlassen Sie das Unterverzeichnis und erstellen Sie ein neues Unterverzeichnis vc:
++
+[source,batch]
+-----
+> mkdir vc
+> cd vc
+-----
+
+. Öffnen Sie cmake-gui, geben Sie das Elternverzeichnis als Quellverzeichnis an und wählen Sie einen Visual Studio Erstellungsgenerator. 
+
+
+[source,batch]
+-----
+> cmake-gui ..
+-----
+
+==== Vorbereitete VC-Projektdateien
+
+Sie können ebenso die VC-Problemlösungsdatei in `build\VC14\MasterSim.sln` öffnen.
+**Note**: Sie müssen zunächst die CMake erstellen, um die Zlib `zconf.h`-Datei zu konfigurieren!
+
+
+== Hilfreiches Material bezogen auf die Entwicklung auf Linux 
+
+Hier folgen ein paar Anmerkungen, die ich gesammelt habe, als ich auf einige unerwartete Schwierigkeiten beim Erstellen dieses Master-Simulators gestoßen bin:
+
+=== Überprüfen von Symbolen in gemeinsamen Bibliotheken
+
+[source,bash]
+-----
+objdump -t <shared_library>
+-----
+    
+Um alle fmi2-Funktionen zu erhalten
+
+[source,bash]
+-----
+objdump -t <shared_library> | grep fmi2
+-----
+
+
+=== Verknüpfung gemeinsamer Bibliotheken mit statischen Teilen (die in ausführenden Programmen ebenso auftauchen)
+
+**Problem:** Ursache des Problems: Sowohl FMU als auch Master nutzen die IBK-Bibliothek, welche wiederum statistische Teile/Singletons (z. B. Message-Handler) haben. Wenn FMU mit Exe während der Reinigung am Ende der Leitung verbunden wird, wird der Destructor des Singleton-Objekts zweimal aufgerufen, was einen Teilfehler verursacht. 
+
+**Lösung:**
+Dennoch keine, es scheint zu funktionieren, nachdem die "Verdopplung der So-Import-Prüfung" hinzugefügt wurde.
+ 
+TODO: Hervorheben Eigennamen? z. B. cmake, Qt creator
+
+=== FMU von Fehlern befreien
+
+Vorausgesetzt Sie entwickeln die gemeinsame FMU-Bibliothek mit dem Qt Creator, können sie diesem Ablauf folgen:
+
+1. Erstellen Sie ihr FMU entweder mit erhöhter Fehlerreinigung oder geben Sie Fehlerreinigungssymbole frei. Sie können auch eine externe Aufbauwerkzeug-Verkettung nutzen, z. B. Cmake. 
+2. Stellen Sie ihr FMU zusammen und entpacken Sie es im FMU-Archiv (Sie müssen dies nur einmal tun); Bedenken Sie: die gemeinsame Bibliothek innerhalb des FMU muss diejenige sein, die mit einem Qt Creator erstellt wurde
+3. Erstellen Sie ihr MSIM-Test-Projekt.
+4. Im Qt Creator öffnen und aktivieren Sie das MaterSimulator-Projekt, wählen Sie das MSIM-Projekt als Befehlszeilenargument aus und starten Sie die Fehlerbereinigung. Es wird die FMUs extrahieren und zu den Funktionen der gemeinsamen Bibliothek zufügen. 
+
+Sie können jetzt entweder Fehler entfernen und zu den Funktionen von FMU fmi2xxx übergehen oder die Quelldateien öffnen, die Sie für das Erstellen des FMU genutzt haben und Programmstopps setzten. Der Qt Creator wird diese automatisch aufnehmen und Sie können Fehler bereinigen/zum Master übergehen und ebenso zu den FMUs.
+
+==== Beipiel: Während der Fehlerbereinigung eines gesonderten FMU-Projekts, welches statisch im Freigabemodus erstellt ist, aber während der Entwicklung dynamisch mit anderen Bibliotheken verbunden ist.
+1. Das FMU ist erstellt (zunächst mit  einer statisch verbundenen FMU `Test.so`) und das MasterSim-Projekt ist eingerichtet.
+2. _MasterSim_ läuft einmal und die Verzeichnisstruktur ist erstellt, das FMU ist extrahiert und wurde ohne angehängte Fehlerbeseitigung gestartet.
+3. Nun erstellt das FMU-Entwicklungsprojekt im Qt Creator `libTest.so.2.0.1`, welches eine Verbindung zu anderen dynamischen Bibliotheken im Entwicklungsverzeichnis schafft.
+4. Die FMU-Datei wird in `Test.so` umbenannt und in das extrahierte FMU-Verzeichnis kopiert, wodurch es das statisch verknüpfte FMU überschreibt.
+5. Der Suchpfad der Bibliothek zu der anderen dynamischen Bibliothek, zu welcher `libTest.so.2.0.1` führt, ist variabel zur Umgebung von MasterSim-Projekt `LD_LIBRARY_PATH` zugefügt. 
+6. `MasterSimulator` startet im Feherbereinigungs-Modus unter Nutzung der `--skip-unzip`-Befehlszeilen-Option. 
+
+
+== Innerhalb von MasterSim
+
+=== Datentypen
+
+Die Simulation mit unterschiedlichen FMU-Datentypen (v1 and v2) sollte übereinstimmen. Ebenso sind die voreingestellten Typenüberschriften die selben für beide Versionen.
+
+Die vorgesehene Plattform für diesen Master ist das Desktop-System (32bit/64bit), deshalb werden alle vom Master-Algorithmus erkannten Datentypen folgendermaßen zugeordnet:
+
+* `fmi2Boolean` (`bool` in skalierten Schnittstellenfunktionen)
+* `int`
+* `double`
+* `std::string`
+
+
+=== Verbindungsgraf und variable Zuordnung
+
+Variablen können einzig identifiziert werden von 
+
+    <slave-name>.<variable-name>
+ 
+und ein Graf kann definiert werden von:
+
+    A.x1         B.u1
+    A.d1         C.du1
+    B.x1         C.u1
+    B.x2         A.u2
+    C.x1         A.u1
+
+Die erste Spalte sind Ausgabevariablen, die zweite Spalte verbundene Eingangsvariablen. x sind wahre Typen, d vom Typ 'ganze Zahl'.
+
+Jeder Slave besitzt für jeden Datentypen einen Vektor an Ausgabewerten (bool, int, real/double, string).
+Der Master besitzt außerdem für jeden Datentypen einen Vektor für Verbindungsvariablen. 
+
+Eine Abbildung der Variablen des lokalen Slave-Speichers zum globalen Vektor und vom globalen Vektor zu den Eingängen wird durch eine Abbildungstabelle individuell für jeden Datentypen realisiert: 
+
+**Abbildung Ausgänge - wahre Typen**
+
+
+[width="100%",options="header"]
+|====================
+| Slave | VariableName | global index | local index
+|A      | x1       | 0 | 0
+|B      | x1       | 1 | 0
+|B      | x2       | 2 | 1
+|C      | x1       | 3 | 0
+|====================
+
+Der Transfer von lokaler zu globaler Datenspeicherung ist dann ein simpler Algorithmus:
+
+    loop connectedVariableIndexes:
+        copy(localArray[localIndex], globalArray[globalIndex])
+        
+Im Fall von Slave B wird das Feld connectedVariableIndexes [0, 1] sein.
+
+**Abbildung Eingänge - wahre Typen**
+
+Für Eingangsvariablen existiert eine gleichartige Abbildung. Kein Slave hat einen Eingangsvariablen-Zwischenspeicher, statt dessen sind die Variablen individuell gesetzt (siehe auch Newton-Algorithmus und die Jacobian-Generatio via DQ-Algorithmus).
+
+
+[width="100%",options="header"]
+|====================
+| Slave | VariableName | global index | local value reference
+|B      | u1       | 0 | 55
+|C      | u1       | 1 | 348432
+|A      | u2       | 2 | 122
+|A      | u1       | 3 | 321
+|====================
+
+Abbildungen von Eingang und Ausgang sind in der einzelnen Tabelle RealVariableMappings kombiniert.
+
+**Notiz**: Der Ausgang eines Slaves ist eventuell direkt mit jeder eigenen Eingangsvariable verbunden, zum Beispiel:
+
+    fmu1.var2   fmu1.var15
+
