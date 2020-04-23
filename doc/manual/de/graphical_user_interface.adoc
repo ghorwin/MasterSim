@@ -1,0 +1,261 @@
+:imagesdir: ./images
+= Grafische Benutzeroberfläche
+
+_MasterSim_ verfügt über eine einigermaßen komfortable grafische Benutzeroberfläche, um _Simulations-Szenarios_ festzulegen und anzupassen. Mit _Simulations-Szenario_ meine ich die Definition derjenigen FMUs, die einen Slave (oder Slaves) definieren und realisieren wie man Eingangs-und Ausgangsvariablen verbindet und alle Eigenschaften im Zusammenhang mit Rechenalgorithmen. Grundsätzlich alles, das gebraucht wird, um eine Co-Simulation durchzuführen.
+
+== Startseite
+
+Die Software beginnt mit einer Startseite, welche grundsätzlich eine Liste kürzlich verwendeter Projekte und einiger webbasierter Neuigkeiten enthält(diese werden von der Datei https://bauklimatik-dresden.de/downloads/mastersim/news.html bezogen, welche aktualisiert wird, sobald eine neue Veröffentlichung oder Funktion zur Verfügung steht).
+
+.Startseite mit kürzlich verwendeten Projekten und webbasierten Neuigkeiten
+image::gui_welcome_page.png[alt="Welcome page"]
+
+[horizontal]
+(1):: Miniaturansicht mit der Vorschau eines Simulations-Szenarios
+(2):: Kurze Beschreibung des Projekts. Die Beschreibung entstammt der Kommentarzeile der Projektzeilenüberschriften (siehe <<_project_file_format, Project file format>>).
+
+[TIP]
+====
+Die auf der Startseite angezeigten Miniaturansichten werden erzeugt/aktualisiert, wenn das Projekt gesichert wurde. Die Dateien sind innerhalb des Benutzerverzeichnisses platziert:
+
+- bei Windows in `%APPDATA\Roaming\MasterSim\thumbs` und
+- bei Linux/MacOS in `~/.local/share/MasterSim`
+
+und die Bilddatei ist benannt wie die Projektdatei, erweitert um den Anhang `png`.
+====
+
+
+=== Beispiele
+
+Beim Öffnen eines Beispiels von der Startseite/Beispielseite, werden Sie aufgefordert, das Projekt zunächst in einer benutzerdefinierten Stelle zu sichern (Beispiele werden im Installationsverzeichnis angegeben, welche gewöhnlich schreibgeschützt sind).
+
+== Symbolleiste und nützliche Tastenkombinationen
+
+So schnell ein Projekt hergestellt/geöffnet ist, wird eine der Projektinhaltsansichten gezeigt und eine Symbolleiste an der linken Seite des Programms angezeigt. Die Zeichen der Symbolleiste haben die folgenden Funktionen (sie werden auch beim Antippen angezeigt, wenn man mit dem Mauszeiger über den Button fährt):
+
+[horizontal]
+Programm{nbsp}Information:: Zeigt die Programminformation
+Create new:: Erzeugt ein neues Projekt (Kürzel *Ctrl + N*)
+Open project:: Öffnet eine `*.msim`-Projektdatei (Kürzel *Ctrl + O*)
+Save project:: Sichert das aktuelle Projekt (Kürzel *Ctrl + S*) (sichert außerdem die Netzwerkpräsentation)
+Open PostProc:: Öffnet das Nachbearbeitungswerkzeug, angegeben im Einstellungsdialog. Obwohl ich empfelen würde https://bauklimatik-dresden.de/postproc[PostProc 2] zu nutzen. Sie können hier jede andere Nachbearbeitungs-Software starten oder sogar ein automatisches Analyseskript. Setzen Sie einfach die entsprechende Kommentarzeile in den bevorzugten Dialog.
+FMU Analysis:: _MasterSim_ kann alle referenzierten FMUs entpacken und deren Modellbeschreibungs-Dateien lesen. Es aktualisiert außerdem die grafischen Schemata und Verbindungsansichten, wenn die FMU-Oberflächen sich geändert haben. Ebenso wird die Eigenschaftentabelle auf den neuesten Stand gebracht. Nutzen Sie diese Funktion, wenn Sie ein FMU im Dateiensystem aktualisiert haben und diese Änderungen in der _MasterSim_-Benutzeroberfläche reflektieren wollen (alternativ laden sie das Projekt einfach neu).
+
+TODO: Korr.Orig. s.o. 'thos'
+
+Slave definition view:: Wechselt zum <<_slaves_definition_view,Slaves definition view>>. Hier definieren Sie, welche FMUs wichtig sind und weisen Slaves Parameterwerte zu. Außerdem können Sie eine grafische Darstellung des Netzwerkes kreieren. 
+Connection view:: Wechselt zum  <<_connection_view,Connection view>>. Hier können Sie die Verbindungen zwischen den Slaves verwalten und spezielle Attribute (Transformationen) zwischen den Verbindungen zuweisen.
+Simulation settings view:: Wechselt zum <<_simulation_settings_view,Simulation settings view>>. Alle Simulationsparameter und numerischen Algorithmusoptionen sind hier spezialisiert. Ebenso startet die tatsächliche Simulation von dieser Ansicht.
+Undo/Redo:: Die nächsten zwei Buttons steuern die Funktionen rückgängig oder noch einmal machen der Benutzeroberfläche. Alle im Projekt gemachten Änderungen können zurückgenommen und noch einmal gemacht (Kürzel sind *Ctrl + Z* für rückgängig machen und *Ctrl + Shift + Z* für erneut tun).
+Language switch:: Die nächsten Buttons öffnen ein Kontextmenü mit einer Sprachauswahl. Sie müssen die Anwendung neu starten, um die neue Sprachwahl zu aktivieren.
+Quit:: Schließt die Software. Wenn das Projekt verändert worden ist, wird der Benutzer gefragt, ob er die Änderungen speichern oder verwerfen möchte.
+
+=== Nützliche Kürzel
+
+Hier ist eine Liste der nützlichen programmweiten Tastaturkürzel:
+
+.Programmweite Tastenkombinationen
+[width="100%",cols="20%,40%,40%",options="header"]
+|====================
+| Windows/Linux | MacOS | Command
+|*Ctrl + N*| *⌘ + N* | erstellt ein neues Projekt
+|*Ctrl + O*| *⌘ + O* | lädt ein Projekt
+|*Ctrl + S*| *⌘ + S* | speichert ein Projekt
+|*Ctrl + Shift + S*| *⌘ + Shift + S* | speichert das Projekt mit einem neuen Dateinamen
+|*Ctrl + Z*| *⌘ + Z* | rückgängig machen
+|*Ctrl + Shift + Z* |*⌘ + Shift + Z* |  erneut versuchen
+|*F2* | *F2* | öffnet die Projektdatei im Texteditor
+|*F9* | *F9* | startet die Simulation (kann von jeder Ansicht genutzt werden, keine Notwendigkeit zunächst zur Ansicht der Simulationsumgebung zu wechseln!)
+|  | *⌘ + .* | Öffnet den Präferenzen-Dialog
+|====================
+
+== Die definierte Ansicht von Slaves
+
+Der Eingang der Simulations-Szenarien ist in drei Ansichten aufgeteilt. Das Erstellen einer Simulation startet mit dem Importieren von Slaves. Somit ist die erste Ansicht (und die wichtigste), die für Slaves festgelegte. 
+
+.Die festgelegte Slave-Ansicht zeigt eine Liste importierter FMUs, zugewiesene Slave-ID-Namen und eine optionale grafische Darstellung.
+image::gui_slave_view.png[alt="Slave view"]
+
+Elemente der Ansicht:
+[horizontal]
+(1):: Fügt einen neuen Slave durch das Auswählen einer FMU-Datei (`*.fmu`) oder eines Datei-lese-Slaves zu (`csv` or `tsv` file, siehe Abschnitt <<_csv_filereader_slaves,CSV FileReader Slaves>>)
+(2):: Entfernt die gegenwärtig ausgwählten Slaves (und alle zu ihm gemachten Verbindungen)
+(3):: Durch Doppelklicken wird die Farbe des Slaves geändert (die Farbe wird genutzt, um den Slave in der Verbindungsansicht identifizieren zu können)
+(4):: Der ID-Name des Slaves. Standardmäßig weist _MasterSim_ den Basisinamen des FMU-Datei-Pfades zu. Durch Doppelklicken dieser Zelle kann dies geändert werden. Beachten Sie: Slave-ID-namen müssen innerhalb des Simulations-Szenarios einzigartig sein.
+(5):: Pfad zu einer FMU-Datei, entweder der absolute Pfad oder relativ zur aktuellen _MasterSim_ -Projekt-Datei, abhängig vom Kontrollkästchen _"Show FMU paths relative to project file"_. Außerdem muss der Projektname gespeichert worden sein, bevor relative Pfade angezeigt werden können.
+(6):: Definiert, in welchem Zyklus das FMU berechnet werden soll (im Standard sind alle Slaves im Zyklus 0 und damit alle als gekoppelt angenommen calculated. Siehe Beschreibung in <<_master_algorithmus,Master- Algorithmus>>.
+(7):: Aktivieren Sie den grafischen Verbindungsmodus (siehe Diskussion unten). Wenn dieser Modus aktiv ist, können Sie eine neue Verbindung von einem Ausgang zur Eingangsbuchse im Netzwerk ziehen. 
+(8):: Kopiert Netzwerkschemata für den Drucker oder als PDF-Datei.
+(9):: Dies ist ein grafisches Netzwerkschema - rein optional, aber es hilft, zu verstehen, was Sie tun. 
+
+TIP: Falls Sie mehrere Blöcke gleichzeitig umgestalten wollen, können sie viele Blöcke mittels *Ctrl + Click* am Stück auswählen. Wenn Sie einen der Blöcke verschieben, werden sich die anderen ausgewählten Blöcke ebenso bewegen.
+
+=== Slaves hinzufügen
+
+Neue Slaves werden zugefügt durch das Auswählen von `fmu`- oder  `csv`- oder `tsv`-Dateien. _MasterSim_ nutzt automatisch den Basisnamen der ausgewählten Datei als ID-Namen für den Slave. Falls bereits ein solcher ID-Name existiert, fügt _MasterSim_ eine Nummer zum Basisnamen hinzu. In jedem Fall müssen die Slave-ID-Namen einzigartig innerhalb des Projekts sein. 
+
+TIP: Sie können das selbe FMU mehrere Male importieren, es sei denn das FMU hat die markierte Fähigkeit *canBeInstantiatedOnlyOncePerProcess* auf _false_ gesetzt. In diesem Fall werden die Slaves unterschiedliche ID-Namen haben, trotzdem sie zur selben FMU-Datei referenziert werden. Parameter und das visuelle Auftreten können für einen Slave der selben FMU unterschiedlich gesetzt sein. 
+
+=== Eigenschaften/Parameterwerte der Slaves
+
+Unterhalb der Tabelle mit den wichtigen Slaves ist eine Liste der von den FMUs publizierten Parameter. Die Liste ist bestimmt für den  _gegenwärtig ausgewählten_ Slave. Ein Simulations-Slave kann in der Slave-Tabelle oder durch Anklicken eines Blocks in der Netzwerkansicht ausgewählt werden. 
+
+.Tabelle mit Slave-spezifischen Parameterwerten
+image::gui_slave_view_properties.png[alt="Slave parameter table"]
+
+[horizontal]
+(1):: Schwarze und fette Schriftzeichen geben an, dass dieser Parameter modifiziert oder auf einen bestimmten Wert gesetzt worden ist. Grauer, kursiver Text zeigt einen standardmäßigen, unveränderten Wert.
+(2):: Fährt man mit der Maus über einen Parameterwert, zeigt sich ein Werkzeughinweis mit den Standardparametern. Dies kann genutzt werden, um den Standardwert zu sehen, für den Fall, dass ein Parameter geändert worden ist. 
+(3):: Parameter, die in schwarzer Fettschrift geschrieben sind, wurden von _MasterSim_ festgelegt (während der Initialisierung).
+
+Parameter können durch *Doppeklicken* der Wertezelle editiert werden und einen Wert eingeben. Das Bereinigen des Inhalts der Zelle setzt die Parameter auf ihre standardmäßigen Werte zurück. 
+
+=== Netzwerkansicht
+
+Die Netzwerkansicht *(9)* zeigt ein simples Schema aller FMU-Slaves und ihrer Verbindungen.  Diese Netzwerkansicht ist optional und wird für die Simulation nicht wirklich gebraucht. Dennoch ist die visuelle Darstellung des Simulations-Szenarios wichtig für die Kommunikation.
+
+TIP: Sie können in die Netzwerkansicht heraus- und hineinzoomen, indem Sie mit den Scroll-Knopf der Maus nutzen. Es wird zu der Stelle gezoomt, an der sich der Mauszeiger befindet.
+
+Das Netzwerk zeigt *_Blöcke_* (angepasst an die Simulatoren/Slaves) und in jedem Block einen weiteren *_Sockel_*. Sockel zeigen die Eingangs-/Ausgangsvariablen eines jeden Simuations-Slaves an. Die Blöcke werden in unterschiedlichen Farben angezeigt, die individuellen <<block_states,block states>> anzeigend.
+
+==== Verbindungen in der Netzwerkansicht herstellen
+
+Sie können eine neue Verbindung zwischen Ein- und Ausgängen von Slaves herstellen, indem Sie zunächst das Netzwerk in den  _connection mode_ versetzen durch das Drücken des Buttons *(7)*. Wenn der Verbindungsmodus hergestellt ist, wandelt sich der Zeiger innerhalb des Netzwerkansicht-Fensters zu einem Kreuz. Sie können die Maus dann über einen Ausgangssockel bewegen (Triangel). _Drücken und halten_ Sie den Maus-Button und zeigen Sie die Verbindung zu einem _freien_ Eingangssockel (leerer Halbkreis). Wenn die Verbindung einmal hergestellt worden ist, wird der Verbindungsmodus wieder ausgeschaltet und die Blöcke und Verbindungen können bewegt werden. 
+
+TIP: Sie können den _Verbindungsmodus_ verlassen, indem Sie den Rechtsklick in der Netzwerkansicht drücken. 
+
+Verbindungen zwischen Slaves können bequemer festgelegt werden in der <<_connection_view,Connection view>> (welche ebenso effizienter ist, wenn mehr Verbindungen hergestellt werden, vergleichbar zum manuellen Ziehen der Verbindung mit der Maus).
+
+==== Blockstatus
+
+Da _MasterSim_ nur auf FMUs Bezug nimmt, wird deren eigentlicher Inhalt  their actual content (z. B. Anschlusseigenschaften von `modelDescription.xml`)nur ersichtlich, wenn sie importiert worden. Der FMU-Import und der Analyseschritt werden automatisch vorgenommen, wenn ein Projekt geöffnet ist und ein neuer FMU-Slave hinzugefügt wird.
+
+Beim Importieren des FMU versucht die Benutzeroberfläche das FMU-Archiv zu entpacken und dessen Inhalt zu analysieren. Wenn die `modelDescription.xml`-Datei korrekt gelesen werden kann, wird _MasterSim_ anbieten den Block-Editor zu öffnen. Innerhalb des Editors können Sie grundlegende Geometrie des Blocks (SLave-Darstellung) und die Gestaltung der Sockel (die Position der Eingangs-/Ausgangsvariablen). Sie können die Aufforderung ignorieren und die visuelle FMU-Darstellung verlassen ohne darstellerische Festlegungen. Grundsätzlich kann ein FMU drei Status haben, die in der UI unterschiedlich visualisiert sind:
+
+.Unterschiedlicher Status von Blöcken und deren visuelles Erscheinen
+image::bm_block_states.png[alt="Block states"]
+
+[horizontal]
+(1):: Die entsprechende `fmu`-Datei existiert nicht oder kann nicht gelesen werden (kein Pack-Archiv, kann nicht extrahiert werden, beinhaltet keine `modelDescription.xml`-Datei oder keine gültige Datei,...viele Dinge können hier schief gehen)
+(2):: Die Modellbeschreibung wurde für diesen Slave erfolgreich analysiert, aber die Blockdefinition stimmt nicht mit dem Anschluss überein (bis jetzt). Typischerweise hat die Definition eines zugehörigen Blocks noch keine Sockel definiert oder gestaltet, wenn ein FMU zum ersten Mal importiert wird. Es wird dann eine einfache rote Box angezeigt. Sie können diese Box  *doppelt anklicken*, um den Block-Editor zu öffnen.
+(3):: Der Block ist festgelegt worden und die Sockel passen zu diesem und werden durch die Modellbeschreibung angezeigt (Name und Eingangs-/Ausgangstypen).
+
+
+=== Block-Editor
+
+Der Block-Editor erlaubt Ihnen, die grundlegende, rechteckige Gestalt Ihres FMU festzulegen und die Sockel zu gestalten. Der Block-Editor wird entweder direkt nach dem Import eines FMU geöffnet oder indem Sie auf einen Block in der Netzwerkansicht *doppelklicken*.
+
+.Editor für die Blockgeometrie und die Gestaltung des Sockels
+image::bm_block_editor.png[alt="Block Editor"]
+
+[horizontal]
+(1):: Slave-ID-Name
+(2):: Zeigt die Anzahl der veröffentlichten Eingangs- und Ausgangsvariablen
+(3):: Wenn es getestet wird, wird das FMU-Archiv nach der Image-Datei `model.png` durchsucht (die sollte neben der `modelDescription.xml`-Datei im Hauptverzeichnis des FMU-Archivs sein). Und wenn vorhanden, wird das Bild skaliert nach der Blockgröße angezeigt. 
+(4):: Hier können Sie die Weite und Höhe des Blocks in Rasterlinien festlegen. 
+(5):: Dieser Knopf gestaltet die Sockel. Eingänge sind an der linken, oberen Seite ausgerichtet, Ausgänge an der rechten, unteren Seite. Falls es nicht genügend Platz für alle Sockel gibt, werden die verbleibenden Sockel übereinander platziert.
+(6):: Verweist auf einen Eingangssockel (Eingangsvariable)
+(7):: Verweist auf einen Ausgangssockel (Ausgangsvariable)
+
+TIP: In einer der nächsten Programmversionen wird es möglich sein, das Erscheinungsbild eines Blocks als Vorlage für die zukünftige Nutzung ähnlicher oder gleicher FMUs zu speichern. Gegenwärtig müssen Sie den Block jedes Mal, wenn Sie einen FMU importieren, konfigurieren. Ebenso ist die verbesserte Anwendung und der benutzerdefinierte Sockel-Speicherort noch nicht umgesetzt.
+
+
+== Ansichten verknüpfen
+
+In dieser Ansicht können Sie Slaves verknüpfen, indem Sie Ausgangs- und Eingangsvariablen abbilden. 
+
+.Verknüpfte Ansicht mit aufgezeigten Eingangs- und Ausgangsvariablen für alle Slaves und festgelegten Verbindungen
+image::gui_connection_view.png[alt="Connection view"]
+
+[horizontal]
+(1):: Zeigt alle publizierten Ausgangs- und Eingangsvariablen aller Slaves.
+(2):: Zeigt die Eingangsvariablen aller Slaves, welche noch *nicht* verbunden worden sind.
+(3):: Wählen Sie zunächst eine Ausgangsvariable und die Eingangsvariable aus, die mit dem Ausgang verbunden werden soll und drücken Sie dann diesen Button, um eine Verbindung herzustellen.
+(4):: Hier können Sie viele Verknüpfungen zwischen zwei Slaves verschiedener Namen erstellen (siehe Erklärung unten)
+(5):: Dies macht die aktuell ausgewählte Verbindung in der Tabelle (6) rückgängig
+(6):: Zeigt alle bisher erzeugten Verknüpfungen. Durch einen *Doppelklick* auf die letzte Spalte wird die Umwandlungstätigkeit in Auftrag gegeben. 
+(7):: Eine Tabelle mit allen Slaves und deren Farben (um die Identifikation der Variablen nach Farbe zu unterstützen)
+
+=== Die Besonderheiten automatischer Verbindungen
+
+Diese Funktion ist sehr hilfreich, wenn FMUs miteinander verbunden sind und Ausgangs- und Eingangsvariablen zweier Slaves den selben Namen haben. Dies ist insbesondere hilfreich, wenn Sie viele Eingangs- und Ausgangsvariablen zwischen zwei Slaves verbinden müssen. Falls Sie ein FMU auf diese Weise erzeugen, können Sie den folgenden Ablauf nutzen:
+
+. wählen sie in den Kombinationsfeldern die zu verbindenden Slaves aus
+. drücken Sie den Verbindungs-Button
+
+Eine Verbindung wird erstellt, wenn:
+
+- der Variablenname passt
+- der Datentyp der Variable passt
+- eine Variable einen Kausalitäts-_Eingang_ hat und die andere einen Kausalitäts-_Ausgang_ 
+
+.Automatische Verknüpfung zweier Slaves
+====
+1. Slave1 publiziert:
+  - Raum1.Temperatur (real, Ausgang)
+  - Raum1.Heizkraft (real, Eingang)
+  - Raum1.Betriebstemperatur (real, Ausgang)
+2. Slave2 publiziert:
+  - Raum1.Temperatur (real, Eingang)
+  - Raum1.Heizkraft (real, Ausgang)
+  - Raum2.Betriebstemperatur (real, Eingang)
+
+Die automatische Verbindung erstellt:
+
+- Slave1.Raum1.Temperatur  -> Slave2.Raum1.Temperatur
+- Slave1.Raum1.Heizkraft -> Slave2.Raum1.Heizkraft
+
+Die dritte Verbindung wird nicht hergestellt, da _Raum1.Betriebstemperatur_ nicht zu _Raum2.Betriebstemperatur_ passt.
+====
+
+=== Eine Verbindung mit einer Umwandlungstätigkeit beauftragen 
+
+Falls Sie die Umwandlung einer Einheit oder andere Änderungen (Zeichenumkehrung, Skalierung) zwischen Ausgangs- und Eingangsvariablen vornehmen wollen, können Sie in der dritten Spalte der Tabelle *(6)* *doppelklicken*, um einen Dialog für das Editieren der Umwandlungsfaktoren und Versätze zu öffnen. Siehe Abschnitt <<_Verbindungsgrafik_,Verbindungsgrafik>> für eine detaillierte Beschreibung.
+
+
+== Die Ansicht der Simulationseinstellungen
+
+Alle Einstellungen, die die gegenwärtigen Co-Simulations-Algorithmen kontrollieren, werden hier festgelegt. Eine detaillierte Beschreibung der Einstellungen und ihrer Anwendung findet man im Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
+
+TIP: Abschnitt <<_simulator_settings, Project file reference - Simulator settings>> beschreibt die zugehörigen Eintragungen in der _MasterSim_-Projekt-Datei.
+
+.Simulationseinstellungen und die Startansicht der Simulation
+image::gui_simulation_settings_view.png[alt="Simulation view"]
+ 
+TODO: Korr.Orig. s.u. adjustment; convergence
+ 
+[horizontal]
+(1):: Hier können sie den Start- und Endzeitpunkt ihrer Simulation festlegen.
+(2):: Die anfängliche Intervallgröße der Datenübertragung. Wenn die Zeitschritt-Anpassung *(7)* deaktiviert ist, wird diese Intervallgröße der Datenübertragung genutzt, bis das Ende der Simulationszeit erreicht wurde. 
+(3):: Auswahl des Master-Algorithmus
+(4):: Maximale Anzahl an Wiederholungen, 1 deaktivierte Wiederholung.
+(5):: Die relativen und absoluten Toleranzen werden für einen Verbindungstest wiederholender Algorithmen und, wenn freigegeben, für eine lokale Fehlerprüfung und die Zeitschritt-Anpassung genutzt.
+(6):: Hier können Sie eine Fehlerkontroll-Methode auswählen, siehe Abschnitt <<_Fehlerkontrolle_und_Zeitschrittregulierung,Fehlerkontrolle und Zeitschrittregulierung>>.
+(7):: Wenn getestet, wird _MasterSim_ den Zeitschritt anpassen, dies verlangt FMUs, um die Fähigkeit  *canHandleVariableCommunicationStepSize* zu unterstützen. 
+(8):: Diese drei Parameter kontrollieren, wie der Zeitschritt im Fall einer Anpassung/Scheitern des Fehlertests angepasst wird. 
+(9):: Wenn getestet, wird _MasterSim_ die Schrittgröße an das letzte Intervall so anpassen, dass es den Endzeitpunkt der Simulation als Ende des letzten Intervalls der Datenübertragung _exakt_ wiedergibt, ohne Rücksicht auf das Kennzeichen *(7)* (siehe Diskussion in Abschnitt <<_time_step_adjustment, Time step adjustment>>).
+(10):: Legt das minimale Intervall fest, dass durchlaufen werden muss, bevor ein neuer Ausgang geschrieben wird. Es hilft, die Anzahl an Ausgängen im Falle variabler Zeitschritte zu reduzieren, wenn diese Zeitschritte viel kleiner als ein aussagekräftiges Ausgangsraster werden können. 
+(11):: Wenn getestet, schreibt _MasterSim_ auch die Werte innerbetrieblicher Variablen zu den Ausgangs-Dateien, ansonsten nur die Variablen von Kausalitäts-_Ausgängen_. Hauptsächlich nützlich für das Entpacken/die FMU-Analyse, oder um interne Werte zu erhalten, die nicht von der FMU selbst für Ausgangs-Dateien geschrieben  worden.  
+(12):: Lässt Sie das Level an Vielfältigkeit der Lösungsausgaben des Bedienfeldes kontrollieren (siehe <<_Befehlszeilen-Argumente_, Befehlszeilen-Argumente>>).
+(13):: Befehlszeile, die genutzt wird, den Simulator zu betreiben. Kann für die automatische Verarbeitung in ein Shell-Skript oder eine Batch-Datei kopiert werden.
+(14):: Der große, dicke Start-Button. *Ready, Steady, Go!*
+
+
+Wenn Sie die Simulation starten, wird ein Konsolenfenster mit einer Fortschritts-/Warnungs-/Fehlermeldung für die laufende Simulation auftauchen. Da einige Simulationen sehr schnell sein können, zeigt sich nach ungefähr 2 Sekunden das Protokollfenster mit dem gegenwärtigen Inhalt des Bildschirmprotokolls. 
+[CAUTION]
+====
+Beachten Sie, dass die Simulation vielleicht noch im Hintergrund laufen könnte, selbst wenn das Protokollfenster bereits gezeigt wurde. Wenn Sie die Simulation mehrere Male starten, bringen Sie mehrere Simulationsprozesse parallel hervor. Das wäre nur dann eine Verschwendung, wenn die Simulation ins selbe Verzeichnis schreiben und jede andere Datei überschreiben würde.
+====
+
+
+== Einstellungs-Dialog
+
+Der Einstellungs-Dialog, geöffnet im Hauptmenü oder durch die Anwendung des Tastatur-Kürzels, bietet derzeit Konfigurationsoptionen für den Texteditor (wird genutzt, um die Projekt-Datei mittels Kürzel *F2* zu editieren) und das ausführbare Nachbearbeitungsprogramm an. 
+
+.Einstellungsdialog mit Eingangsoptionen für den Texteditor und das ausführbare Nachbearbeitungsprogramm
+image::gui_preferences_tools.png[alt="Preferences dialog"]
+
+
+TIP: Wenn Sie eine Textdatei im externen Texteditor bearbeiten und die Datei speichern, bringen Sie das nächste Mal die _MasterSim_-Benutzeroberfläche in den Fokus. Sie wird anregen, das modifizierte Projekt neu zu laden.
+
+---

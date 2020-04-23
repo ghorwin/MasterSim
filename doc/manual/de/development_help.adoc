@@ -1,0 +1,13 @@
+= Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung
+
+Dieser Abschnitt beschreibt einige Funktionen von _MasterSim_, die teilweise nützlich für Entwickler eigener FMUs oder zum Identifizieren von Rechenproblemen eines dritten FMUs sind.
+
+
+== Modifikation/Fixierung des FMU-Inhalts
+
+Wenn ein FMU eine ungültige `modelDescription.xml`-Datei besitzt, kann der Prozess zum Entpacken der FMU, Fixieren der Datei, erneutes Packen der FMU und das erneute Versuchen der Simulation mit einem Co-Simulations-Master zu viel Zeit kosten. Mit _MasterSim_ läuft die Simulation nur einmal und extrahiert das FMU in das jeweilige `fmus`-Unterverzeichnis subdir. Dort kann man alle Dateien untersuchen und Fehler festmachen, oder fehlende Dateien zufügen. 
+
+Das nächste mal, wenn Sie den _MasterSimulator_ durchlaufen lassen, führen Sie die Befehlszeilen-Option `--skip-unzip` aus und _MasterSim_ wird den Schritt des Entpackens überspringen und direkt auf die Dateien im extrahierten Verzeichnis zugreifen. 
+
+
+---
