@@ -90,6 +90,7 @@ private slots:
 	void on_actionEditOpenPostProc_triggered();
 	void on_actionHelpAboutQt_triggered();
 	void on_actionHelpAboutMasterSim_triggered();
+	void on_actionHelpMasterSimWebpage_triggered();
 
 	/*! Triggered when a recent file menu entry was clicked. */
 	void onActionOpenRecentFile();
@@ -133,6 +134,9 @@ private slots:
 		parsing of the model description.
 	*/
 	void onNewSlaveAdded(const QString & slaveName, const QString & fullFMUPath);
+
+
+	void on_actionHelpOnlineManual_triggered();
 
 private:
 	/*! Sets up all dock widgets with definition lists. */

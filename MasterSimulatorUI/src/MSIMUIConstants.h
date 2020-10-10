@@ -19,8 +19,10 @@ extern const int TABLE_FONT_SIZE;
 /*! Fixed-size font family to be used in tables. */
 extern const char * const FIXED_FONT_FAMILY;
 
-///*! Utility function to ensure consistant table formatting. */
-//void formatTable(QTableWidget * tab);
+extern const char * const MASTERSIM_URL;
+
+/*! URL to online help page, only need to add "_de.html" or "en_html" */
+extern const char * const MASTERSIM_ONLINE_MANUAL_URL;
 
 /*! Utility function to ensure consistant table formatting. */
 void formatTable(QTableView * tab, bool caption = true);
