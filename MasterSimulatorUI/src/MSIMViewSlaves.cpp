@@ -36,6 +36,7 @@
 #include "MSIMUndoConnections.h"
 #include "MSIMUndoNetworkGeometry.h"
 #include "MSIMUndoSlaveParameters.h"
+#include "MSIMSettings.h"
 
 #include <MSIM_Project.h>
 
@@ -307,13 +308,14 @@ std::string pickSlaveName(const std::string& basename, iterator first, const_ite
 
 
 void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
-	// open file dialog and let user select FMU file
-	QSettings settings(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
-	QString fmuSearchPath = settings.value("FMUSearchPath", QString()).toString();
+	// use directory where last time an FMU was imported from (in this session)
+	// if slave's are imported the first time this session, use the project directory
+	QString fmuSearchPath = MSIMSettings::instance().m_lastFMUImportDirectory;
 	if (fmuSearchPath.isEmpty()) {
-		fmuSearchPath = QFileInfo(MSIMProjectHandler::instance().projectFile()).dir().absolutePath();
+		fmuSearchPath = MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory].toString();
 	}
 
+	// open file dialog and let user select FMU file
 	QString fname = QFileDialog::getOpenFileName(this, tr("Select FMU"), fmuSearchPath,
 												 tr("Slave files (*.fmu *.tsv *.csv);;FMUs (*.fmu)"));
 	if (fname.isEmpty())
@@ -321,7 +323,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 
 	QFileInfo finfo(fname);
 	fmuSearchPath = finfo.dir().absolutePath();
-	settings.setValue("FMUSearchPath", fmuSearchPath);
+	MSIMSettings::instance().m_lastFMUImportDirectory = fmuSearchPath;
 
 	MASTER_SIM::Project p = project();
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();

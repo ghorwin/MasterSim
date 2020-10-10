@@ -116,6 +116,9 @@ bool MSIMProjectHandler::closeProject(QWidget * parent) {
 	// actions should be disabled
 	emit updateActions();
 
+	// also clear the last FMU import directory
+	MSIMSettings::instance().m_lastFMUImportDirectory.clear();
+
 	return true;
 }
 
@@ -292,6 +295,9 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 
 	// add project file name to recent file list
 	addToRecentFiles(fname);
+
+	// remember path to project
+	MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory] = QFileInfo(fname).absoluteDir().absolutePath();
 
 	return SaveOK; // saving succeeded
 }
