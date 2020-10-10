@@ -553,8 +553,20 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 			for (unsigned int v=0; v<modelDesc.m_variables.size(); ++v) {
 				const MASTER_SIM::FMIVariable & var = modelDesc.m_variables[v];
 				QTableWidget * table;
+				bool outputConnected = false;
 				if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT) {
 					table = m_ui->tableWidgetOutputVariable;
+
+					// check if this output variable is already connected
+					std::string variableRef = simDef.m_name + "." + var.m_name;
+					unsigned int e=0;
+					for (; e<project().m_graph.size(); ++e) {
+						const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[e];
+						if (edge.m_outputVariableRef == variableRef)
+							break;
+					}
+					if (e != project().m_graph.size())
+						outputConnected = true; // color output variables differently to show that they are connected
 				}
 				else if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT) {
 					table = m_ui->tableWidgetInputVariable;
@@ -578,17 +590,32 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 				QTableWidgetItem * item = new QTableWidgetItem( QString::fromStdString(simDef.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				if (outputConnected) {
+					QFont f(item->font());
+					f.setBold(true);
+					item->setFont(f);
+				}
 				table->setItem(currentRow, 0, item);
 
 				item = new QTableWidgetItem( QString::fromStdString(var.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				if (outputConnected) {
+					QFont f(item->font());
+					f.setBold(true);
+					item->setFont(f);
+				}
 				table->setItem(currentRow, 1, item);
 
 				item = new QTableWidgetItem( QString( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
 				item->setData(Qt::UserRole, var.m_type);
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				if (outputConnected) {
+					QFont f(item->font());
+					f.setBold(true);
+					item->setFont(f);
+				}
 				table->setItem(currentRow, 2, item);
 
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
@@ -601,6 +628,11 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 					item = new QTableWidgetItem("");
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				if (outputConnected) {
+					QFont f(item->font());
+					f.setBold(true);
+					item->setFont(f);
+				}
 				table->setItem(currentRow, 3, item);
 			}
 		}
