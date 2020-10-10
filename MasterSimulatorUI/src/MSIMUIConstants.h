@@ -20,6 +20,7 @@ extern const int TABLE_FONT_SIZE;
 extern const char * const FIXED_FONT_FAMILY;
 
 extern const char * const MASTERSIM_URL;
+extern const char * const MASTERSIM_BUG_REPORT;
 
 /*! URL to online help page, only need to add "_de.html" or "en_html" */
 extern const char * const MASTERSIM_ONLINE_MANUAL_URL;

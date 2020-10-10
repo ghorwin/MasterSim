@@ -138,6 +138,8 @@ private slots:
 
 	void on_actionHelpOnlineManual_triggered();
 
+	void on_actionHelpReport_triggered();
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();
