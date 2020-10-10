@@ -794,6 +794,7 @@ void MSIMMainWindow::onOpenProjectByFilename(const QString & filename) {
 		// signal modified to all views
 		m_viewConnections->onModified(MSIMProjectHandler::AllModified, nullptr);
 		m_viewSlaves->onModified(MSIMProjectHandler::AllModified, nullptr);
+		MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory] = QFileInfo(filename).absoluteDir().absolutePath();
 	}
 	// if failed, no view state change needed
 }
