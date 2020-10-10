@@ -342,6 +342,10 @@ void MSIMMainWindow::on_actionFileNew_triggered() {
 
 	// create new project
 	m_projectHandler.newProject(this); // emits updateActions()
+
+	// now ask the user to save the project
+	QMessageBox::information(this, QString(), tr("Please save the project now so that relative paths to imported FMUs can be generated!"));
+	on_actionFileSave_triggered();
 }
 
 
