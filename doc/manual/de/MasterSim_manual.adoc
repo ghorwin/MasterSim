@@ -1,9 +1,9 @@
 MasterSim Benutzerhandbuch
-==========================
+====================
 Andreas Nicolai <andreas.nicolai@tu-dresden.de>
-v0.8.2, Nov 2019
+v0.8.3, Oct 2020
 :Author Initials: AN
-:toc:
+:toc: left
 :toclevels: 3
 :toc-title: Inhaltsverzeichnis
 :icons: font
@@ -14,6 +14,12 @@ v0.8.2, Nov 2019
 :rouge-style: custom
 :title-page:
 
+Dieses Handbuch ist verfügbar als:
+
+* https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.pdf[PDF Version (Deutsch)]
+* https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.pdf[PDF Version (Englisch)]
+* https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.html[Online Handbuch (Deutsch)]
+* https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.html[Online Handbuch (Englisch)]
 
 include::basic_concepts.adoc[leveloffset=+1]
 include::graphical_user_interface.adoc[leveloffset=+1]

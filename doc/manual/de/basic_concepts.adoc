@@ -1,23 +1,24 @@
 :imagesdir: ./images
 = Einführung und Grundbegriffe
 
-_MasterSim_ ist ein Co-Simulations-Masterprogramm, dass eine FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, unter der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
+_MasterSim_ ist ein Co-Simulations-Masterprogramm, welche die FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, z.B. auf der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
 
-Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während der Laufzeit aus. Die folgende Grafik illustriert die Programmfunktion und ihren elementaren Ablauf.
+Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während der Laufzeit aus. Die folgende Grafik illustriert die Programmfunktion und ihren elementaren Ablauf und Datenaustausch.
 
-.Diagramm über den Datenfluss und die Dateienanwendung
+.Diagramm über den Datenfluss und Anwendungen
 image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
 
 == Die Teile des Programms
 _MasterSim_ besteht aus zwei Teilen:
 
-a. einer grafischen Benutzeroberfläche (GUI) und
-b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeilen
+a. einer grafischen Benutzeroberfläche (_graphical user interface_ - GUI) und
+b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeile
 
-Das GUI macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der Grafischen Darstellung. Letzteres ist optional und nicht notwendig für die Simulation. 
-Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, ausgewiesene FMUs importiert und die Simulation umsetzt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen möglicher anderer Slaves werden dann von allen weiterverarbeitenden Werkzeugen genutzt (z. B. https://bauklimatik-dresden.de/postproc[PostProc 2]), um die Ergebnisse zu visualisieren und zu analysieren.
+Die Oberfläche macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der grafischen Darstellung (Verknüpfungsschematik). Letzteres ist optional und nicht notwendig für die Simulation.
 
-Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<_workflows,Workflows>> beschrieben wird.
+Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (z.B. mit https://bauklimatik-dresden.de/postproc[PostProc 2]).
+
+Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<_arbeitsablauf,Arbeitsablauf>> beschrieben wird.
 
 == Unterstützte FMU - Varianten
 
@@ -26,32 +27,29 @@ Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht 
 
 Es werden keine asynchronen FMU-Varianten unterstützt.
 
-Typischerweise ist  _MasterSim_  für Linux und MacOS nur als 64-Bit-Anwendung verfügbar. Für Windows ist  _MasterSim_ auch als  32-Bit und 64-Bit-Anwendung vorhanden.
+Typischerweise ist  _MasterSim_  für Linux und MacOS nur als 64-Bit-Anwendung verfügbar. Für Windows ist  _MasterSim_ sowohl als 32-Bit als auch 64-Bit-Anwendung vorhanden.
 
 [IMPORTANT]
 ====
 Nutzen Sie für 32-Bit-FMUs eine 32-Bit-Version, für 64-Bit-FMUs eine mit 64 Bit. Gemischte FMU-Plattform-Typen (32 Bit und 64 Bit) werden nicht unterstützt.
 ====
 
-== Konstruktionskriterien/ Schwerpunkte
+== Entwicklungsziele/Schwerpunkte
 
 - Betriebssystemübergreifend: Windows, MacOS, Linux
-- keine Abhängigkeit von extern installierten Datenbanken, alle Quellen sind in der Version enthalten, insbesondere keine Abhängigkeit von FMI-unterstützenden Datenbanken (Ausnahme: Standard C++, und die Qt-5-Datenbanken); das Ausgliedern und Erstellen von Quell-Codes sollte leicht sein (ebenso das Packen für andere Plattformen) 
-- vollständige, in die _MasterSim_-Datenbank eingebettete Master-Funktionalität, nutzbar über das Kommandozeilen-Werkzeug und das Programm GUI 
-- eingebettete Nachrichtenverarbeitung, um GUI-Einbindung und Log-Datei-Support zu unterstützen, keine direkten `printf()`- oder `std::cout´ -Ausführungen 
-- unterstützt FMU-Fehlerbehebung: kann das Entpacken deaktivieren (ständig: dll/so/dylib-Dateien), der Quellzugriff erlaubt die Fehlersuche während des Ladens von gemeinsam genutzten Datenbanken und angefügten Fehlersuchprogrammen
+- keine Abhängigkeit von extern installierten Bibliotheken, alle Quelltexte sind im Repository enthalten (Ausnahme: Standard C++ Laufzeitbibliotheken und die Qt 5-Bibliothek), insbesondere gibt es keine Abhängigkeit von FMI-unterstützenden Bibliotheken; den Quelltext vom Repository zu holen und zu erstellen sollte leicht sein (ebenso das Verpacken und Veröffentlichen für andere Plattformen) 
+- vollständige, in die _MasterSim_-Bibliothek eingebettete Master-Funktionalität, nutzbar über das Kommandozeilen-Werkzeug und die Oberfläche
+- Meldungen/Ausgaben sind gekapselt, um GUI-Einbindung und Log-Dateien zu unterstützen, keine direkten `printf()`- oder `std::cout` -Ausgaben
+- unterstützt FMU-Fehlerdiagnose: kann das Entpacken  deaktivieren (dauerhafte dll/so/dylib-Dateien), der Quelltextzugang erlaubt die Fehlersuche während des Ladens von gemeinsam genutzten Bibliotheken und angefügten Debuggern
 - High-Level- C++-Code (lesbar und wartungsfreundlich) 
-
-TODO: readable Korrektur im Original
-
-- enthält Instrumente, um Zähler und Timer für den Leistungsvergleich von Master-Algorithmen und FMU wiederherzustellen
-- der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen der typspezifischen Datenfelder im  _easy analysis in debugger_
+- enthält Instrumentierung und stellt Zähler und Zeitmessungen für den Leistungsvergleich von Master-Algorithmen und FMU bereit
+- der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen sind typspezifisch in Datenfeldern gruppiert, für eine _einfache Analyse im Debugger_
 
 Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Problemen der Fehlerbeseitigung von Co-Simulationen wichtig sind, lesen Sie bitte das Kapitel <<_assistenzfunktionen_für_fmu_entwicklung_und_fehlerbeseitigung, Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung>>.
 
 === Besondere Funktionen von _MasterSim_
 
-Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich ist, um FMUs zu benutzen, die ihre eigenen Ausgabedaten verfassen. Um ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis für jeden Slave zur Verfügung zu stellen, setzt _MasterSim_ den Parameter `ResultsRootDir` (normalerweise mit dem Referenzwert 42) für jeden Slave in diesem Verzeichnis. So lange ein Slave einen solchen Parameter definiert, besitzt der FMU-Code ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten. Siehe auch unter <<_verzeichnis_slaves, Verzeichnis 'Slaves'>>.
+Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigenen Ausgabedaten schreiben. Um ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis für jeden Slave zur Verfügung zu stellen, setzt _MasterSim_ den Parameter `ResultsRootDir` (normalerweise mit dem Referenzwert 42) für jeden Slave in diesem Verzeichnis. So lange ein Slave einen solchen Parameter definiert, besitzt das FMU-Programm ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten. Siehe auch Abschnitt <<_verzeichnis_slaves, Verzeichnis 'Slaves'>>.
 
 == Terminologie
 
@@ -59,7 +57,7 @@ Die folgenden Begriffe werden sowohl im Handbuch als auch in der Benennung von K
 
 [horizontal]
 FMU:: beschreibt das FMU-Archiv inklusive der Modellbeschreibung und der gemeinsamen Datenbanken 
-Slave/Simulator:: beschreibt ein Simulationsmodell, dass durch ein FMU realisiert/erstellt wird; dabei können mehrere Slaves durch ein einziges FMU realisiert werden, falls die Fähigkeit *canBeInstantiatedOnlyOncePerProcess* richtig eingestellt ist
+Slave/Simulator:: beschreibt ein Simulationsmodell, dass aus einer FMU erstellt(instanziiert) wird; dabei können mehrere Slaves durch eine einzige FMU erstellt werden, falls die Fähigkeit *canBeInstantiatedOnlyOncePerProcess* gesetzt ist
 Master:: beschreibt den gesamten Rahmen der Simulationskontrolle, der die generelle Verwaltungsarbeit übernimmt
 Simulationsszenario:: definiert eine Reihe von Slaves und deren Verbindungen (Datenaustausch) ebenso gut wie andere Eigenschaften, wie z.B. Start- und Endzeit, algorithmische Optionen, Output-Einstellungen; alternativ *system* genannt
 Grafiknetzwerk:: eine andere Beschreibung für die räumliche Struktur miteinander verbundener Slaves
