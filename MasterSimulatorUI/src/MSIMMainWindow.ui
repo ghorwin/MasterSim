@@ -36,6 +36,7 @@
     <addaction name="actionFileSaveAs"/>
     <addaction name="actionFileClose"/>
     <addaction name="separator"/>
+    <addaction name="actionFileOpenProjectDir"/>
     <addaction name="actionFileExport"/>
     <addaction name="separator"/>
     <addaction name="actionFileQuit"/>
@@ -309,6 +310,9 @@
    <property name="toolTip">
     <string>Opens webpage with online manual.</string>
    </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
   </action>
   <action name="actionHelpReport">
    <property name="text">
@@ -316,6 +320,17 @@
    </property>
    <property name="toolTip">
     <string>Open MasterSim bug report/feature tracker webpage.</string>
+   </property>
+  </action>
+  <action name="actionFileOpenProjectDir">
+   <property name="text">
+    <string>Go to project directory...</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens file manager with path to project file.</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
    </property>
   </action>
  </widget>

@@ -477,6 +477,18 @@ void MSIMMainWindow::on_actionFileExport_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionFileOpenProjectDir_triggered() {
+	if (MSIMProjectHandler::instance().projectFile().isEmpty()) {
+		QMessageBox::critical(this, QString(), tr("Please save the project file first!"));
+		return;
+	}
+
+
+	QString projectDir = QFileInfo(MSIMProjectHandler::instance().projectFile() ).dir().path();
+	QDesktopServices::openUrl( QUrl::fromLocalFile( projectDir ) );
+}
+
+
 void MSIMMainWindow::on_actionFileClose_triggered() {
 	// move input focus away from any input fields (to allow editingFinished() events to fire)
 	setFocus();
@@ -694,6 +706,7 @@ void MSIMMainWindow::onUpdateActions() {
 	m_ui->actionFileExport->setEnabled(have_project);
 	m_ui->actionFileReload->setEnabled(have_project);
 	m_ui->actionFileClose->setEnabled(have_project);
+	m_ui->actionFileOpenProjectDir->setEnabled(have_project);
 	m_ui->actionEditTextEditProject->setEnabled(have_project);
 	m_ui->actionEditParseFMUs->setEnabled(have_project);
 	m_ui->actionEditOpenPostProc->setEnabled(have_project);
@@ -939,6 +952,7 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 	}
 
 }
+
 
 
 

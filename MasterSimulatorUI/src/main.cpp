@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
 	f.setPointSize(8);
 	qApp->setFont(f);
 #endif
-
+	qApp->setApplicationName(MASTER_SIM::PROGRAM_NAME);
 
 	// *** Create and initialize setting object ***
 	MSIMSettings settings(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
