@@ -48,9 +48,16 @@ asciidoctor-pdf -a pdf-theme=mastersim-manual-pdf-theme.yml -r ./rouge_theme.rb 
 
 Use Editor: AsciidocFX _https://asciidocfx.com_
 
-Mind:
+*Mind:*
 
 - Pictures file names must only have one .
+
+
+### Images
+
+- use full HD screen resolution when making screenshots
+- resize diagrams to at max 500 px width when getting screenshots
+- 
 
 
 
