@@ -15,6 +15,7 @@
 #include <QTextStream>
 #include <QToolButton>
 #include <QLabel>
+#include <QDesktopServices>
 
 #include <numeric>
 
@@ -46,6 +47,7 @@
 #include "MSIMButtonBar.h"
 #include "MSIMUndoSlaveParameters.h"
 #include "MSIMPostProcBindings.h"
+#include "MSIMLanguageHandler.h"
 
 MSIMMainWindow * MSIMMainWindow::m_self = nullptr;
 
@@ -641,6 +643,21 @@ void MSIMMainWindow::on_actionHelpAboutMasterSim_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionHelpMasterSimWebpage_triggered() {
+	QDesktopServices::openUrl(QUrl(MASTERSIM_URL));
+}
+
+
+void MSIMMainWindow::on_actionHelpOnlineManual_triggered() {
+	QString helpUrl = MASTERSIM_ONLINE_MANUAL_URL;
+	if (MSIMLanguageHandler::instance().langId() == "de")
+		helpUrl += "_de.html";
+	else
+		helpUrl += "_en.html";
+	QDesktopServices::openUrl(QUrl(helpUrl));
+}
+
+
 void MSIMMainWindow::onActionOpenRecentFile() {
 	QAction *action = qobject_cast<QAction *>(sender());
 	if (action) {
@@ -917,4 +934,6 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 	}
 
 }
+
+
 

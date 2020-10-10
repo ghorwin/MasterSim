@@ -60,6 +60,9 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionHelpMasterSimWebpage"/>
+    <addaction name="actionHelpOnlineManual"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpAboutMasterSim"/>
     <addaction name="actionHelpAboutQt"/>
    </widget>
@@ -288,6 +291,22 @@
    </property>
    <property name="toolTip">
     <string>Opens the Post-processing with a matching session for this project.</string>
+   </property>
+  </action>
+  <action name="actionHelpMasterSimWebpage">
+   <property name="text">
+    <string>Open MasterSim webpage...</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens web browser with MasterSim homepage.</string>
+   </property>
+  </action>
+  <action name="actionHelpOnlineManual">
+   <property name="text">
+    <string>Show Online Manual...</string>
+   </property>
+   <property name="toolTip">
+    <string>Opens webpage with online manual.</string>
    </property>
   </action>
  </widget>
