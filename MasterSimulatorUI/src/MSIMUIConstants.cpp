@@ -11,6 +11,7 @@ const char * const ORG_NAME				= "IBK";
 const char * const DOT_FILE_EXTENSION	= ".msim";
 
 const char * const MASTERSIM_URL					= "https://bauklimatik-dresden.de/mastersim";
+const char * const MASTERSIM_BUG_REPORT				= "https://sourceforge.net/p/mastersim/tickets";
 const char * const MASTERSIM_ONLINE_MANUAL_URL		= "https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual";
 
 

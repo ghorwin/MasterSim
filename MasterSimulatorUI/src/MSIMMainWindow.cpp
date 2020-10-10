@@ -658,6 +658,11 @@ void MSIMMainWindow::on_actionHelpOnlineManual_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionHelpReport_triggered() {
+	QDesktopServices::openUrl(QUrl(MASTERSIM_BUG_REPORT));
+}
+
+
 void MSIMMainWindow::onActionOpenRecentFile() {
 	QAction *action = qobject_cast<QAction *>(sender());
 	if (action) {
@@ -934,6 +939,7 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 	}
 
 }
+
 
 
 
