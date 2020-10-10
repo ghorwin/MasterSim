@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<alles>
+<seite>
+	<titelde>Dokumentation &amp; Hilfe</titelde>
+	<titelen>Documentation &amp; Help</titelen>
+	<prio>20</prio>
+</seite>
+<content>
+	<artikel>
+		<titel>Benutzerhandbuch</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt>
+			<p>
+				Dokumentation ist verfügbar als:
+				<ul>
+					<li><a href="help/MasterSim_manual_de.html" target="_blank">Online-Handbuch</a>, oder als </li>
+					<li><a href="help/MasterSim_manual_de.pdf" target="_blank">Handbuch [MasterSim_manual_de.pdf]</a>.</li>
+				</ul>
+			</p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>User Manual</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt>
+			<p>
+				Documentation is available as:
+				<ul>
+					<li><a href="help/MasterSim_manual_en.html" target="_blank">Online manual</a>, or as </li>
+					<li><a href="help/MasterSim_manual_en.pdf" target="_blank">Printed manual [MasterSim_manual_en.pdf]</a>.</li>
+				</ul>
+			</p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Publikationen</titel>
+		<lang>de</lang>
+		<position>beide</position>
+		<inhalt><p>
+<p>Folgende wissenschaftliche Publikationen, Präsentationen und Forschungsberichte über MASTERSIM sind verfügbar:</p>
+<p><ul>
+		<li>
+Nicolai, A.; <i>Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM</i>, 2018, Qucosa, <a href="http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735" target="_blank">http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735</a>.<br>
+	[<a href="2nd/doc/Nicolai_Qucosa_2018_MasterSim_Algorithmus.pdf">Nicolai_MasterSim_Algorithmus.pdf</a> (in german)]</li>
+
+<li>Nicolai, A.; <i>Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System</i>, 2018, Technical Report<br>
+				[<a href="2nd/doc/Nicolai_MasterSim_ErrorTests_with_Lotka_Volterra_Model.pdf">Nicolai_MasterSim_ErrorTests_with_Lotka_Volterra_Model.pdf</a>]</li>
+<li>Nicolai, A. and Paepcke, A.; <i>Co-Simulation between detailed building energy performance simulation and Modelica HVAC component models</i>, 2017, 12th International Modelica Conference, Prague<br>
+				[<a href="2nd/doc/Nicolai_Modelica_NANDRAD_CoSim_2017.pdf">Nicolai_Modelica_NANDRAD_CoSim_2017.pdf</a>]</li>
+<li>Nicolai, A., Paepcke, A. and Hirsch, H.; <i>Robust and accurate co-simulation master algorithms applied to FMI slaves with discontinuous signals using FMI 2.0 features</i>, 2019, 13th International Modelica Conference, Munich<br>
+				[<a href="2nd/doc/Nicolai_et_al_2019_ModelicaConference.pdf">Nicolai_et_al_2019_ModelicaConference.pdf</a>]</li>
+<li>Nicolai, A.; <i>Validierung des Co-Simulations-Masterprogramms MASTERSIM</i>, 2019, Technical Report<br>
+				[<a href="2nd/doc/Nicolai_Validierung_des_CoSimulations_Masterprogramms_MasterSim.pdf">Nicolai_Validierung_des_CoSimulations_Masterprogramms_MasterSim.pdf</a>]</li>
+</ul>
+</p>
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Publications</titel>
+		<lang>en</lang>
+		<position>beide</position>
+		<inhalt><p>
+<p>The following scientific publications, presentations and research reports are available about MASTERSIM:</p>
+<p><ul>
+		<li>
+Nicolai, A.; <i>Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM</i>, 2018, Qucosa, <a href="http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735" target="_blank">http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735</a>.<br>
+	[<a href="2nd/doc/Nicolai_Qucosa_2018_MasterSim_Algorithmus.pdf">Nicolai_MasterSim_Algorithmus.pdf</a> (in german)]</li>
+
+<li>Nicolai, A.; <i>Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System</i>, 2018, Technical Report<br>
+				[<a href="2nd/doc/Nicolai_MasterSim_ErrorTests_with_Lotka_Volterra_Model.pdf">Nicolai_MasterSim_ErrorTests_with_Lotka_Volterra_Model.pdf</a>]</li>
+<li>Nicolai, A. and Paepcke, A.; <i>Co-Simulation between detailed building energy performance simulation and Modelica HVAC component models</i>, 2017, 12th International Modelica Conference, Prague<br>
+				[<a href="2nd/doc/Nicolai_Modelica_NANDRAD_CoSim_2017.pdf">Nicolai_Modelica_NANDRAD_CoSim_2017.pdf</a>]</li>
+<li>Nicolai, A., Paepcke, A. and Hirsch, H.; <i>Robust and accurate co-simulation master algorithms applied to FMI slaves with discontinuous signals using FMI 2.0 features</i>, 2019, 13th International Modelica Conference, Munich<br>
+				[<a href="2nd/doc/Nicolai_et_al_2019_ModelicaConference.pdf">Nicolai_et_al_2019_ModelicaConference.pdf</a>]</li>
+<li>Nicolai, A.; <i>Validierung des Co-Simulations-Masterprogramms MASTERSIM</i>, 2019, Technical Report<br>
+				[<a href="2nd/doc/Nicolai_Validierung_des_CoSimulations_Masterprogramms_MasterSim.pdf">Nicolai_Validierung_des_CoSimulations_Masterprogramms_MasterSim.pdf</a>]</li>
+
+</ul>
+</p>
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>Besondere Funktionalität</titel>
+		<lang>de</lang>
+		<position>links</position>
+		<inhalt><p>
+<h3>Script-Funktionalität</h3>
+<p>MasterSim kann durch Skripte gesteuert werden, zum Beispiel für Variationsstudien. Zu diesem Zweck sind Projektdateien als einfache <b>Textdateien</b> gespeichert und können mit Scripten leicht erstellt/bearbeitet werden.
+Der eigentliche Simulator steht als Kommandozeilentool <i>MasterSimulator</i> zur Verfügung, welches von Skripten aufgerufen werden kann.</p>
+</p>
+
+<h3>Simulation-Szenarien mit mehreren FMU Instanzen</h3>
+<p>MasterSim unterstützt das mehrfache Instanziieren der gleichen FMU innerhalb eines Simulationsszenarios. Damit FMU Instanzen beim schreiben eigenen Ausgaben sich nicht gegenseitig überschreiben,
+gibt es eine definierte Verzeichnisstruktur und FMU-spezifische Wurzelverzeichnisse werden an jeden FMU-Slave übergeben. Diese ermöglicht auch die gleichzeitige Ausführung mehrerer 
+Simulationszenarios (MasterSimulation Ausführungen), wobei die gleiche FMU verwendet wird.</p>
+<sbr>
+<h3>Unterstützung bei der FMU Entwicklung</h3>
+<p>MasterSim kann mittels Kommandozeilenargumenten so konfiguriert werden, dass FMUs autmatisch entpackt werden, oder aber bereits entpackte FMUs verwendet werden. Dadurch können Shared Libraries/DLLs 
+im Debug-Modus übersetzt werden, welche MasterSim dann anstelle der in der FMU gepackten DLL lädt. Dadurch können externe Debugger verwendet werden, um das Verhalten der FMUs 
+im Co-Simulationsszenario zu testen. Außerdem kann man so direkt Fehler in der modelDescription-Datei beheben, ohne jeweils die FMU neu packen zu müssen.</p>
+		</inhalt>
+	</artikel>
+
+
+	<artikel>
+		<titel>Special features</titel>
+		<lang>en</lang>
+		<position>links</position>
+		<inhalt><p>
+<h3>Scripting possibilities</h3>
+<p>MasterSim can be used from scripts, for example when variation studies are done. For that purpose, project files are <b>plain-text</b> and can created/edited with scripts easily. 
+The actual simulator is provided as command line executable <i>MasterSimulator</i>, which can be called from scripts.
+</p>
+<h3>Assisting FMU Development</h3>
+<p>MasterSim can be configured via command line arguments to extract FMUs automatically, or use already extracted FMUs. This allows compilation of the shared libraries/DLLs in debug mode and 
+let MasterSim load these librares, instead of those packaged in the FMU, which allows external debugger use. Also, you can directly fix errors in the modelDescription file without unpacking/repacking the FMU archive.
+<h3>Simulation Scenarios with several FMU instances</h3>
+<p>MasterSim supports multiple instances of the same FMU within one simulation scenario. In order to avoid FMU instances overwriting each others results, a directory structure layout is defined and FMU-specific base paths are communicated to each FMU slave. This allows batch processing/parallel execution of several simulation scenarios (runs of MasterSimulator) where the same FMU is instantiated many times.
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Fehler, Funktionswünsche, Danksagungen und Beschwerden</titel>
+		<lang>de</lang>
+		<position>rechts</position>
+		<inhalt><p>
+		Das Sourceforge Projekt verfügt auch über ein <a href="https://sourceforge.net/p/mastersim/tickets/" target="_blank">Fehlerreport/Anfrage-System</a>, wo man Fehler melden kann und
+		neue Funktionen beschreiben kann.
+<p>
+<h3>Diskussionsforum/FAQ</h3>
+... siehe <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">Forum</a> des SourceForge-Projekts.
+
+		</inhalt>
+	</artikel>
+
+	<artikel>
+		<titel>Bugs, feature wishes, thanks and complains</titel>
+		<lang>en</lang>
+		<position>rechts</position>
+		<inhalt><p>
+		The sourceforge project also hosts a bug/request <a href="https://sourceforge.net/p/mastersim/tickets/" target="_blank">tracker</a> where you can report bugs 
+		and problems or describe features that you might miss.
+<p>
+<h3>Discussion forum/FAQ</h3>
+... see <a href="https://sourceforge.net/p/mastersim/discussion/" target="_blank">forum</a> of the SourceForge project.
+
+		</inhalt>
+	</artikel>
+
+
+	
+</content>
+</alles>
