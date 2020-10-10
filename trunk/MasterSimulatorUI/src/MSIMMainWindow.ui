@@ -62,6 +62,7 @@
     </property>
     <addaction name="actionHelpMasterSimWebpage"/>
     <addaction name="actionHelpOnlineManual"/>
+    <addaction name="actionHelpReport"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAboutMasterSim"/>
     <addaction name="actionHelpAboutQt"/>
@@ -307,6 +308,14 @@
    </property>
    <property name="toolTip">
     <string>Opens webpage with online manual.</string>
+   </property>
+  </action>
+  <action name="actionHelpReport">
+   <property name="text">
+    <string>Bug report/feature request...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open MasterSim bug report/feature tracker webpage.</string>
    </property>
   </action>
  </widget>
