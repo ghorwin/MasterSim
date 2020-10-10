@@ -438,16 +438,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>MasterSim User Guide</h1>
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
 <span id="email" class="email"><a href="mailto:andreas.nicolai@tu-dresden.de">andreas.nicolai@tu-dresden.de</a></span><br>
-<span id="revnumber">version 0.8.2,</span>
-<span id="revdate">Nov 2019</span>
+<span id="revnumber">version 0.8.3,</span>
+<span id="revdate">Oct 2020</span>
 </div>
-<div id="toc" class="toc">
+<div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#_introduction_and_basic_concepts">1. Introduction and basic concepts</a>
@@ -626,6 +626,29 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This manual is available as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.pdf">PDF Version (english)</a></p>
+</li>
+<li>
+<p><a href="https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.pdf">PDF Version (german)</a></p>
+</li>
+<li>
+<p><a href="https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.html">Online manual (english)</a></p>
+</li>
+<li>
+<p><a href="https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.html">Online manual (german)</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="_introduction_and_basic_concepts">1. Introduction and basic concepts</h2>
 <div class="sectionbody">
@@ -707,7 +730,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>cross-platform: Windows, MacOS, Linux</p>
 </li>
 <li>
-<p>no dependency on externally installed libraries, all source included in release, especially no dependency on FMI support libraries (exception: standard C++, and the Qt 5 libraries); checking out source code and building it should be easy (also packaging for different platforms)</p>
+<p>no dependency on externally installed libraries, all sources included in repository (exception: standard C++, and the Qt 5 libraries), especially no dependency on FMI support libraries; checking out source code and building it should be easy (also packaging for different platforms)</p>
 </li>
 <li>
 <p>complete master functionality wrapped in library <em>MasterSim</em> usable by command line tools and GUI applications</p>
@@ -716,10 +739,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>message handling wrapped to support GUI integration and log file support, no direct <code>printf()</code> or <code>std::cout</code> statements</p>
 </li>
 <li>
-<p>supports FMU debugging: can disable unzipping (persistant dll/so/dylib files), source access allows debugging runtime loading of shared libraries and attaching debuggers</p>
+<p>supports FMU debugging: can disable unzipping (persistent dll/so/dylib files), source access allows debugging runtime loading of shared libraries and attaching debuggers</p>
 </li>
 <li>
-<p>high-level C++ code (readible and maintainable)</p>
+<p>high-level C++ code (readable and maintainable)</p>
 </li>
 <li>
 <p>includes instrumentation to retrieve counters and timers for benchmarking performance of master algorithms and FMUs</p>
@@ -4378,8 +4401,8 @@ The master also holds for each data type a vector of connection variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.8.2<br>
-Last updated 2019-11-13 15:07:22 +0100
+Version 0.8.3<br>
+Last updated 2020-10-10 18:29:57 +0200
 </div>
 </div>
 <style>
