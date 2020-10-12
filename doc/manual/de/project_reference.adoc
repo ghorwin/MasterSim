@@ -65,6 +65,7 @@ Alle Befehlszeilen, bevor die ersten tatsächlichen Eingabezeilen als Kopfzeile 
 Nach der Kopfzeile mit der Beschreibung, ist die Ordnung der Einträge/Zeilen willkürlich. 
 ====
 
+[[simulator_settings]]
 == Einstellungen des Simulators
 
 Unten gibt es eine kurze Beschreibung der verschiedenen Parameter mit einer Formatsbeschreibung und den benötigten Werten. Für Details über ihren Gebrauch und welchen Einfluss sie haben, siehe Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
