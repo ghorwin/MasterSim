@@ -188,11 +188,15 @@ The end time of the simulation is also passed to the FMU via the `setupExperimen
 
 == Time step adjustment
 
-Once the communication interval is completed, the solver enters the time step adjustment loop. If time step adjustment is disabled via flag *adjustStepSize* (see <<_simulator_settings, Simulator settings>>), the loop content will only be executed once. For FMI 1.0 slaves, or FMI 2.0 slaves without capability for storing/restoring slave states, iteration is also not possible (actually, requesting an iterative algorithm for such slaves will trigger an error during initialzation).
+Once the communication interval is completed, the solver enters the time step adjustment loop. If time step adjustment is disabled via flag *adjustStepSize* (see section <<simulator_settings>>), the loop content will only be executed once. For FMI 1.0 slaves, or FMI 2.0 slaves without capability for storing/restoring slave states, iteration is also not possible (actually, requesting an iterative algorithm for such slaves will trigger an error during initialisation).
+
+[[fig_timestep_adjustment]]
+.Simulation example in which error test failures as well as convergence failures cause a drastic reduction in communication step sizes
+image::timestep_adjustment.png[width=600,height=300]
 
 Within the loop, the selected _master algorithm_ tries to take a single step with the currently proposed time step size (for constant step methods, the *hStart* parameter is used). The _master algorithm_ may involve iterative evaluation of slaves (see below).
 
-For iterative master algorithms, it may be possible that the method does not converge within the given iteration limit (see parameter *maxIterations*).
+For iterative master algorithms, it may be possible that the method does not converge within the given iteration limit (see parameter *maxIterations*, see section <<simulator_settings>>).
 
 === Time step reduction when algorithm did not converge
 
@@ -204,7 +208,7 @@ The factor 5 is selected such, that the time step size can be quickly reduced. F
 
 The step size is then compared with the lower communication step limit (parameter *hMin*). This is necessary to prevent the simulation to get stuck with extremely low time steps. If the step size would be reduced below the *hMin* value, the simulation **will be aborted** with an error message.
 
-In some cases, the interaction between two slaves may prevent any master algorithm to converge (even the Newton algorithm). Still, in these cases the remaining error may be insignificant and the simulation can tip-toe with small steps over the problematic time and increase steps afterwards. For such cases, you can specifiy the parameter *hFallBackLimit*, which must be larger than *hMin*. If h is reduced to a value below this _acceptable_ communication step size, the master algorithms will return succesfully after all iterations have been done. Thus, the step is treated as _converged_ and the simulation progresses to the next interval.
+In some cases, the interaction between two slaves may prevent any master algorithm to converge (even the Newton algorithm). Still, in these cases the remaining error may be insignificant and the simulation can pass with tiny steps over the problematic time and increase steps afterwards. For such cases, you can specifiy the parameter *hFallBackLimit*, which must be larger than *hMin*. If h is reduced to a value below this _acceptable_ communication step size, the master algorithms will return succesfully after all iterations have been done. Thus, the step is treated as _converged_ and the simulation progresses to the next interval.
 
 The publication mentioned above illustrates the behavior of the simulation using these parameters.
 
