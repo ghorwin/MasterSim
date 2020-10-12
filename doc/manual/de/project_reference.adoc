@@ -123,6 +123,7 @@ writeInternalVariables:: (_default=false_) Verfasst auch Variablen mit lokaler/i
 Abhängig von den gewählten Optionen, müssen sicherlich einige Fähigkeiten durch FMUs unterstützt werden, siehe Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
 
 
+[[slave_definition]]
 == Simulator-/Slave-Definitionen
 
 Jeder Slave wird festgelegt durch:
