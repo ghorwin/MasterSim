@@ -5,7 +5,7 @@ _MasterSim_ ist ein Co-Simulations-Masterprogramm, welche die FMI-Co-Simulation 
 
 Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während der Laufzeit aus. Die folgende Grafik illustriert die Programmfunktion und ihren elementaren Ablauf und Datenaustausch.
 
-.Diagramm über den Datenfluss und Anwendungen
+.Diagramm über den Datenfluss (Dateien) und beteiligten Programme
 image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
 
 == Die Teile des Programms
@@ -50,6 +50,8 @@ Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Prob
 === Besondere Funktionen von _MasterSim_
 
 Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigene Ausgabedaten schreiben. _MasterSim_ erstellt für jede FMU Instanz/jeden Slave ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis. Der Pfad zu diesem Verzeichnis setzt _MasterSim_ im Parameter `ResultsRootDir`. Falls ein Slave einen solchen Parameter definiert, erhält die FMU über den Parameter ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten (siehe auch Abschnitt <<dir_slaves, Verzeichnis 'Slaves'>>).
+
+Zyklen bei der Definition von verknüpften Slaves können explizit definiert werden und reduzieren damit dem Aufwand für iterative Masteralgorithmen (siehe auch Abschnitt <<cycles>>).
 
 == Terminologie
 
@@ -267,7 +269,7 @@ Schleife über alle Slaves:
   
 Schleife über alle Slaves:
   setzen aller Eingangswerte
-  dem Slave sagen. einen Schritt zu tun
+  den Slave einen Schritt durchführen lassen (`doStep()`)
 -----
 
 Gauss-Jacobi wird stets ohne Iteration ausgeführt. Wie in der Publikation gezeigt (siehe oben), ergibt es wirklich keinen Sinn, eine Iteration zu nutzen.
@@ -282,63 +284,75 @@ Anstatt einen Schritt zur Datenübertragung für 10 Sekunden zu nutzen und Gauss
 Basis-Algorithmus:
 
 -----
-Wiederholungsschleife:
-  Durchlaufstationen aller Slaves:
-    setzen der Eingangswerte für Slaves aus der globalen Werteliste
-    den Slave veranlassen, einen Schritt zu tun
-    wiederherstellen des Ausgangs aus dem gegenwärtigen Slave
-    Erneuern der globalen Variablenliste
-  eine konvergierende Prüfung durchführen
+Iterationsschleife:
+  Schleife über alle Slaves:
+    setzen aller Eingangswerte aus globaler Variablenzuordnungsliste
+    den Slave einen Schritt durchführen lassen (`doStep()`)
+    Ergebnisgrößen vom Slave abrufen
+    globale Variablenzuordnungsliste aktualisieren
+  Konvergenztest durchführen
 -----
 
+Durch die Aktualisierung der Variablenliste nach jedem Slave erhalten die nachfolgenden Slaves bereits aktualisierte Größen für den Kommunikationsschritt, welches das Gauss-Seidel-Verfahren auszeichnet.
+
+[[cycles]]
 ==== Zyklen
 
-_MasterSim_ enthält eine Funktion, die die Rechenleistung reduziert, wenn viele FMUs involviert sind und nicht alle direkt miteinander verbunden sind. Die folgende Figur zeigt ein Simulationsszenario, in dem die Berechnung in Stufen ausgeführt werden kann.
+:xrefstyle: short 
 
+_MasterSim_ enthält eine Funktion zur Reduktion des Rechenaufwands, wenn viele FMUs involviert sind und nicht alle direkt miteinander verbunden sind. Abb. <<fig_cycles>> zeigt ein Simulationsszenario, in dem die Berechnung in drei Stufen ausgeführt werden kann.
+
+[[fig_cycles]]
 .Zyklen in sich wiederholenden Algorithmen
 image::algorithm_cycles.png[alt="Cycles in iterative algorithms"]
 
+:xrefstyle: basic
+
 [horizontal]
-(1):: Dieses FMU erzeugt nur Ausgänge und kann nur ein einziges Mal im Gauss-Seidel-Algorithmus untersucht werden.
-(2):: Diese zwei FMUs tauschen Werte aus, sie sind in einem _Zyklus_. Wenn der Gauss-Seidel-Algorithmus mit aktivierter Wiederholung ausgeführt wird, brauchen nur diese beiden FMUs aktualisiert werden und sie müssen Werte austauschen, denn sie erfordern keinen Eingang von anderen FMUs (außer für das Erste, dessen Ausgangsvariablen sind bereits bekannt).
-(3):: Die letzten beiden FMUs sind auch in einem Zyklus gekoppelt, aber nur miteinander. Sie werden in der letzten Phase/Zyklus wiederholt. Bis die Ergebnisse der anderen drei FMUs berechnet worden und bekannt sind, müssen wieder nur drei FMUs im Zyklus sein. 
+(1):: Diese FMU erzeugt nur Ergebnisse und kann als Erstes und nur ein einziges Mal im Gauss-Seidel-Algorithmus ausgewertet werden
+(2):: Diese zwei FMUs tauschen Werte aus, sie sind in einem _Zyklus_. Wenn der Gauss-Seidel-Algorithmus mit aktivierter Iteration ausgeführt wird, brauchen nur diese beiden FMUs aktualisiert werden und Werte austauschen, denn sie erfordern keine weiteren Ergebnisgrößen der anderen FMUs (abgesehen von der ersten FMU, deren Ausgangsvariablen bereits bekannt sind)
+(3):: Die letzten beiden FMUs sind auch in einem Zyklus gekoppelt, aber wiederum nur miteinander. Sie werden in der letzten Phase ausgewertet. Da die Ergebnisse der anderen drei FMUs bereits berechnet wurden und bekannt sind, müssen wieder nur zwei FMUs im Zyklus ausiteriert werden. 
 
-TODO: Korrektur Original: relation
+Die Anzahl an FMUs in einem Zyklus zu begrenzen reduziert nicht nur den gesamten Aufwand, sondern berücksichtigt auch die Steifigkeit der Kopplung. In einem Zyklus könnten die FMUs nur lose miteinander verbunden sein und die Konvergenz ist mit 2 oder 3 Wiederholungen erreicht. In anderen Zyklen können die FMUs in einer nichtlinearen Beziehung gekoppelt sein oder sensibler auf Änderungen der Eingangswerte reagieren (= starre Kopplung) wodurch zehn oder mehr Wiederholungen benötigt würden. Das Trennen der Zyklen kann daher den Rechenaufwand bei der Gauss-Seidel signifikant vergrößern.
 
-Die Anzahl an FMUs in einem Zyklus zu begrenzen, reduziert nicht nur den gesamten Aufwand, sondern berücksichtigt auch die Starre der Kopplung. In einem Zyklus können die FMUs nur lose miteinander verbunden sein und die Konvergenz ist mit 2 oder 3 Wiederholungen erreicht. In anderen Zyklen können die FMUs in einer nicht linearen Verbindung gekoppelt sein oder sensibler auf Änderungen der Eingangswerte reagieren (= starre Kopplung) und zehn oder mehr Wiederholungen können benötigt werden. Dieses, das Vereinzeln der Zyklen, kann die Rechenleistung bei der Gauss-Seidel signifikant reduzieren.
-
-Jedes FMU kann einem Zyklus zugewiesen sein, welcher nummeriert ist (Beginn bei 0) und in der Reihenfolge der Zyklusnummer ausgeführt wird (siehe Simulatordefinition im Abschnitt <<_Simulator-Slave-Definitionen, Simulator-/Slave- Definitionen>>).
+Jede FMU kann einem Zyklus zugewiesen werden. Die Zyklen sind durchnummeriert sind (beginnend bei 0) und werden in der Reihenfolge der Zyklusnummer berechnet (siehe Simulatordefinition im Abschnitt <<slave_definition>>).
 
 === Newton
 
 Basis-Algorithmus:
 
 -----
-Wiederholungsschleife:
-  Berechnen Sie in der ersten Wiederholung die Newtonmatrix via Angleichung des  Differenzquotienten
+Iterationsschleife:
+  In der ersten Iteration berechne Newton Matrix mittels Differenzquotienten
 
-  Lassen sie alle Slaves Folgendes durchlaufen:
-    Legen Sie alle Eingangswerte fest
-    Befehlen Sie dem Slave, einen Schritt zu machen
+  Schleife über alle Slaves:
+    setzen aller Eingangswerte aus globaler Variablenzuordnungsliste
+    den Slave einen Schritt durchführen lassen (`doStep()`)
   
-  Lassen alle Slaves Folgendes durchlaufen:
-    Rufen Sie alle Ausgangswerte ab
+  Schleife über alle Slaves:
+    Ergebnisgrößen vom Slave abrufen
 
-  Lösen Sie das Gleichungssystem
-  Berechnen Sie die Abweichung der Variablen
+  Newton-Gleichungssystem lösen
+  Berechnen der Korrekturgrößen für die Variablen und aktualisieren der 
+  Variablen
   
-  Führen Sie einen Konvergenz-Test durch
+  Konvergenz-Test durchführen
 -----
 
-Zyklen werden genauso behandelt wie mit dem Gauss-Seidel.
+Zyklen werden genauso behandelt wie beim Gauss-Seidel-Algorithmus.
 
-NOTE: Für den Fall, dass nur ein einziger FMU innerhalb des Zyklus ist, wird der Newton-Master-Algorithmus dieses FMU nur einmal auswerten und die Ergebnisse als bereits konvergiert behandeln. Natürlich wird in diesem Fall keine Newton-Matrix benötigt und verfasst. Allerdings wird es in dem (seltenen) Fall, dass ein solches FMU seine Eingangswerte mit _seinen eigenen Ausgängen_ verbindet, vielleicht zu Problemen führen, bis die potentiell ungültigen FMU-Bedingungen akzeptiert werden.
+[NOTE]
+====
+Für den Fall, dass nur eine einzige FMU innerhalb des Zyklus ist, wird der Newton-Master-Algorithmus diese FMU nur einmal auswerten und die Ergebnisse als bereits konvergiert behandeln. Natürlich wird in diesem Fall keine Newton-Matrix benötigt und erstellt. Allerdings wird dies in dem (seltenen) Fall, dass eine solche FMU seine Eingangswerte mit _seinen eigenen Ausgängen_ verbindet, zu Problemen führen, da potentiell ungültige/unpassende FMU-Bedingungen vom Newton-Schritt akzeptiert werden.
+====
 
-== Ausgänge schreiben
+== Schreiben von Ergebnisgrößen/Ausgangsvariablen
 
-Ausgänge werden nach jedem vollendeten Schritt geschrieben, aber nur, wenn die Zeitspanne seit dem letzten Ausgangs-Schreiben mindestens so lang ist wie im Parameter *hOutputMin* festgelegt.
+Ergebnisgrößen werden nach jedem vollendeten Schritt geschrieben, aber nur, wenn die Zeitspanne seit dem letzten Schreiben mindestens so lang ist wie im Parameter *hOutputMin* festgelegt.
+[TIP]
+====
+Wenn Sie Ausgänge wirklich nach jedem internen Schritt haben wollen, setzten Sie *hOutputMin* auf 0.
+====
 
-TIP: Wenn Sie Ausgänge wirklich nach jedem internen Schritt haben wollen, setzten Sie *hOutputMin* auf 0.
 
 
----

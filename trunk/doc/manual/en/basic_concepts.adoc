@@ -298,7 +298,7 @@ image::algorithm_cycles.png[alt="Cycles in iterative algorithms"]
 (2):: These two FMUs exchange values, they are in a _cycle_. If the Gauss-Seidel algorithm is executed with iteration enabled, only these two FMUs need to be updated and need to exchange values, since they do not require input from the other FMUs (except for the first one, whose output variables are already known).
 (3):: The last two FMUs are also coupled in a cycle, but only to each other. They are iterated in the last stage/cycle. Since the results of the other three FMUs are already computed and known, again only two FMUs need to be in a cycle.
 
-Restricting the number of FMUs in a cycle not only reduces overall effort, but also takes into account the stiffness of the coupling. In one cycle, FMUs may be loosely coupled, and convergence is achieved in 2 or 3 iterations. In other cycles, FMUs may be coupled in a non-linear realtion or react more sensitive to input value changes (= stiff coupling), and 10 or more iterations may be needed. This, separating the cycles can significantly reduce computational effort in a Gauss-Seidel method.
+Restricting the number of FMUs in a cycle not only reduces overall effort, but also takes into account the stiffness of the coupling. In one cycle, FMUs may be loosely coupled, and convergence is achieved in 2 or 3 iterations. In other cycles, FMUs may be coupled in a non-linear relation or react more sensitive to input value changes (= stiff coupling), and 10 or more iterations may be needed. Thus, separating the cycles can significantly reduce computational effort in a Gauss-Seidel method.
 
 Each FMU can be assigned a cycle, which are numbered (beginning with 0) and executed in the order of the cycle number (see simulator definition in section <<_simulatorslave_definitions, Simulator/Slave Definitions>>).
 
@@ -334,4 +334,3 @@ Outputs are written after each completed step, but only if the time since last o
 TIP: If you really want outputs after each internal step, set *hOutputMin* to 0.
 
 
----
