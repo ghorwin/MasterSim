@@ -197,9 +197,9 @@ Sobald das Kommunikationsintervall abgeschlossen ist, geht der Simulator in den 
 .Simulationsbeispiel bei dem sowohl Fehlerschätzerüberschreitungen als auch Konvergenzfehler eine drastische Veränderung des Kommunikationszeitschritts bedingen
 image::timestep_adjustment.png[width=600,height=300]
 
-Innerhalb des Schleife versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße zu machen (für eine konstante Schrittmethode wird der *hStart*-Parameter genutzt). Der _Master-Algorithmus_ kann möglicherweise eine wiederholende Auswertung der Slaves beinhalten (siehe unten).
+Innerhalb der Schleife versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße zu machen (für eine Methode mit konstanter Schrittweiter wird der *hStart*-Parameter genutzt). Dabei kann der _Master-Algorithmus_ möglicherweise eine iterative Auswertung der Slaves beinhalten (siehe unten).
 
-Für einen sich wiederholenden Master-Algorithmus ist es dabei möglich, dass die Methode nicht innerhalb des gegebenen Grenzen konvergiert (siehe Parameter *maxIterations*). 
+Für einen sich wiederholenden Master-Algorithmus ist es dabei möglich, dass die Methode nicht innerhalb der gegebenen Grenzen konvergiert (siehe Parameter *maxIterations* in Abschnitt <<simulator_settings>>). 
 
 === Zeitschritt-Verringerung, wenn der Algorithmus nicht konvergiert
 
@@ -211,49 +211,49 @@ Der Faktor 5 ist so ausgewählt, dass die Zeitschrittgröße schnell reduziert w
 
 Die Schrittgröße ist dann vergleichbar mit den Schritten des niedrigeren Datenübertragungs-Limits (Parameter *hMin*). Dies ist notwendig, um zu verhindern, dass die Simulation in extrem langsamen Zeitschritten stecken bleibt. Falls die Schrittgröße unter den Wert von *hMin* reduziert werden müsste, *würde die Simulation abgebrochen*.
 
-In manchen Fällen kann die Interaktion zwischen zwei Slaves das Konvergieren jedweder Master-Algorithmen verhindern (sogar beim Newton-Algorithmus). Dennoch kann in diesen Fällen der verbleibende Fehler unerheblich sein und die Simulation kann in kleinen Schritten langsam über die problematische Zeit hinweggehen und danach die Schritte vergrößern. In diesen Fällen können Sie den Parameter *hFallBackLimit* festlegen, welcher größer sein muss als *hMin*. Wenn 'h' auf einen Wert unter diese _zulässige_ Mitteilungs-Schrittgröße reduziert ist, wird der Master-Algorithmus erfolgreich zurückkehren, nachdem alle Wiederholungen ausgeführt worden sind. Demnach wird der Schritt als _sich angenähert_ behandelt und die Simulation geht zum nächsten Intervall weiter.
+In manchen Fällen kann die Interaktion zwischen zwei Slaves das Konvergieren jedweder Master-Algorithmen verhindern (sogar beim Newton-Algorithmus). Dennoch kann in diesen Fällen der verbleibende Fehler unerheblich sein und die Simulation kann in winzigen Schritten langsam über die problematische Zeit hinweggehen und danach die Schritte wieder vergrößern. In diesen Fällen können Sie den Parameter *hFallBackLimit* festlegen, welcher größer sein muss als *hMin*. Wenn 'h' auf einen Wert unter diese _zulässige_ Kommunikationsschrittlänge reduziert ist, wird der Master-Algorithmus stets erfolgreich zurückkehren, nachdem alle Iterationen ausgeführt worden sind. Der Schritt wird dadurch als _sich angenähert_ behandelt und die Simulation geht zum nächsten Intervall weiter.
 
-TODO: Fehler Original s.o. tiptoe; acceptable
+Die ganz oben angeführte Publikation illustriert das Verhalten der Simulation beim Benutzen dieser Parameter.
 
-Die oben angeführte Publikation illustriert das Verhalten der Simulation beim Benutzen der Parameter. 
+=== Fehlerkontrolle und Zeitschritt-Anpassung
 
-=== Fehlerkontrolle und Zeitschritt-Regulierung
-
-Wenn eine Fehlertestmethode (*ErrorControlMode*) festgelegt ist, folgt einem konvergierendem Schritt eine lokale Fehlersuche. Derzeit basiert diese Fehlerprüfung auf der Schritt-Verdopplungs-Technik und kann als solche nur eingesetzt werden, wenn die Slaves FMI-2.0-Setzung/-Erhaltung der Statusfunktion unterstützen.
+Wenn eine Fehlertestmethode (*ErrorControlMode*) festgelegt ist, folgt nach einem  konvergiertem Schritt eine lokale Fehlerschätzung. Derzeit basiert diese Fehlerprüfung auf der Schritt-Verdopplungs-Technik und kann als solche nur eingesetzt werden, wenn die Slaves FMI 2.0 Setzung/-Erhaltung der Statusfunktion unterstützen.
 
 Grundsätzlich läuft der Test folgendermaßen ab: 
 
 -----
-- Setzten Sie den Slave-Status zurück, um den Lauf des Kommunikationsintervalls zu starten.
-- Nehmen Sie zwei Schritte (mit dem vollen Master-Algorithmus pro Schritt)
-- Berechnen Sie Fehlerkriterien 1 und 2
-- Setzen Sie den Status zurück zum Status nach dem ersten Master-Algorithmus
+- der Slave-Zustand wird zurückgesetzt, um das aktuelle Kommunikationsintervall zu starten
+- es werden zwei Schritte (jeweils mit einem kompletten Master-Algorithmus pro Schritt) nacheinander durchgeführt
+- die Fehlerkriterien 1 und 2 werden ausgewertet
+- der Zustand der Slaves wird auf den Zustand nach dem ursprünglichen Master-Algorithmus zurückgesetzt
 -----
+
 [NOTE]
 ====
-Also, der Fehlertest benötigt zwei weitere Durchgänge des _Master-Algorithmus_ per Datenübertragung. Für wiederholende Master-Algorithmen oder den Newton-Algorithmus kann der Aufwand für den Fehlertest erheblich sein.
+Der Fehlertest benötigt demnach zwei weitere Durchgänge des _Master-Algorithmus_ pro Kommunikationsschritt. Für wiederholende Master-Algorithmen oder den Newton-Algorithmus kann dadurch der zusätzliche Aufwand für den Fehlertest erheblich sein.
 ====
 
-Die mathematischen Formeln und detaillierte Berechnungen des Fehlertests sind in der folgenden Publikation dokumentiert:  
+Die mathematischen Formeln und detaillierte Beschreibungen der Fehlertests sind in der folgenden Publikation dokumentiert:  
 
-Nicolai, A.: _Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System_ (siehe https://bauklimatik-dresden.de/mastersim/documentation.php[MasterSim Documentation Webpage]).
+Nicolai, A.: _Co-Simulation-Test Case: Predator-Prey (Lotka-Volterra) System_ (siehe https://bauklimatik-dresden.de/mastersim/documentation.php[MasterSim Dokumentations-Webpage]).
 
-Die Fehlersuche nutzt die Parameter `relTol` und `absTol` um die akzeptable Differenz zwischen Voll- und Halbschritt einzugrenzen (oder deren Neigung). Abhängig von der lokalen Fehlerschätzung, existieren zwei Optionen:
+Die Fehlersuche nutzt die Parameter `relTol` und `absTol` um die akzeptable Differenz zwischen Voll- und Halbschritt einzugrenzen (oder deren Anstiege). Abhängig von der lokalen Fehlerschätzung existieren zwei Optionen:
 
-- die lokale Fehlerschätzung ist klein genug und der Zeitschritt wird vergrößert, 
-- die Fehlersuche scheitert; die Schrittgröße wird entfernt und die gesamte Datenübertragung wird wiederholt werden. 
+- die lokale Fehlerschätzung ist klein genug und der Zeitschritt wird vergrößert, oder
+- die Fehlersuche scheitert; die Schrittgröße wird entfernt und der gesamte Kommunikationsschritt wird wiederholt.
+
 
 [TIP]
 ====
-Wenn Sie einen Fehlersuche-Algorithmus in _MasterSim_ benutzen, sollten Sie ein Zeitschrittlimit für den Rückzug setzen. Andernfalls könnte _MasterSim_ versuchen, die Dynamiken der Schrittänderung zu beseitigen, indem es die Zeitschritte auf extrem niedrige Werte justiert. 
+Wenn Sie einen Fehlersuche-Algorithmus in _MasterSim_ benutzen, sollten Sie ein Rückfall-Zeitschrittlimit setzen (*hFallBackLimit*). Andernfalls könnte _MasterSim_ versuchen, die eventuell große Dynamik der Veränderungen von Variablen von Schritt zu Schritt dadurch zu verfolgen, indem die Zeitschritte auf extrem niedrige Werte reduziert werden (und damit die Simulation sehr langsam wird).
 ====
 
-
+[[master_algorithms]]
 == Master-Algorithmen
 
-Ein _Master-Algorithmus_ ist grundsätzlich die mathematische Prozedur, um die gekoppelte Simulation einen Schritt voran zu bringen. Solch ein Co-Simulations-Master-Algorithmus verfügt über ein charakteristisches Set an Regeln, um Werte von einem FMU abzurufen, wann und wie diese Werte an andere FMUs überführt werden und die Kriterien des Konvergierens von Wiederholungen. 
+Ein _Master-Algorithmus_ bezeichnet grundsätzlich die mathematische Prozedur, um die gekoppelte Simulation einen Schritt voran zu bringen. Solch ein Co-Simulations-Master-Algorithmus verfügt über einen charakteristischen Satz an Regeln, wie Werte von einer FMU abgerufen werden, wann und wie diese Werte an andere FMUs übergeben werden und die Kriterien für das Konvergieren von Iterationsverfahren.
 
-_MasterSim_ führt mehrere Standard-Algorithmen durch. Eine detaillierte Diskussion über die unterschiedlichen Algorithmen und wie die Wahl von Algorithmen und Parametern Ergebnisse beeinflusst, kann in der folgenden Publikation nachgelesen werden: 
+_MasterSim_ enthält mehrere Standard-Algorithmen. Eine detaillierte Diskussion der  unterschiedlichen Algorithmen und wie die Wahl von Algorithmen und Parametern Ergebnisse beeinflusst, kann in der folgenden Publikation nachgelesen werden: 
 
 Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Implementierung am Beispiel des Masterprogramms MASTERSIM_, http://nbn-resolving.de/urn:nbn:de:bsz:14-qucosa2-319735 (in german)
 
@@ -262,20 +262,19 @@ Nicolai, A.: _Co-Simulations-Masteralgorithmen - Analyse und Details der Impleme
 Basis-Algorithmus:
 
 -----
-alle Slaves sollen folgende Schritte durchlaufen:
-wiederholen aller Ausgangswerte
+Schleife über alle Slaves:
+  Holen aller Ausgangswerte
   
-
-alle Slaves sollen folgende Schritte durchlaufen:
+Schleife über alle Slaves:
   setzen aller Eingangswerte
   dem Slave sagen. einen Schritt zu tun
 -----
 
-Gauss-Jacobi ist ohne Wiederholung fertig ausgeführt. Wie in der Publikation gezeigt (siehe oben), ergibt es wirklich keinen Sinn, eine Wiederholung zu nutzen. 
+Gauss-Jacobi wird stets ohne Iteration ausgeführt. Wie in der Publikation gezeigt (siehe oben), ergibt es wirklich keinen Sinn, eine Iteration zu nutzen.
 
-[NOTE]
+[TIP]
 ====
-Anstatt einen Schritt zur Datenübertragung für 10 Sekunden zu nutzen und Gauss-Jacobi für 2 Wiederholungen zu nutzen, ist es effizienter Wiederholungen zu deaktivieren (festlegen von *maxIterations=1*) und die Größe der Datenübertragungsschritte auf 5 Sekunden zu begrenzen. Der Aufwand für die Simultion ist exakt der gleiche, jedoch läuft die Simulation akkurater ab (und stabiler) mit dem 5-sekündigem Datenübertragungsintervall.
+Anstatt einen Schritt zur Datenübertragung für 10 Sekunden zu nutzen und Gauss-Jacobi mit 2 Iterationen zu nutzen, ist es effizienter Iterationen zu deaktivieren (festlegen von *maxIterations=1*) und die Größe der Datenübertragungsschritte auf 5 Sekunden zu begrenzen. Der Aufwand für die Simultion ist exakt der Gleiche, jedoch läuft die Simulation mit dem 5-sekündigem Kommunikationsintervall genauer ab (und stabiler).
 ====
 
 === Gauss-Seidel
