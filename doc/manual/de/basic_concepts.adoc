@@ -165,53 +165,53 @@ Wenn Sie mehr als 3 Slaves in einer Sequenz mit direktem Durchgang von Ein- zu A
 
 Durch eine Uneindeutigkeit im aktuellen FMI-Standard wird von Co-Simulations-Slaves nicht gefordert, die Ergebnisvariablen immer dann zu aktualisieren, wenn sich Eingangsvariablen ändern. Die meisten FMUs aktualisieren ihre Ausgangswerte tatsächlich erst nach der Aufforderung `doStep()`. Daher ist es mit dem gegenwärtigen Standard nicht möglich, zwischen den direkten mathematischen Beziehungen von Aus- und Eingängen zu unterscheiden. Dies heißt eine Änderung der Ergebnisvariablen *ohne Aufruf* von `doStep()` und *nach einem Aufruf* von `doStep()`.
 
-_MasterSim_ wählt hier die Funktionalität von FMI 1.0, d.h. keine Schleifen über Iteration, nur um Ein- und Ausgänge zu synchronisieren. Dies erfolgt unter der Annahme, dass die Ausgangsgrößen  sich nicht direkt ändern, wenn neue Eingangsvariablen gesetzt wurden (dies gilt für die meisten FMUs). Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
+_MasterSim_ wählt hier die Funktionalität von FMI 1.0, d.h. keine Schleifen innerhalb einer Iteration nur um Ein- und Ausgänge zu synchronisieren. Dies erfolgt unter der Annahme, dass die Ausgangsgrößen sich nicht direkt ändern, sobald neue Eingangsvariablen gesetzt wurden (dies gilt für die meisten FMUs). Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
 ====
 
 === Start- und Endzeit der Simulation
 
-_MasterSim_ betrachtet die Simulationszeit in _Sekunden_. 
+_MasterSim_ behandelt die Simulationszeit als gegeben in _Sekunden_. 
 [TIP]
 ====
 Wenn die gekoppelten FMUs eine unterschiedliche Zeiteinheit verwenden (d. h. Jahre), benutzen Sie einfach Sekunden auf der Benutzeroberfläche und der Projektdatei und interpretieren die Werte als Jahre.
 ====
 
-Die Simulationszeit ist auf der Benutzeroberfläche und der Projektdatei in Sekunden eingetragen (oder irgend einer anderen unterstützten Einheit, die in Sekunden umgewandelt werden kann). Während der Simulation werden alle erfassten Zeiten (Start- und Endzeit und die Zeitstufengrößen und Größenbegrenzung) zuerst in Sekunden umgewandelt und danach ohne irgend eine weitere Einheitenumrechnung benutzt.
+Die Simulationszeit wird in der Benutzeroberfläche und der Projektdatei in Sekunden eingetragen (oder irgend einer anderen unterstützten Einheit, die in Sekunden umgewandelt werden kann). Während der Simulation werden alle erfassten Zeiten (Start- und Endzeit und die Zeitstufengrößen und Größenbegrenzung) zuerst in Sekunden umgewandelt und danach ohne irgend eine weitere Einheitenumrechnung benutzt.
 
-Beispiel: Wenn Sie einen Endzeitpunkt auf '1 h' festlegen, wird der Master bis zur Simultionszeit '3600' laufen, welche dann als _Datenübertragungsintervall der Endzeit_ im letzten `doStep()`-Aufruf gesendet wird. 
+Beispiel: Wenn Sie einen Endzeitpunkt auf '1 h' festlegen, wird der Master bis zur Simultionszeit '3600' laufen, welche dann als _Endzeitpunkt des Kommunikationsintervals_ im letzten `doStep()`-Aufruf gesendet wird. 
 
-Das gesamte Simulationszeit-Intervall wird an die Slaves im `setupExperiment()`-Aufruf weitergegeben. Wenn Sie die Startzeit anders als mit 0 festlegen, wird der Master-Simulator sein erstes Mitteilungsintervall zu diesem Zeitpunkt starten (der Slave braucht dies, um den `setupExperiment()`-Aufruf korrekt zu verarbeiten und den Slave zum Startzeitpunkt zu initialisieren).
+Das gesamte Simulationszeit-Intervall wird an die Slaves im `setupExperiment()`-Aufruf weitergegeben. Wenn Sie die Startzeit anders als mit 0 festlegen, wird der Master-Simulator sein erstes Kommunikationsintervall zu diesem Zeitpunkt starten (der Slave braucht dies, um den `setupExperiment()`-Aufruf korrekt zu verarbeiten und den Slave zum Startzeitpunkt zu initialisieren).
 
 [WARNING]
 ====
 Der korrekte Umgang mit der Startzeit ist wichtig für alle FMUs, die eine Form der Bilanzierung oder Integration durchführen.
 ====
 
-Die Endzeit der Simulation wird zum FMU auch per `setupExperiment()`-Aufruf (das Argument `stopTimeDefined` ist durch _MasterSim_ immer auf `fmiTrue` gesetzt) überführt.
+Die Endzeit der Simulation wird zur FMU auch per `setupExperiment()`-Aufruf übermittelt (das Argument `stopTimeDefined` ist durch _MasterSim_ immer auf `fmiTrue` gesetzt).
 
-TODO: Übersetzung Solver sinnvoll?
+== Anpassung der Kommunikationsschrittlängen
 
-== Die Umstellung der Zeitschritte
+Sobald das Kommunikationsintervall abgeschlossen ist, geht der Simulator in den Zeitschrittsanpassungsschleife über. Wenn die Anpassung der Zeitschritte über die Eigenschaft *adjustStepSize* deaktiviert ist (siehe Abschnitt <<simulator_settings>>), wird der Schleifeninhalt nur einmal ausgeführt. Für FMI 1.0 Slaves oder FMI 2.0 Slaves ohne die Fähigkeit zur Speicherung/Wiederherstellung des Slave-Status, ist eine Wiederholung eines Schritts ebenfalls nicht möglich (tatsächlich löst das Abfragen eines Wiederholungs-Algorithmus für solche Slaves einen Fehler während der Initialisierung aus).
 
-Irgendwann ist die Simulation abgeschlossen, der Solver gibt den Zyklus der umgestellten Zeitschritte an. Wenn die Umstellung der Zeitschritte über die Markierung *adjustStepSize* (siehe <<_simulator_settings, Simulator settings>>) gesperrt ist, wird die Wiederholung des Inhalts nur einmal ausgeführt. Für FMI-1.0-Slaves oder FMI-2.0-Slaves ohne die Fähigkeit zur Speicherung/Wiederherstellung des Slave-Status, ist die Wiederholung ebenfalls nicht möglich (tatsächlich löst das Abfragen eines Wiederholungs-Algorithmus für diese Slaves einen Fehler während der Initialisierung aus).
+[[fig_timestep_adjustment]]
+.Simulationsbeispiel bei dem sowohl Fehlerschätzerüberschreitungen als auch Konvergenzfehler eine drastische Veränderung des Kommunikationszeitschritts bedingen
+image::timestep_adjustment.png[width=600,height=300]
 
-Innerhalb des Zyklus versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße (für eine konstante Schrittmethode, wird der *hStart*-Parameter genutzt)zu machen. Der _Master-Algorithmus_ involviert eventuell eine wiederholende Auswertung der Slaves (siehe unten).
+Innerhalb des Schleife versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße zu machen (für eine konstante Schrittmethode wird der *hStart*-Parameter genutzt). Der _Master-Algorithmus_ kann möglicherweise eine wiederholende Auswertung der Slaves beinhalten (siehe unten).
 
-Für einen sich wiederholenden Master-Algorithmus ist es vielleicht möglich, dass die Methode nicht innerhalb des gegebenen Limits konvergiert (siehe Parameter *maxIterations*). 
-
-TODO: time step übersetzen?
+Für einen sich wiederholenden Master-Algorithmus ist es dabei möglich, dass die Methode nicht innerhalb des gegebenen Grenzen konvergiert (siehe Parameter *maxIterations*). 
 
 === Zeitschritt-Verringerung, wenn der Algorithmus nicht konvergiert
 
-Wenn der Algorithmus nicht innerhalb des vorgegebenen Wiederholungslimits konvergiert, wird die Datenübertragung der Schrittgröße um den Faktor 5 reduziert:
+Wenn der Algorithmus nicht innerhalb des vorgegebenen Wiederholungslimits konvergiert, wird die Kommunikationsschrittlänge um den Faktor 5 reduziert:
 
   h_new = h/5
 
 Der Faktor 5 ist so ausgewählt, dass die Zeitschrittgröße schnell reduziert werden kann. Zum Beispiel, wenn eine Unterbrechung auftritt (z. B. ausgelöst durch eine schrittweise Änderung diskreter Signale) muss der Simulator die Zeitschritte schnell auf einen niedrigen Wert reduzieren, um die Schrittänderung zu überspringen.
 
-Die Schrittgröße ist dann vergleichbar mit den Schritten des niedrigeren Datenübertragungs-Limits (Parameter *hMin*). Dies ist notwendig, um zu verhindern, dass die Simulation in extrem langsamen Zeitschritten stecken bleibt. Wenn die Schrittgröße unter den Wert von *hMin* reduziert würde, würde bei der Simulation die Fehlermeldung **wird abgebrochen** auftreten.
+Die Schrittgröße ist dann vergleichbar mit den Schritten des niedrigeren Datenübertragungs-Limits (Parameter *hMin*). Dies ist notwendig, um zu verhindern, dass die Simulation in extrem langsamen Zeitschritten stecken bleibt. Falls die Schrittgröße unter den Wert von *hMin* reduziert werden müsste, *würde die Simulation abgebrochen*.
 
-In manchen Fällen kann die Interaktion zwischen zwei Slaves das Konvergieren jedweder Master-Algorithmen verhindern (sogar den Newton-Algorithmus). Dennoch kann in diesen Fällen der verbleibende Fehler unerheblich sein und die Simulation kann in kleinen Schritten langsam über die problematische Zeit hinweggehen und danach die Schritte vergrößern. In diesen Fällen können Sie den Parameter *hFallBackLimit* festlegen, welcher größer sein muss als *hMin*. Wenn 'h' auf einen Wert unter diese _zulässige_ Mitteilungs-Schrittgröße reduziert ist, wird der Master-Algorithmus erfolgreich zurückkehren, nachdem alle Wiederholungen ausgeführt worden sind. Demnach wird der Schritt als _sich angenähert_ behandelt und die Simulation geht zum nächsten Intervall weiter.
+In manchen Fällen kann die Interaktion zwischen zwei Slaves das Konvergieren jedweder Master-Algorithmen verhindern (sogar beim Newton-Algorithmus). Dennoch kann in diesen Fällen der verbleibende Fehler unerheblich sein und die Simulation kann in kleinen Schritten langsam über die problematische Zeit hinweggehen und danach die Schritte vergrößern. In diesen Fällen können Sie den Parameter *hFallBackLimit* festlegen, welcher größer sein muss als *hMin*. Wenn 'h' auf einen Wert unter diese _zulässige_ Mitteilungs-Schrittgröße reduziert ist, wird der Master-Algorithmus erfolgreich zurückkehren, nachdem alle Wiederholungen ausgeführt worden sind. Demnach wird der Schritt als _sich angenähert_ behandelt und die Simulation geht zum nächsten Intervall weiter.
 
 TODO: Fehler Original s.o. tiptoe; acceptable
 

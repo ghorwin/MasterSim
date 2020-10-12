@@ -14,6 +14,12 @@ v0.8.3, Oct 2020
 :rouge-style: custom
 :title-page:
 
+:caution-caption: Achtung
+:example-caption: Beispiel
+:figure-caption: Abbildung
+:table-caption: Tabelle
+
+
 Dieses Handbuch ist verfügbar als:
 
 * https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.pdf[PDF Version (Deutsch)]
