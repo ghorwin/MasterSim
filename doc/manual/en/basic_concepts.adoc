@@ -57,7 +57,7 @@ The following terms are used in the manual and also in the naming of classes/var
 
 [horizontal]
 FMU:: describes the fmu archive including model description and shared libraries
-slave/simulator:: describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability *canBeInstantiatedOnlyOncePerProcess* is set to true
+slave/simulator:: describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability *canBeInstantiatedOnlyOncePerProcess* is set to false
 master:: describes the overall simulation control framework that does all the administrative work
 simulation scenario:: defines a set of slaves and their connections (data exchange), as well as other properties such as start and end time, algorithm options, output settings; alternatively called *system*
 graph network:: another description for the topology of interconnected slaves
@@ -159,7 +159,7 @@ Note, the initial calculation algorithm is actually a Gauss-Jacobi algorithm, an
 
 [CAUTION]
 ====
-If you have more than 3 slaves connected in a sequence with direct feed through of variable inputs to outputs, for example when outputs are related to inputs via algebraic relations, the 3 iterationns of the Gauss-Jacobi algorithm may not be enough to properly initialize all slaves.
+If you have more than 3 slaves connected in a sequence with direct feed through of variable inputs to outputs, for example when outputs are related to inputs via algebraic relations, the 3 iterations of the Gauss-Jacobi algorithm may not be enough to properly initialize all slaves.
 
 However, due to an unclear specification in the FMI standard, it is not required by co-simulation slaves, to update their output state whenever input changes. Most FMUs actually only update output values in a call to `doStep()`. Therefore, with the current standard it is not possible to distinguish between a direct algebraic relation between outputs and inputs *without call* to `doStep()` and *with a call* to `doStep()`.
 

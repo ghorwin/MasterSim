@@ -1,7 +1,7 @@
 :imagesdir: ./images
 = Einführung und Grundbegriffe
 
-_MasterSim_ ist ein Co-Simulations-Masterprogramm, welche die FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, z.B. auf der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
+_MasterSim_ ist ein Co-Simulations-Masterprogramm, welche die FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, z. B. auf der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
 
 Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während der Laufzeit aus. Die folgende Grafik illustriert die Programmfunktion und ihren elementaren Ablauf und Datenaustausch.
 
@@ -16,18 +16,18 @@ b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeile
 
 Die Oberfläche macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der grafischen Darstellung (Verknüpfungsschematik). Letzteres ist optional und nicht notwendig für die Simulation.
 
-Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (z.B. mit https://bauklimatik-dresden.de/postproc[PostProc 2]).
+Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (z. B. mit https://bauklimatik-dresden.de/postproc[PostProc 2]).
 
-Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<_arbeitsablauf,Arbeitsablauf>> beschrieben wird.
+Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<workflow,Arbeitsablauf>> beschrieben wird.
 
 == Unterstützte FMU - Varianten
 
 - FMI für die Co-Simulation in der Version 1
-- FMI für die Co-Simulation in der Version 2, inklusive der Unterstützung für abbauende/aufbauende Status
+- FMI für die Co-Simulation in der Version 2, inklusive der Unterstützung für Zustandssicherung/-Rücksetzung (Serialisierungsfunktionen)
 
 Es werden keine asynchronen FMU-Varianten unterstützt.
 
-Typischerweise ist  _MasterSim_  für Linux und MacOS nur als 64-Bit-Anwendung verfügbar. Für Windows ist  _MasterSim_ sowohl als 32-Bit als auch 64-Bit-Anwendung vorhanden.
+_MasterSim_ ist für Linux und MacOS als 64-Bit-Anwendung verfügbar. Für Windows ist  _MasterSim_ sowohl als 32-Bit als auch 64-Bit-Anwendung vorhanden.
 
 [IMPORTANT]
 ====
@@ -43,144 +43,138 @@ Nutzen Sie für 32-Bit-FMUs eine 32-Bit-Version, für 64-Bit-FMUs eine mit 64 Bi
 - unterstützt FMU-Fehlerdiagnose: kann das Entpacken  deaktivieren (dauerhafte dll/so/dylib-Dateien), der Quelltextzugang erlaubt die Fehlersuche während des Ladens von gemeinsam genutzten Bibliotheken und angefügten Debuggern
 - High-Level- C++-Code (lesbar und wartungsfreundlich) 
 - enthält Instrumentierung und stellt Zähler und Zeitmessungen für den Leistungsvergleich von Master-Algorithmen und FMU bereit
-- der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen sind typspezifisch in Datenfeldern gruppiert, für eine _einfache Analyse im Debugger_
+- der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen sind typspezifisch für eine _einfache Analyse im Debugger_ in Datenfeldern gruppiert 
 
-Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Problemen der Fehlerbeseitigung von Co-Simulationen wichtig sind, lesen Sie bitte das Kapitel <<_assistenzfunktionen_für_fmu_entwicklung_und_fehlerbeseitigung, Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung>>.
+Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Problemen der Fehlerbeseitigung von Co-Simulationen wichtig sind, lesen Sie bitte das Kapitel <<fmu_dev_helpers, Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung>>.
 
 === Besondere Funktionen von _MasterSim_
 
-Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigenen Ausgabedaten schreiben. Um ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis für jeden Slave zur Verfügung zu stellen, setzt _MasterSim_ den Parameter `ResultsRootDir` (normalerweise mit dem Referenzwert 42) für jeden Slave in diesem Verzeichnis. So lange ein Slave einen solchen Parameter definiert, besitzt das FMU-Programm ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten. Siehe auch Abschnitt <<_verzeichnis_slaves, Verzeichnis 'Slaves'>>.
+Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigene Ausgabedaten schreiben. _MasterSim_ erstellt für jede FMU Instanz/jeden Slave ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis. Der Pfad zu diesem Verzeichnis setzt _MasterSim_ im Parameter `ResultsRootDir`. Falls ein Slave einen solchen Parameter definiert, erhält die FMU über den Parameter ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten (siehe auch Abschnitt <<dir_slaves, Verzeichnis 'Slaves'>>).
 
 == Terminologie
 
 Die folgenden Begriffe werden sowohl im Handbuch als auch in der Benennung von Klassen/Variablen genutzt:
 
 [horizontal]
-FMU:: beschreibt das FMU-Archiv inklusive der Modellbeschreibung und der gemeinsamen Datenbanken 
-Slave/Simulator:: beschreibt ein Simulationsmodell, dass aus einer FMU erstellt(instanziiert) wird; dabei können mehrere Slaves durch eine einzige FMU erstellt werden, falls die Fähigkeit *canBeInstantiatedOnlyOncePerProcess* gesetzt ist
+FMU:: beschreibt das FMU-Archiv inklusive der Modellbeschreibung und der Laufzeit-Bibliotheken
+Slave/Simulator:: beschreibt ein Simulationsmodell, dass aus einer FMU erstellt(instanziiert) wird; dabei können mehrere Slaves durch eine einzige FMU erstellt werden, falls die Fähigkeit/Eigenschaft *canBeInstantiatedOnlyOncePerProcess* deaktiviert ist
 Master:: beschreibt den gesamten Rahmen der Simulationskontrolle, der die generelle Verwaltungsarbeit übernimmt
-Simulationsszenario:: definiert eine Reihe von Slaves und deren Verbindungen (Datenaustausch) ebenso gut wie andere Eigenschaften, wie z.B. Start- und Endzeit, algorithmische Optionen, Output-Einstellungen; alternativ *system* genannt
-Grafiknetzwerk:: eine andere Beschreibung für die räumliche Struktur miteinander verbundener Slaves
-Masteralgorithmus:: beschreibt die Implementierung eines mathematischen Algorithmus, der die gekoppelte Simulation zeitgleich fördert; kann ein Wiederholungs-Programm enthalten
-Fehlerkontrolle:: meint eine lokale Fehlerüberprüfung (Schritt-für-Schritt), genutzt als schrittweises Korrekturschema
-Masterzeit:: der Zeitpunkt der Mastersimulation startet mit 0; die Maßeinheit ist nicht strikt definiert (es muss eine gemeinsame Festlegung zwischen FMUs geben, normalerweise in Sekunden; Ausnahme: wenn Datei-Lese-Slaves verwendet werden; siehe Abschnitt <<_csv_filereader_slaves,CSV-FileReader-Slaves>>).
-Gegenwärtige (Master-)Zeit:: die Zeit, in der der Master-Status eingeschaltet ist; ändert sich *einzig* am Ende eines erfolgreichen `doStep()`- oder  `restoreState()`- Aufrufs.
+Simulationsszenario:: definiert eine Reihe von Slaves und deren Verbindungen (Datenaustausch) ebenso wie weiteren Eigenschaften, wie z. B. Start- und Endzeit, algorithmische Optionen, Ausgabeeinstellungen; alternativ auch *System* genannt
+Netzwerk-Graph:: eine andere Beschreibung für die räumliche Struktur miteinander verbundener Slaves
+Masteralgorithmus:: beschreibt die Implementierung eines mathematischen Algorithmus, der die zeitliche gekoppelte Simulation beschreibt; kann ein Iterationsverfahren enthalten
+Fehlerkontrolle:: bezeichnet die Prüfung eines lokale Fehlers (Schritt-basiert), genutzt für die Anpassung des Kommunikationsschritts
+Masterzeit:: Zeitpunkt der Mastersimulation, startet mit 0; die Zeiteinheit ist nicht strikt definiert (es muss eine gemeinsame Festlegung zwischen FMUs geben, normalerweise werden Sekunden verwendet; Ausnahmen sind Datei-Lese-Slaves, siehe Abschnitt <<csv_filereader_slaves,CSV-FileReader-Slaves>>).
+Gegenwärtige (Master-)Zeit:: Zeitpunkt des aktuellen Master-Zustands; ändert sich *ausschließlich* am Ende eines erfolgreichen `doStep()`- oder `restoreState()`- Aufrufs.
 
-== Arbeitsablauf
+[[workflow]]
+== Arbeitsabläufe
 
-Wie alle anderen Simulationsmodelle, beinhalten die meisten Arbeitsabläufe eine Variantenanlyse. Im Kontext der Co-Simulation werden solche Varianten häufig durch die Modifizierung von FMUs und ihrer Parameter erzeugt. _MasterSim_ enthält Funktionen, um diesen Arbeitsprozess zu optimieren.
+Wie bei anderen Simulationsmodellen beinhalten die meisten Arbeitsabläufe eine Variantenanlyse. Im Kontext der Co-Simulation werden solche Varianten häufig durch die Modifizierung von FMUs und ihrer Parameter erzeugt. _MasterSim_ enthält Funktionen, um diesen Arbeitsprozess zu optimieren.
 
 [TIP]
 ====
-Viele Arbeitsabläufe beinhalten mehrfache Ausführungen von _MasterSim_ mit kleinen oder keinen Modifikationen in der Projektdatei. Manchmal ist ist es sehr komfortabel, die selbe Projektdatei zu nutzen und zu verändern, aber ein anderes Arbeitsverzeichnis (in dem Ausgänge gespeichert werden) zu bestimmen, damit das Resultat verschiedener Varianten verglichen werden kann. +
-(Siehe das `--working-dir`-Befehlszeilenargument, beschrieben in Abschnitt <<_arbeits-und_ausgangsverzeichnis, Arbeits-und Ausgangsverzeichnis>>).
+Viele Arbeitsabläufe beinhalten mehrfache Ausführungen von _MasterSim_ mit nur kleinen oder gar keinen Modifikationen in der Projektdatei. Manchmal ist ist es sehr komfortabel, die selbe Projektdatei zu nutzen und zu verändern, aber ein anderes Arbeitsverzeichnis (in dem Ausgänge gespeichert werden) zu bestimmen, damit das Resultat verschiedener Varianten verglichen werden kann (siehe auch das `--working-dir`-Befehlszeilenargument, beschrieben in Abschnitt <<solver_working_dir, Arbeits-und Ausgangsverzeichnis>>).
 ====
 
 === Ersteinrichtung eines Simulationsszenarios
 
-Das ist die einfache Vorgehensweise:
+Das ist eine recht direkte Vorgehensweise:
 
-TODO: Sie oder du?
+. Importieren Sie alle FMUs und weisen Sie Slave-ID-Namen zu
+. (optional) Legen Sie Parametermeterwerte für die Slaves fest
+. (optional) Definieren Sie die grafische Darstellung der Slaves
+. Verbinden Sie die Ausgangs- und Eingangsgrößen
+. Legen Sie die Simulationsparameter fest
+. Führen Sie eine Simulation durch
+. Prüfen und Bewerten Sie die Ergebnisse
 
-. Importieren Sie alle FMUs und weisen Sie Slave-ID-Namen zu.
-. (optional) Legen Sie Parametermeterwerte für die Slaves fest.
-. (optional) Definieren Sie die grafische Darstellung der Slaves.
-. Verbinden Sie die Ausgangs- und Eingangsgrößen.
-. Bestimmen Sie die Simulationsparameter.
-. Führen Sie eine Simulation durch.
-. Prüfen Sie die Ergebnisse.
+=== Nur veröffentlichte FMU-Parameter sind modifiziert
 
-=== Nur publizierte FMU-Parameter sind modifiziert
+Dies ist ein sehr einfacher Fall und, wenn von FMUs unterstützt, durchaus eine praktikable Methode. In _MasterSim_ müssen nur die den veröffentlichten Parametern zugewiesenen Werte geändert werden (dies kann auch direkt in der Projekt-Datei getan werden, z. B. auch mit Skripten) und die Simulation kann wiederholt werden.
 
-Ein sehr einfacher Fall und, wenn von FMUs unterstützt, durchaus eine bewährte Methode. In _MasterSim_ müssen nur die den publizierten Parametern zugewiesenen Werte geändert werden (dies kann auch direkt in der Projekt-Datei getan werden, z. B. mittels Skript) und die Simulation kann wiederholt werden.
+=== FMUs ändern das interne Verhalten, aber nicht die Schnittstelle
 
-=== FMUs ändern das interne Verhalten, aber nicht die Oberfläche
-
-Dies ist am häufigsten der Fall. Hier bleiben die Namen der Eingangs- und Ausgangsgrößen unverändert. Auch die publizierten Parameter bleiben gleich. Jedoch ändert sich das interne Verhalten der Betriebsart aufgrund der Anpassung des internen Modellverhaltens, wonach das FMU nochmals exportiert wurde. Da _MasterSim_ nur noch auf FMUs Bezug nimmt, können FMU-Dateien in solchen Fällen einfach ersetzt und der Simulator ohne weitere Anpassungen gestartet werden.
+Dies ist einer der häufigsten Fälle. Hier bleiben die Namen der Eingangs- und Ausgangsgrößen unverändert (d.h. die FMU-Schnittstelle bleibt unverändert). Auch die publizierten Parameter bleiben gleich. Jedoch ändert sich das interne Verhalten aufgrund der Anpassung des internen Modellverhaltens, wonach die FMU nochmals exportiert wurde. Da _MasterSim_ nur noch auf FMUs Bezug nimmt, können FMU-Dateien in solchen Fällen einfach ersetzt und der Simulator ohne weitere Anpassungen gestartet werden.
 
 === FMUs ändern Parameter aber nicht die Ein- und Ausgangsgrößen
 
 In dieser Situation, in der ein Parameter in _MasterSim_ konfiguriert worden ist, der nicht länger existiert (oder dessen Name geändert wurde), muss die entsprechende Definition in der Projekt-Datei geändert oder von der Benutzeroberfläche entfernt werden.
 
-=== FMUs ändern die Oberfläche
+=== FMUs ändern die Schnittstelle
 
-Wenn eine importierte FMU einen Teil ihrer Oberfläche ändert (z. B. sind Ein- oder Ausgangsgrößen modifiziert), dann wird dies in der Benutzeroberfläche durch Hervorhebung der falschen Verbindungen angezeigt.  Wenn nur der Teil einer Größe verändert wurde, editieren Sie am besten die Projekt-Datei und benennen dort die Größenbezeichnung um. Ansonsten einfach die Verbindung entfernen und eine neue schaffen.
+Wenn eine importierte FMU einen Teil ihrer Oberfläche ändert (z. B. sind Ein- oder Ausgangsgrößen modifiziert), dann wird dies in der Benutzeroberfläche durch Hervorhebung der falschen/nun fehlenden Verbindungen angezeigt.  Wenn nur Variablennamen verändert wurden, editieren Sie am besten die Projekt-Datei und benennen dort die Größenbezeichnung um. Ansonsten sollte man einfach die Verbindung entfernen und eine neue erzeugen.
 
-Wenn sich der Variablentyp in eine Eingangs-/Ausgangsgröße ändert, sodass eine ungültige Verbindung entsteht (oder die Kausalität geändert wird), dann zeigt die Benutzeroberfläche die ungültige Verbindung nicht unbedingt direkt an. Allerdings wird das Befehlszeilenprogramm des  _MasterSimulator_ den Fehler während der Initialisierung anzeigen und abbrechen. 
+Wenn sich der Variablentyp einer Eingangs-/Ausgangsgröße ändert, sodass eine ungültige Verbindung entsteht (oder die Kausalität geändert wird), dann zeigt die Benutzeroberfläche die ungültige Verbindung nicht unbedingt direkt an. Allerdings wird das Befehlszeilenprogramm des  _MasterSimulator_ den Fehler während der Initialisierung anzeigen und abbrechen. Auch hier ist empfehlenswert, die fehlerhafte Verbindung zu löschen und neu zu erstellen.
 
 == Ein Überblick über den Simulations-Algorithmus
 
 _MasterSim_ hat folgende zentrale Bausteine:
 
 - Initialisierung (Lesen der Projekt-Datei, Extraktion von FMUs, Überprüfung ...)
-- Ausgangsbedingungen
+- Anfangsbedingungen
 - Korrekturschleife während der Laufzeit 
-- Master-Algorithmus (d.h. er versucht Maßnahmen zu ergreifen)
+- Master-Algorithmus (d.h. er versucht Schritte durchzuführen)
 - Fehleranalyse
-- Ausgangsschreiben nach Festlegung
+- Ausgaben zu angeforderten Zeitpunkten schreiben 
 
 Diese Bausteine werden nachfolgend näher erläutert.
 
 == Initialisierung
 
-Zu Beginn der aktuellen Simulation (das Befehlszeilenprogramm _MasterSimulator_, siehe Abschnitt <<_befehlszeilen_argumente_line_arguments, Befehlszeilen-Argumente >> für Details zum Betrieb) wird die Struktur des Arbeitsverzeichnisses erzeugt und das Schreiben der Log-Datei gestartet.  
+Zu Beginn der aktuellen Simulation (das Befehlszeilenprogramm _MasterSimulator_, siehe Abschnitt <<command_line_arguments, Befehlszeilen-Argumente >> zu Details zum Simulationsstart) wird die Struktur des Arbeitsverzeichnisses erzeugt und das Schreiben der Log-Datei gestartet.
 
-Danach wird die Projekt-Datei gelesen und alle diesbezüglichen FMUs werden ausgewählt. Wenn Verweise auf CSV-Dateien auftauchen (siehe Abschnitt <<_csv_filereader_slaves, CSV-FileReader-Slaves>>), sind diese Dateien gegliedert und für Kalkulationen eingerichtet.
+Danach wird die Projekt-Datei gelesen und alle referenzierten FMUs werden entpackt. Wenn Verweise auf CSV-Dateien auftauchen (siehe Abschnitt <<csv_filereader_slaves, CSV-FileReader-Slaves>>), werden diese Dateien eingelesen und für Kalkulationen vorbereitet.
 
-TIP: Auszüge aus dem FMU-Archiv können mit der Befehlszeilen-Option `--skip-unzip` (siehe Abschnitt <<_modifikationfixierung_des_fmu_inhalts, Modifikation/Fixierung des FMU-Inhalts>>) übersprungen werden.
+[TIP]
+====
+Das Entpacken der FMU-Archive kann mit der Befehlszeilen-Option `--skip-unzip` (siehe Abschnitt <<skip_FMU_extraction, Modifikation/Fixierung des FMU-Inhalts>>) übersprungen werden.
+====
 
-TODO: library = Datenbank?
+Als erster Schritt der aktuellen Co-Sim-Initialisierung werden alle FMU-Slaves erzeugt (dynamische Bibliotheken werden geladen und Symbole importiert, danach wird `fmiInstantiateSlave()` oder `fmi2Instantiate()` aufgerufen (entsprechend für FMI 1.0 bzw. FMI 2.0-Slaves). Es folgt eine Zusammenstellung aller Austauschvariablen und das Erstellen einer Variablenzuordnung.
 
-Als erster Schritt der aktuellen Co-Sim-Initialisierung werden alle FMU-Slaves realisiert (dynamische Datenbanken werden geladen und Symbole importiert, danach wird `fmiInstantiateSlave()` oder `fmi2Instantiate()` aufgerufen für jeweils FMI 1.0- und FMI 2.0-Slaves). Es folgt eine Sammlung aller Austauschvariablen und das Erstellen einer variablen Kartierung.
+Treten Fehler während der Initialisierung auf, führt dies zu einem Abbruch des Simulators mit einer entsprechenden Fehlermeldung.
 
+=== Anfangsbedingungen
 
-Jeder während der Initialisierung aufgedeckte Fehler führt zu einem Abbruch des Simulators.
-
-=== Ausgangsbedingungen
-
-Die erste Aufgabe des Simulators ist es, für alle Slaves konsistente Anfangswerte zu schaffen. Das ist eine bereits nicht unbedeutende Aufgabe und nicht in allen Fällen ist der Erfolg garantiert. Der einzige Vorgang, für den FMI-1- und FMI-2-Slaves zum Einsatz kommen können, ist der, schrittweise die Eingangs- und Ausgangsgrößen in allen Slaves zu erhalten und zu setzen, in wiederholender Weise, bis keine Änderungen mehr beobachtet werden. 
-
-TODO: sinnvolle Übersetzung "loop over" ?
+Die erste Aufgabe des Simulators ist es, für alle Slaves konsistente Anfangswerte zu erhalten. Das ist bereits eine nicht-triviale Aufgabe und nicht in allen Fällen ist der Erfolg garantiert. Die einzige Prozedur, die sowohl für FMI 1 und FMI 2-Slaves zum Einsatz kommen kann, ist das  schrittweise Lesen und Setzen von Eingangs- und Ausgangsgrößen in allen Slaves. Dieses wird wiederholt, bis keine Änderungen mehr beobachtet werden.
 
 Der Algorithmus in _MasterSim_ ist:
 
 ----
-Lassen Sie alle Slaves folgende Schritte durchlaufen:
-  - rufen Sie setupExperiment() für den aktuellen Slave auf
-  - setzen Sie alle Variablen der Kausalitäten EINGANG oder PARAMETER auf ihre normalen Werte, wie sie in bei modelDescription.xml gegeben sind
-  - setzen Sie alle Parameter auf den in der Projektdatei spezialisierten Wert (falls Werte zugewiesen worden) 
+Schleife über alle Slaves:
+  - setupExperiment() für den aktuellen Slave aufrufen
+  - setzen aller Variablen der Kausalitäten INPUT oder PARAMETER auf ihre Standardwerte, wie sie in der modelDescription.xml gegeben sind
+  - setzen aller Parameter auf die in der Projektdatei spezialisierten Werte (falls Werte zugewiesen wurden)
 
-für FMI 2: befehlen Sie allen Slaves: enterInitializationMode()
+für FMI 2: in allen Slaves enterInitializationMode() aufrufen
 
-ein Zyklus  mit drei Wiederholungen:
-  lassen Sie alle Slaves folgende Schritte durchlaufen:
-    nehmen Sie alle Ausgänge der aktuellen Slaves und speichern Sie sie in der umfassenden Variablen-Abbildung
-  lassen Sie alle SLaves folgende Schritte durchlaufen:
-    setzen Sie für alle Eingangsvariablen Werte aus der umfassenden Variablen-Abbildung ein
+Schreife mit max. 3 Wiederholungen:
+  Schleife über alle Slaves:
+    alle Ausgangsvariablen des aktuellen Slave abfragen und in der globalen Variablenzuordnung speichern
+  Schleife über alle Slaves:
+    setzen aller Eingangsvariablen auf Werte der globalen Variablenzuordnung
 
-für FMI 2: befehlen Sie allen Slaves: exitInitializationMode()
+für FMI 2: in allen Slaves exitInitializationMode() aufrufen
 ----
 
-Beachten Sie: Der anfängliche Berechnungsalgorithmus ist derzeit ein Gauss-Jacobi-Algorithmus und als solcher nicht übermäßig stabil oder effizient. 
-
-TODO: Fehler im Original: iterations
+Achtung: Der Berechnungsalgorithmus für die Anfangsbedingungen ist derzeit ein Gauss-Jacobi-Algorithmus und als solcher nicht übermäßig stabil oder effizient. 
 
 [CAUTION]
 ====
-Wenn Sie mehr als 3 Slaves in einer Sequenz mit direkter Zufuhr von variablen Ein- zu Ausgängen verbunden haben, z. B. wenn die Ausgänge den Eingängen via Algebraischer Verbindungen zugeordnet sind, werden die 3 Wiederholungen des Gauss-Jacobi-Algorithmus eventuell nicht genügen, um alle Slaves korrekt zu initialisieren.
+Wenn Sie mehr als 3 Slaves in einer Sequenz mit direktem Durchgang von Ein- zu Ausgangsvariablen verbunden haben, z. B. wenn die Ausgangsvariablen mit den Eingangsvariablen via algebraischer Verbindungen verknüpft sind, werden die 3 Wiederholungen des Gauss-Jacobi-Algorithmus eventuell nicht genügen, um alle Slaves korrekt zu initialisieren.
 
-Dennoch, der Anteil an einer uneindeutigen Angabe im FMI-Standard, wird von  Co-Simulations-Slaves nicht eingefordert, um deren Ausgangsstatus zu aktualisieren, wann immer sich die Zufuhr ändert. Die meisten FMUs aktualisieren ihre Ausgangswerte tatsächlich erst nach der Aufforderung `doStep()`. Daher  ist es mit dem gegenwärtigen Standard nicht möglich, zwischen den direkten mathematischen Beziehungen von Aus- und Eingängen zu unterscheiden: *without call* zu `doStep()` und *with a call* zu `doStep()`.
+Durch eine Uneindeutigkeit im aktuellen FMI-Standard wird von Co-Simulations-Slaves nicht gefordert, die Ergebnisvariablen immer dann zu aktualisieren, wenn sich Eingangsvariablen ändern. Die meisten FMUs aktualisieren ihre Ausgangswerte tatsächlich erst nach der Aufforderung `doStep()`. Daher ist es mit dem gegenwärtigen Standard nicht möglich, zwischen den direkten mathematischen Beziehungen von Aus- und Eingängen zu unterscheiden. Dies heißt eine Änderung der Ergebnisvariablen *ohne Aufruf* von `doStep()` und *nach einem Aufruf* von `doStep()`.
 
-_MasterSim_ zieht es vor, die Funktionalität von FMI 1.0 zu übernehmen (d. h. keine schrittweise Wiederholung), nur um Ein- und Ausgänge zu synchronisieren, unter der Voraussetzung, dass die Ausgänge sich nicht ändern (für die meisten FMUs sowieso), wenn die Eingänge auf andere Werte eingestellt sind. Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
+_MasterSim_ wählt hier die Funktionalität von FMI 1.0, d.h. keine Schleifen über Iteration, nur um Ein- und Ausgänge zu synchronisieren. Dies erfolgt unter der Annahme, dass die Ausgangsgrößen  sich nicht direkt ändern, wenn neue Eingangsvariablen gesetzt wurden (dies gilt für die meisten FMUs). Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
 ====
-
-TODO: Übersetzen von input/output sinnvoll?; communication=Datenübertragung?
 
 === Start- und Endzeit der Simulation
 
 _MasterSim_ betrachtet die Simulationszeit in _Sekunden_. 
-
-TIP: Wenn die gekoppelten FMUs eine unterschiedliche Zeiteinheit verwenden (d. h. Jahre), benutzen Sie einfach Sekunden auf der Benutzeroberfläche und der Projektdatei und interpretieren die Werte als Jahre.
+[TIP]
+====
+Wenn die gekoppelten FMUs eine unterschiedliche Zeiteinheit verwenden (d. h. Jahre), benutzen Sie einfach Sekunden auf der Benutzeroberfläche und der Projektdatei und interpretieren die Werte als Jahre.
+====
 
 Die Simulationszeit ist auf der Benutzeroberfläche und der Projektdatei in Sekunden eingetragen (oder irgend einer anderen unterstützten Einheit, die in Sekunden umgewandelt werden kann). Während der Simulation werden alle erfassten Zeiten (Start- und Endzeit und die Zeitstufengrößen und Größenbegrenzung) zuerst in Sekunden umgewandelt und danach ohne irgend eine weitere Einheitenumrechnung benutzt.
 
