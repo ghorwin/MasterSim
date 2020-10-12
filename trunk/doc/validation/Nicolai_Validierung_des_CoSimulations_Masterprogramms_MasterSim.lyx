@@ -3214,7 +3214,7 @@ noprefix "false"
 .
  Glücklicherweise liegen bei diesem Testfall alle Ergebnisse sehr gut übereinand
 er - jedoch würde in diesem Fall auch ein komplett falsches Ergebnis, z.B.
- ein konstanter Wert von 0, als validiert gelten.
+ ein konstanter Wert von 200, als validiert gelten.
 \end_layout
 
 \begin_layout Standard
