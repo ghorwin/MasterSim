@@ -8,10 +8,10 @@ This is a minor update release, which includes a few usability features.
 Also, the german and english manuals have been improved (although there
 appears to be still some work left).
 
-Also, the annoying MacOS compatibility issue (required Qt libraries to be installed)
-are gone - MasterSimulation and its user interface now runs nicely on all 
-MacOS from 10.11...10.15 (and should be running on earliear versions as well, 
-though I didn't test it).
+Also, the annoying MacOS compatibility issue is gone (required Qt libraries to be installed).
+MasterSimulator and its user interface now run nicely on all 
+MacOS from 10.11 ... 10.15 and should be running on earlier versions as well 
+(though I didn't test it).
 
 * Feature: [Ticket #81] - File menu: add entry to open project directory in file manager
 * Feature: [Ticket #80] - Improve english and german manual
