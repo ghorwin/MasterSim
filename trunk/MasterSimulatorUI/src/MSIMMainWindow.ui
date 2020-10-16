@@ -330,7 +330,7 @@
     <string>Opens file manager with path to project file.</string>
    </property>
    <property name="shortcut">
-    <string>F3</string>
+    <string>F8</string>
    </property>
   </action>
  </widget>
