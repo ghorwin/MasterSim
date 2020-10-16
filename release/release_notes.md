@@ -1,6 +1,23 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.8.3 (16.10.2020)
+----------------------------------------
+
+This is a minor update release, which includes a few usability features.
+Also, the german and english manuals have been improved (although there
+appears to be still some work left).
+
+* Feature: [Ticket #81] - File menu: add entry to open project directory in file manager
+* Feature: [Ticket #80] - Improve english and german manual
+* Feature: [Ticket #79] - Add option to highlight not-connected output variables
+* Feature: [Ticket #78] - Add shortcut/​file menu entry for "open folder with project file"
+* Feature: [Ticket #77] - Help menu: add link to webpage
+* Feature: [Ticket #76] - Help menu: add links to online manual and bug report/​feature tracker
+* Feature: [Ticket #75] - Usability: remember project save path and use this path as base path when importing FMUs
+* Feature: [Ticket #74] - Usability: prompt for saving project file after "New..."
+
+
 Changelog for Version 0.8.2 (14.11.2019)
 ----------------------------------------
 
