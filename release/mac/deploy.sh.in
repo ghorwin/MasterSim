@@ -55,7 +55,7 @@ cp -f Info.plist $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/ &&
 
 # deploy Qt framework libraries within app bundle and relink shared libraries
 ~/Qt/5.11.3/clang_64/bin/macdeployqt $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app -always-overwrite  &&
-install_name_tool -rpath /Users/jenkina/Qt/5.11.3/clang_64/lib @executable_path/../Frameworks $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/MacOS/MasterSimulatorUI &&
+install_name_tool -rpath /Users/jenkina/Qt/5.11.3/clang_64/lib @executable_path/../Frameworks $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/MacOS/MasterSimulatorUI
 
 echo '*** Creating Symlinks to Applications and Documentation directories' &&
 ln -s /Applications $OUTPUT_DIRECTORY_NAME/Applications &&
