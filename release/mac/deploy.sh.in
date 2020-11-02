@@ -10,7 +10,7 @@ OUTPUT_FILE_BASENAME=${OutputFileBasename}
 if [ -d $OUTPUT_DIRECTORY_NAME ]; then
     rm -rf $OUTPUT_DIRECTORY_NAME
 fi
-if [ -e $OUTPUT_FILE_BASENAME.dmg ]; then 
+if [ -e $OUTPUT_FILE_BASENAME.dmg ]; then
     rm $OUTPUT_FILE_BASENAME.dmg
 fi
 
@@ -47,18 +47,18 @@ cp ../../doc/LICENSE $OUTPUT_DIRECTORY_NAME/LICENSE &&
 
 # Copy qt_menu.nib
 
-cp -R qt_menu.nib $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/ && 
+cp -R qt_menu.nib $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/resources/ &&
 
 # Copy Info.plist (configured by Python script)
 
 cp -f Info.plist $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/ &&
 
 # deploy Qt framework libraries within app bundle and relink shared libraries
-~/Qt/5.11.3/clang_64/bin/macdeployqt $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app &&
-install_name_tool -rpath /Users/jenkina/Qt/5.11.3/clang_64/lib @executable_path/../Frameworks $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/MacOS/MasterSimulatorUI
+~/Qt/5.11.3/clang_64/bin/macdeployqt $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app -always-overwrite  &&
+install_name_tool -rpath /Users/jenkina/Qt/5.11.3/clang_64/lib @executable_path/../Frameworks $OUTPUT_DIRECTORY_NAME/MasterSimulatorUI.app/Contents/MacOS/MasterSimulatorUI &&
 
 echo '*** Creating Symlinks to Applications and Documentation directories' &&
-ln -s /Applications $OUTPUT_DIRECTORY_NAME/Applications && 
+ln -s /Applications $OUTPUT_DIRECTORY_NAME/Applications &&
 ln -s /Library/Documentation $OUTPUT_DIRECTORY_NAME/Documentation &&
 
 # finally create dmg
@@ -67,4 +67,3 @@ echo '*** Creating dmg' &&
 mv $OUTPUT_DIRECTORY_NAME.dmg $OUTPUT_FILE_BASENAME.dmg &&
 
 echo "Created '$OUTPUT_FILE_BASENAME'.dmg"
-
