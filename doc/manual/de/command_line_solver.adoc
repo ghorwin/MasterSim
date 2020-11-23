@@ -54,12 +54,10 @@ Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad vom Proj
 /simulations/myScenario/...
 -------------
 
-Im Bereich <<Struktur_und_Inhalt_des_Arbeitsverzeichnis, Struktur und Inhalt des Inhaltsverzeichnis>> wird der Inhalt des Arbeitsverzeichnisses erklärt.
-
-TODO: sinnvolle Übersetzung für verbosity
+Im Abschnitt <<working_directory_structure>> wird der Inhalt des Arbeitsverzeichnisses erklärt.
 
 === Wortarten der Konsole und des Protokolldatei-Ausgangs
-MasterSimulator schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailgenauigkeit wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der durch den Master erzeugten Fehlinformationen einschränkt. 
+_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailgenauigkeit wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der durch den Master erzeugten Fehlinformationen einschränkt. 
 
 Das Niveau der verbosity auf 0 ermöglicht so ziemlich jede Ausgabe, das verbosity-Niveau auf 1 ist der Standard mit einem normalen Fortschrittsnachrichtenausgang. Nutzen Sie ein höheres verbosity-Level, wenn das Ziel die Fehlersuche ist, oder um Fehler einzugrenzen.
 [NOTE]
@@ -72,7 +70,7 @@ Die verbosity der Protokolldatei ist während der Initialisierung immer auf 3 ge
 Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen, sofern nicht die `-x`-Befehlszeilen-Markierung angegeben wurde.
 
 
-
+[[working_directory_structure]]
 == Struktur und Inhalt des Arbeitsverzeichnis
 
 Im Standard wird die folgende Verzeichnisstruktur genutzt. Angenommen es gibt eine Projekt-Datei `simProject.msim`, die für die Beschreibung des Simulationsszenario 2 bereitgestellte FMUs `part1.fmu` und `part2.fmu` nutzt, welche innerhalb des Projekts jeweils als Simulations-Slaves *P1* und *P2* Bezug nehmen. Nehmen wir an, diese Dateien sind in einem Unterverzeichnis verortet:

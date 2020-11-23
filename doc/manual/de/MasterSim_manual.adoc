@@ -1,7 +1,7 @@
 MasterSim Benutzerhandbuch
 ==========================
 Andreas Nicolai <andreas.nicolai@tu-dresden.de>
-v0.8.3, Oct 2020
+v0.8.3, Dec 2020
 :Author Initials: AN
 :toc: left
 :toclevels: 3

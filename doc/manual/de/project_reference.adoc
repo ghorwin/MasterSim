@@ -1,4 +1,6 @@
 :imagesdir: ./images
+
+[[project_file_format]]
 = Das Format der Projekt-Datei
 
 _MasterSim_benutzt eine einfache Projekt-Datei, welche das Simulations-Szenario beschreibt. Diese Projekt-Datei besitzt die Erweiterung `msim` und beinhaltet alle Daten, um eine Simulation durchzuführen. 
@@ -10,7 +12,6 @@ Eine zweite Datei mit dem selben Namen und der Erweiterung `bm` kann am selben O
 .Zukünftige Entwicklungsarbeit
 
 Derzeit ist die Forschung im Modelica Association Project SSP (https://modelica.org/projects[System Structure and Parameterization of Components for Virtual System Design]) in vollem Gang, um einen Standard für das Darstellen eines Simulations-Szenarios festzulegen. Wenn die Spezifizierungen rechtzeitig  hinreichend abgeschlossen sind, kann der Master-Simulator diesen Datei-Standard vielleicht unterstützen, zumindest den Import und Export solcher Dateien. Tatsächlich fügt eine solche Datei die Beschreibung der räumlichen Struktur der FMU-Verbindung und ihrer (nach wie vor optionalen) grafischen Darstellung in einer Datei zusammen. Allerdings ist dieses Datei-Format, ähnlich den FMUs, eigentlich eine Zip-komprimierte Verzeichnisstruktur, wodurch SSP-Projekt-Dateien vielleicht nicht länger effektiv in Versionskontrollsystemen genutzt werden können. Hier ist das ASCII-Format der aktuellen `msim`- und `bm`-Dateien gut geeignet und nützlich. 
-
 ====
 
 Das Format ist ein Klartext-Format (UTF8-kodiert) mit folgendem Inhalt:
@@ -53,9 +54,9 @@ parameters Part1.para1  14.3
 
 Jede Zeile legt eine andere Eigenschaft fest. Die Tokens jeder Zeile sind durch Leerräume (Tabulatoren oder Leerzeichen) voneinander getrennt. Die Zeilen, die mit einem Rautenzeichen # beginnen, werden kommentiert und ignoriert.
 
-[#screenshot_project_properties]
+[[screenshot_project_properties]]
 .Auf der Startseite angezeigte Projekteigenschaften
-image::welcome_page_project_properties.png[Project properties shown on the welcome page]
+image::welcome_page_project_properties.png
 
 Alle Befehlszeilen, bevor die ersten tatsächlichen Eingabezeilen als Kopfzeile erkannt werden. In diesen Zeilen wird vorausgesetzt, dass auf die Stichworte `Created:` und `LastModified:` ein mehr oder weniger bedeutungsvoller (aber nicht standardisierter) Daten- oder Zeitstrang auf der Benutzeroberfläche gezeigt wird. Andere Kopfzeilen werden als Projektbeschreibung betrachtet, welche in der Projektzusammenfassung auf der Startseite der grafischen Benutzeroberfläche gezeigt werden (siehe Figur <<screenshot_project_properties>>).
 
@@ -68,7 +69,7 @@ Nach der Kopfzeile mit der Beschreibung, ist die Ordnung der Einträge/Zeilen wi
 [[simulator_settings]]
 == Einstellungen des Simulators
 
-Unten gibt es eine kurze Beschreibung der verschiedenen Parameter mit einer Formatsbeschreibung und den benötigten Werten. Für Details über ihren Gebrauch und welchen Einfluss sie haben, siehe Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
+Unten gibt es eine kurze Beschreibung der verschiedenen Parameter mit einer Formatsbeschreibung und den benötigten Werten. Für Details über ihren Gebrauch und welchen Einfluss sie haben, siehe Abschnitt <<master_algorithms>>.
 
 Parameter werden als mit einer Einheit versehene Zahl angegeben, außer die Zähler (Maximum an Wiederholungen) oder Fehlergrenzen (welche sowieso ohne Einheit angegeben werden).
 
@@ -120,7 +121,7 @@ Die folgenden Konfigurationen werden zumeist für den Gebrauch mit einer Gegenpr
 preventOversteppingOfEndTime:: (_default=true_) selbst für FMUs mit konstanten Schritten, wird der letzte Schritt gekürzt, um exakt den Endzeitpunkt zu treffen (das ist für solche FMUs erforderlich, die eine strikte Endzeitüberprüfung haben).
 writeInternalVariables:: (_default=false_) Verfasst auch Variablen mit lokaler/interner Kausalität (wen es auf *no* gesetzt ist, werden nur Variablen mit der Kausalität _Ausgang_ verfasst)
 
-Abhängig von den gewählten Optionen, müssen sicherlich einige Fähigkeiten durch FMUs unterstützt werden, siehe Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
+Abhängig von den gewählten Optionen, müssen sicherlich einige Fähigkeiten durch FMUs unterstützt werden, siehe Abschnitt <<master_algorithms>>.
 
 
 [[slave_definition]]
@@ -132,7 +133,7 @@ Jeder Slave wird festgelegt durch:
 simulator  <priority> <cycle>  <slave-name> <html-color-code> <path/to/fmu-file>
 ----
 
-Der *Zyklus* zeigt an, ob Slaves zu einem Zyklus mit anderen FMUs gehören. Der *Slave-Name* muss eine eindeutige Identifikation des Slaves zulassen (siehe Diskussion in Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>).
+Der *Zyklus* zeigt an, ob Slaves zu einem Zyklus mit anderen FMUs gehören. Der *Slave-Name* muss eine eindeutige Identifikation des Slaves zulassen (siehe Diskussion in Abschnitt <<master_algorithms>>).
 
 NOTE: Die *Priorität* wird genutzt, um die Anordnung der Durchführung in einem Zyklus auszuwählen (für Gauss-Seidel). Trotzdem ist diese Funktion gegenwärtig nicht implementiert und Slaves innerhalb des selben Zyklus werden in der Anordnung bewertet, in der sie festgelegt sind.
 
