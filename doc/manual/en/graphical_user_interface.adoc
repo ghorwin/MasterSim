@@ -92,7 +92,8 @@ TIP: If you want to rearrange several blocks at the same time, you can select mu
 
 New slaves are added by selecting `fmu` or  `csv` or `tsv` files. _MasterSim_ automatically uses the basename of the selected file as ID name for the slave. If already such an ID name exists, _MasterSim_ appends a number to the basename. In any case, slave ID names must be unique within the project.
 
-TIP: You can import the same FMU several times, unless the FMU has the capability flag *canBeInstantiatedOnlyOncePerProcess* set to _false_. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU. 
+TIP: You can import the same FMU several times. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU. 
+Note, that the FMU must have the capability flag *canBeInstantiatedOnlyOncePerProcess* set to _false_ in order to be used several times in the same simulation scenario.
 
 === Slave properties/parameter values
 
