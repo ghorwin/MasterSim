@@ -222,14 +222,14 @@ image::gui_simulation_settings_view.png[alt="Simulation view"]
 
 [horizontal]
 (1):: Here you can define the start and end time point of the simulation.
-(2):: The initial communication interval size. When time step adustment *(7)* is disabled, this communication interval size will be used until the end simulation time has been reached.
+(2):: The initial communication interval size. When time step adjustment *(7)* is disabled, this communication interval size will be used until the end simulation time has been reached.
 (3):: Selection of the master algorithm
 (4):: Maximum number of iterations, 1 disables iteration
 (5):: The relative and absolute tolerances are used for converence check of iterative algorithms and, if enabled, for local error checking and time step adjustment.
 (6):: Here you can select an error control method, see section <<_error_control_and_time_step_adjustment,Error control and time step adjustment>>.
 (7):: If checked, _MasterSim_ will adjust the time step, requires FMUs to support the *canHandleVariableCommunicationStepSize* capability
-(8):: These three parameters control how the time step is adjusted in case of converence/error test failures.
-(9):: If checked, _MasterSim_ will adjust the step size of the last interval such, that is gives _exactly_ the end time point of the simulation as end of the last communication interval, regardless of flag *(7)* (see discussion in section <<_time_step_adjustment, Time step adjustment>>).
+(8):: These three parameters control how the time step is adjusted in case of convergence/error test failures.
+(9):: If checked, _MasterSim_ will adjust the step size of the last interval such, that it gives _exactly_ the end time point of the simulation as end of the last communication interval, regardless of flag *(7)* (see discussion in section <<_time_step_adjustment, Time step adjustment>>).
 (10):: Defines the minimum interval that needs to pass before a new output is written. Helps to reduce amount of outputs in case of variable time steps when these time steps can become much smaller than a meaningful output grid.
 (11):: If checked, _MasterSim_ also writes the values of internal variables to the output files, otherwise only variables of causality _output_. Useful mainly for debugging/FMU analysis, or to obtain internal values that are not written to output files by the FMU itself. 
 (12):: Lets you control the verbosity level of the console solver output (see <<_command_line_arguments, Command line arguments>>)
