@@ -243,14 +243,15 @@ Falls Sie die Umwandlung einer Einheit oder andere Änderungen (Zeichenumkehrung
 [[simulation_settings_view]]
 ## Simulationsansicht
 
-Alle Einstellungen, die die gegenwärtigen Co-Simulations-Algorithmen kontrollieren, werden hier festgelegt. Eine detaillierte Beschreibung der Einstellungen und ihrer Anwendung findet man im Abschnitt <<_Master_Algorithmus, Master-Algorithmus>>.
+In dieser Ansicht werden alle Einstellungen zu den Co-Simulations-Algorithmen festgelegt. Eine detaillierte Beschreibung der Einstellungen und ihrer Anwendung findet man im Abschnitt <<master_algorithms>>.
 
-TIP: Abschnitt <<_simulator_settings, Project file reference - Simulator settings>> beschreibt die zugehörigen Eintragungen in der _MasterSim_-Projekt-Datei.
+[TIP]
+====
+Abschnitt <<simulator_settings, Projektdatei-Referenz - Simulationseinstellungen>> beschreibt die zugehörigen Einträge in der _MasterSim_-Projekt-Datei.
+====
 
 .Simulationseinstellungen und die Startansicht der Simulation
 image::gui_simulation_settings_view.png[alt="Simulation view"]
- 
-TODO: Korr.Orig. s.u. adjustment; convergence
  
 [horizontal]
 (1):: Hier können sie den Start- und Endzeitpunkt ihrer Simulation festlegen.
