@@ -275,7 +275,8 @@ Natürlicherweise ist die lineare Interpolation für *String*-Parameter nicht m�
 Falls Sie einen anpassungsfähigen Schritt-Algorithmus in _MasterSim_ verwenden, sollten Sie den maximalen Zeitschritt/die Länge des Datenübertragungsintervalls auf einen Wert festlegen, der kleiner als ihr kleinstes Zeitintervall in der Eingangsdatei ihres FileReader-Slaves ist. Ansonsten könnte _MasterSim_ die Zeitschritte als höheren Wert festlegen und Werte/Intervalle überspringen. Hierbei würden Daten fehlen und wahrscheinlich falsche Ergebnisse erzeugt. Zum Beispiel: wenn Sie mit stündlichen Klimadaten arbeiten, wählen Sie 30 Minuten als maximale Länge für ein Datenübertragungsintervall.
 ====
 
-== Verbindungsgrafik
+[[connection_graph]]
+## Verbindungsgrafik
 
 Die Verbindungsgrafik legt den Datenaustausch zwischen den Slaves fest. Jede grafisch dargestellte Definitionslinie legt den Datentransfer zwischen einer Eingangs- und einer Ausgangsvariable fest.
 

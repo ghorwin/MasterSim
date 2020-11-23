@@ -8,34 +8,32 @@ Die gegenwärtige Simulation wird mit dem Befehlszeilen-Programm von `MasterSimu
 4. Die Simulation läuft, wie in der Projekt-Datei festgelegt, ab
 
 
-.Benutzen von _MasterSim_ in einer verschriftlichten Umgebung
-***************
-Da die _MasterSim_-Projekt-Datei ein einfacher Text ist und der Auflöser durch die Befehlszeile gestartet werden kann, ist es möglich, _MasterSim_ in einer verschriftlichten Umgebung und in automatisierten Prozessen zu nutzen (z. B. für optimierte Berechnungen).
-***************
+.Benutzen von _MasterSim_ in einer geskripteten Umgebung
+====
+Da die _MasterSim_-Projekt-Datei einfacher ASCII-Text ist und der Rechenkern durch die Befehlszeile gestartet werden kann, ist es möglich, _MasterSim_ in einer geskripteten Umgebung und in automatisierten Prozessen zu nutzen (z. B. für Optimierungsrechnungen).
+====
 
 [[command_line_arguments]]
 == Befehlszeilenargumente
 
-Allgemeine Syntax für das MasterSimulator-Befehlszeilen-Werkzeug:
-
-TODO: Korrektur Original: main page?
+Allgemeine Syntax für das _MasterSimulator_ Kommandozeilenprogramm:
 
 --------------
-Syntax: MasterSimulator [flags] [options] <project file>
+Syntax: MasterSimulator [Schalter] [Optionen] <Projektdatei>
 
-Markierungen:
-  --help            Druckt die Hilfsseite.
-  --man-page        Druckt die Hauptseite (Quellversion) des stündlichen Ausgangs.
-  --cmd-line        Druckt die Befehlszeile wie sie vom Befehlszeilen-Syntaxanalysierer verstanden wurde.
-  --options-left    Druckt alle Optionen, die dem Befehszeilen-Syntaxanalysierer unbekannt sind.
+Schalter:
+  --help            Zeigt diese Hilfsseite.
+  --man-page        Generiert eine man-Hilfeseite (Quellversion)
+  --cmd-line        Zeigt die Befehlszeile, wie sie vom Befehlszeilen-Syntaxanalysierer verstanden wurde.
+  --options-left    Zeigt alle Schalter/Optionen, die dem Befehszeilen-Syntaxanalysierer unbekannt sind.
   -v, --version     Zeigt die Versionsinformation.
-  -x, --close-on-exit  Schließt das Konsolenfenster nach dem Beenden der Simulation.
+  -x, --close-on-exit  Schließt das Konsolenfenster nach dem Beenden der Simulation (nur Windows).
   -t, --test-init   Startet die Initialisierung und stoppt sie direkt danach.
-  --skip-unzip      Entpackt nicht die FMUs und erwartet sie nicht entpackt im Extraktionsverzeichnis.
+  --skip-unzip      Überspringt den Schritt zum entpacken der FMUs und erwartet bereits entpackte FMU-Archive im Arbeitsverzeichnis.
 
 Optionen:
   --verbosity-level=<0..4>
-                    Level für Ausgangsdetails (0-4).
+                    Detailstufe für Programmmeldungen (0-4).
   --working-dir=<working-directory>
                     Arbeitsverzeichnis für den Master.
 --------------
