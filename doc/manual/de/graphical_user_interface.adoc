@@ -73,7 +73,7 @@ Hier ist eine Liste der nützlichen programmweiten Tastaturkürzel:
 
 Die Eingabe eines Simulations-Szenarios ist in drei Ansichten aufgeteilt. Das Erstellen einer Simulation startet mit dem Importieren von FMUs/Slaves. Somit ist die Ansicht zum Festlegen der Slaves die Erste (und Wichtigste).
 
-.Die Slave-Ansicht zeigt eine Liste importierter FMUs, zugewiesene Slave-ID-Namen und eine optionale grafische Darstellung.
+.Die Slave-Ansicht zeigt eine Liste importierter FMUs, zugewiesene Slave-ID-Namen und eine optionale graphische Darstellung.
 image::gui_slave_view.png[alt="Slave view"]
 
 Elemente der Ansicht:
@@ -90,7 +90,7 @@ Elemente der Ansicht:
 
 ### Slaves hinzufügen
 
-Neue Slaves werden zugefügt durch das Auswählen von `fmu`- oder  `csv`- oder `tsv`-Dateien. _MasterSim_ nutzt automatisch den Basisnamen der ausgewählten Datei als ID-Namen für den Slave. Falls bereits ein solcher ID-Name existiert, fügt _MasterSim_ eine Nummer zum Basisnamen hinzu. In jedem Fall müssen die Slave-ID-Namen einzigartig innerhalb des Projekts sein. 
+Neue Slaves werden durch das Auswählen von `fmu`- oder  `csv`- oder `tsv`-Dateien zugefügt. _MasterSim_ nutzt automatisch den Basisnamen der ausgewählten Datei als ID-Namen für den Slave. Falls bereits ein solcher ID-Name existiert, fügt _MasterSim_ eine Nummer zum Basisnamen hinzu. In jedem Fall müssen die Slave-ID-Namen einzigartig innerhalb des Projekts sein. 
 
 [TIP]
 ====
@@ -151,7 +151,7 @@ Beim Analysieren einer FMU versucht die Benutzeroberfläche, das FMU-Archiv zu e
 image::bm_block_states.png[alt="Block states"]
 
 [horizontal]
-(1):: Die entsprechende `fmu`-Datei existiert nicht oder kann nicht gelesen werden (kein Archiv, kann nicht extrahiert werden, beinhaltet keine `modelDescription.xml`-Datei oder die Datei ist ungültig,...viele Dinge können hier schief gehen)
+(1):: Die entsprechende `fmu`-Datei existiert nicht oder kann nicht gelesen werden (kein Archiv, kann nicht extrahiert werden, beinhaltet keine `modelDescription.xml`-Datei, die XML-Datei ist ungültig/fehlerhaft, oder ... viele Dinge können hier schief gehen)
 (2):: Die Modellbeschreibung wurde für diese FMU erfolgreich analysiert, aber die Blockdefinition stimmt nicht mit dem der Modellbeschreibung überein, oder es wurde noch gar keine Blockdefinition erstellt. Typischerweise, wenn eine FMU zum ersten Mal importiert wird, gibt es noch keine Definition der graphischen Darstellung dieser FMU. Es wird dann  einfache eine rote Box angezeigt. Sie können diese Box  *doppelt anklicken*, um den Block-Bearbeitungsdialog zu öffnen.
 (3):: Das Block-Erscheinungsbild ist bereits definiert worden und die Anschlüsse passen zu der Modellbeschreibung (Name und Eingangs-/Ausgangstypen stimmen überein).
 
@@ -255,36 +255,45 @@ image::gui_simulation_settings_view.png[alt="Simulation view"]
  
 [horizontal]
 (1):: Hier können sie den Start- und Endzeitpunkt ihrer Simulation festlegen.
-(2):: Die anfängliche Intervallgröße der Datenübertragung. Wenn die Zeitschritt-Anpassung *(7)* deaktiviert ist, wird diese Intervallgröße der Datenübertragung genutzt, bis das Ende der Simulationszeit erreicht wurde. 
+(2):: Die anfängliche Intervallgröße der Datenübertragung. Wenn die Zeitschritt-Anpassung *(7)* deaktiviert ist, wird diese Intervallgröße konstant verwendet, bis das Ende der Simulationszeit erreicht wurde. 
 (3):: Auswahl des Master-Algorithmus
-(4):: Maximale Anzahl an Wiederholungen, 1 deaktivierte Wiederholung.
-(5):: Die relativen und absoluten Toleranzen werden für einen Verbindungstest wiederholender Algorithmen und, wenn freigegeben, für eine lokale Fehlerprüfung und die Zeitschritt-Anpassung genutzt.
-(6):: Hier können Sie eine Fehlerkontroll-Methode auswählen, siehe Abschnitt <<_Fehlerkontrolle_und_Zeitschrittregulierung,Fehlerkontrolle und Zeitschrittregulierung>>.
-(7):: Wenn getestet, wird _MasterSim_ den Zeitschritt anpassen, dies verlangt FMUs, um die Fähigkeit  *canHandleVariableCommunicationStepSize* zu unterstützen. 
-(8):: Diese drei Parameter kontrollieren, wie der Zeitschritt im Fall einer Anpassung/Scheitern des Fehlertests angepasst wird. 
-(9):: Wenn getestet, wird _MasterSim_ die Schrittgröße an das letzte Intervall so anpassen, dass es den Endzeitpunkt der Simulation als Ende des letzten Intervalls der Datenübertragung _exakt_ wiedergibt, ohne Rücksicht auf das Kennzeichen *(7)* (siehe Diskussion in Abschnitt <<_time_step_adjustment, Time step adjustment>>).
-(10):: Legt das minimale Intervall fest, dass durchlaufen werden muss, bevor ein neuer Ausgang geschrieben wird. Es hilft, die Anzahl an Ausgängen im Falle variabler Zeitschritte zu reduzieren, wenn diese Zeitschritte viel kleiner als ein aussagekräftiges Ausgangsraster werden können. 
-(11):: Wenn getestet, schreibt _MasterSim_ auch die Werte innerbetrieblicher Variablen zu den Ausgangs-Dateien, ansonsten nur die Variablen von Kausalitäts-_Ausgängen_. Hauptsächlich nützlich für das Entpacken/die FMU-Analyse, oder um interne Werte zu erhalten, die nicht von der FMU selbst für Ausgangs-Dateien geschrieben  worden.  
-(12):: Lässt Sie das Level an Vielfältigkeit der Lösungsausgaben des Bedienfeldes kontrollieren (siehe <<_Befehlszeilen-Argumente_, Befehlszeilen-Argumente>>).
-(13):: Befehlszeile, die genutzt wird, den Simulator zu betreiben. Kann für die automatische Verarbeitung in ein Shell-Skript oder eine Batch-Datei kopiert werden.
-(14):: Der große, dicke Start-Button. *Ready, Steady, Go!*
+(4):: Maximale Anzahl an Wiederholungen, 1 deaktiviert Wiederholung.
+(5):: Die relativen und absoluten Toleranzen werden für einen Konvergenztest in iterativen Algorithmen und, falls eingeschaltet, für die Prüfung des lokalen Fehlers und die Zeitschritt-Anpassung genutzt.
+(6):: Hier können Sie eine Fehlerkontroll-Methode auswählen, siehe Abschnitt <<error_control_and_time_step_adjustment>>.
+(7):: Wenn eingeschaltet, wird _MasterSim_ den Zeitschritt adaptiv verändern. Dies verlangt, dass FMUs die Fähigkeit *canHandleVariableCommunicationStepSize* unterstützen.
+(8):: Diese drei Parameter legen fest, wie der Zeitschritt im Fall einer Anpassung/Scheitern des Fehlertests angepasst wird.
+(9):: Wenn eingeschaltet, wird _MasterSim_ die Schrittgröße an das letzte Intervall so anpassen, dass es den Endzeitpunkt der Simulation als Ende des _letzten_ Kommunikationsintervalls  _exakt_ erreicht, ohne dabei Rücksicht auf das Option *(7)* zu nehmen (siehe Diskussion in Abschnitt <<timestep_adjustment>>).
+(10):: Legt das minimale Zeitintervall zwischen dem Schreiben von Ausgabegrößen fest. Dies hilft, die Anzahl an Ausgaben im Fall variabler Zeitschritte zu reduzieren, wenn diese Zeitschritte viel kleiner als ein aussagekräftiges Ausgangsraster werden können. 
+(11):: Wenn eingeschaltet, schreibt _MasterSim_ auch die Werte interner Variablen in die Ausgabedateien, ansonsten nur die Ausgabevariablen (Causality = OUTPUT). Dies ist hauptsächlich nützlich für Analysieren und die Fehlersuche in FMUs, oder um interne Werte zu erhalten, die nicht von der FMU selbst als Ausgaben bereitgestellt werden.
+(12):: Damit kann die Detailstufe der Anwendungsmeldungen angepasst werden (siehe Abschnitt <<command_line_arguments>>).
+(13):: Befehlszeile, welche für den Start des Simulators verwendet wird. Kann für die automatische Verarbeitung in einem Shell-Skript oder einer Batch-Datei kopiert werden.
+(14):: Der große, dicke Start-Button. *Auf die Plätze, Fertig, Los!*
 
 
-Wenn Sie die Simulation starten, wird ein Konsolenfenster mit einer Fortschritts-/Warnungs-/Fehlermeldung für die laufende Simulation auftauchen. Da einige Simulationen sehr schnell sein können, zeigt sich nach ungefähr 2 Sekunden das Protokollfenster mit dem gegenwärtigen Inhalt des Bildschirmprotokolls. 
+Wenn Sie die Simulation startet, wird ein Konsolenfenster mit einer Fortschritts-/Warnungs-/Fehlermeldung für die laufende Simulation auftauchen. Da einige Simulationen sehr schnell sein können, und damit das Fenster auch sehr schnell wieder verschwindet, wird sich nach ungefähr 2 Sekunden das Ausgabenmeldungsfenster mit dem gegenwärtigen Inhalt des Bildschirmprotokolls angezeigt.
+
 [CAUTION]
 ====
-Beachten Sie, dass die Simulation vielleicht noch im Hintergrund laufen könnte, selbst wenn das Protokollfenster bereits gezeigt wurde. Wenn Sie die Simulation mehrere Male starten, bringen Sie mehrere Simulationsprozesse parallel hervor. Das wäre nur dann eine Verschwendung, wenn die Simulation ins selbe Verzeichnis schreiben und jede andere Datei überschreiben würde.
+Beachten Sie, dass die Simulation vielleicht noch im Hintergrund laufen könnte, selbst wenn das Protokollfenster bereits gezeigt wurde. Wenn Sie die Simulation indes mehrere Male starten, werden mehrere Simulationsprozesse parallel laufen. Das wäre aber nur eine Rechenverschwendung, da die parallelen Simulationen ins selbe Verzeichnis schreiben und sich gegenseitig die Dateien überschreiben würden.
 ====
 
 
-== Einstellungs-Dialog
+## Einstellungs-Dialog
 
-Der Einstellungs-Dialog, geöffnet im Hauptmenü oder durch die Anwendung des Tastatur-Kürzels, bietet derzeit Konfigurationsoptionen für den Texteditor (wird genutzt, um die Projekt-Datei mittels Kürzel *F2* zu editieren) und das ausführbare Nachbearbeitungsprogramm an. 
+Der Einstellungs-Dialog, geöffnet im Hauptmenü oder durch die Anwendung des Tastatur-Kürzels, bietet derzeit Konfigurationsoptionen für den externen Texteditor (wird genutzt, um die Projekt-Datei mittels Kürzel *F2* zu editieren) und das ausführbare Post-Prozessing-Programm an. 
 
 .Einstellungsdialog mit Eingangsoptionen für den Texteditor und das ausführbare Nachbearbeitungsprogramm
 image::gui_preferences_tools.png[alt="Preferences dialog"]
 
+Folgende (leichtgewichtige und open-source) Texteditoren bevorzuge ich:
 
-TIP: Wenn Sie eine Textdatei im externen Texteditor bearbeiten und die Datei speichern, bringen Sie das nächste Mal die _MasterSim_-Benutzeroberfläche in den Fokus. Sie wird anregen, das modifizierte Projekt neu zu laden.
+* Linux: Geany
+* Windows: Notepad++
+* MacOS : Brackets (http://brackets.io)
 
----
+
+[TIP]
+====
+Wenn Sie eine Textdatei im externen Texteditor bearbeiten und die Datei speichern, oder die Projektdatei anderweitig in einem externen Programm verändert wird, fragt die _MasterSim_-Benutzeroberfläche bei der nächsten Aktivierung nach, ob die Projektdatei neu geladen werden soll.
+====
+
