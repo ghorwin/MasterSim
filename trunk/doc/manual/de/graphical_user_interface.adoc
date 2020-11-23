@@ -12,7 +12,7 @@ image::gui_welcome_page.png[alt="Welcome page"]
 
 [horizontal]
 (1):: Miniaturansicht mit der Vorschau eines Simulations-Szenarios
-(2):: Kurze Beschreibung des Projekts. Die Beschreibung entstammt der Kommentarzeile der Projektzeilenüberschriften (siehe <<_project_file_format, Project file format>>).
+(2):: Kurze Beschreibung des Projekts. Die Beschreibung entstammt der Kommentarzeile der Projektzeilenüberschriften (siehe Abschnitt <<project_file_format>>).
 
 [TIP]
 ====
