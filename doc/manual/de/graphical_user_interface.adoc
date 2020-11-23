@@ -294,6 +294,6 @@ Folgende (leichtgewichtige und open-source) Texteditoren bevorzuge ich:
 
 [TIP]
 ====
-Wenn Sie eine Textdatei im externen Texteditor bearbeiten und die Datei speichern, oder die Projektdatei anderweitig in einem externen Programm verändert wird, fragt die _MasterSim_-Benutzeroberfläche bei der nächsten Aktivierung nach, ob die Projektdatei neu geladen werden soll.
+Wenn Sie eine Textdatei im externen Texteditor bearbeiten und die Datei speichern, oder die Projektdatei anderweitig in einem externen Programm verändert wird, fragt die _MasterSim_-Benutzeroberfläche nach, wenn es das nächste Mal in den Vordergrund geholt wird, ob die Projektdatei neu geladen werden soll.
 ====
 
