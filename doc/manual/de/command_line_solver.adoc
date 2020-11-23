@@ -1,20 +1,20 @@
-= _MasterSimulator_ - Das Befehlszeilen-Programm
+# _MasterSimulator_ - Das Befehlszeilen-Programm
 
-Die gegenwärtige Simulation wird mit dem Befehlszeilen-Programm von `MasterSimulator` ausgeführt. Es wird grundsätzlich in folgenden Schritten ausgeführt:
+Die eigentliche Simulation wird mit dem Befehlszeilen-Programm von `MasterSimulator` durchgeführt. Es führt  grundsätzlich die folgenden Schritte aus:
 
-1. Es liest die msim-Projektdatei (die Netzwerkdarstellung wird ignoriert, da sie nur visuelle Informationen enthält). 
-2. Danach wird ein Arbeitsverzeichnis für den Simulations-Testfall erzeugt (der Pfad kann angepasst werden, siehe: `--working-dir`-Befehlzeilen-Option unten). 
-3. Die FUMs werden extrahiert (dies kann übersprungen werden, wenn es fertig extrahiert ist, siehe Befehlszeilen-Option `--skip-unzip` unten)
-4. Die Simulation läuft, wie in der Projekt-Datei festgelegt, ab
+1. Es liest die msim-Projektdatei (die Netzwerkdarstellung wird ignoriert, da sie nur visuelle Informationen enthält).
+2. Danach wird ein Arbeitsverzeichnis für die Simulationsdaten erzeugt (der Pfad kann angepasst werden, siehe: `--working-dir`-Befehlzeilen-Option unten). 
+3. Die FUMs werden extrahiert (dies kann übersprungen werden, falls die FMUs bereits entpackt vorliegen, siehe Befehlszeilen-Option `--skip-unzip` unten).
+4. Die Simulation wird, wie in der Projekt-Datei konfiguriert, durchgeführt.
 
 
 .Benutzen von _MasterSim_ in einer geskripteten Umgebung
-====
+***************
 Da die _MasterSim_-Projekt-Datei einfacher ASCII-Text ist und der Rechenkern durch die Befehlszeile gestartet werden kann, ist es möglich, _MasterSim_ in einer geskripteten Umgebung und in automatisierten Prozessen zu nutzen (z. B. für Optimierungsrechnungen).
-====
+***************
 
 [[command_line_arguments]]
-== Befehlszeilenargumente
+## Befehlszeilenargumente
 
 Allgemeine Syntax für das _MasterSimulator_ Kommandozeilenprogramm:
 
@@ -29,7 +29,7 @@ Schalter:
   -v, --version     Zeigt die Versionsinformation.
   -x, --close-on-exit  Schließt das Konsolenfenster nach dem Beenden der Simulation (nur Windows).
   -t, --test-init   Startet die Initialisierung und stoppt sie direkt danach.
-  --skip-unzip      Überspringt den Schritt zum entpacken der FMUs und erwartet bereits entpackte FMU-Archive im Arbeitsverzeichnis.
+  --skip-unzip      Überspringt den Schritt zum Entpacken der FMUs und erwartet bereits entpackte FMU-Archive im Arbeitsverzeichnis.
 
 Optionen:
   --verbosity-level=<0..4>
@@ -39,39 +39,41 @@ Optionen:
 --------------
 
 [[solver_working_dir]]
-=== Arbeits- und Ausgangsverzeichnis
+### Anpassung des Arbeits- und Ausgangsverzeichnis
 
-Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad vom Projektdatei-Pfad erzeugt mit beseitigten Erweiterungen. Zum Beispiel:
+Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad zum Arbeitsverzeichs aus dem Pfad zur Projektdatei ohne Dateierweiterung generiert. Zum Beispiel:
 
 [source,bash]
 -------------
 # Pfad zur Projektdatei
 /simulations/myScenario.msim
 
-# Ausgänge werden hier vermerkt
+# Basisverzeichnis für Simulationsdaten und -ergebnisse
 /simulations/myScenario/...
 -------------
 
-Im Abschnitt <<working_directory_structure>> wird der Inhalt des Arbeitsverzeichnisses erklärt.
+Im Abschnitt <<working_directory_structure>> wird der Inhalt und die Struktur des Arbeitsverzeichnisses erklärt.
 
-=== Wortarten der Konsole und des Protokolldatei-Ausgangs
-_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailgenauigkeit wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der durch den Master erzeugten Fehlinformationen einschränkt. 
+### Anpassung der Ausgabedetailstufe
 
-Das Niveau der verbosity auf 0 ermöglicht so ziemlich jede Ausgabe, das verbosity-Niveau auf 1 ist der Standard mit einem normalen Fortschrittsnachrichtenausgang. Nutzen Sie ein höheres verbosity-Level, wenn das Ziel die Fehlersuche ist, oder um Fehler einzugrenzen.
+_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailstufe wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der erzeugten Fehler-/Analyseinformationen festlegt.
+
+Bei der Detailstufe 0 (`--verbosity-level=0`) wird so ziemlich je Ausgabe abgeschaltet. Die Detailstufe 1 ist der Standard mit normalen Fortschrittsmeldungen. Nutzen Sie eine höhere Ausgabedetailstufe zur Analyse der integrierten Algorithmen oder zur Eingrenzung von Fehlern.
+
 [NOTE]
 ====
-Die verbosity der Protokolldatei ist während der Initialisierung immer auf 3 gesetzt und während der Simulation zurückgesetzt auf den Standardwert 1 oder den Befehlszeilenwert (um eine Verlangsamung der Simulation aufgrund des exzessiven Ausgabeschreibens zu vermeiden).
+Die Detailstufe der Protokolldatei ist während der Initialisierungsphase immer auf 3 gesetzt, um möglichst detaillierte FMU-Analyseausgaben in der Protokolldatei zu erhalten. Während der Simulation wird die Ausgabedetailstufe dann auf den Standardwert 1 zurückgesetzt, um eine Verlangsamung der Simulation aufgrund des exzessiven Ausgabeschreibens zu vermeiden. Falls der `--verbosity-level`-Befehlszeilenparameter angegeben ist, wird dieser Wert auch während der Simulation für die Protokolldatei verwendet.
 ====
 
-=== Spezielle Optionen bei Windows
+### Spezielle Optionen unter Windows
 
-Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen, sofern nicht die `-x`-Befehlszeilen-Markierung angegeben wurde.
+Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen, sofern nicht der  `-x`-Befehlszeilenschalter angegeben wurde.
 
 
 [[working_directory_structure]]
-== Struktur und Inhalt des Arbeitsverzeichnis
+## Struktur und Inhalt des Arbeitsverzeichnis
 
-Im Standard wird die folgende Verzeichnisstruktur genutzt. Angenommen es gibt eine Projekt-Datei `simProject.msim`, die für die Beschreibung des Simulationsszenario 2 bereitgestellte FMUs `part1.fmu` und `part2.fmu` nutzt, welche innerhalb des Projekts jeweils als Simulations-Slaves *P1* und *P2* Bezug nehmen. Nehmen wir an, diese Dateien sind in einem Unterverzeichnis verortet:
+_MasterSim_ erstellt eine Verzeichnisstruktur nach folgendem Schema. Angenommen es gibt eine Projekt-Datei `simProject.msim`, welche im Simulationsszenario zwei FMUs `part1.fmu` und `part2.fmu` verwendet. Diese werden innerhalb des Projekts jeweils als Simulations-Slaves *P1* und *P2* bezeichnet. Nehmen wir an, diese Dateien sind in einem Unterverzeichnis abgelegt:
 
 -----
 /sim_projects/pro1/simProject.msim
@@ -79,34 +81,31 @@ Im Standard wird die folgende Verzeichnisstruktur genutzt. Angenommen es gibt ei
 /sim_projects/pro1/fmus/part2.fmu
 -----
 
-Während des Betriebs des Master-Simulators wird ein Arbeitsverzeichnis erstellt. Standardmäßig entspricht der Dateipfad zu diesem Arbeitsverzeichnis dem Projekt-Dateinamen ohne weitere Anhänge.
+Bei Ausführung des Master-Simulators wird ein Arbeitsverzeichnis erstellt. Standardmäßig entspricht der Dateipfad zu diesem Arbeitsverzeichnis dem Projekt-Dateinamen ohne Dateierweiterung.
 
 -----
-/sim_projects/pro1/simProject/             - working directory
-/sim_projects/pro1/simProject/log/         - log and statistic files
-/sim_projects/pro1/simProject/fmus/        - unzipped fmu subdirectories
-/sim_projects/pro1/simProject/fmus/part1   - unzipped part1.fmu
-/sim_projects/pro1/simProject/fmus/part2   - unzipped part2.fmu
-/sim_projects/pro1/simProject/slaves/      - output/working directory for fmu slaves
-/sim_projects/pro1/simProject/slaves/P1    - output directory for slave P1
-/sim_projects/pro1/simProject/slaves/P2    - output directory for slave P2
-/sim_projects/pro1/simProject/results/     - base directory for simulation results
+/sim_projects/pro1/simProject/             - Arbeitsverzeichnis
+/sim_projects/pro1/simProject/log/         - Logdateien und Statistiken
+/sim_projects/pro1/simProject/fmus/        - Entpackte FMUs
+/sim_projects/pro1/simProject/fmus/part1   - entpackte part1.fmu
+/sim_projects/pro1/simProject/fmus/part2   - entpackte part2.fmu
+/sim_projects/pro1/simProject/slaves/      - Ausgabe-/Arbeitsverzeichnis für FMU Slaves
+/sim_projects/pro1/simProject/slaves/P1    - Ausgabe-/Arbeitsverzeichnis für Slave P1
+/sim_projects/pro1/simProject/slaves/P2    - Ausgabe-/Arbeitsverzeichnis für Slave P2
+/sim_projects/pro1/simProject/results/     - Ausgabeverzeichnis für Simulationsergebnisse
 -----
 
-Der Basisname des Verzeichnis, hier `simProject` kann geändert werden, indem das Befehlszeilenargument `--working-directory` genutzt wird.
+Der Basisname des Verzeichnisses, hier `simProject`, kann durch Angabe das Befehlszeilenarguments `--working-directory` verändert werden.
 
-=== Verzeichnis `log`
-
-TODO: verbosity level?
-
+### Verzeichnis `log`
 
 Dieses Verzeichnis beinhaltet 3 Dateien:
-
-`progress.txt`:: beinhaltet den gesamten Simulations-Fortschritt
-`screenlog.txt`:: beinhaltet die Ausgabe von _MasterSim_, geschrieben im Konsolenfenster mit dem erforderlichen Umfang an Worten (während der Initialisierung wird immer eine detaillierte Ausgabe an die Log-Datei geschrieben, selbst wenn auf dem Bildschirm nichts zu schreiben notwendig ist bei einer geringen Wortanzahl)
+[horizontal]
+`progress.txt`:: beinhaltet den Simulations-Fortschritt (siehe Formatbeschreibung unten)
+`screenlog.txt`:: beinhaltet die Konsolenausgabe von _MasterSim_, welche in das Konsolenfenster mit der jeweils angeforderten Detailstufe geschrieben wurde (während der Initialisierung wird immer eine detaillierte Ausgabe an die Log-Datei geschrieben, selbst wenn die Bildschirmausgabe mit `--verbosity-level=0` deaktiviert wurde)
 `summary.txt`:: nachdem die Simulation _erfolgreich_ vollendet ist, beinhaltet diese Datei eine Zusammenfassung der relevanten Lösungs- und Algorithmusstatistiken.
 
-Das Format des `progress.txt` ist recht simpel:
+Das Format der Datei `progress.txt` ist recht simpel:
 
 ----
    Simtime [s] 	   Realtime [s]	 Percentage [%]
@@ -117,17 +116,13 @@ Das Format des `progress.txt` ist recht simpel:
             ...             ...             ...
 ----
 
-TODO: Korrektur Original (s.u.): Tab groß? 
-
 Die Datei besitzt 3 Spalten, getrennt durch ein Tabulatorzeichen. Die Datei wird bei laufender Simulation geschrieben und aktualisiert und kann von anderen Werkzeugen genutzt werden, um den Gesamtfortschritt aufzugreifen und Fortschrittsdiagramme zu erzeugen. (Geschwindigkeit/Prozentsatz etc.)
 
-Die Bedeutung der verschiedenen Werte im `summary.txt` werden im Abschnitt erklärt.
+Die Bedeutung der verschiedenen Werte im `summary.txt` werden im Abschnitt <<summary_txt_file>> erklärt.
 
-TODO: Original s.o.: welcher Abschnitt?
+### Verzeichnis `fmus`
 
-=== Verzeichnis `fmus`
-
-Innerhalb dieses Verzeichnisses werden die importierten FMUs extrahiert, jedes in ein Unterverzeichnis mit dem Basisnamen des FMU (`part1.fmu` -> `part1`).
+Innerhalb dieses Verzeichnis werden die importierten FMUs extrahiert, jedes in ein Unterverzeichnis mit dem Basisdatei der FMU (`part1.fmu` -> `part1`).
 
 Wenn ein _MasterSim_-Projekt auf verschiedene FMUs desselben Basisnamen Bezug nimmt, welche zum Beispiel in verschiedenen Unterverzeichnissen stehen, wird es den Pfadnamen anpassen. Beispiel: 
 
@@ -137,21 +132,22 @@ slave1 : /path/to/fmus/s1.fmu
 slave2 : /path/to/fmus/s1.fmu                # <1>
 slave3 : /path/other/project/fmus/s1.fmu     # <2>
 
-# _MasterSim_ erzeugt Verzeichnisse
+# von _MasterSim_ erzeugte Verzeichnisse
 .../fmus/s1
 .../fmus/s1_2                                # <3> 
 ------
-<1> zweite Realisierung des gleichen FMU
-<2> anderes FMU mit gleichem Basisnamen
-<3> Anhang 2 und 3 ist durch _MasterSim_ zugefügt
+<1> zweite Instanz der gleichen FMU (wird nur einmal entpackt)
+<2> andere FMU mit gleichem Basisnamen
+<3> Suffix `_2` (bzw. `_3` etc.) wird durch _MasterSim_ angehängt
 
-Grundsätzlich wird jede FMU-Datei nur einmal ausgewählt.
+Grundsätzlich wird jede FMU-Datei nur einmal entpackt.
+
 [TIP]
 ====
 .Überspringen des FMU-Extraktions-Schritts
-MasterSim unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr nützlich ist, um fehlerhafte FMUs im `modelDescription.xml` oder fehlende Ressourcen zu reparieren. Wenn solch ein FMU auftaucht, können Sie MasterSimulater einmal durchlaufen lassen, um die FMUs ins Verzeichnis zu extrahieren, dann die schlechten Dateien im jeweiligen extrahierten Verzeichnis überarbeiten/anpassen und danach die Simulation noch einmal mit `--skip-unzip` durchlaufen lassen. _MasterSim_ wird nun die (veränderten) Dateien direkt lesen und Sie können sich selbst die Mühe des Komprimierens und Umbenennens der FMUs sparen. Ebenso können Sie die `modelDescription.xml` im Editor geöffnet lassen und durch die Editions- und Test-Lauf-Prozedur schnell wiederholen, bis alles funktioniert.
+_MasterSim_ unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr nützlich ist, um FMUs durch Korrektur einer fehlerhaften `modelDescription.xml`-Datei oder fehlender Ressourcen zu reparieren. Wenn solch eine FMU auftaucht, können Sie _MasterSimulater_ einmal durchlaufen lassen, um die FMUs in die Verzeichnisse zu extrahieren. Dann kann man die fehlerhaften Dateien im jeweiligen Entpack-Verzeichnis überarbeiten/anpassen und danach die Simulation noch einmal mit `--skip-unzip` durchlaufen lassen. _MasterSim_ wird nun die (veränderten) Dateien direkt lesen und Sie können sich selbst die Mühe des Komprimierens und Umbenennens der FMUs sparen. Ebenso können Sie die `modelDescription.xml` im Editor geöffnet lassen und die wiederholte "Bearbeiten-und-Testsimulieren"-Prozedur schnell durchlaufen, bis alles funktioniert.
 
-Siehe außerdem Abschnitt <<_ModifikationFixierung_des_FMU_Inhalts,Modifikation/Fixierung des FMU-Inhalts>>.
+Siehe auch Erläuterungen im Abschnitt <<skip_FMU_extraction>>.
 ====
 
 [[dir_slaves]]
@@ -250,8 +246,8 @@ ControlledTemperature.fmu	idealSwitch.control	logicalNot.y
 ControlledTemperature.fmu	logicalNot.u	onOffController.y
 ----
 
-
-=== Finale Statistik/Zusammenfassung
+[[summary_txt_file]]
+### Simulations-Statistik/Zusammenfassung
 
 _MasterSim_ beinhaltet interne Profilierungsfunktionen, welche die Evaluierungszeiten der verschiedenen Teile der Software überwachen. Ebenso werden Ausführungsgrafen für unterschiedliche entscheidende Funktionen gezeigt. 
 Die Statistik wird ins Konsolenfenster kopiert (für das Wortartlevel > 0) und in der Log-Datei `screenlog.txt` im folgenden Format:

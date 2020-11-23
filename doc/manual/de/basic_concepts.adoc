@@ -6,7 +6,7 @@ _MasterSim_ ist ein Co-Simulations-Masterprogramm, welches die FMI-Co-Simulation
 Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während zur _Laufzeit_ aus. Die folgende Grafik illustriert die Programmfunktion, die einzelnen Komponenten des Programms und den Datenaustausch.
 
 .Diagramm über den Datenfluss (Dateien) und beteiligten Programme
-image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
+image::DataFlowDiagram.png[alt="Data flow diagram",pdfwidth="10cm"]
 
 ## Die Teile des Programms
 _MasterSim_ besteht aus zwei Teilen:

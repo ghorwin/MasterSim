@@ -1,15 +1,32 @@
 [[fmu_dev_helpers]]
-= Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung
+# Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung
 
-Dieser Abschnitt beschreibt einige Funktionen von _MasterSim_, die teilweise nützlich für Entwickler eigener FMUs oder zum Identifizieren von Rechenproblemen eines dritten FMUs sind.
+Dieser Abschnitt beschreibt einige Funktionen von _MasterSim_, die sehr nützlich für Entwickler eigener FMUs oder zum Identifizieren von FMU-Berechnungsproblemen sind.
 
+Dadurch, dass der _MasterSim_-Quelltext frei verfügbar ist, kann die ganze Kommunikation zwischen Co-Simulations-Master und den Simulations-Slaves im Debugger verfolgt und analysiert werden. Doch auch ohne Entwicklungsumgebung und Quelltextzugriff, kann man mit _MasterSim_ effizient FMU-Probleme beseitigen.
 
 [[skip_FMU_extraction]]
-== Modifikation/Fixierung des FMU-Inhalts
+## Einfache Veränderung/Reparatur von fehlerhaften FMUs
 
-Wenn ein FMU eine ungültige `modelDescription.xml`-Datei besitzt, kann der Prozess zum Entpacken der FMU, Fixieren der Datei, erneutes Packen der FMU und das erneute Versuchen der Simulation mit einem Co-Simulations-Master zu viel Zeit kosten. Mit _MasterSim_ läuft die Simulation nur einmal und extrahiert das FMU in das jeweilige `fmus`-Unterverzeichnis subdir. Dort kann man alle Dateien untersuchen und Fehler festmachen, oder fehlende Dateien zufügen. 
+Häufig resultieren Fehler in FMUs aus fehlerhaften/unvollständigen `modelDescription.xml`-Dateien. Oder es fehlen Resourcen. Oder die im FMU-Archiv eingebetteten Resource sind veraltet, und müssen ersetzt werden (Datenbankdateien etc.).
 
-Das nächste mal, wenn Sie den _MasterSimulator_ durchlaufen lassen, führen Sie die Befehlszeilen-Option `--skip-unzip` aus und _MasterSim_ wird den Schritt des Entpackens überspringen und direkt auf die Dateien im extrahierten Verzeichnis zugreifen. 
+In diesem Fall ist die klassische Arbeitsweise:
 
+1. FMU entpacken
+2. Inhalt bearbeiten
+3. FMU-Verzeichnis wieder komprimieren
+4. Komprimierte Datei umbenennen/in das ursprüngliche Verzeichnis kopieren
 
----
+Dies kann recht mühsehlig und zeitaufwändig sein. _MasterSim_ kann dieses Prozedere abkürzen.
+
+Dazu startet man den _MasterSimulator_ einmal regulär (und bricht dann ggfs. die Simulation ab). Die verwendeten FMUs wurden bei der Initialisierung in die jeweiligen Verzeichnisse entpackt (siehe auch Abschnitt <<working_directory_structure>>).
+
+Nun kann man in diesem Verzeichnissen die benötigten Änderungen vornehmen, z.B. die `modelDescription.xml`-Datei im Texteditor bearbeiten oder Dateien austauschen. Auch kann man die Laufzeitbibliotheken der FMU selbst austauschen (oder neu compilieren).
+
+Nun kann man _MasterSimulator_ erneut durchlaufen lassen, jedoch diesmal mit der Befehlszeilen-Option `--skip-unzip`. _MasterSim_ wird den Schritt des Entpackens überspringen und direkt auf die Dateien im extrahierten Verzeichnis zugreifen.
+
+[TIP]
+====
+Beim Bearbeiten der `modelDescription.xml`-Datei kann man diese dabei auch im Texteditor geöffnet halten, was wiederum etwas Zeit spart.
+====
+

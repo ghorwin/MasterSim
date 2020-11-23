@@ -3,7 +3,7 @@
 The actual simulation is done by the `MasterSimulator` command line program. It basically performs the following steps:
 
 1. Read the msim project file (the network representation file is ignored, since it only contains visual information). 
-2. Then, a working directory for this simulation test case is created (path can be adjusted, see `--working-dir` command line option below). 
+2. Then, a working directory for the simulation data is created (path can be adjusted, see `--working-dir` command line option below). 
 3. The FMUs are extracted (can be skipped if already extracted, see command line option `--skip-unzip` below)
 4. The simulation is run as defined in the project file
 
