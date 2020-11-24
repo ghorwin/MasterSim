@@ -1,4 +1,4 @@
-:imagesdir: ./images
+:imagesdir: ../images
 # Grafische Benutzeroberfläche
 
 _MasterSim_ verfügt über eine komfortable grafische Benutzeroberfläche, um _Simulations-Szenarios_ festzulegen und anzupassen. Mit _Simulations-Szenario_ meine ich die Festlegung, welche FMUs zu importieren sind, welche Slave (oder Slaves) erstellt werden sollen, wie Eingangs-und Ausgangsvariablen verbunden sind und die Definition aller Eigenschaften im Zusammenhang mit den Berechnungsalgorithmen. Grundsätzlich behaltet ein _Szenario_ alles, das gebraucht wird, um eine Co-Simulation durchzuführen.
@@ -120,7 +120,7 @@ Die Netzwerkansicht *(9)* zeigt ein simples Schema aller FMU-Slaves und ihrer Ve
 Mit dem Scrollrad der Maus können Sie in der Netzwerkansicht heraus- und hineinzoomen. Es wird zu der Stelle gezoomt, an der sich der Mauszeiger befindet.
 ====
 
-Das Netzwerk zeigt *_Blöcke_* (je importiertem Simulator/Slave), und in jedem Block eine oder mehrere *_Anschlussstellen_* (engl. _socket_). Diese *_Anschlussstellen_* zeigen die Eingangs-/Ausgangsvariablen eines jeden Simuations-Slaves an. Die Blöcke werden in unterschiedlichen Farben angezeigt, welche individuelle <<block_states,Blockzustände>> anzeigen.
+Das Netzwerk zeigt *_Blöcke_* (je importiertem Simulator/Slave), und in jedem Block eine oder mehrere *_Anschlussstellen/Sockel_* (engl. _socket_). Diese *_Sockel_* zeigen die Eingangs-/Ausgangsvariablen eines jeden Simuations-Slaves an. Die Blöcke werden in unterschiedlichen Farben angezeigt, welche individuelle <<block_states,Blockzustände>> anzeigen.
 
 Blöcke können markiert und dann mit der Maus verschoben werden. Ebenso können Verbindungslinien verschoben werden.
 

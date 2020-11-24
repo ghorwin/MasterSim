@@ -1,4 +1,4 @@
-:imagesdir: ./images
+:imagesdir: ../images
 = Project file format
 
 _MasterSim_ uses a single project file that describes a simulation scenario. This project file has the extension `msim` and contains all data to perform a simulation.

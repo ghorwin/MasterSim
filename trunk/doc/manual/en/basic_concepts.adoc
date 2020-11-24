@@ -1,4 +1,5 @@
-:imagesdir: ./images
+:imagesdir: ../images
+
 = Introduction and basic concepts
 
 _MasterSim_ is a co-simulation master program that supports FMI co-simulation. If you are new to co-simulation in general, or not yet familiar with the Functional Mock-Up Interface (FMI), I suggest reading up a bit on the basics on the https://fmi-standard.org[fmi-standard.org] webpage.
