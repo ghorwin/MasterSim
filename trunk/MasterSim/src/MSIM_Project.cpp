@@ -149,6 +149,10 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 					throw IBK::Exception(IBK::FormatString("Expected parameter variable name in format <slave name>.<parameter name>', got '%1'").arg(line), FUNC_ID);
 				std::string slaveName = parameter.substr(0, dotPos);
 				parameter = parameter.substr(dotPos+1);
+
+				// if parameter string is enclosed in ", remove those
+				if (value.size() > 1 && value[0] == '\"' and value[value.size()-1] == '\"')
+					value = value.substr(1, value.size()-2);
 				// add paramter to slave
 				unsigned int s=0;
 				for (; s<m_simulators.size(); ++s) {
@@ -337,7 +341,11 @@ void Project::write(const IBK::Path & prjFile) const {
 			// do not write empty parameters
 			if (it->second.empty())
 				continue;
-			out << "parameter " << simDef.m_name << "." << it->first << "   " << it->second << std::endl;
+			// if parameter string starts with leading space, enclose it in ""
+			std::string para = it->second;
+			if (para[0] == ' ')
+				para = '\"' + para + '\"';
+			out << "parameter " << simDef.m_name << "." << it->first << "   " << para << std::endl;
 		}
 	}
 	out << std::endl;
