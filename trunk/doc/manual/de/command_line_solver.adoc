@@ -182,7 +182,7 @@ _MasterSimulator_ gibt folgende Return-Code zurück:
 0:: bei Erfolg
 1:: wenn ein Fehler aufgetreten ist (alle Ursachen, von schlechten oder fehlenden FMUs, oder Fehlern während der Berechnung,...), die Datei  `screenlog.txt` beinhaltet Details.
 
-
+[[simulation_outputs]]
 ## Simulationsausgaben
 
 ### Slave-Ausgabewerte

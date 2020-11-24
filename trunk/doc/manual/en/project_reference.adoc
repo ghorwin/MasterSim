@@ -82,16 +82,16 @@ hStart:: (_default=10 min_) initial time step, will be use as constant step size
 +
 TIP: If *hStart* is set to 0 in the project file, it will be computed to be 1/1000 of the simulation duration defined by (*tEnd - tStart*).
 
-hOutputMin:: (_default=10 min_) minimim time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
+hOutputMin:: (_default=10 min_) minimum time that need to elapse before next output values are written, if communication step sizes are larger than *hOutputMin*, outputs may be skipped but the regular output intervals will be kept
 outputTimeUnit:: (_default=s_) The unit to be used in for the time column (the first column) of output files
-adjustStepSize:: (_default=false_) enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP*, disablin *adjustStepSize* is an error
+adjustStepSize:: (_default=false_) enables/disables adaptive-time-step mode, when error control mode is *ADAPT_STEP*, disabling *adjustStepSize* is an error
 preventOversteppingOfEndTime:: This flag is needed for certain FMUs, which include a test against surpassing the end simulation time. This is in some cases related to time series parameters, that only last until exactly the simulation end time. Another problem is also, that rounding errors can add to a very small overshooting of the end time point. Nevertheless, well-behaving FMUs should handle overstepping gracefully. Yet, to avoid an FMU error and abort of the simulation, _MasterSim_ can adjust the last communcation interval's size such, that exactly the end time of the simulation is given to the FMU. If this flag is enabled, the last interval's step size may be adjusted, even though time step adjustment is generally disabled by flag *adjustStepSize*.
 
 
 *MasterMode* (_default=GAUSS_SEIDEL_) is one of:
 [horizontal]
 GAUSS_JACOBI:: Gauss-Jacobi algorithm (non-iterative)
-GAUSS_SEIDEL:: Gauss-Seidel algorithm (iterative or non-iterative depending on *it_max_steps*)
+GAUSS_SEIDEL:: Gauss-Seidel algorithm (iterative or non-iterative depending on *maxIterations*)
 NEWTON:: Newton algorithm with difference-quotient approximation to Jacobi matrix
 
 Iteration and convergence parameters:
