@@ -54,7 +54,7 @@ Each line defines a different property. Tokens in each line are separated by whi
 
 [#screenshot_project_properties]
 .Project properties shown on the welcome page
-image::welcome_page_project_properties.png[Project properties shown on the welcome page]
+image::welcome_page_project_properties.png[alt="Project properties shown on the welcome page",pdfwidth=10cm]
 
 All comment lines before the first actual input line are recognized as the header lines. In these lines the keywords `Created:` and `LastModified:` are expected to be followed by a more or less meaningful (but not standardized) date/time string to be shown in the user interface. Other header lines are treated as project description, show in the project summary on the welcome page of the graphical user interface (see Figure <<screenshot_project_properties>>).
 
@@ -345,12 +345,11 @@ The `bm` file is a simple xml file and describes the graphical layout and visual
 A simple network like
 
 .Example for a simple graphical representation of a network
-image::bm_network_example.png[Blockmod Network Example]
+image::bm_network_example.png[alt="Blockmod Network Example",pdfwidth=7cm]
 
 is defined in the following BlockMod network representation file:
 
 [source,xml]
-.Blockmod network representation file
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <BlockMod>
