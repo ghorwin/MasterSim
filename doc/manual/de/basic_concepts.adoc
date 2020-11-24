@@ -3,10 +3,10 @@
 
 _MasterSim_ ist ein Co-Simulations-Masterprogramm, welches die FMI-Co-Simulation unterstützt. Wenn die Co-Simulation für Sie etwas gänzlich Neues ist oder Sie mit dem funktionalen Mock-Up-Interface (FMI) noch nicht vertraut sind, empfehle ich Ihnen, zunächst ein wenig über die Grundlagen zu lesen, z. B. auf der https://fmi-standard.org[fmi-standard.org]-Web-Seite.
 
-Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves während zur _Laufzeit_ aus. Die folgende Grafik illustriert die Programmfunktion, die einzelnen Komponenten des Programms und den Datenaustausch.
+Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves zur _Laufzeit_ aus. Die folgende Grafik illustriert die einzelnen Komponenten des Programms und den Datenaustausch zwischen diesen.
 
 .Diagramm über den Datenfluss (Dateien) und beteiligten Programme
-image::DataFlowDiagram.png[alt="Data flow diagram",pdfwidth="10cm"]
+image::DataFlowDiagram.png[alt="Datenaustausch zwischen Programmkomponenten",pdfwidth="10cm"]
 
 ## Die Teile des Programms
 _MasterSim_ besteht aus zwei Teilen:
@@ -16,9 +16,9 @@ b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeile
 
 Die Oberfläche macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der grafischen Darstellung (Verknüpfungsschematik). Letzteres ist optional und nicht notwendig für die Simulation.
 
-Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (z. B. mit https://bauklimatik-dresden.de/postproc[PostProc 2]).
+Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (das kostenfreie Analysetool mit https://bauklimatik-dresden.de/postproc[PostProc 2] ist dafür sehr gut geeignet und meine Empfehlung für die _MasterSim_ Ergebnisauswertung).
 
-Die Trennung zwischen der Benutzeroberfläche und dem aktuellen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<workflow,Arbeitsablauf>> beschrieben wird.
+Die Trennung zwischen der Benutzeroberfläche und dem eigentlichen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<workflow>> beschrieben wird.
 
 ## Unterstützte FMU - Varianten
 
@@ -53,6 +53,8 @@ Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Prob
 Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigene Ausgabedaten schreiben. _MasterSim_ erstellt für jede FMU Instanz/jeden Slave ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis. Der Pfad zu diesem Verzeichnis setzt _MasterSim_ im Parameter `ResultsRootDir`. Falls ein Slave einen solchen Parameter definiert, erhält die FMU über den Parameter ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten (siehe auch Abschnitt <<dir_slaves, Verzeichnis 'Slaves'>>).
 
 Zyklen bei der Definition von verknüpften Slaves können explizit definiert werden und reduzieren damit dem Aufwand für iterative Masteralgorithmen (siehe auch Abschnitt <<cycles>>).
+
+_MasterSim_ beinhaltet eine Zeitmessung und Erfassung der Ausführungshäufigkeiten für einzelne Funktionen. Dies ist hilfreich, zeitkritische Simulationen zu optimieren oder Fehler zu finden (siehe Abschnitt <<summary_txt_file>>).
 
 ## Terminologie
 
