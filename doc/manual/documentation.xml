@@ -14,8 +14,10 @@
 			<p>
 				Dokumentation ist verfügbar als:
 				<ul>
-					<li><a href="help/MasterSim_manual_de.html" target="_blank">Online-Handbuch</a>, oder als </li>
-					<li><a href="help/MasterSim_manual_de.pdf" target="_blank">Handbuch [MasterSim_manual_de.pdf]</a>.</li>
+					<li><a href="help/MasterSim_manual_de.html" target="_blank">Online-Handbuch</a></li>
+					<li><a href="help/MasterSim_manual_de.pdf" target="_blank">Handbuch (Druckversion) [MasterSim_manual_de.pdf]</a></li>
+					<li><a href="help/MasterSim_manual_en.html" target="_blank">Online-Handbuch (englisch)</a></li>
+					<li><a href="help/MasterSim_manual_en.pdf" target="_blank">Handbuch (Druckversion, englisch) [MasterSim_manual_en.pdf]</a></li>
 				</ul>
 			</p>
 		</inhalt>
@@ -29,8 +31,10 @@
 			<p>
 				Documentation is available as:
 				<ul>
-					<li><a href="help/MasterSim_manual_en.html" target="_blank">Online manual</a>, or as </li>
-					<li><a href="help/MasterSim_manual_en.pdf" target="_blank">Printed manual [MasterSim_manual_en.pdf]</a>.</li>
+					<li><a href="help/MasterSim_manual_en.html" target="_blank">Online manual</a></li>
+					<li><a href="help/MasterSim_manual_en.pdf" target="_blank">Printed manual [MasterSim_manual_en.pdf]</a></li>
+					<li><a href="help/MasterSim_manual_de.html" target="_blank">Online manual (german)</a></li>
+					<li><a href="help/MasterSim_manual_de.pdf" target="_blank">Printed manual (german) [MasterSim_manual_de.pdf]</a></li>
 				</ul>
 			</p>
 		</inhalt>
