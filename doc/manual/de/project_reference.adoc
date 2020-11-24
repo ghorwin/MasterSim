@@ -151,7 +151,7 @@ Der *html-Farb-Code* st eine übliche html-basierte Farbdefinition, die mit eine
 Das letzte Argument in der Zeile ist der Dateipfad-Verweis zur eigentlichen FMU-Datei. Der Pfad zur FMU-Datei in Anführungszeichen angefügt werden, wenn der Pfad oder der Dateiname Leerzeichen enthält. Der Pfad kann absolut oder relativ zur `msim`-Projektdatei sein. Einige Slaves können durch die selbe FMU-Datei realisiert sein (wenn das FMU diese Funktion unterstützt). In diesem Fall nehmen einige Simulatorzeilen Bezug auf den gleichen FMU-Dateipfad.
 
 [[csv_filereader_slaves]]
-=== CSV-FileReader-Slaves
+=== CSV-Datei-Lese-Slaves
 
 Anstatt eines FMUs können Sie ebenso auf eine Datendatei verweisen (Erweiterung mit `tsv` oder `csv`). In diesem Fall wird _MasterSim_ FileReader-Slaves realisieren und die Daten in der Datei wird wie ein FMU behandelt, dass nur Ausgänge zur Verfügung stellt, aber keinen Eingang und keine Parameter hat.
 

@@ -1,6 +1,6 @@
 # _MasterSimulator_ - Das Befehlszeilen-Programm
 
-Die eigentliche Simulation wird mit dem Befehlszeilen-Programm von `MasterSimulator` durchgeführt. Es führt  grundsätzlich die folgenden Schritte aus:
+Die eigentliche Simulation wird mit dem Befehlszeilen-Programm _MasterSimulator_ durchgeführt. Es führt  grundsätzlich die folgenden Schritte aus:
 
 1. Es liest die msim-Projektdatei (die Netzwerkdarstellung wird ignoriert, da sie nur visuelle Informationen enthält).
 2. Danach wird ein Arbeitsverzeichnis für die Simulationsdaten erzeugt (der Pfad kann angepasst werden, siehe: `--working-dir`-Befehlzeilen-Option unten). 
@@ -54,9 +54,10 @@ Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad zum Arbe
 
 Im Abschnitt <<working_directory_structure>> wird der Inhalt und die Struktur des Arbeitsverzeichnisses erklärt.
 
+
 ### Anpassung der Ausgabedetailstufe
 
-_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailstufe wird durch den `--verbosity-level`-Parameter kontrolliert, welcher die Menge der erzeugten Fehler-/Analyseinformationen festlegt.
+_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailstufe wird durch den `--verbosity-level` Parameter kontrolliert, welcher die Menge der erzeugten Fehler-/Analyseinformationen festlegt.
 
 Bei der Detailstufe 0 (`--verbosity-level=0`) wird so ziemlich je Ausgabe abgeschaltet. Die Detailstufe 1 ist der Standard mit normalen Fortschrittsmeldungen. Nutzen Sie eine höhere Ausgabedetailstufe zur Analyse der integrierten Algorithmen oder zur Eingrenzung von Fehlern.
 
@@ -65,9 +66,10 @@ Bei der Detailstufe 0 (`--verbosity-level=0`) wird so ziemlich je Ausgabe abgesc
 Die Detailstufe der Protokolldatei ist während der Initialisierungsphase immer auf 3 gesetzt, um möglichst detaillierte FMU-Analyseausgaben in der Protokolldatei zu erhalten. Während der Simulation wird die Ausgabedetailstufe dann auf den Standardwert 1 zurückgesetzt, um eine Verlangsamung der Simulation aufgrund des exzessiven Ausgabeschreibens zu vermeiden. Falls der `--verbosity-level`-Befehlszeilenparameter angegeben ist, wird dieser Wert auch während der Simulation für die Protokolldatei verwendet.
 ====
 
+
 ### Spezielle Optionen unter Windows
 
-Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen, sofern nicht der  `-x`-Befehlszeilenschalter angegeben wurde.
+Normalerweise bleibt das Konsolenfenster (bei Windows) am Ende der Simulation offen. Man kann aber durch  Angabe des `-x` Befehlszeilenschalters das Fenster nach Ende der Simulation automatisch schließen lassen.
 
 
 [[working_directory_structure]]
@@ -83,12 +85,14 @@ _MasterSim_ erstellt eine Verzeichnisstruktur nach folgendem Schema. Angenommen 
 
 Bei Ausführung des Master-Simulators wird ein Arbeitsverzeichnis erstellt. Standardmäßig entspricht der Dateipfad zu diesem Arbeitsverzeichnis dem Projekt-Dateinamen ohne Dateierweiterung.
 
+Die Verzeichnisstruktur sähe dann so aus:
+
 -----
 /sim_projects/pro1/simProject/             - Arbeitsverzeichnis
 /sim_projects/pro1/simProject/log/         - Logdateien und Statistiken
 /sim_projects/pro1/simProject/fmus/        - Entpackte FMUs
-/sim_projects/pro1/simProject/fmus/part1   - entpackte part1.fmu
-/sim_projects/pro1/simProject/fmus/part2   - entpackte part2.fmu
+/sim_projects/pro1/simProject/fmus/part1   - Entpackte part1.fmu
+/sim_projects/pro1/simProject/fmus/part2   - Entpackte part2.fmu
 /sim_projects/pro1/simProject/slaves/      - Ausgabe-/Arbeitsverzeichnis für FMU Slaves
 /sim_projects/pro1/simProject/slaves/P1    - Ausgabe-/Arbeitsverzeichnis für Slave P1
 /sim_projects/pro1/simProject/slaves/P2    - Ausgabe-/Arbeitsverzeichnis für Slave P2
@@ -96,6 +100,7 @@ Bei Ausführung des Master-Simulators wird ein Arbeitsverzeichnis erstellt. Stan
 -----
 
 Der Basisname des Verzeichnisses, hier `simProject`, kann durch Angabe das Befehlszeilenarguments `--working-directory` verändert werden.
+
 
 ### Verzeichnis `log`
 
@@ -119,6 +124,7 @@ Das Format der Datei `progress.txt` ist recht simpel:
 Die Datei besitzt 3 Spalten, getrennt durch ein Tabulatorzeichen. Die Datei wird bei laufender Simulation geschrieben und aktualisiert und kann von anderen Werkzeugen genutzt werden, um den Gesamtfortschritt aufzugreifen und Fortschrittsdiagramme zu erzeugen. (Geschwindigkeit/Prozentsatz etc.)
 
 Die Bedeutung der verschiedenen Werte im `summary.txt` werden im Abschnitt <<summary_txt_file>> erklärt.
+
 
 ### Verzeichnis `fmus`
 
@@ -150,43 +156,50 @@ _MasterSim_ unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr n�
 Siehe auch Erläuterungen im Abschnitt <<skip_FMU_extraction>>.
 ====
 
+
 [[dir_slaves]]
-=== Verzeichnis `Slaves`
+### Verzeichnis `Slaves`
 
-Oft schreiben nicht-triviale Simulations-Slaves ihre eigenen Ausgabe-Dateien, anstatt die gesamten Ausgabedaten per FMI-Ausgabevariablen zum Master zu verschieben. In Fällen in denen PDEs gelöst werden und tausende Variablen erzeugt werden, könnte dies tatsächlich nicht möglich sein.
+Oft schreiben nicht-triviale Simulations-Slaves ihre eigenen Ausgabedateien, anstatt die gesamten Ausgabedaten per FMU-Ausgabevariablen zum Master zu verschieben. Bei FMUs, in denen partielle Differentialgleichungen gelöst werden, und Feldausgaben mit mehreren tausenden Datenpunkten je Zeitschritt erzeugt werden, wäre dies auch nicht sinnvoll (oder effizient). Für das Schreiben derartiger Ausgaben bräuchte die FMU einen Zielpfad, in den die FMU schreiben darf.
 
-Da ein Slave-FMU mehrere Male realisiert werden kann, ist die feste Programmierung eines Ausgabepfads innerhalb des FMU im Allgemeinen keine gute Idee (obgleich gegenwärtig noch immer Praxis). Ausgaben ins gegenwärtige Arbeitsverzeichnis zu schreiben ist ebenso ungeschickt, da das Arbeitsverzeichnis zwischen den Aufrufen der FMUs eventuell durch den Master geändert werden muss - und dies wird am besten vermieden.
+Da eine FMU mehrere Male instanziiert werden kann (d.h. mehrere Slaves werden aus der gleichen FMU-Datei erzeugt), ist die feste Programmierung eines Ausgabepfads innerhalb der FMU im Allgemeinen keine gute Idee (obgleich gegenwärtig noch immer häufige Praxis). Die Ausgaben der unterschiedlichen Slaves würden sich sonst gegenseitig überschreiben.
 
-Leider unterstützt der FMU-Standard keine Option, ein solches offizielles Ergebnis-Verzeichnis festzulegen. _MasterSim_ löst dies, indem es Slave-spezifische Verzeichnispfade in einem Reihenparameter, genannt `ResultsRootDir`, einführt, falls das FMU einen solchen Parameter angibt. Wenn keine Wertemenge in der Projekt-Datei für diesen Parameter festgelegt ist, wird _MasterSim_ den für den Slave erzeugten Pfad im Arbeitsverzeichnis fixieren. Das FMU kann auf den von _MasterSim_ kreierten Pfad gestützt und beschreibbar sein. 
-Natürlich, wie bei jedem Parameter, können Sie manuell einen Wert für diesen Parameter setzen.
+Ausgaben ins gegenwärtige Arbeitsverzeichnis zu schreiben ist ebenso ungeschickt, da das Arbeitsverzeichnis zwischen den Aufrufen der FMUs eventuell durch den Master geändert werden muss. Dadurch sollte der Zugriff auf das Arbeitsverzeichnis am besten vermieden werden.
 
+Leider unterstützt der FMU-Standard keine Option, einem Slave ein gültiges Ergebnis-/Arbeitsverzeichnis zu übergeben. _MasterSim_ behebt das Problem, indem es Slave-spezifische Verzeichnispfade in einem Parameter, genannt `ResultsRootDir`, angibt. Dazu braucht die FMU lediglich diesen Zeichenketten-Parameter zu deklarieren. Man kann in _MasterSim_ den Wert dieses Parameters natürlich wie bei allen anderen Parametern manuell festlegen.
+Wenn allerdings kein Wert in der Projekt-Datei für diesen Parameter festgelegt ist, wird _MasterSim_ den für den Slave erzeugten Pfad im Arbeitsverzeichnis eintragen. Die FMU kann den von _MasterSim_ erzeugten Slave-spezifischen Pfad nutzen und Ausgaben oder andere Daten dort hinein schreiben.
 
-== Rückkehr-Codes des _MasterSimulator_ -Programms
+[TIP]
+====
+Das Analysetool _PostProc_ wird bei Angabe des Projektbasisverzeichnis auch die Ausgaben in den Slave-Verzeichnissen finden und zur Analyse anzeigen.
+====
 
-_MasterSimulator_ setzt zurück:
+## Return-Code des _MasterSimulator_ -Programms
+
+_MasterSimulator_ gibt folgende Return-Code zurück:
 
 [horizontal]
-0:: auf Erfolg
-1:: auf Fehler (alles von schlechten oder fehlenden FMUs, oder Fehlern während der Berechnung,...),  `screenlog.txt` wird Details beinhalten.
+0:: bei Erfolg
+1:: wenn ein Fehler aufgetreten ist (alle Ursachen, von schlechten oder fehlenden FMUs, oder Fehlern während der Berechnung,...), die Datei  `screenlog.txt` beinhaltet Details.
 
 
-== Simulationsausgabe
+## Simulationsausgaben
 
-=== Slave-Ausgabewerte
+### Slave-Ausgabewerte
 
-_MasterSim_ kreiert zwei Ergebnisdateien innerhalb des `results`-Unterverzeichnis.
+_MasterSim_ erstellt zwei Ergebnisdateien innerhalb des `results`-Unterverzeichnis:
 
-`values.csv`:: Anzahl-Ausgabe aller Ausgabevariablen von allen Slaves (egal, ob sie verbunden sind oder nicht).
-`strings.csv`:: Werte aller Ausgabevariablen der Typenreihen aller Slaves.
+[horizontal]
+`values.csv`:: Ausgabe aller Ausgabevariablen vom Typ Zahl (einschließlich Booleans) von allen Slaves (egal, ob sie verbunden sind oder nicht).
+`strings.csv`:: Werte aller Ausgabevariablen vom Typ Zeichenketter aller Slaves.
 
-TODO: Korrektur im Original s.u.: Wo beginnt der folgende Satz?
+Abhängig davon, ob _synonyme Variablen_ in der ModelDescription (siehe unten) definiert sind, die Datei `synonymous_variables.txt`.
 
-und hängt davon ab, ob _synonyme Variablen_ in der ModelDescription (siehe unten) definiert sind, die Datei `synonymous_variables.txt`.
+Zeichenketten-Ausgabe-Dateien werden nur erzeugt, wenn tatsächlich Ausgaben dieses Datentyps von Slaves erzeugt werden. 
 
-TODO: "type" lieber generell mit Modell übersetzen?
-Korrektur Original s.u. 2 mal "generates" klingt nicht gut
+### Dateiformat der Ergebnisdateien
 
-Reihen-Ausgabe-Dateien werden nur erzeugt, wenn die Ausgabe dieser Typen erstellt wird. CSV-Dateien nutzen Tabulatorzeichen als Trennzeichen. In der ersten Spalte steht immer der Zeitpunkt, der Spaltenkopf gibt die Zeiteinheit an.
+Die Ergebnisdateien haben die Erweiterung `csv`, nutzen aber Tabulatorzeichen als Trennzeichen. In der ersten Spalte steht immer der Zeitpunkt. Im Spaltenkopf jeder Spalte kann in [] die Zeiteinheit angegeben werden.
 
 Beispiel `values.csv`-Datei:
 
@@ -199,7 +212,7 @@ Time [s] 	slave1.h [-] 	slave1.v [-]
 0.0040000000000002	0.99992153962	-0.039240000000001
 ----
 
-Das Dateiformat entspricht denen der csv-Dateien, die als Datei-lese-Slaves genutzt werden, siehe Abschnitt <<_csv_filereader_slaves,CSV-FileReader-Slaves>>, mit:
+Das Dateiformat entspricht dem der csv-Dateien, die als Datei-Lese-Slaves genutzt werden, siehe Abschnitt <<csv_filereader_slaves>>, mit:
 
 - durch Tabulatoren getrennte Spalten,
 - Nummern sind im englischen Nummernformat geschrieben, und 
@@ -207,17 +220,23 @@ Das Dateiformat entspricht denen der csv-Dateien, die als Datei-lese-Slaves genu
 
 Den FMI- Variablennamen sind die entsprechenden Slave-Namen vorangestellt. Die Einheiten sind in Klammern angegeben und für einheitslose ganzzahlige und boolesche Datentypen, wird die Einheit [-] genutzt. 
 
-==== Synonyme Variablen
+[NOTE]
+====
+Vektorwertige Variablen, z.B. mit Namen "var[12]" werden immer einheitenlos geschrieben, sodass das _PostProc_ Programm erkennt, dass es sich bei [12] nicht um eine Einheit handelt.
+====
 
-Einige  FMUs (d.h. solche, die von Modelica Modellen erstellt wurden) können verschiedene (interne) Variblen aufweisen, welche den selben Referenzwert teilen. Das passiert, wenn die symbolische Analyse des Modelica Modells diese Variablen als die selben erkennen konnte. In diesem Fall, schreibt MasterSim keine duplizierte Ausgabevariable (dies wäre eine Verschwendung von Festplattenkapazitäten und Simulationszeit, siehe Ticket #47), sondern erstellt eine Datei `synonymous_variables.txt` mit einer Tabelle synonymer Variablen.
+#### Synonyme Variablen
 
+Einige  FMUs, z.B. solche, die von Modelica Modellen erstellt wurden, können verschiedene (interne) Variblen aufweisen, welche den selben Wert referenzieren. Das passiert, wenn die symbolische Analyse des Modelica Modells diese Variablen als die selben erkennen konnte, z.B. bei einer Gleichung "a = b", wird eine FMU sicher intern nur eine Variable halten, aber gegebenenfalls bei Variablen getrennt als Ausgaben anbieten. Beide Variablen hätten in der `modelDescription.xml`-Datei die gleiche `valueReference` (Wertereferenz).
 
-TODO: Korr.Orig. s.u.: Warum hier "fmu" klein, sonst immer in großen Lettern
+In diesem Fall schreibt _MasterSim_ die Ausgabevariablen nicht doppelt (dies wäre eine Verschwendung von Festplattenkapazitäten und Simulationszeit, siehe Ticket #47), sondern erstellt eine Datei `synonymous_variables.txt` mit einer Tabelle synonymer Variablen.
 
-Die Tabelle wird als einfache Textdatei geschrieben mit durch Tabs getrennte Spalten: 
-1. fmu-Dateiname (gegenwärtig wird nur der Dateiname geschrieben - im Fall, dass der _gleiche Dateiname_ mit _unterschiedlichen Dateipfaden_ genutzt wird, muss dies geändert werden)
+Die Tabelle wird als einfache Textdatei geschrieben mit durch Tabulatoren getrennte Spalten:
+
+1. FMU-Dateiname (gegenwärtig wird nur der Dateiname geschrieben - im Fall, dass der _gleiche Dateiname_ mit _unterschiedlichen Dateipfaden_ genutzt wird, muss dies geändert werden)
 2. der Name der Variablen, erscheint in der `values.csv`-Datei
-3. die synonyme Variable, die nicht in die Ausgabedatei geschrieben wird, da es ohnehin den gleichen Wert hat. 
+3. die synonyme Variable, die nicht in die Ausgabedatei geschrieben wird, da sie ohnehin den gleichen Wert hat.
+
 Ein Beispiel für eine `synonymous_variables.txt`-Datei:
 
 ----
@@ -246,38 +265,38 @@ ControlledTemperature.fmu	idealSwitch.control	logicalNot.y
 ControlledTemperature.fmu	logicalNot.u	onOffController.y
 ----
 
+Aus dieser Datei wird ersichtlich, dass die Variablen `heatCapacitor.T`, `heatCapacitor.port.T`, `heatingResistor.T_heatPort`, `heatingResistor.heatPort.T`, `temperatureSensor.port.T` und `thermalConductor.port_a.T` alle den gleichen Wert haben und damit die Variablennamen Synonyme sind.
+
 [[summary_txt_file]]
 ### Simulations-Statistik/Zusammenfassung
 
-_MasterSim_ beinhaltet interne Profilierungsfunktionen, welche die Evaluierungszeiten der verschiedenen Teile der Software überwachen. Ebenso werden Ausführungsgrafen für unterschiedliche entscheidende Funktionen gezeigt. 
-Die Statistik wird ins Konsolenfenster kopiert (für das Wortartlevel > 0) und in der Log-Datei `screenlog.txt` im folgenden Format:
+_MasterSim_ beinhaltet eine interne Zeitmessfunktion, welche die Ausführungszeiten der verschiedenen Teile der Software überwachen. Ebenso werden Ausführungshäufigkeiten für verschiedene wichtige Funktionen gezeigt. 
+Die Statistik wird ins Konsolenfenster (bei `verbosity-level` > 0) und in die Log-Datei `screenlog.txt`  geschrieben. Dabei wird folgendes Format verwendet (die unteren Zeilen beginnend ab "Part1" sind projektspezifisch).
 
 ------
-Solver-Statistiken
+Solver statistics
 ------------------------------------------------------------------------------
-Wanduhrzeit                            =   78.044 ms  
+Wall clock time                            =   78.044 ms  
 ------------------------------------------------------------------------------
-Ausgabenschreibung                             =   76.767 ms  
-Master-Algorithmus                           =    0.666 ms         324
-Annäherungsfehler                       =                      41
-Annäherung an überschrittene Wiederholungsobergrenze =                      41
-Fehlermesszeit und gezählte Fehler          =    0.214 ms          85
+Output writing                             =   76.767 ms  
+Master-Algorithm                           =    0.666 ms         324
+Convergence failures                       =                      41
+Convergence iteration limit exceeded       =                      41
+Error test time and failure count          =    0.214 ms          85
 ------------------------------------------------------------------------------
-Teil1                               doStep =    0.101 ms        1229
+Part1                               doStep =    0.101 ms        1229
                                   getState =    0.070 ms        1116
                                   setState =    0.020 ms         509
-Teil2                               doStep =    0.079 ms        1496
+Part2                               doStep =    0.079 ms        1496
                                   getState =    0.039 ms        1116
                                   setState =    0.024 ms         776
-Teil3                               doStep =    0.071 ms        1496
+Part3                               doStep =    0.071 ms        1496
                                   getState =    0.038 ms        1116
                                   setState =    0.040 ms         776
 ------------------------------------------------------------------------------
 ------
 
-Ebenso wird dieselbe statistische Information in die `summary.txt`-Logsdatei kopiert, in ein eher _maschinenfreundliches_ Format (mit Zeitangaben immer in *Sekunden*):
-
-TODO: Übersetzten oder lieber nicht, da es im Programm selbst auch so angezeigt werden wird?
+Die selben Statistikdaten werden in die `summary.txt`-Logsdatei kopiert, dabei aber in ein eher _maschinenfreundliches_ Format (mit Zeitangaben immer in *Sekunden* bzw. der jeweils verwendeten Master-Zeiteinheit):
 
 ------
 WallClockTime=0.078044
@@ -293,30 +312,27 @@ Slave[2]Time=0.000142
 Slave[3]Time=0.000149
 ------
 
+Die Werte bedeuten im Einzelnen:
 
-Wall clock time:: gesamte Simulationszeit, die nach der Initialisierung aufgebracht wurde. Die Dauer für Entpacken und Laden der geteilten Bibliothek wird nicht einbezogen (`WallClockTime`)
+Wall clock time (`WallClockTime`):: gesamte Simulationszeit, die nach Abschluss der Initialisierung benötigt wurde. Die Dauer für Entpacken und Laden der Laufzeitbibliotheken wird nicht einbezogen 
 
-Output writing:: Zeit, die für das Schreiben von Ausgabedateien und das Berechnen damit zusammnenhängender Werte gebraucht wurde. (`FrameworkTimeWriteOutputs`)
+Output writing (`FrameworkTimeWriteOutputs`):: Zeit, die für das Schreiben von Ausgabedateien und das Berechnen damit zusammenhängender Werte gebraucht wurde. 
 
-Master-Algorithm:: Zeit, die für den eigentlichen Master-Algorithmus (`MasterAlgorithmTime`) und die Anzahl der Aufrufe des Algorithmus und die gesamten genutzten Zeitschritte aufgewendet wurde. (`MasterAlgorithmSteps`)
+Master-Algorithm:: Zeit, die für den eigentlichen Master-Algorithmus (`MasterAlgorithmTime`) und die Anzahl der Aufrufe des Algorithmus und die gesamten genutzten Zeitschritte aufgewendet wurde (`MasterAlgorithmSteps`). 
 
-Convergence failures:: Anzahl der Zeiten, die ein wiederholender Master-Algorithmus scheitert, sich innerhalb der erlaubten Anzahl an Wiederholungen anzunähern oder abweicht. Dies gilt einzig für sich wiederholende Master-Algorithmen. (`ConvergenceFails`)
+Convergence failures (`ConvergenceFails`):: Anzahl der Konvergenzfehler bei iterativen Master-Algorithmen.
 
-Convergence iteration limit exceeded:: Zeiten, die ein sich wiederholender Master-Algorithmus scheitert, sich innerhalb der erlaubten Anzahl an Wiederholungen anzunähern (sie sollte weniger oder gleich der Anzahl der Annäherungsfehler sein). Dies gilt einzig für sich wiederholende Master-Algorithmen. (`ConvergenceIterLimitExceeded`)
+Convergence iteration limit exceeded (`ConvergenceIterLimitExceeded`):: Anzahl der Überschreitungen der maximalen Iterationszahl in iterierenden Master-Algorithmen (diese Zahl sollte kleiner oder gleich der Anzahl der Konvergenzfehler sein).
 
-Error test time and failure count:: Anzahl der Zeit, in der der Fehlertext scheitert (`ErrorTestFails`) und die insgesamt genutzte Zeit, um die Fehlertests durchzuführen, inklusive der Zeit, um den FMU-Status zurückzusetzen und für Schritte der Neubewertung. (`ErrorTestTime`). Dies gilt nur für Master-Algorithmen mit aktivierter Fehlerkontrolle (Richardson-Varianten).
+Error test time and failure count:: Anzahl der Fehlertest-Überschreitungen (`ErrorTestFails`) und die insgesamt genutzte Zeit, um die Fehlertests durchzuführen (`ErrorTestTime`). Dies schließt die Zeit ein, die für das Speichern und Zurücksetzen des FMU-Zustands und für die zusätzlichen Kommunikationsschritte benötigt wurde. Dies gilt nur für Master-Algorithmen mit aktivierter Fehlerkontrolle (Richardson-Varianten).
 
-Die übrigen Linien zeigen Zeiten und Zählungen individuell für jeden Slave. Diese Linien zeigen die genutzte Zeit in den Funktionsaufrufen bis `doStep()`, `getState()` und `setState()` für diesen Slave und die jeweilige Aufrufzählung. Die den Status betreffenden Funktionen werden nur für sich wiederholende Master-Algorithmen genutzt, wenn die FMUs FMI-2.0-Merkmale unterstützen. Bedenken Sie, dass diese Funktionen sowohl vom Master-Algorithmus als auch vom Fehlertest aufgerufen werden (wenn möglich).
+Die übrigen Zeilen zeigen Dauer und Aufrufhäufigkeiten individuell für jeden Slave. Die Zeilen zeigen die genutzte Zeit in den Funktionsaufrufen `doStep()`, `getState()` und `setState()` und die jeweilige Häufigkeit des Aufrufs. Die den Zustand betreffenden Funktionen (state) werden nur für iterierende Master-Algorithmen genutzt, falls die FMUs diese FMI 2 Funktionalität unterstützt. Es ist zu beachten, dass diese Funktionen sowohl vom Master-Algorithmus als auch vom Fehlertest aufgerufen werden (wenn eingeschaltet).
 
-*Ausgabe-Scheiben* und *Master-Algorithmus* sind die beiden Hauptkomponenten des MasterSimulator-Pogramms, sodass ihre addierten Zeiten nahe der Wanduhrzeit liegen sollten.
+Das Schreiben von Ausgaben (*Output writing*) und Ausführen des Master-Algorithmus (*Master-Algorithm*) sind die beiden Hauptkomponenten des _MasterSimulator_-Pogramms, sodass ihre addierten Zeiten nahe der Gesamtlaufzeit liegen sollten.
 
-Die dritte Spalte in der Bildschirm-Datei-Statistik beinhaltet Zähler. Der Zähler für den Master-Algorithmus ist die Anzahl der Zeit, in welcher der Master-Algorithmus einen Schritt macht. Damit ist dies die gesamte Zählung der Schritte. Neuversuche und Wiederholungen _innerhalb_ des Master-Algorithmus werden hier nicht beachtet.
-
-Der letzte Abschnitt der Statistik listet Zeiten und Zähler für individuelle FMU-Slaves und die meisten relevanten Funktionen.
+Die dritte Spalte in der Konsolen-Ausgabe-Statistik beinhaltet Zähler. Der Zähler für den Master-Algorithmus ist die Gesamtzahl der Ausführungen des Master-Algorithmus, also die Gesamtschrittzahl bzw. Gesamtzahl an _erfolgreich_ absolvierten Kommunikationsintervallen. Neuversuche und Wiederholungen _innerhalb_ des Master-Algorithmus werden hier nicht beachtet.
 
 [TIP]
 ====
-Sie sollten diese Profilierungswerte nutzen, um die Simulation abzustimmen und, im Fall einer sehr langsamen Simulation, herausfiltern, welche FMUs die meiste Zeit benötigen. Ebenso helfen sie bei der Identifikation, falls eine der schnellen Funktionen (den Status zu setzen und zu erhalten) zu viel Zeit verbraucht. 
+Sie sollten diese Profilierungswerte nutzen, um die Simulation abzustimmen und, im Fall einer sehr langsamen Simulation, herauszufinden, welche FMU die meiste Zeit benötigt. Diese kann man dann gezielt optimieren. Ebenso helfen sie zu erkennen, ob eine der eigentlich schnellen Funktionen, wie die zum Lesen und Rücksetzen des FMU-Zustands, ungewöhnlich lange braucht (beispielsweise, wenn FMU-Intern übermäßig lange Zeit für die  Neuinitialisierung benötigt wird).
 ====
-
----

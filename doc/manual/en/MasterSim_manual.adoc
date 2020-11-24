@@ -20,6 +20,8 @@ This manual is available as:
 * https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.html[Online manual (english)]
 * https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.html[Online manual (german)]
 
+Software is available at: https://bauklimatik-dresden.de/mastersim
+
 include::basic_concepts.adoc[leveloffset=+1]
 include::graphical_user_interface.adoc[leveloffset=+1]
 include::command_line_solver.adoc[leveloffset=+1]
