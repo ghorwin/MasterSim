@@ -1,22 +1,23 @@
-:imagesdir: ./images
+:imagesdir: ../images
 
 [[project_file_format]]
-= Das Format der Projekt-Datei
+# Format der Projekt-Datei
 
-_MasterSim_benutzt eine einfache Projekt-Datei, welche das Simulations-Szenario beschreibt. Diese Projekt-Datei besitzt die Erweiterung `msim` und beinhaltet alle Daten, um eine Simulation durchzuführen. 
+_MasterSim_ benutzt eine einfache Projekt-Datei, welche das Simulations-Szenario beschreibt. Diese Projekt-Datei besitzt die Erweiterung `msim` und beinhaltet alle Daten, um eine Simulation durchzuführen. 
 
-Eine zweite Datei mit dem selben Namen und der Erweiterung `bm` kann am selben Ort wie die Projekt-Datei angezeigt sein. Diese beinhaltet die grafische Darstellung des Simulations-Szenarios. Da die grafische Netzwerkanzeige _rein optional_ ist, kann die `bm`-Datei beliebig weggelassen/ignoriert/gelöscht werden.
+Eine zweite Datei mit demselben Namen und der Erweiterung `bm` wird im gleichen Verzeichnis wie die Projekt-Datei gespeichert. Diese beinhaltet die grafische Darstellung des Simulations-Szenarios. Da die grafische Netzwerkanzeige _rein optional_ ist, kann die `bm`-Datei beliebig weggelassen/ignoriert/gelöscht werden.
 
+.SSP-Unterstützung
 [NOTE]
 ====
-.Zukünftige Entwicklungsarbeit
 
 Derzeit ist die Forschung im Modelica Association Project SSP (https://modelica.org/projects[System Structure and Parameterization of Components for Virtual System Design]) in vollem Gang, um einen Standard für das Darstellen eines Simulations-Szenarios festzulegen. Wenn die Spezifizierungen rechtzeitig  hinreichend abgeschlossen sind, kann der Master-Simulator diesen Datei-Standard vielleicht unterstützen, zumindest den Import und Export solcher Dateien. Tatsächlich fügt eine solche Datei die Beschreibung der räumlichen Struktur der FMU-Verbindung und ihrer (nach wie vor optionalen) grafischen Darstellung in einer Datei zusammen. Allerdings ist dieses Datei-Format, ähnlich den FMUs, eigentlich eine Zip-komprimierte Verzeichnisstruktur, wodurch SSP-Projekt-Dateien vielleicht nicht länger effektiv in Versionskontrollsystemen genutzt werden können. Hier ist das ASCII-Format der aktuellen `msim`- und `bm`-Dateien gut geeignet und nützlich. 
 ====
 
-Das Format ist ein Klartext-Format (UTF8-kodiert) mit folgendem Inhalt:
+Die Projektdatei wird im Klartext (ASCII,UTF8-kodiert) abgelegt und hat beispielsweise folgenden Inhalt:
 
-.Beispiel MasterSim-Projektdatei
+.MasterSim-Projektdatei
+====
 ----
 # Created:	Di. Aug. 14 17:02:20 2018
 # LastModified:	Di. Aug. 14 17:02:20 2018
@@ -51,57 +52,66 @@ graph Part3.x4 Part2.x4
 
 parameters Part1.para1  14.3
 ----
+====
+Jede Zeile legt eine andere Eigenschaft fest. Die Wortbausteiner jeder Zeile sind durch Leerräume (Tabulatoren oder Leerzeichen) voneinander getrennt. Die Zeilen, die mit einem Rautezeichen # beginnen, werden als Kommentare interpretiert.
 
-Jede Zeile legt eine andere Eigenschaft fest. Die Tokens jeder Zeile sind durch Leerräume (Tabulatoren oder Leerzeichen) voneinander getrennt. Die Zeilen, die mit einem Rautenzeichen # beginnen, werden kommentiert und ignoriert.
+[IMPORTANT]
+====
+Auf allen Betriebssystemen werden Zeichenketten (auch Pfade) UTF-8-kodiert erwartet. Unter Windows und auf dem Mac muss das beim Bearbeiten/Erstellen von Projektdateien mit dem Texteditor berücksichtigt werden.
+====
+
+:xrefstyle: short
+
+Alle Kommentarzeilen vor der ersten Nicht-Kommentarzeile werden als Kopfzeilen mit Projektinformationen interpretiert. Auf die Stichworte `Created:` und `LastModified:` sollte ein mehr oder weniger sinnvoller (aber nicht standardisierter) Datums-/Zeitstempel folgen, der in der Benutzeroberfläche gezeigt wird. Andere Kopfzeilen werden als Projektbeschreibung betrachtet, welche in der Projektzusammenfassung auf der Startseite der grafischen Benutzeroberfläche gezeigt werden (siehe <<screenshot_project_properties>>).
+
+:xrefstyle: basic
 
 [[screenshot_project_properties]]
 .Auf der Startseite angezeigte Projekteigenschaften
-image::welcome_page_project_properties.png
-
-Alle Befehlszeilen, bevor die ersten tatsächlichen Eingabezeilen als Kopfzeile erkannt werden. In diesen Zeilen wird vorausgesetzt, dass auf die Stichworte `Created:` und `LastModified:` ein mehr oder weniger bedeutungsvoller (aber nicht standardisierter) Daten- oder Zeitstrang auf der Benutzeroberfläche gezeigt wird. Andere Kopfzeilen werden als Projektbeschreibung betrachtet, welche in der Projektzusammenfassung auf der Startseite der grafischen Benutzeroberfläche gezeigt werden (siehe Figur <<screenshot_project_properties>>).
+image::welcome_page_project_properties.png[pdfwidth=16cm]
 
 
 [NOTE]
 ====
-Nach der Kopfzeile mit der Beschreibung, ist die Ordnung der Einträge/Zeilen willkürlich. 
+Nach der Kopfzeile mit der Beschreibung ist die Ordnung der Einträge/Zeilen willkürlich. Es ist aber übersichtlich, die oben gezeigte Ordnung der Parametrisierung beizubehalten (welche von der _MasterSim_ Programmoberfläche auch so geschrieben wird).
 ====
 
 [[simulator_settings]]
-== Einstellungen des Simulators
+## Einstellungen für die Simulation
 
-Unten gibt es eine kurze Beschreibung der verschiedenen Parameter mit einer Formatsbeschreibung und den benötigten Werten. Für Details über ihren Gebrauch und welchen Einfluss sie haben, siehe Abschnitt <<master_algorithms>>.
+Nachfolgend gibt es eine kurze Beschreibung der verschiedenen Parameter mit einer Formatsbeschreibung und den benötigten Werten. Für Details über ihren Gebrauch und welchen Einfluss sie haben, siehe Abschnitt <<master_algorithms>>.
 
-Parameter werden als mit einer Einheit versehene Zahl angegeben, außer die Zähler (Maximum an Wiederholungen) oder Fehlergrenzen (welche sowieso ohne Einheit angegeben werden).
+Parameter werden als mit einer Einheit versehenen Zahl angegeben, abgesehen von die Zählern (Maximum an Wiederholungen) oder relativen Fehlerschranken (welche sowieso ohne Einheit angegeben werden).
 
-Optionen, die Zeitschritte betreffend:
+Optionen, die Kommunikationsschritte/Zeitschritte betreffend:
 
 [horizontal]
-tStart:: (_default=0 s_) Startzeitpunkt der Simulation 
-tEnd:: (_default=1 a_) Endzeitpunkt der Simulation, muss > *tStart*
-hMax:: (_default=30 min_) maximale Zeitschritt-Größe 
-hMin:: (_default=1e-5 s_) niedrigere Begrenzung des Zeitschritts im anpassungsfähigen Zeitschritt-Modus, wenn der Zeitschritt unter diese Grenze reduziert wird, stoppt der Master
-hFallBackLimit:: (_default=1e-3 s_) für einen Gauss-Seidel mit Zeitschritt-Festlegung: wenn die Zeitschritte unter diese Grenze fallen, wird der nicht wiederholende Gauss-Seidel genutzt (um diskontinuierliche Ausgänge zu kompensieren), sollte > *hMin*
-hStart:: (_default=10 min_) initialer Zeitschritt, wird als konstante Schrittgröße verwendet, wenn nicht der anpassungsfähige Zeitschritt-Modus in Gebrauch ist.
-+
-TIP: Falls *hStart* in der Projekt-Datei auf 0 gesetzt ist, wird berechnet, dass es 1/1000 der Simulationsdauer ist, festgelegt durch (*tEnd - tStart*).
+tStart:: (_default=0 s_) Startzeitpunkt der Simulation
+tEnd:: (_default=1 a_) Endzeitpunkt der Simulation, muss > *tStart* sein
+hMax:: (_default=30 min_) maximale Zeitschritt-Länge
+hMin:: (_default=1e-5 s_) untere Grenze für Zeitschritte, wenn Zeitschritt-Anpassung eingeschaltet ist. Falls der  Zeitschritt unter diese Grenze fällt, beendet der Master die Simulation mit einer Fehlermeldung
+hFallBackLimit:: (_default=1e-3 s_) für einen Gauss-Seidel-Algorithmus mit Zeitschritt-Anpassung: wenn die Zeitschritte unter diese Grenze fallen, wird der nicht-iterierende Gauss-Seidel genutzt (um diskontinuierliche Variablenänderungen zu überspringen), sollte > *hMin* sein
+hStart:: (_default=10 min_) anfänglicher Zeitschritt, wird auch als konstante Schrittgröße verwendet, wenn Zeitschritt-Anpassung abgeschaltet ist
 
-TODO: Korr.Orig.s.u. minimum, disabling 
+[TIP]
+====
+Falls *hStart* in der Projekt-Datei auf 0 gesetzt ist, wird der Master automatisch *hStart* auf 1/1000 der Simulationsdauer festlegen, wobei die Simulationsdauer durch *tEnd - tStart* festgelegt ist.
+====
 
-hOutputMin:: (_default=10 min_) minimale Dauer, die verstreichen muss, bevor der nächste Ausgabewert geschrieben wurde. Wenn Schrittgrößen der  Kommunikation größer als *hOutputMin* sind, werden die Ausgänge eventuell übersprungen, aber das reguläre Ausgabeintervall bleibt erhalten. 
-outputTimeUnit:: (_default=s_) Der Wert, der für die Zeitspalte (die erste Spalte) der Ausgangsdateien genutzt wird. 
-adjustStepSize:: (_default=false_) aktiviert/verhindert den anpassungsfähigen Zeitschritt-Modus, wenn der Fehlerkontroll-Modus *ADAPT_STEP* ist, eine fehlerhafte *adjustStepSize* ist ein Fehler.
-preventOversteppingOfEndTime:: Diese Markierung wird für bestimmte FMUs gebraucht, welche einen Test gegen das Übersteigen der Simulationsendzeit enthalten. Dies ist in manchen Fällen mit Zeitreihen-Parameteren verbunden, die nur bis zum exakten Ende der Simulationszeit dauern. Ein anderes Problem ist, dass Rundungsfehler zu einer sehr kleinen Überschreitung des Endzeitpunktes dazu addiert werden können. Dennoch sollten gute FMUs das Überschreiten angemessen händeln. Zugleich, um einen FMU-Fehler und einen Simulationsabbruch zu vermeiden, kann _MasterSim_ die letzte Kommunikationsintervall-Größe so anpassen, dass exakt die Endzeit der Simulation an das FMU übermittelt wird. Wenn diese Markierung deaktiviert ist, muss wahrscheinlich die letzte Intervallschritt-Größe eingestellt werden, selbst wenn die Zeitschritt-Anpassung generell durch die Markierung *adjustStepSize* gesperrt ist.
-
+hOutputMin:: (_default=10 min_) minimale Zeitspanne die verstreichen muss, bevor das nächste Mal Ausgaben geschrieben werden. Wenn die Kommunikationsschrittlänge größer als *hOutputMin* wird, werden einige Ausgabezeitpunkte eventuell übersprungen, aber das reguläre Ausgaberaster bleibt erhalten.
+outputTimeUnit:: (_default=s_) Der Wert, der für die Zeitspalte (die erste Spalte) der Ausgabedateien genutzt wird. 
+adjustStepSize:: (_default=false_) aktiviert/deaktiviert die Zeitschritt-Anpassung, wenn der Fehlerkontroll-Modus *ADAPT_STEP* ist, wird das Deaktivieren von *adjustStepSize* als Fehler gemeldet.
+preventOversteppingOfEndTime:: Diese Schalter wird für bestimmte FMUs gebraucht, welche einen Test gegen das Überschreiten der Simulationsendzeit enthalten. Dies ist in manchen Fällen mit Zeitreihen-Parameteren verbunden, die nur bis zum exakten Ende der Simulationszeit dauern. Ein anderes Problem ist, dass sich Rundungsfehler aufsummieren können und zu einer sehr kleinen Überschreitung des Endzeitpunktes führen können. Sich gut-verhaltende FMUs sollte zwar ein solches Überschreiten angemessen behandeln, es gibt jedoch auch FMUs, welche hier mit einer Fehlermeldung abbrechen. Um einen solchen FMU-Fehler und einen Simulationsabbruch zu vermeiden, kann _MasterSim_ das letzte Kommunikationsintervall so anpassen, dass exakt die angegebene Endzeit der Simulation an das FMU übermittelt wird. Wenn dieser Schalter aktiviert ist, muss möglicherweise die letzte Intervallschritt-Größe verändert werden, selbst wenn eine Zeitschritt-Anpassung generell durch einen deaktivierten *adjustStepSize* Schalter verboten ist.
 
 *MasterMode* (_default=GAUSS_SEIDEL_) ist einer von:
 [horizontal]
-GAUSS_JACOBI:: Gauss-Jacobi-Algorithmus (nicht wiederholend)
-GAUSS_SEIDEL:: Gauss-Seidel-Algorithmus (wiederholend oder nicht wiederholend, abhängig von *it_max_steps*)
-NEWTON:: Newton-Algorithmus mit einer Annäherung des Differenz-Quotienten an die Jacobi-Matrix
+GAUSS_JACOBI:: Gauss-Jacobi-Algorithmus (nicht iterierend)
+GAUSS_SEIDEL:: Gauss-Seidel-Algorithmus (iterierend oder nicht iterierend, abhängig von *maxIterations*)
+NEWTON:: Newton-Algorithmus mit einer Differenz-Quotient-Approximation der Jacobi-Matrix
 
-Wiederholungs- und Konvergenzparameter:
+Iterations- und Konvergenzparameter:
 [horizontal]
-maxIterations:: (_default=1=disabled_) max. Anzahl an Wiederholungen, wenn == 1 wird keine Widerholung ausgeführt
+maxIterations:: (_default=1=disabled_) max. Anzahl an Iterationen, wenn == 1 wird keine Iteration ausgeführt
 absTol:: (_default=1e-5_) absolute Toleranz für den Konvergenz-/Fehlertest
 relTol:: (_default=1e-6_) relative Toleranz für den Konvergenz-/Fehlertest
 
@@ -110,135 +120,166 @@ relTol:: (_default=1e-6_) relative Toleranz für den Konvergenz-/Fehlertest
 NONE:: keine Fehlerprüfung und Anpassung
 CHECK:: nur Fehlerprüfung; Protokollzeit und Größenordnung von überschreitendem Fehlerlimit. Funktioniert auch mit FMI 1 (indem die Daten der letzten beiden Schritte genutzt werden).
 +
-WARNING: Noch nicht implementiert. Nicht benutzen! 
-ADAPT_STEP:: ermöglicht implizit den anpassungsfähigen Zeitschritt-Modus und passt Zeitschritte an, wenn das Fehlerlimit überschritten ist.
+*WARNING:* Noch nicht implementiert. Nicht benutzen!
+ADAPT_STEP:: aktiviert automatisch die Zeitschritt-Anpassung und vergrößert/verkleinert die Kommunikationsschrittlänge entsprechend des Fehlerschätzers.
 
 
-=== Fortgeschrittene Konfigurationen
-Die folgenden Konfigurationen werden zumeist für den Gebrauch mit einer Gegenproben-Prozedur verwendet.
+### Fortgeschrittene Konfigurationen
+Die folgenden Optionen werden zumeist für die Validierungs-Prozedur verwendet.
 
 [horizontal]
-preventOversteppingOfEndTime:: (_default=true_) selbst für FMUs mit konstanten Schritten, wird der letzte Schritt gekürzt, um exakt den Endzeitpunkt zu treffen (das ist für solche FMUs erforderlich, die eine strikte Endzeitüberprüfung haben).
 writeInternalVariables:: (_default=false_) Verfasst auch Variablen mit lokaler/interner Kausalität (wen es auf *no* gesetzt ist, werden nur Variablen mit der Kausalität _Ausgang_ verfasst)
 
-Abhängig von den gewählten Optionen, müssen sicherlich einige Fähigkeiten durch FMUs unterstützt werden, siehe Abschnitt <<master_algorithms>>.
+Abhängig von den gewählten Optionen, müssen einige Fähigkeiten durch die FMUs unterstützt werden, siehe dazu Erläuterungen in Abschnitt <<master_algorithms>>. Grundsätzlich muss für die Verwendung eines iterierenden Master-Algorithmus oder für die Fehlerprüfung und Zeitschrittanpassung eine FMU den FMI 2 Standard und die Funktionalität für das Holen und Zurücksetzen des Zustands implementieren.
 
 
 [[slave_definition]]
-== Simulator-/Slave-Definitionen
+## Simulator-/Slave-Definitionen
 
 Jeder Slave wird festgelegt durch:
 
 ----
-simulator  <priority> <cycle>  <slave-name> <html-color-code> <path/to/fmu-file>
+simulator  <priority> <cycle>  <slave-name> <html-color-code> <Pfad/zur/FMU-Datei>
 ----
 
 Der *Zyklus* zeigt an, ob Slaves zu einem Zyklus mit anderen FMUs gehören. Der *Slave-Name* muss eine eindeutige Identifikation des Slaves zulassen (siehe Diskussion in Abschnitt <<master_algorithms>>).
 
-NOTE: Die *Priorität* wird genutzt, um die Anordnung der Durchführung in einem Zyklus auszuwählen (für Gauss-Seidel). Trotzdem ist diese Funktion gegenwärtig nicht implementiert und Slaves innerhalb des selben Zyklus werden in der Anordnung bewertet, in der sie festgelegt sind.
+[NOTE] 
+====
+Die *Priorität* könnte genutzt werden, um die Reihenfolge der Auswertung innerhalb eines Zyklus auszuwählen (für Gauss-Jacobi/Gauss-Seidel). Die Funktion ist gegenwärtig aber nicht (mehr) implementiert und Slaves innerhalb des selben Zyklus werden in der Reihenfolge ausgewertet, in der sie festgelegt sind.
+====
 
-Der Slave-/Simulatorname ist eine eindeutige Identifikation des FMU-Falls. 
+Der Slave-/Simulatorname muss eindeutig innerhalb des Simulationsprojekts sein.
 
 [IMPORTANT]
 ====
-Slave-Namen *dürfen keine* Leerzeichen oder Punkte enthalten. Wenn ein Slave-Name ein Leerzeichen oder einen Punkt enthält, wird der Parser der Projekt-Datei melden, dass die Definitionszeile der Simulation ungültig ist. Auch werden Slave-Namen für die Verzeichnisnamen genutzt (Zielverzeichnisse für Slave-spezifische Ausgänge). Daher müssen sie keine Zeichen beinhalten, die in Dateisystemnamen nicht erlaubt sind. 
+Slave-Namen *dürfen keine* Leerzeichen oder Punkte enthalten. Wenn ein Slave-Name ein Leerzeichen oder einen Punkt enthält, wird der Parser der Projekt-Datei melden, dass die Definitionszeile der Simulation ungültig ist. Auch werden Slave-Namen für die Verzeichnisnamen genutzt (Zielverzeichnisse für Slave-spezifische Ergebnisse). Daher dürfen sie keine Zeichen beinhalten, die in Dateisystemnamen nicht erlaubt sind (wie z.B. ':' unter Windows).
 ====
 
 
+Der *html-Farb-Code* st eine übliche html-basierte Farbdefinition, die mit einem Rautezeichen beginnt, auf welches entweder 8 oder 6 Zeichen folgen, zum Beispiel: `#ff00ff00` oder `#00ff00` für grün. Im 8-Zeichen-Format ist die erste Hexadezimalzahl der Alphawert/Transparenzwert. Gegenwärtig gibt es keinen Gebrauch für diesen Wert auf der Benutzeroberfläche, sodass die 6-Zeichen-Variante die gebräuchliche Wahl ist.
 
-Der *html-Farb-Code* st eine übliche html-basierte Farbdefinition, die mit einem Rautezeichen beginnt, auf welches entweder 8 oder 6 Zeichen folgen, zum Beispiel: `#ff00ff00` oder `#00ff00` für grün. Im 8-Zeichen-Format, ist die erste Hexadezimalzahl der Alphawert (Opazität - ff = vollkommen opak, 0 = vollkommen transparent). Gegenwärtig gibt es keinen Gebrauch für diesen Wert auf der Benutzeroberfläche, sodass die 6-Zeichen-Variante die gebräuchliche Wahl ist.
-
-Das letzte Argument in der Zeile ist der Dateipfad-Verweis zur eigentlichen FMU-Datei. Der Pfad zur FMU-Datei in Anführungszeichen angefügt werden, wenn der Pfad oder der Dateiname Leerzeichen enthält. Der Pfad kann absolut oder relativ zur `msim`-Projektdatei sein. Einige Slaves können durch die selbe FMU-Datei realisiert sein (wenn das FMU diese Funktion unterstützt). In diesem Fall nehmen einige Simulatorzeilen Bezug auf den gleichen FMU-Dateipfad.
+Das letzte Argument in der Zeile ist der Dateipfad zur eigentlichen FMU-Datei. Der Pfad zur FMU-Datei kann in Anführungszeichen angefügt werden, wenn der Pfad oder der Dateiname Leerzeichen enthält. Der Pfad kann ein absoluter Pfad oder relativ zur `msim`-Projektdatei sein. Einige Slaves können durch die selbe FMU-Datei beschrieben werden (wenn die FMU diese Funktion unterstützt). In diesem Fall wird in einigen Simulatorzeilen der gleiche FMU-Dateipfad eingetragen.
 
 [[csv_filereader_slaves]]
-=== CSV-Datei-Lese-Slaves
+### CSV-Datei-Lese-Slaves
 
-Anstatt eines FMUs können Sie ebenso auf eine Datendatei verweisen (Erweiterung mit `tsv` oder `csv`). In diesem Fall wird _MasterSim_ FileReader-Slaves realisieren und die Daten in der Datei wird wie ein FMU behandelt, dass nur Ausgänge zur Verfügung stellt, aber keinen Eingang und keine Parameter hat.
+Bisweilen ist es sinnvoll/notwendig, vorgegebene Zeitreihen als Eingangsgrößen für FMUs bereitszustellen. Diese können in einer Datendatei bereitgestellt werden. Eine solche Datendatei (Erweiterung mit `tsv` oder `csv`) kann man wie eine FMU auswählen. _MasterSim_ wird eine solche Datei wie eine FMU behandeln, und daraus CSV-Datei-Lese-Slaves erstellen, die lediglich Ausgabevariablen bereitstellen.
 
-Effektiv unterstützt _MasterSim_ zwei Varianten von csv-Dateien. In beiden Varianten werden Zahlen immer in der *englischen Nummernschreibweise* verfasst. Der Datei-Parser-Pfad versucht zunächst, den durch Tabulatoren getrennten Variantenwert zu nutzen, indem die ersten beiden Zeilen mit Tabulatorzeichen aufgeteilt werden. Wenn dies mehr als zwei Spalten ergibt und die gleiche Anzahl an Spalten in beiden Linien (die Kopf- und erste Datenzeile), wird eine Tabulator-getrennte csv/tsv-Variante übernommen. Andernfalls wird der Exeltyp der angeführten csv-Variante übernommen. 
+Effektiv unterstützt _MasterSim_ zwei Varianten von CSV/TSV-Dateien (Dateierweiterung ist dabei egal). In beiden Varianten werden Zahlen immer im *englischen Zahlenformat* erwartet. Beim Einlesen wird zuerst versucht, eine durch Tabulatoren getrennte Spaltenstruktur zu erkennen, indem die ersten beiden Zeilen mit Tabulatorzeichen aufgeteilt werden. Wenn dies mehr als zwei Spalten ergibt und die Anzahl an Spalten in beiden Zeilen (in Kopf- und erster Datenzeile) übereinstimmt, wird eine Tabulator-getrennte CSV/TSV-Variante erkannt. Andernfalls wird eine CSV-Datei im "Excel"-Format erwartet (siehe unten).
 
-==== Tabulator-getrennte Werte
+#### Tabulator-getrennte Werte
 
-Das Format einer solchen Input-Datei folgt den selben Konventionen wie das Dateienformat, dass von https://bauklimatik-dresden.de/postproc[PostProc2] unterstützt wird.
+Das Format einer solchen Datei folgt denselben Konventionen wie das Dateiformat, dass von https://bauklimatik-dresden.de/postproc[PostProc 2] unterstützt wird (siehe auch Beschreibung dazu im _PostProc 2_ Handbuch). _MasterSim_ selbst schreibt Ergebnisse in diesem Dateiformat (siehe <<simulation_outputs>>).
 
-Die Datei startet mit einer einzelnen Zeile (der Kopfzeile), dem Identifizieren von Variablen-Namen und der Einheit im Format, wie:
+Die Datei startet mit einer einzelnen Zeile (der Kopfzeile), in welcher Variablennamen und (optional) Einheiten angegeben werden. Es wird folgendes Format erwartet (wobei die Anzahl der Spalten nicht begrenzt ist).
 
     Time [<time unit>] <tab> <var1 name> [<unit>] <tab> <var2 name> [<unit>]
 
-wo `<tab>` das Tabulatorzeichen ist.
+`<tab>` ist ein Tabulatorzeichen. Beispiel:
 
     Time [d]  <tab>  T_lab [C]  <tab>  T_sample [C]  <tab>  RH_lab [%]
 
-Beispieldatei:
-
+[[ex_tsv_flavor]]
+.Datei mit 3 Variablen
+====
     Time [h]     T_lab [C]     T_sample [C]     RH_lab [%]
     0            20            20.2             46
     0.5          20.1          20.3             43
     1.0          22            25               40
     3.0          19            15               65
 
-Die Variablennamen entsprechen der Zeichenfolge der Kopfzeile, ausgenommen der Einheiten (falls angegeben). Im Beispiel oben wird die Datei Ausgangsvariablen mit den Namen **T_lab**, **T_sample** und **TH_lab** anbieten.
+Die Variablennamen entsprechen den Spaltenüberschriften in der Kopfzeile, ausgenommen der Einheiten (falls angegeben). Im Beispiel wird die erzeugte Datei-Lese-FMU Ausgangsvariablen mit den Namen **T_lab**, **T_sample** und **TH_lab** anbieten.
+====
 
 [TIP]
 ====
-Eine Datei mit diesem Format gilt automatisch, wenn eine Tabelle mit solchen Daten aus LibreOffice/Calc/Excel in einen einfachen Text-Editor kopiert und eingefügt wird.
+Eine Datei mit diesem Format erhält man automatisch, wenn eine Tabelle mit solchen Daten aus LibreOffice/Calc oder Excel etc. in einen einfachen Text-Editor kopiert wird.
 ====
 
-==== Kommatrennung mit Anführungszeichen
+#### Kommatrennung mit Anführungszeichen
 
-In solchen Dateien ist das Trennungszeichen das , (Komma) und Werte werden durch Anführungszeichen angegeben. Zum Beispiel: 
+:xrefstyle: short
 
+Das zweite unterstützte Format entspricht dem Format von Dateien, welche als CSV-Dateien gespeicherte Excel-Dateien haben. In solchen Dateien ist das Trennungszeichen das , (Komma) und Werte werden durch Anführungszeichen angegeben (siehe <<ex_csv_Excel_flavor>>).
+
+[[ex_csv_Excel_flavor]]
+.Datei im CSV Format mit Komma-Trennung
+====
     "time","T_lab [C]","T_sample [C]","RH_lab [%]"
     "0","20","20.2","46"
     "0.5","20.1","20.3","43"
     "1.0","22","25","40"
+    "3.0","19","15","65"
+    
+Der Inhalt dieser Datei entspricht der aus <<ex_tsv_flavor>>.
+====
 
-=== Zeitpunkte und Zeiteinheiten
+:xrefstyle: basic
+
+[IMPORTANT]
+====
+Für beide Formatvarianten gilt: für Variablen ohne gegebene Einheiten, d.h. ohne [...] in der Spaltenüberschrift, wird eine unbekannte/undefinierte Einheit `-` angenommen.
+====
+
+
+### Zeitpunkte und Zeiteinheiten
 
 Die Zeitpunkte können in zufällige Intervalle aufgeteilt sein. _MasterSim_ erwartet zur Zeit, dass Simulationen in Sekunden ablaufen als Basis-Zeiteinheit. Das bedeutet im Internen, dass Variablen ausgetauscht werden, um einer Simulationszeit in Sekunden zu entsprechen. Wenn eine Eingangsdatei eine andere Einheit für die Zeit festlegt, konvertiert _MasterSim_ diese Zeit in Sekunden. 
 
 Die folgenden Zeiteinheiten werden von MasterSim erkannt:
 
-* ms - Millisekunden
-* s - Sekunden
-* min - Minuten
-* h - Stunden
-* d - Tage
-* a - Jahre (reguläre Jahre, 365 reguläre Tage, kein Schaltjahr/-tag)
+[horizontal]
+ms:: Millisekunden
+s:: Sekunden
+min:: Minuten
+h:: Stunden
+d:: Tage
+a:: Jahre (reguläre Jahre, 365 reguläre Tage, kein Schaltjahr/-tag)
 
 [NOTE]
 ====
 .Die standardmäßige Zeiteinheit ist Sekunde
-Im Falle einer fehlenden Zeiteinheit in der Kopfzeile der ersten Spalte setzt  _MasterSim_ gegenwärtig die Zeiteinheit **Sekunden** (s) voraus.
+Im Falle einer fehlenden Zeiteinheit in der Kopfzeile der ersten Spalte nimmt _MasterSim_ die Zeiteinheit **Sekunden** (s) an.
 ====
 
-=== Interpretation der von den FileReader-Slaves bereitgestellten Daten
 
-TODO: Fehlt im Folgenden vielleicht etwas?
+### Interpretation der von den Datei-Lese-Slaves bereitgestellten Daten
 
-Variablen ohne gegebene Einheiten, z. B. das [...] fehlt in der Spaltenüberschrift, werden als unbekannte/undefinierte Einheit ausgewiesen. '-'.
 
 [IMPORTANT]
 ====
-Die von einem solchen FileReader-Slave exportierten Variablen wurden noch keinem Datentyp zugewiesen. Während der Initialisierung schaut _MasterSim_ nach den Verbindungen, die mit FileReader-Slaves gemacht worden und teilt die Datentypen den auf _connected input variable_ basierenden Variablen zu. 
+Die von einem Datei-Lese-Slave exportierten Variablen sind zunächst keinem Datentyp zugewiesen, wie das sonst bei FMU Ergebnisvariablen ist. Daher prüft _MasterSim_ während der Initialisierung nach den Verbindungen, die mit Datei-Lese-Slaves gemacht worden sind. Falls Verbindungen definiert sind übernimmt _MasterSim_ den Datentyp der verknüpften Eingangsvariable auch für die Ausgangsvariable des Datei-Lese-Slaves.
+
+Falls man versucht, die gleiche Ausgabevariable eines Datei-Lese-Slaves auf verschiedene Eingangsvariablen mit _unterschiedlichen Variablentypen_ zuzuweisen, bricht _MasterSim_ mit einer Fehlermeldung ab.
 ====
 
-Während der Simulation, wenn der FileReader-Slave gefragt wird, einen Wert für eine Variable bereitzustellen, gelten die folgenden Regeln:
+Während der Simulation, wenn der Datei-Lese-Slave ausgewertet wird, gelten die folgenden Regeln: für die Berechnung der Ergebnisgrößen.
 
-==== *Boolean*-, *Integer*- und *Enumeration*-Werte
-Für *Boolean*-, *Integer*- und *Enumeration*-Werte wird keine Interpolation vorgenommen. Werte werden konstant zurückgeführt, bis der Wert zur Änderung festgelegt ist. Beispiel:
+#### *Boolean*-, *Integer*- und *Enumeration*-Datentypen
 
+Für die Datentypen *Boolean*-, *Integer*- und *Enumeration* wird keine Interpolation vorgenommen. Die Werte in der Tabelle werden konstant zurückgeliefert, bis in einer Zeile ein neuer Wert definiert wird. 
+
+:xrefstyle: short
+
+<<ex_filereader_constant>> verdeutlicht die Auswertung der Werte.
+
+[[ex_filereader_constant]]
+.Konstante Auswertung bei nicht-interpolierten Datentypen
+====
+
+Datentabelle für die einheitenlose Variable `v`:
 ----
-Zeit [s]   Wert [-]
+Zeit [s]   v [-]
  1         4
  3         4 <1>
  3         7 <2>
  6         4
 ----
-<1> Der Wert am Ende des Intervalls endet in der Zeit 3
-<2> Der Wert zu Beginn des Intervalls, startet mit der Zeit 3; dieser Wert sollte von t>=3 genutzt werden.
+<1> Der Wert am Ende des Intervalls endet zum Zeitpunkt 3
+<2> Der Wert zu Beginn des Intervalls startet mit Zeitpunkt 3; dieser Wert sollte von t>=3 genutzt werden.
 
-Evaluation dieser Werteergebnisse:
+Auswertung dieser Datentabelle für ausgewählte Zeitpunkte:
 
  v(1) = 4
  v(2) = 4
@@ -248,11 +289,17 @@ Evaluation dieser Werteergebnisse:
  v(5.99999) = 7
  v(6) = 4
 
-Somit könnte die Zeile `3     4` aus der Datei weggelassen werden. 
+Bei konstanter Auswertung ohne Interpolation könnte die Zeile `3     4` aus der Datei weggelassen werden. 
+====
 
-==== Reale Werte
 
-*Reale* Werte sind linear interpoliert. Für das Datenbeispiel oben würden reale Werte folgendermaßen bewertet:
+#### Gleitkomma-Werte
+
+Werte vom Datentyp *Real* (Gleitkommazahlen) werden linear interpoliert. Analog zum obigen Beispiel zeigt <<ex_filereader_linear>> die Auswertung bei Verwendung der linearen Interpolation.
+
+[[ex_filereader_linear]]
+.Lineare Interpolation bei Gleitkommazahlen
+====
 
 ----
  v(1) = 4
@@ -263,22 +310,41 @@ Somit könnte die Zeile `3     4` aus der Datei weggelassen werden.
  v(5.99999) = 4.00001
  v(6) = 4
 ----
+
 <1> Wenn doppelte Zeitpunkte gefunden werden, überschreibt der zweite den ersten Wert, sodass die Zeile `3   4` ignoriert wird. Daher wird die Bewertung der Werte im Intervall 2...3 ebenso mit linearer Interpolation durchgeführt.
 <2> Die lineare Interpolation zwischen den Werten v(3)=7 und v(6)=4 bei t=4 ergibt 6.
+====
 
-TIP: Wenn Sie Schrittfunktionen mit *Realen* Werten nachbilden möchten, nutzen Sie einfach ein sehr kurzes Wechsel-Intervall, z. B. `v(1) = 4; v(2.9999) = 4; v(3) = 7`. _MasterSim_ wird nach wie vor die lineare Neigung zwischen t=2.9999 und 3 erkennen, was aber unerheblich für die Ergebnisse sein könnte.
-
-Natürlicherweise ist die lineare Interpolation für *String*-Parameter nicht möglich, daher werden sie simultan zu *ganzzahligen* Werten behandelt. 
 
 [TIP]
 ====
-Falls Sie einen anpassungsfähigen Schritt-Algorithmus in _MasterSim_ verwenden, sollten Sie den maximalen Zeitschritt/die Länge des Datenübertragungsintervalls auf einen Wert festlegen, der kleiner als ihr kleinstes Zeitintervall in der Eingangsdatei ihres FileReader-Slaves ist. Ansonsten könnte _MasterSim_ die Zeitschritte als höheren Wert festlegen und Werte/Intervalle überspringen. Hierbei würden Daten fehlen und wahrscheinlich falsche Ergebnisse erzeugt. Zum Beispiel: wenn Sie mit stündlichen Klimadaten arbeiten, wählen Sie 30 Minuten als maximale Länge für ein Datenübertragungsintervall.
+Wenn Sie Stufenfunktionen mit *Real*-Werten nachbilden möchten, nutzen Sie einfach ein sehr kurzes Wechsel-Intervall, z. B. `v(1) = 4; v(2.9999) = 4; v(3) = 7`. _MasterSim_ wird nach wie vor den linearen Anstieg zwischen t=2.9999 und 3 verwenden, was aber unerheblich für die Ergebnisse sein sollte.
 ====
 
-[[connection_graph]]
-## Verbindungsgrafik
+[WARNING]
+====
+Starke Änderungen des Anstiegs in benachbarten Intervallen (Unstetigkeiten in der ersten Ableitung) können bei Fehlerschätzer-basierter Zeitschrittanpassung zu sehr kleinen Zeitschritten führen und damit die Simulationszeit drastisch verlängern. Wann immer möglich (und ohne die Ergebnisse signifikant zu verfälschen) sollte man versuchen, größere Sprünge zwischen Anstiegen zu vermeiden oder geeignet zu glätten.
+====
 
-Die Verbindungsgrafik legt den Datenaustausch zwischen den Slaves fest. Jede grafisch dargestellte Definitionslinie legt den Datentransfer zwischen einer Eingangs- und einer Ausgangsvariable fest.
+:xrefstyle: basic
+
+
+[TIP]
+====
+Falls Sie einen Master-Algorithmus mit Zeitschrittanpassung in _MasterSim_ verwenden, sollten Sie den maximalen Zeitschritt (max. Länge des Kommunikationsintervalls) auf einen Wert festlegen (Parameter *hMax*, siehe Abschnitt <<simulator_settings>>), der kleiner als ihr kleinstes Zeitintervall in der Eingangsdatei ihres Datei-Lese-Slaves ist. Ansonsten könnte _MasterSim_ unter Umständen ein Intervall überspringen und gar nicht merken, dass es zwischenzeitlich eine Änderung in den Eingangsdaten gab. Hierbei würden Daten fehlen und wahrscheinlich falsche Ergebnisse erzeugt. 
+
+Beispiel: wenn Sie mit stündlichen Klimadaten arbeiten, wählen Sie 30 Minuten als maximale Länge für ein Kommunikationsintervall.
+====
+
+#### Zeichenketten-Variablen
+
+Zeichenketten (*String*)-Variablen werden wie *ganzzahlige* Werten behandelt.
+
+
+[[connection_graph]]
+## Verbindungsgraph
+
+Der Verbindungsgraph beschreibt die Verknüpfung aller Slaves über Ein- und Ausgangsvariablen und legt damit den Datenaustausch zwischen den Slaves fest. Jede `graph` Zeile legt den Datentransfer zwischen einer Ausgangs- und einer Eingangsvariable fest.
 
 Syntax der Definition:
 
@@ -286,34 +352,34 @@ Syntax der Definition:
 graph <outputvar> <inputvar> [<offset> <scale factor>]
 ----
 
-Ausgangs- und Eingangvariablen werden aus Slave-Namen und Variablennamen zusammengesetzt:
+Ausgangs- und Eingangvariablen werden jeweils aus Slave-Namen und Variablennamen zusammengesetzt:
 
 ----
 graph <slave-name>.<variable-name> <slave-name>.<variable-name>  [<offset> <scale factor>]
 ----
 
-Der Offset- und Skalenfaktor legt den Umwandlungsvorgang zwischen Ausgangsvariablen und dem Wert, der für die Eingangsvariable bestimmt wurde, fest. Wenn eine solche Umwandlung einer Verbindung zugewiesen wird, müssen immer beide Werte dargestellt sein. 
+Der optionale Verschiebungs- und Skalierungsfaktor legt eine Umrechenvorschrift zwischen Ausgangsvariable und Eingangsvariable fest. Wenn eine Umrechnungsvorschrift angegeben wird, müssen immer beide Werte in der Zeile angegeben sein.
 
-Die folgende Umwandlungsgleichung wird verwendet:
+Die folgende Umrechnungsgleichung wird verwendet:
 
   input = offset + scale * output
 
-Falls zum Beispiel ein FMU-Slave 'Sensor' eine Temperatur in Kelvin liefert und ein anderer FMU-Slave 'Heater' die Temperatur in Grad Celsius angibt, können Sie die Verbindung wie folgt festlegen:
+Falls zum Beispiel ein FMU-Slave _Sensor_ eine Temperatur in Kelvin liefert und ein anderer FMU-Slave _Heater_ die Temperatur in Grad Celsius erwartet, können Sie die Verbindung wie folgt festlegen:
 
  graph  Sensor.temperature  Heater.temperature  -273.15  1
  
-Was resultieren wird als:
+wodurch _MasterSim_ folgende Gleichung ausführt:
 
  input (in C) = -273.15 + 1 * output (in K)
- 
-Auf ähnliche Weise können Sie das Zeichen einer Verbindung umkehren, wenn Sie zum Beispiel Hitze und Massefluss durch Röhren verbinden. Angenommen der Hitzefluss ist positiv auf einer Oberfläche festgelegt und Sie verbinden 'SurfaceA.HeatFlow' und 'SurfaceB.HeatFlow', dann wird die Verbindung mit der Zeichenumkehr festgelegt als:
+
+Auf ähnliche Weise können Sie das Vorzeichen einer Variable in einer Verbindung umkehren, wenn Sie zum Beispiel Wärmeströme oder  Masseströme durch Röhren verbinden. Angenommen der Wärmestrom ist positiv in Richtung der Oberflächennormalen festgelegt und Sie verbinden _SurfaceA.HeatFlow_ und _SurfaceB.HeatFlow_, dann wird die Verknüpfung unter Berücksichtigung der Vorzeichenumkehr so definiert:
 
  graph  SurfaceA.HeatFlow  SurfaceB.HeatFlow  0  -1
 
 
-=== FMU-Parameter
+### FMU-Parameter
 
-Sie können die Parameter der FMUs (oder spezieller, die der individuellen FMU-Slaves/-Exemplare) festlegen, indem Sie das `parameter`-Stichwort benutzen.
+Sie können Parameter der FMUs (oder konkreter, die der individuellen FMU-Slaves) festlegen, indem Sie das `parameter`-Schlüsselwort benutzen.
 
 Definition der Syntax:
 
@@ -321,21 +387,21 @@ Definition der Syntax:
 parameter <slave-name>.<variable-name> <value>
 ----
 
-Für *boolesche* Parameter müssen Sie `true` festlegen (case-sensitive!) für *true* oder irgend einen anderen Wert (zum Beispiel `false`) für *falsch*.
+Für *boolesche* Parameter müssen Sie `true` als Wert verwenden (Kleinschreibung beachten) oder irgend einen anderen Wert (zum Beispiel `false`) für *falsch*.
 
-Für *ganzzahlige* Werte müssen Sie einfach den Wert als Ziffer festlegen.
+Für ganzzahlige Werte (Typ *Integer*) müssen Sie einfach den Wert als Ziffer festlegen.
 
-Werte für *wahre* Parameter werden in der Einheit erwartet, die in der `modelDescription.xml`-Datei für entsprechende Parameter festgelegt worden sind. Die Umwandlung der Einheit wird hier *nicht* unterstützt.
+Werte für Parameter vom Typ *Real*" werden in der Einheit erwartet, die in der `modelDescription.xml`-Datei für den entsprechenden Parameter festgelegt worden sind. Eine Einheitenumrechnung wird hier *nicht* unterstützt.
 
-Für *String*-Parameter wird alles nach dem Variablennamen als String angesehen (bis zum Ende der Zeile). Beispiel:
+Für *String*-Parameter wird alles nach dem Variablennamen als Zeichenkette angesehen (bis zum Ende der Zeile). Beispiel:
 
  parameter building_model.projectFile C:\\My projects\\p2\\This tall building.project
 
-Leerstellen können eingefügt sein, aber die Rücktasten müssen als `\\` kodiert sein. Zeilenumbrüche werden durch `\n` kodiert wie im folgenden Beispiel:
+Leerstellen können enthalten sein. Aber die Rückwärts-Schrägstrich-Zeichen (_backslash_) müssen als `\\` kodiert sein. Dies ist notwendig, damit Sonderzeichen wie Zeilenumbrüche durch `\n` kodiert werden können, wie im folgenden Beispiel gezeigt:
 
  parameter building_model.configPara First line\n    Some more lines with indentation\nlast line.
 
-Es wird den String setzen:
+Dies wird den folgenden String setzen:
 
  First line
      Some more lines with indentation
@@ -343,12 +409,14 @@ Es wird den String setzen:
 
 [NOTE]
 ====
-Wegen der eher leichten String-Kodierung können Sie keinen String festlegen, der mit Leerraum-Zeichen beginnt.
+In dem seltenen Fall, wenn man Zeichenketten-Parameter mit führenden und abschließenden Leerzeichen festlegen möchte, kann man die Zeichenkette in "" einschließen. Beispiel:
+
+ parameter building_model.configPara "   Zeichenkette mit Leerzeichen am Anfang und Ende     "
 ====
 
 
 
-== Blockmodell - das Dateiformat der Netzwerkpräsentation
+## Blockmodell - das Dateiformat der Netzwerkpräsentation
 
 Die `bm`-Datei ist eine simple XML-Datei und beschreibt die grafische Gestaltung und die Visualisierung des modellierten Simulations-Szenarios.
 
