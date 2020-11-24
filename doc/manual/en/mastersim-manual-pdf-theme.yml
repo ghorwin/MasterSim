@@ -1,9 +1,9 @@
 extends: default
 base:
-  font-size: 11
+  font-size: 10
 
 toc:
-  font-size: 10
+  font-size: 9
 
 toc-h2:
   font-style: bold
@@ -26,6 +26,9 @@ page:
 image:
   align: center
   
+code:
+  font-size: 9
+
 footer:
   height: 0.75in
   line-height: 1

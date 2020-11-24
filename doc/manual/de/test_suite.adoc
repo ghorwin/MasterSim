@@ -1,24 +1,26 @@
-= Konzept zur Testfolge
+# Testreihen und Validierung
 
-Die _MasterSim_-Quelle enthält ein Unterverzeichnis `Daten/Tests` mit einer Regressionstestfolge. Diese Tests werden genutzt, um zu prüfen, ob alle Algorithmen wie erwartet arbeiten und ob die Änderungen der  Code-Basis versehentlich etwas kaputtmachen. 
+Das _MasterSim_ Quelltext-Repository enthält ein Unterverzeichnis `data/tests` mit einem Regressionstest. Diese Testreihe wird genutzt, um zu prüfen, ob alle Algorithmen wie erwartet arbeiten und ob Änderungen am Quelltext versehentlich etwas kaputt machen.
 
-_MasterSim_ durchläuft ebenso die FMU-Mehrfachprüfung. Die Dateien und Skripte, die mit diesem Test in Verbindung stehen, befinden sich im Unterverzeichnis `cross-check`.
+_MasterSim_ durchläuft außerdem die FMU-Quer-Validierung (fmi-cross-check). Die Dateien und Skripte, die mit diesem Test in Verbindung stehen, befinden sich im Unterverzeichnis `cross-check`.
 
-== Regressionstest
 
-=== Verzeichnisstruktur
+## Regressionstests
 
-    /data/tests                     - root directory for tests
-    /data/tests/<platform>/<test>   - base directory for a test suite
 
-Die `Plattform` ist (gegenwärtig) eine von: `linux64`, `win32`,`win64` und `darwin64`
+### Verzeichnisstruktur
 
-Jede _Testfolge_ hat eine Reihe von Unterverzeichnissen:
+    /data/tests                     - Basisverzeichnis für Tests
+    /data/tests/<platform>/<test>   - Basisverzeichnis für eine Testreihe
+
+`platform` ist (gegenwärtig) eine von: `linux64`, `win32`,`win64` und `darwin64`
+
+Jede _Testreihe_ hat eine Reihe von Unterverzeichnissen:
 
     fmus                 - enthält für den Test benötigte FMU-Archive
     description          - (mathematische) Beschreibung des Test-Problems
 
-Innerhalb der _Testfolge_ können verschiedene ähnliche _Testfälle_ mit modifizierten Parametern oder angepassten Problemlösungs-Szenarien gespeichert sein. _Testfälle_ werden in der Regel als Testfolgen gruppiert, wenn sie die selben FMUs oder andere Eingangsdateien benutzen. 
+Innerhalb der _Testreihe_ können verschiedene ähnliche _Testfälle_ mit modifizierten Parametern oder angepassten Problemlösungs-Szenarien gespeichert sein. _Testfälle_ werden in der Regel als Testreihen gruppiert, wenn sie die gleichen FMUs oder andere Eingangsdateien benutzen. 
 
 Für jeden _Testfall_ existiert eine _MasterSim_-Projektdatei mit der Erweiterung `msim`. Das Skript, welches die Testfälle durchführt, verarbeitet alle `msim`-Dateien, die in der Unterverzeichnisstruktur unter der aktuellen Plattform gefunden werden.
 
@@ -33,60 +35,62 @@ Zum Beispiel:
 
 Diese Verzeichnisse sind grundsätzlich nach einer durchlaufenen Simulation umbenannte Arbeitsverzeichnisse, in denen alles außer `summary.txt` und `values.csv` beseitigt worden ist.
 
-=== Durchlauf der Tests
+### Durchlauf der Tests
 
-Die Tests laufen automatisch ab nach der Errichtung mit den Aufbauskripts. Ansonsten läuft ein geeignetes Skript:
+Die Tests laufen automatisch nach Erstellen der Software ab. Ansonsten kann man die Testreihe auch über ein Skript selbst starten (je nach Plattform):
 
 - `build/cmake/run_tests_win32.bat`
 - `build/cmake/run_tests_win64.bat`
 - `build/cmake/run_tests.sh`
 
-=== Aktualisierung der Referenzergebnisse
+### Aktualisierung der Referenzergebnisse
 
-Aus dem Inneren ruft das Skript ein Testverzeichnis auf: `update_reference_results.py` mit der Verzeichnisendung als Argument.
+Aus einem Testverzeichnis heraus kann man das Script  `update_reference_results.py` aufrufen und dabei die plattformspezifische Verzeichnisendung als Argument angeben.
 
-Zum Beispiel von innen:
+Beispielsweise würde der Aufruf aus dem Verzeichnis
 
     data/tests/linux64/Math_003_control_loop
-    
-ruft auf:
+
+so aussehen:
 
 [source,bash]
 -----
 > ../../../../scripts/TestSuite/update_reference_results.py gcc_linux
 -----
 
-welches alle Referenzergebnisse in diesem Verzeichnis aktualisieren wird. Falls Sie die Referenzergebnisse einiger Testfolgen bearbeiten/aktualisieren wollen, führen Sie das folgende Skript aus einem der oberen Verzeichnisse durch, zum Beispiel von: `data/tests/linux64`:
+Das Script aktualisiert nun alle Referenzergebnisse in diesem Verzeichnis. Falls die Referenzergebnisse mehrerer Testreihen bearbeitet/aktualisiert werden sollen, so führt man das Skript `update_reference_results_in_subdirs.py` aus einem der oberen Verzeichnisse durch, zum Beispiel von: `data/tests/linux64` (anderen Scriptnamen beachten!):
 
 [source,bash]
 -----
 > ../../../scripts/TestSuite/update_reference_results_in_subdirs.py gcc_linux
 -----
 
-== Regeln für Gegenproben und die Liste der FMI Standard.org
+
+## Regeln für Quervergleiche und die FMI Standard.org Übersicht
 
 Siehe Dokumentation im Unterverzeichnis `cross-check`.
 
-== Der Weg um Test-FMUs zu generieren
+## Verschieden Möglichkeiten, Test-FMUs zu erstellen
 
-=== Der Gebrauch von C++ - FMUs
+### Native C++ FMUs
 
-Ein geeigneter Weg, um ein einfaches, sehr spezielles Test-FMU zu erhalten, ist der Gebrauch des https://github.com/ghorwin/FMICodeGenerator[FMI Code Generator]-Werkzeugs. Es ist ein Python-Werkzeug, mit einer grafischen Benutzeroberfläche, auf der FMU-Variablen und -Eigenschaften festgelegt werden können. Mit dieser Information erstellt der Code-Generator ein Quellcodeverzeichnis mit einem Vorlagen-Code und verbundenen Aufbauskripts - sodass es sehr einfach ist, eigene FMUs herzustellen. Siehe Dokumentation /Tutorial auf der Github-Seite.
+Ein geeigneter Weg, um eine einfache, sehr spezielle Test-FMU zu erhalten, ist die Verwendung des https://github.com/ghorwin/FMICodeGenerator[FMI Code Generator]-Werkzeugs. Es ist ein Python-Skript mit einer grafischen Benutzeroberfläche, in der FMU-Variablen und -Eigenschaften festgelegt werden können. Mit dieser Information erstellt der Code-Generator ein Quelltextverzeichnis mit einer Programm-Quelltextvorlage und den benötigten Skripten für das Erstellen und Verpacken der FMUs. Damit ist es sehr einfach, eigene FMUs zu erstellen (siehe auch Dokumentation/Tutorial auf der Webseite https://github.com/ghorwin/FMICodeGenerator).
 
-=== FMUs, die von der SimulationsX exportiert werden. 
+### Modelica-basierte FMUs
 
-Benötigt eine passende Lizenz. Das Exportieren von FMUs aus SimX ist sehr einfach, aber für die Windows-Plattform beschränkt.
+#### FMUs aus kommerziellen Modelica-Entwicklungsumgebungen
 
-=== Von OpenModelica exportierte FMUs
+Benötigt eine entsprechende passende Lizenz. Das Exportieren von FMUs aus SimulationX oder Dymola ist recht einfach, aber für die Windows-Plattform beschränkt.
 
-OpenModelica kann ebenso FMUs exportieren. Hier folgen die Schritte, um so ein FMU herzustellen.
+OpenModelica kann ebenso FMUs exportieren. Nachfolgend sind die Schritte erläutert, um so eine FMU zu erstellen.
 
-==== Erstellen eines Modelica Modells
+### Erstellen einer FMU mit OpenModelica
 
-Erstellen eines Modelica Modells. 
+Zunächst wird ein Modelica-Modell erstellt.
+
 [IMPORTANT]
 ====
-Annotieren Sie Variablen, die als Ausgangsgröße genutzt werden mit dem Stichwort `output`.
+Versehen Sie Variablen, die als Ausgangsgrößen von der FMU bereitgestellt werden sollen, mit dem Stichwort `output`.
 ====
 
 Zum Beispiel:
@@ -122,9 +126,9 @@ end BouncingBall;
 ----
 
 
-==== Variante 1: Das FMU manuell erstellen
+#### Erstellungsvariante 1: Die FMU manuell erstellen
 
-Öffnen Sie zunächst OMShell, tippen Sie dann die folgenden Befehle, um das Modell zu laden und erzeugen Sie ein Co-Simulations-FMU:
+Öffnen Sie zunächst OMShell, tippen Sie dann die folgenden Befehle, um das Modell zu laden und erzeugen Sie eine Co-Simulations-FMU:
 
 [source,bash]
 ----
@@ -133,16 +137,16 @@ end BouncingBall;
 "/tmp/OpenModelica/BouncingBall.fmu"
 ----    
     
-Der Output lässt vermuten, dass die FMU-Datei `/tmp/OpenModelica/BouncingBall.fmu` erfolgreich erstellt wurde.
+Die Ausgabe `/tmp/OpenModelica/BouncingBall.fmu` zeigt an, dass die FMU erfolgreich erstellt wurde.
 
-Für Version 2.0 des FMI-Standard-Gebrauchs:
+Zur Erstellung von FMUs mit FMI 2.0 Unterstützung:
 
 [source,bash]
 ----
 >> translateModelFMU(BouncingBall, fmuType="cs", version="2.0")
 ----
 
-==== Variante 2: Skript-basierte automatische FMU-Erzeugung
+#### Erstellungsvariante 2: Skript-basierte automatische FMU-Erzeugung
 
 Erstellen Sie eine Skript-Datei (`createFMU.mos`) mit dem folgenden Inhalt:
 
@@ -167,4 +171,3 @@ Lassen Sie das Skript laufen, mittels:
 > omc createFMU.mos
 ----
 
----

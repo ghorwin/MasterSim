@@ -570,21 +570,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_blockmod_dateiformat_der_netzwerkdarstellungsdatei">4.4. BlockMod - Dateiformat der Netzwerkdarstellungsdatei</a></li>
 </ul>
 </li>
-<li><a href="#_konzept_zur_testfolge">5. Konzept zur Testfolge</a>
+<li><a href="#_testreihen_und_validierung">5. Testreihen und Validierung</a>
 <ul class="sectlevel2">
-<li><a href="#_regressionstest">5.1. Regressionstest</a>
+<li><a href="#_regressionstests">5.1. Regressionstests</a>
 <ul class="sectlevel3">
 <li><a href="#_verzeichnisstruktur">5.1.1. Verzeichnisstruktur</a></li>
 <li><a href="#_durchlauf_der_tests">5.1.2. Durchlauf der Tests</a></li>
 <li><a href="#_aktualisierung_der_referenzergebnisse">5.1.3. Aktualisierung der Referenzergebnisse</a></li>
 </ul>
 </li>
-<li><a href="#_regeln_für_gegenproben_und_die_liste_der_fmi_standard_org">5.2. Regeln für Gegenproben und die Liste der FMI Standard.org</a></li>
-<li><a href="#_der_weg_um_test_fmus_zu_generieren">5.3. Der Weg um Test-FMUs zu generieren</a>
+<li><a href="#_regeln_für_quervergleiche_und_die_fmi_standard_org_übersicht">5.2. Regeln für Quervergleiche und die FMI Standard.org Übersicht</a></li>
+<li><a href="#_verschieden_möglichkeiten_test_fmus_zu_erstellen">5.3. Verschieden Möglichkeiten, Test-FMUs zu erstellen</a>
 <ul class="sectlevel3">
-<li><a href="#_der_gebrauch_von_c_fmus">5.3.1. Der Gebrauch von C++ - FMUs</a></li>
-<li><a href="#_fmus_die_von_der_simulationsx_exportiert_werden">5.3.2. FMUs, die von der SimulationsX exportiert werden.</a></li>
-<li><a href="#_von_openmodelica_exportierte_fmus">5.3.3. Von OpenModelica exportierte FMUs</a></li>
+<li><a href="#_native_c_fmus">5.3.1. Native C++ FMUs</a></li>
+<li><a href="#_modelica_basierte_fmus">5.3.2. Modelica-basierte FMUs</a></li>
+<li><a href="#_erstellen_einer_fmu_mit_openmodelica">5.3.3. Erstellen einer FMU mit OpenModelica</a></li>
 </ul>
 </li>
 </ul>
@@ -598,29 +598,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_erstellen_von_bibliotheken_und_ausführbaren_programmen">7.1. Erstellen von Bibliotheken und ausführbaren Programmen</a>
 <ul class="sectlevel3">
-<li><a href="#_erstellen_durch_die_befehlszeile">7.1.1. Erstellen durch die Befehlszeile</a></li>
-<li><a href="#_externe_bibliotheken">7.1.2. Externe Bibliotheken</a></li>
+<li><a href="#_erstellen_mit_die_befehlszeile">7.1.1. Erstellen mit die Befehlszeile</a></li>
+<li><a href="#_bibliotheken">7.1.2. Bibliotheken</a></li>
 </ul>
 </li>
 <li><a href="#_entwicklungsumgebungen_und_projekt_sitzungsdateien">7.2. Entwicklungsumgebungen und Projekt-/Sitzungsdateien</a>
 <ul class="sectlevel3">
 <li><a href="#_qt_creator">7.2.1. Qt Creator</a></li>
-<li><a href="#_visuelles_studio">7.2.2. Visuelles Studio</a></li>
+<li><a href="#_visual_studio">7.2.2. Visual Studio</a></li>
 </ul>
 </li>
-<li><a href="#_hilfreiches_material_bezogen_auf_die_entwicklung_auf_linux">7.3. Hilfreiches Material bezogen auf die Entwicklung auf Linux</a>
-<ul class="sectlevel3">
-<li><a href="#_überprüfen_von_symbolen_in_gemeinsamen_bibliotheken">7.3.1. Überprüfen von Symbolen in gemeinsamen Bibliotheken</a></li>
-<li><a href="#_verknüpfung_gemeinsamer_bibliotheken_mit_statischen_teilen_die_in_ausführenden_programmen_ebenso_auftauchen">7.3.2. Verknüpfung gemeinsamer Bibliotheken mit statischen Teilen (die in ausführenden Programmen ebenso auftauchen)</a></li>
-<li><a href="#_fmu_von_fehlern_befreien">7.3.3. FMU von Fehlern befreien</a></li>
-</ul>
-</li>
-<li><a href="#_innerhalb_von_mastersim">7.4. Innerhalb von MasterSim</a>
-<ul class="sectlevel3">
-<li><a href="#_datentypen">7.4.1. Datentypen</a></li>
-<li><a href="#_verbindungsgraf_und_variable_zuordnung">7.4.2. Verbindungsgraf und variable Zuordnung</a></li>
-</ul>
-</li>
+<li><a href="#_weitere_entwickler_informationen">7.3. Weitere Entwickler-Informationen</a></li>
 </ul>
 </li>
 </ul>
@@ -1110,7 +1098,7 @@ nur für FMI 2: in allen Slaves exitInitializationMode() aufrufen</pre>
 </div>
 <div id="fig_timestep_adjustment" class="imageblock">
 <div class="content">
-<img src="../images/timestep_adjustment.png" alt="timestep adjustment" width="600" height="300">
+<img src="../images/timestep_adjustment.png" alt="timestep adjustment">
 </div>
 <div class="title">Abbildung 2. Simulationsbeispiel bei dem sowohl Fehlerschätzerüberschreitungen als auch Konvergenzfehler eine drastische Veränderung des Kommunikationszeitschritts bedingen</div>
 </div>
@@ -1587,32 +1575,32 @@ Beenden
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + N</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + N</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + N</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">erstellt ein neues Projekt</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + O</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + O</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + O</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">lädt ein Projekt</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + S</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + S</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + S</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">speichert ein Projekt</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + Shift + S</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + Shift + S</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + Shift + S</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">speichert das Projekt mit einem neuen Dateinamen</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + Z</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + Z</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + Z</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">rückgängig machen</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Strg + Shift + Z</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + Shift + Z</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + Shift + Z</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">erneut versuchen</p></td>
 </tr>
 <tr>
@@ -1632,7 +1620,7 @@ Beenden
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>⌘ + .</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>CMD + .</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">öffnet den Einstellungs-Dialog</p></td>
 </tr>
 </tbody>
@@ -3763,7 +3751,7 @@ last line</pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../images/bm_network_example.png" alt="Blockmod Network Example">
+<img src="../images/bm_network_example.png" alt="Blockmod Network Beispiel">
 </div>
 <div class="title">Abbildung 13. Beispiel für eine einfache grafische Präsentation eines Netzwerks</div>
 </div>
@@ -3771,7 +3759,6 @@ last line</pre>
 <p>wird wie folgt in einer BlockMod Netzwerk-Beschreibungsdatei abgelegt:</p>
 </div>
 <div class="listingblock">
-<div class="title">Blockmod Netzwerk-Beschreibungsdatei</div>
 <div class="content">
 <pre class="rouge highlight"><code data-lang="xml"><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="nt">&lt;BlockMod&gt;</span>
@@ -3859,7 +3846,7 @@ last line</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Das Format ist ziemlich selbsterklärend. Das erste und das letzte Segment einer Verbindung (<code>Connector</code> tag) wird automatisch festgelegt, abhängig von der Sockelposition auf dem Block und wird dadurch nicht in der Netzwerk-Beschreibungsdatei gespeichert.</p>
+<p>Das Format ist ziemlich selbsterklärend. Das erste und das letzte Segment einer Verbindung (<code>Connector</code> tag) wird automatisch abhängig von der Sockelposition auf dem Block festgelegt, und wird dadurch nicht in der Netzwerk-Beschreibungsdatei gespeichert.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -3879,29 +3866,29 @@ last line</pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_konzept_zur_testfolge">5. Konzept zur Testfolge</h2>
+<h2 id="_testreihen_und_validierung">5. Testreihen und Validierung</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Die <em>MasterSim</em>-Quelle enthält ein Unterverzeichnis <code>Daten/Tests</code> mit einer Regressionstestfolge. Diese Tests werden genutzt, um zu prüfen, ob alle Algorithmen wie erwartet arbeiten und ob die Änderungen der  Code-Basis versehentlich etwas kaputtmachen.</p>
+<p>Das <em>MasterSim</em> Quelltext-Repository enthält ein Unterverzeichnis <code>data/tests</code> mit einem Regressionstest. Diese Testreihe wird genutzt, um zu prüfen, ob alle Algorithmen wie erwartet arbeiten und ob Änderungen am Quelltext versehentlich etwas kaputt machen.</p>
 </div>
 <div class="paragraph">
-<p><em>MasterSim</em> durchläuft ebenso die FMU-Mehrfachprüfung. Die Dateien und Skripte, die mit diesem Test in Verbindung stehen, befinden sich im Unterverzeichnis <code>cross-check</code>.</p>
+<p><em>MasterSim</em> durchläuft außerdem die FMU-Quer-Validierung (fmi-cross-check). Die Dateien und Skripte, die mit diesem Test in Verbindung stehen, befinden sich im Unterverzeichnis <code>cross-check</code>.</p>
 </div>
 <div class="sect2">
-<h3 id="_regressionstest">5.1. Regressionstest</h3>
+<h3 id="_regressionstests">5.1. Regressionstests</h3>
 <div class="sect3">
 <h4 id="_verzeichnisstruktur">5.1.1. Verzeichnisstruktur</h4>
 <div class="literalblock">
 <div class="content">
-<pre>/data/tests                     - root directory for tests
-/data/tests/&lt;platform&gt;/&lt;test&gt;   - base directory for a test suite</pre>
+<pre>/data/tests                     - Basisverzeichnis für Tests
+/data/tests/&lt;platform&gt;/&lt;test&gt;   - Basisverzeichnis für eine Testreihe</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Die <code>Plattform</code> ist (gegenwärtig) eine von: <code>linux64</code>, <code>win32</code>,<code>win64</code> und <code>darwin64</code></p>
+<p><code>platform</code> ist (gegenwärtig) eine von: <code>linux64</code>, <code>win32</code>,<code>win64</code> und <code>darwin64</code></p>
 </div>
 <div class="paragraph">
-<p>Jede <em>Testfolge</em> hat eine Reihe von Unterverzeichnissen:</p>
+<p>Jede <em>Testreihe</em> hat eine Reihe von Unterverzeichnissen:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -3910,7 +3897,7 @@ description          - (mathematische) Beschreibung des Test-Problems</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Innerhalb der <em>Testfolge</em> können verschiedene ähnliche <em>Testfälle</em> mit modifizierten Parametern oder angepassten Problemlösungs-Szenarien gespeichert sein. <em>Testfälle</em> werden in der Regel als Testfolgen gruppiert, wenn sie die selben FMUs oder andere Eingangsdateien benutzen.</p>
+<p>Innerhalb der <em>Testreihe</em> können verschiedene ähnliche <em>Testfälle</em> mit modifizierten Parametern oder angepassten Problemlösungs-Szenarien gespeichert sein. <em>Testfälle</em> werden in der Regel als Testreihen gruppiert, wenn sie die gleichen FMUs oder andere Eingangsdateien benutzen.</p>
 </div>
 <div class="paragraph">
 <p>Für jeden <em>Testfall</em> existiert eine <em>MasterSim</em>-Projektdatei mit der Erweiterung <code>msim</code>. Das Skript, welches die Testfälle durchführt, verarbeitet alle <code>msim</code>-Dateien, die in der Unterverzeichnisstruktur unter der aktuellen Plattform gefunden werden.</p>
@@ -3939,7 +3926,7 @@ FeedthroughTest.vc14_win64</pre>
 <div class="sect3">
 <h4 id="_durchlauf_der_tests">5.1.2. Durchlauf der Tests</h4>
 <div class="paragraph">
-<p>Die Tests laufen automatisch ab nach der Errichtung mit den Aufbauskripts. Ansonsten läuft ein geeignetes Skript:</p>
+<p>Die Tests laufen automatisch nach Erstellen der Software ab. Ansonsten kann man die Testreihe auch über ein Skript selbst starten (je nach Plattform):</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3958,10 +3945,10 @@ FeedthroughTest.vc14_win64</pre>
 <div class="sect3">
 <h4 id="_aktualisierung_der_referenzergebnisse">5.1.3. Aktualisierung der Referenzergebnisse</h4>
 <div class="paragraph">
-<p>Aus dem Inneren ruft das Skript ein Testverzeichnis auf: <code>update_reference_results.py</code> mit der Verzeichnisendung als Argument.</p>
+<p>Aus einem Testverzeichnis heraus kann man das Script  <code>update_reference_results.py</code> aufrufen und dabei die plattformspezifische Verzeichnisendung als Argument angeben.</p>
 </div>
 <div class="paragraph">
-<p>Zum Beispiel von innen:</p>
+<p>Beispielsweise würde der Aufruf aus dem Verzeichnis</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -3969,7 +3956,7 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>ruft auf:</p>
+<p>so aussehen:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3977,7 +3964,7 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>welches alle Referenzergebnisse in diesem Verzeichnis aktualisieren wird. Falls Sie die Referenzergebnisse einiger Testfolgen bearbeiten/aktualisieren wollen, führen Sie das folgende Skript aus einem der oberen Verzeichnisse durch, zum Beispiel von: <code>data/tests/linux64</code>:</p>
+<p>Das Script aktualisiert nun alle Referenzergebnisse in diesem Verzeichnis. Falls die Referenzergebnisse mehrerer Testreihen bearbeitet/aktualisiert werden sollen, so führt man das Skript <code>update_reference_results_in_subdirs.py</code> aus einem der oberen Verzeichnisse durch, zum Beispiel von: <code>data/tests/linux64</code> (anderen Scriptnamen beachten!):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3987,34 +3974,35 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_regeln_für_gegenproben_und_die_liste_der_fmi_standard_org">5.2. Regeln für Gegenproben und die Liste der FMI Standard.org</h3>
+<h3 id="_regeln_für_quervergleiche_und_die_fmi_standard_org_übersicht">5.2. Regeln für Quervergleiche und die FMI Standard.org Übersicht</h3>
 <div class="paragraph">
 <p>Siehe Dokumentation im Unterverzeichnis <code>cross-check</code>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_der_weg_um_test_fmus_zu_generieren">5.3. Der Weg um Test-FMUs zu generieren</h3>
+<h3 id="_verschieden_möglichkeiten_test_fmus_zu_erstellen">5.3. Verschieden Möglichkeiten, Test-FMUs zu erstellen</h3>
 <div class="sect3">
-<h4 id="_der_gebrauch_von_c_fmus">5.3.1. Der Gebrauch von C++ - FMUs</h4>
+<h4 id="_native_c_fmus">5.3.1. Native C++ FMUs</h4>
 <div class="paragraph">
-<p>Ein geeigneter Weg, um ein einfaches, sehr spezielles Test-FMU zu erhalten, ist der Gebrauch des <a href="https://github.com/ghorwin/FMICodeGenerator">FMI Code Generator</a>-Werkzeugs. Es ist ein Python-Werkzeug, mit einer grafischen Benutzeroberfläche, auf der FMU-Variablen und -Eigenschaften festgelegt werden können. Mit dieser Information erstellt der Code-Generator ein Quellcodeverzeichnis mit einem Vorlagen-Code und verbundenen Aufbauskripts - sodass es sehr einfach ist, eigene FMUs herzustellen. Siehe Dokumentation /Tutorial auf der Github-Seite.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_fmus_die_von_der_simulationsx_exportiert_werden">5.3.2. FMUs, die von der SimulationsX exportiert werden.</h4>
-<div class="paragraph">
-<p>Benötigt eine passende Lizenz. Das Exportieren von FMUs aus SimX ist sehr einfach, aber für die Windows-Plattform beschränkt.</p>
+<p>Ein geeigneter Weg, um eine einfache, sehr spezielle Test-FMU zu erhalten, ist die Verwendung des <a href="https://github.com/ghorwin/FMICodeGenerator">FMI Code Generator</a>-Werkzeugs. Es ist ein Python-Skript mit einer grafischen Benutzeroberfläche, in der FMU-Variablen und -Eigenschaften festgelegt werden können. Mit dieser Information erstellt der Code-Generator ein Quelltextverzeichnis mit einer Programm-Quelltextvorlage und den benötigten Skripten für das Erstellen und Verpacken der FMUs. Damit ist es sehr einfach, eigene FMUs zu erstellen (siehe auch Dokumentation/Tutorial auf der Webseite <a href="https://github.com/ghorwin/FMICodeGenerator" class="bare">https://github.com/ghorwin/FMICodeGenerator</a>).</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_von_openmodelica_exportierte_fmus">5.3.3. Von OpenModelica exportierte FMUs</h4>
-<div class="paragraph">
-<p>OpenModelica kann ebenso FMUs exportieren. Hier folgen die Schritte, um so ein FMU herzustellen.</p>
-</div>
+<h4 id="_modelica_basierte_fmus">5.3.2. Modelica-basierte FMUs</h4>
 <div class="sect4">
-<h5 id="_erstellen_eines_modelica_modells">Erstellen eines Modelica Modells</h5>
+<h5 id="_fmus_aus_kommerziellen_modelica_entwicklungsumgebungen">FMUs aus kommerziellen Modelica-Entwicklungsumgebungen</h5>
 <div class="paragraph">
-<p>Erstellen eines Modelica Modells.</p>
+<p>Benötigt eine entsprechende passende Lizenz. Das Exportieren von FMUs aus SimulationX oder Dymola ist recht einfach, aber für die Windows-Plattform beschränkt.</p>
+</div>
+<div class="paragraph">
+<p>OpenModelica kann ebenso FMUs exportieren. Nachfolgend sind die Schritte erläutert, um so eine FMU zu erstellen.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_erstellen_einer_fmu_mit_openmodelica">5.3.3. Erstellen einer FMU mit OpenModelica</h4>
+<div class="paragraph">
+<p>Zunächst wird ein Modelica-Modell erstellt.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -4024,7 +4012,7 @@ FeedthroughTest.vc14_win64</pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Annotieren Sie Variablen, die als Ausgangsgröße genutzt werden mit dem Stichwort <code>output</code>.</p>
+<p>Versehen Sie Variablen, die als Ausgangsgrößen von der FMU bereitgestellt werden sollen, mit dem Stichwort <code>output</code>.</p>
 </div>
 </td>
 </tr>
@@ -4063,11 +4051,10 @@ FeedthroughTest.vc14_win64</pre>
 <span class="n">end</span> <span class="n">BouncingBall</span><span class="p">;</span></code></pre>
 </div>
 </div>
-</div>
 <div class="sect4">
-<h5 id="_variante_1_das_fmu_manuell_erstellen">Variante 1: Das FMU manuell erstellen</h5>
+<h5 id="_erstellungsvariante_1_die_fmu_manuell_erstellen">Erstellungsvariante 1: Die FMU manuell erstellen</h5>
 <div class="paragraph">
-<p>Öffnen Sie zunächst OMShell, tippen Sie dann die folgenden Befehle, um das Modell zu laden und erzeugen Sie ein Co-Simulations-FMU:</p>
+<p>Öffnen Sie zunächst OMShell, tippen Sie dann die folgenden Befehle, um das Modell zu laden und erzeugen Sie eine Co-Simulations-FMU:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4077,10 +4064,10 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Der Output lässt vermuten, dass die FMU-Datei <code>/tmp/OpenModelica/BouncingBall.fmu</code> erfolgreich erstellt wurde.</p>
+<p>Die Ausgabe <code>/tmp/OpenModelica/BouncingBall.fmu</code> zeigt an, dass die FMU erfolgreich erstellt wurde.</p>
 </div>
 <div class="paragraph">
-<p>Für Version 2.0 des FMI-Standard-Gebrauchs:</p>
+<p>Zur Erstellung von FMUs mit FMI 2.0 Unterstützung:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4089,7 +4076,7 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_variante_2_skript_basierte_automatische_fmu_erzeugung">Variante 2: Skript-basierte automatische FMU-Erzeugung</h5>
+<h5 id="_erstellungsvariante_2_skript_basierte_automatische_fmu_erzeugung">Erstellungsvariante 2: Skript-basierte automatische FMU-Erzeugung</h5>
 <div class="paragraph">
 <p>Erstellen Sie eine Skript-Datei (<code>createFMU.mos</code>) mit dem folgenden Inhalt:</p>
 </div>
@@ -4115,7 +4102,6 @@ FeedthroughTest.vc14_win64</pre>
 <pre class="rouge highlight"><code data-lang="bash"><span class="o">&gt;</span> omc createFMU.mos</code></pre>
 </div>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -4194,6 +4180,9 @@ FeedthroughTest.vc14_win64</pre>
 </td>
 <td class="content">
 <div class="paragraph">
+<p>Die aktuellsten Informationen sind in der englischsprachigen Dokumentation enthalten.</p>
+</div>
+<div class="paragraph">
 <p>Die in diesem Kapitel zur Verfügung gestellten Informationen werden eventuell in den <em>MasterSim Developers Guide</em> verschoben.</p>
 </div>
 </td>
@@ -4203,7 +4192,7 @@ FeedthroughTest.vc14_win64</pre>
 <div class="sect2">
 <h3 id="_erstellen_von_bibliotheken_und_ausführbaren_programmen">7.1. Erstellen von Bibliotheken und ausführbaren Programmen</h3>
 <div class="sect3">
-<h4 id="_erstellen_durch_die_befehlszeile">7.1.1. Erstellen durch die Befehlszeile</h4>
+<h4 id="_erstellen_mit_die_befehlszeile">7.1.1. Erstellen mit die Befehlszeile</h4>
 <div class="sect4">
 <h5 id="_linuxmacos">Linux/MacOS</h5>
 <div class="listingblock">
@@ -4213,16 +4202,16 @@ FeedthroughTest.vc14_win64</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Im Falle fehlender Abhängigkeiten (verlangt zlib) wollen Sie vielleicht die zugehörigen Entwicklungspakete installieren.</p>
+<p>Im Falle fehlender Abhängigkeiten (verlangt zlib) müssen ggfs. die benötigten Entwicklungspakete installiert werden.</p>
 </div>
 </div>
 <div class="sect4">
 <h5 id="_windows">Windows</h5>
 <div class="paragraph">
-<p>Es sind komfortable Skripte für die Errichtung mit Visual Studio 2015 und Qt5 (für die Benutzeroberfläche von <em>MasterSim</em>) enthalten. Andere Kompilierer, wie MinGw, arbeiten genauso gut, die Dateienpfade müssen allerdings manuell konfiguriert werden.</p>
+<p>Es sind komfortable Skripte für die Erstellung mit Visual Studio 2015 und Qt5 (für die Benutzeroberfläche von <em>MasterSim</em>) enthalten. Andere Compiler, wie MinGW, arbeiten genauso gut, die Dateipfade/Suchpfade müssen allerdings manuell konfiguriert werden.</p>
 </div>
 <div class="paragraph">
-<p>Die Dateien sind im <code>build/cmake</code>-Verzeichnis verortet:</p>
+<p>Folgende Dateien sind im <code>build/cmake</code>-Verzeichnis:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4271,10 +4260,8 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <pre>c:\Qt\Tools\QtCreator\bin\jom.exe</pre>
 </div>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>`cmake` muss ebenso im Pfad vorhanden sein. Wenn es irgendwo anders installiert ist, können alternativ die Umgebungsvariablen `JOM_PATH` und `CMAKE_PREFIX_PATH` gesetzt werden (siehe Aufbau-Batch-Dateien).</pre>
-</div>
+<div class="paragraph">
+<p><code>cmake</code> muss ebenso im Pfad vorhanden sein. Wenn es irgendwo anders installiert ist, können alternativ die Umgebungsvariablen <code>JOM_PATH</code> und <code>CMAKE_PREFIX_PATH</code> gesetzt werden.</p>
 </div>
 <div class="paragraph">
 <p>Mit dieser Konfiguration können Sie nun entweder im 32-bit- oder 64-bit-Modus weiter bauen:</p>
@@ -4295,14 +4282,14 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Für unterschiedliche Visual-Studio-Versionen oder MinGW kopieren Sie die Batch-Datei und bearbeiten die Pfadgrößen. Eventuell wollen Sie auch diese Batch-Dateien überarbeiten, wenn sie verschiedene Installationspfade haben.</p>
+<p>Für unterschiedliche Visual-Studio-Versionen oder MinGW kopieren Sie die Batch-Datei und bearbeiten die Pfade in den Batch-Dateien.</p>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_externe_bibliotheken">7.1.2. Externe Bibliotheken</h4>
+<h4 id="_bibliotheken">7.1.2. Bibliotheken</h4>
 <div class="paragraph">
-<p>Die <em>MasterSim</em>-Bibliothek und die Simulationsprojekte unterscheiden sich durch die folgenden externen/dritten Bibliotheken (außer für Qt sind alle im Quell-Code-Speicher enthalten, somit ist es nicht notwendig, diese Bibliotheken separat zu installieren):</p>
+<p>Die <em>MasterSim</em>-Bibliothek und die Simulationsprojekte hängen von folgenden Bibliotheken ab,  wobei abgesehen von Qt alle im Quelltext-Repository enthalten sind. Somit ist es nicht notwendig, irgendwelche Bibliotheken separat zu installieren:</p>
 </div>
 <div class="paragraph">
 <p><strong>MasterSimulator</strong> und <strong>MasterSimulatorUI</strong></p>
@@ -4332,12 +4319,12 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <p><a href="https://www.qt.io/developers">Qt 5 Library</a></p>
 </li>
 <li>
-<p><a href="https://github.com/ghorwin/BlockMod">BlockMod library</a> (von IBK, TU Dresden, Germany, untergebracht in github)</p>
+<p><a href="https://github.com/ghorwin/BlockMod">BlockMod library</a> (von IBK, TU Dresden, Germany, gehostet auf github)</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Die frei verfügbare Version der Bibliotheken (mit Ausnahme von Qt) sind im Unterverzeichnis <code>third-party</code> verortet.</p>
+<p>Die frei verfügbare Version der Bibliotheken (mit Ausnahme von Qt) sind im Unterverzeichnis <code>third-party</code> abgelegt.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -4346,7 +4333,9 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Die Bibliotheken in einem dritten Unterverzeichnis sind möglicherweise veraltet. Nutzen Sie bitte nur den Quell-Code im <code>externals</code>-Unterverzeichnis des Speicherortes.
+<div class="paragraph">
+<p>Die Bibliotheken im <code>third-party</code>  Unterverzeichnis sind möglicherweise veraltet. Nutzen Sie bitte nur den Quelltext im <code>externals</code>-Unterverzeichnis des Repositories.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -4358,7 +4347,7 @@ Die Bibliotheken in einem dritten Unterverzeichnis sind möglicherweise veraltet
 <div class="sect3">
 <h4 id="_qt_creator">7.2.1. Qt Creator</h4>
 <div class="paragraph">
-<p>Die Entwicklung mit Qt Creator wird unterstützt und Projektdateien stehen zur Verfügung. Individuelle Projektdateien befinden sich in Unterverzeichnissen:</p>
+<p>Die Entwicklung mit Qt Creator wird unterstützt (und explizit empfohlen) und Projektdateien stehen zur Verfügung. Individuelle Projektdateien befinden sich in Unterverzeichnissen:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -4366,32 +4355,32 @@ Die Bibliotheken in einem dritten Unterverzeichnis sind möglicherweise veraltet
 </div>
 </div>
 <div class="paragraph">
-<p>Ausführbare Programme sind verortet in:</p>
+<p>Ausführbare Programme werden abgelegt in:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>bin/debug        - Ausgabepfad für Entwicklungen mit dem Qt-Erschaffer
-bin/release      - standardisierter Ausgabepfad für Cmake-Bildung</pre>
+<pre>bin/debug        - Ausgabepfad für Entwicklungen mit dem Qt Creator
+bin/release      - standardisierter Ausgabepfad für Erstellung mit cmake</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_visuelles_studio">7.2.2. Visuelles Studio</h4>
+<h4 id="_visual_studio">7.2.2. Visual Studio</h4>
 <div class="sect4">
 <h5 id="_cmake_erstellte_vc_projektdateien">CMake-erstellte VC-Projektdateien</h5>
 <div class="paragraph">
-<p>Die einfachste Variante, die immer funktionieren sollte, ist die CMake-erzeugte VC-Projektdatei und Problemlösung zu verwenden.</p>
+<p>Die einfachste Variante, die immer funktionieren sollte, ist die CMake-erzeugte VC-Projektdatei und <em>Solution</em> zu verwenden.</p>
 </div>
 <div class="paragraph">
-<p>Basisschritte: Öffnen Sie ein Konsolenfenster, die Installation des VC-Umgebungsaufbau und alle erforderlichen Pfade, nutzen Sie dann CMake mit dem Visual Studio Erstellungsdatei-Generator.</p>
+<p>Basisschritte: Öffnen Sie ein Konsolenfenster (VC Commandozeilen Fenster) und verwenden Sie dann CMake mit dem Visual Studio Erstellungsdatei-Generator.</p>
 </div>
 <div class="paragraph">
-<p>Sie können die <code>build.bat</code>- oder <code>built_x64.bat</code>-Dateien für diesen Zweck wiederverwenden. Öffnen Sie ein Befehlszeilenfenster und ändern dies in das Verzeichnis <code>build/cmake</code>.</p>
+<p>Sie können die <code>build.bat</code>- oder <code>built_x64.bat</code>-Dateien für diesen Zweck wiederverwenden. Öffnen Sie ein Befehlszeilenfenster und wechseln in das Verzeichnis <code>build/cmake</code>.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>starten Sie entweder <code>build.bat</code> oder <code>built_x64.bat</code> und drücken Sie Ctrl+C, wenn der Aufbau startet.</p>
+<p>Starten Sie entweder <code>build.bat</code> oder <code>build_x64.bat</code> und drücken Sie Ctrl+C, wenn die Erstellung startet (dann sind alle Umgebungsvariablen und Pfade bereits gesetzt).</p>
 </li>
 <li>
 <p>Verlassen Sie das Unterverzeichnis und erstellen Sie ein neues Unterverzeichnis vc:</p>
@@ -4403,7 +4392,7 @@ bin/release      - standardisierter Ausgabepfad für Cmake-Bildung</pre>
 </div>
 </li>
 <li>
-<p>Öffnen Sie cmake-gui, geben Sie das Elternverzeichnis als Quellverzeichnis an und wählen Sie einen Visual Studio Erstellungsgenerator.</p>
+<p>Öffnen Sie <code>cmake-gui</code>, geben Sie das Elternverzeichnis als Quellverzeichnis an und wählen Sie einen Visual Studio Generator.</p>
 </li>
 </ol>
 </div>
@@ -4412,276 +4401,16 @@ bin/release      - standardisierter Ausgabepfad für Cmake-Bildung</pre>
 <pre class="rouge highlight"><code data-lang="batch"><span class="o">&gt;</span> <span class="kd">cmake</span><span class="na">-gui </span>..</code></pre>
 </div>
 </div>
-</div>
-<div class="sect4">
-<h5 id="_vorbereitete_vc_projektdateien">Vorbereitete VC-Projektdateien</h5>
 <div class="paragraph">
-<p>Sie können ebenso die VC-Problemlösungsdatei in <code>build\VC14\MasterSim.sln</code> öffnen.
-<strong>Note</strong>: Sie müssen zunächst die CMake erstellen, um die Zlib <code>zconf.h</code>-Datei zu konfigurieren!</p>
+<p>Die so erstellte <code>*.sln</code> Datei kann man dann einfach in VC öffnen.</p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_hilfreiches_material_bezogen_auf_die_entwicklung_auf_linux">7.3. Hilfreiches Material bezogen auf die Entwicklung auf Linux</h3>
+<h3 id="_weitere_entwickler_informationen">7.3. Weitere Entwickler-Informationen</h3>
 <div class="paragraph">
-<p>Hier folgen ein paar Anmerkungen, die ich gesammelt habe, als ich auf einige unerwartete Schwierigkeiten beim Erstellen dieses Master-Simulators gestoßen bin:</p>
-</div>
-<div class="sect3">
-<h4 id="_überprüfen_von_symbolen_in_gemeinsamen_bibliotheken">7.3.1. Überprüfen von Symbolen in gemeinsamen Bibliotheken</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="bash">objdump <span class="nt">-t</span> &lt;shared_library&gt;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Um alle fmi2-Funktionen zu erhalten</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code data-lang="bash">objdump <span class="nt">-t</span> &lt;shared_library&gt; | <span class="nb">grep </span>fmi2</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_verknüpfung_gemeinsamer_bibliotheken_mit_statischen_teilen_die_in_ausführenden_programmen_ebenso_auftauchen">7.3.2. Verknüpfung gemeinsamer Bibliotheken mit statischen Teilen (die in ausführenden Programmen ebenso auftauchen)</h4>
-<div class="paragraph">
-<p><strong>Problem:</strong> Ursache des Problems: Sowohl FMU als auch Master nutzen die IBK-Bibliothek, welche wiederum statistische Teile/Singletons (z. B. Message-Handler) haben. Wenn FMU mit Exe während der Reinigung am Ende der Leitung verbunden wird, wird der Destructor des Singleton-Objekts zweimal aufgerufen, was einen Teilfehler verursacht.</p>
-</div>
-<div class="paragraph">
-<p><strong>Lösung:</strong>
-Dennoch keine, es scheint zu funktionieren, nachdem die "Verdopplung der So-Import-Prüfung" hinzugefügt wurde.</p>
-</div>
-<div class="paragraph">
-<p>TODO: Hervorheben Eigennamen? z. B. cmake, Qt creator</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_fmu_von_fehlern_befreien">7.3.3. FMU von Fehlern befreien</h4>
-<div class="paragraph">
-<p>Vorausgesetzt Sie entwickeln die gemeinsame FMU-Bibliothek mit dem Qt Creator, können sie diesem Ablauf folgen:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Erstellen Sie ihr FMU entweder mit erhöhter Fehlerreinigung oder geben Sie Fehlerreinigungssymbole frei. Sie können auch eine externe Aufbauwerkzeug-Verkettung nutzen, z. B. Cmake.</p>
-</li>
-<li>
-<p>Stellen Sie ihr FMU zusammen und entpacken Sie es im FMU-Archiv (Sie müssen dies nur einmal tun); Bedenken Sie: die gemeinsame Bibliothek innerhalb des FMU muss diejenige sein, die mit einem Qt Creator erstellt wurde</p>
-</li>
-<li>
-<p>Erstellen Sie ihr MSIM-Test-Projekt.</p>
-</li>
-<li>
-<p>Im Qt Creator öffnen und aktivieren Sie das MaterSimulator-Projekt, wählen Sie das MSIM-Projekt als Befehlszeilenargument aus und starten Sie die Fehlerbereinigung. Es wird die FMUs extrahieren und zu den Funktionen der gemeinsamen Bibliothek zufügen.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Sie können jetzt entweder Fehler entfernen und zu den Funktionen von FMU fmi2xxx übergehen oder die Quelldateien öffnen, die Sie für das Erstellen des FMU genutzt haben und Programmstopps setzten. Der Qt Creator wird diese automatisch aufnehmen und Sie können Fehler bereinigen/zum Master übergehen und ebenso zu den FMUs.</p>
-</div>
-<div class="sect4">
-<h5 id="_beipiel_während_der_fehlerbereinigung_eines_gesonderten_fmu_projekts_welches_statisch_im_freigabemodus_erstellt_ist_aber_während_der_entwicklung_dynamisch_mit_anderen_bibliotheken_verbunden_ist">Beipiel: Während der Fehlerbereinigung eines gesonderten FMU-Projekts, welches statisch im Freigabemodus erstellt ist, aber während der Entwicklung dynamisch mit anderen Bibliotheken verbunden ist.</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Das FMU ist erstellt (zunächst mit  einer statisch verbundenen FMU <code>Test.so</code>) und das MasterSim-Projekt ist eingerichtet.</p>
-</li>
-<li>
-<p><em>MasterSim</em> läuft einmal und die Verzeichnisstruktur ist erstellt, das FMU ist extrahiert und wurde ohne angehängte Fehlerbeseitigung gestartet.</p>
-</li>
-<li>
-<p>Nun erstellt das FMU-Entwicklungsprojekt im Qt Creator <code>libTest.so.2.0.1</code>, welches eine Verbindung zu anderen dynamischen Bibliotheken im Entwicklungsverzeichnis schafft.</p>
-</li>
-<li>
-<p>Die FMU-Datei wird in <code>Test.so</code> umbenannt und in das extrahierte FMU-Verzeichnis kopiert, wodurch es das statisch verknüpfte FMU überschreibt.</p>
-</li>
-<li>
-<p>Der Suchpfad der Bibliothek zu der anderen dynamischen Bibliothek, zu welcher <code>libTest.so.2.0.1</code> führt, ist variabel zur Umgebung von MasterSim-Projekt <code>LD_LIBRARY_PATH</code> zugefügt.</p>
-</li>
-<li>
-<p><code>MasterSimulator</code> startet im Feherbereinigungs-Modus unter Nutzung der <code>--skip-unzip</code>-Befehlszeilen-Option.</p>
-</li>
-</ol>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_innerhalb_von_mastersim">7.4. Innerhalb von MasterSim</h3>
-<div class="sect3">
-<h4 id="_datentypen">7.4.1. Datentypen</h4>
-<div class="paragraph">
-<p>Die Simulation mit unterschiedlichen FMU-Datentypen (v1 and v2) sollte übereinstimmen. Ebenso sind die voreingestellten Typenüberschriften die selben für beide Versionen.</p>
-</div>
-<div class="paragraph">
-<p>Die vorgesehene Plattform für diesen Master ist das Desktop-System (32bit/64bit), deshalb werden alle vom Master-Algorithmus erkannten Datentypen folgendermaßen zugeordnet:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>fmi2Boolean</code> (<code>bool</code> in skalierten Schnittstellenfunktionen)</p>
-</li>
-<li>
-<p><code>int</code></p>
-</li>
-<li>
-<p><code>double</code></p>
-</li>
-<li>
-<p><code>std::string</code></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_verbindungsgraf_und_variable_zuordnung">7.4.2. Verbindungsgraf und variable Zuordnung</h4>
-<div class="paragraph">
-<p>Variablen können einzig identifiziert werden von</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>&lt;slave-name&gt;.&lt;variable-name&gt;</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>und ein Graf kann definiert werden von:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>A.x1         B.u1
-A.d1         C.du1
-B.x1         C.u1
-B.x2         A.u2
-C.x1         A.u1</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Die erste Spalte sind Ausgabevariablen, die zweite Spalte verbundene Eingangsvariablen. x sind wahre Typen, d vom Typ <em>ganze Zahl</em>.</p>
-</div>
-<div class="paragraph">
-<p>Jeder Slave besitzt für jeden Datentypen einen Vektor an Ausgabewerten (bool, int, real/double, string).
-Der Master besitzt außerdem für jeden Datentypen einen Vektor für Verbindungsvariablen.</p>
-</div>
-<div class="paragraph">
-<p>Eine Abbildung der Variablen des lokalen Slave-Speichers zum globalen Vektor und vom globalen Vektor zu den Eingängen wird durch eine Abbildungstabelle individuell für jeden Datentypen realisiert:</p>
-</div>
-<div class="paragraph">
-<p><strong>Abbildung Ausgänge - wahre Typen</strong></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Slave</th>
-<th class="tableblock halign-left valign-top">VariableName</th>
-<th class="tableblock halign-left valign-top">global index</th>
-<th class="tableblock halign-left valign-top">local index</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">x1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Der Transfer von lokaler zu globaler Datenspeicherung ist dann ein simpler Algorithmus:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>loop connectedVariableIndexes:
-    copy(localArray[localIndex], globalArray[globalIndex])</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Im Fall von Slave B wird das Feld connectedVariableIndexes [0, 1] sein.</p>
-</div>
-<div class="paragraph">
-<p><strong>Abbildung Eingänge - wahre Typen</strong></p>
-</div>
-<div class="paragraph">
-<p>Für Eingangsvariablen existiert eine gleichartige Abbildung. Kein Slave hat einen Eingangsvariablen-Zwischenspeicher, statt dessen sind die Variablen individuell gesetzt (siehe auch Newton-Algorithmus und die Jacobian-Generatio via DQ-Algorithmus).</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Slave</th>
-<th class="tableblock halign-left valign-top">VariableName</th>
-<th class="tableblock halign-left valign-top">global index</th>
-<th class="tableblock halign-left valign-top">local value reference</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">B</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">u1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">55</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">C</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">u1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">348432</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">u2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">122</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">u1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">321</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Abbildungen von Eingang und Ausgang sind in der einzelnen Tabelle RealVariableMappings kombiniert.</p>
-</div>
-<div class="paragraph">
-<p><strong>Notiz</strong>: Der Ausgang eines Slaves ist eventuell direkt mit jeder eigenen Eingangsvariable verbunden, zum Beispiel:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>fmu1.var2   fmu1.var15</pre>
-</div>
-</div>
+<p>Alle weiteren Entwicklerinformationen werden der Einfachheit halber nur in der englischen Dokumentation beschrieben.</p>
 </div>
 </div>
 </div>

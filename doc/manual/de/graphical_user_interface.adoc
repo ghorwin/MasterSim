@@ -56,16 +56,16 @@ Hier ist eine Liste der nützlichen programmweiten Tastaturkürzel:
 [width="100%",cols="20%,40%,40%",options="header"]
 |====================
 | Windows/Linux | MacOS | Command
-|*Strg + N*| *⌘ + N* | erstellt ein neues Projekt
-|*Strg + O*| *⌘ + O* | lädt ein Projekt
-|*Strg + S*| *⌘ + S* | speichert ein Projekt
-|*Strg + Shift + S*| *⌘ + Shift + S* | speichert das Projekt mit einem neuen Dateinamen
-|*Strg + Z*| *⌘ + Z* | rückgängig machen
-|*Strg + Shift + Z* |*⌘ + Shift + Z* |  erneut versuchen
+|*Strg + N*| *CMD + N* | erstellt ein neues Projekt
+|*Strg + O*| *CMD + O* | lädt ein Projekt
+|*Strg + S*| *CMD + S* | speichert ein Projekt
+|*Strg + Shift + S*| *CMD + Shift + S* | speichert das Projekt mit einem neuen Dateinamen
+|*Strg + Z*| *CMD + Z* | rückgängig machen
+|*Strg + Shift + Z* |*CMD + Shift + Z* |  erneut versuchen
 |*F2* | *F2* | öffnet die Projektdatei im Texteditor
 |*F8* | *F8* | öffnet das Verzeichnis der Projektdatei in der Dateiverwaltung
 |*F9* | *F9* | startet die Simulation (kann von jeder Ansicht genutzt werden, es ist nicht notwendig, zunächst zur Ansicht der Simulationsumgebung zu wechseln!)
-|  | *⌘ + .* | öffnet den Einstellungs-Dialog
+|  | *CMD + .* | öffnet den Einstellungs-Dialog
 |====================
 
 [[slave_definition_view]]
@@ -148,7 +148,7 @@ Da _MasterSim_ die verwendeten FMUs selbst nur referenziert, erhält die Program
 Beim Analysieren einer FMU versucht die Benutzeroberfläche, das FMU-Archiv zu entpacken und dessen Inhalt zu analysieren. Wenn die `modelDescription.xml`-Datei korrekt gelesen werden konnte, bietet _MasterSim_ an, den Block-Bearbeitungsdialog zu öffnen. Innerhalb dieses Dialogs können Sie die grundlegende Geometrie des Blocks (SLave-Darstellung) und die Gestaltung der Anschlüsse (die Position der Eingangs-/Ausgangsvariablen) festlegen. Sie können diesen Schritt aber auch überspringen. Grundsätzlich kann eine Block eines FMU-Slaves drei Zustände haben, die in der UI unterschiedlich dargestellt sind:
 
 .Unterschiedliche Zustände von Blöcken und deren visuelle Darstellung
-image::bm_block_states.png[alt="Block states"]
+image::bm_block_states.png[alt="Block states",pdfwidth=8cm]
 
 [horizontal]
 (1):: Die entsprechende `fmu`-Datei existiert nicht oder kann nicht gelesen werden (kein Archiv, kann nicht extrahiert werden, beinhaltet keine `modelDescription.xml`-Datei, die XML-Datei ist ungültig/fehlerhaft, oder ... viele Dinge können hier schief gehen)
@@ -283,7 +283,7 @@ Beachten Sie, dass die Simulation vielleicht noch im Hintergrund laufen könnte,
 Der Einstellungs-Dialog, geöffnet im Hauptmenü oder durch die Anwendung des Tastatur-Kürzels, bietet derzeit Konfigurationsoptionen für den externen Texteditor (wird genutzt, um die Projekt-Datei mittels Kürzel *F2* zu editieren) und das ausführbare Post-Prozessing-Programm an. 
 
 .Einstellungsdialog mit Eingangsoptionen für den Texteditor und das ausführbare Nachbearbeitungsprogramm
-image::gui_preferences_tools.png[alt="Preferences dialog"]
+image::gui_preferences_tools.png[alt="Preferences dialog",pdfwidth=12cm]
 
 Folgende (leichtgewichtige und open-source) Texteditoren bevorzuge ich:
 

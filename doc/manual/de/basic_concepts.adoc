@@ -6,7 +6,7 @@ _MasterSim_ ist ein Co-Simulations-Masterprogramm, welches die FMI-Co-Simulation
 Grundsätzlich verbindet _MasterSim_ verschiedene Simulationsmodelle und tauscht Daten zwischen Simulation-Slaves zur _Laufzeit_ aus. Die folgende Grafik illustriert die einzelnen Komponenten des Programms und den Datenaustausch zwischen diesen.
 
 .Diagramm über den Datenfluss (Dateien) und beteiligten Programme
-image::DataFlowDiagram.png[alt="Datenaustausch zwischen Programmkomponenten",pdfwidth="10cm"]
+image::DataFlowDiagram.png[alt="Datenaustausch zwischen Programmkomponenten",pdfwidth=10cm]
 
 ## Die Teile des Programms
 _MasterSim_ besteht aus zwei Teilen:
@@ -209,7 +209,7 @@ Sobald das Kommunikationsintervall abgeschlossen ist, geht der Simulator in die 
 
 [[fig_timestep_adjustment]]
 .Simulationsbeispiel bei dem sowohl Fehlerschätzerüberschreitungen als auch Konvergenzfehler eine drastische Veränderung des Kommunikationszeitschritts bedingen
-image::timestep_adjustment.png[width=600,height=300]
+image::timestep_adjustment.png[pdfwidth=12cm]
 
 Innerhalb der Schleife versucht der ausgewählte _Master-Algorithmus_ einen einzelnen Schritt mit der gegenwärtig vorgeschlagenen Zeitschrittgröße zu machen (für eine Methode mit konstanter Schrittweiter wird der *hStart*-Parameter genutzt). Dabei kann der _Master-Algorithmus_ möglicherweise eine iterative Auswertung der Slaves beinhalten (siehe unten).
 
@@ -321,7 +321,7 @@ _MasterSim_ enthält eine Funktion zur Reduktion des Rechenaufwands, wenn viele 
 
 [[fig_cycles]]
 .Zyklen in sich wiederholenden Algorithmen
-image::algorithm_cycles.png[alt="Cycles in iterative algorithms", pdfwidth="14cm"]
+image::algorithm_cycles.png[alt="Cycles in iterative algorithms",pdfwidth=12cm]
 
 :xrefstyle: basic
 
