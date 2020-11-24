@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <span id="author" class="author">Andreas Nicolai</span><br>
 <span id="email" class="email"><a href="mailto:andreas.nicolai@tu-dresden.de">andreas.nicolai@tu-dresden.de</a></span><br>
 <span id="revnumber">version 0.8.3,</span>
-<span id="revdate">Oct 2020</span>
+<span id="revdate">Dec 2020</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -647,6 +647,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>Software is available at: <a href="https://bauklimatik-dresden.de/mastersim" class="bare">https://bauklimatik-dresden.de/mastersim</a></p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -660,7 +663,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/DataFlowDiagram.png" alt="Data flow diagram">
+<img src="../images/DataFlowDiagram.png" alt="Data flow diagram">
 </div>
 <div class="title">Figure 1. Data flow and file usage diagram</div>
 </div>
@@ -782,7 +785,7 @@ FMU
 slave/simulator
 </td>
 <td class="hdlist2">
-<p>describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability <strong>canBeInstantiatedOnlyOncePerProcess</strong> is set to true</p>
+<p>describes a simulation model that is instantiated/created from an FMU; there can be several slaves instantiated by a single FMU, if the capability <strong>canBeInstantiatedOnlyOncePerProcess</strong> is set to false</p>
 </td>
 </tr>
 <tr>
@@ -1018,7 +1021,7 @@ for FMI 2: tell all slaves to exitInitializationMode()</pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>If you have more than 3 slaves connected in a sequence with direct feed through of variable inputs to outputs, for example when outputs are related to inputs via algebraic relations, the 3 iterationns of the Gauss-Jacobi algorithm may not be enough to properly initialize all slaves.</p>
+<p>If you have more than 3 slaves connected in a sequence with direct feed through of variable inputs to outputs, for example when outputs are related to inputs via algebraic relations, the 3 iterations of the Gauss-Jacobi algorithm may not be enough to properly initialize all slaves.</p>
 </div>
 <div class="paragraph">
 <p>However, due to an unclear specification in the FMI standard, it is not required by co-simulation slaves, to update their output state whenever input changes. Most FMUs actually only update output values in a call to <code>doStep()</code>. Therefore, with the current standard it is not possible to distinguish between a direct algebraic relation between outputs and inputs <strong>without call</strong> to <code>doStep()</code> and <strong>with a call</strong> to <code>doStep()</code>.</p>
@@ -1079,13 +1082,19 @@ If the coupled FMUs use a different time unit (i.e. years), simply use seconds i
 <div class="sect2">
 <h3 id="_time_step_adjustment">1.8. Time step adjustment</h3>
 <div class="paragraph">
-<p>Once the simulation is completed, the solver enters the time step adjustment loop. If time step adjustment is disabled via flag <strong>adjustStepSize</strong> (see <a href="#_simulator_settings">Simulator settings</a>), the loop content will only be executed once. For FMI 1.0 slaves, or FMI 2.0 slaves without capability for storing/restoring slave states, iteration is also not possible (actually, requesting an iterative algorithm for such slaves will trigger an error during initialzation).</p>
+<p>Once the communication interval is completed, the solver enters the time step adjustment loop. If time step adjustment is disabled via flag <strong>adjustStepSize</strong> (see section <a href="#simulator_settings">[simulator_settings]</a>), the loop content will only be executed once. For FMI 1.0 slaves, or FMI 2.0 slaves without capability for storing/restoring slave states, iteration is also not possible (actually, requesting an iterative algorithm for such slaves will trigger an error during initialisation).</p>
+</div>
+<div id="fig_timestep_adjustment" class="imageblock">
+<div class="content">
+<img src="../images/timestep_adjustment.png" alt="timestep adjustment" width="600" height="300">
+</div>
+<div class="title">Figure 2. Simulation example in which error test failures as well as convergence failures cause a drastic reduction in communication step sizes</div>
 </div>
 <div class="paragraph">
 <p>Within the loop, the selected <em>master algorithm</em> tries to take a single step with the currently proposed time step size (for constant step methods, the <strong>hStart</strong> parameter is used). The <em>master algorithm</em> may involve iterative evaluation of slaves (see below).</p>
 </div>
 <div class="paragraph">
-<p>For iterative master algorithms, it may be possible that the method does not converge within the given iteration limit (see parameter <strong>maxIterations</strong>).</p>
+<p>For iterative master algorithms, it may be possible that the method does not converge within the given iteration limit (see parameter <strong>maxIterations</strong>, see section <a href="#simulator_settings">[simulator_settings]</a>).</p>
 </div>
 <div class="sect3">
 <h4 id="_time_step_reduction_when_algorithm_did_not_converge">1.8.1. Time step reduction when algorithm did not converge</h4>
@@ -1104,7 +1113,7 @@ If the coupled FMUs use a different time unit (i.e. years), simply use seconds i
 <p>The step size is then compared with the lower communication step limit (parameter <strong>hMin</strong>). This is necessary to prevent the simulation to get stuck with extremely low time steps. If the step size would be reduced below the <strong>hMin</strong> value, the simulation <strong>will be aborted</strong> with an error message.</p>
 </div>
 <div class="paragraph">
-<p>In some cases, the interaction between two slaves may prevent any master algorithm to converge (even the Newton algorithm). Still, in these cases the remaining error may be insignificant and the simulation can tip-toe with small steps over the problematic time and increase steps afterwards. For such cases, you can specifiy the parameter <strong>hFallBackLimit</strong>, which must be larger than <strong>hMin</strong>. If h is reduced to a value below this <em>acceptable</em> communication step size, the master algorithms will return succesfully after all iterations have been done. Thus, the step is treated as <em>converged</em> and the simulation progresses to the next interval.</p>
+<p>In some cases, the interaction between two slaves may prevent any master algorithm to converge (even the Newton algorithm). Still, in these cases the remaining error may be insignificant and the simulation can pass with tiny steps over the problematic time and increase steps afterwards. For such cases, you can specifiy the parameter <strong>hFallBackLimit</strong>, which must be larger than <strong>hMin</strong>. If h is reduced to a value below this <em>acceptable</em> communication step size, the master algorithms will return succesfully after all iterations have been done. Thus, the step is treated as <em>converged</em> and the simulation progresses to the next interval.</p>
 </div>
 <div class="paragraph">
 <p>The publication mentioned above illustrates the behavior of the simulation using these parameters.</p>
@@ -1242,9 +1251,9 @@ loop over all slaves:
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/algorithm_cycles.png" alt="Cycles in iterative algorithms">
+<img src="../images/algorithm_cycles.png" alt="Cycles in iterative algorithms">
 </div>
-<div class="title">Figure 2. Cycles in iterative algorithms</div>
+<div class="title">Figure 3. Cycles in iterative algorithms</div>
 </div>
 <div class="hdlist">
 <table>
@@ -1275,7 +1284,7 @@ loop over all slaves:
 </table>
 </div>
 <div class="paragraph">
-<p>Restricting the number of FMUs in a cycle not only reduces overall effort, but also takes into account the stiffness of the coupling. In one cycle, FMUs may be loosely coupled, and convergence is achieved in 2 or 3 iterations. In other cycles, FMUs may be coupled in a non-linear realtion or react more sensitive to input value changes (= stiff coupling), and 10 or more iterations may be needed. This, separating the cycles can significantly reduce computational effort in a Gauss-Seidel method.</p>
+<p>Restricting the number of FMUs in a cycle not only reduces overall effort, but also takes into account the stiffness of the coupling. In one cycle, FMUs may be loosely coupled, and convergence is achieved in 2 or 3 iterations. In other cycles, FMUs may be coupled in a non-linear relation or react more sensitive to input value changes (= stiff coupling), and 10 or more iterations may be needed. Thus, separating the cycles can significantly reduce computational effort in a Gauss-Seidel method.</p>
 </div>
 <div class="paragraph">
 <p>Each FMU can be assigned a cycle, which are numbered (beginning with 0) and executed in the order of the cycle number (see simulator definition in section <a href="#_simulatorslave_definitions">Simulator/Slave Definitions</a>).</p>
@@ -1339,7 +1348,6 @@ If you really want outputs after each internal step, set <strong>hOutputMin</str
 </tr>
 </table>
 </div>
-<hr>
 </div>
 </div>
 </div>
@@ -1356,9 +1364,9 @@ If you really want outputs after each internal step, set <strong>hOutputMin</str
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_welcome_page.png" alt="Welcome page">
+<img src="../images/gui_welcome_page.png" alt="Welcome page">
 </div>
-<div class="title">Figure 3. Welcome page with recently used projects and webbased news</div>
+<div class="title">Figure 4. Welcome page with recently used projects and webbased news</div>
 </div>
 <div class="hdlist">
 <table>
@@ -1595,9 +1603,9 @@ Quit
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_slave_view.png" alt="Slave view">
+<img src="../images/gui_slave_view.png" alt="Slave view">
 </div>
-<div class="title">Figure 4. Slave definition view shows list of imported FMUs, assigned slave ID names and an optional graphical representation</div>
+<div class="title">Figure 5. Slave definition view shows list of imported FMUs, assigned slave ID names and an optional graphical representation</div>
 </div>
 <div class="paragraph">
 <p>Items of the view:</p>
@@ -1702,7 +1710,8 @@ If you want to rearrange several blocks at the same time, you can select multipl
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-You can import the same FMU several times, unless the FMU has the capability flag <strong>canBeInstantiatedOnlyOncePerProcess</strong> set to <em>false</em>. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU.
+You can import the same FMU several times. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU.
+Note, that the FMU must have the capability flag <strong>canBeInstantiatedOnlyOncePerProcess</strong> set to <em>false</em> in order to be used several times in the same simulation scenario.
 </td>
 </tr>
 </table>
@@ -1715,9 +1724,9 @@ You can import the same FMU several times, unless the FMU has the capability fla
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_slave_view_properties.png" alt="Slave parameter table">
+<img src="../images/gui_slave_view_properties.png" alt="Slave parameter table">
 </div>
-<div class="title">Figure 5. Table with slave-specific parameter values</div>
+<div class="title">Figure 6. Table with slave-specific parameter values</div>
 </div>
 <div class="hdlist">
 <table>
@@ -1802,9 +1811,9 @@ You can leave <em>connection mode</em> by pressing right-click in the network vi
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/bm_block_states.png" alt="Block states">
+<img src="../images/bm_block_states.png" alt="Block states">
 </div>
-<div class="title">Figure 6. Different states of blocks and their visual appearance</div>
+<div class="title">Figure 7. Different states of blocks and their visual appearance</div>
 </div>
 <div class="hdlist">
 <table>
@@ -1843,9 +1852,9 @@ You can leave <em>connection mode</em> by pressing right-click in the network vi
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/bm_block_editor.png" alt="Block Editor">
+<img src="../images/bm_block_editor.png" alt="Block Editor">
 </div>
-<div class="title">Figure 7. Editor for block geometry and socket layout</div>
+<div class="title">Figure 8. Editor for block geometry and socket layout</div>
 </div>
 <div class="hdlist">
 <table>
@@ -1928,9 +1937,9 @@ In one of the next program versions, it will be possible to store block appearan
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_connection_view.png" alt="Connection view">
+<img src="../images/gui_connection_view.png" alt="Connection view">
 </div>
-<div class="title">Figure 8. Connection view with published input and output variables for all slaves and defined connections</div>
+<div class="title">Figure 9. Connection view with published input and output variables for all slaves and defined connections</div>
 </div>
 <div class="hdlist">
 <table>
@@ -2107,9 +2116,9 @@ Section <a href="#_simulator_settings">Project file reference - Simulator settin
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_simulation_settings_view.png" alt="Simulation view">
+<img src="../images/gui_simulation_settings_view.png" alt="Simulation view">
 </div>
-<div class="title">Figure 9. Simulation settings and simulation start view</div>
+<div class="title">Figure 10. Simulation settings and simulation start view</div>
 </div>
 <div class="hdlist">
 <table>
@@ -2126,7 +2135,7 @@ Section <a href="#_simulator_settings">Project file reference - Simulator settin
 (2)
 </td>
 <td class="hdlist2">
-<p>The initial communication interval size. When time step adustment <strong>(7)</strong> is disabled, this communication interval size will be used until the end simulation time has been reached.</p>
+<p>The initial communication interval size. When time step adjustment <strong>(7)</strong> is disabled, this communication interval size will be used until the end simulation time has been reached.</p>
 </td>
 </tr>
 <tr>
@@ -2174,7 +2183,7 @@ Section <a href="#_simulator_settings">Project file reference - Simulator settin
 (8)
 </td>
 <td class="hdlist2">
-<p>These three parameters control how the time step is adjusted in case of converence/error test failures.</p>
+<p>These three parameters control how the time step is adjusted in case of convergence/error test failures.</p>
 </td>
 </tr>
 <tr>
@@ -2182,7 +2191,7 @@ Section <a href="#_simulator_settings">Project file reference - Simulator settin
 (9)
 </td>
 <td class="hdlist2">
-<p>If checked, <em>MasterSim</em> will adjust the step size of the last interval such, that is gives <em>exactly</em> the end time point of the simulation as end of the last communication interval, regardless of flag <strong>(7)</strong> (see discussion in section <a href="#_time_step_adjustment">Time step adjustment</a>).</p>
+<p>If checked, <em>MasterSim</em> will adjust the step size of the last interval such, that it gives <em>exactly</em> the end time point of the simulation as end of the last communication interval, regardless of flag <strong>(7)</strong> (see discussion in section <a href="#_time_step_adjustment">Time step adjustment</a>).</p>
 </td>
 </tr>
 <tr>
@@ -2252,9 +2261,9 @@ Section <a href="#_simulator_settings">Project file reference - Simulator settin
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/gui_preferences_tools.png" alt="Preferences dialog">
+<img src="../images/gui_preferences_tools.png" alt="Preferences dialog">
 </div>
-<div class="title">Figure 10. Preference dialog with input options for text editor and post-processing executable</div>
+<div class="title">Figure 11. Preference dialog with input options for text editor and post-processing executable</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -2284,7 +2293,7 @@ When you edit a project file in the external text editor and save the file, the 
 <p>Read the msim project file (the network representation file is ignored, since it only contains visual information).</p>
 </li>
 <li>
-<p>Then, a working directory for this simulation test case is created (path can be adjusted, see <code>--working-dir</code> command line option below).</p>
+<p>Then, a working directory for the simulation data is created (path can be adjusted, see <code>--working-dir</code> command line option below).</p>
 </li>
 <li>
 <p>The FMUs are extracted (can be skipped if already extracted, see command line option <code>--skip-unzip</code> below)</p>
@@ -2836,9 +2845,9 @@ parameters Part1.para1  14.3</pre>
 </div>
 <div id="screenshot_project_properties" class="imageblock">
 <div class="content">
-<img src="./images/welcome_page_project_properties.png" alt="Project properties shown on the welcome page">
+<img src="../images/welcome_page_project_properties.png" alt="Project properties shown on the welcome page">
 </div>
-<div class="title">Figure 11. Project properties shown on the welcome page</div>
+<div class="title">Figure 12. Project properties shown on the welcome page</div>
 </div>
 <div class="paragraph">
 <p>All comment lines before the first actual input line are recognized as the header lines. In these lines the keywords <code>Created:</code> and <code>LastModified:</code> are expected to be followed by a more or less meaningful (but not standardized) date/time string to be shown in the user interface. Other header lines are treated as project description, show in the project summary on the welcome page of the graphical user interface (see Figure <a href="#screenshot_project_properties">Project properties shown on the welcome page</a>).</p>
@@ -2935,7 +2944,7 @@ If <strong>hStart</strong> is set to 0 in the project file, it will be computed 
 hOutputMin
 </td>
 <td class="hdlist2">
-<p>(<em>default=10 min</em>) minimim time that need to elapse before next output values are written, if communication step sizes are larger than <strong>hOutputMin</strong>, outputs may be skipped but the regular output intervals will be kept</p>
+<p>(<em>default=10 min</em>) minimum time that need to elapse before next output values are written, if communication step sizes are larger than <strong>hOutputMin</strong>, outputs may be skipped but the regular output intervals will be kept</p>
 </td>
 </tr>
 <tr>
@@ -2951,7 +2960,7 @@ outputTimeUnit
 adjustStepSize
 </td>
 <td class="hdlist2">
-<p>(<em>default=false</em>) enables/disables adaptive-time-step mode, when error control mode is <strong>ADAPT_STEP</strong>, disablin <strong>adjustStepSize</strong> is an error</p>
+<p>(<em>default=false</em>) enables/disables adaptive-time-step mode, when error control mode is <strong>ADAPT_STEP</strong>, disabling <strong>adjustStepSize</strong> is an error</p>
 </td>
 </tr>
 <tr>
@@ -2982,7 +2991,7 @@ GAUSS_JACOBI
 GAUSS_SEIDEL
 </td>
 <td class="hdlist2">
-<p>Gauss-Seidel algorithm (iterative or non-iterative depending on <strong>it_max_steps</strong>)</p>
+<p>Gauss-Seidel algorithm (iterative or non-iterative depending on <strong>maxIterations</strong>)</p>
 </td>
 </tr>
 <tr>
@@ -3523,9 +3532,9 @@ last line</pre>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="./images/bm_network_example.png" alt="Blockmod Network Example">
+<img src="../images/bm_network_example.png" alt="Blockmod Network Example">
 </div>
-<div class="title">Figure 12. Example for a simple graphical representation of a network</div>
+<div class="title">Figure 13. Example for a simple graphical representation of a network</div>
 </div>
 <div class="paragraph">
 <p>is defined in the following BlockMod network representation file:</p>
@@ -4402,7 +4411,7 @@ The master also holds for each data type a vector of connection variables.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.8.3<br>
-Last updated 2020-10-10 18:29:57 +0200
+Last updated 2020-11-24 16:03:48 +0100
 </div>
 </div>
 <style>

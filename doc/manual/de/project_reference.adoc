@@ -215,7 +215,6 @@ Das zweite unterstützte Format entspricht dem Format von Dateien, welche als CS
 Der Inhalt dieser Datei entspricht der aus <<ex_tsv_flavor>>.
 ====
 
-:xrefstyle: basic
 
 [IMPORTANT]
 ====
@@ -225,7 +224,7 @@ Für beide Formatvarianten gilt: für Variablen ohne gegebene Einheiten, d.h. oh
 
 ### Zeitpunkte und Zeiteinheiten
 
-Die Zeitpunkte können in zufällige Intervalle aufgeteilt sein. _MasterSim_ erwartet zur Zeit, dass Simulationen in Sekunden ablaufen als Basis-Zeiteinheit. Das bedeutet im Internen, dass Variablen ausgetauscht werden, um einer Simulationszeit in Sekunden zu entsprechen. Wenn eine Eingangsdatei eine andere Einheit für die Zeit festlegt, konvertiert _MasterSim_ diese Zeit in Sekunden. 
+Die Zeitpunkte können in beliebigen Intervallen angegeben sein. _MasterSim_ geht davon aus, dass Sekunde als Basis-Zeiteinheit verwendet wird. Das bedeutet, dass Variablen intern zu einer Simulationszeit in Sekunden ausgetauscht werden. Wenn eine Eingangsdatei eine andere Einheit für die Zeit festlegt, konvertiert _MasterSim_ diese Zeitangaben beim Einlesen der Datei in Sekunden.
 
 Die folgenden Zeiteinheiten werden von MasterSim erkannt:
 
@@ -240,12 +239,13 @@ a:: Jahre (reguläre Jahre, 365 reguläre Tage, kein Schaltjahr/-tag)
 [NOTE]
 ====
 .Die standardmäßige Zeiteinheit ist Sekunde
-Im Falle einer fehlenden Zeiteinheit in der Kopfzeile der ersten Spalte nimmt _MasterSim_ die Zeiteinheit **Sekunden** (s) an.
+Im Falle einer fehlenden Zeiteinheit in der Kopfzeile der ersten Spalte (wie in <<ex_csv_Excel_flavor>>) nimmt _MasterSim_ die Zeiteinheit **Sekunden** (s) an.
 ====
+
+:xrefstyle: basic
 
 
 ### Interpretation der von den Datei-Lese-Slaves bereitgestellten Daten
-
 
 [IMPORTANT]
 ====
@@ -411,24 +411,25 @@ Dies wird den folgenden String setzen:
 ====
 In dem seltenen Fall, wenn man Zeichenketten-Parameter mit führenden und abschließenden Leerzeichen festlegen möchte, kann man die Zeichenkette in "" einschließen. Beispiel:
 
- parameter building_model.configPara "   Zeichenkette mit Leerzeichen am Anfang und Ende     "
+ parameter building_model.configPara "   Leerzeichen am Anfang und Ende    "
 ====
 
 
 
-## Blockmodell - das Dateiformat der Netzwerkpräsentation
+## BlockMod - Dateiformat der Netzwerkdarstellungsdatei
 
-Die `bm`-Datei ist eine simple XML-Datei und beschreibt die grafische Gestaltung und die Visualisierung des modellierten Simulations-Szenarios.
+Die `bm`-Datei ist eine simple XML-Datei und beschreibt die graphische Anordnung und die Visualisierung des modellierten Simulations-Szenarios.
 
 Ein einfaches Netzwerk, wie:
 
 .Beispiel für eine einfache grafische Präsentation eines Netzwerks
-image::bm_network_example.png[Blockmod Network Example]
+image::bm_network_example.png[alt="Blockmod Network Example",pdfwith=14cm]
 
-Es wird in der folgenden BlockMod Netzwerk-Präsentationsdatei festgelegt:
+wird wie folgt in einer BlockMod Netzwerk-Beschreibungsdatei abgelegt:
 
+
+.Blockmod Netzwerk-Beschreibungsdatei
 [source,xml]
-.Blockmod Netzwerkpräsentationsdatei
 ----
 <?xml version="1.0" encoding="UTF-8"?>
 <BlockMod>
@@ -515,11 +516,9 @@ Es wird in der folgenden BlockMod Netzwerk-Präsentationsdatei festgelegt:
 </BlockMod>
 ----
 
-Das Format ist ziemlich selbsterklärend. Das erste und das letzte Segment wird automatisch festgelegt, abhängig von der Sockelposition auf dem Block und wird dadurch nicht in der Netzwerk-Präsentationsdatei gespeichert.
+Das Format ist ziemlich selbsterklärend. Das erste und das letzte Segment einer Verbindung (`Connector` tag) wird automatisch abhängig von der Sockelposition auf dem Block festgelegt, und wird dadurch nicht in der Netzwerk-Beschreibungsdatei gespeichert.
 
 [TIP]
 ====
 https://github.com/ghorwin/BlockMod[BlockMod] ist eine Open-Source-Bibliothek zum Modellieren solcher Netzwerke. Die Wiki-Seite des Projekts enthält mehr ausführliche Informationen über das Datenformat und die Funktionalität.
 ====
-
----
