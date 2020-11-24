@@ -34,27 +34,33 @@ _MasterSim_ ist für Linux und MacOS als 64-Bit-Anwendung verfügbar. Für Windo
 Nutzen Sie für 32-Bit-FMUs eine 32-Bit-Version, für 64-Bit-FMUs eine mit 64 Bit. Gemischte FMU-Plattform-Typen (32 Bit und 64 Bit) werden nicht unterstützt.
 ====
 
-## Entwicklungsziele/Schwerpunkte
+## Entwicklungsziele/Schwerpunkte aus Entwicklersicht
 
 - Betriebssystemübergreifend: Windows, MacOS, Linux
 - Projektdateien sind im ASCII-Format abgelegt und dadurch leicht editierbar oder durch Skripte zu modifizieren
+- da Projektdateien und Netzwerkbeschreibungsdateien ASCII-Format haben, sind sie sehr gut für die Verwendung in  Versionskontrollsystemen geeignet
+- enthält Instrumentierung und stellt Zähler und Zeitmessungen für den Leistungsvergleich von Master-Algorithmen und FMU bereit
 - keine Abhängigkeit von extern installierten Bibliotheken, alle Quelltexte sind im Repository enthalten (Ausnahme: Standard C++ Laufzeitbibliotheken und die Qt 5-Bibliothek), insbesondere gibt es keine Abhängigkeit von FMI-unterstützenden Bibliotheken; den Quelltext vom Repository zu holen und zu erstellen sollte leicht sein (ebenso das Verpacken und Veröffentlichen für andere Plattformen) 
 - vollständige, in die _MasterSim_-Bibliothek eingebettete Master-Funktionalität, nutzbar über das Kommandozeilen-Werkzeug und die Oberfläche
 - Meldungen/Ausgaben sind gekapselt, um GUI-Einbindung und Log-Dateien zu unterstützen, keine direkten `printf()`- oder `std::cout` -Ausgaben
 - unterstützt FMU-Fehlerdiagnose: kann das Entpacken  deaktivieren (dauerhafte dll/so/dylib-Dateien), der Quelltextzugang erlaubt die Fehlersuche während des Ladens von gemeinsam genutzten Bibliotheken und angefügten Debuggern
 - High-Level- C++-Code (lesbar und wartungsfreundlich) 
-- enthält Instrumentierung und stellt Zähler und Zeitmessungen für den Leistungsvergleich von Master-Algorithmen und FMU bereit
 - der Code ist angepasst für die Fehleranalyse des Master-Algorhitmus - alle Variablen sind typspezifisch für eine _einfache Analyse im Debugger_ in Datenfeldern gruppiert 
 
 Für Details über Funktionen, die insbesondere für FMU-Entwickler und bei Problemen der Fehlerbeseitigung von Co-Simulationen wichtig sind, lesen Sie bitte das Kapitel <<fmu_dev_helpers, Assistenzfunktionen für FMU-Entwicklung und Fehlerbeseitigung>>.
 
 ### Besondere Funktionen von _MasterSim_
 
+Einige Funktionen in _MasterSim_ sind (aus meiner Sicht) sehr praktisch und gibt es so in anderen Co-Simulations-Masterprogrammen nicht.
+
 Es gibt eine besondere Funktion in _MasterSim_, welche hilfreich für die Verwendung von FMUs ist, welche  eigene Ausgabedaten schreiben. _MasterSim_ erstellt für jede FMU Instanz/jeden Slave ein beschreibbares, _slave-spezifisches_ Ausgabeverzeichnis. Der Pfad zu diesem Verzeichnis setzt _MasterSim_ im Parameter `ResultsRootDir`. Falls ein Slave einen solchen Parameter definiert, erhält die FMU über den Parameter ein verlässliches, gültiges Verzeichnis zum Hineinschreiben seiner Daten (siehe auch Abschnitt <<dir_slaves, Verzeichnis 'Slaves'>>).
 
 Zyklen bei der Definition von verknüpften Slaves können explizit definiert werden und reduzieren damit dem Aufwand für iterative Masteralgorithmen (siehe auch Abschnitt <<cycles>>).
 
 _MasterSim_ beinhaltet eine Zeitmessung und Erfassung der Ausführungshäufigkeiten für einzelne Funktionen. Dies ist hilfreich, zeitkritische Simulationen zu optimieren oder Fehler zu finden (siehe Abschnitt <<summary_txt_file>>).
+
+Verknüpfungen zwischen Ausgangs- und Eingangsvariablen können in _MasterSim_ mit Umrechnungsfaktoren und Verschiebungen definiert werden, was besonders für Einheitenumrechnungen und Flussverknüpfungen mit Vorzeichenumkehr praktisch ist (siehe Abschnitt <<connection_graph>>).
+
 
 ## Terminologie
 
