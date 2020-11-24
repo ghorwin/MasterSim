@@ -39,9 +39,9 @@ Optionen:
 --------------
 
 [[solver_working_dir]]
-### Anpassung des Arbeits- und Ausgangsverzeichnis
+### Anpassung des Arbeits- und Ausgabeverzeichnis
 
-Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad zum Arbeitsverzeichs aus dem Pfad zur Projektdatei ohne Dateierweiterung generiert. Zum Beispiel:
+Wenn kein Arbeitsverzeichnis vorgegeben wird, wird der Verzeichnis-Pfad zum Arbeitsverzeichnis aus dem Pfad zur Projektdatei ohne Dateierweiterung generiert. Zum Beispiel:
 
 [source,bash]
 -------------
