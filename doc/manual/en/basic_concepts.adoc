@@ -7,7 +7,7 @@ _MasterSim_ is a co-simulation master program that supports FMI co-simulation. I
 Basically, _MasterSim_ couples different simulation models and exchanges data between simulation slaves at runtime. The following Figure illustrates the program organisation and the basic data flow.
 
 .Data flow and file usage diagram
-image::DataFlowDiagram.png[Data flow diagram,pdfwidth=80%]
+image::DataFlowDiagram.png[Data flow diagram,pdfwidth=10cm]
 
 == Program parts
 _MasterSim_ consists of a two parts:
@@ -193,7 +193,7 @@ Once the communication interval is completed, the solver enters the time step ad
 
 [[fig_timestep_adjustment]]
 .Simulation example in which error test failures as well as convergence failures cause a drastic reduction in communication step sizes
-image::timestep_adjustment.png[width=600,height=300]
+image::timestep_adjustment.png[pdfwidth=12cm]
 
 Within the loop, the selected _master algorithm_ tries to take a single step with the currently proposed time step size (for constant step methods, the *hStart* parameter is used). The _master algorithm_ may involve iterative evaluation of slaves (see below).
 
@@ -292,7 +292,7 @@ iteration loop:
 _MasterSim_ includes a feature that reduces the calculation effort when many FMUs are involved and not all are directly coupled. The following figure shows a simulation scenario where calculation can be done in three stages.
 
 .Cycles in iterative algorithms
-image::algorithm_cycles.png[alt="Cycles in iterative algorithms"]
+image::algorithm_cycles.png[alt="Cycles in iterative algorithms",pdfwidth=12cm]
 
 [horizontal]
 (1):: This FMU only generates output and can be evaluated first and only once in the Gauss-Seidel algorithm.

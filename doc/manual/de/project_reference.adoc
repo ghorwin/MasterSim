@@ -68,7 +68,7 @@ Alle Kommentarzeilen vor der ersten Nicht-Kommentarzeile werden als Kopfzeilen m
 
 [[screenshot_project_properties]]
 .Auf der Startseite angezeigte Projekteigenschaften
-image::welcome_page_project_properties.png[pdfwidth=16cm]
+image::welcome_page_project_properties.png[pdfwidth=10cm]
 
 
 [NOTE]
@@ -423,12 +423,10 @@ Die `bm`-Datei ist eine simple XML-Datei und beschreibt die graphische Anordnung
 Ein einfaches Netzwerk, wie:
 
 .Beispiel für eine einfache grafische Präsentation eines Netzwerks
-image::bm_network_example.png[alt="Blockmod Network Example",pdfwith=14cm]
+image::bm_network_example.png[alt="Blockmod Network Beispiel",pdfwidth=7cm]
 
 wird wie folgt in einer BlockMod Netzwerk-Beschreibungsdatei abgelegt:
 
-
-.Blockmod Netzwerk-Beschreibungsdatei
 [source,xml]
 ----
 <?xml version="1.0" encoding="UTF-8"?>

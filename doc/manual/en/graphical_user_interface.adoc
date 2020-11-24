@@ -56,15 +56,15 @@ Here's a list of useful program-wide shortcuts:
 [width="100%",cols="20%,40%,40%",options="header"]
 |====================
 | Windows/Linux | MacOS | Command
-|*Ctrl + N*| *⌘ + N* | create new project
-|*Ctrl + O*| *⌘ + O* | load project
-|*Ctrl + S*| *⌘ + S* | save project
-|*Ctrl + Shift + S*| *⌘ + Shift + S* | save project with new filename
-|*Ctrl + Z*| *⌘ + Z* | undo
-|*Ctrl + Shift + Z* |*⌘ + Shift + Z* |  redo
+|*Ctrl + N*| *CMD + N* | create new project
+|*Ctrl + O*| *CMD + O* | load project
+|*Ctrl + S*| *CMD + S* | save project
+|*Ctrl + Shift + S*| *CMD + Shift + S* | save project with new filename
+|*Ctrl + Z*| *CMD + Z* | undo
+|*Ctrl + Shift + Z* |*CMD + Shift + Z* |  redo
 |*F2* | *F2* | open project file in text editor
 |*F9* | *F9* | start simulation (can be used from any view, no need to switch to simulation settings view first!)
-|  | *⌘ + .* | Open preferences dialog
+|  | *CMD + .* | Open preferences dialog
 |====================
 
 == Slaves definition view
@@ -131,7 +131,7 @@ Because _MasterSim_ only references FMUs, their actual content (i.e. interface p
 When importing an FMU the user interface will attempt to unzip the FMU archive and analyse its content. If the `modelDescription.xml` file could be read correctly, _MasterSim_ will offer to open the block editor. Inside the editor you can define the basic geometry of the block (slave representation) and the layout of the sockets (the positions of inlet and outlet variables). You can ignore this request and leave the FMU visual representation undefined. Basically, an FMU can have three states that are visualized differently in the UI:
 
 .Different states of blocks and their visual appearance
-image::bm_block_states.png[alt="Block states"]
+image::bm_block_states.png[alt="Block states",pdfwidth=7cm]
 
 [horizontal]
 (1):: The referenced `fmu` file does not exist or cannot be read (not a zip archive, cannot be extracted, doesn't contain a `modelDescription.xml` file, or not a valid file, ... many things can go wrong here)
@@ -249,7 +249,7 @@ Mind, that the simulation may still be running in the background, even if the lo
 The preferences dialog, opened from the main menu or via application shortcut, currently provides configuration options for the text editor (used to edit the project file with the short cut *F2*) and the post processing executable.
 
 .Preference dialog with input options for text editor and post-processing executable
-image::gui_preferences_tools.png[alt="Preferences dialog"]
+image::gui_preferences_tools.png[alt="Preferences dialog",pdfwidth=12cm]
 
 
 TIP: When you edit a project file in the external text editor and save the file, the next time you bring the _MasterSim_ user interface into focus, it will prompt to re-load the modified project.

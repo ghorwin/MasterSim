@@ -26,6 +26,9 @@ page:
 image:
   align: center
   
+code:
+  font-size: 9
+
 footer:
   height: 0.75in
   line-height: 1
