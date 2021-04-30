@@ -44,11 +44,17 @@ namespace IBK {
 /*! used to specify a unused or invalid item index. */
 extern const unsigned int INVALID_ELEMENT;
 
+/*! Used to specify an invalid year in IBK::Time. */
+extern const int INVALID_YEAR;
+
 /*! The library version (full version number). */
 extern const char * const VERSION;
 
 /*! The seconds in each of the twelve months. */
 extern unsigned int SECONDS_PER_MONTH[12];
+
+/*! The seconds up to the given month. */
+extern unsigned int SECONDS_UNTIL_MONTH[12];
 
 /*! The abbreviated names of the months for date In/Output. */
 extern const char * const MONTH_NAMES[12];
@@ -61,6 +67,8 @@ extern const unsigned int SECONDS_PER_DAY;
 
 /*! Current start id for user space in the various databases. */
 extern const unsigned int USER_ID_START;
+
+
 
 /*! ID used to identify VOID types, for example VOID materials.
 	\warning Changing this constant may cause problems with older project/data files that store
@@ -80,8 +88,8 @@ enum materialDBTypes {
 
 /*! Default placeholder name to be used to reference the project directory. */
 extern const char * const PLACEHOLDER_PROJECT_DIR;
-/*! Default placeholder name to be used to reference the root directory of all databases. */
-extern const char * const PLACEHOLDER_DATABASE_ROOT;
+/*! Default placeholder name to be used to reference the installation location of the GUI/solver binary. */
+extern const char * const PLACEHOLDER_INSTALL_DIR;
 /*! Default placeholder name to be used to reference the material database directory. */
 extern const char * const PLACEHOLDER_MATERIALS_DIR;
 /*! Default placeholder name to be used to reference the climate database directory. */

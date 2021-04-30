@@ -30,54 +30,36 @@
 	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+	Based on:
+	IOGP Publication 373-7-2 – Geomatics Guidance Note number 7, part 2 – September 2019
+	To facilitate improvement, this document is subject to revision.
+	The current version is available at www.epsg.org
+	https://www.bbsr.bund.de/BBSR/DE/FP/ZB/Auftragsforschung/5EnergieKlimaBauen/2013/testreferenzjahre/01-start.html?nn=436654&notFirst=true&docId=1595620
 
-	This library contains derivative work based on other open-source libraries.
-	See OTHER_LICENCES and source code headers for details.
 
 */
 
-#include "IBK_Constants.h"
+#ifndef IBK_geographicH
+#define IBK_geographicH
 
 namespace IBK {
 
-const unsigned int INVALID_ELEMENT = 0xFFFFFFFF;
+/*! Transform WSG84 values (longitude and latitude) in lambert projection values (north and east).
+	\param longitude Longitude in Deg
+	\param latitude Latitude in deg
+	\param lambertEast East coordinate for Lambert projection in m
+	\param lambertNorth East coordinate for Lambert projection in m
+*/
+void transformWSG84ToLambertProjection(double longitude, double latitude, double& lambertEast, double& lambertNorth);
 
-const int INVALID_YEAR = -1000000;
+/*! Transform lambert projection values (north and east) in WSG84 values (longitude and latitude).
+	\param lambertEast East coordinate for Lambert projection in m
+	\param lambertNorth East coordinate for Lambert projection in m
+	\param longitude Longitude in Deg
+	\param latitude Latitude in deg
+*/
+void transformLambertProjectionToWSG84(double lambertEast, double lambertNorth, double& longitude, double& latitude);
 
-const char * const VERSION = "5.0.0";
+} // end namespace
 
-
-const char * const  MONTH_NAMES[12]         = { "Jan", "Feb", "Mar", "Apr",
-												"May", "Jun", "Jul", "Aug",
-												"Sep", "Oct", "Nov", "Dec"};
-
-unsigned int SECONDS_PER_MONTH[12] 			= { 31*86400, 28*86400, 31*86400, 30*86400,
-												31*86400, 30*86400, 31*86400, 31*86400,
-												30*86400, 31*86400, 30*86400, 31*86400 };
-
-unsigned int SECONDS_UNTIL_MONTH[12]	= { 0, 31*86400, (31+28)*86400, (31+28+31)*86400,
-												(31+28+31+30)*86400, (31+28+31+30+31)*86400,
-												(31+28+31+30+31+30)*86400, (31+28+31+30+31+30+31)*86400,
-												(31+28+31+30+31+30+31+31)*86400, (31+28+31+30+31+30+31+31+30)*86400,
-												(31+28+31+30+31+30+31+31+30+31)*86400, (31+28+31+30+31+30+31+31+30+31+30)*86400 };
-
-
-const unsigned int SECONDS_PER_YEAR = 31536000;
-
-const unsigned int SECONDS_PER_DAY = 86400;
-
-const unsigned int USER_ID_START = 1 << 11;
-
-const unsigned int VOID_ID = (unsigned int)(-1);
-
-
-const char * const PLACEHOLDER_PROJECT_DIR = "Project Directory";
-
-const char * const PLACEHOLDER_INSTALL_DIR = "Install Directory";
-
-const char * const PLACEHOLDER_MATERIALS_DIR = "Material Database";
-
-const char * const PLACEHOLDER_CLIMATE_DIR = "Climate Database";
-
-} // namespace IBK
-
+#endif // IBK_geographicH

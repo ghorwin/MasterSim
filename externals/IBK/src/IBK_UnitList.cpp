@@ -45,6 +45,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iterator>
+#include <clocale>
 
 #include <sstream>
 
@@ -96,7 +97,8 @@ bool UnitList::read_file(const std::string& filename, bool overwrite) {
 
 // Reads the unitlist from default string
 bool UnitList::read_default() {
-	const char * const FUNC_ID = "[UnitList::read_default]";
+	FUNCID(UnitList::read_default);
+
 #define NO_ATOF
 	std::vector<char> defaultVector;
 	std::copy(DEFAULT_UNITS, DEFAULT_UNITS + std::strlen(DEFAULT_UNITS), std::back_inserter(defaultVector));
@@ -105,12 +107,12 @@ bool UnitList::read_default() {
 	std::vector<std::vector<char> > lines;
 	// divide unit list into lines
 	char* line = std::strtok(defaultList, ";");
-	while( line != NULL) {
+	while( line != nullptr) {
 		std::vector<char> tmp;
 		std::copy(line, line + std::strlen(line), std::back_inserter(tmp));
 		tmp.push_back('\0');
 		lines.push_back(tmp);
-		line = strtok(NULL, ";");
+		line = strtok(nullptr, ";");
 	}
 
 	std::set<std::string> all_units; // temporary set of units, used in duplicate check
@@ -119,7 +121,7 @@ bool UnitList::read_default() {
 	for( unsigned int i=0; i<lines.size(); ++i) {
 		char* line = &(lines[i][0]);
 		char* str = std::strtok(line, "\t ");
-		if( str == NULL)
+		if( str == nullptr)
 			continue;
 
 		// sanity check, ensure uniqueness of units
@@ -128,10 +130,10 @@ bool UnitList::read_default() {
 		all_units.insert(str);
 
 		add(new UnitData(current_index, str, base_index, 1.0, OP_NONE));
-		char* op = strtok(NULL, "\t ");
-		while( op != NULL) {
-			char* fact = strtok(NULL, "\t ");
-			if( fact == NULL)
+		char* op = strtok(nullptr, "\t ");
+		while( op != nullptr) {
+			char* fact = strtok(nullptr, "\t ");
+			if( fact == nullptr)
 				break;
 #ifdef NO_ATOF
 			double factor = IBK::string2val<double>(fact);
@@ -139,8 +141,8 @@ bool UnitList::read_default() {
 			double factor = std::atof(fact);
 #endif // NO_ATOF
 
-			str = strtok(NULL, "\t ");
-			if( str == NULL)
+			str = strtok(nullptr, "\t ");
+			if( str == nullptr)
 				break;
 
 			// sanity check, ensure uniqueness of units
@@ -164,7 +166,7 @@ bool UnitList::read_default() {
 			else {
 				add(new UnitData(current_index, str, base_index, factor, op_id));
 			}
-			op = strtok(NULL, "\t ");
+			op = strtok(nullptr, "\t ");
 		}
 		current_index++;          // next unit
 		base_index=current_index; // is also the base unit
@@ -174,7 +176,7 @@ bool UnitList::read_default() {
 
 // Reads the unitlist from an input filestream
 bool UnitList::read(std::istream& stream, bool overwrite) {
-	const char * const FUNC_ID = "[UnitList::read]";
+	FUNCID(UnitList::read);
 	if (!overwrite && !empty())  return true; // do not read the list again
 	if (!stream)  return false;
 
@@ -364,7 +366,7 @@ const UnitData* UnitList::retrieve(const std::string &str) const {
 			return unit;
 		++it;
 	};
-	return NULL;
+	return nullptr;
 }
 // ---------------------------------------------------------------------------
 
@@ -594,7 +596,7 @@ void UnitList::convert_special(const UnitData* src, const UnitData* target, doub
 // ---------------------------------------------------------------------------
 
 IBK::Unit UnitList::integralQuantity(const IBK::Unit & srcUnit, bool spaceIntegral, bool timeIntegral) {
-	const char * const FUNC_ID = "[UnitList::integralQuantity]";
+	FUNCID(UnitList::integralQuantity);
 	// first retrieve name of base unit
 	std::string base_name = srcUnit.base_unit().name();
 	// convert all cases
@@ -665,7 +667,7 @@ IBK::Unit UnitList::integralQuantity(const IBK::Unit & srcUnit, bool spaceIntegr
 // ---------------------------------------------------------------------------
 
 std::string UnitList::replaceUnitWithIntegralUnit(const std::string & original) {
-	const char * const FUNC_ID = "[UnitList::replaceUnitWithIntegralUnit]";
+	FUNCID(UnitList::replaceUnitWithIntegralUnit);
 	// extract unit string
 	std::string::size_type pos1 = original.find('[');
 	std::string::size_type pos2 = original.find(']');
@@ -774,7 +776,8 @@ const char * const DEFAULT_UNITS =
 "W/K          ;"
 "kWh/m2a;"
 "kWh/a;"
-"m2/m3;";
+"m2/m3;"
+"Kh;";
 
 
 }  // namespace IBK

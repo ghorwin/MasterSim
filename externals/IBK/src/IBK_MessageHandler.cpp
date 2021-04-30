@@ -91,7 +91,7 @@ MessageHandler::MessageHandler() :
 	m_requestedConsoleVerbosityLevel(VL_DEVELOPER),
 	// by default, write only messages up to VL_INFO to logfile
 	m_requestedLogfileVerbosityLevel(VL_INFO),
-	m_logfile(NULL),
+	m_logfile(nullptr),
 	m_timeStampFormat("%Y-%m-%d %H:%M:%S"),
 	m_indentation(0)
 {
@@ -109,11 +109,11 @@ MessageHandler::~MessageHandler() {
 
 
 void MessageHandler::setConsoleVerbosityLevel(int verbosity) {
-	m_requestedConsoleVerbosityLevel = verbosity;
+	m_requestedConsoleVerbosityLevel = (verbosity_levels_t)verbosity;
 }
 
 void MessageHandler::setLogfileVerbosityLevel(int verbosity) {
-	m_requestedLogfileVerbosityLevel = verbosity;
+	m_requestedLogfileVerbosityLevel = (verbosity_levels_t)verbosity;
 }
 
 
@@ -143,6 +143,9 @@ bool MessageHandler::openLogFile(const std::string& logfile, bool append, std::s
 	closeLogFile();
 	if (logfile.empty())
 		return true;
+
+	if (m_requestedLogfileVerbosityLevel == 0)
+		return true; // no log file writing
 
 	if (append) {
 
@@ -179,7 +182,7 @@ void MessageHandler::closeLogFile() {
 		if(m_logfile->is_open())
 			m_logfile->close();
 		delete m_logfile;
-		m_logfile = NULL;
+		m_logfile = nullptr;
 	}
 }
 
@@ -190,7 +193,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 
 #if 1
 	// do nothing if verbosity level is not high enough
-	if (t != MSG_DEBUG &&
+	if (t != MSG_DEBUG && t != MSG_ERROR &&
 			verbose_level > m_requestedLogfileVerbosityLevel &&
 			verbose_level > m_requestedConsoleVerbosityLevel)
 	{
@@ -199,6 +202,9 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 #endif
 
 	std::string vbStr;
+
+	// Uncomment the following section to check the correct verbosity level of individual messages
+	// but remember to turn it off again after testing!
 //#define PRINT_VERBOSITY_LEVEL
 #ifdef PRINT_VERBOSITY_LEVEL
 	std::stringstream strm;
@@ -208,7 +214,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 
 	std::string timeStamp;
 	if (!m_timeStampFormat.empty()) {
-		std::time_t timeT = std::time(NULL);
+		std::time_t timeT = std::time(nullptr);
 		std::tm *currentTimeTM = std::localtime(&timeT);
 		std::string buffer(500 + m_timeStampFormat.size(), ' ');
 
@@ -218,7 +224,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 
 	/// \todo add configuration option to enable/disable context printing
 	std::string contextStr;
-	if (func_id != NULL) {
+	if (func_id != nullptr) {
 		std::stringstream strm;
 		strm << std::setw(m_contextIndentation) << std::left << std::string(func_id) << "\t";
 		contextStr = strm.str();
@@ -263,7 +269,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 		case MSG_PROGRESS:
 			// write output for all messages to logfile
 			// to avoid spamming the output file, do not log anything above detailed level
-			if (m_logfile!=NULL && verbose_level != VL_SPECIAL &&
+			if (m_logfile!=nullptr && verbose_level != VL_SPECIAL &&
 				verbose_level <= m_requestedLogfileVerbosityLevel)
 			{
 				*m_logfile << timeStamp << messageTypeStr << contextStr << istr << indentedMsg;
@@ -277,7 +283,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			break;
 
 		case MSG_CONTINUED:
-			if (m_logfile!=NULL && verbose_level != VL_SPECIAL &&
+			if (m_logfile!=nullptr && verbose_level != VL_SPECIAL &&
 				verbose_level <= m_requestedLogfileVerbosityLevel)
 			{
 				*m_logfile << msg;
@@ -289,7 +295,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			break;
 
 		case MSG_WARNING :
-			if (m_logfile!=NULL && verbose_level != VL_SPECIAL &&
+			if (m_logfile!=nullptr && verbose_level != VL_SPECIAL &&
 				verbose_level <= m_requestedLogfileVerbosityLevel)
 			{
 				*m_logfile << timeStamp << messageTypeStr << contextStr << istr << indentedMsg << std::endl;
@@ -307,7 +313,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			break;
 
 		case MSG_ERROR :
-			if (m_logfile!=NULL) {
+			if (m_logfile!=nullptr) {
 				*m_logfile << timeStamp << messageTypeStr << contextStr << istr << indentedMsg << std::endl;
 			}
 			IBK::set_console_text_color(IBK::CF_BRIGHT_RED);
@@ -321,7 +327,7 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			break;
 
 		case MSG_DEBUG :
-			if (m_logfile!=NULL) {
+			if (m_logfile!=nullptr) {
 				*m_logfile << timeStamp << messageTypeStr << contextStr << istr << indentedMsg << std::endl;
 			}
 			IBK::set_console_text_color(IBK::CF_BRIGHT_MAGENTA);
@@ -333,10 +339,9 @@ void MessageHandler::msg(const std::string& msg, msg_type_t t, const char * func
 			IBK::set_console_text_color(IBK::CF_GREY);
 #endif // _WIN32
 			break;
-		default : ; // do nothing
 	}
 
-	if (m_logfile != NULL)
+	if (m_logfile != nullptr)
 		m_logfile->flush();
 }
 

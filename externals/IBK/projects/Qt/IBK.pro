@@ -14,7 +14,7 @@ include( ../../../IBK/projects/Qt/IBK.pri )
 # like version number etc., we also may reset all
 #
 unix|mac {
-	VER_MAJ = 5
+	VER_MAJ = 4
 	VER_MIN = 0
 	VER_PAT = 0
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
