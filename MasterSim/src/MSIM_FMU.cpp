@@ -60,11 +60,6 @@ public:
 	*/
 	void loadLibrary(const IBK::Path & sharedLibraryDir);
 
-	/*! Unload library.
-		\param sharedLibraryPath Path to directory containing the shared libraries (not the path to an individual dll/so file).
-	*/
-	void unloadLibrary();
-
 #if defined(_WIN32)
 	HMODULE				m_dllHandle; // fmu.dll handle
 #else
