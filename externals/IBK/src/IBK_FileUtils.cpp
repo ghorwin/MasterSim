@@ -189,7 +189,7 @@ IBK::Path userDirectory() {
 	// if we were able to get the shell malloc object, then
 	// proceed by fetching the pidl
 	LPITEMIDLIST  pidl;
-	HRESULT hdres = SHGetSpecialFolderLocation(NULL, CSIDL_APPDATA, &pidl);
+	HRESULT hdres = SHGetSpecialFolderLocation(nullptr, CSIDL_APPDATA, &pidl);
 	if(hdres == S_OK) {
 		// return is true if success
 		#ifdef IBK_ENABLE_UTF8
@@ -219,7 +219,7 @@ IBK::Path userDirectory() {
 
 	struct passwd *pw = getpwuid(getuid());
 
-	if (pw != NULL) {
+	if (pw != nullptr) {
 
 		const char *homedir = pw->pw_dir;
 		result = homedir;
@@ -229,6 +229,38 @@ IBK::Path userDirectory() {
 #endif
 	return IBK::Path(result);
 }
+
+std::ofstream * create_ofstream(const IBK::Path& file, std::ios_base::openmode mode) {
+#if defined(_MSC_VER)
+
+#if defined(_MSC_VER)
+	return new std::ofstream(file.wstr().c_str(), mode);
+#else
+	std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
+	return new std::ofstream(filenameAnsi.c_str(), mode);
+#endif // _MSC_VER
+
+#else //_WIN32
+	return new std::ofstream(file.c_str(), mode);
+#endif // _WIN32
+}
+
+std::ifstream * open_ifstream(const IBK::Path& file, std::ios_base::openmode mode) {
+#if defined(_WIN32)
+
+#if defined(_MSC_VER)
+		return new std::ifstream(file.wstr().c_str(), mode);
+#else
+		std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
+		return new std::ifstream(filenameAnsi.c_str(), mode);
+#endif // _MSC_VER
+
+#else // _WIN32
+
+	return new std::ifstream(file.c_str(), mode);
+#endif
+}
+
 
 
 }  // namespace IBK

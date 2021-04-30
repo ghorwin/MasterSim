@@ -42,6 +42,8 @@
 #include <string>
 #include <iosfwd>   // only include the iostream prototypes
 
+#include "IBK_Constants.h"
+
 namespace IBK {
 
 /*! Encapsulates the time consisting of a reference year and the seconds since the begin of this year.
@@ -61,6 +63,39 @@ namespace IBK {
 */
 class Time {
 public:
+	/*! Struct with infos of a certain time format string.
+		Can be created by using static function formatInfo().
+		Can be used from static function fromString().
+	*/
+	struct TimeFormatInfo {
+		TimeFormatInfo() :
+			m_year4Start(-1),
+			m_year2Start(-1),
+			m_monthStart(-1),
+			m_dayStart(-1),
+			m_hourStart(-1),
+			m_minuteStart(-1),
+			m_secondStart(-1)
+		{}
+
+		bool valid() const {
+			if(m_year4Start > -1 && m_year2Start > -1)
+				return false;
+
+			int res = m_year4Start + m_year2Start + m_monthStart + m_dayStart;
+			res += m_hourStart + m_minuteStart + m_secondStart;
+			return res > -7;
+		}
+
+		int	m_year4Start;
+		int m_year2Start;
+		int m_monthStart;
+		int m_dayStart;
+		int m_hourStart;
+		int m_minuteStart;
+		int m_secondStart;
+	};
+
 	/*! Constructor, creates an invalid time. */
 	Time();
 
@@ -91,6 +126,21 @@ public:
 		\sa isValid()
 	*/
 	Time(int year, unsigned int month, unsigned int day, double seconds);
+
+	/*! Comparison operator 'not equal'. */
+	bool operator!=(const Time & other) const { return m_sec != other.m_sec || m_year != other.m_year; }
+	/*! Comparison operator 'equal'. */
+	bool operator==(const Time & other) const { return m_sec == other.m_sec && m_year == other.m_year; }
+	/*! Comparison operator 'less'. */
+	bool operator<(const Time & other) const {
+		return (m_year*(int)SECONDS_PER_YEAR + m_sec < other.m_year*(int)SECONDS_PER_YEAR + other.m_sec);
+	}
+	/*! Comparison operator 'less or equal'. */
+	bool operator<=(const IBK::Time& other) const { return *this < other || *this == other; }
+	/*! Comparison operator 'greater'. */
+	bool operator>(const IBK::Time& other) const { return !(*this <= other); }
+	/*! Comparison operator 'greater or equal'. */
+	bool operator>=(const IBK::Time& other) const { return !(*this < other); }
 
 	/*! Sets the time for a reference time point.
 		\param year	The year in [years] since 0 AD.
@@ -145,7 +195,11 @@ public:
 	*/
 	void decomposeTOY(unsigned int& day, unsigned int & hour, unsigned int & minutes, unsigned int& seconds) const;
 
-	/*! Computes the seconds between this date/time and the other date/time, just as if "other - this" is evaluated in total seconds. */
+	/*! Computes the seconds between this date/time and the other date/time, just as
+		if "other - this" is evaluated in total seconds.
+
+		IBK::Time(2003,0).secondsUntil(IBK::Time(2004,0)) == IBK:SECONDS_PER_YEAR.
+	*/
 	double secondsUntil(const Time& other) const;
 
 	/*! Adds 'secs' seconds to the current time. */
@@ -189,8 +243,10 @@ public:
 	std::string toShortDateFormat() const;
 	/*! Returns the simulation time in the 17-character short english format '02/27/05 22:10:40'. */
 	std::string toShortDateFormatUS() const;
-	/*! Returns regular date/time format 'dd.mm.yyyy hh:mm:ss'. */
+	/*! Returns regular date/time format 'dd.MM.yyyy hh:mm:ss'. Very similar to toShortDateFormat(), but with 4-digit year. */
 	std::string toDateTimeFormat() const;
+	/*! Returns just the day and month in format 'dd.MM.'. */
+	std::string toDayMonthFormat() const;
 
 	/*! Format types for Time-Of-Year formats. */
 	enum TOYFormat {
@@ -231,6 +287,31 @@ public:
 		Returns an invalid IBK::Time() object when parsing fails, see isInvalid().
 	*/
 	static IBK::Time fromDateTimeFormat(const std::string & formatted_time);
+
+	/*! Converts the time from english date/time format 'yyyy-mm-dd hh:mm:ss'.
+		Returns an invalid IBK::Time() object when parsing fails, see isInvalid().
+	*/
+	static IBK::Time fromDateTimeFormat2(const std::string & formatted_time);
+
+	/*! Scan the given format and create a formatInfo set for using in fromString().
+		Format is a string which can contain the following specifier:
+		- yyyy	- Year given by 4 digits
+		- dd	- day as number given by 2 digits (start with 1)
+		- MM	- Month given as number (01 is January, 02 february a.s.o.)
+		- hh	- hour with two digits (goes from 00 to 23 h)
+		- mm	- minute with two digits (goes from 00 to 59)
+		- ss	- second with two digits /goes from 00 to 59)
+		Format can be a string like this:
+		"yyyy dd.MM. hh:mm:ss"
+	*/
+	static Time::TimeFormatInfo formatInfo(const std::string& format);
+
+	/*! Converts the time from a string using the given format information.
+		These information can be created by using function formatInfo().
+		\param useLeapYear If this is true date will be checked if it is a leap year and this influences the day number of February.
+		It return a invalid Time object an any case of an error.
+	*/
+	static IBK::Time fromString(const std::string & formatted_time, const TimeFormatInfo& formatInfo, bool useLeapYear);
 
 	// *** Utility functions related to time formatting ***
 

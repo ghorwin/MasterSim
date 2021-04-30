@@ -74,7 +74,7 @@ SolverArgsParser::SolverArgsParser() :
 }
 
 void SolverArgsParser::parse(int argc, const char * const argv[]) {
-	const char * const FUNC_ID = "[SolverArgsParser::parse]";
+	FUNCID(SolverArgsParser::parse);
 
 	// parse parent
 	IBK::ArgParser::parse(argc, argv);
@@ -83,9 +83,20 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 	if (args().size() > 0) {
 		m_executablePath = args()[0];
 	}
-
 	if (args().size() > 1) {
 		m_projectFile = args()[1];
+		// remove leading "file://" prefix if existing
+		if (IBK::string_nocase_find(m_projectFile.str(), "file://") == 0) {
+			// special check for Windows file:///C:\blabla
+			if (IBK::string_nocase_find(m_projectFile.str(), "file:///") == 0 &&
+					m_projectFile.str().size() > 10 &&
+					m_projectFile.str()[9] == ':')
+			{
+				m_projectFile = IBK::Path( m_projectFile.str().substr(8));
+			}
+			else
+				m_projectFile = IBK::Path( m_projectFile.str().substr(7));
+		}
 	}
 
 	// check restart option
@@ -277,7 +288,7 @@ const std::string & SolverArgsParser::option(int index) const {
 
 
 bool SolverArgsParser::handleErrors(std::ostream & errstrm) {
-	const char * const FUNC_ID = "[SolverArgsParser::handleErrors]";
+	FUNCID(SolverArgsParser::handleErrors);
 	// check for valid project file
 	try {
 		if (!m_projectFile.isValid())

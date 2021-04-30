@@ -72,55 +72,82 @@
 namespace IBK {
 
 void string2valueVector(const std::string & origStr, std::vector<double> & vec) {
+	FUNCID(IBK::string2valueVector);
+	// algorithm is simple - search for white-space delimiters and replace the first white-space after each non-white space
+	// substr with \0 and remember its position, then parse all the substrings
 
-//#define USE_C_VERSION
-#ifdef USE_C_VERSION
-	std::string str = origStr;
-	const char * valstr = str.c_str();
-	const char * number_start = valstr;
-	bool have_decimal = false;
-	const char DecimalPoint = '.';
-	while (*valstr != 0) {
-		const char & ch = *valstr;
-		if (have_decimal) {
-			if (ch == ' ' ||  ch == '\t') {
-				// set string end
-				*(char*)valstr = 0;
-				// append number
-				double v = std::atof(number_start);
-				number_start = valstr + 1;
-				vec.push_back(v);
-				have_decimal = false;
+	vec.clear();
+	size_t strsize = origStr.size();
+	if (strsize == 0)
+		return; // empty string - no data in vector
+
+	std::string str(origStr);
+	size_t pos = 0;
+	size_t numberStart = 0;
+
+	bool inNumber = false;
+
+	// process entire string, search until we toggle from "whitespace" to "number" and remember starting position of number
+	// then continue until we toggle from "number" to "whitespace" and try to convert the string in-between
+	while (pos < strsize) {
+		char ch = str[pos];
+		// do we have a whitespace char?
+		if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
+			// toggle to "whitespace mode"?
+			if (inNumber) {
+				inNumber = false;
+				// change character to \0
+				str[pos] = 0;
+#ifdef IBK_USE_STOD
+				// try to parse from begin of number to this position
+				size_t charCount;
+				try {
+					double val = std::stod(str.data()+numberStart, &charCount);
+					if (charCount != pos - numberStart)
+						throw std::exception();
+					vec.push_back(val);
+				} catch (...) {
+					throw IBK::Exception(IBK::FormatString("'%1' at character pos #2 is not a valid number.").arg(str.data()+numberStart).arg(numberStart), FUNC_ID);
+				}
+#else
+				// try to parse from begin of number to this position
+				double val;
+				bool isok = fast_double_parser::decimal_separator_dot::parse_number(str.data()+numberStart, &val);
+				if (!isok)
+					throw IBK::Exception(IBK::FormatString("'%1' at character pos #2 is not a valid number.").arg(str.data()+numberStart).arg(numberStart), FUNC_ID);
+				vec.push_back(val);
+#endif // IBK_USE_STOD
 			}
 		}
 		else {
-			if ((ch >= '0' && ch <= '9') || ch == DecimalPoint) {
-				have_decimal = true;
+			// toggle to "number" mode?
+			if (!inNumber) {
+				numberStart = pos;
+				inNumber = true;
 			}
 		}
-		++valstr;
+		++pos;
 	}
-	have_decimal = false;
-	// don't forget last number, check if last string contains a number
-	const char * numptr = number_start;
-	while (*numptr != 0) {
-		if ((*numptr >= '0' && *numptr <= '9') || *numptr == DecimalPoint) {
-			have_decimal = true;
-			break;
+	// if we are still in number mode at end of string, then try to parse the last number
+	if (inNumber) {
+#ifdef IBK_USE_STOD
+		size_t charCount;
+		try {
+			double val = std::stod(str.data()+numberStart, &charCount);
+			if (charCount != pos - numberStart)
+				throw;
+			vec.push_back(val);
+		} catch (...) {
+			throw IBK::Exception(IBK::FormatString("'%1' at character pos #2 is not a valid number.").arg(str.data()+numberStart).arg(numberStart), FUNC_ID);
 		}
-		++numptr;
-	}
-	if (have_decimal) {
-		vec.push_back(std::atof(number_start));
-	}
-
-#else // USE_C_VERSION
-	// C++ Version below is factor 3 slower than version above.
-	std::stringstream valstrm(origStr);
-	double val;
-	while (valstrm >> val)
+#else
+		double val;
+		bool isok = fast_double_parser::decimal_separator_dot::parse_number(str.data()+numberStart, &val);
+		if (!isok)
+			throw IBK::Exception(IBK::FormatString("'%1' at character pos #2 is not a valid number.").arg(str.data()+numberStart).arg(numberStart), FUNC_ID);
 		vec.push_back(val);
-#endif // USE_C_VERSION
+#endif // IBK_USE_STOD
+	}
 }
 // ---------------------------------------------------------------------------
 
@@ -302,22 +329,31 @@ std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 }
 // ---------------------------------------------------------------------------
 
+std::vector<std::string> explode(const std::string & str, char delim, int maxTokens) {
+	std::vector<std::string> tokens;
+	std::string tmp;
+	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
+		if (*it!=delim)
+			tmp+=*it;
+		else {
+			if (tmp.empty()) continue;
+			tokens.push_back(tmp);
+			if (maxTokens != -1 && tokens.size() >= (size_t)maxTokens)
+				return tokens;
+			tmp.clear();
+		}
+	}
+	if (tmp.size())
+		tokens.push_back(tmp);
+	return tokens;
+}
+
 
 size_t explode(const std::string& str, std::vector<std::string>& tokens, const std::string& delims, int explodeFlags) {
 	tokens.clear();
 	std::string tmp;
 
-	bool inQuotes = false;
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
-		if (explodeFlags & EF_UseQuotes) {
-			// if we find a quotation char - currently hardcoded to be " - we do not search for delimiters if inside the quotes
-			if (*it == '"')
-				inQuotes = !inQuotes;
-			if (inQuotes) {
-				tmp += *it;
-				continue;
-			}
-		}
 		bool delim_found = false;
 		for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
 			if (*it==*tit) {
@@ -816,7 +852,7 @@ std::string random_string(size_t length, unsigned int charTypes) {
 
 	static bool first = true;
 	if( first ) {
-		std::srand(static_cast<unsigned int>(std::time(0)));
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
 		first = false;
 	}
 	std::generate_n(std::back_inserter(res), length, random_char(charTypes));
@@ -869,7 +905,6 @@ std::string replace_string(const std::string& src, const std::string& old_patter
 				resstr = resstr.replace(lpos, old_pattern.size(), new_pattern);
 			break;
 		}
-		default: ;
 	}
 	return resstr;
 }
@@ -1038,7 +1073,7 @@ unsigned short Hex2DToShort(char upper, char lower) {
 void decode_version_number(const std::string & versionString, unsigned int & major, unsigned int & minor,
 						   unsigned int & patch)
 {
-	const char * const FUNC_ID = "[decode_version_number]";
+	FUNCID(decode_version_number);
 	try {
 		std::vector<std::string> versionTokens;
 		IBK::explode(versionString, versionTokens, '.', true);
@@ -1268,7 +1303,7 @@ void decode_version_number(const std::string & versionString, unsigned int & maj
 #ifdef _WIN32
 
 std::wstring UTF8ToWstring(const std::string& utf8str) {
-	const char * const FUNC_ID = "[IBK::UTF8ToWstring]";
+	FUNCID(IBK::UTF8ToWstring);
 	if (utf8str.empty())
 		return std::wstring();
 
@@ -1286,7 +1321,7 @@ std::wstring UTF8ToWstring(const std::string& utf8str) {
 
 
 std::string WstringToUTF8(const std::wstring& wide) {
-	const char * const FUNC_ID = "[IBK::WstringToUTF8]";
+	FUNCID(IBK::WstringToUTF8);
 	if (wide.empty())
 		return std::string();
 
@@ -1303,7 +1338,7 @@ std::string WstringToUTF8(const std::wstring& wide) {
 
 
 std::wstring ANSIToWstring(const std::string& ansiString, bool OEMPage) {
-	const char * const FUNC_ID = "[IBK::ANSIToWstring]";
+	FUNCID(IBK::ANSIToWstring);
 	if (ansiString.empty())
 		return std::wstring();
 

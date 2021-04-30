@@ -58,6 +58,9 @@ public:
 	*/
 	void read(const IBK::Path & filename, bool headerOnly = false, bool extractUnits = false);
 
+	/*! Convenience function to extract data of a given column (colIndex starts with index 0). */
+	std::vector<double> colData(unsigned int colIndex) const;
+
 	/*! Utility function to test if a file has tab-separated values or is written in Excel flavor, with , and quotation characters. */
 	static bool haveTabSeparationChar(const IBK::Path & filename);
 
@@ -70,7 +73,7 @@ public:
 		accordingly.
 	*/
 	std::vector<std::string>			m_units;
-	/*! Data values sorted by row and column. */
+	/*! Data values sorted by row and column, access via m_values[row][column] or use the convenience function colData(colIndex). */
 	std::vector<std::vector<double> >	m_values;
 	/*! Number of tabulator columns. */
 	unsigned int						m_nColumns;

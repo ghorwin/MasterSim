@@ -75,7 +75,7 @@ namespace IBK {
 class FileHandlerWrapper {
 public:
 	FileHandlerWrapper(const std::string& filename, bool write = false) :
-		m_handle(0),
+		m_handle(nullptr),
 		m_valid(false),
 		m_error(0)
 	{
@@ -83,8 +83,8 @@ public:
 			std::wstring wfilename = UTF8ToWstring(filename);
 			DWORD desiredAccess = write ? FILE_WRITE_ATTRIBUTES : 0;
 			DWORD shareMode = write ? FILE_SHARE_WRITE : FILE_SHARE_READ;
-			m_handle = CreateFileW(wfilename.c_str(), desiredAccess, shareMode, NULL,
-								OPEN_EXISTING, 0, NULL);
+			m_handle = CreateFileW(wfilename.c_str(), desiredAccess, shareMode, nullptr,
+								OPEN_EXISTING, 0, nullptr);
 			m_valid = m_handle != INVALID_HANDLE_VALUE;
 		}
 		catch(...) {
@@ -120,18 +120,18 @@ int64_t FileSizeReturner<8>(LARGE_INTEGER FileSize) {
 
 std::string GetLastErrorMessage(int id = 0) {
 	DWORD errorId = id == 0 ? GetLastError() : id;
-	char* lpMsgBuf = 0;
+	char* lpMsgBuf = nullptr;
 	FormatMessageA(
 		FORMAT_MESSAGE_ALLOCATE_BUFFER |
 		FORMAT_MESSAGE_FROM_SYSTEM |
 		FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL,
+		nullptr,
 		errorId,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 		(LPSTR) &lpMsgBuf,
 		0,
-		NULL );
-	if(lpMsgBuf != 0) {
+		nullptr );
+	if(lpMsgBuf != nullptr) {
 		std::string errmsg = lpMsgBuf;
 		LocalFree(lpMsgBuf);
 		return errmsg.substr(0, errmsg.size() - 2); // remove EOL at end of string
@@ -281,7 +281,7 @@ bool Path::canCreateRelativePath(const Path& toPath, std::string& errstr) const 
 
 
 Path Path::relativePath(const Path& toPath) const {
-	const char * const FUNC_ID = "[Path::relativePath]";
+	FUNCID(Path::relativePath);
 
 	std::string errstr;
 	if( !canCreateRelativePath(toPath, errstr))
@@ -427,7 +427,7 @@ bool Path::isAbsolute() const {
 
 Path Path::filename() const {
 
-	const char * const FUNC_ID = "[Path::filename]";
+	FUNCID(Path::filename);
 
 	// IBK::Path("").filename() --> exception
 	if (m_path.empty())
@@ -630,7 +630,7 @@ Path Path::withReplacedPlaceholders(const std::map<std::string, Path> & placeHol
 	*/
 
 
-	const char * const FUNC_ID = "[Path::withReplacedPlaceholders]";
+	FUNCID(Path::withReplacedPlaceholders);
 
 	Path newPath(m_path); // newPath holds current path, including placeholders
 
@@ -839,7 +839,7 @@ void Path::removeRelativeParts() {
 
 Path Path::subBranch(unsigned int begin, unsigned int count) const {
 
-	const char * const FUNC_ID = "[Path::subBranch]";
+	FUNCID(Path::subBranch);
 	bool isLinuxAbsolute = false;
 
 	if( begin == 0 && count == 0)
@@ -1033,7 +1033,7 @@ bool Path::setFileTime(	const IBK::Path& filename,
 						int month,
 						int year)
 {
-	const char * const FUNC_ID = "[Path::setFileTime]";
+	FUNCID(Path::setFileTime);
 
 #if defined(_WIN32)
 
@@ -1378,6 +1378,7 @@ bool Path::remove(const IBK::Path & p, bool quiet) {
 #else
 
 	// delete path
+	// TODO : use posix rm function
 	IBK::FormatString cmd("rm -rf \"%1\"");
 	std::string str = cmd.arg(p).str();
 	if ( std::system( str.c_str() ) )
@@ -1390,8 +1391,8 @@ bool Path::remove(const IBK::Path & p, bool quiet) {
 
 
 bool Path::copy(const IBK::Path & source, const IBK::Path & target){
-
-	const char* FUNC_ID = "[Path::copy]";
+	FUNCID(Path::copy);
+	(void)FUNC_ID; // silence warning about unused variable
 
 	if ( !source.exists() ) {
 		return false;
@@ -1405,10 +1406,12 @@ bool Path::copy(const IBK::Path & source, const IBK::Path & target){
 	if ( source.isFile() ) {
 
 		// check if target allready exists
+#ifdef IBK_PATH_WARN_IF_OVERWRITING
 		if ( target.exists() && target.isFile() ){
-			/// \todo think about this code
+			// This should be a warning with lower message verbosity
 			IBK::IBK_Message( IBK::FormatString("We will overwrite %1").arg(target), MSG_WARNING, FUNC_ID );
 		}
+#endif //  IBK_PATH_WARN_IF_OVERWRITING
 
 		if ( target.exists() && target.isDirectory() ){
 
@@ -1500,7 +1503,7 @@ bool Path::copy(const IBK::Path & source, const IBK::Path & target){
 				struct dirent *ep;
 				dp = opendir (source.absolutePath().str().c_str());
 
-				if (dp == NULL)
+				if (dp == nullptr)
 					return false; // should have been tested for before
 				// get file list
 				std::list<std::string> filelist;
@@ -1548,7 +1551,7 @@ bool Path::copy(const IBK::Path & source, const IBK::Path & target){
 
 bool Path::move(const IBK::Path & source, const IBK::Path & target){
 
-	const char * const FUNC_ID = "[Path::move]";
+	FUNCID(Path::move);
 
 	// prevent recursive path move
 	if ( target.isRootPath(source) ) {

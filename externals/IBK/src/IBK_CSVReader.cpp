@@ -56,7 +56,7 @@ using namespace std;
 namespace IBK {
 
 bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
-	const char * const FUNC_ID = "[CSVReader::haveTabSeparationChar]";
+	FUNCID(CSVReader::haveTabSeparationChar);
 	// first detect file format
 	bool tabFormat = true;
 #if defined(_WIN32)
@@ -96,7 +96,7 @@ bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
 
 
 void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUnits) {
-	const char * const FUNC_ID = "[CSVReader::read]";
+	FUNCID(CSVReader::read);
 	try {
 #if defined(_WIN32)
 	#if defined(_MSC_VER)
@@ -175,6 +175,23 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 	}
 	// store final number of rows
 	m_nRows = m_values.size();
+}
+// ----------------------------------------------------------------------------
+
+
+std::vector<double> CSVReader::colData(unsigned int colIndex) const {
+	FUNCID(CSVReader::colData);
+	if (m_values.empty())
+		return std::vector<double>();
+	if (colIndex >= m_values[0].size())
+		throw IBK::Exception(IBK::FormatString("Column index %1 out of range. Only have %2 columns in file.").arg(colIndex).arg(m_values[0].size()), FUNC_ID);
+	std::vector<double> res;
+	for (unsigned int j=0; j<m_values.size(); ++j) {
+		if (colIndex >= m_values[j].size())
+			throw IBK::Exception(IBK::FormatString("Column index %1 out of range in row %2 (only %3 columns in this row).").arg(colIndex).arg(j).arg(m_values[j].size()), FUNC_ID);
+		res.push_back(m_values[j][colIndex]);
+	}
+	return res;
 }
 // ----------------------------------------------------------------------------
 
