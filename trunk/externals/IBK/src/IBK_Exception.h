@@ -150,6 +150,8 @@ private:
 
 } // namespace IBK
 
+#define FUNCID(x) const char * const FUNC_ID = "[" #x "]"
+
 /*! \file IBK_Exception.h
 	\brief Contains declaration of class Exception.
 */

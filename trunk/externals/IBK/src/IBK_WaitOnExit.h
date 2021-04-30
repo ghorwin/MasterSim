@@ -39,6 +39,9 @@
 #ifndef IBK_WaitOnExitH
 #define IBK_WaitOnExitH
 
+#include <iostream>
+#include <cstdio>
+
 #include "IBK_configuration.h"
 
 namespace IBK {
@@ -61,12 +64,19 @@ public:
 					upon destruction.
 	*/
 	WaitOnExit(bool wait = true) : m_wait(wait) {}
-#ifdef WIN32
-	/*! Destructor, only on Windows systems. */
+	/*! Destructor, stops execution unless 'wait' is true. */
 	~WaitOnExit() {
+		// WARNING: on Unix-type systems there is not such thing as get-a-key-from-keyboard,
+		//          since this all depends on the actual terminal emulator being used (or any other
+		//          mechanism that feeds character input into applications). Also, solvers are most frequently
+		//          started in the terminal window anyway, so we do not need a "wait for closing of terminal"
+		//          feature.
+		//          The best way to get such a functionality would be to call a wrapper shell script with
+		//          a subsequent wait for keypress command once the application is finished.
+#ifdef WIN32
 		if (m_wait) system("pause");
-	}
 #endif // WIN32
+	}
 
 
 	/*! If true, the "pause" command is issued on destruction of this object, if false, nothing happens. */

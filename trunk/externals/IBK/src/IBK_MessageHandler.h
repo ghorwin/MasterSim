@@ -48,8 +48,8 @@ namespace IBK {
 class MessageIndentor;
 
 /*! Different categories of messages.
-	For MSG_PROGRESS, MSG_CONTINUED and MSG_DEBUG the verbosity level determines whether
-	a message is shown or not. MSG_WARNING, MSG_ERROR and are always printed.
+	For MSG_PROGRESS, MSG_CONTINUED and MSG_WARNING the verbosity level determines whether
+	a message is shown or not. MSG_ERROR, and MSG_DEBUG are always printed.
 */
 enum msg_type_t {
 	/*! General progress/informative messages, printed indented. */
@@ -98,7 +98,7 @@ public:
 	/*! Re-implemented message function. */
 	virtual void msg(	const std::string& msg,
 						msg_type_t t = MSG_PROGRESS,
-						const char * func_id = NULL,
+						const char * func_id = nullptr,
 						int verbose_level = VL_ALL);
 
 	/*! Sets the desired console verbosity level.
@@ -158,12 +158,12 @@ protected:
 		priority/detail level VL_DETAILED is printed, it will not be shown
 		on the console (it is too detailed).
 	*/
-	int				m_requestedConsoleVerbosityLevel;
+	verbosity_levels_t	m_requestedConsoleVerbosityLevel;
 
 	/*! Holds level of detail that defines which messages should be written to logfile.
 		\sa m_requestedConsoleVerbosityLevel
 	*/
-	int				m_requestedLogfileVerbosityLevel;
+	verbosity_levels_t	m_requestedLogfileVerbosityLevel;
 
 	/*! Pointer to log file. */
 	std::ofstream * m_logfile;

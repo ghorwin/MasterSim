@@ -61,6 +61,18 @@ void IntPara::set(const std::string& str, int val) {
 }
 
 
+unsigned int IntPara::toUInt(bool zeroExcluded, const char * const errormsg) const {
+	FUNCID(IntPara::toUInt);
+	if ((zeroExcluded && value < 1) || (!zeroExcluded && value < 0)) {
+		if (errormsg != nullptr)
+			throw IBK::Exception(errormsg, FUNC_ID);
+		else
+			throw IBK::Exception(IBK::FormatString("Invalid argument %1 to '%2' parameter!").arg(value).arg(name), FUNC_ID);
+	}
+	return static_cast<unsigned int>(value);
+}
+
+
 std::string IntPara::toString(bool without_name) const {
 	std::stringstream strm;
 	if (!without_name)
@@ -115,7 +127,7 @@ void IntPara::clear() {
 
 
 void IntPara::checkIfValueIsBelowLimit( const IBK::IntPara& limit, bool isLessEqual ) const {
-	const char * const FUNC_ID = "[IntPara::checkIfValueIsBelowLimit]";
+	FUNCID(IntPara::checkIfValueIsBelowLimit);
 
 	// check IntPara
 	if ( name.empty() || name != limit.name ) {
@@ -133,7 +145,7 @@ void IntPara::checkIfValueIsBelowLimit( const IBK::IntPara& limit, bool isLessEq
 
 
 void IntPara::checkIfValueIsAboveLimit( const IBK::IntPara& limit, bool isGreaterEqual ) const {
-	const char * const FUNC_ID = "[IntPara::checkIfValueIsUpperBound]";
+	FUNCID(IntPara::checkIfValueIsUpperBound);
 
 	// check IntPara
 	if (name.empty() || name != limit.name ) {
@@ -151,7 +163,7 @@ void IntPara::checkIfValueIsAboveLimit( const IBK::IntPara& limit, bool isGreate
 
 void IntPara::test( const IBK::IntPara& val, oper_t op ) const {
 
-	static const char * const FUNC_ID = "[IntPara::test]";
+    static FUNCID(IntPara::test);
 
 	// convert and compare value
 	switch (op) {

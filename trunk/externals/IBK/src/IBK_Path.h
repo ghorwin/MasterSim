@@ -581,7 +581,7 @@ public:
 	static bool remove(const IBK::Path & p, bool quiet = false);
 
 	/*! Copy file/directory identified by 'source' to 'target', in cases of directories uses recursive copy.
-		If target file exists, it will be overwritten.
+		\bug If target file exists, it should be overwritten or at least some error handling should be implemented. Test!
 		If target directory exists, the new copied files are merged with existing files in the directory.
 		\code
 			IBK::Path::copy("/tmp/blubb.txt", "/tmp/bla.txt");

@@ -78,12 +78,12 @@ public:
 	/*! Sets value and unit with conversion.
 		The value 'val' will be converted from 'unit' in the base unit of 'unit'.
 	*/
-	bool set(double val, Unit unit, std::string * errmsg = NULL);
+	bool set(double val, Unit unit, std::string * errmsg = nullptr);
 
 	/*! Sets name, value and unit with conversion.
 		The value 'val' will be converted from 'unit' in the base unit of 'unit'.
 	*/
-	bool set(const std::string& str, double val, Unit unit, std::string * errmsg = NULL);
+	bool set(const std::string& str, double val, Unit unit, std::string * errmsg = nullptr);
 
 	/*! Sets name and value without conversion.
 		The value 'val' will not be converted and the unit will be set to 'undefined'.
@@ -93,12 +93,12 @@ public:
 	/*! Sets name, value and unit with conversion.
 		The value 'val' will be converted from unit 'ustr' in the base unit of 'ustr'.
 	*/
-	bool set(const std::string& name_, double val, const std::string& ustr, std::string * errmsg = NULL) { return set(name_, val, Unit(ustr), errmsg); }
+	bool set(const std::string& name_, double val, const std::string& ustr, std::string * errmsg = nullptr) { return set(name_, val, Unit(ustr), errmsg); }
 
 	/*! Sets the parameter by name and value, whereas valstr is composed of the actual value and the IO_unit.
 		The value will be converted in the corresponding base unit.
 	*/
-	bool set(const std::string& str, const std::string& valstr, std::string * errmsg = NULL);
+	bool set(const std::string& str, const std::string& valstr, std::string * errmsg = nullptr);
 
 	/*! Returns the value of the parameter converted into its IO unit. */
 	double get_value() const { return get_value(IO_unit); }
@@ -238,6 +238,22 @@ public:
 	*/
 	void checkIfValueIsUpperBound (	const IBK::Parameter& limit,
 							bool isGreaterEqual ) const;
+
+	/*! This function checks the parameter for given and valid unit that is convertible to 'targetUnit', converts
+		the current value to 'limitUnit' and then compares the value to minVal and maxVal (provided in target unit). If the (converted) value
+		is outside the relevant bounds, it throws an IBK::Exception with an error text. If errmsg is not a null ptr, this
+		error message is appended to the error message.
+		Range checks are done as follows:
+
+		- value "greater than" minVal if isGreaterEqual = false
+		- value "greater or equal to" minVal isGreaterEqual = true
+
+		\return If checks are successful, the function returns the value converted to targetUnit.
+	*/
+	double checkedValue(const std::string & expectedName,
+						const std::string & targetUnit, const std::string & limitUnit,
+						double minVal, bool isGreaterEqual, double maxVal, bool isLessEqual,
+						const char * const errmsg) const;
 
 
 	// ****** member variables *************************************************

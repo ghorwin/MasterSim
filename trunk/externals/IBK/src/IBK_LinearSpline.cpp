@@ -86,7 +86,7 @@ void LinearSpline::eliminateConsecutive(	const std::vector<double>& tmp_x,
 											std::vector<double>& tmp2_x,
 											std::vector<double>& tmp2_y)
 {
-	const char * const FUNC_ID = "[LinearSpline::eliminateConsecutive]";
+	FUNCID(LinearSpline::eliminateConsecutive);
 	// eliminate consecutive x values (stem from missing accuracy when reading the file)
 	tmp2_x.clear();
 	tmp2_y.clear();
@@ -120,7 +120,7 @@ void LinearSpline::eliminateConsecutive(	const std::vector<double>& tmp_x,
 
 
 void LinearSpline::setValues(const std::vector<double> & xvals, const std::vector<double> & yvals) {
-	const char * const FUNC_ID = "[LinearSpline::setValues]";
+	FUNCID(LinearSpline::setValues);
 	if (xvals.size() != yvals.size())
 		throw IBK::Exception("X and Y vector size mismatch.", FUNC_ID);
 	if (xvals.empty())
@@ -154,11 +154,11 @@ bool LinearSpline::read(const std::string& x_data, const std::string& y_data, st
 //	std::copy(std::istream_iterator<double>(ystrm), std::istream_iterator<double>(), std::back_inserter(tmp_y) );
 
 	if (tmp_x.empty()) {
-		if (errorMsg != NULL) *errorMsg = "Missing data to read!";
+		if (errorMsg != nullptr) *errorMsg = "Missing data to read!";
 		return false;
 	}
 	if (tmp_x.size() != tmp_y.size()) {
-		if (errorMsg != NULL) {
+		if (errorMsg != nullptr) {
 			std::stringstream errstrm;
 			errstrm << "Number of x [" << tmp_x.size() << "] and y ["<< tmp_y.size() <<"] values differs!";
 			*errorMsg = errstrm.str();
@@ -244,9 +244,9 @@ double LinearSpline::value(double x) const {
 	// thus testing this is not sufficient in make spline, and we need to fix the implementation right here if
 	// new types are added to ExtrapolationMethod enum
 //	if (m_extrapolationMethod > EM_Constant) {
-	IBK_ASSERT_X( (m_extrapolationMethod <= EM_Constant), "Invalid or unknown extrapolation method!" )
+	IBK_ASSERT_X( (m_extrapolationMethod <= EM_Constant), "Invalid or unknown extrapolation method!" );
 //	}
-	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" )
+	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" );
 
 	if (m_xStep != 0) {
 		if (x>m_xMax) {
@@ -296,7 +296,7 @@ double LinearSpline::value(double x) const {
 
 double LinearSpline::nonInterpolatedValue(double x) const {
 
-	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" )
+	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" );
 
 	if (m_x.size() == 1)
 		return m_y[0];
@@ -369,7 +369,7 @@ LinearSpline::SplineGenerationResults LinearSpline::generate(
 		unsigned int maxPoints,
 		bool continueIter)
 {
-	const char * const FUNC_ID = "[LinearSplineGenerator::generate]";
+	FUNCID(LinearSplineGenerator::generate);
 
 	// *** PART 1 - Initialization ***
 

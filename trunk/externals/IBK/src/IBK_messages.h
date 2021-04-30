@@ -43,6 +43,11 @@
 #include "IBK_FormatString.h"
 #include "IBK_MessageHandlerRegistry.h"
 
+/*! The namespace IBK contains all functions/classes/data types of the IBK
+	library.
+	The name IBK stands for Institut fuer Bauklimatik der TU Dresden
+	(TUD) in Germany, where most of this library was coded.
+*/
 namespace IBK {
 
 #ifndef QT_DEBUG_BUILD
@@ -63,7 +68,7 @@ namespace IBK {
 /*! Prototype for the message function.
 	The function will be called from certain IBK classes.
 */
-inline void IBK_Message(const std::string& msg, msg_type_t t = MSG_PROGRESS, const char * func_id = NULL, int verbose_level = VL_ALL) {
+inline void IBK_Message(const std::string& msg, msg_type_t t = MSG_PROGRESS, const char * func_id = nullptr, int verbose_level = VL_ALL) {
 #ifdef _OPENMP
 	#pragma omp master
 #endif
@@ -74,7 +79,7 @@ inline void IBK_Message(const std::string& msg, msg_type_t t = MSG_PROGRESS, con
 /*! Prototype for the message function.
 	The function will be called from certain IBK classes.
 */
-inline void IBK_Message(const IBK::FormatString& msg, msg_type_t t = MSG_PROGRESS, const char * func_id = NULL, int verbose_level = VL_ALL) {
+inline void IBK_Message(const IBK::FormatString& msg, msg_type_t t = MSG_PROGRESS, const char * func_id = nullptr, int verbose_level = VL_ALL) {
 #ifdef _OPENMP
 	#pragma omp master
 #endif
@@ -96,6 +101,9 @@ public:
 		--(MessageHandlerRegistry::instance().messageHandler()->m_indentation);
 	}
 };
+
+/*! Convenience macro that creates a message indentor object and adds a void cast to remove compiler warning. */
+#define IBK_MSG_INDENT IBK::MessageIndentor indent; (void)indent
 
 /*! Foreground and background colors. */
 enum ConsoleColor {
@@ -147,6 +155,8 @@ void set_console_text_color(ConsoleColor c);
 	\brief Contains declarations for the IBK_Message() functions and the class MessageIndentor, central include file
 			for IBK-Message system.
 */
+
+extern const char * const TERMINAL_CODES[16];
 
 } // namespace IBK
 

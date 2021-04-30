@@ -113,13 +113,13 @@ inline const char * myFilename(const char * fullFilePath){
 	const char * posLastBackslash = std::strrchr( fullFilePath, '\\');
 	const char * posLastSlash = std::strrchr( fullFilePath, '/');
 
-	if (posLastSlash != NULL) {
-		if (posLastBackslash != NULL)
+	if (posLastSlash != nullptr) {
+		if (posLastBackslash != nullptr)
 			return (posLastBackslash > posLastSlash) ? posLastBackslash+1 : posLastSlash+1;
 		else
 			return posLastSlash+1;
 	}
-	else if (posLastBackslash != NULL)
+	else if (posLastBackslash != nullptr)
 		return posLastBackslash+1;
 
 	return fullFilePath;
@@ -129,15 +129,15 @@ inline const char * myFilename(const char * fullFilePath){
 #define IBK_ASSERT(p)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << "\nFILE:  " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
 #define IBK_ASSERT_X(p,m)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << ", " << #m <<  "\nFILE: " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
 #define IBK_ASSERT_XX(p,m)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << ", " << m <<  "\nFILE: " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
 
 #else
 

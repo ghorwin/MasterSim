@@ -71,7 +71,7 @@ namespace IBK {
 		"123.2 321.3"
 	\endcode
 */
-bool read_vector(const std::string& data, std::vector<double>& vec, std::string * errmsg = NULL);
+bool read_vector(const std::string& data, std::vector<double>& vec, std::string * errmsg = nullptr);
 
 /*! Tries to write a vector of numbers to the stream 'out'.
 	\sa read_vector
@@ -217,7 +217,7 @@ inline void read_uint32_binary( std::istream &in, uint32_t &number ){
 void read_string_list_binary( std::istream &in,
 							  const std::vector<std::string> & lastLineTokens,
 							  std::list<std::string> & strList,
-							  IBK::NotificationHandler * notify = NULL );
+							  IBK::NotificationHandler * notify = nullptr );
 
 /*! Reads an ASCII file in binary mode into a list of strings.
 
@@ -233,7 +233,7 @@ void read_string_list_binary( std::istream &in,
 void read_string_vector_binary( std::istream &in,
 							  const std::vector<std::string> & lastLineTokens,
 							  std::vector<std::string> & strList,
-							  IBK::NotificationHandler * notify = NULL );
+							  IBK::NotificationHandler * notify = nullptr );
 
 
 /*! Writes a matrix into a binary file.
@@ -264,7 +264,7 @@ void write_matrix_binary(const T & mat, const std::string & filename) {
 */
 template <typename T>
 void read_matrix_binary(const std::string & filename, T & mat) {
-	const char * const FUNC_ID = "[IBK::read_matrix_binary]";
+	FUNCID(IBK::read_matrix_binary);
 	std::ifstream binFile(filename.c_str(), std::ios_base::binary);
 	// read size of data storage in file
 	uint64_t matSize;
@@ -310,7 +310,7 @@ void write_matrix(std::ostream & out, const T & mat, double * b, bool eulerForma
 			if (i + 1 != n)		out << ";";
 		}
 		out << "];\n";
-		if (b != NULL) {
+		if (b != nullptr) {
 			out << ">" << vectorLabel << ":=[";
 			for (unsigned int i=0; i<n; ++i) {
 				out << std::setw(width) << std::right << b[i];
@@ -327,7 +327,7 @@ void write_matrix(std::ostream & out, const T & mat, double * b, bool eulerForma
 				out << std::setw(width) << std::right << mat.value(i,j) << " ";
 			}
 			out << " ]";
-			if (b != NULL)
+			if (b != nullptr)
 				out << "  [ " << std::setw(width) << std::right << b[i] << " ]";
 			out << std::endl;
 		}

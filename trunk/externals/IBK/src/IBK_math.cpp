@@ -148,20 +148,16 @@ double scale2(double x, double epsilon) {
 #endif // USE_COSINE
 }
 
-
 double error_function(double x) {
 	// Implementation based on approximation,
-	// see Abramowitz and Steger, 1964, Handbook of mathematical functions, Dover Publications, IBC, 1046p.
+	// see Abramowitz and Stegun, 1972, Handbook of Mathematical Functions,
+	// National Bureau of Standards, Applied Mathematics Series 55, page 299, 7.1.25
 	double ra = std::fabs(x);
 	double sign = ra/x;
-	double b = 1;
-	if (ra <= 0.5) {
-		x = ra;
-		double ex = std::exp(-x*x);
-		double T = 1.0/(1.0 + 0.47047*x);
-		b = 1.0 - ex*(T*(0.3480242 - T*(0.0958798 - T*0.7478556) ) );
-	}
-	return sign*b;
+	double ex = std::exp(-1.0 * ra * ra);
+	double T = 1.0 / (1.0 + 0.47047 * ra);
+	double b = 1.0 - ex * (T * (0.3480242 - T * (0.0958798 - T * 0.7478556) ) );
+	return sign * b;
 }
 // -----------------------------------------------------------------------------
 
