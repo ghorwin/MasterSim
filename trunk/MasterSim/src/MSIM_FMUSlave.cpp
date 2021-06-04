@@ -298,11 +298,17 @@ void FMUSlave::cacheOutputs() {
 		}
 		// strings are queried one-by-one
 		for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
-			const char * str;
+			const char * str = NULL;
 			res = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
 			if (res != fmi2OK) break;
-			IBK_ASSERT(str != NULL);
-			m_stringOutputs[i] = std::string(str);
+			if (str == NULL) {
+				IBK::IBK_Message(IBK::FormatString("Slave '%1' returned null-ptr as string for requested variable/parameter with value ref #%2." )
+								 .arg(m_fmu->m_modelDescription.m_modelName).arg(m_fmu->m_stringValueRefsOutput[i]), IBK::MSG_ERROR, FUNC_ID, IBK::VL_STANDARD);
+				res = fmi2Error;
+				break;
+			}
+			else
+				m_stringOutputs[i] = std::string(str);
 		}
 	}
 	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
