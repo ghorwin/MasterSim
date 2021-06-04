@@ -151,7 +151,7 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				parameter = parameter.substr(dotPos+1);
 
 				// if parameter string is enclosed in ", remove those
-				if (value.size() > 1 && value[0] == '\"' and value[value.size()-1] == '\"')
+				if (value.size() > 1 && value[0] == '\"' && value[value.size()-1] == '\"')
 					value = value.substr(1, value.size()-2);
 				// add paramter to slave
 				unsigned int s=0;
