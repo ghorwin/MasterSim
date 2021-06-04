@@ -26,6 +26,8 @@ unix {
 		-ldl
 }
 
+DEPENDPATH += $${INCLUDEPATH}
+
 win32 {
 	LIBS += -lzlib
 }
