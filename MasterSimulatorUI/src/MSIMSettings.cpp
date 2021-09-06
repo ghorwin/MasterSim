@@ -12,7 +12,7 @@
 
 #include "MSIMConversion.h"
 
-MSIMSettings * MSIMSettings::m_self = NULL;
+MSIMSettings * MSIMSettings::m_self = nullptr;
 
 const char * const					MSIMSettings::PROPERTY_KEYWORDS[MSIMSettings::NUM_PT] = {
 	"LastImportDirectory",
@@ -21,7 +21,7 @@ const char * const					MSIMSettings::PROPERTY_KEYWORDS[MSIMSettings::NUM_PT] = {
 
 
 MSIMSettings & MSIMSettings::instance() {
-	Q_ASSERT_X(m_self != NULL, "[MSIMSettings::instance]", "You must create an instance of "
+	Q_ASSERT_X(m_self != nullptr, "[MSIMSettings::instance]", "You must create an instance of "
 		"MSIMSettings before accessing MSIMSettings::instance()!");
 	return *m_self;
 }
@@ -32,14 +32,14 @@ MSIMSettings::MSIMSettings(const QString & organization, const QString & appName
 	m_appName(appName)
 {
 	// singleton check
-	Q_ASSERT_X(m_self == NULL, "[MSIMSettings::MSIMSettings]", "You must not create multiple instances of "
+	Q_ASSERT_X(m_self == nullptr, "[MSIMSettings::MSIMSettings]", "You must not create multiple instances of "
 		"classes that derive from MSIMSettings!");
 	m_self = this;
 }
 
 
 MSIMSettings::~MSIMSettings() {
-	m_self = NULL;
+	m_self = nullptr;
 }
 
 
@@ -64,6 +64,9 @@ void MSIMSettings::setDefaults() {
 
 	// determine text executable
 	m_textEditorExecutable.clear();
+
+	// default to XTerm
+	m_terminalEmulator = TE_XTerm;
 
 	/// \todo Improve default text editor detection
 #ifdef Q_OS_UNIX
@@ -167,6 +170,7 @@ void MSIMSettings::read(QString regName) {
 	}
 
 	m_postProcExecutable = settings.value("PostProcExecutable", QString()).toString();
+	m_terminalEmulator = (TerminalEmulators)settings.value("TerminalEmulator", TE_XTerm).toInt();
 
 }
 
@@ -203,6 +207,7 @@ void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 	}
 
 	settings.setValue("PostProcExecutable", m_postProcExecutable );
+	settings.setValue("TerminalEmulator", m_terminalEmulator);
 }
 
 
@@ -220,6 +225,114 @@ bool MSIMSettings::openFileInTextEditor(QWidget * parent, const QString & filepa
 							  .arg(m_textEditorExecutable));
 	}
 	return res;
+}
+
+
+bool MSIMSettings::startProcess(const QString & executable,
+									QStringList commandLineArgs,
+									const QString & projectFile,
+									TerminalEmulators terminalEmulator)
+{
+	bool success;
+	// spawn process
+#ifdef Q_OS_WIN
+
+	/// \todo use wide-string version of API and/or encapsulate spawn process into a function
+
+	// Use WinAPI to create a solver process
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory( &si, sizeof(si) );
+	si.cb = sizeof(si);
+	std::string utf8String = projectFile.toStdString().data();
+	si.lpTitle = (LPSTR)utf8String.c_str();
+//	si.dwFlags = STARTF_USESHOWWINDOW;
+//	si.wShowWindow = SW_SHOW;
+	ZeroMemory( &pi, sizeof(pi) );
+	const unsigned int lower_priority = 0x00004000;
+	QString cmdLine = QString("\"%1\" %2 \"%3\"")
+		.arg(executable)
+		.arg(commandLineArgs.join(" "))
+		.arg(projectFile);
+
+	std::string cmd = cmdLine.toLatin1().data();
+	// Start the child process.
+	if( !CreateProcess( nullptr,	// No module name (use command line).
+		&cmd[0],					// Command line.
+		nullptr,					// Process handle not inheritable.
+		nullptr,					// Thread handle not inheritable.
+		FALSE,						// Set handle inheritance to FALSE.
+		lower_priority,				// Create with priority lower then normal.
+		nullptr,					// Use parent's environment block.
+		nullptr,					// Use parent's starting directory.
+		&si,						// Pointer to STARTUPINFO structure.
+		&pi )						// Pointer to PROCESS_INFORMATION structure.
+	)
+	{
+		return false;
+	}
+	return true;
+
+#elif defined(Q_OS_MAC)
+
+	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
+
+	// on Mac, create a bash script in a temporary location with the command line as content
+	QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" +
+			QFileInfo(projectFile).baseName() + ".sh";
+	QFile bashFile(tmpPath);
+	bashFile.open(QFile::WriteOnly);
+	QTextStream strm(&bashFile);
+	strm << "#!/bin/bash\n";
+	// only for debugging we need to add the library fall back path
+#ifdef IBK_DEBUG
+	strm << QString("export DYLD_FALLBACK_LIBRARY_PATH=%1:%2\n")
+			.arg(MSIMSettings::instance().m_installDir + "/../../../../../externals/lib_x64")
+			.arg(MSIMSettings::instance().m_installDir + "/../../../../../lib_x64");
+#endif
+	strm << bashCmdLine + '\n';
+
+	// finally set executable permissions
+	bashFile.setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther );
+	bashFile.close();
+
+	QStringList allCmdLine{ "-a" , "Terminal.app" , tmpPath };
+	QProcess::execute("open", allCmdLine);
+
+#else // for all other platforms LINUX is expected
+
+	// append project file to arguments, no quotes needed, since Qt takes care of that
+	commandLineArgs << projectFile;
+	qint64 pid;
+	switch (terminalEmulator) {
+		case TE_XTerm : {
+			commandLineArgs = QStringList() << "-hold"
+											<< "-fa" << "'Monospace'"
+											<< "-fs" << "9"
+											<< "-geometry" << "120x40" << "-e" << executable << commandLineArgs;
+			QString terminalProgram = "xterm";
+			success = QProcess::startDetached(terminalProgram, commandLineArgs, QString(), &pid);
+		} break;
+
+		case TE_GnomeTerminal : {
+			//  gnome-terminal -- /home/ghorwin/git/SIM-VICUS/data/vicus/Tutorial/run_in_gnome_terminal.sh  /home/ghorwin/git/SIM-VICUS/bin/release/NandradSolver /home/ghorwin/git/SIM-VICUS/data/vicus/Tutorial/Tutorial1.nandrad
+			QString executablePath = QFileInfo(executable).dir().absolutePath();
+			commandLineArgs = QStringList() << "--tab"  << "--" << executablePath + "/run_in_gnome_terminal.sh" << executable << commandLineArgs;
+
+//			commandLineArgs = QStringList() << "--tab"  << "--" << "/bin/bash" << executable << "\"" + commandLineArgs.join(" ") + "\"";
+			QString terminalProgram = "gnome-terminal";
+			success = QProcess::startDetached(terminalProgram, commandLineArgs, QString(), &pid);
+		} break;
+
+		default:
+			success = QProcess::startDetached(executable, commandLineArgs, QString(), &pid);
+	}
+
+
+	// TODO : do something with the process identifier... mayby check after a few seconds, if the process is still running?
+	return success;
+
+#endif // Q_OS_WIN
 }
 
 
