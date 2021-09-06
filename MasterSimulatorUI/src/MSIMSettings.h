@@ -43,6 +43,12 @@ public:
 		NumCmdLineFlags
 	};
 
+	/*! Different choices for terminal emulators (Linux only). */
+	enum TerminalEmulators {
+		TE_None, // background process; no terminal window
+		TE_XTerm,
+		TE_GnomeTerminal
+	};
 
 	/*! Returns the instance of the singleton. */
 	static MSIMSettings & instance();
@@ -97,6 +103,11 @@ public:
 	*/
 	bool openFileInTextEditor(QWidget * parent, const QString & filepath) const;
 
+	/*! Launches a command-line process (handles platform specific issues). */
+	static bool startProcess(const QString & executable,
+							 QStringList commandLineArgs,
+							 const QString & projectFile,
+							 TerminalEmulators terminalEmulator);
 
 	// ****** member variables ************
 
@@ -186,6 +197,9 @@ public:
 
 	/*! Path to Post-Proc executable. */
 	QString						m_postProcExecutable;
+
+	/*! Stores the choice of terminal emulator. */
+	TerminalEmulators			m_terminalEmulator;
 
 	/*! Enumeration values for different properties to be managed in settings.
 	*/
