@@ -67,6 +67,19 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->comboBoxVerbosityLevel->addItems(verbosityLevels);
 	m_ui->comboBoxVerbosityLevel->setCurrentIndex(MSIMSettings::instance().m_userLogLevelConsole);
 
+#ifdef WIN32
+	m_ui->labelTerminalEmulator->setVisible(false);
+	m_ui->comboBoxTermEmulator->setVisible(false);
+#elif defined(Q_OS_LINUX)
+	m_ui->comboBoxTermEmulator->blockSignals(true);
+	m_ui->comboBoxTermEmulator->setCurrentIndex(MSIMSettings::instance().m_terminalEmulator);
+	m_ui->comboBoxTermEmulator->blockSignals(false);
+#else
+	// mac has neither option
+	m_ui->labelTerminalEmulator->setVisible(false);
+	m_ui->comboBoxTermEmulator->setVisible(false);
+#endif
+
 	blockMySignals(this, false);
 }
 
@@ -100,7 +113,7 @@ void MSIMViewSimulation::onModified(unsigned int modificationType, void * /*data
 	m_ui->lineEditRelTol->setText( QString("%L1").arg(project().m_relTol));
 	m_ui->lineEditAbsTol->setText( QString("%L1").arg(project().m_absTol));
 
-	m_ui->spinBoxMaxIteration->setValue(project().m_maxIterations);
+	m_ui->spinBoxMaxIteration->setValue((int)project().m_maxIterations);
 
 	m_ui->comboBoxMasterAlgorithm->setCurrentIndex(project().m_masterMode);
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
@@ -156,104 +169,17 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 	QDir resultDir( targetPath );
 	resultDir.removeRecursively();
 
-	// spawn process
-#ifdef Q_OS_WIN
-
-	/// \todo use wide-string version of API and/or encapsulate spawn process into a function
-
-	// Use WinAPI to create a solver process
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	ZeroMemory( &si, sizeof(si) );
-	si.cb = sizeof(si);
-	std::string utf8String = projectFile.toUtf8().data();
-	si.lpTitle = (LPSTR)utf8String.c_str();
-//	std::strcpy(si.lpTitle, );
-	ZeroMemory( &pi, sizeof(pi) );
-	const unsigned int lower_priority = 0x00004000;
-	QString cmdLine = QString("%1 %2 \"%3\"")
-		.arg(m_solverName)
-		.arg(commandLineArgs.join(" "))
-			.arg(projectFile);
-
-	std::string cmd = cmdLine.toUtf8().data();
-	// Start the child process.
-	if( !CreateProcess( NULL,   // No module name (use command line).
-		&cmd[0], 				// Command line.
-		NULL,             		// Process handle not inheritable.
-		NULL,             		// Thread handle not inheritable.
-		FALSE,            		// Set handle inheritance to FALSE.
-		lower_priority,   		// Create with priority lower then normal.
-		NULL,             		// Use parent's environment block.
-		NULL,             		// Use parent's starting directory.
-		&si,              		// Pointer to STARTUPINFO structure.
-		&pi )             		// Pointer to PROCESS_INFORMATION structure.
-	)
-	{
-		QMessageBox::critical(this, tr("Error running solver"),
-							  tr("Could not start solver executable '%1'.").arg(m_solverName));
+#if defined(Q_OS_LINUX)
+	MSIMSettings::TerminalEmulators runOption = (MSIMSettings::TerminalEmulators)m_ui->comboBoxTermEmulator->currentIndex();
+#else
+	MSIMSettings::TerminalEmulators runOption = (MSIMSettings::TerminalEmulators)-1;
+#endif
+	bool success = MSIMSettings::startProcess(m_solverName, commandLineArgs, projectFile, runOption);
+	if (!success) {
+		QMessageBox::critical(this, QString(), tr("Could not run solver '%1'").arg(m_solverName));
 		return;
 	}
-#else // Q_OS_WIN
 
-	commandLineArgs.append(projectFile);
-
-#ifdef Q_OS_LINUX
-#if __cplusplus >= 199711L
-	std::unique_ptr<QProcess> myProcess (new QProcess(this));
-#else
-	std::auto_ptr<QProcess> myProcess (new QProcess(this));
-#endif
-
-	// open terminal and start solver in terminal
-
-	QString terminalCommand = "gnome-terminal";
-	QStringList cmdLineArgs;
-	cmdLineArgs << QString("--working-directory=\"%1\"").arg(MSIMSettings::instance().m_installDir);
-
-	// compose bash command line and
-	// append project file to arguments, but use quotes since spaces may be in the path
-	QString bashCmdLine = "\"" + m_solverName + "\" " + commandLineArgs.join(" ");
-
-	cmdLineArgs << "--command";
-	cmdLineArgs << bashCmdLine;
-	/*int res = */myProcess->execute(terminalCommand, cmdLineArgs);
-
-	// release process
-	myProcess.release();
-
-#else
-
-	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
-
-	// on Mac, create a bash script in a temporary location with the command line as content
-	QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" +
-			QFileInfo(projectFile).baseName() + ".sh";
-	QFile bashFile(tmpPath);
-	bashFile.open(QFile::WriteOnly);
-	QTextStream strm(&bashFile);
-	strm << "#!/bin/bash\n";
-	// only for debugging we need to add the library fall back path
-#ifdef IBK_DEBUG
-	strm << QString("export DYLD_FALLBACK_LIBRARY_PATH=%1:%2\n")
-			.arg(MSIMSettings::instance().m_installDir + "/../../../../../externals/lib_x64")
-			.arg(MSIMSettings::instance().m_installDir + "/../../../../../lib_x64");
-#endif
-	strm << bashCmdLine + '\n';
-
-	// finally set executable permissions
-	bashFile.setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther );
-	bashFile.close();
-
-	QStringList allCmdLine{ "-a" , "Terminal.app" , tmpPath };
-	QProcess::execute("open", allCmdLine);
-#endif
-
-#endif // Q_OS_WIN
-
-#ifdef Q_OS_LINUX
-	QTimer::singleShot(2000, this, SLOT(on_pushButtonShowLogfile_clicked()));
-#endif
 }
 
 
