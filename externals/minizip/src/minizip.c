@@ -253,10 +253,7 @@ int isLargeFile(const char* filename)
  return largeFile;
 }
 
-int minizip(argc,argv)
-	int argc;
-	char *argv[];
-{
+int minizip(int argc,const char *argv[]) {
 	int i;
 	int opt_overwrite=0;
 	int opt_compress_level=Z_DEFAULT_COMPRESSION;
