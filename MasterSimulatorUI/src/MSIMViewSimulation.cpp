@@ -67,15 +67,12 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->comboBoxVerbosityLevel->addItems(verbosityLevels);
 	m_ui->comboBoxVerbosityLevel->setCurrentIndex(MSIMSettings::instance().m_userLogLevelConsole);
 
-#ifdef WIN32
-	m_ui->labelTerminalEmulator->setVisible(false);
-	m_ui->comboBoxTermEmulator->setVisible(false);
-#elif defined(Q_OS_LINUX)
+#if defined(Q_OS_LINUX)
 	m_ui->comboBoxTermEmulator->blockSignals(true);
 	m_ui->comboBoxTermEmulator->setCurrentIndex(MSIMSettings::instance().m_terminalEmulator);
 	m_ui->comboBoxTermEmulator->blockSignals(false);
 #else
-	// mac has neither option
+	// win and mac have no terminal selection
 	m_ui->labelTerminalEmulator->setVisible(false);
 	m_ui->comboBoxTermEmulator->setVisible(false);
 #endif
@@ -523,4 +520,9 @@ void MSIMViewSimulation::on_checkBoxPreventOversteppingOfEndTime_toggled(bool ch
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();
+}
+
+
+void MSIMViewSimulation::on_comboBoxTermEmulator_currentIndexChanged(int index) {
+	MSIMSettings::instance().m_terminalEmulator = (MSIMSettings::TerminalEmulators)(index);
 }
