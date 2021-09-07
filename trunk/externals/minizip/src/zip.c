@@ -519,17 +519,17 @@ local ZPOS64_T zip64local_SearchCentralDir(const zlib_filefunc64_32_def* pzlib_f
 	  break;
 
 	for (i=(int)uReadSize-3; (i--)>0;)
-	  if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
-		((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
-	  {
-		uPosFound = uReadPos+i;
-		break;
-	  }
+		if (((*(buf+i))==0x50) && ((*(buf+i+1))==0x4b) &&
+			((*(buf+i+2))==0x05) && ((*(buf+i+3))==0x06))
+		{
+			uPosFound = uReadPos+i;
+			break;
+		}
 
-	  if (uPosFound!=0)
+	if (uPosFound!=0)
 		break;
   }
-  TRYFREE(buf);
+  TRYFREE(buf)
   return uPosFound;
 }
 
@@ -595,7 +595,7 @@ local ZPOS64_T zip64local_SearchCentralDir64(const zlib_filefunc64_32_def* pzlib
 		break;
   }
 
-  TRYFREE(buf);
+  TRYFREE(buf)
   if (uPosFound == 0)
 	return 0;
 
@@ -1115,7 +1115,7 @@ extern int ZEXPORT zipOpenNewFileInZip4_64 (zipFile file, const char* filename, 
 	zi->ci.flag = flagBase;
 	if ((level==8) || (level==9))
 	  zi->ci.flag |= 2;
-	if ((level==2))
+	if (level==2)
 	  zi->ci.flag |= 4;
 	if ((level==1))
 	  zi->ci.flag |= 6;
@@ -1246,7 +1246,7 @@ extern int ZEXPORT zipOpenNewFileInZip4_64 (zipFile file, const char* filename, 
 		unsigned char bufHead[RAND_HEAD_LEN];
 		unsigned int sizeHead;
 		zi->ci.encrypt = 1;
-		zi->ci.pcrc_32_tab = get_crc_table();
+		zi->ci.pcrc_32_tab = (const unsigned long*)get_crc_table();
 		/*init_keys(password,zi->ci.keys,zi->ci.pcrc_32_tab);*/
 
 		sizeHead=crypthead(password,bufHead,RAND_HEAD_LEN,zi->ci.keys,zi->ci.pcrc_32_tab,crcForCrypting);
@@ -1941,9 +1941,9 @@ extern int ZEXPORT zipClose (zipFile file, const char* global_comment)
 			err = ZIP_ERRNO;
 
 #ifndef NO_ADDFILEINEXISTINGZIP
-	TRYFREE(zi->globalcomment);
+	TRYFREE(zi->globalcomment)
 #endif
-	TRYFREE(zi);
+	TRYFREE(zi)
 
 	return err;
 }
