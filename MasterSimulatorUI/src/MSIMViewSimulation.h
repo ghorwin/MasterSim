@@ -68,6 +68,8 @@ private slots:
 
 	void on_checkBoxPreventOversteppingOfEndTime_toggled(bool checked);
 
+	void on_comboBoxTermEmulator_currentIndexChanged(int index);
+
 private:
 	void updateCommandLine();
 
