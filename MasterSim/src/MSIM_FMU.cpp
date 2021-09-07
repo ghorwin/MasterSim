@@ -40,7 +40,7 @@ public:
 #if defined(_WIN32)
 		m_dllHandle(0)
 #else
-		m_soHandle(NULL)
+		m_soHandle(nullptr)
 #endif
 	{
 	}
@@ -143,7 +143,7 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
 				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
-					IBK_ASSERT_X(false, "bad variable initialization");
+					IBK_ASSERT_X(false, "bad variable initialization")
 			}
 		}
 	}
@@ -157,7 +157,7 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
 				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
-					IBK_ASSERT_X(false, "bad variable initialization");
+					IBK_ASSERT_X(false, "bad variable initialization")
 			}
 		}
 	}
@@ -193,12 +193,10 @@ void FMU::import(ModelDescription::FMUType typeToImport) {
 
 	// append model identifier for selected model
 	switch (typeToImport) {
-		case ModelDescription::ME_v1 : ; // same as for CS_v1
+		case ModelDescription::ME_v1 : // same as for CS_v1
 		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_modelIdentifier; break;
 		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier; break;
 		case ModelDescription::CS_v2 : sharedLibraryPath /= m_modelDescription.m_csV2ModelIdentifier; break;
-		default :
-			throw IBK::Exception("Invalid selection of model type (can only import a single FMU at a time).", FUNC_ID);
 	}
 
 	try {
@@ -244,6 +242,7 @@ unsigned int FMU::localOutputIndex(FMIVariable::VarType t, unsigned int valueRef
 				if (m_stringValueRefsOutput[i] == valueReference)
 					return i;
 		} break;
+		case FMIVariable::NUM_VT : ; // just to remove compiler warning
 	}
 	throw IBK::Exception( IBK::FormatString("Variable of type '%1' with value reference %2 is not defined in this FMU.")
 		.arg(FMIVariable::varType2String(t)).arg(valueReference), "[FMU::localOutputIndex]");
@@ -360,7 +359,7 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 
 	// Mind: miniunz changes the current working directory
 	IBK::Path currentWd = IBK::Path::current();
-	int res = miniunz(6, (char**)argv);
+	int res = miniunz(6, argv);
 	IBK::Path::setCurrent(currentWd); // reset working directory
 	if (res != 0)
 		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'")
@@ -411,11 +410,11 @@ std::string GetLastErrorStdStr() {
 			FORMAT_MESSAGE_ALLOCATE_BUFFER |
 			FORMAT_MESSAGE_FROM_SYSTEM |
 			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
+			nullptr,
 			error,
 			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 			(LPTSTR) &lpMsgBuf,
-			0, NULL );
+			0, nullptr );
 		if (bufLen)
 		{
 			LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
@@ -438,7 +437,7 @@ FMUPrivate::~FMUPrivate() {
 
 void * FMUPrivate::importFunctionAddress(const char* functionName ) {
 	void * ptr = reinterpret_cast<void*>( GetProcAddress( m_dllHandle, functionName ) );
-	if (ptr == NULL)
+	if (ptr == nullptr)
 		throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library").arg(functionName), "[FMUPrivate::importFunctionAddress]");
 	return ptr;
 }
@@ -452,7 +451,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
 	// use wide-char version of LoadLibrary
 	std::wstring dllPath = sharedLibraryPath.wstrOS();
-	m_dllHandle = LoadLibraryExW( dllPath.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+	m_dllHandle = LoadLibraryExW( dllPath.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
 
 	if ( m_dllHandle == 0 )
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load DLL '%2' (maybe missing dependencies).")
@@ -465,7 +464,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 // Linux/Mac implementation
 
 FMUPrivate::~FMUPrivate() {
-	if (m_soHandle != NULL) {
+	if (m_soHandle != nullptr) {
 		dlclose( m_soHandle );
 	}
 }
@@ -473,7 +472,7 @@ FMUPrivate::~FMUPrivate() {
 
 void * FMUPrivate::importFunctionAddress(const char* functionName) {
 	void * ptr = dlsym( m_soHandle, functionName );
-	if (ptr == NULL) {
+	if (ptr == nullptr) {
 		throw IBK::Exception( IBK::FormatString("Cannot import function '%1' from shared/dynamic library")
 							  .arg(std::string(functionName)), "[FMUPrivate::importFunctionAddress]");
 	}
@@ -501,7 +500,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	///		 the import should fail.
 	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW|RTLD_LOCAL );
 
-	if (m_soHandle == NULL)
+	if (m_soHandle == nullptr)
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
 							 .arg(dlerror()).arg(sharedLibraryPath), FUNC_ID);
 }

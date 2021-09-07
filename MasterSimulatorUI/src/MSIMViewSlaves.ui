@@ -153,7 +153,7 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget2">
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="2" column="0" colspan="4">
         <widget class="BLOCKMOD::ZoomMeshGraphicsView" name="blockModWidget">

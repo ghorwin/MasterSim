@@ -9,6 +9,10 @@ namespace Ui {
 	class MSIMSimulationMonitorWidget;
 }
 
+
+/*! Realtime co-sim monitoring and control widget.
+	TODO Rethink design and implement properly with start/stop/store/restore/rewind buttons
+*/
 class MSIMSimulationMonitorWidget : public QWidget {
 	Q_OBJECT
 public:

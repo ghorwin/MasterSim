@@ -406,8 +406,8 @@ void MSIMViewConnections::updateConnectionsTable() {
 		inItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 		try {
 			edge.splitReference(edge.m_inputVariableRef, inputSlaveName, varName);
-			// find slave in list of slaves
-			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(inputSlaveName);
+			// find slave in list of slaves; throws an exception if slave is missing
+			project().simulatorDefinition(inputSlaveName);
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();

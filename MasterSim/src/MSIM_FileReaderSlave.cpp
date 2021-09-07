@@ -180,17 +180,17 @@ void FileReaderSlave::cacheOutputs() {
 	unsigned int idxDouble = 0;
 	unsigned int idxInt = 0;
 	unsigned int idxBool = 0;
-	unsigned int idxString = 0;
+//	unsigned int idxString = 0;
 	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
 		switch (m_columnVariableTypes[j]) {
 			case MASTER_SIM::FMIVariable::VT_DOUBLE :
 				m_doubleOutputs[idxDouble++] = m_valueSplines[j]->value(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_INT :
-				m_intOutputs[idxInt++] = m_valueSplines[j]->nonInterpolatedValue(m_t);
+				m_intOutputs[idxInt++] = (int)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_BOOL :
-				m_boolOutputs[idxBool++] = m_valueSplines[j]->nonInterpolatedValue(m_t);
+				m_boolOutputs[idxBool++] = (bool)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_STRING : break; // TODO : later store string variables
 			case MASTER_SIM::FMIVariable::NUM_VT : break; // nothing to do
