@@ -21,19 +21,20 @@ MSIMSimulationMonitorWidget::~MSIMSimulationMonitorWidget() {
 }
 
 
-void MSIMSimulationMonitorWidget::onNewMessageReceived(const QString & message) {
+void MSIMSimulationMonitorWidget::onNewMessageReceived(const QString & /*message*/) {
 
 }
 
 
-void MSIMSimulationMonitorWidget::lastLineOfMessage(const QString & lastLineOfMessage) {
+void MSIMSimulationMonitorWidget::lastLineOfMessage(const QString & /*lastLineOfMessage*/) {
 
 }
 
 
 void MSIMSimulationMonitorWidget::run(const IBK::Path & projectFile, int verbosityLevel) {
-	const char * const FUNC_ID = "[MSIMSimulationMonitorWidget::run]";
+	(void)projectFile; (void)verbosityLevel;
 #if 0
+	const char * const FUNC_ID = "[MSIMSimulationMonitorWidget::run]";
 	try {
 		// setup directory structure
 		IBK::Path workingDir = projectFile.withoutExtension();

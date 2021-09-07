@@ -66,11 +66,11 @@ void fmi2LoggerCallback( fmi2ComponentEnvironment /* c */, fmi2String instanceNa
 #if defined(_MSC_VER)
 
 fmiCallbackFunctions FMUSlave::m_fmiCallBackFunctions = {
-	{ fmiLoggerCallback }, { calloc }, { free }, {NULL}
+	{ fmiLoggerCallback }, { calloc }, { free }, {nullptr}
 };
 
 fmi2CallbackFunctions FMUSlave::m_fmi2CallBackFunctions = {
-	{ fmi2LoggerCallback }, { calloc }, { free }, {NULL}, {NULL}
+	{ fmi2LoggerCallback }, { calloc }, { free }, {nullptr}, {nullptr}
 };
 
 #else
@@ -79,15 +79,15 @@ fmiCallbackFunctions FMUSlave::m_fmiCallBackFunctions = {
 	.logger					= fmiLoggerCallback,
 	.allocateMemory			= calloc,
 	.freeMemory				= free,
-	.stepFinished			= NULL,
+	.stepFinished			= nullptr,
 };
 
 fmi2CallbackFunctions FMUSlave::m_fmi2CallBackFunctions = {
 	.logger					= fmi2LoggerCallback,
 	.allocateMemory			= calloc,
 	.freeMemory				= free,
-	.stepFinished			= NULL,
-	.componentEnvironment	= NULL
+	.stepFinished			= nullptr,
+	.componentEnvironment	= nullptr
 };
 
 #endif
@@ -97,14 +97,14 @@ bool FMUSlave::m_useDebugLogging = true;
 FMUSlave::FMUSlave(FMU * fmu, const std::string & name) :
 	AbstractSlave(name),
 	m_fmu(fmu),
-	m_component(NULL)
+	m_component(nullptr)
 {
 	m_filepath = fmu->fmuFilePath();
 }
 
 
 FMUSlave::~FMUSlave() {
-	if (m_component != NULL) {
+	if (m_component != nullptr) {
 		if (m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v1)
 			m_fmu->m_fmi1Functions.freeSlaveInstance(m_component);
 		else
@@ -137,7 +137,7 @@ void FMUSlave::instantiate() {
 							m_useDebugLogging ? fmi2True : fmi2False); // debug logging
 	}
 
-	if (m_component == NULL)
+	if (m_component == nullptr)
 		throw IBK::Exception("Error instantiating slave.", "[FMUSlave::instantiateFMUSlave]");
 
 	// resize vectors
@@ -235,7 +235,7 @@ int FMUSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 
 
 void FMUSlave::currentState(fmi2FMUstate * state) const {
-	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2);
+	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2)
 
 	if (m_fmu->m_fmi2Functions.getFMUstate(m_component, state) != fmi2OK) {
 		throw IBK::Exception(IBK::FormatString("Failed getting FMU state from slave '%1'.").arg(m_name), "[FMUSlave::currentState]");
@@ -274,7 +274,7 @@ void FMUSlave::cacheOutputs() {
 			const char * str;
 			res = m_fmu->m_fmi1Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
 			if (res != fmi2OK) break;
-			IBK_ASSERT(str != NULL);
+			IBK_ASSERT(str != nullptr)
 			m_stringOutputs[i] = std::string(str);
 		}
 	}
@@ -298,10 +298,10 @@ void FMUSlave::cacheOutputs() {
 		}
 		// strings are queried one-by-one
 		for (unsigned int i=0; i<m_fmu->m_stringValueRefsOutput.size(); ++i) {
-			const char * str = NULL;
+			const char * str = nullptr;
 			res = m_fmu->m_fmi2Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
 			if (res != fmi2OK) break;
-			if (str == NULL) {
+			if (str == nullptr) {
 				IBK::IBK_Message(IBK::FormatString("Slave '%1' returned null-ptr as string for requested variable/parameter with value ref #%2." )
 								 .arg(m_fmu->m_modelDescription.m_modelName).arg(m_fmu->m_stringValueRefsOutput[i]), IBK::MSG_ERROR, FUNC_ID, IBK::VL_STANDARD);
 				res = fmi2Error;
@@ -389,6 +389,7 @@ void FMUSlave::setValue(const FMIVariable & var, const std::string & value) {
 		case FMIVariable::VT_STRING :
 			setString(var.m_valueReference, value);
 			break;
+		case FMIVariable::NUM_VT : ; // just to silence compiler warning
 	}
 }
 
