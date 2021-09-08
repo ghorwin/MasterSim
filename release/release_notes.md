@@ -1,6 +1,20 @@
 Release Notes and ChangeLog for MasterSimulator
 ===============================================
 
+Changelog for Version 0.9.0 (08.09.2021)
+----------------------------------------
+
+* Bugfix:  [Ticket #91] Fix crash when FMU slave returns nullptr upon string query
+* Feature: [Ticket #90] Add link to webpage in about dialog
+* Feature: [Ticket #89] Add main menu option for Linux Desktop integration
+* Feature: [Ticket #88] Add check against nullptr returned from fmi2GetString() calls
+* Feature: [Ticket #87] Add support for "file:/​/​/​path/​to/​project.msim" protocol prefix
+* Feature: [Ticket #86] Run solver in visible terminal on Linux (XTerm/​Gnome Terminal)
+* Feature: [Ticket #85] Add support for string parameters with leading spaces
+* Feature: [Ticket #83] Deploy examples/​validation files on Mac as well
+* Feature: [Ticket #82] More improvement on german and english manual
+
+
 Changelog for Version 0.8.3 (16.10.2020)
 ----------------------------------------
 
