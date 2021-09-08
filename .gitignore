@@ -1,0 +1,56 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+*.so.*
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+*.qmake.stash
+Makefile*
+*.pro.user
+*.pyc
+*.pdb
+/build/build-*
+
+# Mac-specific stuff
+.DS_Store
+
+
+# misc
+*.tlog
+*.vcxproj.user
+*.~p2
+*.autosave
+
+*.lyx~
+*.lyx\#
+*.odg\#
+*.ilk
+
+
