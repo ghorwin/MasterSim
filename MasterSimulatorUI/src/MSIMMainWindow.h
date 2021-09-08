@@ -142,6 +142,8 @@ private slots:
 
 	void on_actionFileOpenProjectDir_triggered();
 
+	void on_actionHelpLinuxDesktopIntegration_triggered();
+
 private:
 	/*! Sets up all dock widgets with definition lists. */
 	void setupDockWidgets();

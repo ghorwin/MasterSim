@@ -45,16 +45,11 @@ int main(int argc, char *argv[]) {
 
 	MSIMDebugApplication a(argc, argv);
 
-//	QPalette p;
-//	p.setBrush(QPalette::Window, QColor(44,44,44));
-//	a.setPalette(p);
-
 #if QT_VERSION >= 0x050000
 	qInstallMessageHandler(qDebugMsgHandler);
 #else
 	qInstallMsgHandler(qDebugMsgHandler);
 #endif
-
 
 
 	// *** Locale setup for Unix/Linux ***
@@ -111,53 +106,6 @@ int main(int argc, char *argv[]) {
 	messageHandler.openLogFile(MSIMDirectories::globalLogFile().toUtf8().data(), false, errmsg);
 	messageHandler.setConsoleVerbosityLevel( settings.m_userLogLevelConsole );
 	messageHandler.setLogfileVerbosityLevel( settings.m_userLogLevelLogfile );
-
-#if defined(Q_OS_UNIX)
-
-	// copy icon files, unless existing already
-//	QString iconFile = QDir::home().absoluteFilePath(".local/share/icons/hicolor/32x32/apps/mastersim.png");
-#ifdef IBK_DEPLOYMENT
-	QString iconLocation = MSIMDirectories::resourcesRootDir();
-#else
-	QString iconLocation = MSIMDirectories::resourcesRootDir() + "/gfx/logo";
-#endif
-	QStringList iconSizes;
-	iconSizes << "16" << "32" << "48" << "64" << "128" << "256" << "512";
-	QString targetPath = QDir::home().absoluteFilePath(".icons/hicolor/%1x%1/apps/mastersim.png");
-//	QString targetPath = QDir::home().absoluteFilePath(".local/share/icons/hicolor/%1x%1/apps/mastersim.png");
-	foreach (QString s, iconSizes) {
-		QString iconFile = iconLocation + "/icon_" + s + ".png";
-		QDir::home().mkpath( QString(".icons/hicolor/%1x%1/apps").arg(s));
-		QString targetFile = targetPath.arg(s);
-		if (!QFile(targetFile).exists())
-			QFile::copy(iconFile, targetFile);
-	}
-
-	// generate .desktop file, if it does not exist yet
-	QString desktopFileContents =
-			"[Desktop Entry]\n"
-			"Name=MasterSim %1\n"
-			"Comment=FMI Co-Simulations Master\n"
-			"Exec=%2/MasterSimulatorUI\n"
-			"Icon=mastersim\n"
-			"Terminal=false\n"
-			"Type=Application\n"
-			"Categories=Science;\n"
-			"StartupNotify=true\n";
-	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(settings.m_installDir);
-	QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
-	if (!dirs.empty()) {
-		QString desktopFile = dirs[0] + "/mastersimulatorui.desktop";
-		if (!QFile(desktopFile).exists()) {
-			QFile deskFile(desktopFile);
-			deskFile.open(QFile::WriteOnly);
-			QTextStream strm(&deskFile);
-			strm << desktopFileContents;
-			deskFile.setPermissions((QFile::Permission)0x755);
-			deskFile.close();
-		}
-	}
-#endif
 
 	// *** Install translator ***
 	if (argParser.hasOption("lang")) {

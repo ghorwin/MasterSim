@@ -192,7 +192,9 @@ public:
 	/*! Stores the logging threshold for the log file. */
 	IBK::verbosity_levels_t		m_userLogLevelLogfile;
 
-	/*! The version number stored during last run (used to detect version changes). */
+	/*! The version number stored during last run (used to detect version changes) (empty on first call,
+		thus we can detect a first-install.
+	*/
 	QString						m_lastVersionNumber;
 
 	/*! Path to Post-Proc executable. */

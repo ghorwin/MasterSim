@@ -222,6 +222,14 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 		}
 	}
 
+#if defined(Q_OS_UNIX)
+	// on first run on Linux, ask for setting up desktop integration
+	if (MSIMSettings::instance().m_lastVersionNumber.isEmpty())
+		QTimer::singleShot(500, this, &MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered);
+#else
+	m_ui->actionHelpLinuxDesktopIntegration->setVisible(false);
+#endif
+
 }
 
 
@@ -959,6 +967,77 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 }
 
 
+void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
+	// compose path to desktop-file, if existing, prompt user to "update" system integration, otherwise prompt to
+	// "setup" integration
 
+	QStringList dirs = QStandardPaths::standardLocations(QStandardPaths::ApplicationsLocation);
+	if (dirs.empty()) return; // cannot continue
 
+	QString desktopFile = dirs[0] + "/mastersimulatorui.desktop";
+	if (QFileInfo::exists(desktopFile)) {
+		int res = QMessageBox::question(this, tr("Update Desktop Integration"), tr("Should the existing desktop integration and msim file type association be updated?"),
+										QMessageBox::Yes | QMessageBox::No);
+		if (res == QMessageBox::No)
+			return;
+	}
+	else {
+		int res = QMessageBox::question(this, tr("Update Desktop Integration"), tr("Should MasterSim set up the desktop integration and associate msim file types with MasterSim?"),
+										QMessageBox::Yes | QMessageBox::No);
+		if (res == QMessageBox::No)
+			return;
+	}
 
+	// copy icon files, unless existing already
+#ifdef IBK_DEPLOYMENT
+	QString iconLocation = MSIMDirectories::resourcesRootDir();
+#else
+	QString iconLocation = MSIMDirectories::resourcesRootDir() + "/gfx/logo";
+#endif
+	QStringList iconSizes;
+	iconSizes << "16" << "32" << "48" << "64" << "128" << "256" << "512";
+	QString targetPath = QDir::home().absoluteFilePath(".icons/hicolor/%1x%1/apps/mastersim.png");
+	foreach (QString s, iconSizes) {
+		QString iconFile = iconLocation + "/icon_" + s + ".png";
+		QDir::home().mkpath( QString(".icons/hicolor/%1x%1/apps").arg(s));
+		QString targetFile = targetPath.arg(s);
+		if (!QFile(targetFile).exists())
+			QFile::copy(iconFile, targetFile);
+	}
+
+	// generate .desktop file, if it does not exist yet
+	QString desktopFileContents =
+			"[Desktop Entry]\n"
+			"Name=MasterSim %1\n"
+			"Comment=FMI Co-Simulations Master\n"
+			"Exec=%2/MasterSimulatorUI\n"
+			"Icon=mastersim\n"
+			"Terminal=false\n"
+			"Type=Application\n"
+			"Categories=Science;\n"
+			"StartupNotify=true\n";
+	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(MSIMSettings::instance().m_installDir);
+	QFile deskFile(desktopFile);
+	deskFile.open(QFile::WriteOnly);
+	QTextStream strm(&deskFile);
+	strm << desktopFileContents;
+	deskFile.setPermissions((QFile::Permission)0x755);
+	deskFile.close();
+
+	// also create Mime file for file type associations
+	QString mimeFileContents =
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+			"<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>\n"
+			"	<mime-type type=\"application/x-mastersim\">\n"
+			"		<comment>MASTERSIM project file</comment>\n"
+			"		<generic-icon name=\"mastersim\"/>\n"
+			"		<glob pattern=\"*.msim\"/>\n"
+			"	</mime-type>\n"
+			"</mime-info>\n";
+	QString mimeFile = dirs[0] + "/../mime/packages/x-mastersim.xml";
+	QFile mimeF(mimeFile);
+	mimeF.open(QFile::WriteOnly);
+	QTextStream strm2(&mimeF);
+	strm2 << mimeFileContents;
+	mimeF.close();
+}
