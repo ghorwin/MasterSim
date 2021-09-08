@@ -120,8 +120,16 @@ void MSIMSettings::applyCommandLineArgs(const IBK::ArgParser & argParser) {
 		m_langId = QString::fromStdString(argParser.option("lang"));
 	// first positional argument is project file
 	if (argParser.args().size() > 1){
-		std::string dummy = argParser.args()[1];
-		m_initialProjectFile = utf82QString(dummy);
+		std::string str = argParser.args()[1];
+#ifdef Q_OS_WIN
+		// On Windows, use codepage encoding instead of UTF8
+		m_initialProjectFile = QString::fromLatin1(str.c_str() );
+#else
+		m_initialProjectFile = QString::fromUtf8( str.c_str() );
+		// remove "file://" prefix
+		if (m_initialProjectFile.indexOf("file://") == 0)
+			m_initialProjectFile = m_initialProjectFile.mid(7);
+#endif
 	}
 }
 
