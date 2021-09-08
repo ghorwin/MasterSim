@@ -12,6 +12,7 @@
 
 #include "MSIMUIConstants.h"
 #include "MSIMDirectories.h"
+#include "MSIMSettings.h"
 
 MSIMLanguageHandler & MSIMLanguageHandler::instance() {
 	static MSIMLanguageHandler myHandler;
@@ -19,8 +20,8 @@ MSIMLanguageHandler & MSIMLanguageHandler::instance() {
 }
 
 MSIMLanguageHandler::MSIMLanguageHandler() :
-	applicationTranslator(NULL),
-	systemTranslator(NULL)
+	applicationTranslator(nullptr),
+	systemTranslator(nullptr)
 {
 }
 
@@ -29,15 +30,15 @@ MSIMLanguageHandler::~MSIMLanguageHandler() {
 	// get rid of old translators
 	// at this time, the application object doesn't live anylonger, so we
 	// can savely destruct the translator objects
-	delete applicationTranslator; applicationTranslator = NULL;
-	delete systemTranslator; systemTranslator = NULL;
+	delete applicationTranslator; applicationTranslator = nullptr;
+	delete systemTranslator; systemTranslator = nullptr;
 }
 
 
 QString MSIMLanguageHandler::langId() {
 	const char * const FUNC_ID = "[MSIMLanguageHandler::langId]";
 
-	QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
+	QSettings config(MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName);
 	QString langid = config.value("LangID", QString() ).toString();
 	if (langid.isEmpty()) {
 		// try to determine language id from OS
@@ -54,7 +55,7 @@ QString MSIMLanguageHandler::langId() {
 
 
 void MSIMLanguageHandler::setLangId(QString id) {
-	QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
+	QSettings config(MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName);
 	config.setValue("LangID", id );
 }
 
@@ -63,19 +64,19 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 	const char * const FUNC_ID = "[MSIMLanguageHandler::installTranslator]";
 
 	// get rid of old translators
-	if (applicationTranslator != NULL) {
+	if (applicationTranslator != nullptr) {
 		qApp->removeTranslator(applicationTranslator);
-		delete applicationTranslator; applicationTranslator = NULL;
+		delete applicationTranslator; applicationTranslator = nullptr;
 	}
-	if (systemTranslator != NULL) {
+	if (systemTranslator != nullptr) {
 		qApp->removeTranslator(systemTranslator);
-		delete systemTranslator; systemTranslator = NULL;
+		delete systemTranslator; systemTranslator = nullptr;
 	}
 
 
 	// create new translators, unless we are using english
 	if (langId == "en") {
-		QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
+		QSettings config(MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName);
 		config.setValue("LangID", langId);
 		QLocale loc(QLocale::English);
 		loc.setNumberOptions(QLocale::OmitGroupSeparator | QLocale::RejectGroupSeparator);
@@ -101,7 +102,7 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		// no translator found, remove it again
 		delete systemTranslator;
-		systemTranslator = NULL;
+		systemTranslator = nullptr;
 	}
 
 
@@ -111,14 +112,14 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		qApp->installTranslator(applicationTranslator);
 		// remember translator in settings
-		QSettings config(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
+		QSettings config(MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName);
 		config.setValue("LangID", langId);
 	}
 	else {
 		IBK::IBK_Message( IBK::FormatString("Could not load application translator file: 'MasterSimulatorUI_%1'.\n").arg(langId.toUtf8().data()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		delete applicationTranslator;
-		applicationTranslator = NULL;
+		applicationTranslator = nullptr;
 	}
 
 	// now also set the corresponding locale settings (for number display etc.)
