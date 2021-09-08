@@ -195,7 +195,7 @@ public:
 	/*! The version number stored during last run (used to detect version changes) (empty on first call,
 		thus we can detect a first-install.
 	*/
-	QString						m_lastVersionNumber;
+	QString						m_versionIdentifier;
 
 	/*! Path to Post-Proc executable. */
 	QString						m_postProcExecutable;

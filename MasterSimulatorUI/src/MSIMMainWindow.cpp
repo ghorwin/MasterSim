@@ -224,7 +224,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 
 #if defined(Q_OS_UNIX)
 	// on first run on Linux, ask for setting up desktop integration
-	if (MSIMSettings::instance().m_lastVersionNumber.isEmpty())
+	if (MSIMSettings::instance().m_versionIdentifier.isEmpty())
 		QTimer::singleShot(500, this, &MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered);
 #else
 	m_ui->actionHelpLinuxDesktopIntegration->setVisible(false);
@@ -1041,5 +1041,5 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 	mimeF.close();
 
 	// mime-type database update is still needed; if that doesn't work, we can't help it
-	int res = QProcess::execute("update-mime-database", QStringList() << mimeDir);
+	QProcess::execute("update-mime-database", QStringList() << mimeDir);
 }
