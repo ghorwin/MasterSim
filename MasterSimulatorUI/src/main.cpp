@@ -57,6 +57,8 @@ int main(int argc, char *argv[]) {
 	setlocale(LC_NUMERIC,"C");
 #endif
 
+	const QString ProgramVersionName = QString("MasterSim %1").arg(MASTER_SIM::VERSION);
+
 	// *** Font size adjustment ***
 #if defined(Q_OS_MAC)
 //	QFont f = qApp->font();
@@ -67,18 +69,34 @@ int main(int argc, char *argv[]) {
 	QFont f = qApp->font();
 	f.setPointSize(9);
 	qApp->setFont(f);
-	qApp->setWindowIcon(QIcon(":/gfx/MasterSimulator_48x48.png"));
 #elif defined(Q_OS_WIN)
 	QFont f = qApp->font();
 	f.setPointSize(8);
 	qApp->setFont(f);
 #endif
-	qApp->setApplicationName(MASTER_SIM::PROGRAM_NAME);
+
+	qApp->setApplicationName(ProgramVersionName);
+	qApp->setWindowIcon(QIcon(":/gfx/MasterSimulator_48x48.png"));
 
 	// *** Create and initialize setting object ***
-	MSIMSettings settings(ORG_NAME, MASTER_SIM::PROGRAM_NAME);
+	MSIMSettings settings(ORG_NAME, ProgramVersionName);
 	settings.setDefaults();
 	settings.read();
+	// if we have just upgraded to a new version, try to import settings from the last minor version
+	if (settings.m_versionIdentifier.isEmpty() && settings.m_lastProjectFile.isEmpty()) {
+		unsigned int major, minor, patch;
+		IBK::decode_version_number(MASTER_SIM::VERSION, major, minor, patch);
+		for (int i=(int)minor-1; i>0; --i) {
+			QString VersionName = QString("MasterSim %1.%2").arg(major).arg(i);
+			settings.m_appName = VersionName;
+			settings.read();
+			if (!settings.m_versionIdentifier.isEmpty() || !settings.m_lastProjectFile.isEmpty() ||
+					settings.m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory].isValid())
+				break;
+		}
+		settings.m_appName = ProgramVersionName;
+	}
+	settings.m_versionIdentifier = MASTER_SIM::VERSION;
 
 
 	// *** Initialize Command Line Argument Parser ***
