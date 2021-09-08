@@ -65,6 +65,8 @@
     <addaction name="actionHelpOnlineManual"/>
     <addaction name="actionHelpReport"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpLinuxDesktopIntegration"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpAboutMasterSim"/>
     <addaction name="actionHelpAboutQt"/>
    </widget>
@@ -331,6 +333,11 @@
    </property>
    <property name="shortcut">
     <string>F8</string>
+   </property>
+  </action>
+  <action name="actionHelpLinuxDesktopIntegration">
+   <property name="text">
+    <string>Desktop integration (Linux)...</string>
    </property>
   </action>
  </widget>

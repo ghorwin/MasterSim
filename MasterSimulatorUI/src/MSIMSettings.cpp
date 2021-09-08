@@ -12,6 +12,7 @@
 #include <QTextStream>
 
 #include "MSIMConversion.h"
+#include <MSIM_Constants.h>
 
 MSIMSettings * MSIMSettings::m_self = nullptr;
 
@@ -156,6 +157,8 @@ void MSIMSettings::read(QString regName) {
 	m_maxRecentProjects = settings.value("MaxRecentProjects", m_maxRecentProjects).toUInt();
 	m_maxNumUNDOSteps = settings.value("MaxNumUndoSteps", m_maxNumUNDOSteps).toUInt();
 
+	m_lastVersionNumber = settings.value("LastVersionNumber", QString()).toString(); // on first call, this version number is empty
+
 	QString tmpTextEditorExecutable = settings.value("TextEditorExecutable", m_textEditorExecutable ).toString();
 	if (!tmpTextEditorExecutable.isEmpty())
 		m_textEditorExecutable = tmpTextEditorExecutable;
@@ -194,6 +197,8 @@ void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 
 	settings.setValue("TextEditorExecutable", m_textEditorExecutable );
 	settings.setValue("LangID", m_langId );
+
+	settings.setValue("LastVersionNumber", MASTER_SIM::LONG_VERSION);
 
 	settings.setValue("UserLogLevelConsole", m_userLogLevelConsole);
 	settings.setValue("UserLogLevelLogfile", m_userLogLevelLogfile);
