@@ -14,6 +14,11 @@
 #include "MSIMConversion.h"
 #include <MSIM_Constants.h>
 
+#ifdef Q_OS_WIN
+#undef UNICODE
+#include <Windows.h>
+#endif
+
 MSIMSettings * MSIMSettings::m_self = nullptr;
 
 const char * const					MSIMSettings::PROPERTY_KEYWORDS[MSIMSettings::NUM_PT] = {
