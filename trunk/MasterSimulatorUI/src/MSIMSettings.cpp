@@ -290,7 +290,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 
 #elif defined(Q_OS_MAC)
 
-	QString bashCmdLine = (m_solverName + " " + commandLineArgs.join(" "));
+	QString bashCmdLine = (executable + " " + commandLineArgs.join(" "));
 
 	// on Mac, create a bash script with the command line as content
 	QString projectPath = QFileInfo(projectFile).dir().absolutePath();
