@@ -6,7 +6,7 @@ version 2.0, it implements various iteration algorithms that rollback FMU slaves
 
 <img src="doc/screenshots/SplashScreen_MasterSim.png" width="400px"/>
 
-_MasterSim_ is actively maintained/developed at the TU Dresden, Institut für Bauklimatik.
+_MasterSim_ is actively maintained/developed by Andreas Nicolai at the TU Dresden, Institut für Bauklimatik.
 
 The main webpage of _MasterSim_ is https://bauklimatik-dresden.de/mastersim.
 
