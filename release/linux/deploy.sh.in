@@ -28,10 +28,8 @@ cp ../../MasterSimulatorUI/resources/translations/qt_de.qm $OUTPUT_DIRECTORY_NAM
 
 cp ../../MasterSimulatorUI/resources/gfx/logo/* $OUTPUT_DIRECTORY_NAME/resources/ &&
 
-# Copy desktop icon and auxilliary files
+# Copy auxilliary files
 
-cp ../../MasterSimulatorUI/resources/gfx/logo/icon_64.png $OUTPUT_DIRECTORY_NAME/resources/MasterSimulatorUI-64.png &&
-cp ../../release/linux/MasterSimulatorUI.desktop $OUTPUT_DIRECTORY_NAME/bin/MasterSimulatorUI.desktop &&
 cp ../../doc/LICENSE $OUTPUT_DIRECTORY_NAME/resources/LICENSE &&
 
 ${CreateArchive}
