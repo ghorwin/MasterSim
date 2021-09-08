@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FRAME GUID="2FB25471-B62C-4EE6-BD43-F819C095ACF8" FORMAT="0000" APP_VERSION="2.2.0.8" CHECKSUM="E193357844C85EC8">
+  <PROJECT FORMAT="1.00" NAME="MasterSim" AUTHOR="Andreas Nicolai" CREATED="2016.05.17 02:30:57" MODIFIED="2016.05.17 02:56:44">
+    <DIAGRAMS>
+      <DIAGRAM FORMAT="1.00" ID="0" NAME="simulate()" CREATED="2016.05.17 02:31:06" MODIFIED="2016.05.17 02:56:44">
+        <LAYOUT FORMAT="1.00" COLUMNS="3" ROWS="8">
+          <ENTRIES>
+            <ENTRY COLUMN="0" ROW="0" ANCHOR="True">
+              <FIGURE SUBTYPE="PapTitle" FORMAT="1.00" ID="0">
+                <TEXT><![CDATA[simulate()]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="1">
+              <FIGURE SUBTYPE="PapStart" FORMAT="1.00" ID="1">
+                <TEXT><![CDATA[Start]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="2">
+              <FIGURE SUBTYPE="PapLoopStart" FORMAT="1.00" ID="4" ASSOCIATE="6">
+                <TEXT><![CDATA[while t < tEnd]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="3">
+              <FIGURE SUBTYPE="PapModule" FORMAT="1.00" ID="8">
+                <TEXT><![CDATA[doStep()]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="4">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="10">
+                <TEXT><![CDATA[t < tEnd?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="5">
+              <FIGURE SUBTYPE="PapLoopEnd" FORMAT="1.00" ID="6" ASSOCIATE="4">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="6">
+              <FIGURE SUBTYPE="PapModule" FORMAT="1.00" ID="18">
+                <TEXT><![CDATA[appendOutputs()]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="7">
+              <FIGURE SUBTYPE="PapEnd" FORMAT="1.00" ID="2">
+                <TEXT><![CDATA[End]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="4">
+              <FIGURE SUBTYPE="PapModule" FORMAT="1.00" ID="14">
+                <TEXT><![CDATA[appendOutputs()]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="5">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="15">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="4">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="20">
+                <TEXT><![CDATA[This prevents calling appendOutputs() twice at end of simulation since it cannot be guaranteed that algorithm ends exactly at tEnd, for example when fixed steps are used and tEnd is not an exact multiple of step size.]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+          </ENTRIES>
+        </LAYOUT>
+        <CONNECTIONS>
+          <CONNECTION FORMAT="1.00" ID="3" FROM="1" TO="4" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="7" FROM="6" TO="18" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="5" FROM="4" TO="8" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="9" FROM="8" TO="10" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="11" FROM="10" TO="6" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="13" FROM="10" TO="14" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="16" FROM="14" TO="15" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="17" FROM="15" TO="6" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="19" FROM="18" TO="2" TEXT="" />
+        </CONNECTIONS>
+      </DIAGRAM>
+      <DIAGRAM FORMAT="1.00" ID="1" NAME="doStep()" CREATED="2016.05.17 02:36:34" MODIFIED="2016.05.17 02:56:44">
+        <LAYOUT FORMAT="1.00" COLUMNS="5" ROWS="22">
+          <ENTRIES>
+            <ENTRY COLUMN="0" ROW="0" ANCHOR="True">
+              <FIGURE SUBTYPE="PapTitle" FORMAT="1.00" ID="0">
+                <TEXT><![CDATA[doStep()]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="1">
+              <FIGURE SUBTYPE="PapStart" FORMAT="1.00" ID="1">
+                <TEXT><![CDATA[Start]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="2">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="4">
+                <TEXT><![CDATA[h = hProposed]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="3">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="6">
+                <TEXT><![CDATA[iterating?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="4">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="13">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="5">
+              <FIGURE SUBTYPE="PapLoopStart" FORMAT="1.00" ID="16" ASSOCIATE="18">
+                <TEXT><![CDATA[loop until converged and error test passed]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="6">
+              <FIGURE SUBTYPE="PapModule" FORMAT="1.00" ID="20">
+                <TEXT><![CDATA[MasterAlgorithm step]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="7">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="22">
+                <TEXT><![CDATA[converged?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="12">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="92">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="13">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="80">
+                <TEXT><![CDATA[error test enabled?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="14">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="97">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="15">
+              <FIGURE SUBTYPE="PapLoopEnd" FORMAT="1.00" ID="18" ASSOCIATE="16">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="16">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="100">
+                <TEXT><![CDATA[t := t + h]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="17">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="102">
+                <TEXT><![CDATA[copy vectors from xxxNext to xxx]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="18">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="107">
+                <TEXT><![CDATA[variable time stepping?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="19">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="110">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="20">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="52">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="0" ROW="21">
+              <FIGURE SUBTYPE="PapEnd" FORMAT="1.00" ID="2">
+                <TEXT><![CDATA[End]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="3">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="8">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="4">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="12">
+                <TEXT><![CDATA[storeFMUStates in iterationStates]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="7">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="24">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="8">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="40">
+                <TEXT><![CDATA[iterating and variable step size allowed?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="9">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="56">
+                <TEXT><![CDATA[h = h/2]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="10">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="58">
+                <TEXT><![CDATA[restoreFMUStates from iterationStates]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="11">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="32">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="13">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="85">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="14">
+              <FIGURE SUBTYPE="PapCondition" FORMAT="1.00" ID="95">
+                <TEXT><![CDATA[doErrorTest()?]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="18">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="113">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="1" ROW="19">
+              <FIGURE SUBTYPE="PapActivity" FORMAT="1.00" ID="109">
+                <TEXT><![CDATA[hProposed = h*factor]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="8">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="42">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="2" ROW="20">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="50">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="3" ROW="5">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="76">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="3" ROW="11">
+              <FIGURE SUBTYPE="PapConnector" FORMAT="1.00" ID="63">
+                <TEXT><![CDATA[]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="3" ROW="20">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="55">
+                <TEXT><![CDATA[abort with exception]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="4" ROW="9">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="79">
+                <TEXT><![CDATA[A check for minStepSize is included]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="4" ROW="12">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="94">
+                <TEXT><![CDATA[Solution at time level t+h is stored in xxxNext vectors, slaves and variables are at state t+h, iterationStates contains FMU states at level t]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="4" ROW="16">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="104">
+                <TEXT><![CDATA[Book keeping: advance to next time level]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+            <ENTRY COLUMN="4" ROW="17">
+              <FIGURE SUBTYPE="PapComment" FORMAT="1.00" ID="116">
+                <TEXT><![CDATA[xxx is either real, integer, boolean or string]]></TEXT>
+              </FIGURE>
+            </ENTRY>
+          </ENTRIES>
+        </LAYOUT>
+        <CONNECTIONS>
+          <CONNECTION FORMAT="1.00" ID="3" FROM="1" TO="4" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="5" FROM="4" TO="6" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="14" FROM="13" TO="16" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="9" FROM="6" TO="8" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="11" FROM="8" TO="12" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="7" FROM="6" TO="13" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="15" FROM="12" TO="13" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="53" FROM="52" TO="2" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="17" FROM="16" TO="20" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="21" FROM="20" TO="22" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="65" FROM="42" TO="50" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="25" FROM="22" TO="24" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="23" FROM="22" TO="92" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="33" FROM="24" TO="40" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="78" FROM="76" TO="16" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="106" FROM="102" TO="107" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="41" FROM="40" TO="56" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="43" FROM="40" TO="42" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="19" FROM="18" TO="100" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="62" FROM="32" TO="63" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="54" FROM="50" TO="52" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="57" FROM="56" TO="58" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="59" FROM="58" TO="32" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="67" FROM="63" TO="76" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="81" FROM="80" TO="97" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="105" FROM="100" TO="102" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="84" FROM="80" TO="85" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="90" FROM="85" TO="95" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="99" FROM="95" TO="97" TEXT="success" />
+          <CONNECTION FORMAT="1.00" ID="93" FROM="92" TO="80" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="98" FROM="97" TO="18" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="111" FROM="110" TO="52" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="108" FROM="107" TO="110" TEXT="no" />
+          <CONNECTION FORMAT="1.00" ID="112" FROM="109" TO="110" TEXT="" />
+          <CONNECTION FORMAT="1.00" ID="114" FROM="107" TO="113" TEXT="yes" />
+          <CONNECTION FORMAT="1.00" ID="115" FROM="113" TO="109" TEXT="" />
+        </CONNECTIONS>
+      </DIAGRAM>
+    </DIAGRAMS>
+  </PROJECT>
+</FRAME>
