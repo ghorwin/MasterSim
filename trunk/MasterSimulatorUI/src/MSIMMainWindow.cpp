@@ -996,13 +996,12 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 #endif
 	QStringList iconSizes;
 	iconSizes << "16" << "32" << "48" << "64" << "128" << "256" << "512";
-	QString targetPath = QDir::home().absoluteFilePath(".icons/hicolor/%1x%1/apps/mastersim.png");
+	QString targetPath = QDir::home().absoluteFilePath(".local/share/icons/hicolor/%1x%1/apps/mastersim.png");
 	foreach (QString s, iconSizes) {
 		QString iconFile = iconLocation + "/icon_" + s + ".png";
-		QDir::home().mkpath( QString(".icons/hicolor/%1x%1/apps").arg(s));
+		QDir::home().mkpath( QString(".local/share/icons/hicolor/%1x%1/apps").arg(s));
 		QString targetFile = targetPath.arg(s);
-		if (!QFile(targetFile).exists())
-			QFile::copy(iconFile, targetFile);
+		QFile::copy(iconFile, targetFile);
 	}
 
 	// generate .desktop file, if it does not exist yet
@@ -1030,14 +1029,17 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 			"<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>\n"
 			"	<mime-type type=\"application/x-mastersim\">\n"
 			"		<comment>MASTERSIM project file</comment>\n"
-			"		<generic-icon name=\"mastersim\"/>\n"
 			"		<glob pattern=\"*.msim\"/>\n"
 			"	</mime-type>\n"
 			"</mime-info>\n";
-	QString mimeFile = dirs[0] + "/../mime/packages/x-mastersim.xml";
+	QString mimeDir = dirs[0] + "/../mime";
+	QString mimeFile = mimeDir + "/packages/x-mastersim.xml";
 	QFile mimeF(mimeFile);
 	mimeF.open(QFile::WriteOnly);
 	QTextStream strm2(&mimeF);
 	strm2 << mimeFileContents;
 	mimeF.close();
+
+	// mime-type database update is still needed; if that doesn't work, we can't help it
+	int res = QProcess::execute("update-mime-database", QStringList() << mimeDir);
 }
