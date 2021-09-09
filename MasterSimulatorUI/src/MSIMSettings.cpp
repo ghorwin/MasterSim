@@ -23,7 +23,9 @@ MSIMSettings * MSIMSettings::m_self = nullptr;
 
 const char * const					MSIMSettings::PROPERTY_KEYWORDS[MSIMSettings::NUM_PT] = {
 	"LastImportDirectory",
-	"LastFileOpenDirectory"
+	"LastFileOpenDirectory",
+	"LastFMUImportDirectory",
+	"LastExampleSaveDirectory"
 };
 
 
