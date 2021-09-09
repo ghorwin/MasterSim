@@ -224,12 +224,10 @@ void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 	else if (link.toString().startsWith("example:")) {
 		QString fname = link.toString();
 		fname = fname.right(fname.length()-8);
-		emit openProject(fname);
-		// afterwards clear file name in project handler, so that user needs to save the file again
-		MSIMProjectHandler::instance().saveWithNewFilename(this);
+		emit openExample(fname);
 		return;
 	}
-	else if (link.toString().toLower().startsWith("projectremove:")) {
+	else if (link.toString().startsWith("projectRemove:")) {
 
 		// extract project index to delete and remove it from list
 		QString index = link.toString();

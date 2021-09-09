@@ -29,6 +29,8 @@ public slots:
 signals:
 	/*! Emitted when user clicked on the file name of an example/recently used file. */
 	void openProject(const QString & projectFile);
+	/*! Emitted when user clicked on the file name of an example (read-only location). */
+	void openExample(const QString & projectFile);
 
 	void newProjectClicked();
 	void openProjectClicked();

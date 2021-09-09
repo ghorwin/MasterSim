@@ -117,7 +117,7 @@ bool MSIMProjectHandler::closeProject(QWidget * parent) {
 	emit updateActions();
 
 	// also clear the last FMU import directory
-	MSIMSettings::instance().m_lastFMUImportDirectory.clear();
+	MSIMSettings::instance().m_propertyMap.remove(MSIMSettings::PT_LastFMUImportDirectory);
 
 	return true;
 }

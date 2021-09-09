@@ -58,7 +58,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->widgetProperties->verticalHeader()->setVisible(false);
 
 	formatTable(m_ui->widgetProperties);
-	updateSlaveParameterTable(-1);
+	updateSlaveParameterTable((unsigned int)-1);
 
 	// set the scene showing the network
 	m_ui->blockModWidget->setResolution(1);
@@ -310,7 +310,7 @@ std::string pickSlaveName(const std::string& basename, iterator first, const_ite
 void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	// use directory where last time an FMU was imported from (in this session)
 	// if slave's are imported the first time this session, use the project directory
-	QString fmuSearchPath = MSIMSettings::instance().m_lastFMUImportDirectory;
+	QString fmuSearchPath = MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFMUImportDirectory].toString();
 	if (fmuSearchPath.isEmpty()) {
 		fmuSearchPath = MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory].toString();
 	}
@@ -323,7 +323,7 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 
 	QFileInfo finfo(fname);
 	fmuSearchPath = finfo.dir().absolutePath();
-	MSIMSettings::instance().m_lastFMUImportDirectory = fmuSearchPath;
+	MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFMUImportDirectory] = fmuSearchPath;
 
 	MASTER_SIM::Project p = project();
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
