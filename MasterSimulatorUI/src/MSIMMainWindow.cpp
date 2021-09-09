@@ -106,6 +106,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	connect(m_welcomeScreen, SIGNAL(newProjectClicked()), this, SLOT(on_actionFileNew_triggered()));
 	connect(m_welcomeScreen, SIGNAL(openProjectClicked()), this, SLOT(on_actionFileOpen_triggered()));
 	connect(m_welcomeScreen, SIGNAL(openProject(QString)), this, SLOT(onOpenProjectByFilename(QString)));
+	connect(m_welcomeScreen, SIGNAL(openExample(QString)), this, SLOT(onOpenExampleByFilename(QString)));
 	connect(m_welcomeScreen, SIGNAL(updateRecentList()), this, SLOT(onUpdateRecentProjects()));
 
 	// *** create views ***
@@ -807,6 +808,74 @@ void MSIMMainWindow::onOpenProjectByFilename(const QString & filename) {
 	// if failed, no view state change needed
 }
 
+
+
+//https://qt.gitorious.org/qt-creator/qt-creator/source/1a37da73abb60ad06b7e33983ca51b266be5910e:src/app/main.cpp#L13-189
+// taken from utils/fileutils.cpp. We can not use utils here since that depends app_version.h.
+static bool copyRecursively(const QString &srcFilePath,
+							const QString &tgtFilePath)
+{
+	QFileInfo srcFileInfo(srcFilePath);
+	if (srcFileInfo.isDir()) {
+		QDir targetDir(tgtFilePath);
+		targetDir.cdUp();
+		// only create subdir if it does not yet exist
+		if (!QFileInfo::exists(tgtFilePath))
+			if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
+				return false;
+		QDir sourceDir(srcFilePath);
+		QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+		foreach (const QString &fileName, fileNames) {
+			const QString newSrcFilePath
+					= srcFilePath + QLatin1Char('/') + fileName;
+			const QString newTgtFilePath
+					= tgtFilePath + QLatin1Char('/') + fileName;
+			if (!copyRecursively(newSrcFilePath, newTgtFilePath))
+				return false;
+		}
+	} else {
+		// remove potentially existing file
+		if (QFileInfo::exists(tgtFilePath)) {
+			if (!QFile::remove(tgtFilePath))
+				return false;
+		}
+		if (!QFile::copy(srcFilePath, tgtFilePath))
+			return false;
+	}
+	return true;
+}
+
+
+void MSIMMainWindow::onOpenExampleByFilename(const QString & filename) {
+	// This function is only called from the welcome page, so there must not be a project opened!
+	QFile f1(filename);
+	if (!f1.exists()) {
+		QMessageBox::critical(this, tr("File not found"), tr("The file '%1' cannot be found or does not exist.").arg(filename));
+		return;
+	}
+	// determine parent directory and ask user to select an example base directory to copy the input data into
+	QFileInfo finfo(filename);
+	QDir srcDir = finfo.absoluteDir();
+	QSettings settings( MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName );
+	QString lastExampleTargetDir = settings.value("LastExampleSaveDirectory", QDir::homePath()).toString();
+	QString targetDir = QFileDialog::getExistingDirectory(this, tr("Select directory to copy example project into"), lastExampleTargetDir);
+	if (targetDir.isEmpty())
+		return;
+	settings.setValue("LastExampleSaveDirectory", targetDir);
+
+	// append base directory name to target Dir
+	targetDir = QDir(targetDir).absoluteFilePath( srcDir.dirName() );
+
+	// now recursively copy 'srcDir' into targetDir
+	if (!copyRecursively(srcDir.absolutePath(), targetDir)) {
+		QMessageBox::critical(this, tr("Write error"), tr("Cannot copy example, maybe missing permissions?"));
+		return;
+	}
+
+	// and finally open the copied project file and hope for the best
+	QString newFName = QDir(targetDir).absoluteFilePath(finfo.fileName());
+	onOpenProjectByFilename(newFName);
+}
 
 
 void MSIMMainWindow::updateWindowTitle() {

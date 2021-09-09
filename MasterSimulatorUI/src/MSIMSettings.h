@@ -164,11 +164,6 @@ public:
 	*/
 	QString						m_lastProjectFile;
 
-	/*! Stores path to last directory that FMUs were imported from.
-		This variable is not stored in the user settings but updated/set when the first FMU is imported.
-	*/
-	QString						m_lastFMUImportDirectory;
-
 	/*! Executable file name of external text editor.
 		The text editor executable is determined automatically in setDefaults(),
 		but can be customized by the user.
@@ -208,6 +203,8 @@ public:
 	enum PropertyType {
 		PT_LastImportDirectory,
 		PT_LastFileOpenDirectory,
+		PT_LastFMUImportDirectory,
+		PT_LastExampleSaveDirectory,
 		NUM_PT
 	};
 

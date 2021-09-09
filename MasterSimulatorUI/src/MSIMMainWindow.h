@@ -120,6 +120,12 @@ private slots:
 	*/
 	void onOpenProjectByFilename(const QString & filename);
 
+	/*! Copies an example project (and its directory content) to a new directory (interactive) and
+		opens the copied example project.
+		Called only from welcome screen.
+	*/
+	void onOpenExampleByFilename(const QString & filename);
+
 	/*! Slave view activated. */
 	void on_actionViewSlaves_toggled(bool arg1);
 	/*! Connvection view activated. */
