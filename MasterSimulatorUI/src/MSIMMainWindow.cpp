@@ -223,7 +223,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 		}
 	}
 
-#if defined(Q_OS_UNIX)
+#ifdef Q_OS_LINUX
 	// on first run on Linux, ask for setting up desktop integration
 	if (MSIMSettings::instance().m_versionIdentifier.isEmpty())
 		QTimer::singleShot(500, this, &MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered);
