@@ -151,13 +151,24 @@ To get all fmi2  functions
 objdump -t <shared_library> | grep fmi2
 -----
 
+=== Building MasterSim for FMU Debugging
 
-=== Linking shared libraries with static members (that occurs in executables as well)
+*Problem*: _MasterSim_ uses the IBK library, and by default, when developing in Qt Creator, this library is dynamically linked. When now _MasterSim_ loads an FMU library at runtime, which _also_ depends on the IBK library, any duplicate symbols/functions are not imported, but instead the FMU library will use the routines already linked into _MasterSim_. 
 
-**Problem:** Source of the problem: both FMU and master use IBK library, which in turn has static members/singletons (e.g. message handler). When linking FMU to exe, during cleanup at exit of main the destructor of the singleton object is called twice, causing a segfault.
+This is not a problem if:
 
-**Solution:**
-None yet, appears to work after "duplicate so-import check" added.
+- the IBK library versions are exactly the same
+- both, _MasterSim_ and the FMU are built the same (either debug or release mode)
+
+In other cases this leads to crashes while debugging.
+
+*Solution*: You need to link the IBK library statically into _MasterSim_, but also all other libraries that depend on the IBK library. For convenience, you can just modify the qmake pro configuration by opening the file `externals/IBK/projects/Qt/CONFIG.pri` and enable the line:
+```
+OPTIONS += FMU_Debugging
+```
+
+Now delete all already generated shared lib files from folder `externals/lib_x64` and `lib_x64`, rebuild all and you are ready to go.
+
 
 
 === FMU Debugging

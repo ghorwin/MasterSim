@@ -444,8 +444,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
 <span id="email" class="email"><a href="mailto:andreas.nicolai@tu-dresden.de">andreas.nicolai@tu-dresden.de</a></span><br>
-<span id="revnumber">version 0.8.3,</span>
-<span id="revdate">Dec 2020</span>
+<span id="revnumber">version 0.9.0,</span>
+<span id="revdate">Sep 2021</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -610,7 +610,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_helpful_stuff_related_to_development_on_linux">7.3. Helpful stuff related to development on Linux</a>
 <ul class="sectlevel3">
 <li><a href="#_checking_symbols_in_shared_libraries">7.3.1. Checking symbols in shared libraries</a></li>
-<li><a href="#_linking_shared_libraries_with_static_members_that_occurs_in_executables_as_well">7.3.2. Linking shared libraries with static members (that occurs in executables as well)</a></li>
+<li><a href="#_building_mastersim_for_fmu_debugging">7.3.2. Building MasterSim for FMU Debugging</a></li>
 <li><a href="#_fmu_debugging">7.3.3. FMU Debugging</a></li>
 </ul>
 </li>
@@ -4167,13 +4167,36 @@ bin/release      - default output path for cmake-builds</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_linking_shared_libraries_with_static_members_that_occurs_in_executables_as_well">7.3.2. Linking shared libraries with static members (that occurs in executables as well)</h4>
+<h4 id="_building_mastersim_for_fmu_debugging">7.3.2. Building MasterSim for FMU Debugging</h4>
 <div class="paragraph">
-<p><strong>Problem:</strong> Source of the problem: both FMU and master use IBK library, which in turn has static members/singletons (e.g. message handler). When linking FMU to exe, during cleanup at exit of main the destructor of the singleton object is called twice, causing a segfault.</p>
+<p><strong>Problem</strong>: <em>MasterSim</em> uses the IBK library, and by default, when developing in Qt Creator, this library is dynamically linked. When now <em>MasterSim</em> loads an FMU library at runtime, which <em>also</em> depends on the IBK library, any duplicate symbols/functions are not imported, but instead the FMU library will use the routines already linked into <em>MasterSim</em>.</p>
 </div>
 <div class="paragraph">
-<p><strong>Solution:</strong>
-None yet, appears to work after "duplicate so-import check" added.</p>
+<p>This is not a problem if:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the IBK library versions are exactly the same</p>
+</li>
+<li>
+<p>both, <em>MasterSim</em> and the FMU are built the same (either debug or release mode)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In other cases this leads to crashes while debugging.</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>: You need to link the IBK library statically into <em>MasterSim</em>, but also all other libraries that depend on the IBK library. For convenience, you can just modify the qmake pro configuration by opening the file <code>externals/IBK/projects/Qt/CONFIG.pri</code> and enable the line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>OPTIONS += FMU_Debugging</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now delete all already generated shared lib files from folder <code>externals/lib_x64</code> and <code>lib_x64</code>, rebuild all and you are ready to go.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4409,8 +4432,8 @@ The master also holds for each data type a vector of connection variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.8.3<br>
-Last updated 2020-11-24 16:03:48 +0100
+Version 0.9.0<br>
+Last updated 2021-09-10 16:28:08 +0200
 </div>
 </div>
 <style>
