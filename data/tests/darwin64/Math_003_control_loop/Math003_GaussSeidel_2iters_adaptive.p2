@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<PostProc version="2.1.1">
+	<!--List of all directories-->
+	<Directories>
+		<Directory>
+			<Path>.</Path>
+			<SubDir Color="#416fce" Checked="1">.</SubDir>
+			<SubDir Color="#ffaa00" Checked="1">Math003_GaussSeidel_2iters_adaptive</SubDir>
+			<ExpandedSubDir>.</ExpandedSubDir>
+		</Directory>
+	</Directories>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+	<!--Split window state.-->
+	<Splitting>
+		<Widget id="1" parent="0" viewTable="0" mapperIndex="-1" size1="1" size2="1" orientation="2" />
+		<FocusedWidget>0</FocusedWidget>
+	</Splitting>
+
+	<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+</PostProc>
+
