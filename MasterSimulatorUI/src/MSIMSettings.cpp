@@ -255,7 +255,6 @@ bool MSIMSettings::startProcess(const QString & executable,
 									const QString & projectFile,
 									TerminalEmulators terminalEmulator)
 {
-	bool success;
 	// spawn process
 #ifdef Q_OS_WIN
 
@@ -323,6 +322,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 
 #else // for all other platforms LINUX is expected
 
+	bool success;
 	qint64 pid;
 	switch (terminalEmulator) {
 		case TE_XTerm : {
