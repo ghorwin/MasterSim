@@ -41,7 +41,6 @@
 
 #include "IBK_ptr_list.h"
 
-
 #include <string>
 #include <vector>
 #include <iosfwd>
@@ -50,10 +49,6 @@
 #include "IBK_UnitData.h"
 
 namespace IBK {
-
-#ifndef QT_DEBUG_BUILD
-#define UnitList UnitListMSIM
-#endif
 
 class Unit;
 
