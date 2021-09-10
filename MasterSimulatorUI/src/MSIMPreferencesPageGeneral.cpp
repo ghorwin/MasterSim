@@ -36,6 +36,11 @@ bool MSIMPreferencesPageGeneral::storeConfig() {
 	MSIMSettings & s = MSIMSettings::instance();
 	s.m_textEditorExecutable = m_ui->filepathTextEditor->filename();
 	s.m_postProcExecutable = m_ui->filepathPostProcExecutable->filename();
+#ifdef Q_OS_MAC
+	int pos = s.m_postProcExecutable.indexOf("PostProcApp.app");
+	if (pos != -1)
+		s.m_postProcExecutable = s.m_postProcExecutable.left(pos) + "PostProcApp.app/Contents/MacOS/PostProcApp";
+#endif
 
 	return true;
 }
