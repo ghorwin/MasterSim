@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BlockMod>
+	<!--Blocks-->
+	<Blocks>
+		<Block name="Part1">
+			<Position>40, -112</Position>
+			<Size>40, 80</Size>
+		</Block>
+		<Block name="Part2">
+			<Position>-8, 112</Position>
+			<Size>40, 80</Size>
+		</Block>
+		<Block name="Part3">
+			<Position>264, 80</Position>
+			<Size>40, 80</Size>
+		</Block>
+	</Blocks>
+</BlockMod>
