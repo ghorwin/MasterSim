@@ -45,10 +45,6 @@
 
 namespace IBK {
 
-#ifndef QT_DEBUG_BUILD
-#define MessageHandlerRegistry MessageHandlerRegistryMSIM
-#endif
-
 /*! This class relays messages (error, debug or progress messages)
 	from the IBK library towards the current message handling class.
 	You can set a message handler via setMessageHandlerRegistry(). The object

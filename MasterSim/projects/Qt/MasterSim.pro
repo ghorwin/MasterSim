@@ -9,8 +9,11 @@ OPTIONS += top_level_libs
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
-CONFIG -= shared
-CONFIG += static
+# we need IBK lib to be statically linked, to debug other IBK-related FMUs
+contains( OPTIONS, FMU_Debugging ) {
+	CONFIG -= shared
+	CONFIG += static
+}
 
 unix|mac {
 	VER_MAJ = 0
