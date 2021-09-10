@@ -255,6 +255,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 									const QString & projectFile,
 									TerminalEmulators terminalEmulator)
 {
+	(void)terminalEmulator; // to get rid of compiler warning - only used for Linux
 	// spawn process
 #ifdef Q_OS_WIN
 
@@ -296,7 +297,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 
 #elif defined(Q_OS_MAC)
 
-	QString bashCmdLine = (executable + " " + commandLineArgs.join(" "));
+	QString bashCmdLine = (executable + " " + commandLineArgs.join(" ") + " \"" + projectFile + '"');
 
 	// on Mac, create a bash script with the command line as content
 	QString projectPath = QFileInfo(projectFile).dir().absolutePath();
@@ -318,7 +319,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 	bashFile.close();
 
 	QStringList allCmdLine{ "-a" , "Terminal.app" , tmpPath };
-	QProcess::execute("open", allCmdLine);
+	return QProcess::execute("open", allCmdLine) == 0;
 
 #else // for all other platforms LINUX is expected
 
