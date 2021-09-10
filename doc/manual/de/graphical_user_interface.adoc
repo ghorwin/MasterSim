@@ -176,7 +176,7 @@ image::bm_block_editor.png[alt="Block Editor"]
 ====
 In einer der nächsten Programmversionen wird es möglich sein, das Erscheinungsbild eines Blocks als Vorlage für die Nutzung bei ähnlichen oder gleichen FMUs zu speichern. Gegenwärtig müssen Sie den Block jedes Mal konfigurieren, wenn Sie eine FMU importieren. Ebenso ist die verbesserte Anwendung und der benutzerdefinierte Sockel-Speicherort noch nicht umgesetzt.
 
-Wenn dieses Feature benötigt wird, bitte ein https://sourceforge.net/p/mastersim/tickets[Ticket anlegen].
+Wenn dieses Feature benötigt wird, bitte ein https://github.com/ghorwin/MasterSim/issues[Ticket anlegen].
 ====
 
 [[connection_view]]
