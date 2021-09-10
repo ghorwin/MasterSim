@@ -1,0 +1,36 @@
+# Created:	So. Nov. 3 05:14:09 2019
+# LastModified:	Mi. Nov. 13 18:08:17 2019
+
+# Project file example for non-iterating GaussJacobi.
+#
+# No error test included, time step adjustment disabled.
+# GaussJacobi is run without iteration.
+#
+# The following options have no influence on the result:
+#   hMax, hMin, hFallBackLimit, absTol, relTol
+
+tStart                   0 s
+tEnd                     10 s
+hMax                     30 min
+hMin                     1e-05 s
+hFallBackLimit           0.001 s
+hStart                   0.01 s
+hOutputMin               0.01 s
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-05
+MasterMode               GAUSS_JACOBI
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   no
+
+simulator 0 0 Part1 #447cb4 "fmus/IBK/Part1.fmu"
+simulator 1 1 Part2 #c38200 "fmus/IBK/Part2.fmu"
+simulator 2 1 Part3 #ff0000 "fmus/IBK/Part3.fmu"
+
+graph Part1.x1 Part2.x1
+graph Part1.x2 Part2.x2
+graph Part3.x4 Part2.x4
+graph Part2.x3 Part3.x3
+
