@@ -41,6 +41,9 @@ void ArgParser::parse(int argc, const char * const argv[]) {
 #else
 		m_projectFile = args()[1];
 #endif
+		// remove "file://" prefix
+		if (m_projectFile.str().find("file://") == 0)
+			m_projectFile = IBK::Path(m_projectFile.str().substr(7));
 		try {
 			// get working directory (defaults to project file path)
 			m_workingDir = m_projectFile.withoutExtension();
