@@ -9,6 +9,9 @@ OPTIONS += top_level_libs
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
+CONFIG -= shared
+CONFIG += static
+
 unix|mac {
 	VER_MAJ = 0
 	VER_MIN = 5

@@ -10,6 +10,9 @@ TEMPLATE = lib
 # it contains all functions defined for casual libraries
 include( ../../../IBK/projects/Qt/IBK.pri )
 
+CONFIG -= shared
+CONFIG += static
+
 # finally we setup our custom library specfic things
 # like version number etc., we also may reset all
 #

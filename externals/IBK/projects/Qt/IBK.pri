@@ -404,8 +404,8 @@ equals(TEMPLATE,lib) {
 	MOC_DIR = moc
 	UI_DIR = ui
 
-# using of shared libs only for non MC compiler
-# MS compiler needs explicite export statements in case of shared libs
+	# using of shared libs only for non MC compiler
+	# MS compiler needs explicite export statements in case of shared libs
 	win32-msvc* {
 		CONFIG += static
 		DEFINES += NOMINMAX
