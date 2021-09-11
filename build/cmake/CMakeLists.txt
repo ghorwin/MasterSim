@@ -7,6 +7,9 @@ project( MasterSimBundle )
 # Require a fairly recent cmake version
 cmake_minimum_required( VERSION 2.8.12 )
 
+# enable @rpath on MacOS
+cmake_policy(SET CMP0042 NEW)
+
 # -------------------------------------------------------------
 # MACRO definitions
 # -------------------------------------------------------------
