@@ -54,3 +54,4 @@ Makefile*
 *.ilk
 
 
+/release/
