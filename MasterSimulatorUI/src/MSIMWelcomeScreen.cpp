@@ -227,7 +227,8 @@ void MSIMWelcomeScreen::onAnchorClicked( const QUrl & link ) {
 		emit openExample(fname);
 		return;
 	}
-	else if (link.toString().startsWith("projectRemove:")) {
+	// Note: link anchors are always passed in lower case
+	else if (link.toString().toLower().startsWith("projectremove:")) {
 
 		// extract project index to delete and remove it from list
 		QString index = link.toString();
