@@ -54,4 +54,5 @@ Makefile*
 *.ilk
 
 
+/lib_x64/
 /release/
