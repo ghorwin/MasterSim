@@ -320,7 +320,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="135"/>
         <source>Export project package...</source>
-        <translation>Exportiert eine Projektpaket...</translation>
+        <translation>Exportiert ein Projektpaket...</translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="138"/>
@@ -1946,7 +1946,7 @@
         <translation>&lt;i&gt;&lt;font color=&quot;#800000&quot;&gt;Projekt nicht zugreifbar/lesbar &lt;/font&gt;&lt;/i&gt;</translation>
     </message>
     <message>
-        <location filename="../../src/MSIMWelcomeScreen.cpp" line="280"/>
+        <location filename="../../src/MSIMWelcomeScreen.cpp" line="281"/>
         <source>&lt;p&gt;&amp;nbsp;&lt;p&gt;&lt;hr&gt;&lt;h1&gt;No news today&lt;/h1&gt;&lt;p&gt;&lt;i&gt;Unable to download news content at this time.&lt;/i&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&amp;nbsp;&lt;p&gt;&lt;hr&gt;&lt;h1&gt;Heute keine Nachrichten&lt;/h1&gt;&lt;p&gt;&lt;i&gt;Kann zum aktuellen Zeitpunkt keine Neuigkeiten herunterladen.&lt;/i&gt;&lt;/p&gt;</translation>
     </message>
