@@ -1056,9 +1056,6 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 	oldFiles << ".local/share/mime/application/x-mastersim.xml"
 			 << ".local/share/mime/packages/x-mastersim.xml"
 			 << ".local/share/applications/mastersimulatorui.desktop";
-	QStringList iconSizes; iconSizes << "16" << "32" << "48" << "64" << "128" << "256" << "512";
-	for (QString i : iconSizes)
-		oldFiles << QDir::home().absoluteFilePath(QString(".local/share/icons/hicolor/%1x%1/apps/mastersim.png").arg(i) );
 
 	for (QString f : oldFiles)
 		QFile::remove(QDir::home().absoluteFilePath(f));
