@@ -1083,7 +1083,8 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 			"Terminal=false\n"
 			"Type=Application\n"
 			"Categories=Science;\n"
-			"StartupNotify=true\n";
+			"StartupNotify=true\n"
+			"MimeType=application/x-mastersim\n";
 	desktopFileContents = desktopFileContents.arg(MASTER_SIM::LONG_VERSION).arg(MSIMSettings::instance().m_installDir);
 	QFile deskFile(desktopFile);
 	deskFile.open(QFile::WriteOnly);
@@ -1111,4 +1112,6 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 
 	// mime-type database update is still needed; if that doesn't work, we can't help it
 	QProcess::execute("update-mime-database", QStringList() << mimeDir);
+
+	QMessageBox::information(this, tr("Update Desktop Integration"), tr("Created and installed 'mastersimulatorui.desktop' and 'mime/packages/x-mastersim.xml' for local user."));
 }
