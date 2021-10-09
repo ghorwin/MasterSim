@@ -4,71 +4,71 @@
  <widget class="QMainWindow" name="MSIMMainWindow">
   <property name="geometry">
    <rect>
-	<x>0</x>
-	<y>0</y>
-	<width>1100</width>
-	<height>625</height>
+    <x>0</x>
+    <y>0</y>
+    <width>1100</width>
+    <height>625</height>
    </rect>
   </property>
   <property name="windowIcon">
    <iconset resource="../resources/MasterSimulator.qrc">
-	<normaloff>:/gfx/logo/Icon_64.png</normaloff>:/gfx/logo/Icon_64.png</iconset>
+    <normaloff>:/gfx/logo/Icon_64.png</normaloff>:/gfx/logo/Icon_64.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
-	<rect>
-	 <x>0</x>
-	 <y>0</y>
-	 <width>1100</width>
-	 <height>22</height>
-	</rect>
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1100</width>
+     <height>22</height>
+    </rect>
    </property>
    <widget class="QMenu" name="menu_File">
-	<property name="title">
-	 <string>&amp;File</string>
-	</property>
-	<addaction name="actionFileNew"/>
-	<addaction name="actionFileOpen"/>
-	<addaction name="actionFileReload"/>
-	<addaction name="actionFileRecentProjects"/>
-	<addaction name="actionFileSave"/>
-	<addaction name="actionFileSaveAs"/>
-	<addaction name="actionFileClose"/>
-	<addaction name="separator"/>
-	<addaction name="actionFileOpenProjectDir"/>
-	<addaction name="actionFileExport"/>
-	<addaction name="separator"/>
-	<addaction name="actionFileQuit"/>
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionFileNew"/>
+    <addaction name="actionFileOpen"/>
+    <addaction name="actionFileReload"/>
+    <addaction name="actionFileRecentProjects"/>
+    <addaction name="actionFileSave"/>
+    <addaction name="actionFileSaveAs"/>
+    <addaction name="actionFileClose"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileOpenProjectDir"/>
+    <addaction name="actionFileExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionFileQuit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
-	<property name="title">
-	 <string>&amp;Edit</string>
-	</property>
-	<widget class="QMenu" name="menuLanguage">
-	 <property name="title">
-	  <string>Application language</string>
-	 </property>
-	</widget>
-	<addaction name="actionEditParseFMUs"/>
-	<addaction name="actionEditTextEditProject"/>
-	<addaction name="actionEditOpenPostProc"/>
-	<addaction name="separator"/>
-	<addaction name="actionEditPreferences"/>
-	<addaction name="menuLanguage"/>
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Application language</string>
+     </property>
+    </widget>
+    <addaction name="actionEditParseFMUs"/>
+    <addaction name="actionEditTextEditProject"/>
+    <addaction name="actionEditOpenPostProc"/>
+    <addaction name="separator"/>
+    <addaction name="actionEditPreferences"/>
+    <addaction name="menuLanguage"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
-	<property name="title">
-	 <string>&amp;Help</string>
-	</property>
-	<addaction name="actionHelpMasterSimWebpage"/>
-	<addaction name="actionHelpOnlineManual"/>
-	<addaction name="actionHelpReport"/>
-	<addaction name="separator"/>
-	<addaction name="actionHelpLinuxDesktopIntegration"/>
-	<addaction name="separator"/>
-	<addaction name="actionHelpAboutMasterSim"/>
-	<addaction name="actionHelpAboutQt"/>
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelpMasterSimWebpage"/>
+    <addaction name="actionHelpOnlineManual"/>
+    <addaction name="actionHelpReport"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpLinuxDesktopIntegration"/>
+    <addaction name="separator"/>
+    <addaction name="actionHelpAboutMasterSim"/>
+    <addaction name="actionHelpAboutQt"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -76,268 +76,271 @@
   </widget>
   <action name="actionFileNew">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/filenew.png</normaloff>:/gfx/actions/24x24/filenew.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/filenew.png</normaloff>:/gfx/actions/24x24/filenew.png</iconset>
    </property>
    <property name="text">
-	<string>New...</string>
+    <string>New...</string>
    </property>
    <property name="toolTip">
-	<string>Creates a new project</string>
+    <string>Creates a new project</string>
    </property>
    <property name="shortcut">
-	<string>Ctrl+N</string>
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionFileOpen">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/fileopen.png</normaloff>:/gfx/actions/24x24/fileopen.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/fileopen.png</normaloff>:/gfx/actions/24x24/fileopen.png</iconset>
    </property>
    <property name="text">
-	<string>Open...</string>
+    <string>Open...</string>
    </property>
    <property name="toolTip">
-	<string>Opens a project file.</string>
+    <string>Opens a project file.</string>
    </property>
    <property name="shortcut">
-	<string>Ctrl+O</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionFileSave">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/filesave.png</normaloff>:/gfx/actions/24x24/filesave.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/filesave.png</normaloff>:/gfx/actions/24x24/filesave.png</iconset>
    </property>
    <property name="text">
-	<string>Save</string>
+    <string>Save</string>
    </property>
    <property name="toolTip">
-	<string>Saves current changes.</string>
+    <string>Saves current changes.</string>
    </property>
    <property name="shortcut">
-	<string>Ctrl+S</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionFileSaveAs">
    <property name="text">
-	<string>Save as...</string>
+    <string>Save as...</string>
    </property>
    <property name="toolTip">
-	<string>Saves project under new name.</string>
+    <string>Saves project under new name.</string>
    </property>
    <property name="shortcut">
-	<string>Ctrl+Shift+S</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionFileExport">
    <property name="text">
-	<string>Export project package...</string>
+    <string>Export project package...</string>
    </property>
    <property name="toolTip">
-	<string>Exports project as package.</string>
+    <string>Exports project as package.</string>
    </property>
    <property name="shortcut">
-	<string>Ctrl+E</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionFileClose">
    <property name="text">
-	<string>Close</string>
+    <string>Close</string>
    </property>
    <property name="toolTip">
-	<string>Closes current project.</string>
+    <string>Closes current project.</string>
    </property>
   </action>
   <action name="actionFileQuit">
    <property name="text">
-	<string>Quit</string>
+    <string>Quit</string>
    </property>
    <property name="toolTip">
-	<string>Quits the application.</string>
+    <string>Quits the application.</string>
    </property>
    <property name="menuRole">
-	<enum>QAction::QuitRole</enum>
+    <enum>QAction::QuitRole</enum>
    </property>
   </action>
   <action name="actionFileRecentProjects">
    <property name="text">
-	<string>Recent projects</string>
+    <string>Recent projects</string>
    </property>
   </action>
   <action name="actionEditTextEditProject">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
    </property>
    <property name="text">
-	<string>Open project in text editor</string>
+    <string>Open project in text editor</string>
    </property>
    <property name="toolTip">
-	<string>Opens the project file in a text editor</string>
+    <string>Opens the project file in a text editor</string>
    </property>
    <property name="shortcut">
-	<string>F2</string>
+    <string>F2</string>
    </property>
   </action>
   <action name="actionHelpAboutQt">
    <property name="text">
-	<string>About Qt...</string>
+    <string>About Qt...</string>
    </property>
    <property name="menuRole">
-	<enum>QAction::AboutQtRole</enum>
+    <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
   <action name="actionHelpAboutMasterSim">
    <property name="text">
-	<string>About MasterSimulator...</string>
+    <string>About MasterSimulator...</string>
    </property>
    <property name="menuRole">
-	<enum>QAction::AboutRole</enum>
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
   <action name="actionEditPreferences">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
    </property>
    <property name="text">
-	<string>Preferences...</string>
+    <string>Preferences...</string>
    </property>
    <property name="menuRole">
-	<enum>QAction::PreferencesRole</enum>
+    <enum>QAction::PreferencesRole</enum>
    </property>
   </action>
   <action name="actionFileReload">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/24x24/reload.png</normaloff>:/gfx/actions/24x24/reload.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/reload.png</normaloff>:/gfx/actions/24x24/reload.png</iconset>
    </property>
    <property name="text">
-	<string>Reload project</string>
+    <string>Reload project</string>
    </property>
    <property name="toolTip">
-	<string>Reloads the current project</string>
+    <string>Reloads the current project</string>
    </property>
   </action>
   <action name="actionViewSlaves">
    <property name="checkable">
-	<bool>true</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulators_32x32.png</iconset>
    </property>
    <property name="text">
-	<string>FMUs and Simulators</string>
+    <string>FMUs and Simulators</string>
    </property>
    <property name="toolTip">
-	<string>Switches to slave edit mode</string>
+    <string>Switches to slave edit mode</string>
    </property>
   </action>
   <action name="actionViewConnections">
    <property name="checkable">
-	<bool>true</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Connections_32x32.png</iconset>
    </property>
    <property name="text">
-	<string>Connections</string>
+    <string>Connections</string>
    </property>
    <property name="toolTip">
-	<string>Switches to connection edit mode</string>
+    <string>Switches to connection edit mode</string>
    </property>
   </action>
   <action name="actionViewSimulation">
    <property name="checkable">
-	<bool>true</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</normaloff>:/gfx/views/32x32/MasterSim_Simulation_Settings_32x32.png</iconset>
    </property>
    <property name="text">
-	<string>Simulation Settings</string>
+    <string>Simulation Settings</string>
    </property>
    <property name="toolTip">
-	<string>Switches to simulation setup mode</string>
+    <string>Switches to simulation setup mode</string>
    </property>
   </action>
   <action name="actionEditParseFMUs">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/actions/32x32/FMU_32x32.png</normaloff>:/gfx/actions/32x32/FMU_32x32.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/32x32/FMU_32x32.png</normaloff>:/gfx/actions/32x32/FMU_32x32.png</iconset>
    </property>
    <property name="text">
-	<string>Analyze FMUs</string>
+    <string>Analyze FMUs</string>
    </property>
    <property name="toolTip">
-	<string>Extracts FMUs and reads modelDescription.xml files.</string>
+    <string>Extracts FMUs and reads modelDescription.xml files.</string>
    </property>
   </action>
   <action name="actionStartSimulation">
    <property name="text">
-	<string>Start simulation</string>
+    <string>Start simulation</string>
    </property>
    <property name="shortcut">
-	<string>F9</string>
+    <string>F9</string>
    </property>
   </action>
   <action name="actionEditOpenPostProc">
    <property name="icon">
-	<iconset resource="../resources/MasterSimulator.qrc">
-	 <normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</iconset>
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</normaloff>:/gfx/views/32x32/PostProcApp_32x32.png</iconset>
    </property>
    <property name="text">
-	<string>Open Post-Proc...</string>
+    <string>Open Post-Proc...</string>
    </property>
    <property name="toolTip">
-	<string>Opens the Post-processing with a matching session for this project.</string>
+    <string>Opens the Post-processing with a matching session for this project.</string>
    </property>
   </action>
   <action name="actionHelpMasterSimWebpage">
    <property name="text">
-	<string>Open MasterSim webpage...</string>
+    <string>Open MasterSim webpage...</string>
    </property>
    <property name="toolTip">
-	<string>Opens web browser with MasterSim homepage.</string>
+    <string>Opens web browser with MasterSim homepage.</string>
    </property>
   </action>
   <action name="actionHelpOnlineManual">
    <property name="text">
-	<string>Show Online Manual...</string>
+    <string>Show Online Manual...</string>
    </property>
    <property name="toolTip">
-	<string>Opens webpage with online manual.</string>
+    <string>Opens webpage with online manual.</string>
    </property>
    <property name="shortcut">
-	<string>F1</string>
+    <string>F1</string>
    </property>
   </action>
   <action name="actionHelpReport">
    <property name="text">
-	<string>Bug report/feature request...</string>
+    <string>Bug report/feature request...</string>
    </property>
    <property name="toolTip">
-	<string>Open MasterSim bug report/feature tracker webpage.</string>
+    <string>Open MasterSim bug report/feature tracker webpage.</string>
    </property>
   </action>
   <action name="actionFileOpenProjectDir">
    <property name="text">
-	<string>Go to project directory...</string>
+    <string>Go to project directory...</string>
    </property>
    <property name="toolTip">
-	<string>Opens file manager with path to project file.</string>
+    <string>Opens file manager with path to project file.</string>
    </property>
    <property name="shortcut">
-	<string>F8</string>
+    <string>F8</string>
    </property>
   </action>
   <action name="actionHelpLinuxDesktopIntegration">
    <property name="text">
-	<string>Desktop integration (Linux)...</string>
+    <string>Desktop integration (Linux)...</string>
+   </property>
+   <property name="toolTip">
+    <string>Desktop integration (Linux),  creates .desktop file and msim-file association.</string>
    </property>
   </action>
  </widget>
