@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+#include <stdio.h>
 
 #include <IBK_WaitOnExit.h>
 #include <IBK_SolverArgsParser.h>
@@ -16,6 +17,10 @@ void setupLogFile(const MASTER_SIM::ArgParser & parser);
 
 int main(int argc, char * argv[]) {
 	const char * const FUNC_ID = "[main]";
+
+#ifdef _WIN32
+	_setmaxstdio(4192);
+#endif
 
 	IBK::WaitOnExit wait;
 
