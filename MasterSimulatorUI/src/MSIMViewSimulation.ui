@@ -389,6 +389,35 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEditStartTime</tabstop>
+  <tabstop>comboBoxStartTimeUnit</tabstop>
+  <tabstop>lineEditEndTime</tabstop>
+  <tabstop>comboBoxEndTimeUnit</tabstop>
+  <tabstop>lineEditDtStart</tabstop>
+  <tabstop>comboBoxDtStartUnit</tabstop>
+  <tabstop>comboBoxMasterAlgorithm</tabstop>
+  <tabstop>spinBoxMaxIteration</tabstop>
+  <tabstop>lineEditRelTol</tabstop>
+  <tabstop>lineEditAbsTol</tabstop>
+  <tabstop>comboBoxErrorControl</tabstop>
+  <tabstop>checkBoxAdjustStepSize</tabstop>
+  <tabstop>lineEditDtMin</tabstop>
+  <tabstop>comboBoxMinDtUnit</tabstop>
+  <tabstop>lineEditDtMax</tabstop>
+  <tabstop>comboBoxMaxDtUnit</tabstop>
+  <tabstop>lineEditDtIterLimit</tabstop>
+  <tabstop>comboBoxDtIterLimitUnit</tabstop>
+  <tabstop>checkBoxPreventOversteppingOfEndTime</tabstop>
+  <tabstop>lineEditDtOutput</tabstop>
+  <tabstop>comboBoxDtOutputUnit</tabstop>
+  <tabstop>checkBoxWriteInternalVariables</tabstop>
+  <tabstop>comboBoxVerbosityLevel</tabstop>
+  <tabstop>comboBoxTermEmulator</tabstop>
+  <tabstop>lineEditCommandLine</tabstop>
+  <tabstop>toolButtonStartInTerminal</tabstop>
+  <tabstop>pushButtonShowLogfile</tabstop>
+ </tabstops>
  <resources>
   <include location="../resources/MasterSimulator.qrc"/>
  </resources>
