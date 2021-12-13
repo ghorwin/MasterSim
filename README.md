@@ -2,7 +2,7 @@
 
 _MasterSim_ is an FMI Co-Simulation master and programming library. It supports the 
 Functional Mock-Up Interface for Co-Simulation in Version 1.0 and 2.0. Using the functionality of 
-version 2.0, it implements various iteration algorithms that rollback FMU slaves and increase stablity of coupled simulation.
+version 2.0, it implements various iteration algorithms that rollback FMU slaves and increase stability of coupled simulations.
 
 <img src="doc/screenshots/SplashScreen_MasterSim.png" width="300px"/>
 
@@ -12,7 +12,7 @@ The main webpage of _MasterSim_ is https://bauklimatik-dresden.de/mastersim.
 
 ## Quality Assurance
 
-We have continuous integration scripts running (build-test of all C/C++ code) and solver regression tests. For details, see [Jenkins](https://baukli01.arch.tu-dresden.de/jenkins).
+We have continuous integration scripts running (build-test of all C/C++ code). For details, see [Jenkins](https://baukli01.arch.tu-dresden.de/jenkins).
 
 | Test | Result|
 |-----|-----|
