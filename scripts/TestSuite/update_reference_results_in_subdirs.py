@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Script to update all files within reference directories (with given suffix) from currently computed cases
 #
@@ -7,16 +7,16 @@
 
 import os
 import os.path
-import optparse
+import argparse
 import shutil
 
-from update_reference_results import copyIfNotEqualD6O
-from update_reference_results import copyIfNotEqualSummary
-from update_reference_results import processCaseDir
+from update_reference_results_utils import copyIfNotEqualD6O
+from update_reference_results_utils import copyIfNotEqualSummary
+from update_reference_results_utils import processCaseDir
 
 HELPTEXT = """
-Syntax: update_reference_results_in_subdirs.py <suffix> [<fileWithFoldersToProcess>]
-	
+Syntax: update_reference_results_in_subdirs.py [-a] <suffix> [<fileWithFoldersToProcess>]
+
 Run this script in the directory of a test suite, for example 'data/tests'.
 The script will search within all subdirectories for subdirectories with the given suffix, for example
 'gcc_linux' and copy newly generated results over reference data files.
@@ -26,22 +26,24 @@ For each file replaced the script will print a line with the updated relative fi
 If a second argument is given, this must be a file path to a text file, containing in each
 line of the file a folder relative to the current working directory. In this case, not all
 subdirectories of the current working directory are processed, but only those in the file.
-Special handling is applied if the file paths in the list point to *.d6p file. In these cases, 
+Special handling is applied if the file paths in the list point to *.d6p file. In these cases,
 the parent directories are processed.
-"""	
+"""
 
 # *** main ***
 
 # setup command line parser
-parser = optparse.OptionParser()
-(options, args) = parser.parse_args()
+parser = argparse.ArgumentParser("update_reference_results_in_subdirs.py", epilog=HELPTEXT)
+parser.add_argument('suffix', help="The directory suffix")
+parser.add_argument('fileWithFoldersToProcess', nargs='?',
+    help="A file with a list of directories, one in each line, to process")
+parser.add_argument('-a', action='store_true', default=False,
+                  dest="alwaysUpdate", help="Always update all files")
 
-if len(args) < 1:
-	print HELPTEXT
-	exit(1)
-	
-suffix = args[0]
-print "Updating reference results for suffix '{}'".format(suffix)
+args = parser.parse_args()
+
+suffix = args.suffix
+print ("Updating reference results for suffix '{}'".format(suffix))
 
 # get current working directory
 rootDir = os.getcwd()
@@ -50,9 +52,9 @@ rootDir = os.getcwd()
 # <refdir>.<suffix>  --> <refdir> must be in caseDirFilter
 caseDirFilter = set()
 
-if len(args) > 1:
+if args.fileWithFoldersToProcess != None:
 	# open file
-	casesFile = open(args[1], mode='r')
+	casesFile = open(args.fileWithFoldersToProcess, mode='r')
 	caseDirPaths = casesFile.readlines()
 	# handle filepath that have d6p files
 	for c in caseDirPaths:
@@ -67,10 +69,9 @@ if len(args) > 1:
 		caseDirFilter.add(c)
 
 # process all subdirectories with given suffix
-print "Processing base directory '{}'\n".format(rootDir)
+print ("Processing base directory '{}'\n".format(rootDir))
 caseDirs = [fname for fname in os.listdir(rootDir) if os.path.isdir(os.path.join(rootDir, fname))]
 caseDirs.sort()
 
 for c in caseDirs:
-	processCaseDir(c, rootDir, suffix, caseDirFilter)
-
+	processCaseDir(c, rootDir, suffix, caseDirFilter, args.alwaysUpdate)
