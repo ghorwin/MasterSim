@@ -178,7 +178,6 @@ else
 fi &&
 
 echo "*** Build MasterSimulator ***" &&
-echo $PWD &&
 if [[ $SKIP_TESTS = "false"  ]];
 then
 ./run_tests.sh
