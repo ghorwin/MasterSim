@@ -32,3 +32,5 @@ target_link_libraries( ${PROJECT_NAME}
 	${LINK_Z_LIBS}
 )
 
+# installation targets for Unix systems
+install(TARGETS ${PROJECT_NAME})

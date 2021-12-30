@@ -109,7 +109,8 @@ target_link_libraries( ${PROJECT_NAME}
 	${WIN_FRAMEWORKS}
 )
 
-
+# installation targets for Unix systems
+install(TARGETS ${PROJECT_NAME})
 
 
 
