@@ -112,5 +112,3 @@ target_link_libraries( ${PROJECT_NAME}
 # installation targets for Unix systems
 install(TARGETS ${PROJECT_NAME})
 
-
-
