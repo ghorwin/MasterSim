@@ -14,9 +14,16 @@ file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 if( WIN32 )
 	set (LINK_Z_LIBS zlibstatic)
 else( WIN32 )
+	# unix Linux/Unix/Darwin we use the system libz package
 	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
 
+if (UNIX)
+	# unix Linux/Unix we use the system tinyxml package
+	set (LINK_TINYXML_LIB tinyxml )
+else (UNIX)
+	set (LINK_TINYXML_LIB TiCPP )
+endif (UNIX)
 
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}
@@ -27,10 +34,11 @@ target_link_libraries( ${PROJECT_NAME}
 	MasterSim
 	IBKMK
 	IBK
-	TiCPP
+	${LINK_TINYXML_LIB}
 	minizip
 	${LINK_Z_LIBS}
 )
+
 
 # installation targets for Unix systems
 install(TARGETS ${PROJECT_NAME})

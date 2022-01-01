@@ -9,8 +9,15 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/IBKMK/src
 	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
-	${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
 )
+
+if (NOT UNIX)
+	include_directories(
+		${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
+	)
+else (NOT UNIX)
+	message("Using tinyxml development package")
+endif (NOT UNIX)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
 	# set C++ 11 standard (needed for vsnprintf)

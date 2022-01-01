@@ -67,8 +67,16 @@ endif (Qt5Widgets_INCLUDE_DIRS)
 if( WIN32 )
 	set (LINK_Z_LIBS zlibstatic)
 else( WIN32 )
+	# unix Linux/Unix/Darwin we use the system libz package
 	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
+
+if (UNIX)
+	# unix Linux/Unix we use the system tinyxml package
+	set (LINK_TINYXML_LIB tinyxml )
+else (UNIX)
+	set (LINK_TINYXML_LIB TiCPP )
+endif (UNIX)
 
 # build application executable for the different platforms
 if( WIN32 )
@@ -101,7 +109,7 @@ target_link_libraries( ${PROJECT_NAME}
 	BlockMod
 	IBKMK
 	IBK
-	TiCPP
+	${LINK_TINYXML_LIB}
 	minizip
 	${LINK_Z_LIBS}
 	${QT_LIBRARIES}
