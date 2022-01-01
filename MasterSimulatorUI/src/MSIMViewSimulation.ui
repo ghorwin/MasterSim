@@ -4,10 +4,10 @@
  <widget class="QWidget" name="MSIMViewSimulation">
   <property name="geometry">
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>940</width>
-    <height>656</height>
+	<x>0</x>
+	<y>0</y>
+	<width>940</width>
+	<height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,377 +15,377 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_6">
    <item row="0" column="0" rowspan="2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Simulation time frame</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="2">
-         <widget class="QComboBox" name="comboBoxStartTimeUnit"/>
-        </item>
-        <item row="1" column="2">
-         <widget class="QComboBox" name="comboBoxEndTimeUnit"/>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEditEndTime"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>End time:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditStartTime"/>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Start time:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_15">
-          <property name="text">
-           <string>Initial time step size:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEditDtStart"/>
-        </item>
-        <item row="2" column="2">
-         <widget class="QComboBox" name="comboBoxDtStartUnit"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Master Algorithm</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>Iteration algorithm:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="comboBoxMasterAlgorithm"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_5">
-          <property name="toolTip">
-           <string>A value of 1 disables iteration</string>
-          </property>
-          <property name="text">
-           <string>Maximum number of iterations:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="spinBoxMaxIteration">
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>100</number>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Relative tolerance:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEditRelTol"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_7">
-          <property name="text">
-           <string>Absolute tolerance:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEditAbsTol"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="title">
-        <string>Time Step Adjustment and Error Control</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_5">
-        <item row="2" column="2">
-         <widget class="QComboBox" name="comboBoxMinDtUnit"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_12">
-          <property name="text">
-           <string>Lower time step limit:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QCheckBox" name="checkBoxAdjustStepSize">
-          <property name="toolTip">
-           <string>Can be checked when error-based time step adjustment is off and iteration algorithm is enabled.</string>
-          </property>
-          <property name="text">
-           <string>Adjust step size</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_14">
-          <property name="text">
-           <string>Time step minimum for iteration:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QComboBox" name="comboBoxMaxDtUnit"/>
-        </item>
-        <item row="4" column="2">
-         <widget class="QComboBox" name="comboBoxDtIterLimitUnit"/>
-        </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QComboBox" name="comboBoxErrorControl"/>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_13">
-          <property name="text">
-           <string>Maximum time step size:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEditDtMin">
-          <property name="toolTip">
-           <string>If time step is reduced below this limit, simulation is stopped.</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_11">
-          <property name="text">
-           <string>Error control mode:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEditDtMax"/>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEditDtIterLimit"/>
-        </item>
-        <item row="5" column="0" colspan="3">
-         <widget class="QCheckBox" name="checkBoxPreventOversteppingOfEndTime">
-          <property name="toolTip">
-           <string>When enabled, the last time step will be shortened so that the last interval ends excactly at the desired end point. Use this only as compatibility option for specific FMUs since it potentially violates the constant-time-step rule.</string>
-          </property>
-          <property name="text">
-           <string>Prevent overstepping over end time</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_3">
-       <property name="title">
-        <string>Output options</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>Minimum output time step:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEditDtOutput"/>
-        </item>
-        <item row="0" column="2">
-         <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
-        </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QCheckBox" name="checkBoxWriteInternalVariables">
-          <property name="text">
-           <string>Write internal variables as outputs</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+	<layout class="QVBoxLayout" name="verticalLayout">
+	 <item>
+	  <widget class="QGroupBox" name="groupBox">
+	   <property name="title">
+		<string>Simulation time frame</string>
+	   </property>
+	   <layout class="QGridLayout" name="gridLayout_2">
+		<item row="0" column="2">
+		 <widget class="QComboBox" name="comboBoxStartTimeUnit"/>
+		</item>
+		<item row="1" column="2">
+		 <widget class="QComboBox" name="comboBoxEndTimeUnit"/>
+		</item>
+		<item row="1" column="1">
+		 <widget class="QLineEdit" name="lineEditEndTime"/>
+		</item>
+		<item row="1" column="0">
+		 <widget class="QLabel" name="label_2">
+		  <property name="text">
+		   <string>End time:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="0" column="1">
+		 <widget class="QLineEdit" name="lineEditStartTime"/>
+		</item>
+		<item row="0" column="0">
+		 <widget class="QLabel" name="label">
+		  <property name="text">
+		   <string>Start time:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="2" column="0">
+		 <widget class="QLabel" name="label_15">
+		  <property name="text">
+		   <string>Initial time step size:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="2" column="1">
+		 <widget class="QLineEdit" name="lineEditDtStart"/>
+		</item>
+		<item row="2" column="2">
+		 <widget class="QComboBox" name="comboBoxDtStartUnit"/>
+		</item>
+	   </layout>
+	  </widget>
+	 </item>
+	 <item>
+	  <widget class="QGroupBox" name="groupBox_2">
+	   <property name="title">
+		<string>Master Algorithm</string>
+	   </property>
+	   <layout class="QGridLayout" name="gridLayout_4">
+		<item row="0" column="0">
+		 <widget class="QLabel" name="label_4">
+		  <property name="text">
+		   <string>Iteration algorithm:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="0" column="1">
+		 <widget class="QComboBox" name="comboBoxMasterAlgorithm"/>
+		</item>
+		<item row="1" column="0">
+		 <widget class="QLabel" name="label_5">
+		  <property name="toolTip">
+		   <string>A value of 1 disables iteration</string>
+		  </property>
+		  <property name="text">
+		   <string>Maximum number of iterations:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="1" column="1">
+		 <widget class="QSpinBox" name="spinBoxMaxIteration">
+		  <property name="alignment">
+		   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+		  </property>
+		  <property name="minimum">
+		   <number>1</number>
+		  </property>
+		  <property name="maximum">
+		   <number>100</number>
+		  </property>
+		 </widget>
+		</item>
+		<item row="2" column="0">
+		 <widget class="QLabel" name="label_6">
+		  <property name="text">
+		   <string>Relative tolerance:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="2" column="1">
+		 <widget class="QLineEdit" name="lineEditRelTol"/>
+		</item>
+		<item row="3" column="0">
+		 <widget class="QLabel" name="label_7">
+		  <property name="text">
+		   <string>Absolute tolerance:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="3" column="1">
+		 <widget class="QLineEdit" name="lineEditAbsTol"/>
+		</item>
+	   </layout>
+	  </widget>
+	 </item>
+	 <item>
+	  <widget class="QGroupBox" name="groupBox_4">
+	   <property name="title">
+		<string>Time Step Adjustment and Error Control</string>
+	   </property>
+	   <layout class="QGridLayout" name="gridLayout_5">
+		<item row="2" column="2">
+		 <widget class="QComboBox" name="comboBoxMinDtUnit"/>
+		</item>
+		<item row="2" column="0">
+		 <widget class="QLabel" name="label_12">
+		  <property name="text">
+		   <string>Lower time step limit:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="1" column="0" colspan="3">
+		 <widget class="QCheckBox" name="checkBoxAdjustStepSize">
+		  <property name="toolTip">
+		   <string>Can be checked when error-based time step adjustment is off and iteration algorithm is enabled.</string>
+		  </property>
+		  <property name="text">
+		   <string>Adjust step size</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="4" column="0">
+		 <widget class="QLabel" name="label_14">
+		  <property name="text">
+		   <string>Time step minimum for iteration:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="3" column="2">
+		 <widget class="QComboBox" name="comboBoxMaxDtUnit"/>
+		</item>
+		<item row="4" column="2">
+		 <widget class="QComboBox" name="comboBoxDtIterLimitUnit"/>
+		</item>
+		<item row="0" column="1" colspan="2">
+		 <widget class="QComboBox" name="comboBoxErrorControl"/>
+		</item>
+		<item row="3" column="0">
+		 <widget class="QLabel" name="label_13">
+		  <property name="text">
+		   <string>Maximum time step size:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="2" column="1">
+		 <widget class="QLineEdit" name="lineEditDtMin">
+		  <property name="toolTip">
+		   <string>If time step is reduced below this limit, simulation is stopped.</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="0" column="0">
+		 <widget class="QLabel" name="label_11">
+		  <property name="text">
+		   <string>Error control mode:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="3" column="1">
+		 <widget class="QLineEdit" name="lineEditDtMax"/>
+		</item>
+		<item row="4" column="1">
+		 <widget class="QLineEdit" name="lineEditDtIterLimit"/>
+		</item>
+		<item row="5" column="0" colspan="3">
+		 <widget class="QCheckBox" name="checkBoxPreventOversteppingOfEndTime">
+		  <property name="toolTip">
+		   <string>When enabled, the last time step will be shortened so that the last interval ends exactly at the desired end point. Use this only as compatibility option for specific FMUs since it potentially violates the constant-time-step rule.</string>
+		  </property>
+		  <property name="text">
+		   <string>Prevent overstepping over end time</string>
+		  </property>
+		 </widget>
+		</item>
+	   </layout>
+	  </widget>
+	 </item>
+	 <item>
+	  <widget class="QGroupBox" name="groupBox_3">
+	   <property name="title">
+		<string>Output options</string>
+	   </property>
+	   <layout class="QGridLayout" name="gridLayout_3">
+		<item row="0" column="0">
+		 <widget class="QLabel" name="label_8">
+		  <property name="text">
+		   <string>Minimum output time step:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="0" column="1">
+		 <widget class="QLineEdit" name="lineEditDtOutput"/>
+		</item>
+		<item row="0" column="2">
+		 <widget class="QComboBox" name="comboBoxDtOutputUnit"/>
+		</item>
+		<item row="1" column="0" colspan="3">
+		 <widget class="QCheckBox" name="checkBoxWriteInternalVariables">
+		  <property name="text">
+		   <string>Write internal variables as outputs</string>
+		  </property>
+		 </widget>
+		</item>
+	   </layout>
+	  </widget>
+	 </item>
+	 <item>
+	  <spacer name="verticalSpacer_2">
+	   <property name="orientation">
+		<enum>Qt::Vertical</enum>
+	   </property>
+	   <property name="sizeHint" stdset="0">
+		<size>
+		 <width>20</width>
+		 <height>40</height>
+		</size>
+	   </property>
+	  </spacer>
+	 </item>
+	</layout>
    </item>
    <item row="0" column="1">
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="title">
-      <string>Start Simulation</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_9">
-          <property name="text">
-           <string>Verbosity/Logging detail:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="comboBoxVerbosityLevel"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelTerminalEmulator">
-          <property name="text">
-           <string>Terminal emulator:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QComboBox" name="comboBoxTermEmulator">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <item>
-           <property name="text">
-            <string>None (background process)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>XTerm</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Gnome Terminal</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Fixed</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Command line:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEditCommandLine"/>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QToolButton" name="toolButtonStartInTerminal">
-          <property name="toolTip">
-           <string>Starts the simulation.</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources/MasterSimulator.qrc">
-            <normaloff>:/gfx/actions/64x64/simStart.png</normaloff>:/gfx/actions/64x64/simStart.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>64</width>
-            <height>64</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>472</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButtonShowLogfile">
-          <property name="text">
-           <string>Show log file...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+	<widget class="QGroupBox" name="groupBox_5">
+	 <property name="title">
+	  <string>Start Simulation</string>
+	 </property>
+	 <layout class="QVBoxLayout" name="verticalLayout_2">
+	  <item>
+	   <layout class="QGridLayout" name="gridLayout">
+		<item row="0" column="0">
+		 <widget class="QLabel" name="label_9">
+		  <property name="text">
+		   <string>Verbosity/Logging detail:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="0" column="1">
+		 <widget class="QComboBox" name="comboBoxVerbosityLevel"/>
+		</item>
+		<item row="1" column="0">
+		 <widget class="QLabel" name="labelTerminalEmulator">
+		  <property name="text">
+		   <string>Terminal emulator:</string>
+		  </property>
+		 </widget>
+		</item>
+		<item row="1" column="1">
+		 <widget class="QComboBox" name="comboBoxTermEmulator">
+		  <property name="sizePolicy">
+		   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+			<horstretch>0</horstretch>
+			<verstretch>0</verstretch>
+		   </sizepolicy>
+		  </property>
+		  <item>
+		   <property name="text">
+			<string>None (background process)</string>
+		   </property>
+		  </item>
+		  <item>
+		   <property name="text">
+			<string>XTerm</string>
+		   </property>
+		  </item>
+		  <item>
+		   <property name="text">
+			<string>Gnome Terminal</string>
+		   </property>
+		  </item>
+		 </widget>
+		</item>
+	   </layout>
+	  </item>
+	  <item>
+	   <spacer name="verticalSpacer_3">
+		<property name="orientation">
+		 <enum>Qt::Vertical</enum>
+		</property>
+		<property name="sizeType">
+		 <enum>QSizePolicy::Fixed</enum>
+		</property>
+		<property name="sizeHint" stdset="0">
+		 <size>
+		  <width>20</width>
+		  <height>20</height>
+		 </size>
+		</property>
+	   </spacer>
+	  </item>
+	  <item>
+	   <widget class="QLabel" name="label_3">
+		<property name="text">
+		 <string>Command line:</string>
+		</property>
+	   </widget>
+	  </item>
+	  <item>
+	   <widget class="QLineEdit" name="lineEditCommandLine"/>
+	  </item>
+	  <item>
+	   <layout class="QHBoxLayout" name="horizontalLayout">
+		<item>
+		 <widget class="QToolButton" name="toolButtonStartInTerminal">
+		  <property name="toolTip">
+		   <string>Starts the simulation.</string>
+		  </property>
+		  <property name="icon">
+		   <iconset resource="../resources/MasterSimulator.qrc">
+			<normaloff>:/gfx/actions/64x64/simStart.png</normaloff>:/gfx/actions/64x64/simStart.png</iconset>
+		  </property>
+		  <property name="iconSize">
+		   <size>
+			<width>64</width>
+			<height>64</height>
+		   </size>
+		  </property>
+		 </widget>
+		</item>
+		<item>
+		 <spacer name="horizontalSpacer">
+		  <property name="orientation">
+		   <enum>Qt::Horizontal</enum>
+		  </property>
+		  <property name="sizeHint" stdset="0">
+		   <size>
+			<width>472</width>
+			<height>20</height>
+		   </size>
+		  </property>
+		 </spacer>
+		</item>
+		<item>
+		 <widget class="QPushButton" name="pushButtonShowLogfile">
+		  <property name="text">
+		   <string>Show log file...</string>
+		  </property>
+		 </widget>
+		</item>
+	   </layout>
+	  </item>
+	 </layout>
+	</widget>
    </item>
    <item row="1" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>392</height>
-      </size>
-     </property>
-    </spacer>
+	<spacer name="verticalSpacer">
+	 <property name="orientation">
+	  <enum>Qt::Vertical</enum>
+	 </property>
+	 <property name="sizeHint" stdset="0">
+	  <size>
+	   <width>20</width>
+	   <height>392</height>
+	  </size>
+	 </property>
+	</spacer>
    </item>
   </layout>
  </widget>
