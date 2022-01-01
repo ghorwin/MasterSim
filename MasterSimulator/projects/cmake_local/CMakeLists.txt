@@ -18,12 +18,12 @@ else( WIN32 )
 	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
 
-if (UNIX)
+if (UNIX AND NOT APPLE)
 	# unix Linux/Unix we use the system tinyxml package
 	set (LINK_TINYXML_LIB tinyxml )
-else (UNIX)
+else (UNIX AND NOT APPLE)
 	set (LINK_TINYXML_LIB TiCPP )
-endif (UNIX)
+endif (UNIX AND NOT APPLE)
 
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}

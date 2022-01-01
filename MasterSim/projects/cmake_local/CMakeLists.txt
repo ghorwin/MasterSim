@@ -11,13 +11,13 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
 )
 
-if (NOT UNIX)
+if (UNIX AND NOT APPLE)
+	message("Using tinyxml development package")
+else (UNIX AND NOT APPLE)
 	include_directories(
 		${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
 	)
-else (NOT UNIX)
-	message("Using tinyxml development package")
-endif (NOT UNIX)
+endif (UNIX AND NOT APPLE)
 
 if (CMAKE_COMPILER_IS_GNUCXX)
 	# set C++ 11 standard (needed for vsnprintf)
