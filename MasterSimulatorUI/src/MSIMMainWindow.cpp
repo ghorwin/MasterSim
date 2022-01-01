@@ -702,7 +702,7 @@ void MSIMMainWindow::onActionSwitchLanguage() {
 	QAction * a = (QAction *)sender();
 	QString langId = a->data().toString();
 	MSIMSettings::instance().m_langId = langId;
-	QMessageBox::information(this, tr("Languange changed"), tr("Please restart the software to activate the new language!"));
+	QMessageBox::information(this, tr("Language changed"), tr("Please restart the software to activate the new language!"));
 }
 
 

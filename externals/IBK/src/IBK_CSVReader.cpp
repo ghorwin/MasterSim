@@ -86,7 +86,7 @@ bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
 		IBK::explode(line2, tokens2, ",", IBK::EF_UseQuotes);
 		// still no luck?
 		if (tokens1.size() < 2 || tokens1.size() != tokens2.size()) {
-			throw IBK::Exception( IBK::FormatString("Unable to determine csv flavour - inconsistent delimiters or missing/wrong quotation charactors (or only one column?)."), FUNC_ID);
+			throw IBK::Exception( IBK::FormatString("Unable to determine csv flavour - inconsistent delimiters or missing/wrong quotation characters (or only one column?)."), FUNC_ID);
 		}
 		tabFormat = false;
 	}
