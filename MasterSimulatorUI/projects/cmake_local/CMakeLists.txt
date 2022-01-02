@@ -117,6 +117,10 @@ target_link_libraries( ${PROJECT_NAME}
 	${WIN_FRAMEWORKS}
 )
 
-# installation targets for Unix systems
-install(TARGETS ${PROJECT_NAME})
 
+if (UNIX AND NOT APPLE)
+
+	# installation targets for Unix systems
+	install(TARGETS ${PROJECT_NAME})
+
+endif (UNIX AND NOT APPLE)
