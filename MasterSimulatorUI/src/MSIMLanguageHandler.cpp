@@ -112,7 +112,7 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 
 	// system translator first, filename is for example "qt_de"
 	systemTranslator = new QTranslator;
-	if (systemTranslator->load("qt_" + langId, translationPath)) {
+	if (systemTranslator->load("qt_" + langId, qtTranslationFilePath)) {
 		qApp->installTranslator(systemTranslator);
 		IBK::IBK_Message( IBK::FormatString("Installing system translator using file: 'qt_%1'.\n").arg(langId.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
