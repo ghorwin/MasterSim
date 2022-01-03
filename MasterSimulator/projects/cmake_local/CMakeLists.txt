@@ -27,6 +27,7 @@ target_link_libraries( ${PROJECT_NAME}
 	MasterSim
 	IBKMK
 	IBK
+	TiCPP
 	minizip
 	${LINK_Z_LIBS}
 )

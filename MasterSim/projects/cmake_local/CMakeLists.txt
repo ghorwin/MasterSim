@@ -21,13 +21,9 @@ endif (CMAKE_COMPILER_IS_GNUCXX)
 # collect a list of all source files of the library
 file( GLOB LIB_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 
-# add tinyxml source files
-file( GLOB TICPP_LIB_SRCS ${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src/*.cpp )
-
 # build the library
 add_library( ${PROJECT_NAME}
 	${LIB_SRCS}
-	${TICPP_LIB_SRCS}
 )
 
 
