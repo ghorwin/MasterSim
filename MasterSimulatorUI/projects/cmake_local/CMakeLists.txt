@@ -35,34 +35,17 @@ set ( APP_WIN_RC
 )
 
 # run uic and moc compilers, add resources
-if (Qt5Widgets_INCLUDE_DIRS)
+qt5_add_resources( APP_RC_SRCS ${APP_QRCS} )
+qt5_wrap_ui( APP_UI_SRCS ${APP_UIS} )
+qt5_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
 
-	qt5_add_resources( APP_RC_SRCS ${APP_QRCS} )
-	qt5_wrap_ui( APP_UI_SRCS ${APP_UIS} )
-	qt5_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
-
-	# generate list of all required QT_LIBRARIES
-	set ( QT_LIBRARIES 
-		Qt5::Widgets
-		Qt5::Svg
-		Qt5::Network
-		Qt5::PrintSupport
-	)
-
-else (Qt5Widgets_INCLUDE_DIRS)
-
-	qt4_add_resources( APP_RC_SRCS ${APP_QRCS} )
-	qt4_wrap_ui( APP_UI_SRCS ${APP_UIS} )
-	qt4_wrap_cpp( APP_MOC_SRCS ${APP_HDRS} )
-
-	# add missing QTMAIN library
-	set( QT_LIBRARIES 
-		${QT_LIBRARIES}
-		${QT_QTMAIN_LIBRARY} # to avoid "error LNK2019: unresolved external symbol _WinMain@16 referenced in function ___tmainCRTStartup"
-	)
-
-endif (Qt5Widgets_INCLUDE_DIRS)
-
+# generate list of all required QT_LIBRARIES
+set ( QT_LIBRARIES 
+	Qt5::Widgets
+	Qt5::Svg
+	Qt5::Network
+	Qt5::PrintSupport
+)
 
 if( WIN32 )
 	set (LINK_Z_LIBS zlibstatic)
@@ -102,6 +85,7 @@ target_link_libraries( ${PROJECT_NAME}
 	BlockMod
 	IBKMK
 	IBK
+	TiCPP
 	minizip
 	${LINK_Z_LIBS}
 	${QT_LIBRARIES}
