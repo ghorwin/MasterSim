@@ -18,13 +18,6 @@ else( WIN32 )
 	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
 
-if (UNIX AND NOT APPLE)
-	# unix Linux/Unix we use the system tinyxml package
-	set (LINK_TINYXML_LIB tinyxml )
-else (UNIX AND NOT APPLE)
-	set (LINK_TINYXML_LIB TiCPP )
-endif (UNIX AND NOT APPLE)
-
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}
 )
@@ -34,7 +27,6 @@ target_link_libraries( ${PROJECT_NAME}
 	MasterSim
 	IBKMK
 	IBK
-	${LINK_TINYXML_LIB}
 	minizip
 	${LINK_Z_LIBS}
 )

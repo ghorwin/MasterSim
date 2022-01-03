@@ -71,13 +71,6 @@ else( WIN32 )
 	set (LINK_Z_LIBS z dl)
 endif( WIN32 )
 
-if (UNIX AND NOT APPLE)
-	# unix Linux/Unix we use the system tinyxml package
-	set (LINK_TINYXML_LIB tinyxml )
-else (UNIX AND NOT APPLE)
-	set (LINK_TINYXML_LIB TiCPP )
-endif (UNIX AND NOT APPLE)
-
 # build application executable for the different platforms
 if( WIN32 )
 	add_executable( ${PROJECT_NAME} WIN32 
@@ -109,7 +102,6 @@ target_link_libraries( ${PROJECT_NAME}
 	BlockMod
 	IBKMK
 	IBK
-	${LINK_TINYXML_LIB}
 	minizip
 	${LINK_Z_LIBS}
 	${QT_LIBRARIES}
