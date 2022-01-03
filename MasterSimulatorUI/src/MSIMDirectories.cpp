@@ -18,23 +18,24 @@ QString MSIMDirectories::resourcesRootDir() {
 	return installPath + "/resources";
 #elif defined(Q_OS_MAC)
 	// in deployment mode, we have them in MasterSim.app/Contents/Resources
+	// where install path is MasterSim.app/MacOS
 	return installPath + "/../Resources";
 #elif defined(Q_OS_UNIX)
 
-	// in deployment mode, we have them in "/usr/share/MasterSim" or "/usr/local/share/MasterSim"
-	// unless otherwise specified in the settings
+#ifdef IBK_BUILDING_DEBIAN_PACKAGE
 
-	QString resRootPath;
-	if (installPath.indexOf("/usr/bin") == 0)
-		resRootPath = "/usr/share/MasterSim";
-	else if (installPath.indexOf("/usr/local/bin") == 0)
-		resRootPath = "/usr/local/share/MasterSim";
-	else
-		resRootPath = installPath + "/../resources";
+	// we install to /usr/bin/MasterSimulatorUI
+	// and the package data is in
+	//               /usr/share/mastersim
+	return installPath + "/../share/mastersim";
 
-	return resRootPath;
+#else // IBK_BUILDING_DEBIAN_PACKAGE
 
-#endif
+	return installPath + "/../resources";
+
+#endif // IBK_BUILDING_DEBIAN_PACKAGE
+
+#endif // defined(Q_OS_UNIX)
 
 
 #else // IBK_DEPLOYMENT
@@ -59,8 +60,13 @@ QString MSIMDirectories::resourcesRootDir() {
 QString MSIMDirectories::translationsDir() {
 #ifdef IBK_DEPLOYMENT
 
-	// deployment mode
+	// for debian deployment we have the locales install in /usr/share/locale/de/LC_MESSAGES
+#ifdef IBK_BUILDING_DEBIAN_PACKAGE
+	QString installPath = qApp->applicationDirPath();
+	return installPath + "/../share/locale/de/LC_MESSAGES";
+#else // IBK_BUILDING_DEBIAN_PACKAGE
 	return resourcesRootDir() + "/translations";
+#endif // IBK_BUILDING_DEBIAN_PACKAGE
 
 #else // IBK_DEPLOYMENT
 	// development (IDE) mode
