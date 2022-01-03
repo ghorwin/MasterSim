@@ -36,6 +36,7 @@ target_link_libraries( ${PROJECT_NAME}
 if (UNIX AND NOT APPLE)
 
 	# installation targets for Unix systems
-	install(TARGETS ${PROJECT_NAME})
+	include(GNUInstallDirs)
+	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
 
 endif (UNIX AND NOT APPLE)
