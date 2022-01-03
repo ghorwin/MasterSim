@@ -1037,6 +1037,13 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 
 
 void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
+#ifdef IBK_BUILDING_DEBIAN_PACKAGE
+	int res = QMessageBox::question(this, QString(), tr("MasterSim appears to be installed as distribution package. The desktop integration should have been "
+									"installed already as part of the package installation. Are you sure you want to create .desktop and mime "
+									"files in your local home directory?"), QMessageBox::Yes | QMessageBox::No);
+	if (res == QMessageBox::No)
+		return;
+#endif
 	// copy icon files, unless existing already
 #ifdef IBK_DEPLOYMENT
 	QString iconLocation = MSIMDirectories::resourcesRootDir();
