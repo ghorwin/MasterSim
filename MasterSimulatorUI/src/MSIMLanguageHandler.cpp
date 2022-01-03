@@ -7,6 +7,7 @@
 
 #include <IBK_messages.h>
 #include <IBK_FormatString.h>
+#include <IBK_configuration.h>
 
 #include <MSIM_Constants.h>
 
@@ -46,7 +47,7 @@ QString MSIMLanguageHandler::langId() {
 		int pos = localeName.indexOf('_');
 		if (pos != -1)
 			localeName = localeName.left(pos);
-		IBK::IBK_Message( IBK::FormatString("Translation required for locale: '%1'.\n").arg(localeName.toUtf8().data()),
+		IBK::IBK_Message( IBK::FormatString("Translation required for locale: '%1'.\n").arg(localeName.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		langid = localeName;
 	}
@@ -85,30 +86,48 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 	}
 
 
+	// We distinguish between regular install, i.e. with deployed Qt libs on Windows and Darwin
+	// and with pre-installed qt on Linux/Unix plattforms
+	//
+	// In case of Windows/MacOS the qt-translation files are shipped together with the application,
+	// yet in case of Linux the qt translation files are always in /usr/share/qt5/translations
+	//
+	// The application translation files are stored in the MSIMDirectories::translationsDir(), which returns
+	// the appropriate path based on whether the define IBK_BUILDING_DEBIAN_PACKAGE is set or not.
+	// If this define is set, we expect a directory structure like
+	//   <prefix>/bin/MasterSimulatorUI
+	//   <prefix>/share/mastersim/translations
+
 	QString translationPath = MSIMDirectories::translationsDir();
-	IBK::IBK_Message( IBK::FormatString("Translation file path = '%1'.\n").arg(translationPath.toUtf8().data()),
+	QString qtTranslationFilePath = translationPath;
+
+#if defined(Q_OS_LINUX)
+	qtTranslationFilePath = "/usr/share/qt5/translations";
+#endif // defined(Q_OS_LINUX)
+
+	IBK::IBK_Message( IBK::FormatString("App translation file path = '%1'.\n").arg(translationPath.toStdString()),
+		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+	IBK::IBK_Message( IBK::FormatString("Qt translation file path  = '%1'.\n").arg(qtTranslationFilePath.toStdString()),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
+	// system translator first, filename is for example "qt_de"
 	systemTranslator = new QTranslator;
-
-	// system translator first
 	if (systemTranslator->load("qt_" + langId, translationPath)) {
 		qApp->installTranslator(systemTranslator);
-		IBK::IBK_Message( IBK::FormatString("Installing system translator using file: 'qt_%1'.\n").arg(langId.toUtf8().data()),
+		IBK::IBK_Message( IBK::FormatString("Installing system translator using file: 'qt_%1'.\n").arg(langId.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	else {
-		IBK::IBK_Message( IBK::FormatString("Could not load system translator file: 'qt_%1'.\n").arg(langId.toUtf8().data()),
+		IBK::IBK_Message( IBK::FormatString("Could not load system translator file: 'qt_%1'.\n").arg(langId.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		// no translator found, remove it again
 		delete systemTranslator;
 		systemTranslator = nullptr;
 	}
 
-
 	applicationTranslator = new QTranslator;
 	if (applicationTranslator->load("MasterSimulatorUI_" + langId, translationPath)) {
-		IBK::IBK_Message( IBK::FormatString("Installing application translator using file: 'MasterSimulatorUI_%1'.\n").arg(langId.toUtf8().data()),
+		IBK::IBK_Message( IBK::FormatString("Installing application translator using file: 'MasterSimulatorUI_%1'.\n").arg(langId.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		qApp->installTranslator(applicationTranslator);
 		// remember translator in settings
@@ -116,7 +135,7 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 		config.setValue("LangID", langId);
 	}
 	else {
-		IBK::IBK_Message( IBK::FormatString("Could not load application translator file: 'MasterSimulatorUI_%1'.\n").arg(langId.toUtf8().data()),
+		IBK::IBK_Message( IBK::FormatString("Could not load application translator file: 'MasterSimulatorUI_%1'.\n").arg(langId.toStdString()),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		delete applicationTranslator;
 		applicationTranslator = nullptr;
