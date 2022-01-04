@@ -1,0 +1,40 @@
+.TH "MASTERSIMULATORUI" "1" "January 01, 2022" "0.9.1" "MasterSim"
+.SH NAME
+MasterSimulatorUI \- FMI Co-Simulation Graphical Configuration Tool
+.SH SYNOPSIS
+.B MasterSimulatorUI [flags] [options] [<project.msim>]
+.SH DESCRIPTION
+.B MasterSimulatorUI
+is a graphical user interface to configure/define FMI co-simulation
+scenarios and generate MasterSim project files. These project files
+are used by the commandline co-simulator
+.B MasterSimulator
+which runs the coupled simulation.
+.TP
+.SH FLAGS
+.RS
+.TP
+.B
+\fB--help\fP
+Prints the help page.
+.TP
+.B
+\fB--cmd-line\fP
+Prints the command line as it was understood by the command line parser
+.TP
+.B
+\fB--options-left\fP
+Prints all options that are unknown to the command line parser
+.TP
+.B
+\fB--no-splash\fP
+Hides the splash screen
+.RE
+.PP
+.SH OPTIONS
+.RS
+.TP
+.B
+\fB--lang\fP=<en, de, ...>
+Start user interface with a different program language. Argument is 
+the short locale ID for one of the supported languages.

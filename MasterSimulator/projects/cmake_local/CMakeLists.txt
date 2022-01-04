@@ -37,6 +37,11 @@ if (UNIX AND NOT APPLE)
 
 	# installation targets for Unix systems
 	include(GNUInstallDirs)
+	
+	# MasterSimulator -> /usr/bin
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
+	
+	# Man-page
+	install(FILES ${PROJECT_SOURCE_DIR}/../../doc/${PROJECT_NAME}.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
 
 endif (UNIX AND NOT APPLE)
