@@ -139,7 +139,7 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 		// m_projectFile now holds current project file
 
 		// convert all slave references to absolute file paths
-		IBK::Path absoluteProjectFilePath = IBK::Path(m_projectFile.toUtf8().data()).parentPath();
+		IBK::Path absoluteProjectFilePath = IBK::Path(m_projectFile.toStdString()).parentPath();
 		for (unsigned int i=0; i<m_project->m_simulators.size(); ++i) {
 			IBK::Path p = m_project->m_simulators[i].m_pathToFMU; // may be a relative path
 			if (!p.isAbsolute()) {
@@ -266,8 +266,8 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveProject(QWidget * parent,
 
 	// updated created and lastEdited tags
 	if (m_project->m_created.empty())
-		m_project->m_created = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
-	m_project->m_lastEdited = QDateTime::currentDateTime().toString(Qt::TextDate).toUtf8().data();
+		m_project->m_created = QDateTime::currentDateTime().toString(Qt::TextDate).toStdString();
+	m_project->m_lastEdited = QDateTime::currentDateTime().toString(Qt::TextDate).toStdString();
 
 	QString lastFileName = m_projectFile;
 
@@ -523,14 +523,14 @@ bool MSIMProjectHandler::read(const QString & fname) {
 
 	if (!QFileInfo(fname).exists()) {
 		IBK::IBK_Message(IBK::FormatString("File '%1' does not exist or permissions are missing for accessing the file.")
-						 .arg(fname.toUtf8().data()), IBK::MSG_ERROR, FUNC_ID);
+						 .arg(fname.toStdString()), IBK::MSG_ERROR, FUNC_ID);
 		return false;
 	}
 
 	try {
 
 		// filename is converted to utf8 before calling readXML
-		IBK::Path fpath(fname.toUtf8().data());
+		IBK::Path fpath(fname.toStdString());
 		m_project->read(fpath, false);
 		m_projectFile = fname;
 
@@ -620,7 +620,7 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 	QFile file(fname);
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
 		IBK::IBK_Message(IBK::FormatString("Cannot create/write file '%1' (path does not exists or missing permissions).")
-						 .arg(fname.toUtf8().data()), IBK::MSG_ERROR, FUNC_ID);
+						 .arg(fname.toStdString()), IBK::MSG_ERROR, FUNC_ID);
 		return false;
 	}
 	file.close();
