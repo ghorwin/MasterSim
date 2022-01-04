@@ -1,0 +1,1013 @@
+Ubuntu Paketerstellung und Veröffentlichung
+===========================================
+Andreas Nicolai <andreas.nicolai@gmx.net>
+v1.0 (03.01.2022)
+// v1.0 date_on_line_above
+:Author Initials: AN
+:toc: left
+:toclevels: 3
+:toc-title: Inhaltsverzeichnis
+:icons: font
+:imagesdir: ./images
+:numbered:
+:website:
+:source-highlighter: rouge
+:rouge-style: custom
+:title-page:
+:stylesdir: ./adoc_utils/css
+:stylesheet: roboto_ubuntu.css
+:tabsize: 2
+:title-page:
+
+:caution-caption: Achtung
+:example-caption: Beispiel
+:figure-caption: Abbildung
+:table-caption: Tabelle
+
+:xrefstyle: short
+
+## Überblick
+
+In dieser Anleitung habe ich meine Erkenntnisse und Verfahrensweisen 
+zur Erstellung von deb-Paketen für Ubuntu-Distributionen 
+zusammengetragen. Am Beispiel von _MasterSim_ beschreibe ich die 
+verschiedenen Arbeitsschritte.
+
+## Vorbetrachtungen
+
+Ubuntu ist eine klassische Linux-Distribution, welche in der jeweiligen 
+Release-Version jeweils durch eine Auswahl von Software in bestimmten
+Versionen gekennzeichnet ist. Der elementare Vorteil von Distributionen
+ist, dass gemeinsame Bibliotheken von mehreren Paketen benutzt werden und
+so stets nur einmal auf der Platte 
+liegen, und nicht wie bei Windows/MacOS als Kopie mehrfach installiert 
+werden. Dadurch ist das _MasterSim_ Paket zum Schluss gerade mal 900 kB
+groß, da ja die C++ und Qt Laufzeitbibliotheken nicht nochmal erneut 
+mitgeliefert werden müssen.
+
+Weiterhin bietet dieses System den Vorteil,
+dass Fehlerbehebungen in gemeinsamen Bibliotheken sofort allen 
+verwendenden Programmen zugute kommen, und diese nicht erst manuell
+aktualisiert und verteilt werden müssen. Daher ist es grundsätzlich eine
+gute Idee, existierende Pakete und Bibliotheken direkt zu nutzen, als 
+diese im eigenen Projekt als Kopie zu duplizieren. Das geht nicht immer,
+aber dazu später mehr.
+
+Dieser Vorteil von den gemeinsam genutzten Bibliotheken, oder allgemeiner
+noch _Paketen_, bedingt allerdings "etwas" mehr Arbeit. Sofern denn die zu 
+verpackende Software Abhängigkeiten von 
+installierten Softwarepaketen hat, muss man bei 
+Änderungen der API solcher Bibliotheken entsprechend 
+distributionsabhängige Quelltextmodifikationen berücksichtigen und auch 
+für verschiedene Distro-Releases etwas veränderte Pakete erstellen.
+
+[IMPORTANT]
+====
+Zusammenfassend die Vor- und Nachteile der Verwendung von Distributionen:
+
+*Vorteile*:
+
+- wesentlich geringerer Speicherplatzbedarf verglichen mit Softwarebundles
+  (AppImage, Docker-Container, MacOS-AppBundles, Windows-Install-Paketen)
+- einfache und schnelle Installation von Software und deren Aktualisierungen
+- Verbesserungen/Bug-Fixes in verwendeten gemeinsamen Bibliotheken/Paketen
+  fließen direkt ohne neue Release-Erstellung in abhängige Pakete ein
+
+*Nachteile*:
+
+- Aktualisierung von verwendeten Bibliotheken, weil z.B. ein neues 
+  Feature benötigt wird, ist in einer veröffentlichten Distribution in 
+  der Regel nicht möglich. Daher muss unter Umständen die Software manuell
+  auf Verwendung einer neueren Bibliotheks-/Paketversion angepasst werden.
+  Oder man verzichtet auf das Feature. Jedenfalls muss man bereits bei der
+  Entwicklung ein Auge auf gewisse Abhängigkeiten haben und ggfs. im Quelltext
+  Fallunterscheidungen implementieren (= mehr Entwicklungsaufwand)
+- Paketveröffentlichung muss für verschiedene Distributionen angepasst 
+  werden (= mehr Veröffentlichungsaufwand)
+====
+
+Schwierig wird es stets dann, wenn man sich entschließt, Bugfixes in
+der aktuellen Entwicklungsversion für eine ältere Distribution zurück
+zu portieren. Problematisch ist dies stets dann, wenn der Bugfix eine 
+Funktion einer abhängigen Bibliothek verwendet, die in der 
+Bibliotheksversion der älteren Distribution noch nicht verfügbar ist.
+
+Damit ist man als Entwickler in einem gewissen Zwiespalt:
+
+- einerseits sollte man versuchen, möglichst viele Distributionspakete
+  nachzunutzen
+- andererseits bringen lokale (und beliebig modifizierte) Kopien von
+  externen Bibliotheken mehr Freiheiten für Entwickler und beschleunigen
+  die Softwareentwicklung
+
+.Verwendung externer Bibliotheken bei _MasterSim_
+====
+Bei _MasterSim_ wird z.B. die systemweit installierte _zlib_ verwendet, 
+jedoch _tinyxml_ als eingebetteter, gepatchter und erweiterter 
+Quelltext genutzt. Dies liegt zum einen an unseren IBK-spezifischen 
+Erweiterungen (die man notfalls auch getrennt von der _tinyxml_ lib
+ablegen könnte), und einigen Korrekturen/Verbesserungen im Quelltext von
+_tinyxml_ selbst. Da die _tinyxml_ lib selbst nicht mehr weiterentwickelt/gepflegt 
+wird, können wir unsere Anpassungen/Verbesserungen nicht in den offiziellen
+Quelltext bekommen und müssen daher zwangsläufig eine veränderte, lokale
+Kopie halten (und diese manuell mit dem Original abgleichen).
+====
+
+Es ist also immer eine Grauzone und oft hängt die
+Entscheidung auch davon ab, inwieweit der Autor/Maintainer der 
+Bibliothek offen für Erweiterungen/Änderungen ist.
+
+### Upstream-Quelltext
+
+Der ursprüngliche Quelltext, der dem Paket zugrunde liegt, wird als
+*Upstream* bezeichnet. 
+
+Normalerweise wird, gerade bei 
+plattformübergreifender Entwicklung, die Entwicklung in einem 
+ausgewählten Distributionsrelease durchgeführt. Bspw. wird _MasterSim_
+gerade unter Ubuntu 20.04.3 LTS entwickelt. Entsprechend ist der 
+Quelltext und das für die Release-Erstellung verwendete 
+CMake-Buildsystem an diese Distribution angepasst.
+
+_MasterSim_ hat kaum Abhängigkeiten von installierten Bibliotheken oder
+Programmen, lediglich Qt5, cmake und zlib, und daher kann der Quelltext
+unverändert sowohl unter 18.04.6 LTS wie auch unter der aktuellesten 
+20.04.3 LTS kompiliert werden. Da sich die API der Bibliotheken nicht
+geändert hat, kann man sogar _MasterSim_ nur für 18.04 kompilieren und die
+Binärdateien/Executables direkt unter 20.04 laufen lassen. Das erleichtert
+die Paketerstellung schon deutlich.
+
+[NOTE]
+====
+Allerdings hat CMake 3.16 bei Ubuntu 20.04 einen Automatismus beim 
+`install()`-Befehl für die Zielverzeichniswahl, der bei CMake 3.10 in
+Ubuntu 18.04 fehlt. Daher musste für die Erstellung unter 18.04 das
+`CMakeLists.txt`-Skript leicht angepasst werden. Dies ist nur ein 
+Beispiel für gelegentlich notwendige Anpassungen im Quelltext und/oder
+Buildsystem.
+====
+
+Zum Überblick die Unterschiede in den Distro-Paket-Versionen:
+
+.Bibliotheksversionen in verschiedenen Distro-Releases
+[width="100%",options="header"]
+|====================
+| *Bibliothek* | *Ubuntu 18.04 LTS* |  *Ubuntu 20.04 LTS*
+| cmake | 3.10.2 | 3.16.3
+| Qt5   | 5.9.5 | 5.12.8 
+|====================
+
+Die Änderungen in der Qt-Bibliothek haben keine Auswirkungen auf den
+C++-Quelltext.
+
+### Grundlegendes zu Paketen
+
+Ubuntu-Pakete sind `deb`-Dateien, welche eigentlich Debian-Pakete sind. 
+Ubuntu baut auf Debian auf. Ein Debian-Paket für eine originale 
+Debian-Distribution zu erstellen, ist wegen der stringenten Prüfanforderungen
+extrem aufwändig. Für Ubuntu ist es deutlich einfacher und da unsere
+Programme für Desktopanwender und weniger für Server gedacht sind, 
+passen die auch besser in Ubuntu/Kubuntu oder ähnliche Distro rein.
+
+Es gibt Binär- und Quellpakete. Binärpakete enthalten effektiv eine 
+Kopie aller zu installierenden Dateien in der zukünftigen Verzeichnisstruktur.
+Bei Quellpaketen sind effektiv nur die Metadaten für die Erstellung und
+Verteilung des Pakets enthalten und ein Verweis auf ein beiliegendes Quelltextarchiv.
+
+Man kann sich den Inhalt eines Binärpakets entweder grafisch mit dem
+Tool `gdebi-gtk` oder mittels `lesspipe` anzeigen lassen:
+
+```bash
+$ lesspipe mastersim_0.9.3-1_bionic_ppa1_amd64.deb
+mastersim_0.9.3-1_bionic_ppa1_amd64.deb:
+ neues Debian-Paket, Version 2.0.
+ Größe 891372 Byte: control-Archiv= 1296 Byte.
+     815 Byte,    15 Zeilen      control              
+    1944 Byte,    23 Zeilen      md5sums              
+ Package: mastersim
+ Version: 0.9.3-1~bionic~ppa1
+ Architecture: amd64
+ Maintainer: Andreas Nicolai <andreas.nicolai@gmx.net>
+ Installed-Size: 3023
+ Depends: libc6 (>= 2.14), libgcc1 (>= 1:3.0), libqt5core5a (>= 5.9.0~beta), libqt5gui5 (>= 5.8.0), libqt5network5 (>= 5.0.2), libqt5printsupport5 (>= 5.0.2), libqt5widgets5 (>= 5.2.0), libstdc++6 (>= 5.2), zlib1g (>= 1:1.1.4)
+ Section: science
+ Priority: optional
+ Homepage: https://bauklimatik-dresden.de/mastersim
+ Description: FMI Co-Simulation Masterprogramm
+  MasterSim is an FMI Co-Simulation master and programming library. It
+  supports the Functional Mock-Up Interface for Co-Simulation in Version
+  1.0 and 2.0. Using the functionality of version 2.0, it implements
+  various iteration algorithms that rollback FMU slaves and increase
+  stability of coupled simulations.
+
+*** Contents:
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/bin/
+-rwxr-xr-x root/root   1063592 2022-01-03 22:04 ./usr/bin/MasterSimulator
+-rwxr-xr-x root/root   1727000 2022-01-03 22:04 ./usr/bin/MasterSimulatorUI
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/applications/
+-rw-r--r-- root/root       272 2022-01-03 22:04 ./usr/share/applications/mastersim.desktop
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/doc/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/doc/mastersim/
+-rw-r--r-- root/root       239 2022-01-03 22:04 ./usr/share/doc/mastersim/changelog.Debian.gz
+-rw-r--r-- root/root      2676 2022-01-03 22:04 ./usr/share/doc/mastersim/copyright
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/icons/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/icons/hicolor/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/icons/hicolor/128x128/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/icons/hicolor/128x128/apps/
+...
+-rw-r--r-- root/root      4654 2022-01-03 18:03 ./usr/share/icons/hicolor/64x64/mimetypes/application-mastersim.png
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/locale/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/locale/de/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/locale/de/LC_MESSAGES/
+-rw-r--r-- root/root     45907 2022-01-03 18:03 ./usr/share/locale/de/LC_MESSAGES/MasterSimulatorUI_de.qm
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/man/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/man/man1/
+-rw-r--r-- root/root       689 2022-01-03 22:04 ./usr/share/man/man1/MasterSimulator.1.gz
+-rw-r--r-- root/root       515 2022-01-03 22:04 ./usr/share/man/man1/MasterSimulatorUI.1.gz
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/mime/
+drwxr-xr-x root/root         0 2022-01-03 22:04 ./usr/share/mime/packages/
+-rw-r--r-- root/root       253 2022-01-03 22:04 ./usr/share/mime/packages/mastersim.xml
+```
+Die Dateiliste zeigt die zu installierenden Dateien und deren Zielpfade. 
+Wie man an den Pfaden sieht, müssen ausführbare Dateien, Icons, aber auch
+Übersetzungsdateien oder man-pages in die jeweiligen Verzeichnisse kopiert werden.
+Wenn die Software dann als Paket-Version ausgeführt wird, muss entsprechend
+auf andere Pfade zugegriffen werden, als bei einer stand-alone 
+Softwarearchiv-Installation. Dies erfordert eine Vorbereitung der Software
+für die Veröffentlichung.
+
+### Vorbereitung des Quelltextes für die Veröffentlichung als Paket
+
+_MasterSim_ wird als Linux/MacOS/Windows Programm herausgegeben. Dabei werden
+folgende Dateitypen installiert, auf die innerhalb des Programms 
+zugegriffen werden muss:
+
+- Übersetzungsdateien (`*.qm`) für Qt und für das Programm selbst 
+- Beispiele und Datenbankdateien (letzteres braucht _MasterSim_ noch nicht)
+
+Andere Dateien werden nur für die Systemintegration benötigt und müssen 
+vom jeweiligen Installer (Inno-Setup unter Windows, dmg für Mac, deb-Paket unter Linux oder manuell bei 7z-Archiven)
+im System verankert werden.
+
+Damit der Quelltext weitgehend ahnungslos hinsichtlich der Platform oder
+Installationsmethode bleiben kann, werden alle Pfade durch eine einheitliche
+Verzeichnis-Klasse (`MSIMDirectories` oder allgemein bei Programmen mit
+QtExt-Bibliotheksunterstützung `QtExt::Directories`) bereitgestellt.
+
+Die Funktionen `resourcesRootDir()` und `translationsDir()` liefern die
+Basisverzeichnisse für die im Programm verwendeten Resourcen. Das Verzeichnis
+`qtTranslationsDir()` liefert den Pfad, in dem die `qt_xxx.qm` Dateien liegen.
+
+.Verzeichnispfade relativ zur ausführbaren Datei für verschiedene Resourcen and Installationsvarianten
+[width="100%",options="header"]
+|====================
+| Plattform* | *Pfad/Funktion* | *relativer Pfad*
+| *Linux - deb* | |
+| | `resourcesRootDir()` | ../share/mastersim
+| | `translationsFilePath(langID)` | ../share/locale/<langID>/LC_MESSAGES/MasterSimulatorUI.qm 
+| | `qtTranslationsFilePath(langID)` | /usr/share/qt5/translations/qt_<langid>.qm 
+| *Linux - 7z* | |
+| | `resourcesRootDir()` | ../resources
+| | `translationsFilePath(langID)` |  ../resources/translations/MasterSimulatorUI_<langID>.qm 
+| | `qtTranslationsFilePath(langID)` | /usr/share/qt5/translations/qt_<langid>.qm 
+| *Windows* | |
+| | `resourcesRootDir()` | ../resources
+| | `translationsFilePath(langID)` |  ../resources/translations/MasterSimulatorUI_<langID>.qm 
+| | `qtTranslationsFilePath(langID)` | ../resources/translations/qt_<langid>.qm
+|====================
+
+[NOTE]
+====
+Unter Windows werden die Qt5 Bibliotheken und passend dazu die `qt_de.qm` im Installer mitgeliefert. Daher liegt hier die Qt-Übersetzungsdatei immer unterhalb `resources`. Unter Linux muss die `qt_de.qm` mit der jeweils installierten Qt-Version übereinstimmen, weswegen unabhängig von der Installationsvarianten (deb oder stand-alone 7z) _immer_ die systemweit installierte Übersetzungsdatei verwendet wird.
+====
+
+Das `resourcesRootDir()` setzt sich bei der deb-Paket-Variante aus dem Präfix `../share` und dem Paketnamen zusammen, hier `mastersim`.
+
+Eine weitere Besonderheit besteht bei der deb-Paket-Installation darin, dass die Übersetzungsdateien für das Programm _kein_ Suffix `_de` haben. Darauf muss man beim Formulieren der `install()` Regeln im CMake achten.
+
+Die Entscheidung darüber, welche Pfade für Resourcen und Übersetzungsdateien verwendet werden, wird zur Compile-Zeit getroffen. Relevant dafür sind die Defines `Q_OS_LINUX` zur Auswahl des qt-Übersetzungsdatei-Pfads und `IBK_BUILDING_DEBIAN_PACKAGE` zur Konfiguration der Suchpfade entsprechend systemweiter Installation. Letzteres sollte zu Testzwecken via Kommandozeile dem cmake-Programm übergeben werden, siehe auch <<sec:cmake_install_test>>.
+
+### Erstellung von zusätzlichen Linux/Unix-spezifischen Dateien
+
+#### Man-Pages
+
+Wenn man ausführbare Dateien ausliefert, sollte man dazu passende man-Seiten ausliefern. Diese sind Text-Dateien mit einfachen Formatangaben (aus Zeiten lange vor Markdown oder ähnlichem).
+
+Idealerweise spucken unsere `IBK::Argparser`-basierten Programme mittels `--man-page` solche Seiten automatisch aus, aber leider ist diese Funktionalität nie ausprogrammiert worden. Sonst würde ein:
+
+```bash
+$ ./MasterSimulator --man-page > MasterSimulator.1
+```
+
+bereits eine gültige und aktuelle Man-page erzeugen.
+
+Stattdessen macht man das vorläufig noch manuell, z.B. mit `help2man` oder `txt2man`. Für `help2man` müsste man die Ausgabe von `--help` wahrscheinlich noch etwas an den geforderten Standard anpassen. Deshalb habe ich `txt2man` verwendet und die entstandene Datei noch minimal nachbearbeitet:
+
+```bash
+$ ./MasterSimulator --help | txt2man > MasterSimulator.1
+```
+
+[NOTE]
+====
+Diese bash-Kommandozeile führt zunächst `./MasterSimulator --help` aus, welches die Hilfeseite in die Ausgabe schiebt. Das | Zeichen führt dazu, dass diese Ausgabe nun als Eingabestream dem Tool `txt2man` zur Verfügung gestellt wird, welches seinerseits die daraus generierte man-Seite in die Ausgabe schreibt. Zum Schluss leitet `> MasterSimulator.1` die Ausgabe noch in die Datei um.
+====
+
+Die Dateierweiterung ".1" deutet auf die Sektion des Programmes und man-page hin - 1 steht hier für reguläre Programme/Tools. 
+
+Die generierte Man-Seite muss man noch bearbeiten, zumindest die Kopfzeile:
+
+```
+.TH "MASTERSIMULATOR" "1" "January 01, 2022" "0.9.1" "mastersim"
+```
+
+und gegebenenfalls noch einige Stellen im Text.
+
+
+[WARNING]
+====
+Hier sieht man auch schon ein Problem: bei jedem Release müsste diese Kopfzeile um die aktuelle Versionsnummer aktualisiert werden, und auch das Datum sollte jeweils erneuert werden. Dies alles spricht dafür, dass man die Option `--man-page` fertig implementiert und dann als post-build-Schritt vor der Installation ausführt (TODO Andreas!).
+====
+
+Die Man-pages für _MasterSimulator_ und _MasterSimulatorUI_ gehören in die jeweiligen Unterverzeichnisse, also:
+
+```
+MasterSimulator/doc/MasterSimulator.1
+MasterSimulatorUI/doc/MasterSimulatorUI.1
+```
+
+#### Application-Shortcut
+
+Um im Programmstarter _MasterSim_ angezeigt zu bekommen (und danach suchen zu können), muss man eine `.desktop`
+Datei erstellen.
+
+Dieser sieht für MasterSimulatorUI so aus:
+
+.`mastersim.desktop`
+```ini
+[Desktop Entry]
+Name=MasterSim
+GenericName=FMI Co-Simulation Master
+Comment=FMI Co-Simulations Master
+Keywords=FMI;FMU;Simulation
+Exec=MasterSimulatorUI %f
+Icon=mastersim
+Terminal=false
+Type=Application
+Categories=Science
+StartupNotify=true
+MimeType=application/mastersim
+```
+
+Letztlich definiert diese Datei den Namen, ein paar Schlüsselworte, ob ein Terminalfenster gebraucht wird oder nicht, 
+den Icon-Namen `mastersim` (wichtig, kein absoluter Pfad hier!), ein paar Kategorisierungsinfos und natürlich die 
+auszuführende Datei im Schlüsselwort `Exec`.
+
+Das *Argument %f* sagt dabei, dass ein über Dateityp-Assoziation verknüpfter Dateipfad hier übergeben wird. 
+D.h. wenn man im Dateimanager auf eine `.msim`-Datei doppelklickt (oder "Öffnen mit..."-auswählt), wird MasterSim mit dieser Datei als Argument gestartet. Wie man diese Verknüpfung definiert, wird gleich erklärt, wichtig ist hierbei aber die Definition des MIME-Typs als `application/mastersim`.
+
+Wichtig beim Icon und Exec Eintrag: es werden keine absoluten Pfade definiert. Das Linux-System erwartet die Installation der ausführbaren Datei in einem Suchpfad des Systems. Das Icon wird in einem der Standard-Verzeichnisse für Icons gesucht, unter dem Namen `mastersim.<Bildtyp>` (dabei können verschiedene Dateierweiterungen verwendet werden, weswegen man auch auf die Dateierweiterung verzichtet).
+
+Die Datei `mastersim.desktop` wird unter `MasterSimulatorUI/resources/mastersim.desktop` gespeichert.
+
+#### Dateityp-Assoziation
+
+Damit im System die `msim`-Dateien entsprechend mit einem Icon dekoriert werden und via Doppelklick die Anwendung geöffnet wird, muss man sogenannte MIME-Typen verknüpfen. Dazu erstellt man eine Datei `masterim.xml`:
+
+.`mastersim.xml`
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns='https://specifications.freedesktop.org/shared-mime-info-spec'>
+	<mime-type type="application/mastersim">
+		<comment>MasterSim project file</comment>
+		<glob pattern="*.msim"/>
+	</mime-type>
+</mime-info>
+```
+
+In dieser Datei findet sich der in der .desktop-Datei definierte MIME-Typ `application/mastersim` wieder. Außerdem wird das Dateisuchmuster als `*.msim` festgelegt (es könnten hier auch weitere Dateierweiterungen assoziiert werden, indem man 
+mehrere `<glob>` Elemente definiert. Außerdem können Dateitypen anhand eines "Magic-Headers" erkannt werden, wie er z.B. bei unseren d6o/d6b und Verwendung findet. Siehe dazu https://specifications.freedesktop.org/shared-mime-info-spec und die darin verlinkte Spezifikation).
+
+Die Datei `mastersim.xml` wird unter `MasterSimulatorUI/resources/mastersim.desktop` gespeichert.
+
+[IMPORTANT]
+====
+Bei der Installation werden diese Dateien an die entsprechenden Orte im Dateisystem kopiert. Dies alleine reicht aber noch nicht aus, um Anwendung und Dateiverknüpfung im System bekannt zu machen. Dafür müssen noch Skripte gestartet werden, welche die jeweiligen Datenbanken aktualisieren. Netterweise macht das die Paketverwaltung bei Installation eines deb-Pakets automatisch für uns.
+====
+
+### Erweitern der CMake-Skripte mit `install()`
+
+CMake bietet eine recht komfortable Möglichkeit, nach dem Erstellen (`make`) auch alle Dateien an die richtige Stelle zu installieren. So kann man mit:
+
+```bash
+cmake ..
+make
+sudo make install
+```
+
+die Anwendung auch direkt aus dem Quelltextarchiv ins System installieren. Allerdings kann man so kein sinnvolles "uninstall" machen, d.h. einmal installierte Dateien müsste man händisch wieder aus den verschiedenen Installationspfade löschen. Debian-Pakete sind hier sinnvoller, da diese bei Aktualisierungen oder De-Installation automatisch vorher installierte und nicht mehr benötigte Dateien entfernt.
+
+Da die Installation via cmake/make nur unter Linux sinnvoll ist (unter Windows gibt's sinnige Installer und unter MacOS kapseln die App-Bundles sowieso alles), sollten entsprechende `install()` Aufrufe im `CMakeLists.txt` Skript in if-Blöcken stehen:
+
+.Install-Abschnitt aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
+[source,cmake]
+----
+if (UNIX AND NOT APPLE)
+
+	# installation targets for Unix systems
+	include(GNUInstallDirs)
+	
+	# MasterSimulator -> /usr/bin
+	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
+	
+	# Man-page
+	install(FILES ${PROJECT_SOURCE_DIR}/../../doc/${PROJECT_NAME}.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+
+endif (UNIX AND NOT APPLE)
+----
+
+In diesem Skript wird der Platzhalter `${PROJECT_NAME}` durch `MasterSimulator` ersetzt.
+
+Letztlich müssen zwei `CMakeLists.txt`-Dateien angepasst werden.
+
+Die Erweiterung für `MasterSimulator/projects/cmake_local/CMakeLists.txt` ist oben bereits gezeigt. Lediglich die ausführbare Datei `MasterSimulator` wird ins `bin`-Verzeichnis installiert (welches je nach Installationspräfix `/usr/bin` oder `/usr/local/bin` ist).
+
+`include(GNUInstallDirs)` definiert diverse Installationpräfixes, wie z.B. `${CMAKE_INSTALL_MANDIR}`. Bei CMake 3.10 muss man bei zu installieren build-targets (hier eine ausführbare Datei, könnte aber auch eine Bibliothek sein) noch explizit das Zielverzeichnis definieren (hier `bin`). Ab CMake 3.16 wird das automatisch je nach Typ des "Targets" erkannt. Da _MasterSim_ aber auch unter Ubuntu 18.04 (mit CMake 3.10) funktionieren soll, steht der Zielpfad nochmal explizit da.
+
+
+Für die Programmoberfläche `MasterSimulatorUI` wird etwas mehr benötigt:
+
+.Install-Abschnitt aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
+[source,cmake]
+----
+# Support for 'make install' on Unix/Linux (not on MacOS!)
+if (UNIX AND NOT APPLE)
+
+	# installation targets for Unix systems
+	include(GNUInstallDirs)
+
+	# MasterSimulator -> /usr/bin
+	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
+
+	# Man-page
+	install(FILES ${PROJECT_SOURCE_DIR}/../../doc/${PROJECT_NAME}.1 
+			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+
+	# Translation files
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/translations/${PROJECT_NAME}_de.qm 
+			DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/de/LC_MESSAGES/
+			RENAME ${PROJECT_NAME}.qm)
+
+	# Desktop file
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.desktop 
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+
+	# Mime type
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.xml 
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages )
+
+    ....
+----
+
+Der erste Teil der Installation von `MasterSimulatorUI` ist identisch mit dem des Konsolensolvers `MasterSimulator`. Interessant wird es bei der Übersetzungsdatei.
+
+Die Anwendungsübersetzungsdatei liegt in `MasterSimulatorUI/resources/translations/MasterSimulatorUI_de.qm` und muss nach
+`/usr/share/locale/de/LC_MESSAGES/MasterSimulatorUI.qm` kopiert werden. ACHTUNG: der Dateiname ändert sich! Der Pfad `/usr/share/locale/` wird wiederum als Platzhalter `${CMAKE_INSTALL_LOCALEDIR}` zur Verfügung gestellt. Die Umbenennung macht man mit dem RENAME Befehl innerhalb der `install()` Funktion. Dieser muss immer als letztes angegeben werden.
+
+Danach werden die `mastersim.desktop` und `mastersim.xml` Dateien in die jeweiligen Zielpfade installiert.
+
+Weiter geht es mit den Anwendungsicons:
+
+.Install-Abschnitt aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
+[source,cmake]
+----
+    ....
+
+	# Icons
+	set(ICON_ROOT_DIR ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+
+	# Anwendungsicons
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png 
+			DESTINATION ${ICON_ROOT_DIR}/512x512/apps 
+			RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png 
+			DESTINATION ${ICON_ROOT_DIR}/256x256/apps 
+			RENAME mastersim.png)
+			
+			...
+			
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png 
+			DESTINATION ${ICON_ROOT_DIR}/16x16/apps 
+			RENAME mastersim.png)
+
+	# Mime-type Icons
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png 
+			DESTINATION ${ICON_ROOT_DIR}/512x512/mimetypes 
+			RENAME application-mastersim.png)
+
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png 
+			DESTINATION ${ICON_ROOT_DIR}/256x256/mimetypes 
+			RENAME application-mastersim.png)
+
+			... 
+			
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png 
+			DESTINATION ${ICON_ROOT_DIR}/16x16/mimetypes 
+			RENAME application-mastersim.png)
+
+endif (UNIX AND NOT APPLE)
+----
+
+Auch hier werden die Icons wieder umbenannt, da sie in unterschiedlichen Verzeichnissen liegen, aber alle den gleichen Dateinamen haben. 
+
+Die einzelnen `install()` Anweisungen sind bis auf die Icon-Größe identisch. CMake erlaubt es einem, solche Abschnitte durch Verwendung von Schleifen zu vereinfachen.
+
+
+
+[[sec:cmake_install_test]]
+#### Testen der CMake-basierten Installation
+
+Wenn man jetzt des Quelltextarchiv mit `make` erstellt hat und nachfolgend `make install` aufruft, versucht
+CMake die Dateien standardmäßig nach `/usr/local` zu installieren. Dafür wären zum einen Superuser-Rechte notwendig, also `sudo make install`. Zum Testen sollte man sich aber nicht das System zumüllen, weswegen man eher ein Test-Install-Präfix wählen sollte:
+
+```bash
+$ mkdir bb-test
+$ cd bb-test
+$ cmake -DCMAKE_INSTALL_PREFIX=/home/ghorwin/tmp ..
+$ make
+...
+```
+Durch Definition des Arguments `CMAKE_INSTALL_PREFIX` legt man das Basisverzeichnis (analog zu `/usr` oder `/usr/local`) fest.
+
+Vorher sollte man noch in der obersten `CMakeLists.txt`-Datei die Zeile
+
+```
+add_definitions( -DIBK_BUILDING_DEBIAN_PACKAGE )
+```
+
+einfügen, welches die Software im deb-Installmodus konfiguriert (Pfade für Übersetzungsdateien und Resourcen/Beispiele).
+
+Das Ausführen von `make install` führt zu folgender Ausgabe:
+```
+$ make install
+[  3%] Built target minizip
+[ 17%] Built target IBK
+[ 18%] Built target IBKMK
+[ 32%] Built target BlockMod
+[ 34%] Built target TiCPP
+[ 41%] Built target MasterSim
+[ 42%] Built target MasterSimulator
+[ 93%] Built target MasterSimulatorUI
+[ 94%] Built target Math003Part1
+[ 96%] Built target Math003Part2
+[ 97%] Built target Math003Part3
+[ 98%] Built target LotkaVolterraPrey
+[100%] Built target LotkaVolterraPredator
+Install the project...
+-- Install configuration: "RelWithDebInfo"
+-- Installing: /home/ghorwin/tmp/bin/MasterSimulator
+-- Installing: /home/ghorwin/tmp/share/man/man1/MasterSimulator.1
+-- Installing: /home/ghorwin/tmp/bin/MasterSimulatorUI
+-- Installing: /home/ghorwin/tmp/share/man/man1/MasterSimulatorUI.1
+-- Installing: /home/ghorwin/tmp/share/locale/de/LC_MESSAGES/MasterSimulatorUI.qm
+-- Installing: /home/ghorwin/tmp/share/applications/mastersim.desktop
+-- Installing: /home/ghorwin/tmp/share/mime/packages/mastersim.xml
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/512x512/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/512x512/mimetypes/application-mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/256x256/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/256x256/mimetypes/application-mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/64x64/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/64x64/mimetypes/application-mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/48x48/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/48x48/mimetypes/application-mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/32x32/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/32x32/mimetypes/application-mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/16x16/apps/mastersim.png
+-- Installing: /home/ghorwin/tmp/share/icons/hicolor/16x16/mimetypes/application-mastersim.png
+```
+
+Scheint also alles zu stimmen. Nun kann man das Programm ausführen und prüfen, ob die Übersetzungsdateien und sonstige Resourcen korrekt gefunden werden:
+
+```bash
+$ /home/ghorwin/tmp/bin/MasterSimulatorUI
+App translation file path = '/home/ghorwin/tmp/bin/../share/locale/de/LC_MESSAGES/MasterSimulatorUI.qm'.
+Qt translation file path  = '/usr/share/qt5/translations/qt_de.qm'.
+Qt translation file loaded successfully
+Application translator loaded successfully
+```
+
+Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
+
+
+
+
+## alt
+
+Ubuntu-Debian-Packages werden als source-debs bereitgestellt und auf Launchpad automatisch für das jeweilige Release kompiliert.
+
+Eigene Binar-Debs kann man auch erzeugen, aber dann nicht auf einem Launchpad-PPA hosten. Dazu empfielt sich CPack.
+
+
+## Launchpad-Account
+
+- Account erstellen
+- Anleitung für PGP und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
+
+
+### GPG Schlüssel
+```
+> gpg --gen-key
+
+gpg: Schlüssel 6E0814BD3FCA8338 ist als ultimativ vertrauenswürdig gekennzeichnet
+gpg: Verzeichnis `/home/ghorwin/.gnupg/openpgp-revocs.d' erzeugt
+gpg: Widerrufzertifikat wurde als '/home/ghorwin/.gnupg/openpgp-revocs.d/34FC6FB934502913B4C1DCA86E0814BD3FCA8338.rev' gespeichert.
+Öffentlichen und geheimen Schlüssel erzeugt und signiert.
+
+pub   rsa3072 2021-12-29 [SC] [verfällt: 2023-12-29]
+      34FC6FB934502913B4C1DCA86E0814BD3FCA8338
+uid                      Andreas Nicolai <andreas.nicolai@gmx.net>
+sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
+```
+
+KEYID = 6E0814BD3FCA8338
+
+```
+> gpg --send-keys --keyserver keyserver.ubuntu.com 6E0814BD3FCA8338
+gpg: sende Schlüssel 6E0814BD3FCA8338 auf hkp://keyserver.ubuntu.com
+```
+
+Find own fingerprint:
+
+```
+> gpg --fingerprint andreas.nicolai@gmx.net
+gpg: "Trust-DB" wird überprüft
+gpg: marginals needed: 3  completes needed: 1  trust model: pgp
+gpg: Tiefe: 0  gültig:   2  signiert:   0  Vertrauen: 0-, 0q, 0n, 0m, 0f, 2u
+gpg: nächste "Trust-DB"-Pflichtüberprüfung am 2023-12-29
+pub   rsa3072 2021-12-29 [SC] [verfällt: 2023-12-29]
+      34FC 6FB9 3450 2913 B4C1  DCA8 6E08 14BD 3FCA 8338
+uid        [uneingeschränkt] Andreas Nicolai <andreas.nicolai@gmx.net>
+sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
+```
+
+Check if synced with keyserver:
+
+```
+> gpg --keyserver keyserver.ubuntu.com --send-keys 6E0814BD3FCA8338
+```
+
+### GPG-Key zu Thunderbird hinzufügen, damit man Bestätigungsmail entschlüsseln kann
+
+* -> Account-Einstellungen
+* -> Ende-zu-Ende-Verschlüsselung
+* -> OpenGPG -> Schlüssel hinzufügen
+* -> Radiobutton 3 (externe Anwendung/SmartCard)
+* -> ID 6E0814BD3FCA8338 reinkopieren -> fertig
+
+### ssh-key setup
+
+ssh key -> use same as for IBK
+
+
+### Launchpad-Account vervollständigen
+
+- GPG Schlüssel hinzufügen
+- SSH-Schlüssel hinzufügen
+- Account Bild
+- eigenes PPA erstellen
+
+https://launchpad.net/~ghorwin/+archive/ubuntu/ppa
+
+
+### Umgebungsvariablen
+
+in `.profile` oder `.bashrc`:
+
+```
+export DEBFULLNAME="Andreas Nicolai"
+export DEBEMAIL="andreas.nicolai@gmx.net"
+```
+
+## Erstellung eines Debian-Source-Packages
+
+
+### Source-Quelltextarchiv erstellen
+
+```bash
+# clone source repo
+git clone https://github.com/ghorwin/MasterSim.git
+# remove .git subdirectory
+rm -rf MasterSim/.git
+# create tarball archive; Namensschema: <paketname>_<version>
+tar -cjf mastersim_0.9.0.orig.tar.bz2 MasterSim
+```
+
+Datei `mastersim_0.9.0.orig.tar.bz2` ist das Ursprungsquelltextarchiv (z.B. automatisiert durch Jenkins erstellt)
+
+
+### dh_make verwenden, um neues Paketverzeichnis zu generieren
+
+```bash
+# Quelltext-Archiv ins Arbeitsverzeichnis entpacken; Namensschema <paketname>-<version>
+mv MasterSim mastersim-0.9.0
+# Ins Arbeitsverzeichnis wechseln
+cd mastersim-0.9.0
+# dh_make aufrufen - sucht automatisch nach Quelltextarchiv im Elternverzeichnis
+dh_make
+
+Type of package: (single, indep, library, python)
+[s/i/l/p]?
+Maintainer Name     : Andreas Nicolai
+Email-Address       : andreas.nicolai@gmx.net
+Date                : Thu, 30 Dec 2021 19:22:26 +0100
+Package Name        : mastersim
+Version             : 0.9.0
+License             : blank
+Package Type        : single
+Are the details correct? [Y/n/q]
+Skipping creating ../mastersim_0.9.0.orig.tar.bz2 because it already exists
+Currently there is not top level Makefile. This may require additional tuning
+Done. Please edit the files in the debian/ subdirectory now.
+
+```
+
+- Prompt nach Pakettyp bei dh_make mit 's' beantworten oder `dh_make -s` aufrufen
+
+
+
+### debian/* Dateien
+
+Unterverzeichnis `debian` wurde erstellt. Nun sind die Dateien zu bearbeiten:
+
+- debian/control
+
+```
+Source: mastersim
+Section: science
+Priority: optional
+Maintainer: Andreas Nicolai <andreas.nicolai@gmx.net>
+Build-Depends: debhelper-compat (= 12), cmake, zlib1g-dev, qt5-default, libqt5svg5-dev, build-essential
+Standards-Version: 4.4.1
+Homepage: https://bauklimatik-dresden.de/mastersim
+#Vcs-Git: https://github.com/ghorwin/MasterSim.git
+
+Package: mastersim
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: FMI Co-Simulation Masterprogramm
+ MasterSim is an FMI Co-Simulation master and programming library. It supports the 
+ Functional Mock-Up Interface for Co-Simulation in Version 1.0 and 2.0. Using the 
+ functionality of version 2.0, it implements various iteration algorithms that 
+ rollback FMU slaves and increase stability of coupled simulations.
+```
+
+- debian/copyrights
+- debian/changelog
+
+```
+mastersim (0.9.0-1) unstable; urgency=medium
+
+  * Initial release of MasterSim as Ubuntu package
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 30 Dec 2021 19:30:10 +0100
+```
+
+- debian/rules
+
+
+```
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+export DH_VERBOSE = 1
+
+# see FEATURE AREAS in dpkg-buildflags(1)
+#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+# see ENVIRONMENT in dpkg-buildflags(1)
+# package maintainers to append CFLAGS
+#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+# package maintainers to append LDFLAGS
+#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+
+%:
+	dh $@
+
+
+# dh_make generated override targets
+# This is example for Cmake (See https://bugs.debian.org/641051 )
+#override_dh_auto_configure:
+#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
+
+```
+
+
+## Source Paket bauen
+
+```bash
+# Im Verzeichnis mastersim-0.9.0
+dpkg-buildpackage -S
+```
+
+Ausgabe:
+
+```
+dpkg-buildpackage: Information: Quellpaket mastersim
+dpkg-buildpackage: Information: Quellversion 0.9.0-1
+dpkg-buildpackage: Information: Quelldistribution unstable
+dpkg-buildpackage: Information: Quelle geändert durch Andreas Nicolai <andreas.nicolai@gmx.net>
+ dpkg-source --before-build .
+ fakeroot debian/rules clean
+dh clean
+   dh_auto_clean
+   dh_clean
+ dpkg-source -b .
+dpkg-source: Information: Quellformat »3.0 (quilt)« wird verwendet
+dpkg-source: Information: mastersim wird unter Benutzung des existierenden ./mastersim_0.9.0.orig.tar.gz gebaut
+dpkg-source: Information: mastersim wird in mastersim_0.9.0-1.debian.tar.xz gebaut
+dpkg-source: Information: mastersim wird in mastersim_0.9.0-1.dsc gebaut
+ dpkg-genbuildinfo --build=source
+ dpkg-genchanges --build=source >../mastersim_0.9.0-1_source.changes
+dpkg-genchanges: Information: kompletter Quellcode beim Hochladen hinzufügen
+ dpkg-source --after-build .
+dpkg-buildpackage: Information: Alles hochzuladen (Originalquellen enthalten)
+ signfile mastersim_0.9.0-1.dsc
+
+ signfile mastersim_0.9.0-1_source.buildinfo
+
+ signfile mastersim_0.9.0-1_source.changes
+```
+
+Es werden im übergeordneten Verzeichnis erstellt:
+
+```
+# archiv mit Steuerungsdaten
+mastersim_0.9.0-1.debian.tar.xz
+# Signaturdatei
+mastersim_0.9.0-1.dsc
+# Hochlade info
+mastersim_0.9.0-1_source.buildinfo
+mastersim_0.9.0-1_source.changes
+
+# vorher existierendes Original-Quelltext-Archiv
+mastersim_0.9.0.orig.tar.gz
+
+```
+
+## Source Paket prüfen
+
+```bash
+# im übergeordneten Verzeichnis 
+lintian -EvI --pedantic --show-overrides --color=auto mastersim_0.9.0-1_source.changes
+```
+
+Ausgabe:
+
+```
+N: Using profile ubuntu/main.
+N: Starting on group mastersim/0.9.0-1
+N: Unpacking packages in group mastersim/0.9.0-1
+N: Finished processing group mastersim/0.9.0-1
+N: ----
+N: Processing changes file mastersim
+N: (version 0.9.0-1, arch source) ...
+N: ----
+N: Processing source package mastersim
+N: (version 0.9.0-1, arch source) ...
+N: ----
+N: Processing buildinfo package mastersim
+N: (version 0.9.0-1, arch source) ...
+E: mastersim changes: bad-distribution-in-changes-file unstable
+E: mastersim source: build-depends-on-build-essential build-depends
+E: mastersim source: build-depends-on-metapackage build-depends: qt5-default
+E: mastersim source: debian-rules-is-dh_make-template
+E: mastersim source: license-problem-md5sum-non-free-file data/tests/linux64/Lotka_Volterra_System/description/sRGB_IEC61966-2-1_black_scaled.icc usual name is sRGB_IEC61966-2-1_black_scaled.icc. Does not allow modification See also https://packages.debian.org/sid/icc-profiles.
+E: mastersim source: license-problem-md5sum-non-free-file doc/validation/sRGB_IEC61966-2-1_black_scaled.icc usual name is sRGB_IEC61966-2-1_black_scaled.icc. Does not allow modification See also https://packages.debian.org/sid/icc-profiles.
+E: mastersim source: source-contains-prebuilt-ms-help-file externals/zlib/src/contrib/dotzlib/DotZLib.chm
+I: mastersim source: debian-watch-file-is-missing
+I: mastersim source: missing-vcs-browser-field vcs-git https://github.com/ghorwin/MasterSim.git
+I: mastersim source: out-of-date-standards-version 4.4.1 (released 2019-09-29) (current is 4.5.0)
+I: mastersim source: testsuite-autopkgtest-missing
+P: mastersim source: file-contains-trailing-whitespace debian/control (line 14)
+P: mastersim source: file-contains-trailing-whitespace debian/control (line 15)
+P: mastersim source: file-contains-trailing-whitespace debian/control (line 16)
+P: mastersim source: file-contains-trailing-whitespace debian/rules (line 25)
+P: mastersim source: rules-requires-root-missing
+X: mastersim source: upstream-metadata-file-is-missing
+```
+
+Fehlerbehebung:
+
+
+...
+
+
+## Binarpaket bauen (wird auf Launchpad gemacht)
+
+
+```bash
+# Im Verzeichnis mastersim-0.9.0
+dpkg-buildpackage
+```
+
+-> Wenn man hochladen will, kein Binärpaket bauen, nur zum testen!
+
+
+## Veröffentlichung auf PPA
+
+-> in ChangeLog älteste zu unterstützende Distro wählen
+-> für diese Distro veröffentlichen
+-> in ppa kopieren der binaries wählen, siehe
+
+https://askubuntu.com/questions/30145/ppa-packaging-having-versions-of-packages-for-multiple-distros
+
+# Automatisierung
+
+- Quelltext von git clonen
+- Top-level CMakeList reinkopieren
+- ungültige Dateien entfernen/Quelltextarchiv bereinigen
+- Quelltext-Archiv erstellen
+- debian-Verzeichnisstruktur reinkopieren
+- debian/* Dateitemplates konfigurieren (Versionen etc.)
+
+
+
+
+## Benötigte Dateien
+
+
+- .desktop files
+
+
+### Man Pages
+
+- man pages
+
+...help2man or txt2man 
+
+
+
+
+# Aktualisieren der debian/changelog
+
+```bash
+# im Arbeitsverzeichnis, d.h. relativ zu debian/changelog
+
+dch -v 0.9.1-2
+```
+
+
+
+
+
+# Hosting package files / publish binary packages
+
+- Verzeichnis mit deb-Dateien anlegen
+- dann die Verzeichnisstruktur befüllen
+- `Packages.gz` erstellen mit:
+
+
+```bash
+dpkg-scanpackages
+```
+
+
+
+# Updating a package
+
+## Neue Upstream-Version
+
+Immer, wenn die Originalquelle sich geändert hat.
+
+-> neue Versionsnummer
+
+## Neues Paket/Paket-Revision
+
+-> wenn sich debian/control oder debian/changelog geändert haben, bzw. beim Upload ein Fehler aufgetreten ist
+
+Fehlermeldung:
+
+```
+Rejected:
+File <UPLOADED_FILE> already exists in <LOCATION>, but uploaded version has different contents.
+See more information about this error in https://help.launchpad.net/Packaging/UploadErrors.
+```
+
+-> orig.tar.xz runterladen und nach mastersim-x.y.z entpacken
+-> debian Verzeichnis reinkopieren/Version anpassen (nur paket-Version)
+-> `debuild -S` aufrufen, um ein neues Source-Paket zu bauen
+
+
+
+## Distro-Specifics
+
+
+### Bionic
+-  devhelper-compat (= 10) oder (= 11)
+
+### Focal
+-  devhelper-compat (= 12)
+
