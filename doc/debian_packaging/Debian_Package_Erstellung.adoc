@@ -627,23 +627,23 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 
 [[deploy:launchpad_ppa]]
-## Veröffentlichung 
+## Veröffentlichung als Open-Source Quellpaket
 
 
-## alt
+### Vorbereitung
 
-Ubuntu-Debian-Packages werden als source-debs bereitgestellt und auf Launchpad automatisch für das jeweilige Release kompiliert.
+#### Launchpad Account
 
-Eigene Binar-Debs kann man auch erzeugen, aber dann nicht auf einem Launchpad-PPA hosten. Dazu empfielt sich CPack.
+- Account erstellen: https://launchpad.net
 
+#### Signaturschlüssel (PGP) und SSH-Schlüssel erstellen und hochladen
 
-## Launchpad-Account
-
-- Account erstellen
 - Anleitung für PGP und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
 
+##### GPG Schlüssel
 
-### GPG Schlüssel
+Neuen Schlüssel erstellen:
+
 ```
 > gpg --gen-key
 
@@ -658,14 +658,14 @@ uid                      Andreas Nicolai <andreas.nicolai@gmx.net>
 sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 ```
 
-KEYID = 6E0814BD3FCA8338
+Die Schlüssel-ID ist `6E0814BD3FCA8338`. Schlüssel auf Schlüsselserver hochladen:
 
 ```
 > gpg --send-keys --keyserver keyserver.ubuntu.com 6E0814BD3FCA8338
 gpg: sende Schlüssel 6E0814BD3FCA8338 auf hkp://keyserver.ubuntu.com
 ```
 
-Find own fingerprint:
+Eigenen Fingerabdruck finden, der mit der eigenen E-Mailadresse verknüpft ist:
 
 ```
 > gpg --fingerprint andreas.nicolai@gmx.net
@@ -679,13 +679,18 @@ uid        [uneingeschränkt] Andreas Nicolai <andreas.nicolai@gmx.net>
 sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 ```
 
-Check if synced with keyserver:
+Prüfen, ob der Schlüssel auf dem Schlüsselserver hochgeladen ist (Verteilung auf Schlüsselserver dauert manchmal etwas):
 
 ```
-> gpg --keyserver keyserver.ubuntu.com --send-keys 6E0814BD3FCA8338
+> gpg --keyserver hkp://keyserver.ubuntu.com --search-key 'andreas.nicolai@gmx.net'
+gpg: data source: http://162.213.33.9:11371
+(1)	Andreas Nicolai <andreas.nicolai@gmx.net>
+	  3072 bit RSA key 6E0814BD3FCA8338, erzeugt: 2021-12-29
+Keys 1-1 of 1 for "andreas.nicolai@gmx.net".  
 ```
 
-### GPG-Key zu Thunderbird hinzufügen, damit man Bestätigungsmail entschlüsseln kann
+
+##### GPG-Key zu Thunderbird hinzufügen, damit man Bestätigungsmail entschlüsseln kann
 
 * -> Account-Einstellungen
 * -> Ende-zu-Ende-Verschlüsselung
@@ -693,22 +698,37 @@ Check if synced with keyserver:
 * -> Radiobutton 3 (externe Anwendung/SmartCard)
 * -> ID 6E0814BD3FCA8338 reinkopieren -> fertig
 
-### ssh-key setup
+TODO : Problem beim Speichern lokal bearbeiteter Mails klären
+
+##### ssh-key setup
 
 ssh key -> use same as for IBK
 
+ssh-key (RSA, 4096 Bits) neu erstellen:
 
-### Launchpad-Account vervollständigen
+```bash
+$ ssh-keygen -t rsa -b 4096
+```
 
-- GPG Schlüssel hinzufügen
+
+#### Launchpad-Account vervollständigen
+
+- GPG Schlüssel hinzufügen (Bestätigungsmail lesen/entschlüsseln)
 - SSH-Schlüssel hinzufügen
 - Account Bild
 - eigenes PPA erstellen
 
-https://launchpad.net/~ghorwin/+archive/ubuntu/ppa
+Web-URL: https://launchpad.net/~ghorwin/+archive/ubuntu/sim
 
 
-### Umgebungsvariablen
+```bash
+# Hinzufügen des Repos (sobald Pakete veröffentlicht sind)
+# sucht nach Paketen für aktuelle Distro
+$ sudo add-apt-repository ppa:ghorwin/sim
+```
+
+
+#### Umgebungsvariablen
 
 in `.profile` oder `.bashrc`:
 
@@ -717,14 +737,96 @@ export DEBFULLNAME="Andreas Nicolai"
 export DEBEMAIL="andreas.nicolai@gmx.net"
 ```
 
-## Erstellung eines Debian-Source-Packages
+### Arbeitsabläufe - Übersicht
+
+1. komplett neues Quellpaket erstellen
+2. Paket aktualisieren (ohne Quelltextänderung; nur Paketfehler beheben/Paket verbessern)
+3. Paket aktualisieren wegen Upstream-Release-Update (neuer Upstream-Quelltext)
+4. fertiges Paket für eine andere Distributionsversion veröffentlichen
 
 
-### Source-Quelltextarchiv erstellen
+
+#### Verzeichnisse und Bezeichnungen
+
+Für die nachfolgenden Schritte werden verschiedene Verzeichnisse benötigt.
+
+- _Basisverzeichnis_ : das Verzeichnis (innerhalb eines Versionskontrollsystems), welches für jede unterstützte Distribution ein Unterverzeichnis enthält.
+
+- _Distro-Verzeichnis_ : das Verzeichnis (innerhalb eines Versionskontrollsystems), welches alle für die Erstellung/Aktualisierung eines Pakets für _eine bestimmte Distributionsversion_ benötigt; in diesem Verzeichnis wird das Arbeitsverzeichnis erstellt
+
+- _Arbeitsverzeichnis_ : ein temporäres Verzeichnis, in dem alle Dateien für die Erstellung des Releases hingekopiert/generiert werden; dieses Verzeichnis enthält zum Schluss die erstellten Pakete
+
+- _Paketverzeichnis_ : das Verzeichnis innerhalb des _Arbeitsverzeichnis_, in dem der Quelltext erstellt wird und die Paketbauskripte ausgeführt werden; enthält das `debian`-Kontrolldateiverzeichnis; Der Name des Paketverzeichnis ergibt sich aus `<paketname>-<version>`, wobei die Version eine semantische major.minor.patch-Versionsnummer ist.
+
+.Verzeichnisstruktur 
+====
+```
+
+```
+====
+
+
+### Manuelle Erstellung eines neuen Debian-Source-Packages
+
+#### Source-Quelltextarchiv erstellen
+
+##### Arbeitsverzeichnis bereinigen
+
+Entweder wird das Arbeitsverzeichnis `work` neu angelegt oder alles im Verzeichnis wird gelöscht. 
 
 ```bash
-# clone source repo
-git clone https://github.com/ghorwin/MasterSim.git
+# im Arbeitsverzeichnis 'work' ausführen
+rm -rf *
+```
+
+##### Quelltextrepository clonen
+
+Der ursprüngliche Quelltext kann für die Erstellung von Paketen für unterschiedliche Distributionen verwendet werden, deshalb wird dieser im übergeordneten Verzeichnis geklont.
+
+```bash
+# Im Basisverzeichnis auszuführen
+git clone https://github.com/ghorwin/MasterSim.git MasterSim-git
+```
+
+Es entsteht das Verzeichnis `MasterSim-git` parallel zur den Distro-Release-Verzeichnissen.
+
+
+Wenn man den Zeitaufwand für das ständig neu clonen vermeiden will, hilft folgendes Script:
+
+```bash
+echo "*** STEP 1 : cloning MasterSim.git ***" &&
+if [ ! -d "MasterSim-git" ]; then
+  echo "Cloning github repo"
+  git clone https://github.com/ghorwin/MasterSim.git MasterSim-git
+else
+  echo "Reverting local changes and pulling newest revisions from github"
+  (cd MasterSim-git; git reset --hard HEAD; git pull --rebase)
+fi
+```
+
+##### Paketverzeichnis als Kopie des Repo-Quelltextes erstellen
+
+Das Name des Paketverzeichnis ergibt sich aus der Upstream-Versionsnummer und dem Paketnamen. Die Upstream-Versionsnummer wird aus der Datei MSIM_Constants.cpp entnommen. Dies wird mit einem Python-Skript erledigt:
+
+```bash
+# auszuführen im Distro-Verzeichnis
+python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp
+```
+
+
+variable=$(python3  [option…] argument1 arguments2 …)
+
+
+
+echo "*** STEP 2 : Creating src directory $TARGETDIR ***" &&
+if [ ! -d $TARGETDIR ]; then
+	mkdir $TARGETDIR
+fi &&
+rsync -a --delete --exclude=".*" MasterSim.git/ $TARGETDIR/ && 
+du -h --summarize $TARGETDIR/ &&
+
+
+
 # remove .git subdirectory
 rm -rf MasterSim/.git
 # create tarball archive; Namensschema: <paketname>_<version>
@@ -1038,3 +1140,19 @@ See more information about this error in https://help.launchpad.net/Packaging/Up
 ### Focal
 -  devhelper-compat (= 12)
 
+
+
+
+[[deploy:private_archive]]
+## Veröffentlichung als Binärpaket auf eigenem Server
+
+### Paketerstellung mit CPack
+
+- CPack Einstellungen
+- Aufruf/Tests
+
+### Hosting der Pakete in eigenem Repository
+
+- Verzeichnisstruktur
+- Signaturschlüssel
+- Uploadprozedere
