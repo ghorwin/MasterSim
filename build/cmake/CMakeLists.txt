@@ -10,6 +10,10 @@ cmake_minimum_required( VERSION 2.8.12 )
 # enable @rpath on MacOS
 cmake_policy(SET CMP0042 NEW)
 
+# enable this to test deb-deployment
+# use in conjunction with `cmake -DCMAKE_INSTALL_PREFIX=/some/local/path`
+# add_definitions( -DIBK_BUILDING_DEBIAN_PACKAGE )
+
 # -------------------------------------------------------------
 # MACRO definitions
 # -------------------------------------------------------------
