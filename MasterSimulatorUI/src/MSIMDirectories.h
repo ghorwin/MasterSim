@@ -12,8 +12,11 @@ public:
 	/*! Returns the platform-specific root directory of all read-only resource files. */
 	static QString resourcesRootDir();
 
-	/*! Returns the platform-specific directory of all read-only translation files. */
-	static QString translationsDir();
+	/*! Returns the path to the application's translation file path. */
+	static QString translationsFilePath(const QString & langID);
+
+	/*! Returns the path to the Qt translation file path. */
+	static QString qtTranslationsFilePath(const QString & langID);
 
 	/*! Returns the platform-specific root directory of all user database files. */
 	static QString userDataDir();

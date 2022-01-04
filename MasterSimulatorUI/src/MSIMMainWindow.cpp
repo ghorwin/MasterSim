@@ -207,6 +207,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	addLanguageAction("en", "English");
 	addLanguageAction("de", "Deutsch");
 
+	// use language select menu also in buttonbar
+	m_buttonBar->m_languageMenu = m_ui->menuLanguage;
 
 	// *** read last loaded project/project specified on command line ***
 
@@ -953,7 +955,7 @@ void MSIMMainWindow::saveThumbNail() {
 
 
 void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &actionCaption) {
-	QString languageFilename = QString("%1/MasterSimulatorUI_%3.qm").arg(MSIMDirectories::translationsDir()).arg(langId);
+	QString languageFilename = MSIMDirectories::translationsFilePath(langId);
 	if (langId == "en" || QFile(languageFilename).exists()) {
 		QAction * a = new QAction(actionCaption, this);
 		a->setData(langId);
@@ -967,8 +969,6 @@ void MSIMMainWindow::addLanguageAction(const QString &langId, const QString &act
 						  IBK::MSG_WARNING, "[MSIMMainWindow::addLanguageAction]");
 	}
 }
-
-
 
 
 void MSIMMainWindow::on_actionViewSlaves_toggled(bool) {
