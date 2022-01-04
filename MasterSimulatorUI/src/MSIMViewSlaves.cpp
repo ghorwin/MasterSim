@@ -413,7 +413,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	switch (column) {
 		case 0 : p.m_simulators[row].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
 		case 1 : {
-			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().trimmed().toUtf8().data();
+			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().trimmed().toStdString();
 			if (newSlaveName != p.m_simulators[row].m_name) {
 				if (newSlaveName.find_first_of(" \t") != std::string::npos) {
 					QMessageBox::critical(this, tr("Invalid input"), tr("Slave names may not contain spaces or tabulator characters."));
@@ -452,9 +452,9 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 
 		} break;
 		case 2 : {
-			IBK::Path path( item->text().toUtf8().data() );
+			IBK::Path path( item->text().toStdString() );
 			if (!path.isAbsolute()) {
-				IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
+				IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toStdString());
 				path = projectFilePath.parentPath() / path;
 				path.removeRelativeParts();
 			}
@@ -645,7 +645,7 @@ void MSIMViewSlaves::updateSlaveTable() {
 
 		IBK::Path fmuFilePath = simDef.m_pathToFMU;
 		if (m_ui->checkBoxRelativeFMUPaths->isChecked()) {
-			IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toUtf8().data());
+			IBK::Path projectFilePath = IBK::Path(MSIMProjectHandler::instance().projectFile().toStdString());
 			try {
 				// now compose relative path
 				projectFilePath = projectFilePath.parentPath(); // may throw an exception if file path is invalid

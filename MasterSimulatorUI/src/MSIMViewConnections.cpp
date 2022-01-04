@@ -108,7 +108,7 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 	std::set<std::string> uncheckedSlaveNames;
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
 		if (m_ui->tableWidgetSlaves->item(i,0)->checkState() == Qt::Unchecked)
-			uncheckedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toUtf8().data());
+			uncheckedSlaveNames.insert(m_ui->tableWidgetSlaves->item(i,0)->text().toStdString());
 	}
 
 	// update tables based on project file content
@@ -179,13 +179,13 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 
 	// create new graph edge and add it to project
 	MASTER_SIM::Project::GraphEdge edge;
-	edge.m_outputVariableRef = m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 0)->text().toUtf8().data();
+	edge.m_outputVariableRef = m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 0)->text().toStdString();
 	edge.m_outputVariableRef += ".";
-	edge.m_outputVariableRef += m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 1)->text().toUtf8().data();
+	edge.m_outputVariableRef += m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 1)->text().toStdString();
 
-	edge.m_inputVariableRef = m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 0)->text().toUtf8().data();
+	edge.m_inputVariableRef = m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 0)->text().toStdString();
 	edge.m_inputVariableRef += ".";
-	edge.m_inputVariableRef += m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 1)->text().toUtf8().data();
+	edge.m_inputVariableRef += m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 1)->text().toStdString();
 
 	MASTER_SIM::Project p = project();
 	p.m_graph.push_back(edge);
@@ -225,8 +225,8 @@ void MSIMViewConnections::on_pushButtonConnectByVariableName_clicked() {
 
 	try {
 		// get slave names and simulator definitions
-		std::string slave1Name = m_ui->comboBoxSlave1->currentText().toUtf8().data();
-		std::string slave2Name = m_ui->comboBoxSlave2->currentText().toUtf8().data();
+		std::string slave1Name = m_ui->comboBoxSlave1->currentText().toStdString();
+		std::string slave2Name = m_ui->comboBoxSlave2->currentText().toStdString();
 //		const MASTER_SIM::Project::SimulatorDef & slave1Def = project().simulatorDefinition( slave1Name );
 //		const MASTER_SIM::Project::SimulatorDef & slave2Def = project().simulatorDefinition( slave2Name );
 
