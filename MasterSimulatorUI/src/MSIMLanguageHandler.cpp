@@ -98,23 +98,20 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 	//   <prefix>/bin/MasterSimulatorUI
 	//   <prefix>/share/mastersim/translations
 
-	QString translationPath = MSIMDirectories::translationsDir();
-	QString qtTranslationFilePath = translationPath;
+	QString translationFilePath = MSIMDirectories::translationsFilePath(langId);
+	QString qtTranslationFilePath = MSIMDirectories::qtTranslationsFilePath(langId);
 
-#if defined(Q_OS_LINUX)
-	qtTranslationFilePath = "/usr/share/qt5/translations";
-#endif // defined(Q_OS_LINUX)
-
-	IBK::IBK_Message( IBK::FormatString("App translation file path = '%1'.\n").arg(translationPath.toStdString()),
+	IBK::IBK_Message( IBK::FormatString("App translation file path = '%1'.\n").arg(translationFilePath.toStdString()),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	IBK::IBK_Message( IBK::FormatString("Qt translation file path  = '%1'.\n").arg(qtTranslationFilePath.toStdString()),
 		IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 
 	// system translator first, filename is for example "qt_de"
 	systemTranslator = new QTranslator;
-	if (systemTranslator->load("qt_" + langId, qtTranslationFilePath)) {
+	QFileInfo finfoQt(qtTranslationFilePath);
+	if (finfoQt.exists() && systemTranslator->load(finfoQt.fileName(), finfoQt.dir().absolutePath())) {
 		qApp->installTranslator(systemTranslator);
-		IBK::IBK_Message( IBK::FormatString("Installing system translator using file: 'qt_%1'.\n").arg(langId.toStdString()),
+		IBK::IBK_Message( IBK::FormatString("Qt translation file loaded successfully\n"),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 	}
 	else {
@@ -126,8 +123,9 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 	}
 
 	applicationTranslator = new QTranslator;
-	if (applicationTranslator->load("MasterSimulatorUI_" + langId, translationPath)) {
-		IBK::IBK_Message( IBK::FormatString("Installing application translator using file: 'MasterSimulatorUI_%1'.\n").arg(langId.toStdString()),
+	QFileInfo finfo(translationFilePath);
+	if (finfo.exists() && applicationTranslator->load(finfo.fileName(), finfo.dir().absolutePath())) {
+		IBK::IBK_Message( IBK::FormatString("Application translator loaded successfully\n"),
 			IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		qApp->installTranslator(applicationTranslator);
 		// remember translator in settings
