@@ -1,7 +1,7 @@
 Ubuntu Paketerstellung und Veröffentlichung
 ===========================================
 Andreas Nicolai <andreas.nicolai@gmx.net>
-v1.0 (03.01.2022)
+v1.0 (04.01.2022)
 // v1.0 date_on_line_above
 :Author Initials: AN
 :toc: left
@@ -239,7 +239,13 @@ auf andere Pfade zugegriffen werden, als bei einer stand-alone
 Softwarearchiv-Installation. Dies erfordert eine Vorbereitung der Software
 für die Veröffentlichung.
 
-### Vorbereitung des Quelltextes für die Veröffentlichung als Paket
+### Optionen für die Veröffentlichung von Paketen
+
+Grundsätzlich kann man Debian-Pakete als quelloffene Pakete veröffentlichen und sie so für die Integration in das Ubuntu-Archiv vorbereiten. Außerdem kann man Launchpad nutzen, um automatisiert Pakete zu erstellen, zu aktualisieren und ein Privates Package Archive (PPA) zu hosten. Dieses Verfahren ist in <<deploy:launchpad_ppa>> beschrieben.
+
+Alternativ kann man auch nur proprietäre Binar-Pakete erstellen und diese dann auf einem selbst gehosteten Paketrepository zur Verfügung stellen. Dieses Verfahren ist in <<deploy:private_archive>> beschrieben.
+
+## Vorbereitung des Quelltextes für die Veröffentlichung als Paket
 
 _MasterSim_ wird als Linux/MacOS/Windows Programm herausgegeben. Dabei werden
 folgende Dateitypen installiert, auf die innerhalb des Programms 
@@ -620,6 +626,8 @@ Application translator loaded successfully
 Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 
+[[deploy:launchpad_ppa]]
+## Veröffentlichung 
 
 
 ## alt
