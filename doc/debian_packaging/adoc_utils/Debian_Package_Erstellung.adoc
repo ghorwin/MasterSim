@@ -480,7 +480,7 @@ Danach werden die `mastersim.desktop` und `mastersim.xml` Dateien in die jeweili
 
 Weiter geht es mit den Anwendungsicons:
 
-.Install-Abschnitt aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
+.Zweiter Teil des Install-Abschnitts aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
 [source,cmake]
 ----
     ....
@@ -522,9 +522,28 @@ endif (UNIX AND NOT APPLE)
 
 Auch hier werden die Icons wieder umbenannt, da sie in unterschiedlichen Verzeichnissen liegen, aber alle den gleichen Dateinamen haben. 
 
-Die einzelnen `install()` Anweisungen sind bis auf die Icon-Größe identisch. CMake erlaubt es einem, solche Abschnitte durch Verwendung von Schleifen zu vereinfachen.
+Der oben gekürzte Textblock wäre ziemlich lang, wenn alle Icongrößen installiert würden. Die einzelnen `install()` Anweisungen sind bis auf die Icon-Größe identisch. CMake erlaubt es einem, solche Abschnitte durch Verwendung von Schleifen zu vereinfachen.
 
+.Verbesserter Install-Abschnitt für Icons aus der Datei `MasterSimulator/projects/cmake_local/CMakeLists.txt`
+[source,cmake]
+----
+	....
 
+	# Icons
+	set(ICON_ROOT_DIR ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+
+	foreach(ICON_SIZE 512 256 64 48 32 16)
+		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/apps 
+				RENAME mastersim.png)
+
+		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/mimetypes 
+				RENAME application-mastersim.png)
+	endforeach()
+
+endif (UNIX AND NOT APPLE)
+----
 
 [[sec:cmake_install_test]]
 #### Testen der CMake-basierten Installation
