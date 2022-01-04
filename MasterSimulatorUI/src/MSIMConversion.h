@@ -34,12 +34,12 @@ inline QString utf82QString( const IBK::Path & path ) {
 
 /*! Utility function for conversion of a QString to a trimmed std::string in utf8 encoding. */
 inline std::string QString2trimmedUtf8(const QString & str) {
-	return str.trimmed().toUtf8().data();
+	return str.trimmed().toStdString();
 }
 
 /*! Utility function for conversion of a QString to an IBK::Path. */
 inline IBK::Path QString2Path(const QString & str) {
-	return IBK::Path(str.toUtf8().data());
+	return IBK::Path(str.toStdString());
 }
 
 /*! Converts string to IBK::Unit. */

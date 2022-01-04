@@ -75,7 +75,7 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 			if (finfo.exists()) {
 				MASTER_SIM::Project pro;
 				try {
-					pro.read(IBK::Path(finfo.filePath().toUtf8().data()), true);
+					pro.read(IBK::Path(finfo.filePath().toStdString()), true);
 					QString created;
 					if (pro.m_created.empty())
 						created = "---";
