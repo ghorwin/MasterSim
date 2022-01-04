@@ -790,7 +790,6 @@ git clone https://github.com/ghorwin/MasterSim.git MasterSim-git
 
 Es entsteht das Verzeichnis `MasterSim-git` parallel zur den Distro-Release-Verzeichnissen.
 
-
 Wenn man den Zeitaufwand für das ständig neu clonen vermeiden will, hilft folgendes Script:
 
 ```bash
@@ -801,34 +800,124 @@ if [ ! -d "MasterSim-git" ]; then
 else
   echo "Reverting local changes and pulling newest revisions from github"
   (cd MasterSim-git; git reset --hard HEAD; git pull --rebase)
-fi
+fi &&
+du -h --summarize MasterSim-git/ 
 ```
 
-##### Paketverzeichnis als Kopie des Repo-Quelltextes erstellen
+##### Kopie des Repo-Quelltextes erstellen
 
-Das Name des Paketverzeichnis ergibt sich aus der Upstream-Versionsnummer und dem Paketnamen. Die Upstream-Versionsnummer wird aus der Datei MSIM_Constants.cpp entnommen. Dies wird mit einem Python-Skript erledigt:
+Das Name des Paketverzeichnis ergibt sich aus der Upstream-Versionsnummer und dem Paketnamen. Die Upstream-Versionsnummer wird aus der Datei MSIM_Constants.cpp entnommen. 
+
+Man erstellt neben dem git-Clone-Verzeichnis das Quelltextverzeichnis, beispielsweise `mastersim-0.9.2`.
+
+Jetzt werden die Daten aus dem Quelltextverzeichnis in das Paketverzeichnis kopiert:
+
+```bash
+# Auszuführen im Arbeitsverzeichnis
+echo "*** STEP 2 : Copy source directory ***" &&
+rsync -a --delete --exclude=".*" MasterSim-git/ mastersim-0.9.2 &&
+du -h --summarize mastersim-0.9.2/ 
+```
+
+Bei diesem Befehl werden alle versteckten Dateien (also primär das Verzeichnis `.git` und alle `.gitignore`) weggelassen.
+
+Nun ist das Verzeichnis `mastersim-0.9.2` ein reines Quelltextverzeichnis. 
+
+[NOTE]
+====
+Das Quelltextverzeichnis liegt aktuell neben dem `MasterSim-git`-Verzeichnis liegen. Allerdings ist es mitunter notwendig, Quelltextanpassungen (Patches) für bestimmte Distributionen einzuarbeiten, wenn sich der Upstream-Quelltext nicht problemlos kompilieren lässt. Dann kann man das Quelltextverzeichnis auch unterhalb des `Distro-Verzeichnis` erstellen und direkt dort 
+die Quelltextanpassungen durchführen. Pragmatischer ist häufiger die Verwendung von Patches, welche auf den Originalquelltext angewendet werden. Mehr dazu hier https://packaging.ubuntu.com/html/patches-to-packages.html.
+====
+
+
+##### Quelltextverzeichnis bereiningen und Quelltext-Archiv packen
+
+Dateien, welche für das Erstellen und/oder Nachvollziehen des Quelltextes nicht zwingend notwendig sind,
+können entfernt werden. Auch sollten Dateien, welche später Probleme bei den Paket-Sicherheitschecks bringen,
+entfernt werden. Allgemein sollte man versuchen, den Platzbedarf für das Quelltextarchiv so klein wie möglich zu
+halten (der Aufruf von `du` am Ende jeder Operation zeigt die jeweiligen Speicherplatzeinsparungen).
+
+```bash
+echo "*** STEP 3 : Cleaning out source directory ***" &&
+rm -rf mastersim-0.9.2/third-party &&
+rm -rf mastersim-0.9.2/doc &&
+mv mastersim-0.9.2/data/examples/linux64 mastersim-0.9.2/examples &&
+rm -rf mastersim-0.9.2/data &&
+rm -rf mastersim-0.9.2/cross-check &&
+rm -rf mastersim-0.9.2/externals/zlib &&
+du -h --summarize mastersim-0.9.2/
+```
+
+Es wird nun noch die Top-Level `CMakeLists.txt` benötigt, welche aber nur ein minimaler Wrapper um die eigentliche
+CMake-Datei `build/cmake/CMakeLists.txt`-Datei ist. Außerdem wird in dieser Wrapper-Datei noch das Define für Debian-Paket-Erstellung gesetzt:
+
+```cmake
+project( MasterSimDebPackage )
+cmake_minimum_required( VERSION 3.10 )
+
+# Debian package build flag for IBK-based applications
+if (UNIX AND NOT APPLE)
+	ADD_DEFINITIONS( -DIBK_BUILDING_DEBIAN_PACKAGE )
+endif (UNIX AND NOT APPLE)
+
+add_subdirectory( build/cmake MasterSimPackage)
+```
+
+Dieses wird nun gepackt und `mastersim-0.9.2.orig.tar.xz` benannt. Man könnte auch ein tar.gz oder tar.bz2 erstellen, aber xz komprimiert ganz gut.
+
+```bash
+tar cf - $TARGETDIR/ | xz -z - > mastersim_$VERSION.orig.tar.xz
+```
+
+Dieses Quelltextarchiv ist nun die Grundlage für neue Pakete und für Aktualisierungen von Paketen ohne Quelltextänderung.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Dies wird mit einem Python-Skript erledigt:
 
 ```bash
 # auszuführen im Distro-Verzeichnis
-python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp
+$ python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp
 ```
 
+Das Skript liefert bei Erfolg die Versionsnummer zurück, welche in einer Variable gespeichert wird.
 
-variable=$(python3  [option…] argument1 arguments2 …)
+```bash
+VERSION=$(python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp)
+
+# Paketverzeichnis
+TARGETDIR=mastersim-$VERSION
+```
+
+Jetzt werden die Daten aus dem Quelltextverzeichnis in das Paketverzeichnis kopiert:
 
 
-
+```bash
+# Auszuführen im Paketverzeichnis
 echo "*** STEP 2 : Creating src directory $TARGETDIR ***" &&
 if [ ! -d $TARGETDIR ]; then
 	mkdir $TARGETDIR
 fi &&
-rsync -a --delete --exclude=".*" MasterSim.git/ $TARGETDIR/ && 
-du -h --summarize $TARGETDIR/ &&
+rsync -a --delete --exclude=".*" ../../MasterSim.git/ $TARGETDIR/ && 
+```
 
-
-
-# remove .git subdirectory
-rm -rf MasterSim/.git
+```bash
 # create tarball archive; Namensschema: <paketname>_<version>
 tar -cjf mastersim_0.9.0.orig.tar.bz2 MasterSim
 ```
