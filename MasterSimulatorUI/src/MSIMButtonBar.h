@@ -40,14 +40,12 @@ public:
 	QToolButton  * toolButtonSwitchLanguage;
 	QToolButton  * toolButtonQuit;
 
+	/*! The language menu pointer will be set to the main programs language menu once this is set up. */
+	QMenu * m_languageMenu = nullptr;
+
 private slots:
-
 	void onToolButtonSwitchLanguageClicked();
-	void onLanguageActionTriggered();
 
-private:
-
-	QMenu * m_languageMenu;
 };
 
 #endif // ButtonBarH
