@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns='https://specifications.freedesktop.org/shared-mime-info-spec'>
+	<mime-type type="application/mastersim">
+		<comment>MasterSim project file</comment>
+		<glob pattern="*.msim"/>
+	</mime-type>
+</mime-info>
