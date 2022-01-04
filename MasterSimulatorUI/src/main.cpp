@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
 	MSIMMessageHandler messageHandler;
 	IBK::MessageHandlerRegistry::instance().setMessageHandler( &messageHandler );
 	std::string errmsg;
-	messageHandler.openLogFile(MSIMDirectories::globalLogFile().toUtf8().data(), false, errmsg);
+	messageHandler.openLogFile(MSIMDirectories::globalLogFile().toStdString(), false, errmsg);
 	messageHandler.setConsoleVerbosityLevel( settings.m_userLogLevelConsole );
 	messageHandler.setLogfileVerbosityLevel( settings.m_userLogLevelLogfile );
 
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 		QString langid = utf82QString(dummy);
 		if (langid != MSIMLanguageHandler::instance().langId()) {
 			IBK::IBK_Message( IBK::FormatString("Installing translator for language: '%1'.\n")
-								.arg(langid.toUtf8().data()),
+								.arg(langid.toStdString()),
 								IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 			MSIMLanguageHandler::instance().installTranslator(langid);
 		}

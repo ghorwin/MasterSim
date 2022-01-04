@@ -57,27 +57,23 @@ QString MSIMDirectories::resourcesRootDir() {
 }
 
 
-QString MSIMDirectories::translationsDir() {
-#ifdef IBK_DEPLOYMENT
-
-	// for debian deployment we have the locales install in /usr/share/locale/de/LC_MESSAGES
+QString MSIMDirectories::translationsFilePath(const QString & langID) {
 #ifdef IBK_BUILDING_DEBIAN_PACKAGE
 	QString installPath = qApp->applicationDirPath();
-	return installPath + "/../share/locale/de/LC_MESSAGES";
+	return installPath + QString("/../share/locale/%1/LC_MESSAGES/MasterSimulatorUI.qm").arg(langID);
 #else // IBK_BUILDING_DEBIAN_PACKAGE
-	return resourcesRootDir() + "/translations";
+	return resourcesRootDir() + QString("/translations/MasterSimulatorUI_%1.qm").arg(langID);
 #endif // IBK_BUILDING_DEBIAN_PACKAGE
+}
 
-#else // IBK_DEPLOYMENT
-	// development (IDE) mode
-	QString installPath = qApp->applicationDirPath();
-#if defined(Q_OS_MAC)
-	return installPath + "/../../../../../MasterSimulatorUI/resources/translations";
+
+QString MSIMDirectories::qtTranslationsFilePath(const QString & langID) {
+#if defined(Q_OS_LINUX)
+	return QString("/usr/share/qt5/translations/qt_%1.qm").arg(langID);
 #else
-	return installPath + "/../../MasterSimulatorUI/resources/translations";
+	// in all other cases the qt_xx.qm files are located in the resources path
+	return resourcesRootDir() + QString("/translations/qt_%1.qm").arg(langID);
 #endif
-
-#endif // IBK_DEPLOYMENT
 }
 
 

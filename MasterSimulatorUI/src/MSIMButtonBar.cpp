@@ -68,21 +68,6 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	setupToolButton(toolButtonSwitchLanguage, ":/gfx/views/32x32/switch_language_32x32.png", tr("Change currently used language."));
 	setupToolButton(toolButtonQuit, ":/gfx/views/32x32/exit_32x32.png", tr("Closes the program (asks for saving confirmation first)."));
 
-	// open context menu with languages
-	m_languageMenu = new QMenu(this);
-
-	QAction * action = new QAction("English", m_languageMenu);
-	action->setIcon(QIcon(":/gfx/icons/gb.png"));
-	action->setData("en");
-	connect(action, SIGNAL(triggered()), this, SLOT(onLanguageActionTriggered()));
-	m_languageMenu->addAction(action);
-
-	action = new QAction("Deutsch", m_languageMenu);
-	action->setIcon(QIcon(":/gfx/icons/de.png"));
-	action->setData("de");
-	connect(action, SIGNAL(triggered()), this, SLOT(onLanguageActionTriggered()));
-	m_languageMenu->addAction(action);
-
 	connect(toolButtonSwitchLanguage, SIGNAL(clicked()),
 			this, SLOT(onToolButtonSwitchLanguageClicked()));
 
@@ -106,16 +91,7 @@ void MSIMButtonBar::setEnabled(bool enabled) {
 
 
 void MSIMButtonBar::onToolButtonSwitchLanguageClicked() {
+	Q_ASSERT(m_languageMenu != nullptr);
 	m_languageMenu->popup(mapToGlobal(toolButtonSwitchLanguage->pos()));
 }
 
-
-void MSIMButtonBar::onLanguageActionTriggered() {
-	QAction * action = static_cast<QAction*>(sender());
-	QString langId = action->data().toString();
-	// save data in language handler
-
-	MSIMLanguageHandler::instance().installTranslator(langId);
-	QMessageBox::information(0, tr("Language Changed"),
-		tr("Please restart the program to activate the selected language!"));
-}
