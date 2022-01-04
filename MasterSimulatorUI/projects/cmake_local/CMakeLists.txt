@@ -122,20 +122,14 @@ if (UNIX AND NOT APPLE)
 	# Icons
 	set(ICON_ROOT_DIR ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
 
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png DESTINATION ${ICON_ROOT_DIR}/512x512/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png DESTINATION ${ICON_ROOT_DIR}/256x256/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_128.png DESTINATION ${ICON_ROOT_DIR}/128x128/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_64.png DESTINATION ${ICON_ROOT_DIR}/64x64/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_48.png DESTINATION ${ICON_ROOT_DIR}/48x48/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_32.png DESTINATION ${ICON_ROOT_DIR}/32x32/apps RENAME mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png DESTINATION ${ICON_ROOT_DIR}/16x16/apps RENAME mastersim.png)
+	foreach(ICON_SIZE 512 256 64 48 32 16)
+		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/apps 
+				RENAME mastersim.png)
 
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png DESTINATION ${ICON_ROOT_DIR}/512x512/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png DESTINATION ${ICON_ROOT_DIR}/256x256/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_128.png DESTINATION ${ICON_ROOT_DIR}/128x128/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_64.png DESTINATION ${ICON_ROOT_DIR}/64x64/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_48.png DESTINATION ${ICON_ROOT_DIR}/48x48/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_32.png DESTINATION ${ICON_ROOT_DIR}/32x32/mimetypes RENAME application-mastersim.png)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png DESTINATION ${ICON_ROOT_DIR}/16x16/mimetypes RENAME application-mastersim.png)
+		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/mimetypes 
+				RENAME application-mastersim.png)
+	endforeach()
 
 endif (UNIX AND NOT APPLE)

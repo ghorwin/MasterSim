@@ -10,7 +10,7 @@
 QString MSIMDirectories::resourcesRootDir() {
 	QString installPath = qApp->applicationDirPath();
 
-#ifdef IBK_DEPLOYMENT
+#if defined(IBK_DEPLOYMENT) || defined(IBK_BUILDING_DEBIAN_PACKAGE)
 	// deployment mode
 
 #if defined(Q_OS_WIN)
