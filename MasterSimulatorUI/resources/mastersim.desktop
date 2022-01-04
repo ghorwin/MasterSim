@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=MasterSim
+GenericName=FMI Co-Simulation Master
+Comment=FMI Co-Simulations Master
+Keywords=FMI;FMU;Simulation
+Exec=MasterSimulatorUI %f
+Icon=mastersim
+Terminal=false
+Type=Application
+Categories=Science
+StartupNotify=true
+MimeType=application/mastersim

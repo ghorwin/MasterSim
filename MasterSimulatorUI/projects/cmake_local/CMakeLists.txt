@@ -93,11 +93,49 @@ target_link_libraries( ${PROJECT_NAME}
 	${WIN_FRAMEWORKS}
 )
 
-
+# Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
 
 	# installation targets for Unix systems
 	include(GNUInstallDirs)
+
+	# MasterSimulator -> /usr/bin
 	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
+
+	# Man-page
+	install(FILES ${PROJECT_SOURCE_DIR}/../../doc/${PROJECT_NAME}.1 
+			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+
+	# Translation files
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/translations/${PROJECT_NAME}_de.qm 
+			DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/de/LC_MESSAGES/
+			RENAME ${PROJECT_NAME}.qm)
+
+	# Desktop file
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.desktop 
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+
+	# Mime type
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.xml 
+			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages )
+
+	# Icons
+	set(ICON_ROOT_DIR ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
+
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png DESTINATION ${ICON_ROOT_DIR}/512x512/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png DESTINATION ${ICON_ROOT_DIR}/256x256/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_128.png DESTINATION ${ICON_ROOT_DIR}/128x128/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_64.png DESTINATION ${ICON_ROOT_DIR}/64x64/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_48.png DESTINATION ${ICON_ROOT_DIR}/48x48/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_32.png DESTINATION ${ICON_ROOT_DIR}/32x32/apps RENAME mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png DESTINATION ${ICON_ROOT_DIR}/16x16/apps RENAME mastersim.png)
+
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_512.png DESTINATION ${ICON_ROOT_DIR}/512x512/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_256.png DESTINATION ${ICON_ROOT_DIR}/256x256/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_128.png DESTINATION ${ICON_ROOT_DIR}/128x128/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_64.png DESTINATION ${ICON_ROOT_DIR}/64x64/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_48.png DESTINATION ${ICON_ROOT_DIR}/48x48/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_32.png DESTINATION ${ICON_ROOT_DIR}/32x32/mimetypes RENAME application-mastersim.png)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_16.png DESTINATION ${ICON_ROOT_DIR}/16x16/mimetypes RENAME application-mastersim.png)
 
 endif (UNIX AND NOT APPLE)
