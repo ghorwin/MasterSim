@@ -334,7 +334,7 @@ und gegebenenfalls noch einige Stellen im Text.
 
 [WARNING]
 ====
-Hier sieht man auch schon ein Problem: bei jedem Release müsste diese Kopfzeile um die aktuelle Versionsnummer aktualisiert werden, und auch das Datum sollte jeweils erneuert werden. Dies alles spricht dafür, dass man die Option `--man-page` fertig implementiert und dann als post-build-Schritt vor der Installation ausführt (TODO Andreas!).
+Hier sieht man auch schon ein Problem: bei jedem Release müsste diese Kopfzeile um die aktuelle Versionsnummer aktualisiert werden, und auch das Datum sollte jeweils erneuert werden. Dies alles spricht dafür, dass man die Option `--man-page` fertig implementiert und dann als post-build-Schritt vor der Installation ausführt (TODO Stefan oder Andreas!).
 ====
 
 Die Man-pages für _MasterSimulator_ und _MasterSimulatorUI_ gehören in die jeweiligen Unterverzeichnisse, also:
@@ -575,7 +575,7 @@ add_definitions( -DIBK_BUILDING_DEBIAN_PACKAGE )
 einfügen, welches die Software im deb-Installmodus konfiguriert (Pfade für Übersetzungsdateien und Resourcen/Beispiele).
 
 Das Ausführen von `make install` führt zu folgender Ausgabe:
-```
+```bash
 $ make install
 [  3%] Built target minizip
 [ 17%] Built target IBK
@@ -644,8 +644,8 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 Neuen Schlüssel erstellen:
 
-```
-> gpg --gen-key
+```bash
+$ gpg --gen-key
 
 gpg: Schlüssel 6E0814BD3FCA8338 ist als ultimativ vertrauenswürdig gekennzeichnet
 gpg: Verzeichnis `/home/ghorwin/.gnupg/openpgp-revocs.d' erzeugt
@@ -660,15 +660,15 @@ sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 
 Die Schlüssel-ID ist `6E0814BD3FCA8338`. Schlüssel auf Schlüsselserver hochladen:
 
-```
-> gpg --send-keys --keyserver keyserver.ubuntu.com 6E0814BD3FCA8338
+```bash
+$ gpg --send-keys --keyserver keyserver.ubuntu.com 6E0814BD3FCA8338
 gpg: sende Schlüssel 6E0814BD3FCA8338 auf hkp://keyserver.ubuntu.com
 ```
 
 Eigenen Fingerabdruck finden, der mit der eigenen E-Mailadresse verknüpft ist:
 
-```
-> gpg --fingerprint andreas.nicolai@gmx.net
+```bash
+$ gpg --fingerprint andreas.nicolai@gmx.net
 gpg: "Trust-DB" wird überprüft
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
 gpg: Tiefe: 0  gültig:   2  signiert:   0  Vertrauen: 0-, 0q, 0n, 0m, 0f, 2u
@@ -681,8 +681,8 @@ sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 
 Prüfen, ob der Schlüssel auf dem Schlüsselserver hochgeladen ist (Verteilung auf Schlüsselserver dauert manchmal etwas):
 
-```
-> gpg --keyserver hkp://keyserver.ubuntu.com --search-key 'andreas.nicolai@gmx.net'
+```bash
+$ gpg --keyserver hkp://keyserver.ubuntu.com --search-key 'andreas.nicolai@gmx.net'
 gpg: data source: http://162.213.33.9:11371
 (1)	Andreas Nicolai <andreas.nicolai@gmx.net>
 	  3072 bit RSA key 6E0814BD3FCA8338, erzeugt: 2021-12-29
@@ -700,9 +700,7 @@ Keys 1-1 of 1 for "andreas.nicolai@gmx.net".
 
 TODO : Problem beim Speichern lokal bearbeiteter Mails klären
 
-##### ssh-key setup
-
-ssh key -> use same as for IBK
+##### ssh-Schlüsselerstellung
 
 ssh-key (RSA, 4096 Bits) neu erstellen:
 
@@ -715,19 +713,23 @@ $ ssh-keygen -t rsa -b 4096
 
 - GPG Schlüssel hinzufügen (Bestätigungsmail lesen/entschlüsseln)
 - SSH-Schlüssel hinzufügen
-- Account Bild
-- eigenes PPA erstellen
+- Account Bild/Metadaten
+- eigenes PPA erstellen, Beispielsweise "sim"
 
 Web-URL: https://launchpad.net/~ghorwin/+archive/ubuntu/sim
 
-
 ```bash
-# Hinzufügen des Repos (sobald Pakete veröffentlicht sind)
-# sucht nach Paketen für aktuelle Distro
+# Hinzufügen des Repos auf jedem beliebigen Rechner 
+# (geht sobald Pakete veröffentlicht sind und der Signaturschlüssel
+# auf die Keyserver verteilt wurde)
 $ sudo add-apt-repository ppa:ghorwin/sim
+
+# beim nächsten "sudo apt update" wird auch im ppa nach Paketen für 
+# aktuelle Distro gesucht
 ```
 
 
+[[prep:environment_vars]]
 #### Umgebungsvariablen
 
 in `.profile` oder `.bashrc`:
@@ -745,6 +747,12 @@ export DEBEMAIL="andreas.nicolai@gmx.net"
 4. fertiges Paket für eine andere Distributionsversion veröffentlichen
 
 
+### Benötigte Pakete
+
+```bash
+$ sudo apt install debhelper lintian
+```
+
 
 #### Verzeichnisse und Bezeichnungen
 
@@ -756,39 +764,63 @@ Für die nachfolgenden Schritte werden verschiedene Verzeichnisse benötigt.
 
 - _Arbeitsverzeichnis_ : ein temporäres Verzeichnis, in dem alle Dateien für die Erstellung des Releases hingekopiert/generiert werden; dieses Verzeichnis enthält zum Schluss die erstellten Pakete
 
-- _Paketverzeichnis_ : das Verzeichnis innerhalb des _Arbeitsverzeichnis_, in dem der Quelltext erstellt wird und die Paketbauskripte ausgeführt werden; enthält das `debian`-Kontrolldateiverzeichnis; Der Name des Paketverzeichnis ergibt sich aus `<paketname>-<version>`, wobei die Version eine semantische major.minor.patch-Versionsnummer ist.
-
 .Verzeichnisstruktur 
 ====
 ```
-
-```
+debPackaging                             - *Basisverzeichnis*
+├── CMakeLists.txt                       - CMakeLists.txt, welche for deb-Pakete benötigt wird
+├── MasterSim-git                        - geklontes git-repository (Upstream-Quelltext)
+├── mastersim-0.9.2                      - bereinigtes Upstream-Quellen
+├── mastersim_0.9.2.orig.tar.xz          - Archiv des bereinigten Upstream-Quellverzeichnisses
+├── scripts                              - Verzeichnis mit Hilfsskripten
+│   ├── extractVersion.py
+│   ├── update_repo.sh
+│   └── update_source_code_archive.sh
+├── ubuntu-18.04-bionic                  - Dateien für Ubuntu 18.04 Bionic release
+│   └── ...
+├── ubuntu-20.04-focal                   - *Distro-Verzeichnis*, enthält Dateien für Ubuntu 20.04 Focal release
+│   ├── buildBinary.sh                   - Skript zur lokalen Erstellung des Binärpakets
+│   ├── debian                           - debian Kontrolldateien
+│   │   ├── changelog
+│   │   ├── control
+│   │   ├── copyright
+│   │   ├── rules
+│   │   └── source
+│   │       └── format
+│   ├── mastersim-0.9.2                  - Distro-spezifisches *Arbeitsverzeichnis*
+│   ├── mastersim_0.9.2-1~focal~ppa1.debian.tar.xz
+│   ├── mastersim_0.9.2-1~focal~ppa1.dsc
+│   ├── mastersim_0.9.2-1~focal~ppa1_source.buildinfo
+│   ├── mastersim_0.9.2-1~focal~ppa1_source.changes
+│   ├── mastersim_0.9.2.orig.tar.xz      - symlink auf top-level Archiv
+│   ├── newUpstreamVersion.sh            - Skript für Erstellung 
+│   └── readme.md
+└── ubuntu-21.10-impish                  - Dateien für Ubuntu 20.10 Impish release
+     └── ...
 ====
-
 
 ### Manuelle Erstellung eines neuen Debian-Source-Packages
 
+Nachfolgend sind alle einzelnen Schritte zu Erstellung eines Source-Pakets beschrieben. Dabei
+werden alle oben gelisteten Dateien und Verzeichnisse besprochen.
+
+[[deb:newSourceCodeRepo]]
 #### Source-Quelltextarchiv erstellen
 
-##### Arbeitsverzeichnis bereinigen
-
-Entweder wird das Arbeitsverzeichnis `work` neu angelegt oder alles im Verzeichnis wird gelöscht. 
-
-```bash
-# im Arbeitsverzeichnis 'work' ausführen
-rm -rf *
-```
-
-##### Quelltextrepository clonen
-
-Der ursprüngliche Quelltext kann für die Erstellung von Paketen für unterschiedliche Distributionen verwendet werden, deshalb wird dieser im übergeordneten Verzeichnis geklont.
+Erster Schritt ist die Erstellung eines Quelltextarchives. Dies erfolgt im Basisverzeichnis, da
+der Upstream-Quelltext für alle zu erstellenden Pakete gleich ist.
 
 ```bash
 # Im Basisverzeichnis auszuführen
 git clone https://github.com/ghorwin/MasterSim.git MasterSim-git
 ```
+Es entsteht das Verzeichnis `MasterSim-git` parallel zur den Distro-Verzeichnissen.
 
-Es entsteht das Verzeichnis `MasterSim-git` parallel zur den Distro-Release-Verzeichnissen.
+Falls das Verzeichnis schon existiert, reicht auch ein
+```bash
+git pull --rebase
+```
+im `MasterSim-git`-Verzeichnis.
 
 Wenn man den Zeitaufwand für das ständig neu clonen vermeiden will, hilft folgendes Script:
 
@@ -799,14 +831,14 @@ if [ ! -d "MasterSim-git" ]; then
   git clone https://github.com/ghorwin/MasterSim.git MasterSim-git
 else
   echo "Reverting local changes and pulling newest revisions from github"
-  (cd MasterSim-git; git reset --hard HEAD; git pull --rebase)
+  (cd MasterSim-git && git reset --hard HEAD && git clean -fdx && git pull --rebase)
 fi &&
 du -h --summarize MasterSim-git/ 
 ```
 
 ##### Kopie des Repo-Quelltextes erstellen
 
-Das Name des Paketverzeichnis ergibt sich aus der Upstream-Versionsnummer und dem Paketnamen. Die Upstream-Versionsnummer wird aus der Datei MSIM_Constants.cpp entnommen. 
+Das Name des Paketverzeichnis ergibt sich aus der Upstream-Versionsnummer und dem Paketnamen. Die Upstream-Versionsnummer wird aus der Datei MSIM_Constants.cpp entnommen, aktuell 0.9.2. 
 
 Man erstellt neben dem git-Clone-Verzeichnis das Quelltextverzeichnis, beispielsweise `mastersim-0.9.2`.
 
@@ -825,23 +857,20 @@ Nun ist das Verzeichnis `mastersim-0.9.2` ein reines Quelltextverzeichnis.
 
 [NOTE]
 ====
-Das Quelltextverzeichnis liegt aktuell neben dem `MasterSim-git`-Verzeichnis liegen. Allerdings ist es mitunter notwendig, Quelltextanpassungen (Patches) für bestimmte Distributionen einzuarbeiten, wenn sich der Upstream-Quelltext nicht problemlos kompilieren lässt. Dann kann man das Quelltextverzeichnis auch unterhalb des `Distro-Verzeichnis` erstellen und direkt dort 
-die Quelltextanpassungen durchführen. Pragmatischer ist häufiger die Verwendung von Patches, welche auf den Originalquelltext angewendet werden. Mehr dazu hier https://packaging.ubuntu.com/html/patches-to-packages.html.
+Das Quelltextverzeichnis liegt aktuell neben dem `MasterSim-git`-Verzeichnis. Mitunter ist es notwendig, Quelltextanpassungen (Patches) für bestimmte Distributionen einzuarbeiten, wenn sich der Upstream-Quelltext nicht problemlos kompilieren lässt. Dazu werden dann Patch-Dateien angewendet. Mehr dazu hier https://packaging.ubuntu.com/html/patches-to-packages.html.
 ====
 
-
-##### Quelltextverzeichnis bereiningen und Quelltext-Archiv packen
+##### Quelltextverzeichnis bereiningen und Top-Level CMakeLists.txt einfügen
 
 Dateien, welche für das Erstellen und/oder Nachvollziehen des Quelltextes nicht zwingend notwendig sind,
 können entfernt werden. Auch sollten Dateien, welche später Probleme bei den Paket-Sicherheitschecks bringen,
 entfernt werden. Allgemein sollte man versuchen, den Platzbedarf für das Quelltextarchiv so klein wie möglich zu
-halten (der Aufruf von `du` am Ende jeder Operation zeigt die jeweiligen Speicherplatzeinsparungen).
+halten.
 
 ```bash
 echo "*** STEP 3 : Cleaning out source directory ***" &&
 rm -rf mastersim-0.9.2/third-party &&
 rm -rf mastersim-0.9.2/doc &&
-mv mastersim-0.9.2/data/examples/linux64 mastersim-0.9.2/examples &&
 rm -rf mastersim-0.9.2/data &&
 rm -rf mastersim-0.9.2/cross-check &&
 rm -rf mastersim-0.9.2/externals/zlib &&
@@ -863,313 +892,462 @@ endif (UNIX AND NOT APPLE)
 add_subdirectory( build/cmake MasterSimPackage)
 ```
 
-Dieses wird nun gepackt und `mastersim-0.9.2.orig.tar.xz` benannt. Man könnte auch ein tar.gz oder tar.bz2 erstellen, aber xz komprimiert ganz gut.
+[NOTE]
+====
+Man könnte auch im Upstream-Quelltext bereits eine Top-Level CMakeLists.txt-Datei haben. Dann müsste diese aber eine
+Option zum Einschalten des Defines enthalten.
+====
+
+##### Quelltext-Archiv packen
+
+Das Quelltextverzeichnis wird nun gepackt und `mastersim-0.9.2.orig.tar.xz` benannt. Man könnte auch ein tar.gz oder tar.bz2 erstellen, aber xz komprimiert ganz gut.
 
 ```bash
-tar cf - $TARGETDIR/ | xz -z - > mastersim_$VERSION.orig.tar.xz
+echo "*** STEP 4 : Creating source tarball ***" &&
+tar cf - mastersim-0.9.2/ | xz -z - > mastersim_0.9.2.orig.tar.xz && 
+du -h --summarize mastersim_0.9.2.orig.tar.xz
 ```
 
 Dieses Quelltextarchiv ist nun die Grundlage für neue Pakete und für Aktualisierungen von Paketen ohne Quelltextänderung.
 
+[IMPORTANT]
+====
+Das Format des Dateinamens `mastersim_0.9.2.orig.tar.xz` ist wichtig. Die Debian-Paketerstellungsskripte
+suchen nach einem Quelltextarchive mit dem Namen `<package>_<version>.orig.tar.xz`.
+====
 
+Es gibt eine sehr strenge Regel bei der Debian-Paketerstellung: jegliche Änderung am Quelltextarchiv benötigt **eine neue Upstream-Versionsnummer*. Geprüft wird dies über eine Checksumme der tar.xz-Datei. 
 
+[CAUTION]
+====
+Die Prüfsumme einer tar.xz-Datei ändert sich auch, wenn man von einem unveränderten Verzeichnis erneut ein Archiv erstellt!
+====
 
+Generell sollte man mit dem Paketerstellen nur dann weitermachen, wenn man mit dem Quelltextarchiv soweit einverstanden ist. Jegliche Release-Fixes upstream sollten _vorher_ erledigt werden.
 
+[TIP]
+====
+Bevor man Debian-Pakete erstellt, sollte man via manueller Installation in ein temporäres Verzeichnis  (siehe <<sec:cmake_install_test>>) die Installation und danach das Programm selbst prüfen (Übersetzungen komplett, Datenbanken/Beispiele richtig installiert, Dokumentation up-to-date...).
+====
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Dies wird mit einem Python-Skript erledigt:
-
-```bash
-# auszuführen im Distro-Verzeichnis
-$ python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp
-```
-
-Das Skript liefert bei Erfolg die Versionsnummer zurück, welche in einer Variable gespeichert wird.
+Die Speicherplatzreduktion durch Bereinigen und Packen ist enorm.
+Der Aufruf von `du` am Ende jeder Operation zeigt die jeweiligen Speicherplatzeinsparungen:
 
 ```bash
-VERSION=$(python3 ../scripts/extractVersion.py ../MasterSim-git/MasterSim/src/MSIM_Constants.cpp)
-
-# Paketverzeichnis
-TARGETDIR=mastersim-$VERSION
+196,0M  MasterSim-git/
+# nach Entfernen von .git
+ 62,0M  mastersim-0.9.2/
+# nach Bereinigen
+  9,1M  mastersim-0.9.2/
+# komprimiert
+  2,9M  mastersim_0.9.2.orig.tar.xz
 ```
 
-Jetzt werden die Daten aus dem Quelltextverzeichnis in das Paketverzeichnis kopiert:
 
+#### Vorbereiten des Debian-Pakets
+
+Je nach Distributions-Release gibt es kleine Unterschiede in den Konfigurationsdateien. Daher werden diese in individuellen Unterverzeichnissen abgelegt (und im Versionskontrollsystem versioniert). 
+
+Es gibt verschiedene Möglichkeiten, 
+die benötigten Konfigurationsdateien zu erstellen. Zum Beispiel kann man `dh_make` nutzen, aber für viele Programme ist das nicht nötig. Daher wird auf die Verwendung des Tools verzichtet und die Dateien selbst generiert.
+
+Es wird nun ein Distro-Release-Verzeichnis erstellt, beispielsweise `ubuntu-20.04-focal` wie oben in der Verzeichnisstruktur
+gezeigt ist.
+
+In diesem Arbeitsverzeichnis wird ein Unterverzeichnis `debian` erstellt.
+
+
+#### Datei `debian/changelog`
+
+Im Distro-Verzeichnis führt man nun den Befehl:
 
 ```bash
-# Auszuführen im Paketverzeichnis
-echo "*** STEP 2 : Creating src directory $TARGETDIR ***" &&
-if [ ! -d $TARGETDIR ]; then
-	mkdir $TARGETDIR
-fi &&
-rsync -a --delete --exclude=".*" ../../MasterSim.git/ $TARGETDIR/ && 
+dch --create
+```
+aus. Dies erstellt eine Vorlage für die changelog-Datei und öffnet einen Editor. Man sollte diese Changelog-Datei
+nun bearbeiten, sodass sie ungefähr so aussieht.
+
+.debian/changelog Datei für 20.04 Focal
+```text
+mastersim (0.9.2-1~focal~ppa1) focal; urgency=medium
+
+  * Created first package for Focal.
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Tue, 04 Jan 2022 17:58:44 +0100
 ```
 
-```bash
-# create tarball archive; Namensschema: <paketname>_<version>
-tar -cjf mastersim_0.9.0.orig.tar.bz2 MasterSim
+[NOTE]
+====
+Das `dch`-Tool verwendet die vorab gesetzten Umgebungsvariablen für die Unterschriftszeile, siehe <<prep:environment_vars>>.
+====
+
+Der Changelog-Text beinhaltet ausschließlich Änderungsinformationen über die Paketerstellung,
+**nicht** über die Upstream-Quelltextänderungen. Diese sind im Quelltextarchiv bzw. in
+Release-Informationen der Software selbst dokumentiert.
+
+Die erste Changelog-Zeile selbst hat auch ein festgelegtes Format
+
+`mastersim (0.9.2-1~focal~ppa1) focal; urgency=medium`
+
+bestehend aus 
+
+- Paketnamen
+- Paket-Version (siehe <<deb:package_version>>)
+- Distributions-ID
+- Dringlichkeit; hier sollte bei Anwendungspaketen eigentlich _medium_ immer ausreichen
+
+[NOTE]
+====
+Man könnte zwar auch mehrere Distributions-IDs angeben, aber dann wird das Paket von Launchpad als
+fehlerhaft zurückgewiesen. Es ist grundsätzlich sinnvoller, für jede unterstützte Distributionsversion
+die Pakete separat zu erstellen und auf der jeweiligen Distro selbst zu testen (geht am besten in einer Virtuellen Maschine).
+====
+
+[[deb:package_version]]
+#### Versionsnummervergabe
+
+Die Wahl der Versionsnummer muss bestimmten Regeln folgen. Sowohl Launchpad als auch der
+Debian-Paket-Installer `apt` verwenden die Versionsnummer, um jeweils das aktuelleste Paket zu finden
+und zu installieren. Dabei soll folgende Regel gelten:
+
+- Pakete im Paketrepository werden installiert, sofern sie neuer als die in den Ubuntu-Archiven
+  oder anderen Paketrepos sind
+- wird ein Paket von einem Paketrepository in das offizielle Ubuntu-Repo übernommen, so soll es Vorang 
+  vor der Paketrepovariante haben
+
+Grundsätzlich funktioniert das bereits gut über die Versionierung mit folgendem Schema:
+
+`<upstream_version>-<deb-paketversion>~<distro>~ppa1`
+
+Also:
+```text
+0.9.2-1~focal~ppa1 - erstes Release für 0.9.2
+0.9.2-2~focal~ppa1 - zweites Release für 0.9.2 (Paketkorrektur)
 ```
 
-Datei `mastersim_0.9.0.orig.tar.bz2` ist das Ursprungsquelltextarchiv (z.B. automatisiert durch Jenkins erstellt)
+Die Paketversion wird immer dann erhöht, wenn - bei gleichem Upstream-Quelltext - das Paket neu erstellt wird. 
+Dies kann notwendig werden, wenn Abhängigkeiten nicht erfüllt sind, oder Launchpad das Paket
+aus anderen Fehlergründen zurückweist. Dazu mehr in <<deb:update_package>>.
 
+#### Datei `debian/control`
 
-### dh_make verwenden, um neues Paketverzeichnis zu generieren
+Diese Datei enthält die wesentlichen Metadaten des Pakets und muss zumindest hinsichtlich der Abhängigkeiten an
+das jeweilige Distro-Release angepasst werden.
 
-```bash
-# Quelltext-Archiv ins Arbeitsverzeichnis entpacken; Namensschema <paketname>-<version>
-mv MasterSim mastersim-0.9.0
-# Ins Arbeitsverzeichnis wechseln
-cd mastersim-0.9.0
-# dh_make aufrufen - sucht automatisch nach Quelltextarchiv im Elternverzeichnis
-dh_make
-
-Type of package: (single, indep, library, python)
-[s/i/l/p]?
-Maintainer Name     : Andreas Nicolai
-Email-Address       : andreas.nicolai@gmx.net
-Date                : Thu, 30 Dec 2021 19:22:26 +0100
-Package Name        : mastersim
-Version             : 0.9.0
-License             : blank
-Package Type        : single
-Are the details correct? [Y/n/q]
-Skipping creating ../mastersim_0.9.0.orig.tar.bz2 because it already exists
-Currently there is not top level Makefile. This may require additional tuning
-Done. Please edit the files in the debian/ subdirectory now.
-
-```
-
-- Prompt nach Pakettyp bei dh_make mit 's' beantworten oder `dh_make -s` aufrufen
-
-
-
-### debian/* Dateien
-
-Unterverzeichnis `debian` wurde erstellt. Nun sind die Dateien zu bearbeiten:
-
-- debian/control
-
+.debian/control für 20.04 Focal
+====
 ```
 Source: mastersim
 Section: science
 Priority: optional
 Maintainer: Andreas Nicolai <andreas.nicolai@gmx.net>
-Build-Depends: debhelper-compat (= 12), cmake, zlib1g-dev, qt5-default, libqt5svg5-dev, build-essential
-Standards-Version: 4.4.1
+Build-Depends: debhelper-compat (= 12), cmake, zlib1g-dev, qtbase5-dev, libqt5core5a, libqt5concurrent5, libqt5gui5, libqt5network5, libqt5svg5-dev, libqt5xml5, libqt5widgets5
+Standards-Version: 4.5.0
 Homepage: https://bauklimatik-dresden.de/mastersim
-#Vcs-Git: https://github.com/ghorwin/MasterSim.git
+Vcs-Git: https://github.com/ghorwin/MasterSim.git
+Vcs-Browser: https://github.com/ghorwin/MasterSim
+Rules-Requires-Root: binary-targets
 
 Package: mastersim
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: FMI Co-Simulation Masterprogramm
- MasterSim is an FMI Co-Simulation master and programming library. It supports the 
- Functional Mock-Up Interface for Co-Simulation in Version 1.0 and 2.0. Using the 
- functionality of version 2.0, it implements various iteration algorithms that 
- rollback FMU slaves and increase stability of coupled simulations.
+ MasterSim is an FMI Co-Simulation master and programming library. It
+ supports the Functional Mock-Up Interface for Co-Simulation in Version
+ 1.0 and 2.0. Using the functionality of version 2.0, it implements
+ various iteration algorithms that rollback FMU slaves and increase
+ stability of coupled simulations.
+```
+====
+
+Die `control` kann sehr viele Daten enthalten. Im Beispiel oben sind nur die Wichtigsten gezeigt (siehe auch https://www.debian.org/doc/debian-policy/ch-controlfields.html). 
+
+Die Zeile `Build-Depends` enthält alle Pakete, die zur Erstellung notwendig sind.
+
+[IMPORTANT]
+====
+Das Paket `build-essential` darf nicht als Abhängigkeit gelistet sein, da es ohnehin eine Grundabhängigkeit ist.
+
+Man darf keine Meta-Pakete (wie z.B. `qt5default`) auflisten, sondern muss alle Abhängigkeiten einzeln benennen.
+====
+
+Grundsätzlich schadet es nicht, mehr Abhängigkeiten aufzulisten als notwendig. Aber es ist effizienter, nur
+die wirklich benötigten Pakete zu wählen.
+
+[TIP]
+====
+Ein einfacher Weg, alle Erstellungsabhängigkeiten zu finden, ist eine VM mit der gewählten Distro zu erstellen.
+Dann sollte man den Quelltext dorthin kopieren und versuchen zu kompilieren. Fehlende Bibliotheken sind in 
+Paketen enthalten (kann man via google in Paketlisten suchen) und so installiert man nach und nach alle
+benötigten Pakete und schreibt diese dann in die `Build-Depends` Zeile.
+====
+
+Die Abhängigkeit `debhelper-compat` verlangt in runden Klammern noch den Kompatibilitätsmodus. Der sollte immer dem aktuellen Kompatibilitätsmodus der jeweiligen Distribution entsprechen. Bei Ubuntu 18.04 ist das 10, ab 20.04 ist das 12. Ab 22.04 wird es voraussichtlich 13 sein.
+
+Ebenso muss die `Standards-Version` jeweils angepasst werden, wenn man Warnungen bei der Paketerstellung vermeiden will. Bei 18.04 ist das 4.4.1, bei 20.04 ist das 4.5.0 und bei 21.10 ist das 4.5.1.
+
+Die Laufzeitabhängigkeiten müssen zumeist nicht explizit gegeben werden. Das Feld `Depends` enthält normalerweise den Platzhalter `${shlibs:Depends}` der automatisch bestimmt wird. Beim Bauen des Quellpakets wird beim Linkprozess eine Liste von gelinkten Laufzeitbibliotheken erstellt und die jeweiligen Pakete werden dann als Abhängigkeiten aufgeführt.
+
+Alle weiteren Informationen kann man in der Ubuntu Doku  https://packaging.ubuntu.com/html/debian-dir-overview.html#the-control-file oder im Debian-Handbuch https://www.debian.org/doc/debian-policy/ch-source.html nachlesen.
+
+
+#### Datei `debian/copyrights`
+
+Diese Datei enthält Informationen zu den verschiedenen Lizenzen im Quelltextarchiv. Typischerweise haben eingebundene externe Bibliotheken anderen Lizenzen als die eigentliche Anwendung. Dies kann durch Angabe von Unterverzeichnissen und Wildcards definiert werden.
+
+.debian/copyrights-Datei
+```text
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: mastersim
+Upstream-Contact: Andreas Nicolai <andreas.nicolai@gmx.net>
+Source: https://github.com/ghorwin/MasterSim
+
+Files: *
+Copyright: 2017-2022 Andreas Nicolai
+License: BSD-3-clause
+
+Files: debian/*
+Copyright: 2021 Andreas Nicolai
+License: GPL-2+
+
+License: GPL-2+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ ...
+
+License: BSD-3-clause
+ Copyright (c) 2022 Andreas Nicolai. All rights reserved.
+ .
+ Redistribution and use in source and binary forms, with or without
+ ...
+
 ```
 
-- debian/copyrights
-- debian/changelog
+Entsprechend dieses Formats lassen sich nun für alle relevanten Teile des Programms individuelle Lizenzen definieren.
+Die Webseite https://dep-team.pages.debian.net/deps/dep5/#license-specification definiert eine Liste von Schlüsselworten,
+die für die `License` Felder zu verwenden sind.
 
-```
-mastersim (0.9.0-1) unstable; urgency=medium
-
-  * Initial release of MasterSim as Ubuntu package
-
- -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 30 Dec 2021 19:30:10 +0100
-```
-
-- debian/rules
+Weitere Informationen in https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 
 
+#### Datei `debian/rules`
+
+Diese Datei gibt letztlich an, was vor, beim und nach dem Erstellen des Binärpakets alles zu machen ist. Je nach Pakettyp kann das eine Menge sein. 
+Allerdings brauchen wir das (fast) alles nicht, da unser `CMakeLists.txt` Skript bereits die ganze Arbeit macht. Entsprechend ist diese Datei minimalistisch:
+
+.debian/rules Datei
 ```
 #!/usr/bin/make -f
 # See debhelper(7) (uncomment to enable)
 # output every command that modifies files on the build system.
-export DH_VERBOSE = 1
-
-# see FEATURE AREAS in dpkg-buildflags(1)
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-
-# see ENVIRONMENT in dpkg-buildflags(1)
-# package maintainers to append CFLAGS
-#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
-# package maintainers to append LDFLAGS
-#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
-
+# export DH_VERBOSE = 1
 
 %:
 	dh $@
-
-
-# dh_make generated override targets
-# This is example for Cmake (See https://bugs.debian.org/641051 )
-#override_dh_auto_configure:
-#	dh_auto_configure -- #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
-
 ```
 
+Alle oben genannten Dateien sollten im Unterverzeichnis `debian` der Distro-Verzeichnis abgelegt werden.
 
-## Source Paket bauen
+### Quell-Paket bauen
+
+Um das Quellpaket zu bauen, benötigt man nun eine lokale Kopie des Quelltextverzeichnisses. In dieses wird das `debian` Verzeichnis kopiert.
 
 ```bash
-# Im Verzeichnis mastersim-0.9.0
-dpkg-buildpackage -S
+# Im Distro-Arbeitsverzeichnis
+$ rm -rf mastersim-0.9.2
+$ cp -R ../mastersim-0.9.2/ .
+$ cp -R debian/ mastersim-0.9.2/
+```
+
+Sind nun alle Dateien abgelegt, wechselt man in das Paketverzeichnis und führt das Paketerstellungstool aus:
+
+```bash
+$ cd mastersim-0.9.2 &&
+$ dpkg-buildpackage -S
 ```
 
 Ausgabe:
 
 ```
 dpkg-buildpackage: Information: Quellpaket mastersim
-dpkg-buildpackage: Information: Quellversion 0.9.0-1
-dpkg-buildpackage: Information: Quelldistribution unstable
+dpkg-buildpackage: Information: Quellversion 0.9.2-1~focal~ppa1
+dpkg-buildpackage: Information: Quelldistribution focal
 dpkg-buildpackage: Information: Quelle geändert durch Andreas Nicolai <andreas.nicolai@gmx.net>
  dpkg-source --before-build .
  fakeroot debian/rules clean
 dh clean
-   dh_auto_clean
    dh_clean
  dpkg-source -b .
 dpkg-source: Information: Quellformat »3.0 (quilt)« wird verwendet
-dpkg-source: Information: mastersim wird unter Benutzung des existierenden ./mastersim_0.9.0.orig.tar.gz gebaut
-dpkg-source: Information: mastersim wird in mastersim_0.9.0-1.debian.tar.xz gebaut
-dpkg-source: Information: mastersim wird in mastersim_0.9.0-1.dsc gebaut
+dpkg-source: Information: mastersim wird unter Benutzung des existierenden ./mastersim_0.9.2.orig.tar.xz gebaut
+dpkg-source: Information: mastersim wird in mastersim_0.9.2-1~focal~ppa1.debian.tar.xz gebaut
+dpkg-source: Information: mastersim wird in mastersim_0.9.2-1~focal~ppa1.dsc gebaut
  dpkg-genbuildinfo --build=source
- dpkg-genchanges --build=source >../mastersim_0.9.0-1_source.changes
+ dpkg-genchanges --build=source >../mastersim_0.9.2-1~focal~ppa1_source.changes
 dpkg-genchanges: Information: kompletter Quellcode beim Hochladen hinzufügen
  dpkg-source --after-build .
 dpkg-buildpackage: Information: Alles hochzuladen (Originalquellen enthalten)
- signfile mastersim_0.9.0-1.dsc
+ signfile mastersim_0.9.2-1~focal~ppa1.dsc
 
- signfile mastersim_0.9.0-1_source.buildinfo
+ signfile mastersim_0.9.2-1~focal~ppa1_source.buildinfo
 
- signfile mastersim_0.9.0-1_source.changes
+ signfile mastersim_0.9.2-1~focal~ppa1_source.changes
 ```
 
 Es werden im übergeordneten Verzeichnis erstellt:
 
 ```
-# archiv mit Steuerungsdaten
-mastersim_0.9.0-1.debian.tar.xz
+# Archiv mit Steuerungsdaten
+mastersim_0.9.2-1~focal~ppa1.debian.tar.xz
 # Signaturdatei
-mastersim_0.9.0-1.dsc
-# Hochlade info
-mastersim_0.9.0-1_source.buildinfo
-mastersim_0.9.0-1_source.changes
-
-# vorher existierendes Original-Quelltext-Archiv
-mastersim_0.9.0.orig.tar.gz
-
+mastersim_0.9.2-1~focal~ppa1.dsc
+# Build-Informationen
+mastersim_0.9.2-1~focal~ppa1_source.build
+mastersim_0.9.2-1~focal~ppa1_source.buildinfo
+# Hochlade Informationen
+mastersim_0.9.2-1~focal~ppa1_source.changes
 ```
 
-## Source Paket prüfen
+### Quell-Paket prüfen
+
+Das Quellpaket sollte nun auf Fehler überprüft werden (das passiert beim Hochladen auf Launchpad automatisch):
 
 ```bash
-# im übergeordneten Verzeichnis 
-lintian -EvI --pedantic --show-overrides --color=auto mastersim_0.9.0-1_source.changes
+# im Distro-Verzeichnis
+lintian -EvI --pedantic --show-overrides --color=auto mastersim_0.9.2-1~focal~ppa1_source.changes
 ```
 
 Ausgabe:
 
-```
+```text
 N: Using profile ubuntu/main.
-N: Starting on group mastersim/0.9.0-1
-N: Unpacking packages in group mastersim/0.9.0-1
-N: Finished processing group mastersim/0.9.0-1
+N: Starting on group mastersim/0.9.2-1~focal~ppa1
+N: Unpacking packages in group mastersim/0.9.2-1~focal~ppa1
+N: Finished processing group mastersim/0.9.2-1~focal~ppa1
 N: ----
 N: Processing changes file mastersim
-N: (version 0.9.0-1, arch source) ...
+N: (version 0.9.2-1~focal~ppa1, arch source) ...
 N: ----
 N: Processing source package mastersim
-N: (version 0.9.0-1, arch source) ...
+N: (version 0.9.2-1~focal~ppa1, arch source) ...
 N: ----
 N: Processing buildinfo package mastersim
-N: (version 0.9.0-1, arch source) ...
-E: mastersim changes: bad-distribution-in-changes-file unstable
-E: mastersim source: build-depends-on-build-essential build-depends
-E: mastersim source: build-depends-on-metapackage build-depends: qt5-default
-E: mastersim source: debian-rules-is-dh_make-template
-E: mastersim source: license-problem-md5sum-non-free-file data/tests/linux64/Lotka_Volterra_System/description/sRGB_IEC61966-2-1_black_scaled.icc usual name is sRGB_IEC61966-2-1_black_scaled.icc. Does not allow modification See also https://packages.debian.org/sid/icc-profiles.
-E: mastersim source: license-problem-md5sum-non-free-file doc/validation/sRGB_IEC61966-2-1_black_scaled.icc usual name is sRGB_IEC61966-2-1_black_scaled.icc. Does not allow modification See also https://packages.debian.org/sid/icc-profiles.
-E: mastersim source: source-contains-prebuilt-ms-help-file externals/zlib/src/contrib/dotzlib/DotZLib.chm
+N: (version 0.9.2-1~focal~ppa1, arch source) ...
 I: mastersim source: debian-watch-file-is-missing
-I: mastersim source: missing-vcs-browser-field vcs-git https://github.com/ghorwin/MasterSim.git
-I: mastersim source: out-of-date-standards-version 4.4.1 (released 2019-09-29) (current is 4.5.0)
 I: mastersim source: testsuite-autopkgtest-missing
-P: mastersim source: file-contains-trailing-whitespace debian/control (line 14)
-P: mastersim source: file-contains-trailing-whitespace debian/control (line 15)
-P: mastersim source: file-contains-trailing-whitespace debian/control (line 16)
-P: mastersim source: file-contains-trailing-whitespace debian/rules (line 25)
-P: mastersim source: rules-requires-root-missing
 X: mastersim source: upstream-metadata-file-is-missing
 ```
 
-Fehlerbehebung:
+Die Webseite https://lintian.debian.org/levels listet die verschiedenen Fehlerstufen auf.
+Bei Fehlern ("E:") kann das Paket nicht hochgeladen werden und muss erstmal repariert werden.
 
+[TIP]
+====
+Fehler und Warnungen werden in der Konsole als Hyperlink angezeigt, welche mit STRG+Klick im Webbrowser geöffnet werden können. Dort gibt es dann eine mehr oder weniger konkrete Hilfestellung.
+====
 
-...
+[CAUTION]
+====
+Versucht man ein fehlerbehaftetes Paket auf Launchpad hochzuladen, wird es normalerweise
+zurückgewiesen. In diesem Fall kann man aber nicht einfach den Fehler beheben und das Paket erneut hochladen - man muss stattdessen **immer eine neue Paketversion definieren!**.
+Deshalb lohnt es sich, Pakete mit `lintian` komplett durchzuchecken.
+====
 
+### Binärpaket erstellen und prüfen
 
-## Binarpaket bauen (wird auf Launchpad gemacht)
-
+Eigentlich analog zur Erstellung und Prüfung des Quellpakets:
 
 ```bash
-# Im Verzeichnis mastersim-0.9.0
-dpkg-buildpackage
+# Im Paketverzeichnis
+$ dpkg-buildpackage
 ```
 
--> Wenn man hochladen will, kein Binärpaket bauen, nur zum testen!
+Dabei wird _MasterSim_ komplett aus dem Quelltext erstellt und sollte natürlich fehlerfrei bauen.
+
+In diesem Schritt werden die folgenden zusätzlichen Dateien im Distro-Verzeichnis erstellt:
+
+```
+mastersim_0.9.2-1~focal~ppa1_amd64.buildinfo
+mastersim_0.9.2-1~focal~ppa1_amd64.changes
+mastersim_0.9.2-1~focal~ppa1_amd64.deb
+mastersim-dbgsym_0.9.2-1~focal~ppa1_amd64.ddeb
+```
+
+Das Binärpaket kann ebenso mit `lintian` getestet werden:
+
+```bash
+# im Distro-Verzeichnis
+# Beim Aufruf Suffix '_amd64' statt '_source' verwenden!
+lintian -EvI --pedantic --show-overrides --color=auto mastersim_0.9.2-1~focal~ppa1_amd64.changes
+```
+
+Ausgabe:
+
+```text
+N: Using profile ubuntu/main.
+N: Starting on group mastersim/0.9.2-1~focal~ppa1
+N: Unpacking packages in group mastersim/0.9.2-1~focal~ppa1
+N: Finished processing group mastersim/0.9.2-1~focal~ppa1
+N: ----
+N: Processing changes file mastersim
+N: (version 0.9.2-1~focal~ppa1, arch source amd64) ...
+N: ----
+N: Processing source package mastersim
+N: (version 0.9.2-1~focal~ppa1, arch source) ...
+N: ----
+N: Processing buildinfo package mastersim
+N: (version 0.9.2-1~focal~ppa1, arch amd64 source) ...
+N: ----
+N: Processing binary package mastersim
+N: (version 0.9.2-1~focal~ppa1, arch amd64) ...
+N: ----
+N: Processing binary package mastersim-dbgsym
+N: (version 0.9.2-1~focal~ppa1, arch amd64) ...
+E: mastersim: embedded-library usr/bin/MasterSimulator: tinyxml
+E: mastersim: embedded-library usr/bin/MasterSimulatorUI: tinyxml
+I: mastersim source: debian-watch-file-is-missing
+I: mastersim source: testsuite-autopkgtest-missing
+P: mastersim source: package-does-not-install-examples examples/
+X: mastersim source: upstream-metadata-file-is-missing
+```
+
+Interessant ist hier die Fehlermeldung über die eingebette externe Bibliothek. Das Prüftool erkennt anhand der Linker-Eingabedateien, dass MasterSimulator und MasterSimulatorUI gegen Symbole linken, die ihrerseits bereits in einer bereits veröffentlichten Bibliothek `tinyxml` vorhanden sind. Das sollte man ja, wie eingangs erläutert, vermeiden. 
+Diese Fehlermeldung kann aber ignoriert werden (geht im Fall von MasterSim auch gar nicht anders, da `tinyxml` selbst nicht mehr weiterentwickelt wird). Das Binärpaket wird trotzdem so auf Launchpad akzeptiert.
+
+### Veröffentlichung auf dem Launchpad PPA
+
+Abschließend bleibt nur noch die Veröffentlichung auf dem eigenen PPA auf Launchpad.
+Dafür gibt es ebenfalls ein kleines Tool `dput`:
+
+```bash
+$ dput ppa:ghorwin/sim ../mastersim_0.9.2-1~focal~ppa1_source.changes
+```
+
+Allerdings führt dies zunächst zu einer Fehlermeldung:
+
+```text
+Checking signature on .dsc
+gpg: /home/ghorwin/svn/MasterSim_trunk/debian/ubuntu-20.04-focal/mastersim_0.9.2-1~focal~ppa1.dsc: Valid signature from 6E0814BD3FCA8338
+Checksum doesn't match for /home/ghorwin/svn/MasterSim_trunk/debian/ubuntu-20.04-focal/mastersim_0.9.2-1~focal~ppa1.dsc
+```
+
+Denn beim Erstellen des Binärpakets wurde die Prüfsummendatei `.dsc` verändert. Daher muss man noch einmal ein Source-Paket erstellen:
+
+```bash
+# im Paketverzeichnis
+$ dpkg-buildpackage -S
+```
+
+und danach klappt es auch mit dem Hochladen.
 
 
-## Veröffentlichung auf PPA
 
--> in ChangeLog älteste zu unterstützende Distro wählen
--> für diese Distro veröffentlichen
--> in ppa kopieren der binaries wählen, siehe
+# Andere Workflows
 
-https://askubuntu.com/questions/30145/ppa-packaging-having-versions-of-packages-for-multiple-distros
-
-# Automatisierung
-
-- Quelltext von git clonen
-- Top-level CMakeList reinkopieren
-- ungültige Dateien entfernen/Quelltextarchiv bereinigen
-- Quelltext-Archiv erstellen
-- debian-Verzeichnisstruktur reinkopieren
-- debian/* Dateitemplates konfigurieren (Versionen etc.)
+TODO
 
 
-
-
-## Benötigte Dateien
-
-
-- .desktop files
-
-
-### Man Pages
-
-- man pages
-
-...help2man or txt2man 
-
-
-
-
-# Aktualisieren der debian/changelog
+## Aktualisieren der debian/changelog
 
 ```bash
 # im Arbeitsverzeichnis, d.h. relativ zu debian/changelog
@@ -1178,31 +1356,15 @@ dch -v 0.9.1-2
 ```
 
 
+## Updating a package
 
-
-
-# Hosting package files / publish binary packages
-
-- Verzeichnis mit deb-Dateien anlegen
-- dann die Verzeichnisstruktur befüllen
-- `Packages.gz` erstellen mit:
-
-
-```bash
-dpkg-scanpackages
-```
-
-
-
-# Updating a package
-
-## Neue Upstream-Version
+### Neue Upstream-Version
 
 Immer, wenn die Originalquelle sich geändert hat.
 
 -> neue Versionsnummer
 
-## Neues Paket/Paket-Revision
+### Neues Paket/Paket-Revision
 
 -> wenn sich debian/control oder debian/changelog geändert haben, bzw. beim Upload ein Fehler aufgetreten ist
 
@@ -1220,18 +1382,6 @@ See more information about this error in https://help.launchpad.net/Packaging/Up
 
 
 
-## Distro-Specifics
-
-
-### Bionic
--  devhelper-compat (= 10) oder (= 11)
-
-### Focal
--  devhelper-compat (= 12)
-
-
-
-
 [[deploy:private_archive]]
 ## Veröffentlichung als Binärpaket auf eigenem Server
 
@@ -1245,3 +1395,10 @@ See more information about this error in https://help.launchpad.net/Packaging/Up
 - Verzeichnisstruktur
 - Signaturschlüssel
 - Uploadprozedere
+- Verzeichnis mit deb-Dateien anlegen
+- dann die Verzeichnisstruktur befüllen
+- `Packages.gz` erstellen mit:
+
+```bash
+dpkg-scanpackages
+```
