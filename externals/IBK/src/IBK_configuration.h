@@ -69,9 +69,6 @@
 /// Enables/Disables colored text in the console window.
 #define IBK_ENABLE_COLORED_CONSOLE
 
-/// Enabled if a debian package is being built - modifies the path location
-/* #undef IBK_BUILDING_DEBIAN_PACKAGE */
-
 #ifdef IBK_DEBUG
 
 /// Enables/Disables name string in IBK::Unit (for debugging)
