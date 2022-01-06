@@ -387,7 +387,7 @@ Damit im System die `msim`-Dateien entsprechend mit einem Icon dekoriert werden 
 .`mastersim.xml`
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<mime-info xmlns='https://specifications.freedesktop.org/shared-mime-info-spec'>
+<mime-info xmlns='http://www.freedesktop.org/standards/shared-mime-info'>
 	<mime-type type="application/mastersim">
 		<comment>MasterSim project file</comment>
 		<glob pattern="*.msim"/>
