@@ -1,7 +1,7 @@
 Ubuntu Paketerstellung und Veröffentlichung
 ===========================================
 Andreas Nicolai <andreas.nicolai@gmx.net>
-v1.0 (04.01.2022)
+v1.0 (06.01.2022)
 // v1.0 date_on_line_above
 :Author Initials: AN
 :toc: left
@@ -403,6 +403,7 @@ Die Datei `mastersim.xml` wird unter `MasterSimulatorUI/resources/mastersim.desk
 Bei der Installation werden diese Dateien an die entsprechenden Orte im Dateisystem kopiert. Dies alleine reicht aber noch nicht aus, um Anwendung und Dateiverknüpfung im System bekannt zu machen. Dafür müssen noch Skripte gestartet werden, welche die jeweiligen Datenbanken aktualisieren. Netterweise macht das die Paketverwaltung bei Installation eines deb-Pakets automatisch für uns.
 ====
 
+[[prep:cmakelists]]
 ### Erweitern der CMake-Skripte mit `install()`
 
 CMake bietet eine recht komfortable Möglichkeit, nach dem Erstellen (`make`) auch alle Dateien an die richtige Stelle zu installieren. So kann man mit:
@@ -797,8 +798,10 @@ debPackaging                             - *Basisverzeichnis*
 │   └── readme.md
 └── ubuntu-21.10-impish                  - Dateien für Ubuntu 20.10 Impish release
      └── ...
+```
 ====
 
+[[deb:manualCreation]]
 ### Manuelle Erstellung eines neuen Debian-Source-Packages
 
 Nachfolgend sind alle einzelnen Schritte zu Erstellung eines Source-Pakets beschrieben. Dabei
@@ -1341,45 +1344,52 @@ $ dpkg-buildpackage -S
 und danach klappt es auch mit dem Hochladen.
 
 
+[[deb:update_package]]
+## Aktualisieren von Open-Source Quellpaketen
 
-# Andere Workflows
+Es gibt letztlich 2 Gründe, warum man Pakete aktualisieren muss:
 
-TODO
+- der Upstream-Quelltext hat sich verändert
+- das Paket funktioniert nicht; entweder es gab Fehler beim Hochladen (Tests sind fehlgeschlagen, Projekt hat fehlende Abhängigkeiten, etc.) oder durch Aktualisierung des Distro-Releases (bspw. Wechsel von 20.04.3 auf 20.04.4) haben sich in abhängigen Paketen Änderungen ergeben, weswegen man das Paket neu konfigurieren muss
 
+### Neues Upstream-Release
 
-## Aktualisieren der debian/changelog
+In diesem Fall muss man den in <<deb:manualCreation>> beschriebenen Prozess nochmal komplett neu durchlaufen. Da die `debian/*` Dateien schon existieren, muss man hier lediglich prüfen, ob sich was geändert hat. Im Wesentlichen muss die `debian/changelog`-Datei erweitert werden.
+
+Dazu kann man wieder das Tool `dch` aufrufen, wobei man gleich auf der Kommandozeile die neue Versionsnummer angeben kann.
 
 ```bash
-# im Arbeitsverzeichnis, d.h. relativ zu debian/changelog
-
-dch -v 0.9.1-2
+# im Distro-Release-Verzeichnis
+$ dch -v 0.9.3-1~focal~ppa1
 ```
 
+`dch` setzt den neuen Paket-Versionseintrag zunächst auf die Distribution `UNRELEASED`. Entweder man ändert das manuell auf die geforderte Ubuntu-Distro, oder ruft
+vor dem Quellpaketbauen noch
 
-## Updating a package
+```bash
+# im Distro-Release-Verzeichnis
+$ dch --release
+```
 
-### Neue Upstream-Version
+auf. Im weiteren Verlauf (wie oben beschrieben) wird dann das neue Quell-Archiv nebst Quelltext-tarball hochgeladen und steht kurz nachher zur Verfügung.
 
-Immer, wenn die Originalquelle sich geändert hat.
+### Paketaktualisierung
 
--> neue Versionsnummer
+Soll nur das Paket selbst aktualisiert werden, muss man letzlich nur die `debian/changelog` anpassen, wobei die Upstream-Versionsnummer unverändert bleibt.
+Man ändert die Version also z.B. von:
 
-### Neues Paket/Paket-Revision
+`0.9.2-1~focal~ppa1` -> `0.9.2-2~focal~ppa1`
 
--> wenn sich debian/control oder debian/changelog geändert haben, bzw. beim Upload ein Fehler aufgetreten ist
-
-Fehlermeldung:
-
+[IMPORTANT]
+====
+Beim Hochladen des Pakets wird erwartet, dass sich der Quelltext nicht verändert hat. Sollte man z.B. die .orig.tar.xz-Datei neu komprimiert haben, oder der Quelltext im Quelltextverzeichnis hat sich anderweitig verändert, wird die Veröffentlichung des Pakets mit einer Fehlermeldung zurückgewiesen:
 ```
 Rejected:
 File <UPLOADED_FILE> already exists in <LOCATION>, but uploaded version has different contents.
 See more information about this error in https://help.launchpad.net/Packaging/UploadErrors.
 ```
-
--> orig.tar.xz runterladen und nach mastersim-x.y.z entpacken
--> debian Verzeichnis reinkopieren/Version anpassen (nur paket-Version)
--> `debuild -S` aufrufen, um ein neues Source-Paket zu bauen
-
+In diesem Fall sollte man vom Paketrepository die bereits hochgeladene .orig.tar.xz-Datei herunterladen, ins Basisverzeichnis kopieren, und dort neu entpacken. Dann ist der Zustand wieder genau hergestellt, und man kann die Paketaktualisierung durchführen.
+====
 
 
 [[deploy:private_archive]]
@@ -1387,18 +1397,34 @@ See more information about this error in https://help.launchpad.net/Packaging/Up
 
 ### Paketerstellung mit CPack
 
-- CPack Einstellungen
-- Aufruf/Tests
+Eigene Binärpakete lassen sich bei bereits vorbereiteter `CMakeLists.txt`-Datei (siehe <<prep:cmakelists>>) am einfachsten mit CPack erstellen.
+
+Dazu werden in der CMakeLists.txt-Datei einfach die notwendigen CPACK-Variablen gesetzt, siehe offizielle Dokumentation: https://cmake.org/cmake/help/latest/module/CPack.html und speziell für Debian Pakete: https://cmake.org/cmake/help/latest/cpack_gen/deb.html
+
+Ein detailliertes Tutorial https://decovar.dev/blog/2021/09/23/cmake-cpack-package-deb-apt/ beschreibt die Konfiguration der CMakeLists.txt im Detail.
+
+Zum Abschluss (nach dem `cmake` Aufruf) folgt die Paketerstellung mit:
+
+```bash
+$ cpack -G DEB
+```
+
+[IMPORTANT]
+====
+Die Variable `CPACK_DEBIAN_PACKAGE_DEPENDS` ist wichtig, da nur damit eine reibungslose Installation möglich ist und automatisch alle abhängigen Pakete mit installiert werden. Und das ist letztlich ja der Sinn der deb-Erstellung, sonst reicht das Stand-Alone Anwendungsarchiv *.7z ja aus.
+====
 
 ### Hosting der Pakete in eigenem Repository
 
-- Verzeichnisstruktur
-- Signaturschlüssel
-- Uploadprozedere
-- Verzeichnis mit deb-Dateien anlegen
-- dann die Verzeichnisstruktur befüllen
-- `Packages.gz` erstellen mit:
+Eine detaillierte Anleitung findet sich hier: https://earthly.dev/blog/creating-and-hosting-your-own-deb-packages-and-apt-repo/
 
-```bash
-dpkg-scanpackages
-```
+Das Ganze beinhaltet eine Reihe von Aufgaben, die man am besten via Skript erledigt.
+
+- Verzeichnisstrukturerstellen
+- Signaturschlüssel erstellen und hochladen
+- dann die Verzeichnisstruktur befüllen (deb-Pakete hochladen)
+- Liste der Pakete aktualisieren
+- hash-codes erzeugen
+- Veröffentlichung signieren
+- alles hochladen
+
