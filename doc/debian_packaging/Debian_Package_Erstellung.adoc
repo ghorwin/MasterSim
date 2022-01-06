@@ -158,7 +158,9 @@ Zum Überblick die Unterschiede in den Distro-Paket-Versionen:
 |====================
 
 Die Änderungen in der Qt-Bibliothek haben keine Auswirkungen auf den
-C++-Quelltext.
+C++-Quelltext. Sollten Funktionen verwendet werden, welche nur in neuen 
+Qt-Versionen verfügbar sind, sollte man im Quelltext mit `#ifdef` 
+entsprechende Fallunterscheidungen programmieren.
 
 ### Grundlegendes zu Paketen
 
@@ -177,7 +179,7 @@ Verteilung des Pakets enthalten und ein Verweis auf ein beiliegendes Quelltextar
 Man kann sich den Inhalt eines Binärpakets entweder grafisch mit dem
 Tool `gdebi-gtk` oder mittels `lesspipe` anzeigen lassen:
 
-```bash
+```text
 $ lesspipe mastersim_0.9.3-1_bionic_ppa1_amd64.deb
 mastersim_0.9.3-1_bionic_ppa1_amd64.deb:
  neues Debian-Paket, Version 2.0.
