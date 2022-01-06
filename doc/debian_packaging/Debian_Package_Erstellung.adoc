@@ -647,7 +647,7 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 Neuen Schlüssel erstellen:
 
-```bash
+```text
 $ gpg --gen-key
 
 gpg: Schlüssel 6E0814BD3FCA8338 ist als ultimativ vertrauenswürdig gekennzeichnet
@@ -663,14 +663,14 @@ sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 
 Die Schlüssel-ID ist `6E0814BD3FCA8338`. Schlüssel auf Schlüsselserver hochladen:
 
-```bash
+```text
 $ gpg --send-keys --keyserver keyserver.ubuntu.com 6E0814BD3FCA8338
 gpg: sende Schlüssel 6E0814BD3FCA8338 auf hkp://keyserver.ubuntu.com
 ```
 
 Eigenen Fingerabdruck finden, der mit der eigenen E-Mailadresse verknüpft ist:
 
-```bash
+```text
 $ gpg --fingerprint andreas.nicolai@gmx.net
 gpg: "Trust-DB" wird überprüft
 gpg: marginals needed: 3  completes needed: 1  trust model: pgp
@@ -684,7 +684,7 @@ sub   rsa3072 2021-12-29 [E] [verfällt: 2023-12-29]
 
 Prüfen, ob der Schlüssel auf dem Schlüsselserver hochgeladen ist (Verteilung auf Schlüsselserver dauert manchmal etwas):
 
-```bash
+```text
 $ gpg --keyserver hkp://keyserver.ubuntu.com --search-key 'andreas.nicolai@gmx.net'
 gpg: data source: http://162.213.33.9:11371
 (1)	Andreas Nicolai <andreas.nicolai@gmx.net>
@@ -701,7 +701,7 @@ Keys 1-1 of 1 for "andreas.nicolai@gmx.net".
 * -> Radiobutton 3 (externe Anwendung/SmartCard)
 * -> ID 6E0814BD3FCA8338 reinkopieren -> fertig
 
-TODO : Problem beim Speichern lokal bearbeiteter Mails klären
+Thunderbird kann so zwar verschlüsselte E-Mails schicken und empfangen, aber beim Speichern lokal bearbeiteter, verschlüsselter Mails gibts einen Fehler. Das müsste ich nochmal recherchieren.
 
 ##### ssh-Schlüsselerstellung
 
