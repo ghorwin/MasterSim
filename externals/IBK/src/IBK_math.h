@@ -47,6 +47,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdio>
+#include <algorithm>
 
 #ifdef _MSC_VER
 	typedef __int64 int64_t;
@@ -155,8 +156,31 @@ inline bool betweenOrEqual(const double & v, const double & vMin, const double &
 }
 
 
-/// Utility function that can be used to set all elements of a Vector to zero very quickly.
+/*! Utility function that can be used to set all elements of a Vector to zero very quickly. */
 inline void set_zero(std::vector<double>& v) { std::memset(&v[0], 0, sizeof(double)*v.size()); }
+
+/*! Rounds to given number of digits. */
+template <unsigned int digits>
+double rounded(double val) {
+	double scale = IBK::f_pow10(digits);
+	double v = std::floor(val*scale+0.5)/scale;
+	return v;
+}
+
+
+/*! Rounds to 4 digits. */
+template <>
+inline double rounded<4>(double val) {
+	double v = std::floor(val*10000 + 0.5)/10000;
+	return v;
+}
+
+/*! Rounds to 6 digits. */
+template <>
+inline double rounded<6>(double val) {
+	double v = std::floor(val*1000000 + 0.5)/1000000;
+	return v;
+}
 
 /*! Power function version for integer exponents.
 
@@ -180,15 +204,42 @@ double f_powN(double base) {
 /*! Function for efficient calculation of x^4. */
 inline double f_pow4(double x) { double x2(x); x2*=x2; x2*=x2; return x2; }
 
-/*! Tests if a is equal to b including a certain range for potential rounding errors. */
+/*! A functor to compare two values using some fuzzy tolerance.
+	\code
+	// use it in STL algorithms
+
+	// erase all values that are similar up to a difference of 1e-8
+	data.erase( std::unique( data.begin(), data.end(), IBK::NearEqual<double>(1e-8) ), data.end() );
+	\endcode
+*/
+template <typename T>
+class NearEqual {
+public:
+	NearEqual(T tolerance) : m_tolerance(tolerance) {}
+	bool operator()(const T & a, const T & b) {
+		return (a + m_tolerance >= b  &&  a <= b + m_tolerance);
+	}
+
+	/*! The absolute comparison tolerance. */
+	const T	m_tolerance;
+};
+
+
+/*! Tests if a is equal to b including a certain range for potential rounding errors.
+	\deprecated Use NearEqual<> instead.
+*/
 inline bool near_equal(double a, double b) {
 	return (a + NEAR_ZERO >= b  &&  a <= b + NEAR_ZERO);
 }
 
-/*! Tests if a is equal to b including a certain range for potential rounding errors. */
+
+/*! Tests if a is equal to b including a certain range for potential rounding errors.
+	\deprecated Use NearEqual<> instead.
+*/
 inline bool near_equal(double a, double b, const double eps) {
 	return (a + eps >= b  &&  a <= b + eps);
 }
+
 
 /*! Tests if a is equal to b including a certain range for potential rounding errors. */
 inline bool near_zero(double a) {
@@ -228,6 +279,16 @@ bool nearly_equal(double x, double y) {
 	return (x + eps >= y  &&  x <= y + eps);
 }
 
+/*! Compares equality of a and b while using a certain number of significant digits. */
+template<int digits>
+bool nearly_equal2(double x, double y) {
+	if( x == y ) //-V550
+		return true;
+
+	const double eps = 1.0 / pow10Pos<digits>::pow;
+	const double absTol = std::max(std::fabs(x*eps), std::fabs(y*eps));
+	return (x + absTol >= y  &&  x <= y + absTol);
+}
 
 /*! Tests if a is less then b including a certain range for potential rounding errors. */
 inline bool near_le(double a, double b)     { return !near_equal(a, b) && a < b; }

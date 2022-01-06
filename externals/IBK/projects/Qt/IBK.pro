@@ -20,7 +20,7 @@ contains( OPTIONS, FMU_Debugging ) {
 # like version number etc., we also may reset all
 #
 unix|mac {
-	VER_MAJ = 4
+	VER_MAJ = 5
 	VER_MIN = 0
 	VER_PAT = 0
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
@@ -30,6 +30,7 @@ SOURCES += \
 	../../src/IBK_ArgParser.cpp \
 	../../src/IBK_Color.cpp \
 	../../src/IBK_Constants.cpp \
+	../../src/IBK_FluidPhysics.cpp \
 	../../src/IBK_crypt.cpp \
 	../../src/IBK_EOLStreamBuffer.cpp \
 	../../src/IBK_Exception.cpp \
@@ -41,6 +42,7 @@ SOURCES += \
 	../../src/IBK_Line.cpp \
 	../../src/IBK_LinearSpline.cpp \
 	../../src/IBK_Logfile.cpp \
+	../../src/IBK_geographic.cpp \
 	../../src/IBK_math.cpp \
 	../../src/IBK_messages.cpp \
 	../../src/IBK_MultiLanguageString.cpp \
@@ -66,6 +68,8 @@ SOURCES += \
 OTHER_FILES +=
 
 HEADERS += \
+	../../src/IBK_Differ.h \
+	../../src/IBK_FluidPhysics.h \
 	../../src/IBK_algorithm.h \
 	../../src/IBK_ArgParser.h \
 	../../src/IBK_array.h \
@@ -88,6 +92,7 @@ HEADERS += \
 	../../src/IBK_Line.h \
 	../../src/IBK_LinearSpline.h \
 	../../src/IBK_Logfile.h \
+	../../src/IBK_geographic.h \
 	../../src/IBK_math.h \
 	../../src/IBK_matrix_view.h \
 	../../src/IBK_memory_usage.h \
@@ -121,7 +126,14 @@ HEADERS += \
 	../../src/IBK_openMP.h \
 	../../src/IBK_Version.h \
 	../../src/IBK_system.h \
-	../../src/IBK_IntPara.h
+	../../src/IBK_IntPara.h \
+	../../src/fast_float/ascii_number.h \
+	../../src/fast_float/decimal_to_binary.h \
+	../../src/fast_float/fast_float.h \
+	../../src/fast_float/fast_table.h \
+	../../src/fast_float/float_common.h \
+	../../src/fast_float/parse_number.h \
+	../../src/fast_float/simple_decimal_conversion.h
 
 DISTFILES += \
 	../../doc/LICENSE

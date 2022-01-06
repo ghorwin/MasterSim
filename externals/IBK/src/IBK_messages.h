@@ -50,10 +50,6 @@
 */
 namespace IBK {
 
-#ifndef QT_DEBUG_BUILD
-#define IBK_Message IBK_MessageMSIM
-#endif
-
 #define IBK_MessageFilter(x) 	if (IBK::MessageHandlerRegistry::instance().messageHandler()->consoleVerbosityLevel() >= (x))
 
 /*! Avoid costly construction of messages that will be disregarded anyway because of too low console verbosity level.
@@ -86,6 +82,7 @@ inline void IBK_Message(const IBK::FormatString& msg, msg_type_t t = MSG_PROGRES
 	MessageHandlerRegistry::instance().msg(msg.str(), t, func_id, verbose_level);
 }
 
+#define IBK_FUNCID_Message(x) IBK::IBK_Message(#x "\n");
 
 /*! Indentor can be used to increase the message indentation level
 	within local function scopes.

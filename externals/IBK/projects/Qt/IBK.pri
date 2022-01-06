@@ -24,12 +24,20 @@
 CONFIG			+= silent
 CONFIG			-= depend_includepath
 
-linux-g++ | linux-g++-64 {
+CONFIG(release, debug|release) {
+#	message( "Setting NDEBUG define" )
+	DEFINES += NDEBUG
+}
+
+linux-g++ | linux-g++-64 | macx {
 
 	# our code doesn't check errno after calling math functions
 	# so it is perfectly safe to disable it in favor of better performance
 	# use *= to uniquely assign option
 	QMAKE_CXXFLAGS   *= -fno-math-errno
+
+	# create "Position Independent Code"
+	QMAKE_CXXFLAGS   *= -fPIC
 }
 
 contains( OPTIONS, sanitize_checks ) {
@@ -40,7 +48,7 @@ contains( OPTIONS, sanitize_checks ) {
 		CONFIG += sanitize_undefined
 	}
 
-	linux-g++ | linux-g++-64 {
+	linux-g++ | linux-g++-64 | macx {
 		QMAKE_CXXFLAGS_DEBUG   *= -fsanitize=address -fno-omit-frame-pointer
 	}
 }
@@ -347,7 +355,6 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 }
 
 
-
 #
 # *** Applications ***
 #
@@ -372,6 +379,7 @@ equals(TEMPLATE,app) {
 	win32-msvc* {
 		QMAKE_CXXFLAGS += /wd4996
 		QMAKE_CFLAGS += /wd4996
+		DEFINES += _CRT_SECURE_NO_WARNINGS
 	}
 	else {
 		QMAKE_CXXFLAGS += -std=c++11
@@ -409,6 +417,7 @@ equals(TEMPLATE,lib) {
 	win32-msvc* {
 		CONFIG += static
 		DEFINES += NOMINMAX
+		DEFINES += _CRT_SECURE_NO_WARNINGS
 		CONFIG(debug, debug|release) {
 			QMAKE_CXXFLAGS += /GS /RTC1
 		}
