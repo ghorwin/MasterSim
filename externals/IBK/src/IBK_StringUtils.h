@@ -52,23 +52,6 @@
 
 #include "IBK_Exception.h"
 
-#ifdef _WIN32
-
-  #ifndef _WIN64
-
-	#define IBK_USE_STOD
-
-  #else
-
-	#include "fast_double_parser/fast_double_parser.h"
-
-  #endif
-
-#else
-
-	#include "fast_double_parser/fast_double_parser.h"
-
-#endif
 
 #ifdef _MSC_VER
 #define TOLOWER(x) tolower(x)
@@ -153,6 +136,14 @@ std::string val2string(const T val) {
 	return strm.str();
 }
 
+
+/*! Converts the boolean 'val' to a string. */
+template <>
+inline std::string val2string<bool>(const bool val) {
+	return (val ? "true" : "false");
+}
+
+
 /*! Converts the value 'val' to a string with given precision. */
 template <class T>
 std::string val2string(const T val, const int precision) {
@@ -206,28 +197,10 @@ T string2val(const std::string& str) {
 
 
 template <>
-inline double string2val<double>(const std::string& str) {
-	double val;
-	if (str=="1.#QNAN")
-		return std::numeric_limits<double>::quiet_NaN();
-#ifdef IBK_USE_STOD
-	// for 32-bit, use std::stod()
-	size_t pos;
-	try {
-		val = std::stod(str, &pos); // may throw std::out_of_range or std::invalid_argument
-		if (str.find_first_not_of(" \t\n", pos) != std::string::npos)
-			throw std::exception();
-	}
-	catch (...) {
-		throw IBK::Exception(IBK::FormatString("Could not convert '%1' into value.").arg(str), "[IBK::string2val<double>]");
-	}
-#else
-	bool isok = fast_double_parser::decimal_separator_dot::parse_number(str.c_str(), &val);
-	if (!isok)
-		throw IBK::Exception(IBK::FormatString("Could not convert '%1' into value.").arg(str), "[IBK::string2val<double>]");
-#endif
-	return val;
-}
+double string2val<double>(const std::string& str);
+
+template <>
+bool string2val<bool>(const std::string& str);
 
 /*! Attempts to extract a numerical value from a string.
 	Returns the def value in case of non valid string.
@@ -251,30 +224,7 @@ T string2valDef(const std::string& str, const T& def) {
 	\endcode
 */
 template <>
-inline double string2valDef<double>(const std::string& str, const double & def) {
-	if (str=="1.#QNAN")
-		return std::numeric_limits<double>::quiet_NaN();
-	double val;
-#ifdef IBK_USE_STOD
-	// for 32-bit, use std::stod()
-	size_t pos;
-	if (std::locale().name() != "C")
-		setlocale(LC_ALL, "C");
-	try {
-		val = std::stod(str, &pos); // may throw std::out_of_range or std::invalid_argument
-		if (str.find_first_not_of(" \t\n", pos) != std::string::npos)
-			throw std::exception();
-	}
-	catch (...) {
-		throw IBK::Exception(IBK::FormatString("Could not convert '%1' into value.").arg(str), "[IBK::string2val<double>]");
-	}
-#else
-	bool isok = fast_double_parser::decimal_separator_dot::parse_number(str.c_str(), &val);
-	if (!isok)
-		return def;
-#endif
-	return val;
-}
+double string2valDef<double>(const std::string& str, const double & def);
 
 
 /*! Converts a string with white-space separated values into a vector.
@@ -725,6 +675,8 @@ void decode_version_number(const std::string & versionString, unsigned int & maj
 */
 bool convertDosToUnix( const std::string& fname, std::stringstream& out, std::string& errmsg );
 
+/*! Takes an XML text and encodes it in HTML by replacing special characters with symbols. */
+std::string convertXml2Html(const std::string & xmlText);
 
 }   // namespace IBK
 

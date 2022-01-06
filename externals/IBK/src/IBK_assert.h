@@ -129,15 +129,15 @@ inline const char * myFilename(const char * fullFilePath){
 #define IBK_ASSERT(p)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << "\nFILE:  " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0
 #define IBK_ASSERT_X(p,m)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << ", " << #m <<  "\nFILE: " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0
 #define IBK_ASSERT_XX(p,m)	if (!(p)) \
 	{ std::stringstream strm; \
 	strm << "Assertion failure\nCHECK: " << #p << ", " << m <<  "\nFILE: " << myFilename(__FILE__) << "\nLINE:  " << __LINE__ << '\n'; \
-	throw IBK::Exception(strm.str(), __FILE__); }(void)0;
+	throw IBK::Exception(strm.str(), __FILE__); }(void)0
 
 #else
 
