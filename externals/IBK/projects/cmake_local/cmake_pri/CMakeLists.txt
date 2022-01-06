@@ -3,6 +3,10 @@
 # on Unix and Apple we want really detailed warnings
 if (UNIX)
 	ADD_DEFINITIONS( -Wall )
+	# our code does not check for errno values, so we can skip this feature
+	ADD_DEFINITIONS( -fno-math-errno )
+	# create position independent code (needed for dynamic libs)
+	ADD_DEFINITIONS( -fPIC )
 endif (UNIX)
 
 
@@ -12,9 +16,9 @@ endif (UNIX)
 IF ( UNIX )
 
 	IF ( NOT APPLE )
-	
+
 		# *** Linux ***
-	
+
 		IF ( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
 
 			IF ( USE_OMP )
@@ -116,7 +120,7 @@ ELSE ( UNIX  )
 		ENDIF ( USE_OMP )
 
 	ENDIF ( CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX )
-	
+
 	IF (MSVC)
 		# VisualStudio compiler
 		IF ( USE_OMP )
@@ -130,9 +134,6 @@ ELSE ( UNIX  )
 			#ADD_DEFINITIONS( -Wunknown-pragmas )
 
 		ENDIF ( USE_OMP )
-		
+
 	ENDIF (MSVC)
 ENDIF( UNIX )
-
-
-
