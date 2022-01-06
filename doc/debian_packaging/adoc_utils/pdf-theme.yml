@@ -33,7 +33,7 @@ title-page:
       with_email: "{author}\n{email}"
 
 page:
-  margin: [0.5in, 0.67in, 1.4in, 0.67in]
+  margin: [0.75in, 0.67in, 1.4in, 0.67in]
 
 image:
   align: center
@@ -42,14 +42,24 @@ footer:
   height: 0.75in
   line-height: 1
   recto:
-    left:
-      content: '_{document-title} {revnumber}_'
     right:
       content: '{section-or-chapter-title} | *{page-number}*'
   verso:
     left:
       content: '*{page-number}* | {section-or-chapter-title}'
 
+header:
+  height: 1.00in
+  line-height: 1
+  recto:
+    left:
+      content: '_{document-title}_'
+    right:
+      content: '{author} <{email}>'
+  verso:
+    left:
+      content: '_{document-title}_'
+      
 thematic-break:
   margin-bottom: 50
   
