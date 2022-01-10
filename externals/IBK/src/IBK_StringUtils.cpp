@@ -477,6 +477,9 @@ size_t explode(const std::string& str, std::list<std::string>& tokens, char deli
 	}
 	if (tmp.size())
 		tokens.push_back(tmp);
+	// if 'str' was empty, return also a vector with exactly one empty string
+	if (tokens.empty())
+		tokens.push_back("");
 	return tokens.size();
 }
 // ---------------------------------------------------------------------------
@@ -500,6 +503,9 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, char de
 			IBK::trim(tmp);
 		tokens.push_back(tmp);
 	}
+	// if 'str' was empty, return also a vector with exactly one empty string
+	if (tokens.empty())
+		tokens.push_back("");
 	return tokens.size();
 }
 // ---------------------------------------------------------------------------
@@ -570,6 +576,9 @@ size_t explode(const std::string& str, std::list<std::string>& tokens,
 		tokens.push_back(tmp);
 		delims[delim_count] = ' ';
 	}
+	// if 'str' was empty, return also a vector with exactly one empty string
+	if (tokens.empty())
+		tokens.push_back("");
 	return tokens.size();
 }
 // ---------------------------------------------------------------------------
@@ -651,7 +660,7 @@ void explode_sections(std::istream& in,
 
 		// check for new keyword
 		if (it != section_titles.end()) {
-			current_section = distance(section_titles.begin(), it);
+			current_section = (unsigned long)std::distance(section_titles.begin(), it);
 		}
 		else {
 
