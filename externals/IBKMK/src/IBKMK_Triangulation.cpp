@@ -36,42 +36,47 @@
 
 */
 
-#ifndef IBKMK_common_definesH
-#define IBKMK_common_definesH
+#include "IBKMK_Triangulation.h"
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
-#define IBKMK_CONST const
-#else
-#define IBKMK_CONST
-#endif /* __cplusplus */
+#include <IBK_messages.h>
+
+#include "CDT/CDT.h"
+
+namespace IBKMK {
+
+bool Triangulation::setPoints(const std::vector<IBK::point2D<double> > & points,
+							  const std::vector<std::pair<unsigned int, unsigned int> > & edges)
+{
+//	FUNCID(Triangulation::setPoints);
+
+	CDT::Triangulation<double> cdt(CDT::FindingClosestPoint::ClosestRandom); // Note: we don't want to use boost
+
+	IBK_ASSERT(sizeof(CDT::V2d<double>) == sizeof(IBK::point2D<double>));
+	// since IBK::point2D<double> and CDT::V2d<double> are internally the same, we can just re-interpret our original
+	// vector as vertex vector
+	const std::vector<CDT::V2d<double> > * vertices = reinterpret_cast<	const std::vector<CDT::V2d<double> > * >(&points);
+
+	std::vector<CDT::Edge> edgeVec;
+	edgeVec.reserve(edges.size());
+	for (const std::pair<unsigned int, unsigned int> & p : edges) {
+		edgeVec.push_back( CDT::Edge(p.first, p.second) );
+	}
+
+	cdt.insertVertices(*vertices);
+	cdt.insertEdges(edgeVec);
+	cdt.eraseOuterTrianglesAndHoles();
+
+	// now transfer the triangle
+
+	m_triangles.resize(cdt.triangles.size());
+	for (unsigned int i=0; i<cdt.triangles.size(); ++i) {
+		const CDT::VerticesArr3 & t = cdt.triangles[i].vertices;
+		m_triangles[i] = triangle_t((unsigned int)t[0], (unsigned int)t[1], (unsigned int)t[2]);
+	}
+
+	return true;
+}
 
 
-#ifdef  __BORLANDC__  /* wrapper to enable C++ usage */
-#define IBKMK_RESTRICT
-#else
-#define IBKMK_RESTRICT __restrict
-#endif /* __cplusplus */
+} // namespace IBKMK
 
-
-#define IBKMK_ONE 1.0
-#define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
-
-
-/*! Matrix types and unique ID numbers, used for matrix serialization into
-	binary data streams.
-	\note It is ok to *add* new matrix types, but changing enumeration values
-		  may prevent code to read old matrix binary files!
-
-	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
-*/
-enum MatrixTypes {
-	MT_DenseMatrix			=	1,
-	MT_BandMatrix			=	2,
-	MT_TridiagMatrix		=	3,
-	MT_SparseMatrixEID		=	4,
-	MT_SparseMatrixCSR		=	5,
-	MT_BlockTridiagMatrix	=	6
-};
-
-
-#endif // IBKMK_common_definesH

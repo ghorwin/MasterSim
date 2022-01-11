@@ -36,84 +36,107 @@
 
 */
 
-#include "IBKMK_DenseMatrix.h"
+#include "IBKMK_TridiagMatrix.h"
 
-#include <IBK_StringUtils.h>
-#include <IBK_Exception.h>
+#include <iomanip>
 #include <IBK_InputOutput.h>
 
 #include "IBKMK_common_defines.h"
-#include "IBKMKC_dense_matrix.h"
+
+#include "IBKMKC_tridiag_matrix.h"
 
 namespace IBKMK {
 
-void DenseMatrix::resize(unsigned int n) {
-	m_n = n;
-	m_data.resize(m_n*m_n);
-	m_pivots.resize(n);
+void TridiagMatrix::solveEquationSystem(double * b) {
+	double * L = &m_data[0];				// L holds the lower band (L[0] not used)
+	double * M = L + m_n;					// M holds main diagonal band
+	double * U = M + m_n;					// U holds the upper band (U[m_n-1] not used)
+	for (unsigned int i=1; i<m_n; ++i) {
+		double fact = L[i]/M[i-1];
+		M[i] -= fact*U[i-1];
+		b[i] -= fact*b[i-1];
+	}
+	b[m_n-1] /= M[m_n-1];
+	for (int i=m_n-2; i>=0; --i) {
+		b[i] -= U[i]*b[i+1];
+		b[i] /= M[i];
+	}
 }
 
-void DenseMatrix::swap(DenseMatrix & mat) {
-	std::swap(m_n, mat.m_n);
-	m_data.swap(mat.m_data);    // this is faster then normal swapping!
-	m_pivots.swap(mat.m_pivots);
+int TridiagMatrix::solveEquationSystemChecked(double * b) {
+	double * L = &m_data[0];				// L holds the lower band (L[0] not used)
+	double * M = L + m_n;					// M holds main diagonal band
+	double * U = M + m_n;					// U holds the upper band (U[m_n-1] not used)
+	for (unsigned int i=1; i<m_n; ++i) {
+		if (M[i-1]==0.0)		return 1;	// Zero element in main diagonal
+		double fact = L[i]/M[i-1];
+		M[i] -= fact*U[i-1];
+		if (M[i]==0.0)			return 2;	// Matrix is singular or becomes singular by transformation
+		b[i] -= fact*b[i-1];
+	}
+	b[m_n-1] /= M[m_n-1];
+	for (int i=m_n-2; i>=0; --i) {
+		b[i] -= U[i]*b[i+1];
+		b[i] /= M[i];
+	}
+	return 0; // all ok
 }
 
-int DenseMatrix::lu() {
-	return ibkmk_dense_LU_pivot(m_n, &m_data[0], &m_pivots[0]);
+
+int TridiagMatrix::lu() {
+	int result = ibkmk_tridiag_LU( m_n, &m_data[0]);
+	return result;
 }
 
 
-void DenseMatrix::backsolve(double * b) const {
-	ibkmk_dense_backsolve_pivot(m_n, &m_data[0], &m_pivots[0], b);
+void TridiagMatrix::backsolve(double * b) const {
+	ibkmk_tridiag_backsolve( m_n, &m_data[0], b);
 }
 
 
-void DenseMatrix::multiply(const double * b, double * res) const {
-	ibkmk_dense_vec_mult(m_n, &m_data[0], b, res);
+void TridiagMatrix::multiply(const double * b, double * r) const {
+	ibkmk_tridiag_vec_mult(m_n, &m_data[0], b, r);
 }
 
 
-void DenseMatrix::write(std::ostream & out, double * b, bool eulerFormat, unsigned int width,
-						const char * const matrixLabel, const char * const vectorLabel) const
+void TridiagMatrix::write(std::ostream & out, double * b, bool eulerFormat, unsigned int width,
+						  const char * const matrixLabel, const char * const vectorLabel) const
 {
 	// re-use generic implementation
 	IBK::write_matrix(out, *this, b, eulerFormat, width, matrixLabel, vectorLabel);
 }
 
 
-std::size_t DenseMatrix::serializationSize() const {
+std::size_t TridiagMatrix::serializationSize() const {
 	// the actual data consists of:
 	// - matrix identifier (char)
 	// - 1 size variable (n),
-	// - data storage, and
-	// - pivot array
-	size_t s = sizeof(char) + sizeof(uint32_t)
-			+ 2*sizeof(uint32_t)
-			+ m_data.size()*sizeof(double) + m_n*sizeof(long int);
+	// - data storage
+	size_t s = sizeof(char) + sizeof(uint32_t) + m_data.size()*sizeof(double);
 	return s;
 }
 
 
-void DenseMatrix::serialize(void* & dataPtr) const {
+void TridiagMatrix::serialize(void* & dataPtr) const {
 	// store type
-	*(char*)dataPtr = (char)MT_DenseMatrix;
+	*(char*)dataPtr = (char)MT_TridiagMatrix;
 	dataPtr = (char*)dataPtr + sizeof(char);
 
 	*(uint32_t*)dataPtr = (uint32_t)m_n;
 	dataPtr = (char*)dataPtr + sizeof(uint32_t);
 
-	IBK::serialize_vector(dataPtr, m_data);
-	IBK::serialize_vector(dataPtr, m_pivots);
+	size_t dataSize = m_data.size()*sizeof(double);
+	std::memcpy(dataPtr, &m_data[0], dataSize);
+	dataPtr = (char*)dataPtr + dataSize;
 }
 
 
-void DenseMatrix::deserialize(void* & dataPtr) {
-	FUNCID(DenseMatrix::deserialize);
+void TridiagMatrix::deserialize(void* & dataPtr) {
+	const char * const FUNC_ID = "[TridiagMatrix::deserialize]";
 	char matType = *(char*)dataPtr;
 	dataPtr = (char*)dataPtr + sizeof(char);
 	// check for valid matrix type
-	if (matType != MT_DenseMatrix)
+	if (matType != MT_TridiagMatrix)
 		throw IBK::Exception("Invalid matrix type in binary data storage.", FUNC_ID);
 
 	unsigned int n = *(uint32_t*)dataPtr;
@@ -121,29 +144,28 @@ void DenseMatrix::deserialize(void* & dataPtr) {
 	if (n != m_n)
 		throw IBK::Exception("Invalid matrix dimensions in binary data storage (target matrix not properly resized?).", FUNC_ID);
 
-	IBK::deserialize_vector(dataPtr, m_data);
-	IBK::deserialize_vector(dataPtr, m_pivots);
+	size_t dataSize = m_data.size()*sizeof(double);
+	std::memcpy(&m_data[0], dataPtr, dataSize);
+	dataPtr = (char*)dataPtr + dataSize;
 }
 
 
-void DenseMatrix::recreate(void* & dataPtr) {
-	FUNCID(DenseMatrix::recreate);
+void TridiagMatrix::recreate(void* & dataPtr) {
+	const char * const FUNC_ID = "[TridiagMatrix::recreate]";
 	char matType = *(char*)dataPtr;
 	dataPtr = (char*)dataPtr + sizeof(char);
 	// check for valid matrix type
-	if (matType != MT_DenseMatrix)
+	if (matType != MT_TridiagMatrix)
 		throw IBK::Exception("Invalid matrix type in binary data storage.", FUNC_ID);
 
-	m_n = *(uint32_t*)dataPtr;
+	unsigned int n = *(uint32_t*)dataPtr;
 	dataPtr = (char*)dataPtr + sizeof(uint32_t);
+	resize(n);
 
-	IBK::recreate_vector(dataPtr, m_data);
-	IBK::recreate_vector(dataPtr, m_pivots);
-
-	if (m_data.size() != m_n*m_n || m_pivots.size() != m_n)
-		throw IBK::Exception("Inconsistent binary matrix data.", FUNC_ID);
+	size_t dataSize = m_data.size()*sizeof(double);
+	std::memcpy(&m_data[0], dataPtr, dataSize);
+	dataPtr = (char*)dataPtr + dataSize;
 }
-
 
 } // namespace IBKMK
 

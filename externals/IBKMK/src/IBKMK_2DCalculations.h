@@ -36,42 +36,35 @@
 
 */
 
-#ifndef IBKMK_common_definesH
-#define IBKMK_common_definesH
+#ifndef IBKMK_2DCalculationsH
+#define IBKMK_2DCalculationsH
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
-#define IBKMK_CONST const
-#else
-#define IBKMK_CONST
-#endif /* __cplusplus */
+#include "IBKMK_Vector2D.h"
 
+namespace IBKMK {
 
-#ifdef  __BORLANDC__  /* wrapper to enable C++ usage */
-#define IBKMK_RESTRICT
-#else
-#define IBKMK_RESTRICT __restrict
-#endif /* __cplusplus */
-
-
-#define IBKMK_ONE 1.0
-#define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
-
-
-/*! Matrix types and unique ID numbers, used for matrix serialization into
-	binary data streams.
-	\note It is ok to *add* new matrix types, but changing enumeration values
-		  may prevent code to read old matrix binary files!
-
-	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
+/*! Check for intersection of each edge of the polygon with the line(p1, p2). Returns true if intersection was found and in this
+	case stores the computed intersection point.
 */
-enum MatrixTypes {
-	MT_DenseMatrix			=	1,
-	MT_BandMatrix			=	2,
-	MT_TridiagMatrix		=	3,
-	MT_SparseMatrixEID		=	4,
-	MT_SparseMatrixCSR		=	5,
-	MT_BlockTridiagMatrix	=	6
-};
+bool intersectsLine2D(const std::vector<Vector2D> & polygon,
+		const IBK::point2D<double> &p1, const IBK::point2D<double> &p2, IBK::point2D<double> & intersectionPoint);
 
+/*! Point in Polygon function. Result:
+	-1 point not in polyline
+	0 point on polyline
+	1 point in polyline
 
-#endif // IBKMK_common_definesH
+	\param	point test point
+	Source https://de.wikipedia.org/wiki/Punkt-in-Polygon-Test_nach_Jordan
+
+*/
+int pointInPolygon(const std::vector<Vector2D> & poly, const IBK::point2D<double> &p);
+
+/*! Eliminates collinear points in a polygon.
+	All points that are closer together than the provided epsilon will be merged.
+*/
+void eliminateCollinearPoints(std::vector<IBKMK::Vector2D> & polygon, double epsilon = 1e-4);
+
+} // namespace IBKMK
+
+#endif // IBKMK_2DCalculationsH

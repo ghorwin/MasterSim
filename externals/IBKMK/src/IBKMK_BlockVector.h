@@ -36,42 +36,56 @@
 
 */
 
-#ifndef IBKMK_common_definesH
-#define IBKMK_common_definesH
+#ifndef IBKMK_BlockVectorH
+#define IBKMK_BlockVectorH
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
-#define IBKMK_CONST const
-#else
-#define IBKMK_CONST
-#endif /* __cplusplus */
+#include <vector>
+
+namespace IBKMK {
+
+/*! Represents a vector that is composed of n sub-vectors, each of size m.
+	In comparison to a linear vector the index operator[] returns a pointer to
+	the begin of a block, not to the element.
+	*/
+class BlockVector {
+public:
+	/*! Standard constructur, creates an empty vector. */
+	BlockVector()  : m_n(0), m_m(0)
+	{
+	}
+
+	/*! Constructor, creates a vector with n blocks of size m.
+		The total size of the vector will be n*m. */
+	BlockVector(unsigned int n, unsigned int m) {
+		resize(n, m);
+	}
+
+	/*! Resizes the vector to hold n sub-vectors of size m. */
+	void resize(unsigned int n, unsigned int m) {
+		m_data.resize(n*m);
+		m_n = n;
+		m_m = m;
+	}
+
+	/*! Returns pointer to begin of sub-vector i.
+		Access sub-vector elements like a two-dimensional matrix.
+		\code
+		// retrieve element k from sub-vector i
+		double val_ik = blockvec[i][k];
+		\endcode
+	*/
+	double * operator[](unsigned int i) {
+		return &m_data[i*m_m];
+	}
+
+private:
+	unsigned int		m_n;	///< Number of sub-vectors.
+	unsigned int		m_m;	///< Size of sub-vectors.
+	std::vector<double>	m_data;	///< Linear data storage member.
+
+}; // class BlockVector
+
+} // namespace IBKMK
 
 
-#ifdef  __BORLANDC__  /* wrapper to enable C++ usage */
-#define IBKMK_RESTRICT
-#else
-#define IBKMK_RESTRICT __restrict
-#endif /* __cplusplus */
-
-
-#define IBKMK_ONE 1.0
-#define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
-
-
-/*! Matrix types and unique ID numbers, used for matrix serialization into
-	binary data streams.
-	\note It is ok to *add* new matrix types, but changing enumeration values
-		  may prevent code to read old matrix binary files!
-
-	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
-*/
-enum MatrixTypes {
-	MT_DenseMatrix			=	1,
-	MT_BandMatrix			=	2,
-	MT_TridiagMatrix		=	3,
-	MT_SparseMatrixEID		=	4,
-	MT_SparseMatrixCSR		=	5,
-	MT_BlockTridiagMatrix	=	6
-};
-
-
-#endif // IBKMK_common_definesH
+#endif // IBKMK_BlockVectorH

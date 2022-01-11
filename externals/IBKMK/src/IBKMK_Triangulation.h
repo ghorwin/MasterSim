@@ -36,42 +36,54 @@
 
 */
 
-#ifndef IBKMK_common_definesH
-#define IBKMK_common_definesH
+#ifndef IBKMK_TriangulationH
+#define IBKMK_TriangulationH
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
-#define IBKMK_CONST const
-#else
-#define IBKMK_CONST
-#endif /* __cplusplus */
+#include <IBK_point.h>
+#include <IBK_assert.h>
 
+namespace IBKMK {
 
-#ifdef  __BORLANDC__  /* wrapper to enable C++ usage */
-#define IBKMK_RESTRICT
-#else
-#define IBKMK_RESTRICT __restrict
-#endif /* __cplusplus */
-
-
-#define IBKMK_ONE 1.0
-#define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
-
-
-/*! Matrix types and unique ID numbers, used for matrix serialization into
-	binary data streams.
-	\note It is ok to *add* new matrix types, but changing enumeration values
-		  may prevent code to read old matrix binary files!
-
-	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
+/*! Performs triangulation.
+	This class wraps the internal triangulation library so that users do not need to know
+	the details of the underlying library's API.
 */
-enum MatrixTypes {
-	MT_DenseMatrix			=	1,
-	MT_BandMatrix			=	2,
-	MT_TridiagMatrix		=	3,
-	MT_SparseMatrixEID		=	4,
-	MT_SparseMatrixCSR		=	5,
-	MT_BlockTridiagMatrix	=	6
+class Triangulation {
+public:
+	/*! Simple storage member to hold vertex indexes of a single triangle. */
+	struct triangle_t {
+		triangle_t() {}
+		triangle_t(unsigned int n1, unsigned int n2, unsigned int n3) :
+			i1(n1), i2(n2), i3(n3)
+		{}
+
+		/*! Returns true, if triangle is invalid, i.e. contains invalid ID, or twice the same ID. */
+		bool isDegenerated() const {
+			if (i1 == (unsigned int)-1 || i1 == i2 || i1 == i3) return true;
+			if (i2 == (unsigned int)-1 || i2 == i1 || i2 == i3) return true;
+			if (i3 == (unsigned int)-1 || i3 == i1 || i3 == i2) return true;
+			return false;
+		}
+
+		unsigned int i1=0, i2=0, i3=0;
+	};
+
+	/*! Set points to triangulate.
+		No duplicate points (within tolerance allowed!)
+		Also, edges must mark outer and inner boundaries of surface.
+	*/
+	bool setPoints(const std::vector<IBK::point2D<double> > & points,
+				   const std::vector<std::pair<unsigned int, unsigned int> > & edges);
+
+	/*! Tolerance criterion - points within this distances are
+		takes and "same".
+	*/
+	double	m_tolerance;
+
+	/*! Contains the generated triangles after triangulation has completed. */
+	std::vector<triangle_t>		m_triangles;
 };
 
+} // namespace IBKMK
 
-#endif // IBKMK_common_definesH
+#endif // IBKMK_TriangulationH
