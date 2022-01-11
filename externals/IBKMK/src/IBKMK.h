@@ -36,42 +36,12 @@
 
 */
 
-#ifndef IBKMK_common_definesH
-#define IBKMK_common_definesH
+#ifndef IBKMKH
+#define IBKMKH
 
-#ifdef __cplusplus  /* wrapper to enable C++ usage */
-#define IBKMK_CONST const
-#else
-#define IBKMK_CONST
-#endif /* __cplusplus */
+#include "IBKMKC_dense_matrix.h"
+#include "IBKMKC_sparse_matrix.h"
+#include "IBKMKC_band_matrix.h"
+#include "IBKMKC_vector_operations.h"
 
-
-#ifdef  __BORLANDC__  /* wrapper to enable C++ usage */
-#define IBKMK_RESTRICT
-#else
-#define IBKMK_RESTRICT __restrict
-#endif /* __cplusplus */
-
-
-#define IBKMK_ONE 1.0
-#define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
-
-
-/*! Matrix types and unique ID numbers, used for matrix serialization into
-	binary data streams.
-	\note It is ok to *add* new matrix types, but changing enumeration values
-		  may prevent code to read old matrix binary files!
-
-	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
-*/
-enum MatrixTypes {
-	MT_DenseMatrix			=	1,
-	MT_BandMatrix			=	2,
-	MT_TridiagMatrix		=	3,
-	MT_SparseMatrixEID		=	4,
-	MT_SparseMatrixCSR		=	5,
-	MT_BlockTridiagMatrix	=	6
-};
-
-
-#endif // IBKMK_common_definesH
+#endif // IBKMKH
