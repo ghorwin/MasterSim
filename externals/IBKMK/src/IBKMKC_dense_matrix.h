@@ -1,5 +1,5 @@
 /*	IBK Math Kernel Library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+	Copyright (c) 2001-today, Institut fuer Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang
 	All rights reserved.
@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -56,7 +56,7 @@ extern "C" {
 	\param p Pivot vector, size n
 	\return Returns 0 for success, otherwise index of row where an error occured.
 */
-int  ibkmk_dense_LU_pivot        ( int n, double * A, int * p);
+int  ibkmk_dense_LU_pivot        ( int n, double * A, long int * p);
 
 /*! Solves the equation system Ax = b using backsolving, A must be
 	LU factorized already.
@@ -66,7 +66,7 @@ int  ibkmk_dense_LU_pivot        ( int n, double * A, int * p);
 	\param p Pivot vector, size n
 	\param b Right-hand-side vector, size n
 */
-void ibkmk_dense_backsolve_pivot ( int n, IBKMK_CONST double * A, IBKMK_CONST int * p, double * b);
+void ibkmk_dense_backsolve_pivot ( int n, IBKMK_CONST double * A, IBKMK_CONST long int * p, double * b);
 
 /*! Computes A^-1 * B and stores result in B, A is assumed to be LU factorized.
 	Pivoting version, requires pivot vector of size n.
@@ -75,7 +75,7 @@ void ibkmk_dense_backsolve_pivot ( int n, IBKMK_CONST double * A, IBKMK_CONST in
 	\param p Pivot vector, size n
 	\param B Matrix, size n*n to be backsolved
 */
-void ibkmk_dense_inverse_mult_pivot( int n, IBKMK_CONST double * A, IBKMK_CONST int * p, double * B);
+void ibkmk_dense_inverse_mult_pivot( int n, IBKMK_CONST double * A, IBKMK_CONST long int * p, double * B);
 
 
 /*! In-place LU Factorization of A (dimension n x n, column-based storage).
@@ -211,7 +211,7 @@ void ibkmk_dense_vec_mult_sub4(IBKMK_CONST double * A, IBKMK_CONST double * b, d
 
 
 
-/*! Performs the matrix vector multiplication and subtraction A b = d. */
+/*! Performs the matrix vector multiplication A b = d. */
 void ibkmk_dense_vec_mult(int n, IBKMK_CONST double * A, IBKMK_CONST double * b, double * d);
 
 /*! Special implementation of the matrix vector multiplication a matrix of dimension 2x2. */

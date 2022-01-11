@@ -1,5 +1,5 @@
 /*	IBK Math Kernel Library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+	Copyright (c) 2001-today, Institut fuer Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang
 	All rights reserved.
@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -46,7 +46,7 @@ namespace IBKMK {
 
 #endif
 
-int ibkmk_dense_LU_pivot(int n, double * A, int * p) {
+int ibkmk_dense_LU_pivot(int n, double * A, long int * p) {
 	int i, j, k, l;
 	double *col_i, *col_j, *col_k;
 	double temp, mult, a_kj;
@@ -111,7 +111,7 @@ int ibkmk_dense_LU_pivot(int n, double * A, int * p) {
 // ---------------------------------------------------------------------------
 
 
-void ibkmk_dense_backsolve_pivot(int n, IBKMK_CONST double * A, IBKMK_CONST int * p, double * b) {
+void ibkmk_dense_backsolve_pivot(int n, IBKMK_CONST double * A, IBKMK_CONST long int * p, double * b) {
 	int i, k, pk;
 	double *col_k, tmp;
 
@@ -144,7 +144,7 @@ void ibkmk_dense_backsolve_pivot(int n, IBKMK_CONST double * A, IBKMK_CONST int 
 // ---------------------------------------------------------------------------
 
 
-void ibkmk_dense_inverse_mult_pivot(int n, IBKMK_CONST double * A, IBKMK_CONST int * p, double * B) {
+void ibkmk_dense_inverse_mult_pivot(int n, IBKMK_CONST double * A, IBKMK_CONST long int * p, double * B) {
 	int i;
 	for (i=0; i<n; ++i, B += n)
 		ibkmk_dense_backsolve_pivot(n, A, p, B);
@@ -162,6 +162,8 @@ int ibkmk_dense_LU(int n, double * A) {
 				A[i + j*n] -= A[i + k*n]*A[k + j*n];
 		}
 	}
+	/* check that the last computed main diagonal element is not zero */
+	if (A[n-1 + (n-1)*n] == 0) return -2;
 	return 0;
 }
 // ---------------------------------------------------------------------------
@@ -171,6 +173,7 @@ int ibkmk_dense_LU2(double * A) {
 	if (A[0] == 0) return -2;
 	A[1] /= A[0];
 	A[3] -= A[1]*A[2];
+	if (A[3] == 0) return -2;
 	return 0;
 }
 // ---------------------------------------------------------------------------

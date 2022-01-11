@@ -1,5 +1,5 @@
 /*	IBK Math Kernel Library
-	Copyright (c) 2001-2016, Institut fuer Bauklimatik, TU Dresden, Germany
+	Copyright (c) 2001-today, Institut fuer Bauklimatik, TU Dresden, Germany
 
 	Written by A. Nicolai, A. Paepcke, H. Fechner, St. Vogelsang
 	All rights reserved.
@@ -13,7 +13,7 @@
 	   list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright notice,
-	   this list of conditions and the following disclaimer in the documentation 
+	   this list of conditions and the following disclaimer in the documentation
 	   and/or other materials provided with the distribution.
 
 	3. Neither the name of the copyright holder nor the names of its contributors
@@ -56,6 +56,22 @@
 #define IBKMK_ONE 1.0
 #define BL_MAT_IJ(A,m,ml,mu,i,j) (A + ((i)*((ml)+(mu)) + (ml) + (j))*(m)*(m);
 
+
+/*! Matrix types and unique ID numbers, used for matrix serialization into
+	binary data streams.
+	\note It is ok to *add* new matrix types, but changing enumeration values
+		  may prevent code to read old matrix binary files!
+
+	\warning DO NOT use values larger than 255, since matrix types are stored as char data type!
+*/
+enum MatrixTypes {
+	MT_DenseMatrix			=	1,
+	MT_BandMatrix			=	2,
+	MT_TridiagMatrix		=	3,
+	MT_SparseMatrixEID		=	4,
+	MT_SparseMatrixCSR		=	5,
+	MT_BlockTridiagMatrix	=	6
+};
 
 
 #endif // IBKMK_common_definesH
