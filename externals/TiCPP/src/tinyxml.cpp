@@ -35,6 +35,10 @@ distribution.
 #include <Windows.h>
 #endif // _WIN32
 
+#ifdef TIXML_USE_IBK_EXTENSIONS
+#include <IBK_StringUtils.h>
+#endif // TIXML_USE_IBK_EXTENSIONS
+
 
 FILE* TiXmlFOpen( const char* filename, const char* mode );
 
@@ -1013,6 +1017,7 @@ void TiXmlElement::appendIBKParameterElement( TiXmlElement * parent,
 		xmlElement->SetAttribute("name", name);
 	xmlElement->SetAttribute("unit", unit);
 	std::stringstream para;
+	para.precision(10);
 	para << value;
 	TiXmlText * text = new TiXmlText( para.str() );
 	xmlElement->LinkEndChild( text );
@@ -1088,12 +1093,15 @@ void TiXmlElement::readIBKParameterElement( const TiXmlElement * element, std::s
 	std::string valstr;
 	if (str)		valstr = str;
 	else			valstr.clear();
-	std::stringstream valstrm(valstr);
-	/// \todo proper value check, full valstr must be parsed
-	if (!(valstrm >> value)) {
+	try {
+		// NOTE: reading the parameter with stringstream is not very safe - values like "1,433" will be
+		//       read as 1 without raising an error. Hence, we use the IBK::string2val<> function.
+		value = IBK::string2val<double>(valstr);
+	} catch (IBK::Exception & ex) {
 		std::stringstream strm;
 		strm << "Error in XML file, line " << element->Row() << ": ";
 		strm << "Cannot read value in IBK:Parameter element.";
+		strm << ex.what();
 		throw std::runtime_error(strm.str());
 	}
 }
@@ -1154,23 +1162,19 @@ void TiXmlElement::readIBKUnitVectorElement( const TiXmlElement * element,
 
 	const char * const str = element->GetText();
 	std::string valstr;
-	if (str)		valstr = str;
-	else			valstr.clear();
-	std::stringstream sstrm(valstr);
-	data.clear();
-	std::string s;
-	while (sstrm >> s) {
-		std::stringstream valstr(s);
-		double v;
-		if (!(valstr >> v)) {
+	if (str) {
+		valstr = str;
+		try {
+			IBK::string2valueVector(valstr, data);
+		} catch (IBK::Exception & ex) {
 			std::stringstream strm;
 			strm << "Error in XML file, line " << element->Row() << ": ";
-			strm << "Invalid floating point value '" << s << "' in IBK:UnitVector.";
+			strm << ex.what();
 			throw std::runtime_error(strm.str());
 		}
-
-		data.push_back(v);
 	}
+	else
+		data.clear();
 }
 
 
@@ -1406,6 +1410,81 @@ void TiXmlElement::readIBKLinearSplineElement( const TiXmlElement * element,
 			strm << "Undefined child element '"<< ename << "' in IBK:LinearSpline element, should be either X or Y.";
 			throw std::runtime_error(strm.str());
 		}
+	}
+}
+
+
+void TiXmlElement::readIBKLinearSplineParameterElement(const TiXmlElement *element,
+														std::string &name,
+														std::string &interpolationMethod,
+														std::string &xunit,
+														std::vector<double> &xdata,
+														std::string &yunit,
+														std::vector<double> &ydata,
+														std::string &path)
+
+{
+	const TiXmlAttribute* attrib = TiXmlAttribute::attributeByName(element, "name");
+	if (attrib == NULL) {
+		std::stringstream strm;
+		strm << "Error in XML file, line " << element->Row() << ": ";
+		strm << "Missing 'name' attribute in linear spline element.";
+		throw std::runtime_error(strm.str());
+	}
+	name = attrib->Value();
+	attrib = TiXmlAttribute::attributeByName(element, "interpolation");
+	if (attrib != NULL) {
+		interpolationMethod = attrib->Value();
+	}
+	else
+		interpolationMethod.clear();
+	for (const TiXmlElement * e = element->FirstChildElement(); e; e = e->NextSiblingElement()) {
+		std::string ename = e->Value();
+		std::string name;
+		if (ename == "X") {
+			TiXmlElement::readIBKUnitVectorElement(e, name, xunit, xdata, true);
+		}
+		else if (ename == "Y") {
+			TiXmlElement::readIBKUnitVectorElement(e, name, yunit, ydata, true);
+		}
+		else if (ename == "TSVFile") {
+			const TiXmlNode * child = e->FirstChild();
+			if (child == NULL){
+				std::stringstream strm;
+				strm << "Error in XML file, line " << e->Row() << ": ";
+				strm << "Missing 'TSVFile' element";
+				throw std::runtime_error(strm.str());
+			}
+			else{
+				path = child->Value();
+			}
+		}
+		else {
+			std::stringstream strm;
+			strm << "Error in XML file, line " << e->Row() << ": ";
+			strm << "Undefined child element '"<< ename << "' in linear spline element, should be either 'X', 'Y' or 'TSVFile'.";
+			throw std::runtime_error(strm.str());
+		}
+	}
+	if (xdata.empty() && ydata.empty() && path.empty()) {
+		std::stringstream strm;
+		strm << "Error in XML file, line " << element->Row() << ": ";
+		strm << "Expected either X and Y, or TSVFile tag within linear spline element.";
+		throw std::runtime_error(strm.str());
+	}
+	// if we have x, we also need y
+	if (xdata.size() != ydata.size() ) {
+		std::stringstream strm;
+		strm << "Error in XML file, line " << element->Row() << ": ";
+		strm << "X and Y vectors in linear spline element must be both present and have the same number of values.";
+		throw std::runtime_error(strm.str());
+	}
+	// we have an exclusive "or" on XY or TSVFile
+	if (!xdata.empty() && !path.empty()) {
+		std::stringstream strm;
+		strm << "Error in XML file, line " << element->Row() << ": ";
+		strm << "Either X and Y, or TSVFile tag must be defined within linear spline element, bot not both.";
+		throw std::runtime_error(strm.str());
 	}
 }
 
