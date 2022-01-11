@@ -816,6 +816,7 @@ public:
 	const char*		Name()  const		{ return name.c_str(); }		///< Return the name of this attribute.
 	const char*		Value() const		{ return value.c_str(); }		///< Return the value of this attribute.
 	#ifdef TIXML_USE_STL
+	const std::string& NameStr()  const	{ return name; }				///< Return the name of this attribute.
 	const std::string& ValueStr() const	{ return value; }				///< Return the value of this attribute.
 	#endif
 	int				IntValue() const;									///< Return the value of this attribute, converted to an integer.
@@ -1258,6 +1259,7 @@ public:
 
 
 	/*! Reads an IBK:Parameter element.
+		\note Throws an IBK::Exception in case of invalid value.
 		\sa appendIBKParameterElement().
 	*/
 	static void readIBKParameterElement( const TiXmlElement * parent,
@@ -1403,6 +1405,18 @@ public:
 										 std::vector<double> & xdata,
 										 std::string & yunit,
 										 std::vector<double> & ydata);
+
+	/*! Reads IBK::LinearSplineParameter, this is basically a copy of readIBKLinearSplineElement,
+	 * but additionally reads a tsv-filepath
+	 * */
+	static void readIBKLinearSplineParameterElement( const TiXmlElement * element,
+										 std::string & name,
+										 std::string & interpolationMethod,
+										 std::string & xunit,
+										 std::vector<double> & xdata,
+										 std::string & yunit,
+										 std::vector<double> & ydata,
+										 std::string & path);
 
 
 
