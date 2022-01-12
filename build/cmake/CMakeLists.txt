@@ -148,7 +148,7 @@ if (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 
 # -------------------------------------------------------------
-# Test FMUs
+# Test FMUs Libraries
 # -------------------------------------------------------------
 
 add_subdirectory( ../../TestFMUs/Math003Part1/projects/cmake Math003Part1)
@@ -156,4 +156,53 @@ add_subdirectory( ../../TestFMUs/Math003Part2/projects/cmake Math003Part2)
 add_subdirectory( ../../TestFMUs/Math003Part3/projects/cmake Math003Part3)
 add_subdirectory( ../../TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
 add_subdirectory( ../../TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
+
+# Support for 'make install' on Unix/Linux (not on MacOS!)
+if (UNIX AND NOT APPLE)
+
+# -------------------------------------------------------------
+# Generate FMUs to be shipped with examples
+# -------------------------------------------------------------
+
+# run the script to re-generate the FMUs from the already compiled libraries
+add_custom_command (
+	OUTPUT	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
+			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
+			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
+	DEPENDS  Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator
+	COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh
+)
+
+# -------------------------------------------------------------
+# Install example FMUs
+# -------------------------------------------------------------
+
+# installation targets for Unix systems
+include(GNUInstallDirs)
+
+# Math_003_control_loop
+
+set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Math_003_control_loop)
+install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim
+		DESTINATION ${EXAMPLE_DESTINATION_DIR})
+install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.bm
+		DESTINATION ${EXAMPLE_DESTINATION_DIR})
+install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim.png
+		DESTINATION ${EXAMPLE_DESTINATION_DIR})
+install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.p2
+		DESTINATION ${EXAMPLE_DESTINATION_DIR})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/description
+		DESTINATION ${EXAMPLE_DESTINATION_DIR})
+# we install newly generated FMUs
+install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu 
+		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+
+
+endif (UNIX AND NOT APPLE)
 
