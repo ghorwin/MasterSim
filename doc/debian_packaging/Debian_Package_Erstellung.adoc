@@ -1,7 +1,7 @@
 Ubuntu Paketerstellung und Veröffentlichung
 ===========================================
 Andreas Nicolai <andreas.nicolai@gmx.net>
-v1.0 (06.01.2022)
+v1.0 (10.01.2022)
 // v1.0 date_on_line_above
 :Author Initials: AN
 :toc: left
@@ -23,6 +23,7 @@ v1.0 (06.01.2022)
 :example-caption: Beispiel
 :figure-caption: Abbildung
 :table-caption: Tabelle
+:section-refsig: Abschnitt
 
 :xrefstyle: short
 
@@ -265,31 +266,32 @@ Installationsmethode bleiben kann, werden alle Pfade durch eine einheitliche
 Verzeichnis-Klasse (`MSIMDirectories` oder allgemein bei Programmen mit
 QtExt-Bibliotheksunterstützung `QtExt::Directories`) bereitgestellt.
 
-Die Funktionen `resourcesRootDir()` und `translationsDir()` liefern die
-Basisverzeichnisse für die im Programm verwendeten Resourcen. Das Verzeichnis
-`qtTranslationsDir()` liefert den Pfad, in dem die `qt_xxx.qm` Dateien liegen.
+Die Funktion `resourcesRootDir()` liefert das Basisverzeichnis 
+für die im Programm verwendeten Resourcen. Da die Verzeichnisse für die Übersetzungsdateien selbst 
+von der gewählten Sprache abhängen, haben diese Funktionen die Syntax `translationsFilePath(langID)`
+bzw. `qtTranslationsFilePath(langID)`.
 
 .Verzeichnispfade relativ zur ausführbaren Datei für verschiedene Resourcen and Installationsvarianten
-[width="100%",options="header"]
+[width="100%",options="header",cols="15%,35%,55%"]
 |====================
 | Plattform* | *Pfad/Funktion* | *relativer Pfad*
 | *Linux - deb* | |
-| | `resourcesRootDir()` | ../share/mastersim
-| | `translationsFilePath(langID)` | ../share/locale/<langID>/LC_MESSAGES/MasterSimulatorUI.qm 
-| | `qtTranslationsFilePath(langID)` | /usr/share/qt5/translations/qt_<langid>.qm 
+| | `resourcesRootDir()` | `../share/mastersim`
+| | `translationsFilePath(langID)` | `../share/locale/<langID>/LC_MESSAGES/MasterSimulatorUI.qm`
+| | `qtTranslationsFilePath(langID)` | `/usr/share/qt5/translations/qt_<langID>.qm` 
 | *Linux - 7z* | |
-| | `resourcesRootDir()` | ../resources
-| | `translationsFilePath(langID)` |  ../resources/translations/MasterSimulatorUI_<langID>.qm 
-| | `qtTranslationsFilePath(langID)` | /usr/share/qt5/translations/qt_<langid>.qm 
+| | `resourcesRootDir()` | `../resources`
+| | `translationsFilePath(langID)` |  `../resources/translations/MasterSimulatorUI_<langID>.qm` 
+| | `qtTranslationsFilePath(langID)` | `/usr/share/qt5/translations/qt_<langID>.qm` 
 | *Windows* | |
-| | `resourcesRootDir()` | ../resources
-| | `translationsFilePath(langID)` |  ../resources/translations/MasterSimulatorUI_<langID>.qm 
-| | `qtTranslationsFilePath(langID)` | ../resources/translations/qt_<langid>.qm
+| | `resourcesRootDir()` | `../resources`
+| | `translationsFilePath(langID)` |  `../resources/translations/MasterSimulatorUI_<langID>.qm`
+| | `qtTranslationsFilePath(langID)` | `../resources/translations/qt_<langID>.qm`
 |====================
 
 [NOTE]
 ====
-Unter Windows werden die Qt5 Bibliotheken und passend dazu die `qt_de.qm` im Installer mitgeliefert. Daher liegt hier die Qt-Übersetzungsdatei immer unterhalb `resources`. Unter Linux muss die `qt_de.qm` mit der jeweils installierten Qt-Version übereinstimmen, weswegen unabhängig von der Installationsvarianten (deb oder stand-alone 7z) _immer_ die systemweit installierte Übersetzungsdatei verwendet wird.
+Unter Windows werden die Qt5 Bibliotheken und passend dazu die `qt_de.qm` im Installer mitgeliefert. Daher liegt hier die Qt-Übersetzungsdatei immer unterhalb `resources`. Unter Linux muss die `qt_de.qm` mit der jeweils installierten Qt-Version übereinstimmen, weswegen unabhängig von der Installationsvariante (deb oder stand-alone 7z) _immer_ die systemweit installierte Übersetzungsdatei verwendet wird.
 ====
 
 Das `resourcesRootDir()` setzt sich bei der deb-Paket-Variante aus dem Präfix `../share` und dem Paketnamen zusammen, hier `mastersim`.
@@ -397,6 +399,11 @@ Damit im System die `msim`-Dateien entsprechend mit einem Icon dekoriert werden 
 
 In dieser Datei findet sich der in der .desktop-Datei definierte MIME-Typ `application/mastersim` wieder. Außerdem wird das Dateisuchmuster als `*.msim` festgelegt (es könnten hier auch weitere Dateierweiterungen assoziiert werden, indem man 
 mehrere `<glob>` Elemente definiert. Außerdem können Dateitypen anhand eines "Magic-Headers" erkannt werden, wie er z.B. bei unseren d6o/d6b und Verwendung findet. Siehe dazu https://specifications.freedesktop.org/shared-mime-info-spec und die darin verlinkte Spezifikation).
+
+[NOTE]
+====
+In der XML-Datei muss aus Kompatibilitätsgründen die mime-info URL `http://www.freedesktop.org/standards/shared-mime-info` stehen, auch wenn die Spezifikation aktuell unter https://specifications.freedesktop.org/shared-mime-info-spec zu finden ist (sonst bekommt man eine Fehlermeldung beim Aktualisieren der MIME-Datenbank).
+====
 
 Die Datei `mastersim.xml` wird unter `MasterSimulatorUI/resources/mastersim.desktop` gespeichert.
 
@@ -639,9 +646,9 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 - Account erstellen: https://launchpad.net
 
-#### Signaturschlüssel (PGP) und SSH-Schlüssel erstellen und hochladen
+#### Signaturschlüssel (GPG) und SSH-Schlüssel erstellen und hochladen
 
-- Anleitung für PGP und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
+- Anleitung für GPG und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
 
 ##### GPG Schlüssel
 
@@ -695,13 +702,18 @@ Keys 1-1 of 1 for "andreas.nicolai@gmx.net".
 
 ##### GPG-Key zu Thunderbird hinzufügen, damit man Bestätigungsmail entschlüsseln kann
 
+GPG-Schlüssel exportieren:
+
+```bash
+> gpg --export-secret-keys --armor > my-secret-keys.asc
+```
+
+* -> In Thunderbird diesen Schlüssel importieren
 * -> Account-Einstellungen
 * -> Ende-zu-Ende-Verschlüsselung
 * -> OpenGPG -> Schlüssel hinzufügen
-* -> Radiobutton 3 (externe Anwendung/SmartCard)
-* -> ID 6E0814BD3FCA8338 reinkopieren -> fertig
+* -> Schlüssel auswählen, fertig
 
-Thunderbird kann so zwar verschlüsselte E-Mails schicken und empfangen, aber beim Speichern lokal bearbeiteter, verschlüsselter Mails gibts einen Fehler. Das müsste ich nochmal recherchieren.
 
 ##### ssh-Schlüsselerstellung
 
@@ -767,13 +779,13 @@ Für die nachfolgenden Schritte werden verschiedene Verzeichnisse benötigt.
 
 - _Arbeitsverzeichnis_ : ein temporäres Verzeichnis, in dem alle Dateien für die Erstellung des Releases hingekopiert/generiert werden; dieses Verzeichnis enthält zum Schluss die erstellten Pakete
 
-.Verzeichnisstruktur 
+.Verzeichnisstruktur (enthält einige temporäre Dateien und Verzeichnisse)
 ====
 ```
 debPackaging                             - *Basisverzeichnis*
 ├── CMakeLists.txt                       - CMakeLists.txt, welche for deb-Pakete benötigt wird
 ├── MasterSim-git                        - geklontes git-repository (Upstream-Quelltext)
-├── mastersim-0.9.2                      - bereinigtes Upstream-Quellen
+├── mastersim-0.9.2                      - bereinigte Upstream-Quelle
 ├── mastersim_0.9.2.orig.tar.xz          - Archiv des bereinigten Upstream-Quellverzeichnisses
 ├── scripts                              - Verzeichnis mit Hilfsskripten
 │   ├── extractVersion.py
@@ -781,8 +793,7 @@ debPackaging                             - *Basisverzeichnis*
 │   └── update_source_code_archive.sh
 ├── ubuntu-18.04-bionic                  - Dateien für Ubuntu 18.04 Bionic release
 │   └── ...
-├── ubuntu-20.04-focal                   - *Distro-Verzeichnis*, enthält Dateien für Ubuntu 20.04 Focal release
-│   ├── buildBinary.sh                   - Skript zur lokalen Erstellung des Binärpakets
+├── ubuntu-20.04-focal                   - *Distro-Verzeichnis*, enthält Dateien für Ubuntu 20.04 Focal
 │   ├── debian                           - debian Kontrolldateien
 │   │   ├── changelog
 │   │   ├── control
@@ -796,18 +807,17 @@ debPackaging                             - *Basisverzeichnis*
 │   ├── mastersim_0.9.2-1~focal~ppa1_source.buildinfo
 │   ├── mastersim_0.9.2-1~focal~ppa1_source.changes
 │   ├── mastersim_0.9.2.orig.tar.xz      - symlink auf top-level Archiv
-│   ├── newUpstreamVersion.sh            - Skript für Erstellung 
 │   └── readme.md
 └── ubuntu-21.10-impish                  - Dateien für Ubuntu 20.10 Impish release
      └── ...
 ```
 ====
 
+Nachfolgend sind alle einzelnen Schritte zu Erstellung eines Source-Pakets beschrieben. Dabei
+werden alle in dieser Verzeichnishierarchie gelisteten Dateien und Verzeichnisse besprochen.
+
 [[deb:manualCreation]]
 ### Manuelle Erstellung eines neuen Debian-Source-Packages
-
-Nachfolgend sind alle einzelnen Schritte zu Erstellung eines Source-Pakets beschrieben. Dabei
-werden alle oben gelisteten Dateien und Verzeichnisse besprochen.
 
 [[deb:newSourceCodeRepo]]
 #### Source-Quelltextarchiv erstellen
@@ -876,11 +886,19 @@ halten.
 echo "*** STEP 3 : Cleaning out source directory ***" &&
 rm -rf mastersim-0.9.2/third-party &&
 rm -rf mastersim-0.9.2/doc &&
-rm -rf mastersim-0.9.2/data &&
+mv $TARGETDIR/data/examples/linux64 $TARGETDIR/examples &&
+rm -rf $TARGETDIR/data &&
+mkdir --parents $TARGETDIR/data/examples/ &&
+mv $TARGETDIR/examples $TARGETDIR/data/examples/linux64  &&
 rm -rf mastersim-0.9.2/cross-check &&
 rm -rf mastersim-0.9.2/externals/zlib &&
 du -h --summarize mastersim-0.9.2/
 ```
+
+[NOTE]
+====
+Das `CMakeLists.txt` install script erwartet (später) die zu installierenden Beispiele im Verzeichnis `data/examples/linux64`. Statt nun alle anderen Verzeichnisse und Dateien individuell zu löschen, "retten" wir das Verzeichnis zuerst mit `mv` und schieben es zum Schluss wieder an die originale Position.
+====
 
 Es wird nun noch die Top-Level `CMakeLists.txt` benötigt, welche aber nur ein minimaler Wrapper um die eigentliche
 CMake-Datei `build/cmake/CMakeLists.txt`-Datei ist. Außerdem wird in dieser Wrapper-Datei noch das Define für Debian-Paket-Erstellung gesetzt:
