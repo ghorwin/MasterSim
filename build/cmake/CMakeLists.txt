@@ -182,27 +182,46 @@ add_custom_command (
 # installation targets for Unix systems
 include(GNUInstallDirs)
 
-# Math_003_control_loop
+	# Math_003_control_loop
 
-set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Math_003_control_loop)
-install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim
-		DESTINATION ${EXAMPLE_DESTINATION_DIR})
-install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.bm
-		DESTINATION ${EXAMPLE_DESTINATION_DIR})
-install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim.png
-		DESTINATION ${EXAMPLE_DESTINATION_DIR})
-install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.p2
-		DESTINATION ${EXAMPLE_DESTINATION_DIR})
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/description
-		DESTINATION ${EXAMPLE_DESTINATION_DIR})
-# we install newly generated FMUs
-install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
-		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
-install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
-		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
-install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu 
-		DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+	set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Math_003_control_loop)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.bm
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim.png
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.p2
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/description
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	# we install newly generated FMUs
+	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu 
+			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
 
+
+	# Lotka_Volterra_System
+
+	set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Lotka_Volterra_System)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.bm
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim.png
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.p2
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/description
+			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+	# we install newly generated FMUs
+	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu 
+			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
+	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu 
+			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
 
 endif (UNIX AND NOT APPLE)
 
