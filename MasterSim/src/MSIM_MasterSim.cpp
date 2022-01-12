@@ -893,7 +893,7 @@ void MasterSim::composeVariableVector() {
 		if (!IBK::string_nocase_compare(filePath.extension(),"fmu")) {
 
 			FileReaderSlave * fileReaderSlave = dynamic_cast<FileReaderSlave *>(slave);
-			IBK_ASSERT(fileReaderSlave != nullptr)
+			IBK_ASSERT(fileReaderSlave != nullptr);
 
 			// compose absolute path
 			if (!filePath.isAbsolute()) {
@@ -1036,7 +1036,7 @@ void MasterSim::composeVariableVector() {
 										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 					}
 				break;
-				case MASTER_SIM::FMIVariable::NUM_VT : IBK_ASSERT(false) // must not ever happen, only to make compiler happy
+				case MASTER_SIM::FMIVariable::NUM_VT : IBK_ASSERT(false); // must not ever happen, only to make compiler happy
 			}
 
 			// store values
@@ -1061,7 +1061,7 @@ void MasterSim::composeVariableVector() {
 			case FMIVariable::VT_INT	: m_intVariableMapping.push_back(varMap); break;
 			case FMIVariable::VT_DOUBLE : m_realVariableMapping.push_back(varMap); break;
 			case FMIVariable::VT_STRING : m_stringVariableMapping.push_back(varMap); break;
-			case FMIVariable::NUM_VT : IBK_ASSERT(false) // remove compiler warning
+			case FMIVariable::NUM_VT : IBK_ASSERT(false); // remove compiler warning
 		}
 	}
 
@@ -1370,10 +1370,10 @@ void MasterSim::updateSlaveInputs(AbstractSlave * slave, const std::vector<doubl
 								  const std::vector<std::string> & stringVariables,
 								  bool realOnly)
 {
-	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size())
-	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size())
-	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size())
-	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size())
+	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
+	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
+	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size());
+	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size());
 	// process all connected variables
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];
@@ -1422,10 +1422,10 @@ void MasterSim::syncSlaveOutputs(const AbstractSlave * slave,
 								 std::vector<std::string> & stringVariables,
 								 bool realOnly)
 {
-	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size())
-	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size())
-	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size())
-	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size())
+	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
+	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
+	IBK_ASSERT(boolVariables.size() == m_boolVariableMapping.size());
+	IBK_ASSERT(stringVariables.size() == m_stringVariableMapping.size());
 	// process all connected variables
 	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
 		VariableMapping & varMap = m_realVariableMapping[i];

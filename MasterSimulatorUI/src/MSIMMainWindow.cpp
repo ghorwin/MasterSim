@@ -372,7 +372,8 @@ void MSIMMainWindow::on_actionFileOpen_triggered() {
 							this,
 							tr("Select project file"),
 							MSIMSettings::instance().m_propertyMap[MSIMSettings::PT_LastFileOpenDirectory].toString(),
-							tr("MasterSim Projects (*.cfg *%1);;All files (*.*)").arg(DOT_FILE_EXTENSION)
+							tr("MasterSim Projects (*.cfg *%1);;All files (*.*)").arg(DOT_FILE_EXTENSION),
+							nullptr, QFileDialog::DontUseNativeDialog
 						);
 
 	if (filename.isEmpty()) return;
@@ -472,7 +473,9 @@ void MSIMMainWindow::on_actionFileExport_triggered() {
 							this,
 							tr("Specify MasterSim project package file"),
 							fnameSuggestion,
-							tr("MasterSim Project Packages (*.msip);;All files (*.*)"));
+							tr("MasterSim Project Packages (*.msip);;All files (*.*)"),
+							nullptr, QFileDialog::DontUseNativeDialog
+				);
 
 	if (filename.isEmpty())
 		return;
@@ -860,7 +863,9 @@ void MSIMMainWindow::onOpenExampleByFilename(const QString & filename) {
 	QDir srcDir = finfo.absoluteDir();
 	QSettings settings( MSIMSettings::instance().m_organization, MSIMSettings::instance().m_appName );
 	QString lastExampleTargetDir = settings.value("LastExampleSaveDirectory", QDir::homePath()).toString();
-	QString targetDir = QFileDialog::getExistingDirectory(this, tr("Select directory to copy example project into"), lastExampleTargetDir);
+	QString targetDir = QFileDialog::getExistingDirectory(this, tr("Select directory to copy example project into"),
+														  lastExampleTargetDir, QFileDialog::DontUseNativeDialog);
+
 	if (targetDir.isEmpty())
 		return;
 	settings.setValue("LastExampleSaveDirectory", targetDir);
