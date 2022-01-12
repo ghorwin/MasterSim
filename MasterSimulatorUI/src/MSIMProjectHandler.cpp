@@ -41,7 +41,7 @@ MSIMProjectHandler::MSIMProjectHandler() :
 	m_sceneManager(nullptr),
 	m_modified(false)
 {
-	IBK_ASSERT(m_self == nullptr)
+	IBK_ASSERT(m_self == nullptr);
 	m_self = this;
 
 	// initialization of other globals
@@ -127,7 +127,7 @@ void MSIMProjectHandler::loadProject(QWidget * parent, const QString & fileName,
 	const char * const FUNC_ID = "[MSIMProjectHandler::loadProject]";
 
 	// we must not have a project loaded
-	IBK_ASSERT(!isValid())
+	IBK_ASSERT(!isValid());
 
 	// create a new project
 	createProject();
@@ -237,7 +237,8 @@ MSIMProjectHandler::SaveResult MSIMProjectHandler::saveWithNewFilename(QWidget *
 			parent,
 			tr("Specify project file"),
 			currentPath,
-			tr("Projects (*%1);;All files (*.*)").arg(DOT_FILE_EXTENSION)
+			tr("Projects (*%1);;All files (*.*)").arg(DOT_FILE_EXTENSION),
+			nullptr, QFileDialog::DontUseNativeDialog
 		);
 
 	if (filename.isEmpty()) return SaveCanceled; // canceled

@@ -143,7 +143,7 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
 				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
-					IBK_ASSERT_X(false, "bad variable initialization")
+					IBK_ASSERT_X(false, "bad variable initialization");
 			}
 		}
 	}
@@ -157,7 +157,7 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 				case FMIVariable::VT_DOUBLE	: addIndexIfNotInList(m_doubleValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, var.m_unit); break;
 				case FMIVariable::VT_STRING	: addIndexIfNotInList(m_stringValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				default:
-					IBK_ASSERT_X(false, "bad variable initialization")
+					IBK_ASSERT_X(false, "bad variable initialization");
 			}
 		}
 	}

@@ -235,7 +235,7 @@ int FMUSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 
 
 void FMUSlave::currentState(fmi2FMUstate * state) const {
-	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2)
+	IBK_ASSERT(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2);
 
 	if (m_fmu->m_fmi2Functions.getFMUstate(m_component, state) != fmi2OK) {
 		throw IBK::Exception(IBK::FormatString("Failed getting FMU state from slave '%1'.").arg(m_name), "[FMUSlave::currentState]");
@@ -274,7 +274,7 @@ void FMUSlave::cacheOutputs() {
 			const char * str;
 			res = m_fmu->m_fmi1Functions.getString(m_component, &m_fmu->m_stringValueRefsOutput[i], 1, &str);
 			if (res != fmi2OK) break;
-			IBK_ASSERT(str != nullptr)
+			IBK_ASSERT(str != nullptr);
 			m_stringOutputs[i] = std::string(str);
 		}
 	}
