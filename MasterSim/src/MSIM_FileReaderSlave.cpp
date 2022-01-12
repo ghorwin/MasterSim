@@ -36,7 +36,7 @@ FileReaderSlave::~FileReaderSlave() {
 void FileReaderSlave::instantiate() {
 	const char * const FUNC_ID = "[FileReaderSlave::instantiate]";
 
-	IBK_ASSERT(m_valueSplines.empty()) // must only be called on empty object
+	IBK_ASSERT(m_valueSplines.empty()); // must only be called on empty object
 
 	bool tabFormat = false;
 

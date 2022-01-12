@@ -34,6 +34,7 @@ QWidget * MSIMSlaveItemDelegate::createEditor ( QWidget * parent, const QStyleOp
 	switch (index.column()) {
 		case 0 : {
 			QColorDialog * editor = new QColorDialog(parent);
+			editor->setOption(QColorDialog::DontUseNativeDialog, true);
 			connect(editor, SIGNAL(accepted()), this, SLOT(commitAndCloseEditor()));
 			connect(editor, SIGNAL(rejected()), this, SLOT(rejectCloseEditor()));
 			return editor;

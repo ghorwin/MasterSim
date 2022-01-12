@@ -47,18 +47,18 @@ void MSIMBrowseFilenameWidget::onToolBtnClicked() {
 	QString fn;
 	if (m_filenameMode) {
 		if (m_fileMustExist) {
-			fn = QFileDialog::getOpenFileName(this, tr("Select filename"), filename(), m_filter);
+			fn = QFileDialog::getOpenFileName(this, tr("Select filename"), filename(), m_filter, nullptr, QFileDialog::DontUseNativeDialog);
 		}
 		else {
-			fn = QFileDialog::getSaveFileName(this, tr("Select filename"), filename(), m_filter);
+			fn = QFileDialog::getSaveFileName(this, tr("Select filename"), filename(), m_filter, nullptr, QFileDialog::DontUseNativeDialog);
 		}
 	}
 	else {
 		if (m_fileMustExist) {
-			fn = QFileDialog::getExistingDirectory(this, tr("Select filename"), filename());
+			fn = QFileDialog::getExistingDirectory(this, tr("Select filename"), filename(), QFileDialog::DontUseNativeDialog);
 		}
 		else {
-			fn = QFileDialog::getSaveFileName(this, tr("Select directory"), filename(), m_filter);
+			fn = QFileDialog::getSaveFileName(this, tr("Select directory"), filename(), m_filter, nullptr, QFileDialog::DontUseNativeDialog);
 		}
 	}
 	if (!fn.isEmpty()) {

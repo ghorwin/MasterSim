@@ -445,7 +445,7 @@ void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 	const char * const FUNC_ID = "[Project::SimulatorDef::parse]";
 	// simulator   0 0 Part1 #00bdcf "fmus/simx/Part1.fmu"
 	std::size_t pos = simulatorDef.find("simulator");
-	IBK_ASSERT(pos != std::string::npos)
+	IBK_ASSERT(pos != std::string::npos);
 	std::vector<std::string> tokens;
 	// first extract
 	try {
