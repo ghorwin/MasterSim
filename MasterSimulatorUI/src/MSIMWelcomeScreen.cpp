@@ -132,14 +132,14 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 		QString recentProjects = "<h1>" + tr("Examples/Validation cases") + "</h1><p>\n";
 
 		// process all files in examples directory
-#ifdef IBK_DEPLOYMENT
+#if defined(IBK_DEPLOYMENT)
 		QDir examplesDir(MSIMDirectories::resourcesRootDir() + "/examples");
 #else
 		QDir examplesDir(MSIMDirectories::resourcesRootDir() + "/../../data/examples");
 #endif
 		IBK::IBK_Message( IBK::FormatString("Searching examples in '%1'.\n")
 							.arg(examplesDir.absolutePath().toStdString()),
-							IBK::MSG_PROGRESS, "[MSIMWelcomeScreen::updateWelcomePage]", IBK::VL_STANDARD);
+							IBK::MSG_PROGRESS, "[MSIMWelcomeScreen::updateWelcomePage]", IBK::VL_INFO);
 		QStringList exampleFiles;
 		MSIMSettings::recursiveSearch(examplesDir, exampleFiles, QStringList() << "msim");
 
