@@ -137,6 +137,9 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 #else
 		QDir examplesDir(MSIMDirectories::resourcesRootDir() + "/../../data/examples");
 #endif
+		IBK::IBK_Message( IBK::FormatString("Searching examples in '%1'.\n")
+							.arg(examplesDir.absolutePath().toStdString()),
+							IBK::MSG_PROGRESS, "[MSIMWelcomeScreen::updateWelcomePage]", IBK::VL_STANDARD);
 		QStringList exampleFiles;
 		MSIMSettings::recursiveSearch(examplesDir, exampleFiles, QStringList() << "msim");
 
