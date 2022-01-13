@@ -18,3 +18,15 @@ target_link_libraries( ${PROJECT_NAME}
 	${APPLE_FRAMEWORKS}
 )
 
+# FMU building command
+# define a command that re-generates the FMU from the already compiled library
+#add_custom_command(
+#	DEPENDS LotkaVolterraPredator
+#	OUTPUT	Predator.fmu
+#	COMMAND  ${PROJECT_SOURCE_DIR}/generate_FMU.sh ${PROJECT_SOURCE_DIR}/../.. ${CMAKE_CURRENT_BINARY_DIR}
+#	COMMENT "Generating Predator.fmu"
+#)
+
+#add_custom_target(ExampleFMUPredator ALL
+#	DEPENDS	Predator.fmu
+#)
