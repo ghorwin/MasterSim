@@ -128,10 +128,13 @@ echo "Created Predator.fmu" &&
 # go back to original directory
 cd .. &&
 
-# copy generates FMUs to test directory
-cp fmus/Part1.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-cp fmus/Part2.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-cp fmus/Part3.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-cp fmus/Prey.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK &&
-cp fmus/Predator.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK
-
+# copy generated FMUs to test directory, if it exists (in Debian deployment mode this
+# directory is omitted)
+if [ -d ../data/tests/linux64 ]; then
+	echo "Updating test FMUs in data/tests/linux64" &&
+	cp fmus/Part1.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
+	cp fmus/Part2.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
+	cp fmus/Part3.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
+	cp fmus/Prey.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK &&
+	cp fmus/Predator.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK
+fi
