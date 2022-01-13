@@ -1,8 +1,17 @@
 #!/bin/bash
 
-# This script is executed before 'make install' on Unix/Linux systems.
+# This script is executed as part of the build to create the FMUs 
+# needed for installation on Unix/Linux systems.
+# 
+# Syntax: generate_FMUs.sh <path/to/cmake_binary dir>
+# Working directory should be data/TestFMUs
+#
+# Example so-location: <path/to/cmake_binary dir>/Math003/libMath003Part1.so
 
-# create subdir and copy all files together
+if [ "$#" -ne 1 ]; then
+    echo "Syntax: generate_FMUs.sh <path/to/cmake_binary dir>"
+    exit 1
+fi
 
 mkdir -p fmus
 cd fmus &&
@@ -16,7 +25,7 @@ fi &&
 mkdir -p Part1/binaries/linux64 &&
 cd Part1 &&
 
-cp ../../../bin/release/libMath003Part1.so binaries/linux64/Part1.so &&
+cp $1/Math003Part1/libMath003Part1.so binaries/linux64/Part1.so &&
 cp ../../Math003Part1/data/modelDescription.xml . &&
 
 if [ -f ../Part1.fmu ]; then
@@ -38,7 +47,7 @@ fi &&
 mkdir -p Part2/binaries/linux64 &&
 cd Part2 &&
 
-cp ../../../bin/release/libMath003Part2.so binaries/linux64/Part2.so &&
+cp $1/Math003Part2/libMath003Part2.so binaries/linux64/Part2.so &&
 cp ../../Math003Part2/data/modelDescription.xml . &&
 
 if [ -f ../Part2.fmu ]; then
@@ -60,7 +69,7 @@ fi &&
 mkdir -p Part3/binaries/linux64 &&
 cd Part3 &&
 
-cp ../../../bin/release/libMath003Part3.so binaries/linux64/Part3.so &&
+cp $1/Math003Part3/libMath003Part3.so binaries/linux64/Part3.so &&
 cp ../../Math003Part3/data/modelDescription.xml . &&
 
 if [ -f ../Part3.fmu ]; then
@@ -82,7 +91,7 @@ fi &&
 mkdir -p Prey/binaries/linux64 &&
 cd Prey &&
 
-cp ../../../bin/release/libLotkaVolterraPrey.so binaries/linux64/Prey.so &&
+cp $1/LotkaVolterraPrey/libLotkaVolterraPrey.so binaries/linux64/Prey.so &&
 cp ../../LotkaVolterraPrey/data/modelDescription.xml . &&
 
 if [ -f ../Prey.fmu ]; then
@@ -104,7 +113,7 @@ fi &&
 mkdir -p Predator/binaries/linux64 &&
 cd Predator &&
 
-cp ../../../bin/release/libLotkaVolterraPredator.so binaries/linux64/Predator.so &&
+cp $1/LotkaVolterraPredator/libLotkaVolterraPredator.so binaries/linux64/Predator.so &&
 cp ../../LotkaVolterraPredator/data/modelDescription.xml . &&
 
 if [ -f ../Predator.fmu ]; then
@@ -115,7 +124,6 @@ fi &&
 cd .. &&
 mv Predator.zip Predator.fmu &&
 echo "Created Predator.fmu" &&
-
 
 # go back to original directory
 cd .. &&
