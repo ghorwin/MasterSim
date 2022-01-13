@@ -225,14 +225,18 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 		}
 	}
 
-#ifdef Q_OS_LINUX
+	// no desktop integration for Windows/Mac
+	m_ui->actionHelpLinuxDesktopIntegration->setVisible(false);
+
+#if defined(Q_OS_LINUX) && !defined(IBK_BUILDING_DEBIAN_PACKAGE)
+	// Note: Debian packages handle desktop integration automatically
+
 	// on first run on Linux, ask for setting up desktop integration
+	m_ui->actionHelpLinuxDesktopIntegration->setVisible(true);
 	if (MSIMSettings::instance().m_versionIdentifier.isEmpty())
 		QTimer::singleShot(500, this, &MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered);
-#else
-	m_ui->actionHelpLinuxDesktopIntegration->setVisible(false);
-#endif
 
+#endif //  Q_OS_LINUX
 }
 
 
@@ -1042,13 +1046,6 @@ void MSIMMainWindow::onNewSlaveAdded(const QString & slaveName, const QString & 
 
 
 void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
-#ifdef IBK_BUILDING_DEBIAN_PACKAGE
-	int res = QMessageBox::question(this, QString(), tr("MasterSim appears to be installed as distribution package. The desktop integration should have been "
-									"installed already as part of the package installation. Are you sure you want to create .desktop and mime "
-									"files in your local home directory?"), QMessageBox::Yes | QMessageBox::No);
-	if (res == QMessageBox::No)
-		return;
-#endif
 	// copy icon files, unless existing already
 #ifdef IBK_DEPLOYMENT
 	QString iconLocation = MSIMDirectories::resourcesRootDir();
