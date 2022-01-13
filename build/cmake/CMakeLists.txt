@@ -173,7 +173,7 @@ if (UNIX AND NOT APPLE)
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
-		COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh
+		COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh ${CMAKE_CURRENT_BINARY_DIR}
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../../TestFMUs
 		COMMENT "Generating example FMUs"
 	)
