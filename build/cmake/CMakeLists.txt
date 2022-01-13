@@ -160,27 +160,41 @@ add_subdirectory( ../../TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolte
 # Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
 
-# -------------------------------------------------------------
-# Generate FMUs to be shipped with examples
-# -------------------------------------------------------------
+	# -------------------------------------------------------------
+	# Generate FMUs to be shipped with examples
+	# -------------------------------------------------------------
 
-# run the script to re-generate the FMUs from the already compiled libraries
-add_custom_command (
-	OUTPUT	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
-			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
-			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
-			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
-			${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
-	DEPENDS  Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator
-	COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh
-)
+	# define a command that re-generates the FMUs from the already compiled libraries
+	# it depends on the compiled shared libraries
+	add_custom_command(
+		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator
+		OUTPUT	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
+		COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../../TestFMUs
+		COMMENT "Generating example FMUs"
+	)
+	
+	# define a target that is always build - it checks the existence and time-stamp
+	# of the example fmu files and if they are missing/out of date it
+	# executes the command above to generate/update the FMUs
+	add_custom_target(ExampleFMUs ALL
+		DEPENDS	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
+	)
 
-# -------------------------------------------------------------
-# Install example FMUs
-# -------------------------------------------------------------
+	# -------------------------------------------------------------
+	# Install example FMUs
+	# -------------------------------------------------------------
 
-# installation targets for Unix systems
-include(GNUInstallDirs)
+	# installation targets for Unix systems
+	include(GNUInstallDirs)
 
 	# Math_003_control_loop
 
