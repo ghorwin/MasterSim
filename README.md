@@ -42,3 +42,38 @@ The welcome page of the software gives you a project overview and up-to-date dev
 
 <img src="doc/screenshots/MasterSim_0.9.0_welcome_page.png" width="600px"/>
 
+## Download and Installation
+
+### Debian/Ubuntu Packages
+
+Ubuntu users can now simply install _MasterSim_ via private package repository:
+
+```bash
+# add repository
+sudo add-apt-repository ppa:ghorwin/sim
+sudo apt-get update
+# install mastersim
+sudo apt install mastersim
+```
+
+### Windows x64
+
+For Windows (7,8,10,11) an installation program is available: see [releases](https://github.com/ghorwin/MasterSim/releases).
+
+Note that (unless there is a specific demand) I will not create x86 releases anylonger.
+
+### On Mac
+
+For MacOS 10.11 ("El Capitan") or newer, there is a dmg for download: see [releases](https://github.com/ghorwin/MasterSim/releases).
+
+### Linux (all distributions)
+
+For any (relatively) modern Linux distribution, there is a stand-alone software archive available for download:  see [releases](https://github.com/ghorwin/MasterSim/releases).
+
+The following dependencies are required: Qt5 + Qt5-svg lib and zlib.
+
+On Debian/Ubuntu systems, you can install them via packages:
+
+```bash
+sudo apt install qt5-default libqt5svg5 zlib1g
+```
