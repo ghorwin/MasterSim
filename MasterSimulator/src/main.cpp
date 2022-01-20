@@ -27,6 +27,21 @@ int main(int argc, char * argv[]) {
 	try {
 		// parse command line
 		MASTER_SIM::ArgParser parser;
+
+		// configure man page output
+		parser.m_manPackageName = "mastersim";
+		parser.m_manReleaseDate = "January 01, 2022";
+		parser.m_manVersionString = MASTER_SIM::LONG_VERSION;
+		parser.m_manShortDescription = "FMI Co-Simulation Master";
+
+		// Note: mind the line breaks that end format commands!
+		parser.m_manLongDescription = ".B MasterSimulator\n"
+				"simulates the co-simulation scenario defined in the msim "
+				"project file. By default all temporary files and all output is created in a subdirectory "
+				"with the same name as the project. You can change that with the\n"
+				".BR --working-dir\n"
+				"option.";
+
 		parser.parse(argc, argv);
 
 		// help and man-page
