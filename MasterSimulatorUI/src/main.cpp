@@ -100,18 +100,30 @@ int main(int argc, char *argv[]) {
 
 
 	// *** Initialize Command Line Argument Parser ***
-	IBK::ArgParser argParser;
-	settings.updateArgParser(argParser); // add MasterSim-specific UI argument options
+	IBK::ArgParser parser;
+	settings.updateArgParser(parser); // add MasterSim-specific UI argument options
 
 
 	// *** Apply command line arguments ***
-	argParser.parse(argc, argv);
-	// handle default arguments (--help)
-	if (argParser.flagEnabled("help")) {
-		argParser.printHelp(std::cout);
+	parser.parse(argc, argv);
+
+	// configure man page output
+	parser.m_appname = "MasterSimulatorUI";
+	parser.m_manManualName = "MasterSim Manual";
+	parser.m_manReleaseDate = MASTER_SIM::RELEASE_DATE;
+	parser.m_manVersionString = MASTER_SIM::LONG_VERSION;
+	parser.m_manShortDescription = "FMI Co-Simulation Graphical Configuration Tool";
+
+	// Note: mind the line breaks that end format commands!
+	parser.m_manLongDescription = ".B MasterSimulatorUI\n"
+			"is a graphical user interface to configure/define FMI co-simulation "
+			"scenarios and generate MasterSim project files. These project files"
+			"are used by the commandline co-simulator \n.BR MasterSimulator\\fR.";
+
+	// handle default arguments (--help and --man-page)
+	if (parser.handleDefaultFlags(std::cout))
 		return EXIT_SUCCESS;
-	}
-	settings.applyCommandLineArgs(argParser);
+	settings.applyCommandLineArgs(parser);
 
 
 	// *** Create log file directory and setup message handler ***
@@ -126,8 +138,8 @@ int main(int argc, char *argv[]) {
 	messageHandler.setLogfileVerbosityLevel( settings.m_userLogLevelLogfile );
 
 	// *** Install translator ***
-	if (argParser.hasOption("lang")) {
-		std::string dummy = argParser.option("lang");
+	if (parser.hasOption("lang")) {
+		std::string dummy = parser.option("lang");
 		QString langid = utf82QString(dummy);
 		if (langid != MSIMLanguageHandler::instance().langId()) {
 			IBK::IBK_Message( IBK::FormatString("Installing translator for language: '%1'.\n")
