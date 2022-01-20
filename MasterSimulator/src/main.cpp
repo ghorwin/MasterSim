@@ -29,8 +29,8 @@ int main(int argc, char * argv[]) {
 		MASTER_SIM::ArgParser parser;
 
 		// configure man page output
-		parser.m_manPackageName = "mastersim";
-		parser.m_manReleaseDate = "January 01, 2022";
+		parser.m_manManualName = "MasterSim Manual";
+		parser.m_manReleaseDate = MASTER_SIM::RELEASE_DATE;
 		parser.m_manVersionString = MASTER_SIM::LONG_VERSION;
 		parser.m_manShortDescription = "FMI Co-Simulation Master";
 

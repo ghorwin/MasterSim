@@ -271,10 +271,8 @@ public:
 
 	/*! Short description of the program. */
 	std::string								m_manVersionString;
-	/*! Package name, that the app appears in.
-		If not in package, use same as appname.
-	*/
-	std::string								m_manPackageName;
+	/*! Manual name like "MasterSim Manual", printed cented at top of man page. */
+	std::string								m_manManualName;
 	/*! Short description of the program. */
 	std::string								m_manShortDescription;
 	/*! Set here the date string like "January 1, 2022" to be used on the man page. */

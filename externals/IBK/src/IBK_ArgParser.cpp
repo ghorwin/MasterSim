@@ -314,9 +314,9 @@ void ArgParser::printManPage(std::ostream & out) const {
 	// header line: .TH [name of program] [section number] [center footer] [left footer] [center header]
 	// example:     .TH foo 1 "14 May 1999" "version 1.0"
 	std::string uppercaseAppName = IBK::toupper_string(m_appname);
-	out << ".TH \"" << uppercaseAppName << "\" 1 \"" << m_manReleaseDate << "\" \"" << m_manVersionString << "\" \"" << m_manPackageName <<"\"\n";
+	out << ".TH \"" << uppercaseAppName << "\" 1 \"" << m_manReleaseDate << "\" \"" << m_manVersionString << "\" \"" << m_manManualName <<"\"\n";
 	out << ".SH NAME\n";
-	out << ".B " + m_appname << "\n \\- " << m_manShortDescription << "\n";
+	out << ".B " + m_appname << "\\fR \\- " << m_manShortDescription << "\n";
 	out << ".SH SYNOPSIS\n";
 	out << ".B " + m_appname << " [flags] [options] arg1 arg2 ...\n";
 	out << ".SH DESCRIPTION\n";

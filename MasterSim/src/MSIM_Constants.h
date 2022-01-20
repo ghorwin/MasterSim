@@ -9,6 +9,9 @@ extern const char * const VERSION;
 /*! Long Version number. */
 extern const char * const LONG_VERSION;
 
+/*! Release Date. */
+extern const char * const RELEASE_DATE;
+
 /*! Indentation of keyword */
 extern const unsigned int KEYWORD_INDENTATION;
 /*! Width of parameter value */
