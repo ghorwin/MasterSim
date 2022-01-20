@@ -12,7 +12,7 @@ ArgParser::ArgParser() : m_verbosityLevel(1)
 	addOption('t', "test-init", "Run the initialization and stop right afterwards.", "<true|false>", "false");
 	addOption(0, "skip-unzip", "Do not unzip FMUs and expect them to be unzipped in extraction directories.", "<true|false>", "false");
 	addOption(0, "verbosity-level", "Level of output detail (0-3).", "0..3", "1");
-	addOption(0, "working-dir", "Working directory for master.", "working-directory", "Parent path of project file.");
+	addOption(0, "working-dir", "Working directory for master, where FMUs are extracted to and simulation results/log files are written.", "working-directory", "Project file path without extension.");
 }
 
 void ArgParser::parse(int argc, const char * const argv[]) {
