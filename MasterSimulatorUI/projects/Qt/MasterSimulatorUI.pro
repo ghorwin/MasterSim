@@ -7,15 +7,13 @@ TEMPLATE = app
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
-QT += xml core gui network printsupport
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += xml core gui network printsupport widgets
 
 LIBS += -L../../../lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
 	-lBlockMod \
-	-lIBKMKmini \
+	-lIBKMK \
 	-lIBK \
 	-lTiCPP
 

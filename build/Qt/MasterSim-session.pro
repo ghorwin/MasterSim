@@ -48,6 +48,7 @@ win32|macx {
 
 IBKMK.depends = IBK
 BlockMod.depends = IBK
+TiCPP.depends = IBK
 
 MasterSimulator.depends = MasterSim IBK IBKMK TiCPP minizip
 MasterSimulatorUI.depends = MasterSim BlockMod IBK IBKMK TiCPP minizip

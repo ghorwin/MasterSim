@@ -16,7 +16,7 @@ LIBS += -L../../../lib$${DIR_PREFIX} \
 	-L../../../externals/lib$${DIR_PREFIX} \
 	-lMasterSim \
 	-lminizip \
-	-lIBKMKmini \
+	-lIBKMK \
 	-lIBK \
 	-lTiCPP
 
