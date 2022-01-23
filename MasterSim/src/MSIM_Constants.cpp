@@ -3,8 +3,8 @@
 namespace MASTER_SIM {
 
 const char * const VERSION			= "0.9";
-const char * const LONG_VERSION		= "0.9.3";
-const char * const RELEASE_DATE		= "January 19th, 2022";
+const char * const LONG_VERSION		= "0.9.4";
+const char * const RELEASE_DATE		= "January 23rd, 2022";
 
 const unsigned int KEYWORD_INDENTATION = 0;
 

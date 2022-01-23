@@ -1,56 +1,34 @@
-.TH "MASTERSIMULATOR" "1" "January 01, 2022" "0.9.1" "MasterSim"
+.TH "MASTERSIMULATOR" 1 "January 23rd, 2022" "0.9.4" "MasterSim Manual"
 .SH NAME
-MasterSimulator \- FMI Co-Simulation Master
+.B MasterSimulator\fR \- FMI Co-Simulation Master
 .SH SYNOPSIS
-.B MasterSimulator [flags] [options] <project.msim>
+.B MasterSimulator\fR [flags] [options] <project file>
 .SH DESCRIPTION
 .B MasterSimulator
-simulates the co-simulation scenario defined in the msim project file. 
-By default all temporary files and all output is created in a subdirectory
-with the same name as the project. You can change that with the 
+simulates the co-simulation scenario defined in the msim project file. By default all temporary files and all output is created in a subdirectory with the same name as the project. You can change that with the
 .BR --working-dir
 option.
 .SH FLAGS
-.RS
-.TP
-.B
-\fB--help\fP
+.IP "\fB\-\-help\fR" 4
 Prints the help page.
-.TP
-.B
-\fB--cmd-line\fP
-Prints the command line as it was understood by the command line parser
-.TP
-.B
-\fB--options-left\fP
-Prints all options that are unknown to the command line parser
-.TP
-.B
-\fB-v\fP, \fB--version\fP
-Show version info
-.TP
-.B
-\fB-x\fP, \fB--close-on-exit\fP
-Close console window after finishing simulation (Windows only)
-.TP
-.B
-\fB-t\fP, \fB--test-init\fP
-Run the initialization with all input checks and stop right afterwards
-.TP
-.B
-\fB--skip-unzip\fP
-Do not unzip FMUs and expect them to be unzipped in
-extraction directories
-.RE
-.PP
+.IP "\fB\-\-man-page\fR" 4
+Prints the man page (source version) to std output.
+.IP "\fB\-\-cmd-line\fR" 4
+Prints the command line as it was understood by the command line parser.
+.IP "\fB\-\-options-left\fR" 4
+Prints all options that are unknown to the command line parser.
+.IP "\fB\-v\fR, \fB\-\-version\fR" 4
+Show version info.
+.IP "\fB\-x\fR, \fB\-\-close-on-exit\fR" 4
+Close console window after finishing simulation.
+.IP "\fB\-t\fR, \fB\-\-test-init\fR" 4
+Run the initialization and stop right afterwards.
+.IP "\fB\-\-skip-unzip\fR" 4
+Do not unzip FMUs and expect them to be unzipped in extraction directories.
+
 .SH OPTIONS
-.RS
-.TP
-.B
-\fB--verbosity-level\fP=<0..3>
-Level of output detail (0-3)
-.TP
-.B
-\fB--working-dir\fP=<working-directory>
-Specify an alternative working directory for the master, where all output
-shall be written into
+.IP "\fB\-\-verbosity-level=<0..3>\fR" 4
+Level of output detail (0-3).
+.IP "\fB\-\-working-dir=<working-directory>\fR" 4
+Working directory for master, where FMUs are extracted to and simulation results/log files are written.
+

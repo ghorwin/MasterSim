@@ -1,40 +1,25 @@
-.TH "MASTERSIMULATORUI" "1" "January 01, 2022" "0.9.1" "MasterSim"
+.TH "MASTERSIMULATORUI" 1 "January 23rd, 2022" "0.9.4" "MasterSim Manual"
 .SH NAME
-MasterSimulatorUI \- FMI Co-Simulation Graphical Configuration Tool
+.B MasterSimulatorUI\fR \- FMI Co-Simulation Graphical Configuration Tool
 .SH SYNOPSIS
-.B MasterSimulatorUI [flags] [options] [<project.msim>]
+.B MasterSimulatorUI\fR [flags] [options] [project file]
 .SH DESCRIPTION
 .B MasterSimulatorUI
-is a graphical user interface to configure/define FMI co-simulation
-scenarios and generate MasterSim project files. These project files
-are used by the commandline co-simulator
-.B MasterSimulator
-which runs the coupled simulation.
-.TP
+is a graphical user interface to configure/define FMI co-simulation scenarios and generate MasterSim project files. These project files are used by the commandline co-simulator 
+.BR MasterSimulator\fR.
 .SH FLAGS
-.RS
-.TP
-.B
-\fB--help\fP
+.IP "\fB\-\-help\fR" 4
 Prints the help page.
-.TP
-.B
-\fB--cmd-line\fP
-Prints the command line as it was understood by the command line parser
-.TP
-.B
-\fB--options-left\fP
-Prints all options that are unknown to the command line parser
-.TP
-.B
-\fB--no-splash\fP
-Hides the splash screen
-.RE
-.PP
+.IP "\fB\-\-man-page\fR" 4
+Prints the man page (source version) to std output.
+.IP "\fB\-\-cmd-line\fR" 4
+Prints the command line as it was understood by the command line parser.
+.IP "\fB\-\-options-left\fR" 4
+Prints all options that are unknown to the command line parser.
+.IP "\fB\-\-no-splash\fR" 4
+Disables splash screen.
+
 .SH OPTIONS
-.RS
-.TP
-.B
-\fB--lang\fP=<en, de, ...>
-Start user interface with a different program language. Argument is 
-the short locale ID for one of the supported languages.
+.IP "\fB\-\-lang=<en;de;it;...>\fR" 4
+Specify the program language using a 2 character language ID.
+
