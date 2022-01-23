@@ -9,19 +9,11 @@ OPTIONS += top_level_libs
 # this pri must be sourced from all our applications
 include( ../../../externals/IBK/projects/Qt/IBK.pri )
 
-# we need IBK lib to be statically linked, to debug other IBK-related FMUs
-contains( OPTIONS, FMU_Debugging ) {
-	CONFIG -= shared
-	CONFIG += static
-}
-
 unix|mac {
 	VER_MAJ = 0
 	VER_MIN = 5
 	VER_PAT = 2
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
-
-	QMAKE_CXXFLAGS +=  -std=c++11
 }
 
 
@@ -32,7 +24,7 @@ INCLUDEPATH = \
 	../../../externals/TiCPP/src
 
 LIBS += -L../../../externals/lib$${DIR_PREFIX} \
-	-lIBKMKmini \
+	-lIBKMK \
 	-lIBK \
 	-lTiCPP \
 	-lminizip \
