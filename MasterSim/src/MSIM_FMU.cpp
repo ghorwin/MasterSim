@@ -498,7 +498,7 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	///		 when dlclose() is called again with the same pointer, an access violation/segfault occurs.
 	///		 There should be a sanity check here that whenever a handle is returned that previously had been returned already,
 	///		 the import should fail.
-	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW|RTLD_LOCAL );
+	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_NOW|RTLD_DEEPBIND );
 
 	if (m_soHandle == nullptr)
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
