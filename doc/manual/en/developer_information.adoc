@@ -14,8 +14,10 @@ The information provided in this chapter will eventually be moved into the _Mast
 [source,bash]
 -----
 cd build/cmake
-./build.sh
+./build.sh [release] [<number of CPUs>]
 -----
+
+See `build.sh` for more command options. By default, binaries are build in _release with debug symbols_ mode.
 
 In case of missing dependencies (zlib is required) you may want to install the corresponding development packages.
 
@@ -25,7 +27,7 @@ Convenience scripts are included for building with Visual Studio 2015 and Qt5 (f
 The files are located in the `build/cmake` directory:
 
 -----
-build\cmake\build_VC.bat <1>
+build\cmake\build_VC.bat
 build\cmake\build_VC_x64.bat <2>
 -----
 <1> for x86 builds
@@ -34,26 +36,28 @@ build\cmake\build_VC_x64.bat <2>
 For the scripts to work, Qt must be installed in the following location:
 
 -----
-c:\Qt\5.11.3\msvc2015 <1>
-c:\Qt\5.11.3\msvc2015_64 <2>
+C:\Qt\5.15.2\msvc2019 <1>
+C:\Qt\5.15.2\msvc2019_64 <2>
 -----
 <1> for x86 builds
 <2> for x64 builds
 
-and **jom.exe** is found at:
+and **jom.exe** is expected at:
 
 -----
 c:\Qt\Tools\QtCreator\bin\jom.exe
 -----
 
-Also, `cmake` must be in the path. If installed elsewhere, the environment variables `JOM_PATH` and `CMAKE_PREFIX_PATH` can be set alternatively (see build-batch files).
+Also, `cmake` must be in the path. 
+
+If Qt or JOM is installed elsewhere, the environment variables `JOM_PATH` and `CMAKE_PREFIX_PATH` can be set alternatively (see build-batch files).
 
 With this setup, you can now build either in 32-bit or 64-bit mode:
 
 [source,batch]
 -----
 cd build\cmake
-build_VC14.bat
+build_VC.bat
 -----
 
 or
@@ -61,7 +65,7 @@ or
 [source,batch]
 -----
 cd build\cmake
-build_VC14_x64.bat
+build_x64.bat
 -----
 
 For different Visual Studio versions or MinGW copy batch file and edit path constants. You may also want to edit these batch files if you have different installation paths.
@@ -73,7 +77,7 @@ The _MasterSim_ library and the simulator projects depend on the following exter
 **MasterSimulator** and **MasterSimulatorUI**
 
 - IBK library (from IBK, TU Dresden, Germany)
-- IBKMK library (from IBK, TU Dresden, Germany), subset of the math-kernel library from IBK
+- IBKMK library (from IBK, TU Dresden, Germany)
 - TiCPP library (adapted version provided by IBK, TU Dresden, Germany)
 - minizip and zlib for unzipping FMUs
 
@@ -108,9 +112,9 @@ The simplest variant that should always work is to use CMake-generated VC projec
 
 Basic steps: Open a console window, setup VC build environment and all required paths, then use cmake with the Visual Studio makefile generator.
 
-You can re-use the `build.bat` or `built_x64.bat` files for that purpose. Open a command line window and change into the directory `build/cmake`.
+You can re-use the `build.bat` or `build_x64.bat` files for that purpose. Open a command line window and change into the directory `build/cmake`.
 
-. start either  `build.bat` or `built_x64.bat` and press Ctrl+C once building starts.
+. start either  `build.bat` or `build_x64.bat` and press Ctrl+C once building starts.
 . leave subdirectory and create a new subdirectory vc:
 +
 [source,batch]
@@ -127,11 +131,7 @@ You can re-use the `build.bat` or `built_x64.bat` files for that purpose. Open a
 > cmake-gui ..
 -----
 
-==== Prepared VC project files
-
-You can also open the VC solution files in `build\VC14\MasterSim.sln`.
-**Note**: You have to build first the cmake to configure the zlib `zconf.h` file!
-
+Afterwards you can open the generated `.sln` file and start debugging (development is not really recommended in Visual Studio).
 
 == Helpful stuff related to development on Linux 
 
@@ -140,56 +140,70 @@ Here are some notes collected when I encountered some unexpected difficulties wh
 === Checking symbols in shared libraries
 
 [source,bash]
------
+----
 objdump -t <shared_library>
------
+nm [-CD] <shared library>
+----
     
 To get all fmi2  functions
 
 [source,bash]
------
+----
 objdump -t <shared_library> | grep fmi2
------
+----
 
-=== Building MasterSim for FMU Debugging
+== Debugging MasterSim and FMUs
 
-*Problem*: _MasterSim_ uses the IBK library, and by default, when developing in Qt Creator, this library is dynamically linked. When now _MasterSim_ loads an FMU library at runtime, which _also_ depends on the IBK library, any duplicate symbols/functions are not imported, but instead the FMU library will use the routines already linked into _MasterSim_. 
+=== Background on shared library handling on Linux
 
-This is not a problem if:
+_MasterSimulator_ can be built in Qt Creator in debug mode. By default the qmake projects will create shared libraries for all dependent libraries like IBK, BlockMod, TiCPP etc.
 
-- the IBK library versions are exactly the same
-- both, _MasterSim_ and the FMU are built the same (either debug or release mode)
+Slaves can also be built to link against their dependency as shared libraries. This happens, for example, when typical IBK-based projects are also built in debug mode. 
 
-In other cases this leads to crashes while debugging.
+Now, since _MasterSim_ and FMU slaves are developed seperately, it is likely that the version of common libraries like IBK, BlockMod, IBKMK etc. differ. This then becomes a problem!
 
-*Solution*: You need to link the IBK library statically into _MasterSim_, but also all other libraries that depend on the IBK library. For convenience, you can just modify the qmake pro configuration by opening the file `externals/IBK/projects/Qt/CONFIG.pri` and enable the line:
-```
-OPTIONS += FMU_Debugging
-```
+==== Dynamic linking against shared libraries and LD_LIBRARY_PATH
 
-Now delete all already generated shared lib files from folder `externals/lib_x64` and `lib_x64`, rebuild all and you are ready to go.
+When launching _MasterSimulator_, it will search for dynamic libraries like `libIBK.so` using the environment variable `LD_LIBRARY_PATH`. Also, when the dynamic library of the slave is loaded, again its shared libraries need to be located. Their paths should also be present in `LD_LIBRARY_PATH`. However, if the path now includes two locations, each containing a _different_ version of the `libIBK.so`, the first one found is linked against _both_ _MasterSimulator_ and the slave library. Naturally, this will likely cause undesired behavior and usually result in segfaults.
+
+The same problem may occur even if _MasterSimulator_ is linked statically against its libraries, yet two different FMU slaves are linked dynamically against different versions of the same library (e.g. DELPHIN against IBK 4.9.x and NANDRAD against IBK 5.0.x). Unless the commonly used library uses semantic versioning and stable APIs (for example, library versions with same major and minor version _always_ have identical memory layouts and compilation settings, and thus can be freely exchanged), one has to ensure that only one shared library is in use.
+
+[CAUTION]
+====
+Rule of thumb: Avoid dynamic linking completely or use dynamic linking only for one library or the master.
+==== 
+
+Basically, one needs to ensure that only one set of shared libraries is being used. There are different options, depending on which part of the software you'd like to develop/debug.
 
 
+### Developing/Debugging MasterSim
 
-=== FMU Debugging
+When developing MasterSim it is best to compile all FMUs to link statically against their dependencies:
+
+- _MasterSim_ can be developed on Qt Creator in Debug mode and its dependent libraries as shared libs; `LD_LIBRARY_PATH` must hold the location of these libraries
+- FMUs are created with CMake either in release, reldeb or debug mode, but statically linked in any case 
+
+
+### Developing/Debugging FMUs
+
+- _MasterSim_ should be compiled with CMake either in release, reldeb or debug mode, and statically linked against its libraries
+- other FMUs should be linked statically
+- the FMU to be developed can be opened in Qt Creator and linked dynamically against its dependent libraries; `LD_LIBRARY_PATH` must hold the location of these libraries
+
+
+=== FMU Debugging Step-by-Step Guide
 
 Assuming you develop the shared FMU library with Qt Creator, you can follow this procedure:
 
-1. build your FMU either in debug more or release-with-debug-symbols, you can use also an external build tool chain, for example cmake
-2. compose your FMU and zip it into the fmu archive (you need to do this only once); MIND: the shared library within the FMU must be the one created by Qt Creator.
+1. build your FMU either in debug mode or release-with-debug-symbols, you can use also an external build tool chain, for example cmake; you can also use an out-of-date version of the FMU library as it will be replaced later anyway
+2. compose your FMU and zip it into the fmu archive (you need to do this only once)
 3. create your msim test project
-4. in Qt Creator, open and activate the MasterSimulator project, select the msim project as command line argument and start debugging - it will extract the fmus and attach to the shared library functions
+4. run _MasterSimulator_ once with the project; it will create the basic directory structure and extract the FMU library into the `project/fmus/xxx/binaries/linux64` directory
 
-You can now either debug and step into the FMU fmi2xxx functions, or open the source files that you used for creating the FMU and set breakpoints. Qt Creator will automatically pick that up and you can debug/step through the master and the FMUs alike.
+5. now copy the shared library built by Qt Creator into the directory and overwrite the .so file there
+6. in Qt Creator, configure the debugging session by specifying _MasterSimulator_ as executable, setting the commandline to contain `/path/to/project.msim --skip-unzip` and set the LD_LIBRARY_PATH environment variable to point to the directory containing any shared libs the FMU links against.
+7. Start debugging...
 
-==== Example when debugging separate FMU project which is statically built in release mode, but dynamically linked to other libs during development
-
-1. The FMU is created (first with the statically linked FMU `Test.so`) and the MasterSim project is set up
-2. _MasterSim_ is run once and the directory structure is created, the FMU is extracted and started without debugger attached.
-3. Now in  Qt Creator the  FMU development project builds `libTest.so.2.0.1` which links to other dynamic libraries in the development directory.
-4. The FMU file is renamed to `Test.so` and copied into the extracted fmu directory, hereby overwriting the statically linked FMU
-5. The library search path to the other dynamic libraries that `libTest.so.2.0.1` links to is added to the MasterSim's project environment `LD_LIBRARY_PATH` variable
-6. `MasterSimulator` is started in debugging mode using the `--skip-unzip` command line option 
 
 
 == Inside MasterSim
