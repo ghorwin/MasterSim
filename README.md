@@ -77,3 +77,5 @@ On Debian/Ubuntu systems, you can install them via packages:
 ```bash
 sudo apt install qt5-default libqt5svg5 zlib1g
 ```
+
+[Download stats...](https://tooomm.github.io/github-release-stats/?username=ghorwin&repository=mastersim)
