@@ -1,12 +1,27 @@
 #include "MSIM_ArgParser.h"
 
 #include <IBK_StringUtils.h>
+#include "MSIM_Constants.h"
 
 namespace MASTER_SIM {
 
-ArgParser::ArgParser() : m_verbosityLevel(1)
-{
+ArgParser::ArgParser() : m_verbosityLevel(1) {
 	m_appname = "MasterSimulator";
+	m_syntaxArguments = "[flags] [options] <project file>";
+	// configure man page output
+	m_manManualName = "MasterSim Manual";
+	m_manReleaseDate = MASTER_SIM::RELEASE_DATE;
+	m_manVersionString = MASTER_SIM::LONG_VERSION;
+	m_manShortDescription = "FMI Co-Simulation Master";
+
+	// Note: mind the line breaks that end format commands!
+	m_manLongDescription = ".B MasterSimulator\n"
+			"simulates the co-simulation scenario defined in the msim "
+			"project file. By default all temporary files and all output is created in a subdirectory "
+			"with the same name as the project. You can change that with the\n"
+			".BR --working-dir\n"
+			"option.";
+
 	addOption('v', "version", "Show version info.", "<true|false>", "false");
 	addOption('x', "close-on-exit", "Close console window after finishing simulation.", "<true|false>", "false");
 	addOption('t', "test-init", "Run the initialization and stop right afterwards.", "<true|false>", "false");

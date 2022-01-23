@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
 
 	// configure man page output
 	parser.m_appname = "MasterSimulatorUI";
+	parser.m_syntaxArguments = "[flags] [options] [project file]";
 	parser.m_manManualName = "MasterSim Manual";
 	parser.m_manReleaseDate = MASTER_SIM::RELEASE_DATE;
 	parser.m_manVersionString = MASTER_SIM::LONG_VERSION;
@@ -117,7 +118,7 @@ int main(int argc, char *argv[]) {
 	// Note: mind the line breaks that end format commands!
 	parser.m_manLongDescription = ".B MasterSimulatorUI\n"
 			"is a graphical user interface to configure/define FMI co-simulation "
-			"scenarios and generate MasterSim project files. These project files"
+			"scenarios and generate MasterSim project files. These project files "
 			"are used by the commandline co-simulator \n.BR MasterSimulator\\fR.";
 
 	// handle default arguments (--help and --man-page)

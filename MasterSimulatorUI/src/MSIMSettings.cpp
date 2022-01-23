@@ -116,7 +116,7 @@ void MSIMSettings::setDefaults() {
 
 void MSIMSettings::updateArgParser(IBK::ArgParser & argParser) {
 	argParser.addFlag(0, "no-splash", "Disables splash screen.");
-	argParser.addOption(0, "lang", "Specify the program language using a 2 character language ID.", "<en;de;it;...>", "en");
+	argParser.addOption(0, "lang", "Specify the program language using a 2 character language ID.", "en;de;it;...", "en");
 }
 
 
