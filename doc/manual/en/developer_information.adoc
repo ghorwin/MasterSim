@@ -200,9 +200,15 @@ Assuming you develop the shared FMU library with Qt Creator, you can follow this
 3. create your msim test project
 4. run _MasterSimulator_ once with the project; it will create the basic directory structure and extract the FMU library into the `project/fmus/xxx/binaries/linux64` directory
 
-5. now copy the shared library built by Qt Creator into the directory and overwrite the .so file there
+5. now create a symlink to the shared library built by Qt Creator that overwrites the .so file there:
++
+```
+ln -s /path/to/FMU/bin/debug_x64/libFMUSlaveName.so.1.0.0 FMUSlaveName.so
+```
++
+where `FMUSlaveName.so` is the name of the shared lib inside `binaries/linux64`
 6. in Qt Creator, configure the debugging session by specifying _MasterSimulator_ as executable, setting the commandline to contain `/path/to/project.msim --skip-unzip` and set the LD_LIBRARY_PATH environment variable to point to the directory containing any shared libs the FMU links against.
-7. Start debugging...
+7. Start debugging/FMU development...
 
 
 
