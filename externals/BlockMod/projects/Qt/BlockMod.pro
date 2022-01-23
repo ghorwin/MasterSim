@@ -6,7 +6,12 @@ TARGET = BlockMod
 TEMPLATE = lib
 
 # common project configurations, source this file after TEMPLATE was specified
-include( BlockMod.pri )
+exists( ../../../IBK/projects/Qt/IBK.pri ) {
+	include( ../../../IBK/projects/Qt/IBK.pri )
+}
+else {
+	include( BlockMod.pri )
+}
 
 QT += core gui network xml widgets
 
