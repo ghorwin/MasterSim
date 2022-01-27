@@ -36,8 +36,8 @@ build\cmake\build_VC_x64.bat <2>
 Damit die Skripte funktionieren, muss Qt am folgenden Ort installiert sein:
 
 -----
-c:\Qt\5.11.3\msvc2015 <1>
-c:\Qt\5.11.3\msvc2015_64 <2>
+C:\Qt\5.15.2\msvc2019 <1>
+C:\Qt\5.15.2\msvc2019_64 <2>
 -----
 <1> für Aufbauten x86 
 <2> für Aufbauten x64 
@@ -48,14 +48,14 @@ und **jom.exe** findet man unter:
 c:\Qt\Tools\QtCreator\bin\jom.exe
 -----
 
-`cmake` muss ebenso im Pfad vorhanden sein. Wenn es irgendwo anders installiert ist, können alternativ die Umgebungsvariablen `JOM_PATH` und `CMAKE_PREFIX_PATH` gesetzt werden.
+`cmake` muss ebenso im Pfad vorhanden sein. Wenn diese Tools irgendwo anders installiert sind, können alternativ die Umgebungsvariablen `JOM_PATH` und `CMAKE_PREFIX_PATH` gesetzt werden.
  
 Mit dieser Konfiguration können Sie nun entweder im 32-bit- oder 64-bit-Modus weiter bauen:
 
 [source,batch]
 -----
 cd build\cmake
-build_VC14.bat
+build_VC.bat
 -----
 
 oder:
@@ -63,7 +63,7 @@ oder:
 [source,batch]
 -----
 cd build\cmake
-build_VC14_x64.bat
+build_VC_x64.bat
 -----
 
 Für unterschiedliche Visual-Studio-Versionen oder MinGW kopieren Sie die Batch-Datei und bearbeiten die Pfade in den Batch-Dateien.
@@ -76,7 +76,7 @@ Die _MasterSim_-Bibliothek und die Simulationsprojekte hängen von folgenden Bib
 
 - IBK-Bibliothek (von IBK, TU Dresden, Germany)
 - IBKMK-Bibliothek (von IBK, TU Dresden, Germany), Untergruppe der Mathe-Kernel-Bibliothek der IBK
-- TiCPP-Bibliothek (eine angepasste Version, angeboten von IBK, TU Dresden, Germany)
+- TiCPP-Bibliothek (eine angepasste Version vom IBK, TU Dresden, Germany)
 - Minizip and zlib zum Entpacken von FMUs
 
 nur **MasterSimulatorUI**

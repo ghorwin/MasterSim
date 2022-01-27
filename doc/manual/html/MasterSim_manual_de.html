@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -443,9 +443,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>MasterSim Benutzerhandbuch</h1>
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
-<span id="email" class="email"><a href="mailto:andreas.nicolai@tu-dresden.de">andreas.nicolai@tu-dresden.de</a></span><br>
-<span id="revnumber">version 0.9.0,</span>
-<span id="revdate">Sep 2021</span>
+<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.de">andreas.nicolai@gmx.de</a></span><br>
+<span id="revnumber">version 0.9.4 (27.01.2022)</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Inhaltsverzeichnis</div>
@@ -2550,13 +2549,13 @@ Optionen:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="python"><span class="n">slave1</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>
-<span class="n">slave2</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>                <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="n">slave3</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">other</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>     <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="rouge highlight"><code data-lang="python"><span class="n">slave1</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>
+<span class="n">slave2</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>                <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="n">slave3</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">other</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>     <i class="conum" data-value="2"></i><b>(2)</b>
 
 <span class="c1"># von _MasterSim_ erzeugte Verzeichnisse
-</span><span class="o">.../</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span>
-<span class="o">.../</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1_2</span>                                <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</span><span class="p">...</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span>
+<span class="p">...</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1_2</span>                                <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -4236,8 +4235,8 @@ build\cmake\build_VC_x64.bat <i class="conum" data-value="2"></i><b>(2)</b></pre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>c:\Qt\5.11.3\msvc2015 <i class="conum" data-value="1"></i><b>(1)</b>
-c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
+<pre>C:\Qt\5.15.2\msvc2019 <i class="conum" data-value="1"></i><b>(1)</b>
+C:\Qt\5.15.2\msvc2019_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -4261,7 +4260,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><code>cmake</code> muss ebenso im Pfad vorhanden sein. Wenn es irgendwo anders installiert ist, können alternativ die Umgebungsvariablen <code>JOM_PATH</code> und <code>CMAKE_PREFIX_PATH</code> gesetzt werden.</p>
+<p><code>cmake</code> muss ebenso im Pfad vorhanden sein. Wenn diese Tools irgendwo anders installiert sind, können alternativ die Umgebungsvariablen <code>JOM_PATH</code> und <code>CMAKE_PREFIX_PATH</code> gesetzt werden.</p>
 </div>
 <div class="paragraph">
 <p>Mit dieser Konfiguration können Sie nun entweder im 32-bit- oder 64-bit-Modus weiter bauen:</p>
@@ -4269,7 +4268,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="batch"><span class="nb">cd</span> <span class="kd">build</span>\cmake
-<span class="kd">build_VC14</span>.bat</code></pre>
+<span class="kd">build_VC</span>.bat</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4278,7 +4277,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="batch"><span class="nb">cd</span> <span class="kd">build</span>\cmake
-<span class="kd">build_VC14_x64</span>.bat</code></pre>
+<span class="kd">build_VC_x64</span>.bat</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4303,7 +4302,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <p>IBKMK-Bibliothek (von IBK, TU Dresden, Germany), Untergruppe der Mathe-Kernel-Bibliothek der IBK</p>
 </li>
 <li>
-<p>TiCPP-Bibliothek (eine angepasste Version, angeboten von IBK, TU Dresden, Germany)</p>
+<p>TiCPP-Bibliothek (eine angepasste Version vom IBK, TU Dresden, Germany)</p>
 </li>
 <li>
 <p>Minizip and zlib zum Entpacken von FMUs</p>
@@ -4418,8 +4417,8 @@ bin/release      - standardisierter Ausgabepfad für Erstellung mit cmake</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.9.0<br>
-Last updated 2021-09-13 08:00:58 +0200
+Version 0.9.4 (27.01.2022)<br>
+Last updated 2022-01-27 16:02:37 +0100
 </div>
 </div>
 <style>
@@ -4529,6 +4528,10 @@ pre.rouge .mo {
 pre.rouge .m, pre.rouge .mb, pre.rouge .mx {
   color: #009999;
 }
+pre.rouge .sa {
+  color: #000000;
+  font-weight: bold;
+}
 pre.rouge .sb {
   color: #d14;
 }
@@ -4562,7 +4565,7 @@ pre.rouge .s1 {
 pre.rouge .ss {
   color: #990073;
 }
-pre.rouge .s, pre.rouge .sa, pre.rouge .dl {
+pre.rouge .s, pre.rouge .dl {
   color: #d14;
 }
 pre.rouge .na {

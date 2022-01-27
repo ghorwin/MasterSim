@@ -19,8 +19,12 @@ import os
 import glob
 import sys
 import ntpath
+import datetime
 
 from print_funcs import *
+
+from colorama import init
+init()
 
 PRINT_FILE_SUFFIX = "-print"
 
@@ -35,10 +39,18 @@ def processAdoc(fpath, mode, scriptPath):
 		fobj.close
 		del fobj
 		
+		
 		imagesdir = ""
 		# now process line by line, search for :imagesdir: property
 		for i in range(len(lines)):
 			line = lines[i]
+
+			# specialized handling of date tag
+			pos = line.find("date_on_line_above")
+			if pos != -1:
+				version = line[2:pos].strip() # ignore first two // characters and extract version from line "// 0.2.2 date_on_line_above"
+				lines[i-1] = version + " (" + datetime.datetime.today().strftime('%d.%m.%Y') + ')\n'
+
 			pos = line.find(":imagesdir:")
 			if pos != -1:
 				imagesdir = line[11:].strip()

@@ -1,7 +1,8 @@
 MasterSim User Guide
 ====================
-Andreas Nicolai <andreas.nicolai@tu-dresden.de>
-v0.9.0, Sep 2021
+Andreas Nicolai <andreas.nicolai@gmx.de>
+v0.9.4 (27.01.2022)
+// v0.9.4 date_on_line_above
 :Author Initials: AN
 :toc: left
 :toclevels: 3
@@ -12,6 +13,8 @@ v0.9.0, Sep 2021
 :source-highlighter: rouge
 :rouge-style: custom
 :title-page:
+:stylesdir: ../css
+//:stylesheet: roboto_ubuntu.css
 
 This manual is available as:
 
