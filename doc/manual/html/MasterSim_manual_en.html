@@ -443,9 +443,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>MasterSim User Guide</h1>
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
-<span id="email" class="email"><a href="mailto:andreas.nicolai@tu-dresden.de">andreas.nicolai@tu-dresden.de</a></span><br>
-<span id="revnumber">version 0.9.0,</span>
-<span id="revdate">Sep 2021</span>
+<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.de">andreas.nicolai@gmx.de</a></span><br>
+<span id="revnumber">version 0.9.4 (27.01.2022)</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -610,14 +609,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_helpful_stuff_related_to_development_on_linux">7.3. Helpful stuff related to development on Linux</a>
 <ul class="sectlevel3">
 <li><a href="#_checking_symbols_in_shared_libraries">7.3.1. Checking symbols in shared libraries</a></li>
-<li><a href="#_building_mastersim_for_fmu_debugging">7.3.2. Building MasterSim for FMU Debugging</a></li>
-<li><a href="#_fmu_debugging">7.3.3. FMU Debugging</a></li>
 </ul>
 </li>
-<li><a href="#_inside_mastersim">7.4. Inside MasterSim</a>
+<li><a href="#_debugging_mastersim_and_fmus">7.4. Debugging MasterSim and FMUs</a>
 <ul class="sectlevel3">
-<li><a href="#_data_types">7.4.1. Data Types</a></li>
-<li><a href="#_connection_graph_and_variable_mapping">7.4.2. Connection Graph and Variable Mapping</a></li>
+<li><a href="#_background_on_shared_library_handling_on_linux">7.4.1. Background on shared library handling on Linux</a></li>
+<li><a href="#_developingdebugging_mastersim">7.4.2. Developing/Debugging MasterSim</a></li>
+<li><a href="#_developingdebugging_fmus">7.4.3. Developing/Debugging FMUs</a></li>
+<li><a href="#_fmu_debugging_step_by_step_guide">7.4.4. FMU Debugging Step-by-Step Guide</a></li>
+</ul>
+</li>
+<li><a href="#_inside_mastersim">7.5. Inside MasterSim</a>
+<ul class="sectlevel3">
+<li><a href="#_data_types">7.5.1. Data Types</a></li>
+<li><a href="#_connection_graph_and_variable_mapping">7.5.2. Connection Graph and Variable Mapping</a></li>
 </ul>
 </li>
 </ul>
@@ -2470,13 +2475,13 @@ Options:
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="python"><span class="n">slave1</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>
-<span class="n">slave2</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>                <i class="conum" data-value="1"></i><b>(1)</b>
-<span class="n">slave3</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">other</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="o">.</span><span class="n">fmu</span>     <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="rouge highlight"><code data-lang="python"><span class="n">slave1</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>
+<span class="n">slave2</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>                <i class="conum" data-value="1"></i><b>(1)</b>
+<span class="n">slave3</span> <span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">other</span><span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span><span class="p">.</span><span class="n">fmu</span>     <i class="conum" data-value="2"></i><b>(2)</b>
 
 <span class="c1"># _MasterSim_ generates directories
-</span><span class="o">.../</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span>
-<span class="o">.../</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1_2</span>                                <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</span><span class="p">...</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1</span>
+<span class="p">...</span><span class="o">/</span><span class="n">fmus</span><span class="o">/</span><span class="n">s1_2</span>                                <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3934,8 +3939,11 @@ FeedthroughTest.vc14_win64</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="bash"><span class="nb">cd </span>build/cmake
-./build.sh</code></pre>
+./build.sh <span class="o">[</span>release] <span class="o">[</span>&lt;number of CPUs&gt;]</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>See <code>build.sh</code> for more command options. By default, binaries are build in <em>release with debug symbols</em> mode.</p>
 </div>
 <div class="paragraph">
 <p>In case of missing dependencies (zlib is required) you may want to install the corresponding development packages.</p>
@@ -3972,8 +3980,8 @@ build\cmake\build_VC_x64.bat <i class="conum" data-value="2"></i><b>(2)</b></pre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>c:\Qt\5.11.3\msvc2015 <i class="conum" data-value="1"></i><b>(1)</b>
-c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
+<pre>C:\Qt\5.15.2\msvc2019 <i class="conum" data-value="1"></i><b>(1)</b>
+C:\Qt\5.15.2\msvc2019_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3989,7 +3997,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </table>
 </div>
 <div class="paragraph">
-<p>and <strong>jom.exe</strong> is found at:</p>
+<p>and <strong>jom.exe</strong> is expected at:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3997,7 +4005,10 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Also, <code>cmake</code> must be in the path. If installed elsewhere, the environment variables <code>JOM_PATH</code> and <code>CMAKE_PREFIX_PATH</code> can be set alternatively (see build-batch files).</p>
+<p>Also, <code>cmake</code> must be in the path.</p>
+</div>
+<div class="paragraph">
+<p>If Qt or JOM is installed elsewhere, the environment variables <code>JOM_PATH</code> and <code>CMAKE_PREFIX_PATH</code> can be set alternatively (see build-batch files).</p>
 </div>
 <div class="paragraph">
 <p>With this setup, you can now build either in 32-bit or 64-bit mode:</p>
@@ -4005,7 +4016,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="batch"><span class="nb">cd</span> <span class="kd">build</span>\cmake
-<span class="kd">build_VC14</span>.bat</code></pre>
+<span class="kd">build_VC</span>.bat</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4014,7 +4025,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="rouge highlight"><code data-lang="batch"><span class="nb">cd</span> <span class="kd">build</span>\cmake
-<span class="kd">build_VC14_x64</span>.bat</code></pre>
+<span class="kd">build_x64</span>.bat</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4036,7 +4047,7 @@ c:\Qt\5.11.3\msvc2015_64 <i class="conum" data-value="2"></i><b>(2)</b></pre>
 <p>IBK library (from IBK, TU Dresden, Germany)</p>
 </li>
 <li>
-<p>IBKMK library (from IBK, TU Dresden, Germany), subset of the math-kernel library from IBK</p>
+<p>IBKMK library (from IBK, TU Dresden, Germany)</p>
 </li>
 <li>
 <p>TiCPP library (adapted version provided by IBK, TU Dresden, Germany)</p>
@@ -4109,12 +4120,12 @@ bin/release      - default output path for cmake-builds</pre>
 <p>Basic steps: Open a console window, setup VC build environment and all required paths, then use cmake with the Visual Studio makefile generator.</p>
 </div>
 <div class="paragraph">
-<p>You can re-use the <code>build.bat</code> or <code>built_x64.bat</code> files for that purpose. Open a command line window and change into the directory <code>build/cmake</code>.</p>
+<p>You can re-use the <code>build.bat</code> or <code>build_x64.bat</code> files for that purpose. Open a command line window and change into the directory <code>build/cmake</code>.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>start either  <code>build.bat</code> or <code>built_x64.bat</code> and press Ctrl+C once building starts.</p>
+<p>start either  <code>build.bat</code> or <code>build_x64.bat</code> and press Ctrl+C once building starts.</p>
 </li>
 <li>
 <p>leave subdirectory and create a new subdirectory vc:</p>
@@ -4135,12 +4146,8 @@ bin/release      - default output path for cmake-builds</pre>
 <pre class="rouge highlight"><code data-lang="batch"><span class="o">&gt;</span> <span class="kd">cmake</span><span class="na">-gui </span>..</code></pre>
 </div>
 </div>
-</div>
-<div class="sect4">
-<h5 id="_prepared_vc_project_files">Prepared VC project files</h5>
 <div class="paragraph">
-<p>You can also open the VC solution files in <code>build\VC14\MasterSim.sln</code>.
-<strong>Note</strong>: You have to build first the cmake to configure the zlib <code>zconf.h</code> file!</p>
+<p>Afterwards you can open the generated <code>.sln</code> file and start debugging (development is not really recommended in Visual Studio).</p>
 </div>
 </div>
 </div>
@@ -4154,7 +4161,8 @@ bin/release      - default output path for cmake-builds</pre>
 <h4 id="_checking_symbols_in_shared_libraries">7.3.1. Checking symbols in shared libraries</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="rouge highlight"><code data-lang="bash">objdump <span class="nt">-t</span> &lt;shared_library&gt;</code></pre>
+<pre class="rouge highlight"><code data-lang="bash">objdump <span class="nt">-t</span> &lt;shared_library&gt;
+nm <span class="o">[</span><span class="nt">-CD</span><span class="o">]</span> &lt;shared library&gt;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4166,94 +4174,123 @@ bin/release      - default output path for cmake-builds</pre>
 </div>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_debugging_mastersim_and_fmus">7.4. Debugging MasterSim and FMUs</h3>
 <div class="sect3">
-<h4 id="_building_mastersim_for_fmu_debugging">7.3.2. Building MasterSim for FMU Debugging</h4>
+<h4 id="_background_on_shared_library_handling_on_linux">7.4.1. Background on shared library handling on Linux</h4>
 <div class="paragraph">
-<p><strong>Problem</strong>: <em>MasterSim</em> uses the IBK library, and by default, when developing in Qt Creator, this library is dynamically linked. When now <em>MasterSim</em> loads an FMU library at runtime, which <em>also</em> depends on the IBK library, any duplicate symbols/functions are not imported, but instead the FMU library will use the routines already linked into <em>MasterSim</em>.</p>
+<p><em>MasterSimulator</em> can be built in Qt Creator in debug mode. By default the qmake projects will create shared libraries for all dependent libraries like IBK, BlockMod, TiCPP etc.</p>
 </div>
 <div class="paragraph">
-<p>This is not a problem if:</p>
+<p>Slaves can also be built to link against their dependency as shared libraries. This happens, for example, when typical IBK-based projects are also built in debug mode.</p>
+</div>
+<div class="paragraph">
+<p>Now, since <em>MasterSim</em> and FMU slaves are developed seperately, it is likely that the version of common libraries like IBK, BlockMod, IBKMK etc. differ. This then becomes a problem!</p>
+</div>
+<div class="sect4">
+<h5 id="_dynamic_linking_against_shared_libraries_and_ld_library_path">Dynamic linking against shared libraries and LD_LIBRARY_PATH</h5>
+<div class="paragraph">
+<p>When launching <em>MasterSimulator</em>, it will search for dynamic libraries like <code>libIBK.so</code> using the environment variable <code>LD_LIBRARY_PATH</code>. Also, when the dynamic library of the slave is loaded, again its shared libraries need to be located. Their paths should also be present in <code>LD_LIBRARY_PATH</code>. However, if the path now includes two locations, each containing a <em>different</em> version of the <code>libIBK.so</code>, the first one found is linked against <em>both</em> <em>MasterSimulator</em> and the slave library. Naturally, this will likely cause undesired behavior and usually result in segfaults.</p>
+</div>
+<div class="paragraph">
+<p>The same problem may occur even if <em>MasterSimulator</em> is linked statically against its libraries, yet two different FMU slaves are linked dynamically against different versions of the same library (e.g. DELPHIN against IBK 4.9.x and NANDRAD against IBK 5.0.x). Unless the commonly used library uses semantic versioning and stable APIs (for example, library versions with same major and minor version <em>always</em> have identical memory layouts and compilation settings, and thus can be freely exchanged), one has to ensure that only one shared library is in use.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Rule of thumb: Avoid dynamic linking completely or use dynamic linking only for one library or the master.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Basically, one needs to ensure that only one set of shared libraries is being used. There are different options, depending on which part of the software you&#8217;d like to develop/debug.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_developingdebugging_mastersim">7.4.2. Developing/Debugging MasterSim</h4>
+<div class="paragraph">
+<p>When developing MasterSim it is best to compile all FMUs to link statically against their dependencies:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>the IBK library versions are exactly the same</p>
+<p><em>MasterSim</em> can be developed on Qt Creator in Debug mode and its dependent libraries as shared libs; <code>LD_LIBRARY_PATH</code> must hold the location of these libraries</p>
 </li>
 <li>
-<p>both, <em>MasterSim</em> and the FMU are built the same (either debug or release mode)</p>
+<p>FMUs are created with CMake either in release, reldeb or debug mode, but statically linked in any case</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>In other cases this leads to crashes while debugging.</p>
 </div>
-<div class="paragraph">
-<p><strong>Solution</strong>: You need to link the IBK library statically into <em>MasterSim</em>, but also all other libraries that depend on the IBK library. For convenience, you can just modify the qmake pro configuration by opening the file <code>externals/IBK/projects/Qt/CONFIG.pri</code> and enable the line:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="rouge highlight"><code>OPTIONS += FMU_Debugging</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Now delete all already generated shared lib files from folder <code>externals/lib_x64</code> and <code>lib_x64</code>, rebuild all and you are ready to go.</p>
+<div class="sect3">
+<h4 id="_developingdebugging_fmus">7.4.3. Developing/Debugging FMUs</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><em>MasterSim</em> should be compiled with CMake either in release, reldeb or debug mode, and statically linked against its libraries</p>
+</li>
+<li>
+<p>other FMUs should be linked statically</p>
+</li>
+<li>
+<p>the FMU to be developed can be opened in Qt Creator and linked dynamically against its dependent libraries; <code>LD_LIBRARY_PATH</code> must hold the location of these libraries</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_fmu_debugging">7.3.3. FMU Debugging</h4>
+<h4 id="_fmu_debugging_step_by_step_guide">7.4.4. FMU Debugging Step-by-Step Guide</h4>
 <div class="paragraph">
 <p>Assuming you develop the shared FMU library with Qt Creator, you can follow this procedure:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>build your FMU either in debug more or release-with-debug-symbols, you can use also an external build tool chain, for example cmake</p>
+<p>build your FMU either in debug mode or release-with-debug-symbols, you can use also an external build tool chain, for example cmake; you can also use an out-of-date version of the FMU library as it will be replaced later anyway</p>
 </li>
 <li>
-<p>compose your FMU and zip it into the fmu archive (you need to do this only once); MIND: the shared library within the FMU must be the one created by Qt Creator.</p>
+<p>compose your FMU and zip it into the fmu archive (you need to do this only once)</p>
 </li>
 <li>
 <p>create your msim test project</p>
 </li>
 <li>
-<p>in Qt Creator, open and activate the MasterSimulator project, select the msim project as command line argument and start debugging - it will extract the fmus and attach to the shared library functions</p>
+<p>run <em>MasterSimulator</em> once with the project; it will create the basic directory structure and extract the FMU library into the <code>project/fmus/xxx/binaries/linux64</code> directory</p>
 </li>
-</ol>
+<li>
+<p>now create a symlink to the shared library built by Qt Creator that overwrites the .so file there:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="rouge highlight"><code>ln -s /path/to/FMU/bin/debug_x64/libFMUSlaveName.so.1.0.0 FMUSlaveName.so</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>You can now either debug and step into the FMU fmi2xxx functions, or open the source files that you used for creating the FMU and set breakpoints. Qt Creator will automatically pick that up and you can debug/step through the master and the FMUs alike.</p>
+<p>where <code>FMUSlaveName.so</code> is the name of the shared lib inside <code>binaries/linux64</code></p>
 </div>
-<div class="sect4">
-<h5 id="_example_when_debugging_separate_fmu_project_which_is_statically_built_in_release_mode_but_dynamically_linked_to_other_libs_during_development">Example when debugging separate FMU project which is statically built in release mode, but dynamically linked to other libs during development</h5>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The FMU is created (first with the statically linked FMU <code>Test.so</code>) and the MasterSim project is set up</p>
 </li>
 <li>
-<p><em>MasterSim</em> is run once and the directory structure is created, the FMU is extracted and started without debugger attached.</p>
+<p>in Qt Creator, configure the debugging session by specifying <em>MasterSimulator</em> as executable, setting the commandline to contain <code>/path/to/project.msim --skip-unzip</code> and set the LD_LIBRARY_PATH environment variable to point to the directory containing any shared libs the FMU links against.</p>
 </li>
 <li>
-<p>Now in  Qt Creator the  FMU development project builds <code>libTest.so.2.0.1</code> which links to other dynamic libraries in the development directory.</p>
-</li>
-<li>
-<p>The FMU file is renamed to <code>Test.so</code> and copied into the extracted fmu directory, hereby overwriting the statically linked FMU</p>
-</li>
-<li>
-<p>The library search path to the other dynamic libraries that <code>libTest.so.2.0.1</code> links to is added to the MasterSim&#8217;s project environment <code>LD_LIBRARY_PATH</code> variable</p>
-</li>
-<li>
-<p><code>MasterSimulator</code> is started in debugging mode using the <code>--skip-unzip</code> command line option</p>
+<p>Start debugging/FMU development&#8230;&#8203;</p>
 </li>
 </ol>
-</div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_inside_mastersim">7.4. Inside MasterSim</h3>
+<h3 id="_inside_mastersim">7.5. Inside MasterSim</h3>
 <div class="sect3">
-<h4 id="_data_types">7.4.1. Data Types</h4>
+<h4 id="_data_types">7.5.1. Data Types</h4>
 <div class="paragraph">
 <p>In simulations with mixed FMUs (v1 and v2) data types should match. Also, the default type-headers are the same for both versions.</p>
 </div>
@@ -4278,7 +4315,7 @@ bin/release      - default output path for cmake-builds</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_connection_graph_and_variable_mapping">7.4.2. Connection Graph and Variable Mapping</h4>
+<h4 id="_connection_graph_and_variable_mapping">7.5.2. Connection Graph and Variable Mapping</h4>
 <div class="paragraph">
 <p>Variables can be uniquely identified by</p>
 </div>
@@ -4432,8 +4469,8 @@ The master also holds for each data type a vector of connection variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.9.0<br>
-Last updated 2021-09-13 08:00:58 +0200
+Version 0.9.4 (27.01.2022)<br>
+Last updated 2022-01-27 15:55:33 +0100
 </div>
 </div>
 <style>
@@ -4543,6 +4580,10 @@ pre.rouge .mo {
 pre.rouge .m, pre.rouge .mb, pre.rouge .mx {
   color: #009999;
 }
+pre.rouge .sa {
+  color: #000000;
+  font-weight: bold;
+}
 pre.rouge .sb {
   color: #d14;
 }
@@ -4576,7 +4617,7 @@ pre.rouge .s1 {
 pre.rouge .ss {
   color: #990073;
 }
-pre.rouge .s, pre.rouge .sa, pre.rouge .dl {
+pre.rouge .s, pre.rouge .dl {
   color: #d14;
 }
 pre.rouge .na {

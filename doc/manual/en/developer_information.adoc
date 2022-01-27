@@ -27,7 +27,7 @@ Convenience scripts are included for building with Visual Studio 2015 and Qt5 (f
 The files are located in the `build/cmake` directory:
 
 -----
-build\cmake\build_VC.bat
+build\cmake\build_VC.bat <1>
 build\cmake\build_VC_x64.bat <2>
 -----
 <1> for x86 builds
