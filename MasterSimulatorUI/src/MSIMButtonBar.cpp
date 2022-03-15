@@ -56,7 +56,7 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	setupToolButton(toolButtonLoad, ":/gfx/views/32x32/fileopen_32x32.png", tr("Loads a project (Ctrl + O)."));
 	setupToolButton(toolButtonSave, ":/gfx/views/32x32/filesave_32x32.png", tr("Saves current project (Ctrl + S)."));
 	setupToolButton(toolButtonAnalyze, ":/gfx/views/32x32/filesave_32x32.png", tr("Saves current project (Ctrl + S)."));
-	setupToolButton(toolButtonLaunchPostProc, ":/gfx/views/32x32/postproc_32x32.png", tr("Opens Post-Processing."));
+	setupToolButton(toolButtonLaunchPostProc, ":/gfx/views/32x32/PostProcApp_32x32.png", tr("Opens Post-Processing."));
 
 	setupToolButton(toolButtonEditFMUs, ":/gfx/views/32x32/MasterSim_Simulators_32x32.png", tr("Switches to slave edit mode."));
 	setupToolButton(toolButtonEditConnections, ":/gfx/views/32x32/MasterSim_Connections_32x32.png", tr("Switches to connection edit mode."));
