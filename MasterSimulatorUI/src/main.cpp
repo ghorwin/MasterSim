@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	qApp->setApplicationName(ProgramVersionName);
-	qApp->setWindowIcon(QIcon(":/gfx/MasterSimulator_48x48.png"));
+	qApp->setWindowIcon(QIcon(":/gfx/logo/Icon_64.png"));
 
 	// *** Create and initialize setting object ***
 	MSIMSettings settings(ORG_NAME, ProgramVersionName);
