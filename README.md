@@ -16,7 +16,7 @@ We have continuous integration scripts running (build-test of all C/C++ code). F
 
 | Test | Result|
 |-----|-----|
-| CI - Linux 64-bit (Ubuntu 20.04.3 LTS; Qt 12.9) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-Linux-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-Linux-MasterSim/)    |
+| CI - Linux 64-bit (Ubuntu 20.04.3 LTS; Qt 5.12.9) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-Linux-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-Linux-MasterSim/)    |
 | CI - Windows 64-bit (Win10, VC 2019, Qt 5.15.2) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR64-Win-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR64-Win-MasterSim/)   |
 | CI - MacOS 64-bit (10.11 "El Capitan", Qt 5.11.3) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-IOS-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-IOS-MasterSim/) |
 
