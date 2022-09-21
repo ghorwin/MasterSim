@@ -1,6 +1,6 @@
 MasterSim User Guide
 ====================
-Andreas Nicolai <andreas.nicolai@gmx.de>
+Andreas Nicolai <andreas.nicolai@gmx.net>
 v0.9.4 (27.01.2022)
 // v0.9.4 date_on_line_above
 :Author Initials: AN
