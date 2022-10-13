@@ -19,25 +19,25 @@ SUBDIRS += MasterSim \
 
 win32|macx {
 	SUBDIRS += zlib
-	zlib.file = ../../externals/zlib/projects/Qt/zlib.pro
+	zlib.file = externals/zlib/zlib.pro
 }
 
 # where to find the sub projects
-MasterSimulator.file = ../../MasterSimulator/projects/Qt/MasterSimulator.pro
-MasterSim.file = ../../MasterSim/projects/Qt/MasterSim.pro
-MasterSimulatorUI.file = ../../MasterSimulatorUI/projects/Qt/MasterSimulatorUI.pro
+#MasterSimulator.file = MasterSimulator/MasterSimulator.pro
+#MasterSim.file = MasterSim/MasterSim.pro
+#MasterSimulatorUI.file = MasterSimulatorUI/MasterSimulatorUI.pro
 
-BlockMod.file = ../../externals/BlockMod/projects/Qt/BlockMod.pro
-IBK.file = ../../externals/IBK/projects/Qt/IBK.pro
-IBKMK.file = ../../externals/IBKMK/projects/Qt/IBKMK.pro
-minizip.file = ../../externals/minizip/projects/Qt/minizip.pro
-TiCPP.file = ../../externals/TiCPP/projects/Qt/TiCPP.pro
+BlockMod.file = externals/BlockMod/BlockMod.pro
+IBK.file = externals/IBK/IBK.pro
+IBKMK.file = externals/IBKMK/IBKMK.pro
+minizip.file = externals/minizip/minizip.pro
+TiCPP.file = externals/TiCPP/TiCPP.pro
 
-FMUTestMath003Part1.file = ../../TestFMUs/Math003Part1/projects/Qt/Math003Part1.pro
-FMUTestMath003Part2.file = ../../TestFMUs/Math003Part2/projects/Qt/Math003Part2.pro
-FMUTestMath003Part3.file = ../../TestFMUs/Math003Part3/projects/Qt/Math003Part3.pro
-FMUTestLotkaVolterraPrey.file = ../../TestFMUs/LotkaVolterraPrey/projects/Qt/LotkaVolterraPrey.pro
-FMUTestLotkaVolterraPredator.file = ../../TestFMUs/LotkaVolterraPredator/projects/Qt/LotkaVolterraPredator.pro
+FMUTestMath003Part1.file = TestFMUs/Math003Part1/Math003Part1.pro
+FMUTestMath003Part2.file = TestFMUs/Math003Part2/Math003Part2.pro
+FMUTestMath003Part3.file = TestFMUs/Math003Part3/Math003Part3.pro
+FMUTestLotkaVolterraPrey.file = TestFMUs/LotkaVolterraPrey/LotkaVolterraPrey.pro
+FMUTestLotkaVolterraPredator.file = TestFMUs/LotkaVolterraPredator/LotkaVolterraPredator.pro
 
 # dependencies
 MasterSim.depends = IBK IBKMK TiCPP minizip
@@ -58,5 +58,4 @@ FMUTestMath003Part2.depends = MasterSimulator
 FMUTestMath003Part3.depends = MasterSimulator
 FMUTestLotkaVolterraPrey.depends = MasterSimulator
 FMUTestLotkaVolterraPredator.depends = MasterSimulator
-
 

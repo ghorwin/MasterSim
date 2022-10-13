@@ -12,7 +12,7 @@
 # see https://github.com/ghorwin/FMICodeGenerator/blob/master/LICENSE for details.
 
 
-TARGET = FourVars
+TARGET = Pipe
 TEMPLATE = lib
 
 # no GUI
@@ -35,7 +35,7 @@ else {
 	}
 }
 
-#DEFINES += FMI2_FUNCTION_PREFIX=FourVars_
+#DEFINES += FMI2_FUNCTION_PREFIX=Pipe_
 
 unix|mac {
 	VER_MAJ = 1
@@ -44,19 +44,19 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-INCLUDEPATH = ../../src
+INCLUDEPATH = src
 
 SOURCES += \
-	../../src/fmi2common/fmi2Functions.cpp \
-	../../src/fmi2common/InstanceData.cpp \
-	../../src/FourVars.cpp
+	src/fmi2common/fmi2Functions.cpp \
+	src/fmi2common/InstanceData.cpp \
+	src/Pipe.cpp
 
 HEADERS += \
-	../../src/fmi2common/fmi2Functions.h \
-	../../src/fmi2common/fmi2Functions_complete.h \
-	../../src/fmi2common/fmi2FunctionTypes.h \
-	../../src/fmi2common/fmi2TypesPlatform.h \
-	../../src/fmi2common/InstanceData.h \
-	../../src/FourVars.h
+	src/fmi2common/fmi2Functions.h \
+	src/fmi2common/fmi2Functions_complete.h \
+	src/fmi2common/fmi2FunctionTypes.h \
+	src/fmi2common/fmi2TypesPlatform.h \
+	src/fmi2common/InstanceData.h \
+	src/Pipe.h
 
 

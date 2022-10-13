@@ -6,7 +6,7 @@ TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
-include( ../../../IBK/projects/Qt/IBK.pri )
+include( ../IBK/IBK.pri )
 
 # finally we setup our custom library specific things
 # like version number etc., we also may reset all
@@ -26,26 +26,26 @@ win32 {
 }
 
 INCLUDEPATH += \
-	../../../zlib/src
+	../zlib/src
 
 SOURCES += \
-  ../../src/ioapi.c \
-  ../../src/miniunz.c \
-  ../../src/minizip.c \
-  ../../src/unzip.c \
-  ../../src/zip.c
+  src/ioapi.c \
+  src/miniunz.c \
+  src/minizip.c \
+  src/unzip.c \
+  src/zip.c
 
 win32 {
-	SOURCES += ../../src/iowin32.c
+	SOURCES += src/iowin32.c
 }
 
 HEADERS += \
-	../../src/crypt.h \
-	../../src/ioapi.h \
-	../../src/miniunz.h \
-	../../src/minizip.h \
-	../../src/mztools.h \
-	../../src/unzip.h \
-	../../src/zip.h
+	src/crypt.h \
+	src/ioapi.h \
+	src/miniunz.h \
+	src/minizip.h \
+	src/mztools.h \
+	src/unzip.h \
+	src/zip.h
 
 

@@ -14,7 +14,7 @@ TEMPLATE = lib
 
 # this pri must be sourced from all our libraries,
 # it contains all functions defined for casual libraries
-include( ../../../IBK/projects/Qt/IBK.pri )
+include( ../IBK/IBK.pri )
 
 # finally we setup our custom library specfic things
 # like version number etc., we also may reset all
@@ -26,33 +26,33 @@ unix|mac {
 }
 
 INCLUDEPATH = \
-		../../src/
+		src/
 
 SOURCES += \
-	../../src/adler32.c \
-	../../src/compress.c \
-	../../src/crc32.c \
-	../../src/deflate.c \
-	../../src/gzclose.c \
-	../../src/gzlib.c \
-	../../src/gzread.c \
-	../../src/gzwrite.c \
-	../../src/inflate.c \
-	../../src/infback.c \
-	../../src/inftrees.c \
-	../../src/inffast.c \
-	../../src/trees.c \
-	../../src/uncompr.c \
-	../../src/zutil.c
+	src/adler32.c \
+	src/compress.c \
+	src/crc32.c \
+	src/deflate.c \
+	src/gzclose.c \
+	src/gzlib.c \
+	src/gzread.c \
+	src/gzwrite.c \
+	src/inflate.c \
+	src/infback.c \
+	src/inftrees.c \
+	src/inffast.c \
+	src/trees.c \
+	src/uncompr.c \
+	src/zutil.c
 
 HEADERS += \
-	../../src/crc32.h \
-	../../src/deflate.h \
-	../../src/gzguts.h \
-	../../src/inffast.h \
-	../../src/inffixed.h \
-	../../src/inflate.h \
-	../../src/inftrees.h \
-	../../src/trees.h \
-	../../src/zlib.h \
-	../../src/zutil.h
+	src/crc32.h \
+	src/deflate.h \
+	src/gzguts.h \
+	src/inffast.h \
+	src/inffixed.h \
+	src/inflate.h \
+	src/inftrees.h \
+	src/trees.h \
+	src/zlib.h \
+	src/zutil.h
