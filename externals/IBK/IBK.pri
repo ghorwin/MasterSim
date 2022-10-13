@@ -29,6 +29,12 @@ CONFIG(release, debug|release) {
 	DEFINES += NDEBUG
 }
 
+# we expect IBK lib and this qmake to be located in <reporoot>/externals/IBK, so we
+# set the define REPOROOT to hold the path to <reporoot>
+DEFINES += REPOROOT=\\\"$$PWD/../..\\\"
+
+message($$DEFINES)
+
 linux-g++ | linux-g++-64 | macx {
 
 	# our code doesn't check errno after calling math functions

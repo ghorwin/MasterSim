@@ -10,6 +10,11 @@
 QString MSIMDirectories::resourcesRootDir() {
 	QString installPath = qApp->applicationDirPath();
 
+	// override install path (exe-file location) if REPOROOT path is given
+#ifdef REPOROOT
+	installPath = QString(REPOROOT) += "/bin/debug";
+#endif
+
 #if defined(IBK_DEPLOYMENT)
 	// deployment mode
 
@@ -50,7 +55,7 @@ QString MSIMDirectories::resourcesRootDir() {
 	// in development mode, we have the resources outside the bundle
 	return installPath + "/../../../../MasterSimulatorUI/resources";
 #elif defined(Q_OS_UNIX)
-	return installPath + "/../../MasterSimulatorUI/resources";
+	return QFileInfo(installPath + "/../../MasterSimulatorUI/resources").absoluteFilePath();
 #endif
 
 #endif // IBK_DEPLOYMENT
@@ -62,7 +67,7 @@ QString MSIMDirectories::translationsFilePath(const QString & langID) {
 	QString installPath = qApp->applicationDirPath();
 	return installPath + QString("/../share/locale/%1/LC_MESSAGES/MasterSimulatorUI.qm").arg(langID);
 #else // IBK_BUILDING_DEBIAN_PACKAGE
-	return resourcesRootDir() + QString("/translations/MasterSimulatorUI_%1.qm").arg(langID);
+	return QFileInfo(resourcesRootDir() + QString("/translations/MasterSimulatorUI_%1.qm").arg(langID)).absoluteFilePath();
 #endif // IBK_BUILDING_DEBIAN_PACKAGE
 }
 
