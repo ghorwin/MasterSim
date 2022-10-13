@@ -6,14 +6,13 @@ TARGET = MasterSimulator
 TEMPLATE = app
 
 # this pri must be sourced from all our applications
-include( ../../../externals/IBK/projects/Qt/IBK.pri )
+include( ../externals/IBK/IBK.pri )
 
 QT -= core gui
 CONFIG += console
 CONFIG -= app_bundle
 
-LIBS += -L../../../lib$${DIR_PREFIX} \
-	-L../../../externals/lib$${DIR_PREFIX} \
+LIBS += -L../lib \ # for our top-level MasterSim lib
 	-lMasterSim \
 	-lminizip \
 	-lIBKMK \
@@ -33,9 +32,9 @@ win32 {
 }
 
 INCLUDEPATH = \
-	../../../MasterSim/src \
-	../../../externals/IBK/src
+	../MasterSim/src \
+	../externals/IBK/src
 
 SOURCES += \
-	../../src/main.cpp
+	src/main.cpp
 

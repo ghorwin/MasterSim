@@ -12,7 +12,7 @@
 # see https://github.com/ghorwin/FMICodeGenerator/blob/master/LICENSE for details.
 
 
-TARGET = Valve
+TARGET = Pump
 TEMPLATE = lib
 
 # no GUI
@@ -35,7 +35,7 @@ else {
 	}
 }
 
-#DEFINES += FMI2_FUNCTION_PREFIX=Valve_
+#DEFINES += FMI2_FUNCTION_PREFIX=Pump_
 
 unix|mac {
 	VER_MAJ = 1
@@ -44,19 +44,21 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-INCLUDEPATH = ../../src
+INCLUDEPATH = src
 
 SOURCES += \
-	../../src/fmi2common/fmi2Functions.cpp \
-	../../src/fmi2common/InstanceData.cpp \
-	../../src/Valve.cpp
+	src/IBK_LinearSpline.cpp \
+	src/fmi2common/fmi2Functions.cpp \
+	src/fmi2common/InstanceData.cpp \
+	src/Pump.cpp
 
 HEADERS += \
-	../../src/fmi2common/fmi2Functions.h \
-	../../src/fmi2common/fmi2Functions_complete.h \
-	../../src/fmi2common/fmi2FunctionTypes.h \
-	../../src/fmi2common/fmi2TypesPlatform.h \
-	../../src/fmi2common/InstanceData.h \
-	../../src/Valve.h
+	src/IBK_LinearSpline.h \
+	src/fmi2common/fmi2Functions.h \
+	src/fmi2common/fmi2Functions_complete.h \
+	src/fmi2common/fmi2FunctionTypes.h \
+	src/fmi2common/fmi2TypesPlatform.h \
+	src/fmi2common/InstanceData.h \
+	src/Pump.h
 
 

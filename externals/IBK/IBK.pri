@@ -343,18 +343,6 @@ contains( OPTIONS, gprof ) {
 }
 
 
-# check if 32 or 64 bit version and set prefix variable for using in output paths
-greaterThan(QT_MAJOR_VERSION, 4) {
-	contains(QT_ARCH, i386): {
-		DIR_PREFIX =
-	} else {
-		DIR_PREFIX = _x64
-	}
-} else {
-	DIR_PREFIX =
-}
-
-
 #
 # *** Applications ***
 #
@@ -364,12 +352,12 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 equals(TEMPLATE,app) {
 
 	CONFIG(debug, debug|release) {
-		OBJECTS_DIR = debug$${DIR_PREFIX}
-		DESTDIR = ../../../bin/debug$${DIR_PREFIX}
+		OBJECTS_DIR = debug
+		DESTDIR = ../bin/debug
 	}
 	else {
-		OBJECTS_DIR = release$${DIR_PREFIX}
-		DESTDIR = ../../../bin/release$${DIR_PREFIX}
+		OBJECTS_DIR = release
+		DESTDIR = ../bin/release
 	}
 
 	MOC_DIR = moc
@@ -392,8 +380,8 @@ equals(TEMPLATE,app) {
 		QMAKE_CXXFLAGS += -std=c++11
 	}
 
-	QMAKE_LIBDIR += ../../../externals/lib$${DIR_PREFIX}
-	LIBS += -L../../../externals/lib$${DIR_PREFIX}
+	QMAKE_LIBDIR += ../externals/lib
+	LIBS += -L../externals/lib
 
 	win32:LIBS += -liphlpapi
 	win32:LIBS += -lshell32
@@ -440,28 +428,28 @@ equals(TEMPLATE,lib) {
 		QMAKE_CXXFLAGS += -std=c++11
 	}
 
-	DESTDIR = ../../../lib$${DIR_PREFIX}
-	LIBS += -L../../../lib$${DIR_PREFIX}
+	DESTDIR = ../lib
+	LIBS += -L../lib
 
 	CONFIG(debug, debug|release) {
-		OBJECTS_DIR = debug$${DIR_PREFIX}
+		OBJECTS_DIR = debug
 		windows {
 			contains( OPTIONS, top_level_libs ) {
-				DLLDESTDIR = ../../../bin/debug$${DIR_PREFIX}
+				DLLDESTDIR = ../bin/debug
 			}
 			else {
-				DLLDESTDIR = ../../../../bin/debug$${DIR_PREFIX}
+				DLLDESTDIR = ../../bin/debug
 			}
 		}
 	}
 	else {
-		OBJECTS_DIR = release$${DIR_PREFIX}
+		OBJECTS_DIR = release
 		windows {
 			contains( OPTIONS, top_level_libs ) {
-				DLLDESTDIR = ../../../bin/release$${DIR_PREFIX}
+				DLLDESTDIR = ../bin/release
 			}
 			else {
-				DLLDESTDIR = ../../../../bin/release$${DIR_PREFIX}
+				DLLDESTDIR = ../../bin/release
 			}
 		}
 	}

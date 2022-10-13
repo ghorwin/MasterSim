@@ -44,19 +44,19 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-INCLUDEPATH = ../../src
+INCLUDEPATH = src
 
 SOURCES += \
-	../../src/fmi2common/fmi2Functions.cpp \
-	../../src/fmi2common/InstanceData.cpp \
-	../../src/FourVarsFeedThrough.cpp
+	src/fmi2common/fmi2Functions.cpp \
+	src/fmi2common/InstanceData.cpp \
+	src/FourVarsFeedThrough.cpp
 
 HEADERS += \
-	../../src/fmi2common/fmi2Functions.h \
-	../../src/fmi2common/fmi2Functions_complete.h \
-	../../src/fmi2common/fmi2FunctionTypes.h \
-	../../src/fmi2common/fmi2TypesPlatform.h \
-	../../src/fmi2common/InstanceData.h \
-	../../src/FourVarsFeedThrough.h
+	src/fmi2common/fmi2Functions.h \
+	src/fmi2common/fmi2Functions_complete.h \
+	src/fmi2common/fmi2FunctionTypes.h \
+	src/fmi2common/fmi2TypesPlatform.h \
+	src/fmi2common/InstanceData.h \
+	src/FourVarsFeedThrough.h
 
 
