@@ -16,7 +16,6 @@ unix|mac {
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
 
-
 INCLUDEPATH = \
 	../externals/minizip/src \
 	../externals/IBK/src \
