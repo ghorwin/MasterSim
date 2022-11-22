@@ -1,7 +1,7 @@
 Ubuntu Paketerstellung und Veröffentlichung
 ===========================================
 Andreas Nicolai <andreas.nicolai@gmx.net>
-v1.0 (10.01.2022)
+v1.0 (17.10.2022)
 // v1.0 date_on_line_above
 :Author Initials: AN
 :toc: left
