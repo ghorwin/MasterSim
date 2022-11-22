@@ -249,7 +249,7 @@ void OutputWriter::setupProgressReport() {
 void OutputWriter::appendOutputs(double t) {
 	// skip output writing, if last output was written within minimum output
 	// time step size; mind rounding errors here!
-	if (m_tEarliestOutputTime >= 0 && m_tEarliestOutputTime > t + 1e-8) {
+	if (m_tEarliestOutputTime >= 0 && m_tEarliestOutputTime > t) {
 		m_progressFeedback.writeFeedbackFromF(t);
 		return;
 	}
@@ -263,7 +263,7 @@ void OutputWriter::appendOutputs(double t) {
 	// this will be the first time that we allow next outputs to be made again
 	// we use the multiplication method here, since this avoids accumulation of rounding errors
 	int i = 0;
-	while (++i*m_project->m_hOutputMin.value < t + 1e-8);
+	while (++i*m_project->m_hOutputMin.value <= t);
 	m_tEarliestOutputTime = i*m_project->m_hOutputMin.value;
 
 	m_progressFeedback.writeFeedback(t, false);
