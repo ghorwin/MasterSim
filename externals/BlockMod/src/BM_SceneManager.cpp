@@ -788,6 +788,10 @@ void SceneManager::onSelectionChanged() {
 
 	// if a connector segment was selected, de-select only the last connector and all segments of the same
 	if (!selectedCons.isEmpty()) {
+
+		// TODO Andreas: there can only be one connector selected or not?
+		emit newConnectorSelected(selectedCons[0]->m_sourceSocket, selectedCons[0]->m_targetSocket);
+
 //		disconnect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
 		clearSelection();
 		// now select all items that belong to the connector
