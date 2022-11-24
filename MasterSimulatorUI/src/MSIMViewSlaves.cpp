@@ -36,6 +36,7 @@
 #include "MSIMUndoConnections.h"
 #include "MSIMUndoNetworkGeometry.h"
 #include "MSIMUndoSlaveParameters.h"
+#include "MSIMUndoConnectionModified.h"
 #include "MSIMSettings.h"
 
 #include <MSIM_Project.h>
@@ -59,6 +60,12 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 
 	formatTable(m_ui->widgetProperties);
 	updateSlaveParameterTable((unsigned int)-1);
+
+	m_ui->widgetConnectors->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+	m_ui->widgetConnectors->horizontalHeader()->setStretchLastSection(true);
+	m_ui->widgetConnectors->verticalHeader()->setVisible(false);
+
+	formatTable(m_ui->widgetConnectors);
 
 	// set the scene showing the network
 	m_ui->blockModWidget->setResolution(1);
@@ -259,6 +266,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 						   this, &MSIMViewSlaves::onNetworkGeometryChanged);
 				disconnect(sceneManager, &BLOCKMOD::SceneManager::newBlockSelected,
 						   this, &MSIMViewSlaves::onBlockSelected);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::newConnectorSelected,
+						this, &MSIMViewSlaves::onConnectorSelected);
 			}
 			BLOCKMOD::SceneManager * newSceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
 			m_ui->blockModWidget->setScene(newSceneManager);
@@ -270,6 +279,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 					this, &MSIMViewSlaves::onNetworkGeometryChanged);
 			connect(newSceneManager, &BLOCKMOD::SceneManager::newBlockSelected,
 					this, &MSIMViewSlaves::onBlockSelected);
+			connect(newSceneManager, SIGNAL(newConnectorSelected(const QString &, const QString &)),
+					this, SLOT(onConnectorSelected(const QString &, const QString &)));
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
 		} break;
@@ -582,9 +593,43 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 	// find corresponding row in table widget
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
 		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
+			// show slave page
+			m_ui->stackedWidget->setCurrentIndex(0);
 			m_ui->tableWidgetSlaves->selectRow(i);
 			break;
 		}
+	}
+}
+
+void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
+	for (const MASTER_SIM::Project::GraphEdge &edge: project().m_graph) {
+		if (sourceSocketName.toStdString() == edge.m_outputVariableRef && targetSocketName.toStdString() == edge.m_inputVariableRef) {
+
+			// show connector page and update table widget
+			m_ui->stackedWidget->setCurrentIndex(1);
+			m_ui->widgetConnectors->blockSignals(true);
+
+			m_ui->widgetConnectors->clearContents();
+			m_ui->widgetConnectors->setRowCount(2);
+			QTableWidgetItem *itemOffsetLabel = new QTableWidgetItem(tr("Offset"));
+			itemOffsetLabel->setFlags(itemOffsetLabel->flags() &~ (Qt::ItemIsEditable | Qt::ItemIsSelectable));
+			m_ui->widgetConnectors->setItem(0, 0, itemOffsetLabel);
+			QTableWidgetItem *itemOffset = new QTableWidgetItem(QString::number(edge.m_offset));
+			itemOffset->setData(Qt::UserRole, QString::fromStdString(edge.m_inputVariableRef));
+			itemOffset->setData(Qt::UserRole + 1, QString::fromStdString(edge.m_outputVariableRef));
+			m_ui->widgetConnectors->setItem(0, 1, itemOffset);
+
+			QTableWidgetItem *itemFactorLabel = new QTableWidgetItem(tr("Factor"));
+			itemFactorLabel->setFlags(itemOffsetLabel->flags() &~ (Qt::ItemIsEditable | Qt::ItemIsSelectable));
+			m_ui->widgetConnectors->setItem(1, 0, itemFactorLabel);
+			QTableWidgetItem *itemFactor = new QTableWidgetItem(QString::number(edge.m_scaleFactor));
+			itemFactor->setData(Qt::UserRole, QString::fromStdString(edge.m_inputVariableRef));
+			itemFactor->setData(Qt::UserRole + 1, QString::fromStdString(edge.m_outputVariableRef));
+			m_ui->widgetConnectors->setItem(1, 1, itemFactor);
+
+			m_ui->widgetConnectors->blockSignals(false);
+		}
+
 	}
 }
 
@@ -792,5 +837,34 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 	if (selectedRow < m_ui->widgetProperties->rowCount()) {
 		m_ui->widgetProperties->setCurrentCell(selectedRow, 1);
 	}
+}
+
+
+void MSIMViewSlaves::on_widgetConnectors_itemChanged(QTableWidgetItem *item) {
+	Q_ASSERT(item->row()<2);
+	Q_ASSERT(item->column()==1);
+
+	bool ok;
+	double value = QLocale().toDouble(item->text(), &ok);
+	if (!ok)
+		value = item->text().toDouble(&ok);
+	if (!ok) {
+		QMessageBox::critical(this, tr("Connection parameter error"), tr("Invalid value for offset."));
+		return;
+	}
+
+	std::string inputValRef = item->data(Qt::UserRole).toString().toStdString();
+	std::string outputValRef = item->data(Qt::UserRole+1).toString().toStdString();
+	MASTER_SIM::Project p = project();
+	for (MASTER_SIM::Project::GraphEdge &edge: p.m_graph) {
+		if (outputValRef == edge.m_outputVariableRef && inputValRef == edge.m_inputVariableRef) {
+			if (item->row()==0)
+				edge.m_offset = value;
+			else
+				edge.m_scaleFactor = value;
+		}
+	}
+	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
+	undo->push();
 }
 

@@ -88,10 +88,14 @@ private slots:
 	/*! Called from sceneManager() whenever a block has been selected. */
 	void onBlockSelected(const QString & blockName);
 
+	void onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName);
+
 	void on_toolButtonPrint_clicked();
 
 	/*! User has edited a parameter of a slave. */
 	void on_widgetProperties_itemChanged(QTableWidgetItem *item);
+
+	void on_widgetConnectors_itemChanged(QTableWidgetItem *item);
 
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */

@@ -214,6 +214,9 @@ signals:
 	/*! Emitted, when a block was selected. */
 	void newBlockSelected(const QString & blockName);
 
+	/*! Emitted, when a connector was selected. */
+	void newConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName);
+
 	/*! Emitted when a block or connector has been moved. */
 	void networkGeometryChanged();
 
