@@ -37,6 +37,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QPainter>
+#include <QRectF>
 
 #include <cmath>
 
@@ -327,6 +328,20 @@ QVariant ConnectorSegmentItem::itemChange(GraphicsItemChange change, const QVari
 		return pF;
 	}
 	return QGraphicsLineItem::itemChange(change, value);
+}
+
+
+QPainterPath ConnectorSegmentItem::shape() const {
+	QPainterPath path;
+	qreal x = line().p1().x() -10;
+	qreal y = line().p1().y() - 10;
+	qreal dx = line().dx() + 20;
+	qreal dy = line().dy() + 20;
+
+	QRectF rect = QRectF(x,y,dx,dy);
+	path.addRect(rect);
+
+	return path;
 }
 
 } // namespace BLOCKMOD

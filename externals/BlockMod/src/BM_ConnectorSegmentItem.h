@@ -62,6 +62,8 @@ public:
 	/*! If true, the connector segment is painted in highlighted mode. */
 	bool		m_isHighlighted;
 
+	QPainterPath shape() const override;
+
 protected:
 	/*! Re-implemented to draw the highlighted connection. */
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
