@@ -73,7 +73,7 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	painter->save();
 	if (m_isHighlighted) {
 		QPen p;
-		p.setWidthF(2);
+		p.setWidthF(1.5 * m_connector->m_linewidth);
 		p.setStyle(Qt::SolidLine);
 		p.setColor(QColor(0,0,110));
 		if (isSelected()) {
@@ -85,11 +85,11 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	}
 	else {
 		QPen p;
-		p.setWidthF(0.8);
-		p.setColor(Qt::black);
+		p.setWidthF(m_connector->m_linewidth);
+		p.setColor(m_connector->m_color);
 		p.setStyle(Qt::SolidLine);
 		if (isSelected()) {
-			p.setWidthF(2);
+			p.setWidthF(1.5*m_connector->m_linewidth);
 			p.setColor(QColor(192,0,0));
 			p.setStyle(Qt::DashLine);
 		}
@@ -97,6 +97,33 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 		QLineF l = line();
 		painter->drawLine(l);
 	}
+
+	// determine index of central segment
+	int idxText;
+	if (m_connector->m_segments.size() <= 2)
+		idxText = - 1; // start line
+	else
+		idxText = (int)(m_connector->m_segments.size()-2) / 2 + 1;
+
+	// draw equation text if we are this segment
+	if (m_segmentIdx == idxText) {
+		double x = line().p1().x() + line().dx()/2;
+		double y = line().p1().y() + line().dy()/2;
+		QRect br = painter->boundingRect((int)x, (int)y, 150, 30, 0, m_connector->m_text);
+		double width = 1.2*br.width();
+		double height = 1.2*br.height();
+		const QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
+		QPen p;
+		p.setWidthF(1);
+		p.setColor(m_connector->m_color);
+		p.setStyle(Qt::SolidLine);
+		painter->setPen(p);
+		QBrush b(Qt::white);
+		painter->setBrush(b);
+		painter->drawRect(rectangle);
+		painter->drawText(rectangle, Qt::AlignCenter, m_connector->m_text);
+	}
+
 	painter->restore();
 }
 
@@ -337,7 +364,6 @@ QPainterPath ConnectorSegmentItem::shape() const {
 	qreal y = line().p1().y() - 10;
 	qreal dx = line().dx() + 20;
 	qreal dy = line().dy() + 20;
-
 	QRectF rect = QRectF(x,y,dx,dy);
 	path.addRect(rect);
 

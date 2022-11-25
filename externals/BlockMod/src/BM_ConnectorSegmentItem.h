@@ -62,8 +62,6 @@ public:
 	/*! If true, the connector segment is painted in highlighted mode. */
 	bool		m_isHighlighted;
 
-	QPainterPath shape() const override;
-
 protected:
 	/*! Re-implemented to draw the highlighted connection. */
 	virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -82,6 +80,9 @@ protected:
 		Implements the snap-to-grid functionality.
 	*/
 	virtual QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
+
+	/*! Re-implements the shape of the line, making it wider for more convenient hovering/clicking */
+	QPainterPath shape() const override;
 
 private:
 	/*! Indicates, that the item has been moved. */

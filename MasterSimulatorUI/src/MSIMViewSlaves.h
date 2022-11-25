@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <MSIM_Project.h>
+
 namespace QPW {
 	class VariantPropertyManager;
 }
@@ -97,6 +99,12 @@ private slots:
 
 	void on_widgetConnectors_itemChanged(QTableWidgetItem *item);
 
+	void on_pushButtonDeleteConnection_clicked();
+
+	void on_doubleSpinBoxLinewidth_valueChanged(double arg1);
+
+	void on_pushButtonSelectColor_clicked();
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
@@ -106,12 +114,19 @@ private:
 	*/
 	void updateSlaveParameterTable(unsigned int slaveIndex);
 
+	/*! Populates the table widget with offset, scaleFactor values and updates the linewidth spinBox
+		\param edge the current
+	*/
+	void updateGraphProperties();
+
 	Ui::MSIMViewSlaves				*m_ui;
 
 	/*! The manager for the properties. */
 	QPW::VariantPropertyManager		*m_variantManager;
 
 	MSIMBlockEditorDialog			*m_blockEditorDialog;
+
+	int								m_selectedEdgeIdx = -1;
 };
 
 #endif // MSIMVIEWSLAVES_H

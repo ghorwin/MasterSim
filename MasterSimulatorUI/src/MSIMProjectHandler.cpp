@@ -471,6 +471,18 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 			newCon.m_sourceSocket = QString::fromStdString(edge.m_outputVariableRef);
 			newCon.m_targetSocket = QString::fromStdString(edge.m_inputVariableRef);
 		}
+
+		// add equation text, if factor or offset given
+		if (edge.m_scaleFactor != 1.0 || edge.m_offset != 0.0) {
+			std::string outputName, inputName, dummy;
+			edge.splitReference(edge.m_outputVariableRef, dummy, outputName);
+			edge.splitReference(edge.m_inputVariableRef, dummy, inputName);
+			newCon.m_text = QString("%1 = %2 * %3 + %4").arg(QString::fromStdString(inputName)).arg(QString::fromStdString(outputName))
+					.arg(edge.m_scaleFactor).arg(edge.m_offset);
+		}
+		newCon.m_linewidth = edge.m_linewidth;
+		newCon.m_color = QColor(edge.m_color.m_red, edge.m_color.m_green, edge.m_color.m_blue, edge.m_color.m_alpha);
+
 		// one last thing: we can only keep the connection in the network, if the connected blocks have
 		// a valid layout and geometry
 
