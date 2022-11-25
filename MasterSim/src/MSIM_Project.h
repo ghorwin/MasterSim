@@ -121,6 +121,10 @@ public:
 			inputValue = m_offset + m_scaleFactor*outputValue;
 		*/
 		double		m_offset;
+
+		double		m_linewidth = 0.8;
+
+		IBK::Color	m_color = IBK::Color(0,0,0,255);
 	};
 
 	/*! Constructor. */

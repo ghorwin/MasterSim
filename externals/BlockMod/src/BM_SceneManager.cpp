@@ -760,6 +760,7 @@ QList<ConnectorSegmentItem *> SceneManager::createConnectorItems(Connector & con
 			newConns.append(item);
 			start = next;
 		}
+
 	}
 	catch (std::runtime_error & e) {
 		std::cerr << e.what() << std::endl;
