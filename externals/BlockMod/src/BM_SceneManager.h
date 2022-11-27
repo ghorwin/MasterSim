@@ -209,7 +209,7 @@ signals:
 	void newConnectionAdded();
 
 	/*! Emitted whenever a block action was triggered (usually by double-clicking on the block). */
-	void blockActionTriggered(const BlockItem * blockItem);
+	void blockActionTriggered(const BLOCKMOD::BlockItem * blockItem);
 
 	/*! Emitted, when a block was selected. */
 	void newBlockSelected(const QString & blockName);
