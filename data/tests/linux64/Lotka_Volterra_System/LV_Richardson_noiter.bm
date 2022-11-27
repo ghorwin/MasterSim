@@ -3,7 +3,7 @@
 	<!--Blocks-->
 	<Blocks>
 		<Block name="Prey">
-			<Position>0, 0</Position>
+			<Position>240, 96</Position>
 			<Size>96, 48</Size>
 			<!--Sockets-->
 			<Sockets>
@@ -45,12 +45,8 @@
 			<!--Connector segments (between start and end lines)-->
 			<Segments>
 				<Segment>
-					<Orientation>Vertical</Orientation>
-					<Offset>-96</Offset>
-				</Segment>
-				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>-176</Offset>
+					<Offset>64</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
@@ -60,12 +56,20 @@
 			<!--Connector segments (between start and end lines)-->
 			<Segments>
 				<Segment>
+					<Orientation>Vertical</Orientation>
+					<Offset>144</Offset>
+				</Segment>
+				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>-176</Offset>
+					<Offset>-432</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Vertical</Orientation>
-					<Offset>96</Offset>
+					<Offset>-144</Offset>
+				</Segment>
+				<Segment>
+					<Orientation>Horizontal</Orientation>
+					<Offset>16</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
