@@ -48,7 +48,7 @@ public:
 
 
 	/*! Default MSIMMainWindow constructor. */
-	explicit MSIMMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = nullptr);
+	explicit MSIMMainWindow(QWidget *parent = nullptr, Qt::WindowFlags flags = Qt::WindowFlags());
 
 	/*! Default destructor. */
 	~MSIMMainWindow();

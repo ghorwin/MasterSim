@@ -610,6 +610,7 @@ void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const
 			m_ui->stackedWidget->setCurrentIndex(1);
 			m_selectedEdgeIdx = (int)i;
 			updateGraphProperties();
+			break;
 		}
 	}
 }
@@ -771,7 +772,7 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 				valueItem->setFont(f);
 			}
 			else {
-				valueItem->setTextColor(QColor(64,64,64));
+				valueItem->setForeground(QColor(64,64,64));
 				QFont fi;
 				fi.setItalic(true);
 				valueItem->setFont(fi);
@@ -831,14 +832,14 @@ void MSIMViewSlaves::updateGraphProperties() {
 	m_ui->widgetConnectors->setRowCount(2);
 
 	QTableWidgetItem *itemOffsetLabel = new QTableWidgetItem(tr("Offset"));
-	itemOffsetLabel->setFlags(itemOffsetLabel->flags() &~ (Qt::ItemIsEditable | Qt::ItemIsSelectable));
+	itemOffsetLabel->setFlags(Qt::ItemIsEnabled);
 	m_ui->widgetConnectors->setItem(0, 0, itemOffsetLabel);
-	QTableWidgetItem *itemOffset = new QTableWidgetItem(QString::number(edge.m_offset));
+	QTableWidgetItem *itemOffset = new QTableWidgetItem(QString("%L1").arg(edge.m_offset));
 	m_ui->widgetConnectors->setItem(0, 1, itemOffset);
 	QTableWidgetItem *itemFactorLabel = new QTableWidgetItem(tr("Factor"));
-	itemFactorLabel->setFlags(itemOffsetLabel->flags() &~ (Qt::ItemIsEditable | Qt::ItemIsSelectable));
+	itemFactorLabel->setFlags(Qt::ItemIsEnabled);
 	m_ui->widgetConnectors->setItem(1, 0, itemFactorLabel);
-	QTableWidgetItem *itemFactor = new QTableWidgetItem(QString::number(edge.m_scaleFactor));
+	QTableWidgetItem *itemFactor = new QTableWidgetItem(QString("%L1").arg(edge.m_scaleFactor));
 	m_ui->widgetConnectors->setItem(1, 1, itemFactor);
 
 	m_ui->widgetConnectors->blockSignals(false);
