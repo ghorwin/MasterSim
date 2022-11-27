@@ -33,7 +33,7 @@ CONFIG(release, debug|release) {
 # set the define REPOROOT to hold the path to <reporoot>
 DEFINES += REPOROOT=\\\"$$PWD/../..\\\"
 
-message($$DEFINES)
+#message($$DEFINES)
 
 linux-g++ | linux-g++-64 | macx {
 
