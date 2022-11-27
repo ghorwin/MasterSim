@@ -510,7 +510,7 @@ void MSIMViewConnections::updateConnectionsTable() {
 	}
 
 	m_ui->tableWidgetConnections->setSortingEnabled(true);
-	m_ui->tableWidgetConnections->sortByColumn(sortColumn);
+	m_ui->tableWidgetConnections->sortByColumn(sortColumn, Qt::AscendingOrder);
 
 	if (m_ui->tableWidgetConnections->rowCount() > 0) {
 		if (currentIdx == -1)
@@ -589,7 +589,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 				table->setRowCount(currentRow+1);
 				QTableWidgetItem * item = new QTableWidgetItem( QString::fromStdString(simDef.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
 				if (outputConnected) {
 					QFont f(item->font());
 					f.setBold(true);
@@ -599,7 +599,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 
 				item = new QTableWidgetItem( QString::fromStdString(var.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
 				if (outputConnected) {
 					QFont f(item->font());
 					f.setBold(true);
@@ -610,7 +610,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 				item = new QTableWidgetItem( QString( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
 				item->setData(Qt::UserRole, var.m_type);
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
 				if (outputConnected) {
 					QFont f(item->font());
 					f.setBold(true);
@@ -627,7 +627,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 				else
 					item = new QTableWidgetItem("");
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				item->setTextColor( QRgb(simDef.m_color.toQRgb()));
+				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
 				if (outputConnected) {
 					QFont f(item->font());
 					f.setBold(true);
@@ -658,10 +658,10 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 											   (m_ui->tableWidgetOutputVariable->currentRow() != -1));
 
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
-	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn);
+	m_ui->tableWidgetOutputVariable->sortByColumn(outputSortColumn, Qt::AscendingOrder);
 
 	m_ui->tableWidgetInputVariable->setSortingEnabled(true);
-	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn);
+	m_ui->tableWidgetInputVariable->sortByColumn(inputSortColumn, Qt::AscendingOrder);
 }
 
 
