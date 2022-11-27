@@ -103,7 +103,7 @@ private slots:
 
 	void on_doubleSpinBoxLinewidth_valueChanged(double arg1);
 
-	void on_pushButtonSelectColor_clicked();
+	void on_pushButtonSelectColor_colorChanged();
 
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
