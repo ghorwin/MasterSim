@@ -47,12 +47,12 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_blockEditorDialog(nullptr)
 {
 	m_ui->setupUi(this);
-	m_ui->verticalLayout_4->setContentsMargins(9,0,9,9);
 
 	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
 			this, SLOT(onModified(unsigned int,void*)));
 
-	m_ui->groupBox->layout()->setContentsMargins(0,0,0,0);
+	m_ui->verticalLayoutConnectors->setContentsMargins(0,0,0,0);
+	m_ui->verticalLayoutSlaveProperties->setContentsMargins(0,0,0,0);
 
 	m_ui->widgetProperties->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 	m_ui->widgetProperties->horizontalHeader()->setStretchLastSection(true);
@@ -253,6 +253,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			// sync check of all blocks and FMU slaves
 
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+			m_ui->stackedWidget->setCurrentIndex(0); // we always show fmu property view first
 
 			// sync network with graphical display
 			if (m_ui->blockModWidget->scene() != nullptr) {
@@ -801,13 +802,13 @@ void MSIMViewSlaves::updateSlaveParameterTable(unsigned int slaveIndex) {
 	// show remaining parameters that are specified in simulator
 	f.setItalic(true);
 	f.setBold(false);
-	for (auto m : customParameters) {
+	for (std::map<std::string, std::string>::const_iterator m = customParameters.begin(); m != customParameters.end(); ++m) {
 		m_ui->widgetProperties->setRowCount(currentRow+1);
-		QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString(m.first));
+		QTableWidgetItem * item = new QTableWidgetItem(QString::fromStdString(m->first));
 		item->setFlags(Qt::ItemIsEnabled);
 		item->setFont(f);
 		m_ui->widgetProperties->setItem(currentRow, 0, item);
-		item = new QTableWidgetItem(QString::fromStdString(m.second));
+		item = new QTableWidgetItem(QString::fromStdString(m->second));
 		item->setFlags(Qt::ItemIsEnabled);
 		item->setFont(f);
 		m_ui->widgetProperties->setItem(currentRow, 1, item);
@@ -843,6 +844,9 @@ void MSIMViewSlaves::updateGraphProperties() {
 	m_ui->widgetConnectors->setItem(1, 1, itemFactor);
 
 	m_ui->widgetConnectors->blockSignals(false);
+
+	// set color in push button
+	m_ui->pushButtonSelectColor->setColor(p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color.toQRgb());
 
 	m_ui->doubleSpinBoxLinewidth->setValue(edge.m_linewidth);
 
@@ -912,15 +916,12 @@ void MSIMViewSlaves::on_doubleSpinBoxLinewidth_valueChanged(double arg1) {
 }
 
 
-void MSIMViewSlaves::on_pushButtonSelectColor_clicked() {
-	if (m_selectedEdgeIdx<0)
-		return;
+void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
+	Q_ASSERT(m_selectedEdgeIdx >= 0);
 	MASTER_SIM::Project p = project();
-	Q_ASSERT(p.m_graph.size() > (unsigned int)m_selectedEdgeIdx);
+	Q_ASSERT((unsigned int)m_selectedEdgeIdx < p.m_graph.size());
 
-	IBK::Color curr = p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color;
-	QColorDialog *diag = new QColorDialog();
-	QColor col = diag->getColor(QColor((int)curr.m_red, (int)curr.m_green, (int)curr.m_blue, (int)curr.m_alpha), this);
+	QColor col = m_ui->pushButtonSelectColor->color();
 	p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color = IBK::Color((unsigned int)col.red(), (unsigned int)col.green(),
 																	(unsigned int)col.blue(), (unsigned int)col.alpha());
 
