@@ -134,7 +134,7 @@ void ConnectorSegmentItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 	QGraphicsItem::hoverEnterEvent(event);
 	// check if scene is in connection mode, if yes, do nothing
 	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
-	if (sceneManager && sceneManager->isConnectionModeEnabled())
+	if (sceneManager && sceneManager->isCurrentlyConnecting())
 		return;
 
 	if (m_segmentIdx >= 0) {
@@ -154,7 +154,7 @@ void ConnectorSegmentItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 	QGraphicsItem::hoverLeaveEvent(event);
 	// check if scene is in connection mode, if yes, do nothing
 	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
-	if (sceneManager && sceneManager->isConnectionModeEnabled())
+	if (sceneManager && sceneManager->isCurrentlyConnecting())
 		return;
 
 	QApplication::restoreOverrideCursor();

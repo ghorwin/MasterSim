@@ -184,15 +184,21 @@ void ZoomMeshGraphicsView::enterEvent(QEvent *event) {
 
 	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
 	if (sceneManager) {
-		if (sceneManager->isConnectionModeEnabled() && (QApplication::overrideCursor() == nullptr || QApplication::overrideCursor()->shape() != Qt::CrossCursor))
-			QApplication::setOverrideCursor(Qt::CrossCursor);
+		// clear any override cursors that we had enabled when leaving the scene
+		while (QApplication::overrideCursor() != nullptr)
+			QApplication::restoreOverrideCursor();
 	}
 	QGraphicsView::enterEvent(event);
 }
 
 
 void ZoomMeshGraphicsView::leaveEvent(QEvent *event) {
-	QApplication::restoreOverrideCursor();
+	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
+	if (sceneManager) {
+		if (sceneManager->isCurrentlyConnecting())
+			sceneManager->finishConnection();
+	}
+	QApplication::restoreOverrideCursor(); // needed if we drag a segment out of the view
 	QGraphicsView::leaveEvent(event);
 }
 
