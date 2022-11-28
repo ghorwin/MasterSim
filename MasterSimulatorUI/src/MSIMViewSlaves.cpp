@@ -280,8 +280,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 					this, &MSIMViewSlaves::onNetworkGeometryChanged);
 			connect(newSceneManager, &BLOCKMOD::SceneManager::newBlockSelected,
 					this, &MSIMViewSlaves::onBlockSelected);
-			connect(newSceneManager, SIGNAL(newConnectorSelected(const QString &, const QString &)),
-					this, SLOT(onConnectorSelected(const QString &, const QString &)));
+			connect(newSceneManager, &BLOCKMOD::SceneManager::newConnectorSelected,
+					this, &MSIMViewSlaves::onConnectorSelected);
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
 		} break;
@@ -603,6 +603,7 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 }
 
 void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
+	qDebug() << "MSIMViewSlaves::onConnectorSelected" << sourceSocketName << "->" << targetSocketName;
 	// find current GraphEdge, store its index and update its properties
 	m_selectedEdgeIdx = -1;
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
@@ -848,7 +849,9 @@ void MSIMViewSlaves::updateGraphProperties() {
 	// set color in push button
 	m_ui->pushButtonSelectColor->setColor(p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color.toQRgb());
 
+	m_ui->doubleSpinBoxLinewidth->blockSignals(true);
 	m_ui->doubleSpinBoxLinewidth->setValue(edge.m_linewidth);
+	m_ui->doubleSpinBoxLinewidth->blockSignals(false);
 
 }
 

@@ -202,6 +202,10 @@ void ConnectorSegmentItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 
 
 QVariant ConnectorSegmentItem::itemChange(GraphicsItemChange change, const QVariant & value) {
+	// NOTE/WARNING: one connector consists of several connector items. When a single item is
+	//               selected, all the other items of the same connector shall be selected as well.
+	//               Hence, we are not reacting on "ItemSelectionChanged" change here, but rather
+	//               intercept mouse-clicks on connector items and handle selection manually.
 	if (change == QGraphicsItem::ItemPositionChange && m_segmentIdx >= 0) {
 		// snap to grid
 		QPointF pF = value.toPointF();
