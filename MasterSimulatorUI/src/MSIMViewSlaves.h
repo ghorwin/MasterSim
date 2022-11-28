@@ -71,8 +71,6 @@ private slots:
 
 	void on_tableWidgetSlaves_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
 
-	void on_toolButtonCreateConnection_clicked();
-
 	/*! Connected to the scene's block triggering action (usually double-click on block item). */
 	void onBlockActionTriggered(const BLOCKMOD::BlockItem * blockItem);
 

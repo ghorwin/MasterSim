@@ -273,16 +273,6 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="QToolButton" name="toolButtonCreateConnection">
-         <property name="toolTip">
-          <string>Switches to connection mode.</string>
-         </property>
-         <property name="text">
-          <string>Connect sockets...</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" colspan="5">
         <widget class="QLabel" name="label_3">
          <property name="font">
