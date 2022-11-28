@@ -22,7 +22,7 @@ macx {
 }
 
 win32 {
-	LIBS += lzlib
+	LIBS += -lzlib
 }
 
 INCLUDEPATH += \
