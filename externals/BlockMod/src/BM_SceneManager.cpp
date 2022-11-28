@@ -212,12 +212,10 @@ void SceneManager::selectConnectorSegments(const Connector & con) {
 		if (segmentItem->m_connector == &con) {
 			if (!segmentItem->isSelected())
 				segmentItem->setSelected(true);
-//			segmentItem->update();
-			break;
+			segmentItem->update();
 		}
 	}
-	emit newConnectorSelected(con.m_sourceSocket, con.m_targetSocket);
-//	this->update();
+	this->update();
 }
 
 
@@ -800,17 +798,14 @@ void SceneManager::onSelectionChanged() {
 
 	// if a connector segment was selected, de-select only the last connector and all segments of the same
 	if (!selectedCons.isEmpty()) {
-
-		// no side-effects please!
-		disconnect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
-		clearSelection(); //
+//		disconnect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
+		clearSelection();
 		// now select all items that belong to the connector
-		for (ConnectorSegmentItem * item : qAsConst(m_connectorSegmentItems)) {
+		for (ConnectorSegmentItem * item : m_connectorSegmentItems) {
 			if (item->m_connector == selectedCons.back())
 				item->setSelected(true);
 		}
-		connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
-
+//		connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
 		// signal that our connection was selected
 		emit newConnectorSelected(selectedCons[0]->m_sourceSocket, selectedCons[0]->m_targetSocket);
 	}
