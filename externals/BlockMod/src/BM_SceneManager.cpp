@@ -207,14 +207,17 @@ void SceneManager::highlightConnectorSegments(const Connector & con, bool highli
 
 
 void SceneManager::selectConnectorSegments(const Connector & con) {
+	qDebug() << "SceneManager::selectConnectorSegments";
 	for (ConnectorSegmentItem* segmentItem : qAsConst(m_connectorSegmentItems)) {
 		if (segmentItem->m_connector == &con) {
 			if (!segmentItem->isSelected())
 				segmentItem->setSelected(true);
-			segmentItem->update();
+//			segmentItem->update();
+			break;
 		}
 	}
-	this->update();
+	emit newConnectorSelected(con.m_sourceSocket, con.m_targetSocket);
+//	this->update();
 }
 
 
@@ -774,10 +777,18 @@ QList<ConnectorSegmentItem *> SceneManager::createConnectorItems(Connector & con
 
 
 void SceneManager::onSelectionChanged() {
-	// get newly selected items, and if a connector is part of the selection, select all segments of the same collector,
+	qDebug() << "SceneManager::onSelectionChanged";
+	// get newly selected items, and if a connector is part of the selection, select *all* segments of the same collector,
 	// but deselect all others
-	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
 
+	// if the selection was cleared, signal so
+	QList<QGraphicsItem *> items = QGraphicsScene::selectedItems();
+	if (items.isEmpty()) {
+		emit selectionCleared();
+		return;
+	}
+
+	// search for selected connector items
 	QList<Connector*> selectedCons;
 	for (QGraphicsItem * item : qAsConst(items)) {
 		ConnectorSegmentItem * segItem = dynamic_cast<ConnectorSegmentItem*>(item);
@@ -790,21 +801,18 @@ void SceneManager::onSelectionChanged() {
 	// if a connector segment was selected, de-select only the last connector and all segments of the same
 	if (!selectedCons.isEmpty()) {
 
-		// we may have several connectors selected, however, we only show info of the first in the selection
-		// since usually the user will want to edit one at a time
-
-		// FIXME: when clicking on a connector *without* moving one first, this results in a crash upon
-		//        mouse-release!
-		emit newConnectorSelected(selectedCons[0]->m_sourceSocket, selectedCons[0]->m_targetSocket);
-
-//		disconnect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
-		clearSelection();
+		// no side-effects please!
+		disconnect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
+		clearSelection(); //
 		// now select all items that belong to the connector
 		for (ConnectorSegmentItem * item : qAsConst(m_connectorSegmentItems)) {
 			if (item->m_connector == selectedCons.back())
 				item->setSelected(true);
 		}
-//		connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
+		connect(this, &SceneManager::selectionChanged, this, &SceneManager::onSelectionChanged);
+
+		// signal that our connection was selected
+		emit newConnectorSelected(selectedCons[0]->m_sourceSocket, selectedCons[0]->m_targetSocket);
 	}
 }
 

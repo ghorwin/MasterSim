@@ -220,6 +220,9 @@ signals:
 	/*! Emitted when a block or connector has been moved. */
 	void networkGeometryChanged();
 
+	/*! Emitted when the selection was cleared (by click on empty space in view). */
+	void selectionCleared();
+
 protected:
 	/*! Listens for right-mouse-button clicks that turn off connection mode. */
 	virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent) override;
