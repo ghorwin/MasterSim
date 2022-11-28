@@ -36,6 +36,8 @@
     <addaction name="actionFileSaveAs"/>
     <addaction name="actionFileClose"/>
     <addaction name="separator"/>
+    <addaction name="actionFilePrint"/>
+    <addaction name="separator"/>
     <addaction name="actionFileOpenProjectDir"/>
     <addaction name="actionFileExport"/>
     <addaction name="separator"/>
@@ -341,6 +343,11 @@
    </property>
    <property name="toolTip">
     <string>Desktop integration (Linux),  creates .desktop file and msim-file association.</string>
+   </property>
+  </action>
+  <action name="actionFilePrint">
+   <property name="text">
+    <string>Print schematics...</string>
    </property>
   </action>
  </widget>

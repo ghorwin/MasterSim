@@ -82,6 +82,7 @@ private slots:
 	void on_actionFileReload_triggered();
 	void on_actionFileExport_triggered();
 	void on_actionFileClose_triggered();
+	void on_actionFilePrint_triggered();
 	void on_actionFileOpenProjectDir_triggered();
 	void on_actionFileQuit_triggered();
 
@@ -146,8 +147,6 @@ private slots:
 		parsing of the model description.
 	*/
 	void onNewSlaveAdded(const QString & slaveName, const QString & fullFMUPath);
-
-
 
 
 

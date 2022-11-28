@@ -340,30 +340,6 @@ bool SceneManager::isConnectedSocket(const Block * b, const Socket * s) const {
 }
 
 
-//void SceneManager::disableConnectionMode() {
-//	for (BLOCKMOD::BlockItem * block : qAsConst(m_blockItems)) {
-//		for (QGraphicsItem * item : block->childItems()) {
-//			BLOCKMOD::SocketItem * socketItem = dynamic_cast<BLOCKMOD::SocketItem*>(item);
-//			Q_ASSERT(socketItem != nullptr);
-
-//			socketItem->setHoverEnabled(false);
-//		}
-//		block->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
-//	}
-//	for (BLOCKMOD::ConnectorSegmentItem * segmentItem : qAsConst(m_connectorSegmentItems)) {
-//		if (segmentItem->m_segmentIdx >= 0)
-//			segmentItem->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
-//	}
-
-//	// remove our artifical block and block item, if it exists
-//	if (!m_network->m_blocks.empty() && m_network->m_blocks.back().m_name  == Globals::InvisibleLabel)
-//		removeBlock(m_network->m_blocks.size()-1);
-
-//	m_connectionModeEnabled = false;
-//	QApplication::restoreOverrideCursor();
-//}
-
-
 void SceneManager::startSocketConnection(const SocketItem & outletSocketItem, const QPointF & mousePos) {
 	Q_ASSERT(!outletSocketItem.socket()->m_inlet);
 
@@ -759,7 +735,6 @@ QList<ConnectorSegmentItem *> SceneManager::createConnectorItems(Connector & con
 
 
 void SceneManager::onSelectionChanged() {
-	qDebug() << "SceneManager::onSelectionChanged";
 	// get newly selected items, and if a connector is part of the selection, select *all* segments of the same collector,
 	// but deselect all others
 

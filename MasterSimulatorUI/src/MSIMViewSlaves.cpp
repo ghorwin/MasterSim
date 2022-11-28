@@ -598,8 +598,8 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 	}
 }
 
+
 void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
-	qDebug() << "MSIMViewSlaves::onConnectorSelected" << sourceSocketName << "->" << targetSocketName;
 	// find current GraphEdge, store its index and update its properties
 	m_selectedEdgeIdx = -1;
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
@@ -614,7 +614,7 @@ void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const
 }
 
 
-void MSIMViewSlaves::on_toolButtonPrint_clicked() {
+void MSIMViewSlaves::printScene() {
 	// open print preview dialog and print schematics
 	QPrinter prn;
 	QPrintDialog printDlg(&prn, this);

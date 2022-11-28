@@ -40,6 +40,9 @@ public:
 	/*! Looks up the block item corresponding to the given slave and opens the block editor. */
 	void editBlockItem(const QString & slaveName);
 
+	/*! Opens printer dialog and exports scene to printer. */
+	void printScene();
+
 	/*! Extract the FMU with the given absolute file path, and determined properties for analysis.
 		If successful, returns true and the modelDesc data structure can be accessed to provide the
 		required information.
@@ -90,7 +93,6 @@ private slots:
 
 	void onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName);
 
-	void on_toolButtonPrint_clicked();
 
 	/*! User has edited a parameter of a slave. */
 	void on_widgetProperties_itemChanged(QTableWidgetItem *item);
