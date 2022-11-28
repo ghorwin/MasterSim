@@ -14,6 +14,7 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QColorDialog>
+#include <QRandomGenerator>
 
 #include <unzip.h>
 #include <tinyxml.h>
@@ -350,8 +351,8 @@ void MSIMViewSlaves::on_toolButtonAddSlave_clicked() {
 	p.m_simulators.push_back(simDef);
 
 	// create a block for the graphical representation
-	unsigned int gx = BLOCKMOD::Globals::GridSpacing*qrand()*int(40.0/RAND_MAX);
-	unsigned int gy = BLOCKMOD::Globals::GridSpacing*qrand()*int(40.0/RAND_MAX);
+	unsigned int gx = BLOCKMOD::Globals::GridSpacing*QRandomGenerator::global()->generateDouble()*40.0;
+	unsigned int gy = BLOCKMOD::Globals::GridSpacing*QRandomGenerator::global()->generateDouble()*40.0;
 	BLOCKMOD::Block b(QString::fromStdString(simDef.m_name), gx, gy);
 	b.m_size = QSize(BLOCKMOD::Globals::GridSpacing*8, BLOCKMOD::Globals::GridSpacing*12);
 	n.m_blocks.push_back(b);

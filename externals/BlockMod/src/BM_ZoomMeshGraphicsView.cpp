@@ -64,7 +64,7 @@ ZoomMeshGraphicsView::ZoomMeshGraphicsView(QWidget *parent) :
 
 void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
 
-	if (i_event->delta() < 0) {
+	if (i_event->angleDelta().y() < 0) {
 		zoomOut();
 	}
 	else {
@@ -87,7 +87,7 @@ void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
 		double gridSpacingPix = m_resolution*m_gridStep;
 
 		// apply scaling
-		double scaleFactor = matrix().m11();
+		double scaleFactor = transform().m11();
 		gridSpacingPix *= scaleFactor;
 
 		// get dimensions
@@ -137,7 +137,7 @@ void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
 			gridSpacingPix = m_resolution*m_gridStep*0.1;
 
 			// apply scaling
-			scaleFactor = matrix().m11();
+			scaleFactor = transform().m11();
 			gridSpacingPix *= scaleFactor;
 
 			// clear minor grid lines
