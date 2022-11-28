@@ -99,31 +99,33 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	}
 
 	// determine index of central segment
-	int idxText;
-	if (m_connector->m_segments.size() <= 2)
-		idxText = - 1; // start line
-	else
-		idxText = (int)(m_connector->m_segments.size()-2) / 2 + 1;
+	if (!m_connector->m_text.isEmpty()) {
+		int idxText;
+		Q_ASSERT(m_connector->m_segments.size() != 0);
+		if (m_connector->m_segments.size() <= 2)
+			idxText = 0; // start line
+		else
+			idxText = (int)(m_connector->m_segments.size()-2) / 2 + 1;
 
-	// draw equation text if we are this segment
-	if (m_segmentIdx == idxText) {
-		double x = line().p1().x() + line().dx()/2;
-		double y = line().p1().y() + line().dy()/2;
-		QRect br = painter->boundingRect((int)x, (int)y, 150, 30, 0, m_connector->m_text);
-		double width = 1.2*br.width();
-		double height = 1.2*br.height();
-		const QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
-		QPen p;
-		p.setWidthF(1);
-		p.setColor(m_connector->m_color);
-		p.setStyle(Qt::SolidLine);
-		painter->setPen(p);
-		QBrush b(Qt::white);
-		painter->setBrush(b);
-		painter->drawRect(rectangle);
-		painter->drawText(rectangle, Qt::AlignCenter, m_connector->m_text);
+		// draw equation text if we are this segment
+		if (m_segmentIdx == idxText) {
+			double x = line().p1().x() + line().dx()/2;
+			double y = line().p1().y() + line().dy()/2;
+			QRect br = painter->boundingRect((int)x, (int)y, 150, 30, 0, m_connector->m_text);
+			double width = 1.2*br.width();
+			double height = 1.2*br.height();
+			const QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
+			QPen p;
+			p.setWidthF(1);
+			p.setColor(m_connector->m_color);
+			p.setStyle(Qt::SolidLine);
+			painter->setPen(p);
+			QBrush b(Qt::white);
+			painter->setBrush(b);
+			painter->drawRect(rectangle);
+			painter->drawText(rectangle, Qt::AlignCenter, m_connector->m_text);
+		}
 	}
-
 	painter->restore();
 }
 
