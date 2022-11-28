@@ -112,17 +112,27 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
 				IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens);
-				if (tokens.size() != 2 && tokens.size() != 4)
-					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd> [<offset> <scaleFactor>]', got '%1'.").arg(line), FUNC_ID);
+				if (tokens.size() != 2 && tokens.size() != 4 && tokens.size() != 6)
+					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd> [<offset> <scaleFactor> <linewidth> <html-color>]', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
 				g.m_outputVariableRef = tokens[0];
 				g.m_inputVariableRef = tokens[1];
-				if (tokens.size() == 4) {
+				if (tokens.size() >= 4) {
 					try {
 						g.m_offset = IBK::string2val<double>(tokens[2]);
 						g.m_scaleFactor = IBK::string2val<double>(tokens[3]);
 					} catch (...) {
 						throw IBK::Exception(IBK::FormatString("Invalid offset or scale factor in graph '%1'.").arg(line), FUNC_ID);
+					}
+				}
+				if (tokens.size() >= 6) {
+					try {
+						g.m_linewidth = IBK::string2val<double>(tokens[4]);
+						if (g.m_linewidth < 0.2)
+							g.m_linewidth = 0.2;
+						g.m_color = IBK::Color::fromHtml(tokens[5]);
+					} catch (...) {
+						throw IBK::Exception(IBK::FormatString("Invalid line width or color in graph '%1'.").arg(line), FUNC_ID);
 					}
 				}
 				m_graph.push_back(g);
@@ -328,8 +338,11 @@ void Project::write(const IBK::Path & prjFile) const {
 	for (unsigned int i=0; i<m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_graph[i];
 		out << "graph " << edge.m_outputVariableRef << " " << edge.m_inputVariableRef;
-		if (edge.m_offset != 0.0 || edge.m_scaleFactor != 1.0) {
+		if (edge.m_offset != 0.0 || edge.m_scaleFactor != 1.0 || edge.m_color != IBK::Color(0,0,0) || edge.m_linewidth != 0.8) {
 			out << " " << edge.m_offset << " " << edge.m_scaleFactor;
+			if (edge.m_color != IBK::Color(0,0,0) || edge.m_linewidth != 0.8) {
+				out << " " << edge.m_linewidth << " " << edge.m_color.toHtmlString();
+			}
 		}
 		out << std::endl;
 	}

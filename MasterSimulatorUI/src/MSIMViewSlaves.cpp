@@ -72,6 +72,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->blockModWidget->setResolution(1);
 	m_ui->blockModWidget->setGridStep(BLOCKMOD::Globals::GridSpacing*10);
 	m_ui->splitter_2->setStretchFactor(1,1);
+
+	m_ui->doubleSpinBoxLinewidth->setSingleStep(0.1);
 }
 
 
