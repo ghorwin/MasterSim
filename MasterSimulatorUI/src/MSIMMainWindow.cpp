@@ -518,6 +518,11 @@ void MSIMMainWindow::on_actionFileClose_triggered() {
 }
 
 
+void MSIMMainWindow::on_actionFilePrint_triggered() {
+	m_viewSlaves->printScene();
+}
+
+
 void MSIMMainWindow::on_actionFileQuit_triggered() {
 	close();
 }
@@ -728,6 +733,7 @@ void MSIMMainWindow::onUpdateActions() {
 	m_ui->actionFileExport->setEnabled(have_project);
 	m_ui->actionFileReload->setEnabled(have_project);
 	m_ui->actionFileClose->setEnabled(have_project);
+	m_ui->actionFilePrint->setEnabled(have_project);
 	m_ui->actionFileOpenProjectDir->setEnabled(have_project);
 	m_ui->actionEditTextEditProject->setEnabled(have_project);
 	m_ui->actionEditParseFMUs->setEnabled(have_project);
@@ -1069,3 +1075,6 @@ void MSIMMainWindow::on_actionHelpLinuxDesktopIntegration_triggered() {
 	for (QString f : oldFiles)
 		QFile::remove(QDir::home().absoluteFilePath(f));
 }
+
+
+
