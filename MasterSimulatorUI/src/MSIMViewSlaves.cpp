@@ -497,13 +497,6 @@ void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int
 }
 
 
-void MSIMViewSlaves::on_toolButtonCreateConnection_clicked() {
-	// set scene into connection mode
-	BLOCKMOD::SceneManager * sceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
-	sceneManager->enableConnectionMode();
-}
-
-
 void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockItem) {
 	// first get the block in question
 	const BLOCKMOD::Block * b = blockItem->block();
