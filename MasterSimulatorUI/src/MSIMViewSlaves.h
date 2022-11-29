@@ -31,6 +31,14 @@ class QTableWidgetItem;
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
+
+	enum SelectionState {
+		SS_SlaveSelected,
+		SS_ConnectorSelected,
+		SS_NothingSelected
+	};
+
+
 public:
 	/*! C'tor */
 	explicit MSIMViewSlaves(QWidget *parent = nullptr);
@@ -91,8 +99,13 @@ private slots:
 	/*! Called from sceneManager() whenever a block has been selected. */
 	void onBlockSelected(const QString & blockName);
 
+	/*! Called from sceneManager() whenever a connector has been selected. */
 	void onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName);
 
+	/*! Called from sceneManager() whenever selection has changed and is now empty (there is nothing selected) */
+	void onSelectionCleared();
+
+	void on_toolButtonPrint_clicked();
 
 	/*! User has edited a parameter of a slave. */
 	void on_widgetProperties_itemChanged(QTableWidgetItem *item);
@@ -118,6 +131,10 @@ private:
 		\param edge the current
 	*/
 	void updateGraphProperties();
+
+	/*! Updates Ui property page. Shows slave properties, connector properties or nothing based on current selection state.
+	 */
+	void updatePropertyStackedWidget(SelectionState selectionState);
 
 	Ui::MSIMViewSlaves				*m_ui;
 

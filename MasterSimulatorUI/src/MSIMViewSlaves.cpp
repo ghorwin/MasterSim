@@ -59,8 +59,10 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->widgetProperties->horizontalHeader()->setStretchLastSection(true);
 	m_ui->widgetProperties->verticalHeader()->setVisible(false);
 
+	// upon start there is nothing selected
+	updatePropertyStackedWidget(SS_NothingSelected);
+
 	formatTable(m_ui->widgetProperties);
-	updateSlaveParameterTable((unsigned int)-1);
 
 	m_ui->widgetConnectors->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 	m_ui->widgetConnectors->horizontalHeader()->setStretchLastSection(true);
@@ -272,6 +274,8 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 						   this, &MSIMViewSlaves::onBlockSelected);
 				disconnect(sceneManager, &BLOCKMOD::SceneManager::newConnectorSelected,
 						this, &MSIMViewSlaves::onConnectorSelected);
+				disconnect(sceneManager, &BLOCKMOD::SceneManager::selectionCleared,
+						this, &MSIMViewSlaves::onSelectionCleared);
 			}
 			BLOCKMOD::SceneManager * newSceneManager = const_cast<BLOCKMOD::SceneManager *>(MSIMProjectHandler::instance().sceneManager());
 			m_ui->blockModWidget->setScene(newSceneManager);
@@ -285,12 +289,14 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 					this, &MSIMViewSlaves::onBlockSelected);
 			connect(newSceneManager, &BLOCKMOD::SceneManager::newConnectorSelected,
 					this, &MSIMViewSlaves::onConnectorSelected);
+			connect(newSceneManager, &BLOCKMOD::SceneManager::selectionCleared,
+					this, &MSIMViewSlaves::onSelectionCleared);
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
 		} break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
-			updateSlaveParameterTable( m_ui->tableWidgetSlaves->currentRow() );
+			updatePropertyStackedWidget(SS_SlaveSelected);
 			return;
 
 		case MSIMProjectHandler::ProjectPathModified :
@@ -493,7 +499,7 @@ void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 
 void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
 	// update property browser for currently selected slave
-	updateSlaveParameterTable(currentRow);
+	updatePropertyStackedWidget(SS_SlaveSelected);
 }
 
 
@@ -590,9 +596,10 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 	// find corresponding row in table widget
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
 		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
-			// show slave page
-			m_ui->stackedWidget->setCurrentIndex(0);
+			m_ui->tableWidgetSlaves->blockSignals(true);
 			m_ui->tableWidgetSlaves->selectRow(i);
+			m_ui->tableWidgetSlaves->blockSignals(false);
+			updatePropertyStackedWidget(SS_SlaveSelected);
 			break;
 		}
 	}
@@ -607,14 +614,19 @@ void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const
 		if (sourceSocketName.toStdString() == edge.m_outputVariableRef && targetSocketName.toStdString() == edge.m_inputVariableRef) {
 			m_ui->stackedWidget->setCurrentIndex(1);
 			m_selectedEdgeIdx = (int)i;
-			updateGraphProperties();
+			updatePropertyStackedWidget(SS_ConnectorSelected);
 			break;
 		}
 	}
 }
 
 
-void MSIMViewSlaves::printScene() {
+void MSIMViewSlaves::onSelectionCleared() {
+	updatePropertyStackedWidget(SS_NothingSelected);
+}
+
+
+void MSIMViewSlaves::on_toolButtonPrint_clicked() {
 	// open print preview dialog and print schematics
 	QPrinter prn;
 	QPrintDialog printDlg(&prn, this);
@@ -717,7 +729,6 @@ void MSIMViewSlaves::updateSlaveTable() {
 	}
 
 	blockMySignals(this, false);
-	updateSlaveParameterTable(currentSlaveIdx);
 }
 
 
@@ -849,6 +860,31 @@ void MSIMViewSlaves::updateGraphProperties() {
 	m_ui->doubleSpinBoxLinewidth->setValue(edge.m_linewidth);
 	m_ui->doubleSpinBoxLinewidth->blockSignals(false);
 
+}
+
+
+void MSIMViewSlaves::updatePropertyStackedWidget(SelectionState selectionState) {
+
+	m_ui->pushButtonDeleteConnection->setEnabled(false);
+	m_ui->toolButtonRemoveSlave->setEnabled(false);
+
+	switch (selectionState) {
+		case SS_SlaveSelected:
+			m_ui->toolButtonRemoveSlave->setEnabled(true);
+			m_ui->stackedWidget->setCurrentIndex(0);
+			updateSlaveParameterTable((unsigned int)m_ui->tableWidgetSlaves->currentRow());
+		break;
+		case SS_ConnectorSelected:
+			m_ui->tableWidgetSlaves->clearSelection();
+			m_ui->stackedWidget->setCurrentIndex(1);
+			m_ui->pushButtonDeleteConnection->setEnabled(true);
+			updateGraphProperties();
+		break;
+		case SS_NothingSelected:
+			m_ui->tableWidgetSlaves->clearSelection();
+			m_ui->stackedWidget->setCurrentIndex(2);
+		break;
+	}
 }
 
 
