@@ -660,6 +660,24 @@ void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 			updateConnectorSegmentItems(m_network->m_connectors.back(), nullptr);
 			emit newConnectionAdded();
 		}
+		else {
+			// check if any block or connector has been selected
+			bool blockOrConnectorSelected = false;
+			for (const BlockItem *item: m_blockItems){
+				if (item->isSelected()) {
+					blockOrConnectorSelected = true;
+					break;
+				}
+			}
+			for (const ConnectorSegmentItem *item: m_connectorSegmentItems){
+				if (item->isSelected()) {
+					blockOrConnectorSelected = true;
+					break;
+				}
+			}
+			if (!blockOrConnectorSelected)
+				emit selectionCleared();
+		}
 	}
 }
 
