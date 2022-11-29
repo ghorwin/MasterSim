@@ -305,6 +305,11 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 				break;
 			return;
 
+		case MSIMProjectHandler::ConnectionsModified:
+			// we assume connecions have been deleted/added, so the state "NothingSelected" should be the best choice
+			updatePropertyStackedWidget(SS_NothingSelected);
+			return;
+
 		default:
 			return; // nothing to do for us
 	}
@@ -626,7 +631,7 @@ void MSIMViewSlaves::onSelectionCleared() {
 }
 
 
-void MSIMViewSlaves::on_toolButtonPrint_clicked() {
+void MSIMViewSlaves::printScene() {
 	// open print preview dialog and print schematics
 	QPrinter prn;
 	QPrintDialog printDlg(&prn, this);
@@ -918,8 +923,9 @@ void MSIMViewSlaves::on_widgetConnectors_itemChanged(QTableWidgetItem *item) {
 
 	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
 	undo->push();
-	// update the network
-	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::ConnectionsModified);
+
+	// update the scene, TODO Andreas: is there a simpler way?
+	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 
 
@@ -946,8 +952,9 @@ void MSIMViewSlaves::on_doubleSpinBoxLinewidth_valueChanged(double arg1) {
 
 	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
 	undo->push();
-	// update the network
-	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::ConnectionsModified);
+
+	// update the scene, TODO Andreas: is there a simpler way?
+	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 
 
@@ -962,7 +969,7 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 
 	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
 	undo->push();
-	// update the network
-	MSIMProjectHandler::instance().setModified(MSIMProjectHandler::ConnectionsModified);
+	// update the scene, TODO Andreas: is there a simpler way?
+	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 

@@ -105,8 +105,6 @@ private slots:
 	/*! Called from sceneManager() whenever selection has changed and is now empty (there is nothing selected) */
 	void onSelectionCleared();
 
-	void on_toolButtonPrint_clicked();
-
 	/*! User has edited a parameter of a slave. */
 	void on_widgetProperties_itemChanged(QTableWidgetItem *item);
 
