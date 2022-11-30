@@ -336,8 +336,6 @@ void MSIMProjectHandler::updateLastReadTime() {
 
 
 void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
-	// started implementing block-slave sync code
-
 	// get a copy of the network
 	BLOCKMOD::Network n = m_network;
 
@@ -477,7 +475,8 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 			std::string outputName, inputName, dummy;
 			edge.splitReference(edge.m_outputVariableRef, dummy, outputName);
 			edge.splitReference(edge.m_inputVariableRef, dummy, inputName);
-			newCon.m_text = QString("%1 = %2 * %3 + %4").arg(QString::fromStdString(inputName)).arg(QString::fromStdString(outputName))
+			newCon.m_text = QString("%1 = %2 * %3 + %4").arg(QString::fromStdString(inputName),
+															 QString::fromStdString(outputName))
 					.arg(edge.m_scaleFactor).arg(edge.m_offset);
 		}
 		newCon.m_linewidth = edge.m_linewidth;
@@ -534,7 +533,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 	// check that we have a project, should be newly created
 	Q_ASSERT(isValid());
 
-	if (!QFileInfo(fname).exists()) {
+	if (!QFileInfo::exists(fname)) {
 		IBK::IBK_Message(IBK::FormatString("File '%1' does not exist or permissions are missing for accessing the file.")
 						 .arg(fname.toStdString()), IBK::MSG_ERROR, FUNC_ID);
 		return false;

@@ -306,13 +306,12 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			return;
 
 		case MSIMProjectHandler::ConnectionsModified:
-			// we assume connecions have been deleted/added, so the state "NothingSelected" should be the best choice
-			updatePropertyStackedWidget(SS_NothingSelected);
+			// connector (line) properties and/or connections may have been modified - so update the network
+			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 			return;
 
 		case MSIMProjectHandler::SingleConnectionModified:
 			// redraw equation text in connections
-			// TODO Andreas: is there a simpler way to redraw the scene?
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 			return;
 	}
@@ -925,11 +924,8 @@ void MSIMViewSlaves::on_widgetConnectors_itemChanged(QTableWidgetItem *item) {
 	else
 		p.m_graph[(unsigned int)m_selectedEdgeIdx].m_scaleFactor = value;
 
-	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
+	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
 	undo->push();
-
-	// update the scene, TODO Andreas: is there a simpler way?
-	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 
 
@@ -954,11 +950,8 @@ void MSIMViewSlaves::on_doubleSpinBoxLinewidth_valueChanged(double arg1) {
 	Q_ASSERT(p.m_graph.size() > (unsigned int)m_selectedEdgeIdx);
 	p.m_graph[(unsigned int)m_selectedEdgeIdx].m_linewidth = arg1;
 
-	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
+	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
 	undo->push();
-
-	// update the scene, TODO Andreas: is there a simpler way?
-	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 
 
@@ -971,9 +964,7 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 	p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color = IBK::Color((unsigned int)col.red(), (unsigned int)col.green(),
 																	(unsigned int)col.blue(), (unsigned int)col.alpha());
 
-	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connction properties"), p);
+	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
 	undo->push();
-	// update the scene, TODO Andreas: is there a simpler way?
-	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 }
 
