@@ -663,13 +663,13 @@ void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 		else {
 			// check if any block or connector has been selected
 			bool blockOrConnectorSelected = false;
-			for (const BlockItem *item: m_blockItems){
+			for (const BlockItem *item: qAsConst(m_blockItems)) {
 				if (item->isSelected()) {
 					blockOrConnectorSelected = true;
 					break;
 				}
 			}
-			for (const ConnectorSegmentItem *item: m_connectorSegmentItems){
+			for (const ConnectorSegmentItem *item: qAsConst(m_connectorSegmentItems)) {
 				if (item->isSelected()) {
 					blockOrConnectorSelected = true;
 					break;
