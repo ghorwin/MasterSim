@@ -32,6 +32,8 @@ class QTableWidgetItem;
 class MSIMViewSlaves : public QWidget {
 	Q_OBJECT
 
+public:
+
 	enum SelectionState {
 		SS_SlaveSelected,
 		SS_ConnectorSelected,
@@ -39,7 +41,6 @@ class MSIMViewSlaves : public QWidget {
 	};
 
 
-public:
 	/*! C'tor */
 	explicit MSIMViewSlaves(QWidget *parent = nullptr);
 	/*! D'tor */

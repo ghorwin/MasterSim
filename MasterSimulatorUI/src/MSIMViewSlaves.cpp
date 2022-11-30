@@ -310,8 +310,11 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			updatePropertyStackedWidget(SS_NothingSelected);
 			return;
 
-		default:
-			return; // nothing to do for us
+		case MSIMProjectHandler::SingleConnectionModified:
+			// redraw equation text in connections
+			// TODO Andreas: is there a simpler way to redraw the scene?
+			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+			return;
 	}
 
 	updateSlaveTable();
@@ -598,6 +601,7 @@ void MSIMViewSlaves::onNetworkGeometryChanged() {
 
 
 void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
+	m_selectedEdgeIdx = -1;
 	// find corresponding row in table widget
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
 		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
@@ -612,12 +616,11 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 
 
 void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
-	// find current GraphEdge, store its index and update its properties
+	// find selected GraphEdge, store its index and update its properties
 	m_selectedEdgeIdx = -1;
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
 		const MASTER_SIM::Project::GraphEdge &edge = project().m_graph[i];
 		if (sourceSocketName.toStdString() == edge.m_outputVariableRef && targetSocketName.toStdString() == edge.m_inputVariableRef) {
-			m_ui->stackedWidget->setCurrentIndex(1);
 			m_selectedEdgeIdx = (int)i;
 			updatePropertyStackedWidget(SS_ConnectorSelected);
 			break;
@@ -627,6 +630,7 @@ void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const
 
 
 void MSIMViewSlaves::onSelectionCleared() {
+	m_selectedEdgeIdx = -1;
 	updatePropertyStackedWidget(SS_NothingSelected);
 }
 
@@ -875,19 +879,19 @@ void MSIMViewSlaves::updatePropertyStackedWidget(SelectionState selectionState) 
 
 	switch (selectionState) {
 		case SS_SlaveSelected:
-			m_ui->toolButtonRemoveSlave->setEnabled(true);
 			m_ui->stackedWidget->setCurrentIndex(0);
+			m_ui->toolButtonRemoveSlave->setEnabled(true);
 			updateSlaveParameterTable((unsigned int)m_ui->tableWidgetSlaves->currentRow());
 		break;
 		case SS_ConnectorSelected:
-			m_ui->tableWidgetSlaves->clearSelection();
 			m_ui->stackedWidget->setCurrentIndex(1);
+			m_ui->tableWidgetSlaves->clearSelection();
 			m_ui->pushButtonDeleteConnection->setEnabled(true);
 			updateGraphProperties();
 		break;
 		case SS_NothingSelected:
-			m_ui->tableWidgetSlaves->clearSelection();
 			m_ui->stackedWidget->setCurrentIndex(2);
+			m_ui->tableWidgetSlaves->clearSelection();
 		break;
 	}
 }
