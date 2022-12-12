@@ -308,6 +308,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 		case MSIMProjectHandler::ConnectionsModified:
 			// connector (line) properties and/or connections may have been modified - so update the network
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+			updatePropertyStackedWidget(SS_NothingSelected);
 			return;
 
 		case MSIMProjectHandler::SingleConnectionModified:
