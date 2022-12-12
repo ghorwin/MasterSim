@@ -317,6 +317,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			return;
 	}
 
+	m_ui->checkBoxShowEquations->setChecked(project().m_drawConnectorEquations);
 	updateSlaveTable();
 }
 
@@ -965,6 +966,14 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 	p.m_graph[(unsigned int)m_selectedEdgeIdx].m_color = IBK::Color((unsigned int)col.red(), (unsigned int)col.green(),
 																	(unsigned int)col.blue(), (unsigned int)col.alpha());
 
+	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
+	undo->push();
+}
+
+
+void MSIMViewSlaves::on_checkBoxShowEquations_clicked(bool checked) {
+	MASTER_SIM::Project p = project();
+	p.m_drawConnectorEquations = checked;
 	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
 	undo->push();
 }

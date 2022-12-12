@@ -471,7 +471,7 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		}
 
 		// add equation text, if factor or offset given
-		if (edge.m_scaleFactor != 1.0 || edge.m_offset != 0.0) {
+		if ( prj.m_drawConnectorEquations && (edge.m_scaleFactor != 1.0 || edge.m_offset != 0.0) ) {
 			std::string outputName, inputName, dummy;
 			edge.splitReference(edge.m_outputVariableRef, dummy, outputName);
 			edge.splitReference(edge.m_inputVariableRef, dummy, inputName);
@@ -479,6 +479,8 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 															 QString::fromStdString(outputName))
 					.arg(edge.m_scaleFactor).arg(edge.m_offset);
 		}
+		else
+			newCon.m_text.clear();
 		newCon.m_linewidth = edge.m_linewidth;
 		newCon.m_color = QColor(edge.m_color.m_red, edge.m_color.m_green, edge.m_color.m_blue, edge.m_color.m_alpha);
 

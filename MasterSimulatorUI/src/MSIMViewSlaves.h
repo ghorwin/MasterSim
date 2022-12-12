@@ -117,6 +117,8 @@ private slots:
 
 	void on_pushButtonSelectColor_colorChanged();
 
+	void on_checkBoxShowEquations_clicked(bool checked);
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
