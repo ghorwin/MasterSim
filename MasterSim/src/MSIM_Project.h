@@ -242,6 +242,9 @@ public:
 
 	/*! If not empty, only the values in the filter are dumped to file. */
 	std::set<std::string>		m_outputFilter;
+
+	/*! Defines wether equations of connectors shall be shown in slave view. */
+	bool						m_drawConnectorEquations = true;
 };
 
 } // namespace MASTER_SIM
