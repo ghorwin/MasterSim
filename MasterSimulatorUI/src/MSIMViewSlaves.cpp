@@ -76,6 +76,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->splitter_2->setStretchFactor(1,1);
 
 	m_ui->doubleSpinBoxLinewidth->setSingleStep(0.1);
+
+	m_ui->tableWidgetSlaves->setStyleSheet("selection-background-color: #dfe7fd;");
 }
 
 
@@ -853,18 +855,25 @@ void MSIMViewSlaves::updateGraphProperties() {
 
 	m_ui->widgetConnectors->blockSignals(true);
 	m_ui->widgetConnectors->clearContents();
-	m_ui->widgetConnectors->setRowCount(2);
+	m_ui->widgetConnectors->setRowCount(3);
 
 	QTableWidgetItem *itemOffsetLabel = new QTableWidgetItem(tr("Offset"));
 	itemOffsetLabel->setFlags(Qt::ItemIsEnabled);
 	m_ui->widgetConnectors->setItem(0, 0, itemOffsetLabel);
 	QTableWidgetItem *itemOffset = new QTableWidgetItem(QString("%L1").arg(edge.m_offset));
 	m_ui->widgetConnectors->setItem(0, 1, itemOffset);
+
 	QTableWidgetItem *itemFactorLabel = new QTableWidgetItem(tr("Factor"));
 	itemFactorLabel->setFlags(Qt::ItemIsEnabled);
 	m_ui->widgetConnectors->setItem(1, 0, itemFactorLabel);
 	QTableWidgetItem *itemFactor = new QTableWidgetItem(QString("%L1").arg(edge.m_scaleFactor));
 	m_ui->widgetConnectors->setItem(1, 1, itemFactor);
+
+	QTableWidgetItem *itemDividerLabel = new QTableWidgetItem(tr("Divider"));
+	itemDividerLabel->setFlags(Qt::ItemIsEnabled);
+	m_ui->widgetConnectors->setItem(2, 0, itemDividerLabel);
+	QTableWidgetItem *itemDivider = new QTableWidgetItem(QString("%L1").arg(1./edge.m_scaleFactor));
+	m_ui->widgetConnectors->setItem(2, 1, itemDivider);
 
 	m_ui->widgetConnectors->blockSignals(false);
 
@@ -908,7 +917,7 @@ void MSIMViewSlaves::on_widgetConnectors_itemChanged(QTableWidgetItem *item) {
 		return;
 	MASTER_SIM::Project p = project();
 	Q_ASSERT(p.m_graph.size() > (unsigned int)m_selectedEdgeIdx);
-	Q_ASSERT(item->row()<2);
+	Q_ASSERT(item->row()<3);
 	Q_ASSERT(item->column()==1);
 
 	bool ok;
@@ -928,11 +937,16 @@ void MSIMViewSlaves::on_widgetConnectors_itemChanged(QTableWidgetItem *item) {
 	// set value
 	if (item->row()==0)
 		p.m_graph[(unsigned int)m_selectedEdgeIdx].m_offset = value;
-	else
+	else if (item->row()==1)
 		p.m_graph[(unsigned int)m_selectedEdgeIdx].m_scaleFactor = value;
+	else
+		p.m_graph[(unsigned int)m_selectedEdgeIdx].m_scaleFactor = 1. / value;
 
 	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
 	undo->push();
+
+	// needed for consistent divider / factor value
+	updateGraphProperties();
 }
 
 
