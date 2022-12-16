@@ -315,6 +315,11 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			// redraw equation text in connections
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
 			return;
+
+		// the remaining undo actions do not affect this view
+		case MSIMProjectHandler::SimulationSettingsModified :
+		case MSIMProjectHandler::NetworkGeometryModified:
+			return; // ignored
 	}
 
 	m_ui->checkBoxShowEquations->setChecked(project().m_drawConnectorEquations);
@@ -506,7 +511,7 @@ void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 }
 
 
-void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int currentRow, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
+void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int /*currentRow*/, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
 	// update property browser for currently selected slave
 	updatePropertyStackedWidget(SS_SlaveSelected);
 }
