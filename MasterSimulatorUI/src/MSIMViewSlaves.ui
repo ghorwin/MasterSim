@@ -302,7 +302,7 @@
           </sizepolicy>
          </property>
          <property name="text">
-          <string>show connection equations</string>
+          <string>Show connection equations</string>
          </property>
         </widget>
        </item>
