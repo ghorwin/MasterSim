@@ -382,9 +382,6 @@ equals(TEMPLATE,app) {
 			QMAKE_CXXFLAGS += /GS /RTC1
 		}
 	}
-	else {
-		QMAKE_CXXFLAGS += -std=c++11
-	}
 
 	QMAKE_LIBDIR += ../externals/lib
 	LIBS += -L../externals/lib
@@ -431,7 +428,6 @@ equals(TEMPLATE,lib) {
 	else {
 		# on Unix/MacOS we always build our libraries as dynamic libs
 		CONFIG += shared
-		QMAKE_CXXFLAGS += -std=c++11
 	}
 
 	DESTDIR = ../lib
