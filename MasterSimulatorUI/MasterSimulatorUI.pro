@@ -96,6 +96,7 @@ HEADERS  += \
 	src/MSIMProjectHandler.h \
 	src/MSIMSceneManager.h \
 	src/MSIMSettings.h \
+	src/MSIMSignalingTextEdit.h \
 	src/MSIMSimulationMonitorWidget.h \
 	src/MSIMSlaveBlock.h \
 	src/MSIMSlaveItemDelegate.h \

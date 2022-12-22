@@ -265,49 +265,18 @@
          <item>
           <widget class="QGroupBox" name="groupBox_3">
            <property name="title">
-            <string>Project properties</string>
+            <string>Project description</string>
            </property>
-           <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>Project comment/description:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" rowspan="2">
-             <widget class="QTextEdit" name="textEditDescription">
-              <property name="readOnly">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="MSIMSignalingTextEdit" name="textEditDescription">
+              <property name="enabled">
                <bool>true</bool>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QToolButton" name="toolButtonEditComment">
-              <property name="icon">
-               <iconset resource="../resources/MasterSimulator.qrc">
-                <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
+              <property name="readOnly">
+               <bool>false</bool>
               </property>
              </widget>
-            </item>
-            <item row="2" column="1">
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>186</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -381,6 +350,14 @@
    <class>MSIMColorButton</class>
    <extends>QPushButton</extends>
    <header>MSIMColorButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MSIMSignalingTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header>MSIMSignalingTextEdit.h</header>
+   <slots>
+    <signal>editingFinished()</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>

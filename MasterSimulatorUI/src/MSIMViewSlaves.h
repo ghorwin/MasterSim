@@ -119,7 +119,8 @@ private slots:
 
 	void on_checkBoxShowEquations_clicked(bool checked);
 
-	void on_toolButtonEditComment_clicked();
+
+	void on_textEditDescription_editingFinished();
 
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
