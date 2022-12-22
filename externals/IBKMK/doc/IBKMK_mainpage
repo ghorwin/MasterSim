@@ -5,7 +5,12 @@
 
 \section intro_sec Library concept
 
-The library is organized into low level subroutines implemented mostly in C that take all necessary data arrays as arguments. These functions are performance optimized and do never allocate dynamic memory by themselves. Consequently, these functions require workspace vectors to be passed as arguments when needed. The implementation of these low-level subroutines is in files with format IBKMKC_dense_matrix.* IBKMKC_sparse_matrix.* etc. For frequently used storage structures special implementations are available. By design, the generic function will call the respective optimized function based on function arguments, so that user code only needs to access the generic function.
+The library is organized into low level subroutines implemented mostly in C that take all necessary data arrays as arguments. 
+These functions are performance optimized and do never allocate dynamic memory by themselves. Consequently, these functions 
+require workspace vectors to be passed as arguments when needed. The implementation of these low-level subroutines is in files 
+with format IBKMKC_dense_matrix.* IBKMKC_sparse_matrix.* etc. For frequently used storage structures special implementations are 
+available. By design, the generic function will call the respective optimized function based on function arguments, so that user 
+code only needs to access the generic function.
 
 \li IBKMKC_dense_matrix  - All dense matrix routines, also used for block-versions of other matrices
 \li IBKMKC_tridiag_matrix - Tridiagonal and block-tridiagonal routines
@@ -13,7 +18,9 @@ The library is organized into low level subroutines implemented mostly in C that
 \li IBKMKC_sparse_matrix - Sparse and block-sparse routines, for both Ellpack-Itpack-for-Delphin (EID) and CSR formats
 \li IBKMKC_vector_operations - All operations on vectors
 
-For convenient use, C++ data storage classes that encapsulate data storage members and member functions for necessary operations are provided. The C++ interface makes use of the low-level C interface. Such classes are stored in files with camel-case formatting, for example IBKMK_SparseMatrix.*
+For convenient use, C++ data storage classes that encapsulate data storage members and member functions for necessary 
+operations are provided. The C++ interface makes use of the low-level C interface. Such classes are stored in files with 
+camel-case formatting, for example IBKMK_SparseMatrix.*
 
 
 
