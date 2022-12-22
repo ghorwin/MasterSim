@@ -443,8 +443,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>MasterSim Benutzerhandbuch</h1>
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
-<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.de">andreas.nicolai@gmx.de</a></span><br>
-<span id="revnumber">version 0.9.4 (27.01.2022)</span>
+<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.net">andreas.nicolai@gmx.net</a></span><br>
+<span id="revnumber">version 0.9.5 (22.12.2022)</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Inhaltsverzeichnis</div>
@@ -505,10 +505,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#slave_definition_view">2.3. Ansicht zum Definieren der FMU-Slaves</a>
 <ul class="sectlevel3">
-<li><a href="#_slaves_hinzufügen">2.3.1. Slaves hinzufügen</a></li>
-<li><a href="#_eigenschaftenparameterwerte_der_slaves">2.3.2. Eigenschaften/Parameterwerte der Slaves</a></li>
-<li><a href="#_netzwerkansicht">2.3.3. Netzwerkansicht</a></li>
-<li><a href="#_block_bearbeitungsdialog">2.3.4. Block-Bearbeitungsdialog</a></li>
+<li><a href="#_bearbeiten_der_eigenschaften_von_projekt_ausgewähltem_slave_oder_verbindung">2.3.1. Bearbeiten der Eigenschaften von Projekt, ausgewähltem Slave oder Verbindung</a></li>
+<li><a href="#_slaves_hinzufügen">2.3.2. Slaves hinzufügen</a></li>
+<li><a href="#_eigenschaftenparameterwerte_der_slaves">2.3.3. Eigenschaften/Parameterwerte der Slaves</a></li>
+<li><a href="#_netzwerkansicht">2.3.4. Netzwerkansicht</a></li>
+<li><a href="#_block_bearbeitungsdialog">2.3.5. Block-Bearbeitungsdialog</a></li>
 </ul>
 </li>
 <li><a href="#connection_view">2.4. Verknüpfungsansicht</a>
@@ -1629,7 +1630,8 @@ Beenden
 <div class="sect2">
 <h3 id="slave_definition_view">2.3. Ansicht zum Definieren der FMU-Slaves</h3>
 <div class="paragraph">
-<p>Die Eingabe eines Simulations-Szenarios ist in drei Ansichten aufgeteilt. Das Erstellen einer Simulation startet mit dem Importieren von FMUs/Slaves. Somit ist die Ansicht zum Festlegen der Slaves die Erste (und Wichtigste).</p>
+<p>Die Eingabe eines Simulations-Szenarios ist in drei Ansichten aufgeteilt.
+Das Erstellen einer Simulation startet mit dem Importieren von FMUs/Slaves. Somit ist die Ansicht zum Festlegen der Slaves die Erste (und Wichtigste).</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -1717,7 +1719,13 @@ Beenden
 </table>
 </div>
 <div class="sect3">
-<h4 id="_slaves_hinzufügen">2.3.1. Slaves hinzufügen</h4>
+<h4 id="_bearbeiten_der_eigenschaften_von_projekt_ausgewähltem_slave_oder_verbindung">2.3.1. Bearbeiten der Eigenschaften von Projekt, ausgewähltem Slave oder Verbindung</h4>
+<div class="paragraph">
+<p>Im unteren linken Teil der Ansicht befindet sich eine Kontext-abhängige Eingabe für Projektkommentare (falls nichts gewählt ist), Slave-Eigenschaften (falls ein Slave markiert ist) oder Verbindungseigenschaften (falls eine Verbindung markiert ist).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_slaves_hinzufügen">2.3.2. Slaves hinzufügen</h4>
 <div class="paragraph">
 <p>Neue Slaves werden durch das Auswählen von <code>fmu</code>- oder  <code>csv</code>- oder <code>tsv</code>-Dateien zugefügt. <em>MasterSim</em> nutzt automatisch den Basisnamen der ausgewählten Datei als ID-Namen für den Slave. Falls bereits ein solcher ID-Name existiert, fügt <em>MasterSim</em> eine Nummer zum Basisnamen hinzu. In jedem Fall müssen die Slave-ID-Namen einzigartig innerhalb des Projekts sein.</p>
 </div>
@@ -1737,7 +1745,7 @@ Beenden
 </div>
 </div>
 <div class="sect3">
-<h4 id="_eigenschaftenparameterwerte_der_slaves">2.3.2. Eigenschaften/Parameterwerte der Slaves</h4>
+<h4 id="_eigenschaftenparameterwerte_der_slaves">2.3.3. Eigenschaften/Parameterwerte der Slaves</h4>
 <div class="paragraph">
 <p>Unterhalb der Tabelle mit den verwendeten Slaves ist eine Liste der von den FMUs publizierten Parameter. Die Liste gilt für den  <em>gegenwärtig ausgewählten</em> Slave. Ein Simulations-Slave kann in der Slave-Tabelle oder durch Anklicken eines Blocks in der Netzwerkansicht ausgewählt werden.</p>
 </div>
@@ -1780,7 +1788,7 @@ Beenden
 </div>
 </div>
 <div class="sect3">
-<h4 id="_netzwerkansicht">2.3.3. Netzwerkansicht</h4>
+<h4 id="_netzwerkansicht">2.3.4. Netzwerkansicht</h4>
 <div class="paragraph">
 <p>Die Netzwerkansicht <strong>(9)</strong> zeigt ein simples Schema aller FMU-Slaves und ihrer Verbindungen.  Diese Netzwerkansicht ist optional und wird für die Simulation nicht wirklich gebraucht. Dennoch ist die visuelle Darstellung des Simulations-Szenarios wichtig für die Kommunikation und die Prüfung der Eingabe.</p>
 </div>
@@ -1821,21 +1829,7 @@ Beenden
 <div class="sect4">
 <h5 id="_verbindungen_in_der_netzwerkansicht_herstellen">Verbindungen in der Netzwerkansicht herstellen</h5>
 <div class="paragraph">
-<p>Sie können eine neue Verbindung zwischen Ein- und Ausgängen von Slaves herstellen, indem Sie zunächst das Netzwerk durch das Drücken des Buttons <strong>(7)</strong> in den  <em>Verknüpfungsmodus</em> versetzen. Wenn der Verbindungsmodus aktiv ist, wandelt sich der Zeiger innerhalb des Netzwerkansicht-Fensters zu einem Kreuz. Sie können die Maus dann über einen Variablenausgang bewegen (Dreieck). <em>Drücken und halten</em> Sie die linke Maustaste und ziehen Sie die Verbindung zu einem <em>freien</em> Variableneingang (leerer Halbkreis). Wenn die Verbindung hergestellt wurde, wird der Verbindungsmodus wieder ausgeschaltet und die Blöcke und Verbindungen können bewegt werden.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Sie können den <em>Verbindungsmodus</em> verlassen, indem Sie in der Netzwerkansicht die rechte Maustaste drücken.</p>
-</div>
-</td>
-</tr>
-</table>
+<p>Sie können eine neue Verbindung zwischen Ein- und Ausgängen von Slaves herstellen, indem Sie einfach von einem Variablenausgang (Dreieck) mit der Maus eine Verbindungslinie ziehen. Solange die Maustaste gedrückt bleibt, ist die Ansicht im  <em>Verknüpfungsmodus</em>. Wenn der Verbindungsmodus aktiv ist, wandelt sich der Zeiger innerhalb des Netzwerkansicht-Fensters zu einem Kreuz. Sie können die Maus dann über einen <em>freien</em> Variableneingang (leerer Halbkreis) ziehen. Wenn die Verbindung hergestellt wurde, wird eine Verbindungslinie dauerhaft gezeigt und der Variableneingang leicht ausgefüllt.</p>
 </div>
 <div class="paragraph">
 <p>Verbindungen zwischen Slaves können in der <a href="#connection_view">Verknüpfungsansicht</a> bequemer festgelegt werden (welche ebenso effizienter ist, wenn mehr Verbindungen hergestellt werden, vergleichbar zum manuellen Ziehen der Verbindung mit der Maus).</p>
@@ -1886,7 +1880,7 @@ Beenden
 </div>
 </div>
 <div class="sect3">
-<h4 id="_block_bearbeitungsdialog">2.3.4. Block-Bearbeitungsdialog</h4>
+<h4 id="_block_bearbeitungsdialog">2.3.5. Block-Bearbeitungsdialog</h4>
 <div class="paragraph">
 <p>Der Block-Bearbeitungsdialog erlaubt Ihnen, die grundlegende, rechteckige Gestalt der FMU festzulegen und die Abschlüsse zu auszurichten. Der Block-Bearbeitungsdialog wird entweder direkt nach dem Import einer FMU geöffnet oder indem Sie auf einen Block in der Netzwerkansicht <strong>doppelklicken</strong>.</p>
 </div>
@@ -2142,6 +2136,20 @@ Beenden
 <h4 id="_eine_umrechnungsoperation_zwischen_variablen_definieren">2.4.2. Eine Umrechnungsoperation zwischen Variablen definieren</h4>
 <div class="paragraph">
 <p>Falls Sie die Umwandlung einer Einheit oder andere Änderungen (Zeichenumkehrung, Skalierung) zwischen Ausgangs- und Eingangsvariablen vornehmen wollen, können Sie in der dritten Spalte der Tabelle <strong>(6)</strong> <strong>doppelklicken</strong>, um einen Dialog für das Bearbeiten der Umrechungsoperation zu öffnen (siehe Abschnitt <a href="#connection_graph">Verbindungsgraph</a> für eine detaillierte Beschreibung).</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Es ist mitunter einfacher und übersichtlicher, Umrechungsoperationen in der graphischen Netzwerksicht direkt festzulegen. Dazu wird in der Slave-Ansicht im Netzwerk eine Verbindung markiert und in dem Eigenschaftsfenster unten links kann man direkt Skalierungsfaktor und Abstand eingeben.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -4417,8 +4425,8 @@ bin/release      - standardisierter Ausgabepfad für Erstellung mit cmake</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.9.4 (27.01.2022)<br>
-Last updated 2022-01-27 16:02:37 +0100
+Version 0.9.5 (22.12.2022)<br>
+Last updated 2022-12-22 23:07:50 +0100
 </div>
 </div>
 <style>

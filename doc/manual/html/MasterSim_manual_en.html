@@ -443,8 +443,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h1>MasterSim User Guide</h1>
 <div class="details">
 <span id="author" class="author">Andreas Nicolai</span><br>
-<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.de">andreas.nicolai@gmx.de</a></span><br>
-<span id="revnumber">version 0.9.4 (27.01.2022)</span>
+<span id="email" class="email"><a href="mailto:andreas.nicolai@gmx.net">andreas.nicolai@gmx.net</a></span><br>
+<span id="revnumber">version 0.9.5 (22.12.2022)</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -505,10 +505,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_slaves_definition_view">2.3. Slaves definition view</a>
 <ul class="sectlevel3">
-<li><a href="#_adding_slaves">2.3.1. Adding slaves</a></li>
-<li><a href="#_slave_propertiesparameter_values">2.3.2. Slave properties/parameter values</a></li>
-<li><a href="#_network_view">2.3.3. Network view</a></li>
-<li><a href="#_block_editor">2.3.4. Block editor</a></li>
+<li><a href="#_editing_properties_of_project_selected_slave_or_selected_connection">2.3.1. Editing properties of project, selected slave or selected connection</a></li>
+<li><a href="#_adding_slaves">2.3.2. Adding slaves</a></li>
+<li><a href="#slave:edit_properties">2.3.3. Slave properties/parameter values</a></li>
+<li><a href="#_network_view">2.3.4. Network view</a></li>
+<li><a href="#_block_editor">2.3.5. Block editor</a></li>
 </ul>
 </li>
 <li><a href="#_connection_view">2.4. Connection view</a>
@@ -1704,7 +1705,13 @@ If you want to rearrange several blocks at the same time, you can select multipl
 </table>
 </div>
 <div class="sect3">
-<h4 id="_adding_slaves">2.3.1. Adding slaves</h4>
+<h4 id="_editing_properties_of_project_selected_slave_or_selected_connection">2.3.1. Editing properties of project, selected slave or selected connection</h4>
+<div class="paragraph">
+<p>In the lower left part of the view you may edit project comments (if nothing is selected in the network view), slave properties (if a slave is selected, see also <a href="#slave:edit_properties">Slave properties/parameter values</a>), or connection properties (if a connection is selected).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_adding_slaves">2.3.2. Adding slaves</h4>
 <div class="paragraph">
 <p>New slaves are added by selecting <code>fmu</code> or  <code>csv</code> or <code>tsv</code> files. <em>MasterSim</em> automatically uses the basename of the selected file as ID name for the slave. If already such an ID name exists, <em>MasterSim</em> appends a number to the basename. In any case, slave ID names must be unique within the project.</p>
 </div>
@@ -1723,7 +1730,7 @@ Note, that the FMU must have the capability flag <strong>canBeInstantiatedOnlyOn
 </div>
 </div>
 <div class="sect3">
-<h4 id="_slave_propertiesparameter_values">2.3.2. Slave properties/parameter values</h4>
+<h4 id="slave:edit_properties">2.3.3. Slave properties/parameter values</h4>
 <div class="paragraph">
 <p>Below the table with imported slaves is a list of parameters published by the FMU. The list is specific to the <em>currently selected</em> slave. A simulator slave can be selected in the slave table or by clicking on a block in the network view.</p>
 </div>
@@ -1766,7 +1773,7 @@ Note, that the FMU must have the capability flag <strong>canBeInstantiatedOnlyOn
 </div>
 </div>
 <div class="sect3">
-<h4 id="_network_view">2.3.3. Network view</h4>
+<h4 id="_network_view">2.3.4. Network view</h4>
 <div class="paragraph">
 <p>The network view <strong>(9)</strong> shows a simple schematic of all FMU slaves and their connections. This network view is optional and not really needed for the simulation. Still, a visual representation of the simulation scenario is important for communication.</p>
 </div>
@@ -1788,19 +1795,7 @@ You can zoom in and out of the network view by using the mouse scroll button. Th
 <div class="sect4">
 <h5 id="_creating_connections_in_network_view">Creating connections in network view</h5>
 <div class="paragraph">
-<p>You can create new connections between slave&#8217;s outputs and inputs by first putting the network in <em>connection mode</em> by pressing button <strong>(7)</strong>. When in connection mode, the cursor inside the network view window changes to a cross. You can then move the mouse over an outlet socket (triangle), <em>press and hold</em> the mouse button and drag the connection to a <em>free</em> inlet socket (empty semi-circle). Once the connection has been made, connection mode is disabled again and blocks and connectors can be moved around.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-You can leave <em>connection mode</em> by pressing right-click in the network view.
-</td>
-</tr>
-</table>
+<p>You can create new connections between slave&#8217;s outputs and inputs by dragging a connection from an outlet socket (triangle) to a <em>free</em> inlet socket (empty semi-circle). Once the connection has been made, the newly created connection line is shown.</p>
 </div>
 <div class="paragraph">
 <p>Connections between slaves can be defined more conveniently in the <a href="#_connection_view">Connection view</a> (which is also more efficient when making many connections, compared to manually dragging the connections with the mouse).</p>
@@ -1851,7 +1846,7 @@ You can leave <em>connection mode</em> by pressing right-click in the network vi
 </div>
 </div>
 <div class="sect3">
-<h4 id="_block_editor">2.3.4. Block editor</h4>
+<h4 id="_block_editor">2.3.5. Block editor</h4>
 <div class="paragraph">
 <p>The block editor allows you to define the basic, rectangular shape of your FMU and to layout your sockets. The block editor is opened either directly after an FMU has been imported, or when <strong>double-clicking</strong> on a block in the network view.</p>
 </div>
@@ -2099,6 +2094,20 @@ In one of the next program versions, it will be possible to store block appearan
 <h4 id="_assigning_transformation_operations_to_a_connection">2.4.2. Assigning transformation operations to a connection</h4>
 <div class="paragraph">
 <p>If you want to do unit conversion or other transformations (sign inversion, scaling) between output variables and input variables, you can <strong>double-click</strong> on the third column in table <strong>(6)</strong>, to open a dialog for editing transformation factors and offsets. See section <a href="#_connection_graph">Connection graph</a> for a detailed description.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can easily assign conversion operations in the network schematics in the slave view. Simply select the connection to modify and edit the scale factor and offset in the lower left property window.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -4469,8 +4478,8 @@ The master also holds for each data type a vector of connection variables.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Version 0.9.4 (27.01.2022)<br>
-Last updated 2022-01-27 15:55:33 +0100
+Version 0.9.5 (22.12.2022)<br>
+Last updated 2022-12-22 23:07:39 +0100
 </div>
 </div>
 <style>
