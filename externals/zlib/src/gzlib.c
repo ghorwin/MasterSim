@@ -12,6 +12,7 @@
 #  define LSEEK lseek64
 #else
 #  define LSEEK lseek
+#  include <unistd.h>
 #endif
 #endif
 
