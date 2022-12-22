@@ -471,7 +471,7 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		}
 
 		// add equation text, if factor or offset given
-		if ( prj.m_drawConnectorEquations && (edge.m_scaleFactor != 1.0 || edge.m_offset != 0.0) ) {
+		if ( MSIMSettings::instance().m_drawConnectorEquations && (edge.m_scaleFactor != 1.0 || edge.m_offset != 0.0) ) {
 			std::string outputName, inputName, dummy;
 			edge.splitReference(edge.m_outputVariableRef, dummy, outputName);
 			edge.splitReference(edge.m_inputVariableRef, dummy, inputName);

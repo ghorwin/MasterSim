@@ -220,6 +220,9 @@ public:
 	/*! Stores the choice of terminal emulator. */
 	TerminalEmulators			m_terminalEmulator;
 
+	/*! Defines whether equations of connectors shall be shown in slave view. */
+	bool						m_drawConnectorEquations = true;
+
 	/*! Enumeration values for different properties to be managed in settings.
 	*/
 	enum PropertyType {

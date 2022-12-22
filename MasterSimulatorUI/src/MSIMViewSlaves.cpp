@@ -33,6 +33,7 @@
 #include "MSIMSceneManager.h"
 #include "MSIMSlaveBlock.h"
 #include "MSIMBlockEditorDialog.h"
+#include "MSIMUndoProject.h"
 
 #include "MSIMUndoSlaves.h"
 #include "MSIMUndoConnections.h"
@@ -54,6 +55,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 
 	m_ui->verticalLayoutConnectors->setContentsMargins(0,0,0,0);
 	m_ui->verticalLayoutSlaveProperties->setContentsMargins(0,0,0,0);
+	m_ui->verticalLayoutProjectProps->setContentsMargins(0,0,0,0);
 
 	m_ui->widgetProperties->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 	m_ui->widgetProperties->horizontalHeader()->setStretchLastSection(true);
@@ -78,6 +80,8 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->doubleSpinBoxLinewidth->setSingleStep(0.1);
 
 	m_ui->tableWidgetSlaves->setStyleSheet("selection-background-color: #dfe7fd;");
+
+	m_ui->checkBoxShowEquations->setChecked(MSIMSettings::instance().m_drawConnectorEquations);
 }
 
 
@@ -260,7 +264,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			// sync check of all blocks and FMU slaves
 
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
-			m_ui->stackedWidget->setCurrentIndex(0); // we always show fmu property view first
+			updatePropertyStackedWidget(SS_NothingSelected);
 
 			// sync network with graphical display
 			if (m_ui->blockModWidget->scene() != nullptr) {
@@ -295,6 +299,9 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 					this, &MSIMViewSlaves::onSelectionCleared);
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
+			m_ui->textEditDescription->blockSignals(true);
+			m_ui->textEditDescription->setHtml(QString::fromStdString(project().m_comment));
+			m_ui->textEditDescription->blockSignals(false);
 		} break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
@@ -324,9 +331,9 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			return; // ignored
 	}
 
-	m_ui->checkBoxShowEquations->setChecked(project().m_drawConnectorEquations);
 	updateSlaveTable();
 }
+
 
 template <typename iterator, typename const_iterator>
 std::string pickSlaveName(const std::string& basename, iterator first, const_iterator last) {
@@ -991,9 +998,19 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 
 
 void MSIMViewSlaves::on_checkBoxShowEquations_clicked(bool checked) {
-	MASTER_SIM::Project p = project();
-	p.m_drawConnectorEquations = checked;
-	MSIMUndoConnectionModified * undo = new MSIMUndoConnectionModified(tr("Changed connection properties"), p);
-	undo->push();
+	MSIMSettings::instance().m_drawConnectorEquations = checked;
+	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+}
+
+
+//qDebug() << "new comment";
+//MASTER_SIM::Project p = project();
+//p.m_comment = m_ui->textEditDescription->toHtml().toStdString();
+//MSIMUndoProject * undo = new MSIMUndoProject(tr("Modified project description"), p);
+//undo->push();
+
+
+void MSIMViewSlaves::on_toolButtonEditComment_clicked() {
+
 }
 

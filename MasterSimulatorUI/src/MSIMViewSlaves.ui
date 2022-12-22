@@ -123,7 +123,7 @@
       </widget>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="pageProperties">
         <layout class="QVBoxLayout" name="verticalLayoutSlaveProperties">
@@ -260,7 +260,60 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="page"/>
+       <widget class="QWidget" name="page">
+        <layout class="QVBoxLayout" name="verticalLayoutProjectProps">
+         <item>
+          <widget class="QGroupBox" name="groupBox_3">
+           <property name="title">
+            <string>Project properties</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Project comment/description:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" rowspan="2">
+             <widget class="QTextEdit" name="textEditDescription">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QToolButton" name="toolButtonEditComment">
+              <property name="icon">
+               <iconset resource="../resources/MasterSimulator.qrc">
+                <normaloff>:/gfx/actions/24x24/edit.png</normaloff>:/gfx/actions/24x24/edit.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>186</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="layoutWidget2">
