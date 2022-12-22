@@ -475,9 +475,19 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 			std::string outputName, inputName, dummy;
 			edge.splitReference(edge.m_outputVariableRef, dummy, outputName);
 			edge.splitReference(edge.m_inputVariableRef, dummy, inputName);
-			newCon.m_text = QString("%1 = %2 * %3 + %4").arg(QString::fromStdString(inputName),
-															 QString::fromStdString(outputName))
-					.arg(edge.m_scaleFactor).arg(edge.m_offset);
+			// special handling
+			if (edge.m_scaleFactor == 1.0)
+				newCon.m_text = QString("%1<sub>(in)</sub> = %2<sub>(out)</sub> + %3")
+						.arg(QString::fromStdString(inputName), QString::fromStdString(outputName))
+						.arg(edge.m_offset);
+			else if (edge.m_offset == 0.0)
+				newCon.m_text = QString("%1<sub>(in)</sub> = %3 * %2<sub>(out)</sub>")
+						.arg(QString::fromStdString(inputName), QString::fromStdString(outputName))
+						.arg(edge.m_scaleFactor);
+			else
+				newCon.m_text = QString("%1<sub>(in)</sub> = %3 * %2<sub>(out)</sub> + %4")
+						.arg(QString::fromStdString(inputName), QString::fromStdString(outputName))
+						.arg(edge.m_scaleFactor).arg(edge.m_offset);
 		}
 		else
 			newCon.m_text.clear();
