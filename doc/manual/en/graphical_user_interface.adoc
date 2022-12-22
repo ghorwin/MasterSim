@@ -88,6 +88,12 @@ Items of the view:
 
 TIP: If you want to rearrange several blocks at the same time, you can select multiple blocks by *Ctrl + Click* on a block. If you move one of the selected blocks now, the other selected blocks will be moved as well.
 
+
+### Editing properties of project, selected slave or selected connection
+
+In the lower left part of the view you may edit project comments (if nothing is selected in the network view), slave properties (if a slave is selected, see also <<slave:edit_properties>>), or connection properties (if a connection is selected).
+
+
 === Adding slaves
 
 New slaves are added by selecting `fmu` or  `csv` or `tsv` files. _MasterSim_ automatically uses the basename of the selected file as ID name for the slave. If already such an ID name exists, _MasterSim_ appends a number to the basename. In any case, slave ID names must be unique within the project.
@@ -95,6 +101,7 @@ New slaves are added by selecting `fmu` or  `csv` or `tsv` files. _MasterSim_ au
 TIP: You can import the same FMU several times. In this case, the slaves will have different ID names, yet reference the same FMU file. Parameters and visual appearance can be set differently for slave of the same FMU. 
 Note, that the FMU must have the capability flag *canBeInstantiatedOnlyOncePerProcess* set to _false_ in order to be used several times in the same simulation scenario.
 
+[[slave:edit_properties]]
 === Slave properties/parameter values
 
 Below the table with imported slaves is a list of parameters published by the FMU. The list is specific to the _currently selected_ slave. A simulator slave can be selected in the slave table or by clicking on a block in the network view.
@@ -118,9 +125,7 @@ TIP: You can zoom in and out of the network view by using the mouse scroll butto
 The network shows *_blocks_* (matching the simulators/slaves) and on each of the blocks one or more *_sockets_*. Sockets indicate input/output variables of each simulation slave. Blocks are shown in different colors, indicating the individual <<_block_states,block states>>.
 
 ==== Creating connections in network view
-You can create new connections between slave's outputs and inputs by first putting the network in _connection mode_ by pressing button *(7)*. When in connection mode, the cursor inside the network view window changes to a cross. You can then move the mouse over an outlet socket (triangle), _press and hold_ the mouse button and drag the connection to a _free_ inlet socket (empty semi-circle). Once the connection has been made, connection mode is disabled again and blocks and connectors can be moved around. 
-
-TIP: You can leave _connection mode_ by pressing right-click in the network view. 
+You can create new connections between slave's outputs and inputs by dragging a connection from an outlet socket (triangle) to a _free_ inlet socket (empty semi-circle). Once the connection has been made, the newly created connection line is shown.
 
 Connections between slaves can be defined more conveniently in the <<_connection_view,Connection view>> (which is also more efficient when making many connections, compared to manually dragging the connections with the mouse).
 
@@ -210,6 +215,10 @@ Third connection is not made, since _Room1.OperativeTemperature_ does not match 
 
 If you want to do unit conversion or other transformations (sign inversion, scaling) between output variables and input variables, you can *double-click* on the third column in table *(6)*, to open a dialog for editing transformation factors and offsets. See section <<_connection_graph,Connection graph>> for a detailed description.
 
+[TIP]
+====
+You can easily assign conversion operations in the network schematics in the slave view. Simply select the connection to modify and edit the scale factor and offset in the lower left property window.
+====
 
 == Simulation settings view
 

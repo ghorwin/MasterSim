@@ -71,7 +71,8 @@ Hier ist eine Liste der nützlichen programmweiten Tastaturkürzel:
 [[slave_definition_view]]
 ## Ansicht zum Definieren der FMU-Slaves
 
-Die Eingabe eines Simulations-Szenarios ist in drei Ansichten aufgeteilt. Das Erstellen einer Simulation startet mit dem Importieren von FMUs/Slaves. Somit ist die Ansicht zum Festlegen der Slaves die Erste (und Wichtigste).
+Die Eingabe eines Simulations-Szenarios ist in drei Ansichten aufgeteilt. 
+Das Erstellen einer Simulation startet mit dem Importieren von FMUs/Slaves. Somit ist die Ansicht zum Festlegen der Slaves die Erste (und Wichtigste).
 
 .Die Slave-Ansicht zeigt eine Liste importierter FMUs, zugewiesene Slave-ID-Namen und eine optionale graphische Darstellung.
 image::gui_slave_view.png[alt="Slave view"]
@@ -87,6 +88,12 @@ Elemente der Ansicht:
 (7):: Aktivieren des grafischen Verbindungsmodus (siehe Diskussion unten). Wenn dieser Modus aktiv ist, können Sie eine neue Verbindung von einem Ausgang zu einem Eingang im Netzwerk ziehen. 
 (8):: Druckt Netzwerkschemata oder exportiert eine PDF-Datei.
 (9):: Dies ist ein grafisches Netzwerkschema - rein optional, aber es hilft, das Co-Simulations-Szenario zu verstehen.
+
+
+### Bearbeiten der Eigenschaften von Projekt, ausgewähltem Slave oder Verbindung
+
+Im unteren linken Teil der Ansicht befindet sich eine Kontext-abhängige Eingabe für Projektkommentare (falls nichts gewählt ist), Slave-Eigenschaften (falls ein Slave markiert ist) oder Verbindungseigenschaften (falls eine Verbindung markiert ist).
+
 
 ### Slaves hinzufügen
 
@@ -131,12 +138,7 @@ Falls Sie mehrere Blöcke gleichzeitig verschieben wollen, können sie mehrere B
 
 #### Verbindungen in der Netzwerkansicht herstellen
 
-Sie können eine neue Verbindung zwischen Ein- und Ausgängen von Slaves herstellen, indem Sie zunächst das Netzwerk durch das Drücken des Buttons *(7)* in den  _Verknüpfungsmodus_ versetzen. Wenn der Verbindungsmodus aktiv ist, wandelt sich der Zeiger innerhalb des Netzwerkansicht-Fensters zu einem Kreuz. Sie können die Maus dann über einen Variablenausgang bewegen (Dreieck). _Drücken und halten_ Sie die linke Maustaste und ziehen Sie die Verbindung zu einem _freien_ Variableneingang (leerer Halbkreis). Wenn die Verbindung hergestellt wurde, wird der Verbindungsmodus wieder ausgeschaltet und die Blöcke und Verbindungen können bewegt werden. 
-
-[TIP]
-====
-Sie können den _Verbindungsmodus_ verlassen, indem Sie in der Netzwerkansicht die rechte Maustaste drücken. 
-====
+Sie können eine neue Verbindung zwischen Ein- und Ausgängen von Slaves herstellen, indem Sie einfach von einem Variablenausgang (Dreieck) mit der Maus eine Verbindungslinie ziehen. Solange die Maustaste gedrückt bleibt, ist die Ansicht im  _Verknüpfungsmodus_. Wenn der Verbindungsmodus aktiv ist, wandelt sich der Zeiger innerhalb des Netzwerkansicht-Fensters zu einem Kreuz. Sie können die Maus dann über einen _freien_ Variableneingang (leerer Halbkreis) ziehen. Wenn die Verbindung hergestellt wurde, wird eine Verbindungslinie dauerhaft gezeigt und der Variableneingang leicht ausgefüllt.
 
 Verbindungen zwischen Slaves können in der <<connection_view,Verknüpfungsansicht>> bequemer festgelegt werden (welche ebenso effizienter ist, wenn mehr Verbindungen hergestellt werden, vergleichbar zum manuellen Ziehen der Verbindung mit der Maus).
 
@@ -178,6 +180,7 @@ In einer der nächsten Programmversionen wird es möglich sein, das Erscheinungs
 
 Wenn dieses Feature benötigt wird, bitte ein https://github.com/ghorwin/MasterSim/issues[Ticket anlegen].
 ====
+
 
 [[connection_view]]
 ## Verknüpfungsansicht
@@ -238,6 +241,11 @@ Die dritte Verbindung wird nicht hergestellt, da _Raum1.Betriebstemperatur_ name
 ### Eine Umrechnungsoperation zwischen Variablen definieren
 
 Falls Sie die Umwandlung einer Einheit oder andere Änderungen (Zeichenumkehrung, Skalierung) zwischen Ausgangs- und Eingangsvariablen vornehmen wollen, können Sie in der dritten Spalte der Tabelle *(6)* *doppelklicken*, um einen Dialog für das Bearbeiten der Umrechungsoperation zu öffnen (siehe Abschnitt <<connection_graph>> für eine detaillierte Beschreibung).
+
+[TIP]
+====
+Es ist mitunter einfacher und übersichtlicher, Umrechungsoperationen in der graphischen Netzwerksicht direkt festzulegen. Dazu wird in der Slave-Ansicht im Netzwerk eine Verbindung markiert und in dem Eigenschaftsfenster unten links kann man direkt Skalierungsfaktor und Abstand eingeben.
+====
 
 
 [[simulation_settings_view]]
