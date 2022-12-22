@@ -10,11 +10,6 @@
 QString MSIMDirectories::resourcesRootDir() {
 	QString installPath = qApp->applicationDirPath();
 
-	// override install path (exe-file location) if REPOROOT path is given
-#ifdef REPOROOT
-	installPath = QString(REPOROOT) += "/bin/debug";
-#endif
-
 #if defined(IBK_DEPLOYMENT)
 	// deployment mode
 
@@ -46,6 +41,11 @@ QString MSIMDirectories::resourcesRootDir() {
 #else // IBK_DEPLOYMENT
 
 	// development (IDE) mode
+
+	// override install path (exe-file location) if REPOROOT path is given
+#ifdef REPOROOT
+	installPath = QString(REPOROOT) += "/bin/debug";
+#endif
 
 #if defined(Q_OS_WIN)
 	// in development mode, we have the resources in the data directory
