@@ -6,7 +6,7 @@ version 2.0, it implements various iteration algorithms that rollback FMU slaves
 
 <img src="doc/screenshots/SplashScreen_MasterSim.png" width="300px"/>
 
-_MasterSim_ is actively maintained/developed by Andreas Nicolai at the TU Dresden, Institut für Bauklimatik.
+_MasterSim_ is actively maintained/developed by Andreas Nicolai (formerly at TU Dresden, Institut für Bauklimatik).
 
 The main webpage of _MasterSim_ is https://bauklimatik-dresden.de/mastersim.
 
@@ -19,6 +19,8 @@ We have continuous integration scripts running (build-test of all C/C++ code). F
 | CI - Linux 64-bit (Ubuntu 20.04.3 LTS; Qt 5.12.9) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-Linux-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-Linux-MasterSim/)    |
 | CI - Windows 64-bit (Win10, VC 2019, Qt 5.15.2) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR64-Win-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR64-Win-MasterSim/)   |
 | CI - MacOS 64-bit (10.11 "El Capitan", Qt 5.11.3) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-IOS-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-IOS-MasterSim/) |
+
+*Note:* the MacOS daily build service is currently offline. MacOS releases are built on demand.
 
 ## Quick Overview
 
@@ -44,7 +46,9 @@ The welcome page of the software gives you a project overview and up-to-date dev
 
 ## Download and Installation
 
-### Debian/Ubuntu Packages
+### Linux
+
+#### Debian/Ubuntu Packages
 
 Ubuntu users can now simply install _MasterSim_ via private package repository (https://launchpad.net/~ghorwin/+archive/ubuntu/sim):
 
@@ -54,6 +58,21 @@ sudo add-apt-repository ppa:ghorwin/sim
 sudo apt-get update
 # install mastersim
 sudo apt install mastersim
+```
+
+If you require a deb package for a different release, just let me know by creating an issue.
+
+#### Other distributions
+
+Generally, for any (relatively) modern Linux distribution, there is a stand-alone software archive available for download:  see [releases](https://github.com/ghorwin/MasterSim/releases).
+
+The following dependencies are required: Qt5 + Qt5-svg lib and zlib.
+
+On Debian/Ubuntu systems, you can install these dependencies via packages:
+
+```bash
+# Ubuntu 18.04 
+sudo apt install qt5-default libqt5svg5 zlib1g
 ```
 
 ### Windows x64
@@ -66,16 +85,5 @@ Note that (unless there is a specific demand) I will not create x86 releases any
 
 For MacOS 10.11 ("El Capitan") or newer, there is a dmg for download: see [releases](https://github.com/ghorwin/MasterSim/releases).
 
-### Linux (all distributions)
-
-For any (relatively) modern Linux distribution, there is a stand-alone software archive available for download:  see [releases](https://github.com/ghorwin/MasterSim/releases).
-
-The following dependencies are required: Qt5 + Qt5-svg lib and zlib.
-
-On Debian/Ubuntu systems, you can install them via packages:
-
-```bash
-sudo apt install qt5-default libqt5svg5 zlib1g
-```
 
 [Download stats...](https://tooomm.github.io/github-release-stats/?username=ghorwin&repository=mastersim)
