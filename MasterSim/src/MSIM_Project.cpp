@@ -87,8 +87,13 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 					m_lastEdited = line.substr(pos  + 13);
 					IBK::trim(m_lastEdited);
 				}
-				else
+				else {
+					// remove comment marker and following white space, if any
+					line = line.substr(1);
+					if (!line.empty() && line[0] == ' ')
+						line = line.substr(1);
 					m_comment += line + "\n";
+				}
 			}
 			continue;
 		}
@@ -288,8 +293,11 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write created and last-modified strings
 	out << "# Created:\t" << m_created << std::endl;
 	out << "# LastModified:\t" << m_lastEdited << std::endl << std::endl;
-	// write leading comment, must hold '\n' separated lines with each line beginning with '#'
-	out << m_comment;
+	// write leading comment, must hold '\n' separated lines
+	std::stringstream strm(m_comment);
+	std::string cline;
+	while (std::getline(strm, cline))
+		out << "# " << cline << std::endl;
 	if (!m_comment.empty())
 		out << std::endl;
 

@@ -300,7 +300,7 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 			newSceneManager->installEventFilter ( m_ui->blockModWidget );
 
 			m_ui->textEditDescription->blockSignals(true);
-			m_ui->textEditDescription->setHtml(QString::fromStdString(project().m_comment));
+			m_ui->textEditDescription->setPlainText(QString::fromStdString(project().m_comment));
 			m_ui->textEditDescription->blockSignals(false);
 		} break;
 
@@ -1003,14 +1003,24 @@ void MSIMViewSlaves::on_checkBoxShowEquations_clicked(bool checked) {
 }
 
 
-//qDebug() << "new comment";
-//MASTER_SIM::Project p = project();
-//p.m_comment = m_ui->textEditDescription->toHtml().toStdString();
-//MSIMUndoProject * undo = new MSIMUndoProject(tr("Modified project description"), p);
-//undo->push();
+void MSIMViewSlaves::on_textEditDescription_editingFinished() {
+	std::string newComment = m_ui->textEditDescription->toPlainText().toStdString();
+//	size_t i = newComment.find("</head><body");
+//	if (i != std::string::npos) {
+//		// find closing >
+//		i = newComment.find(">",i+8);
+//		if (i != std::string::npos && newComment.length() > i+1)
+//			newComment = newComment.substr(i+1);
+//		i = newComment.find("</body></html>");
+//		newComment = newComment.substr(0,i);
+//	}
 
-
-void MSIMViewSlaves::on_toolButtonEditComment_clicked() {
-
+	if (newComment == project().m_comment)
+		return;
+	qDebug() << "new comment";
+	MASTER_SIM::Project p = project();
+	p.m_comment = newComment;
+	MSIMUndoProject * undo = new MSIMUndoProject(tr("Modified project description"), p);
+	undo->push();
 }
 
