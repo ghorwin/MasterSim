@@ -13,18 +13,18 @@ QT -= core gui
 
 CONFIG(debug, debug|release) {
 	windows {
-		DLLDESTDIR = ../../bin/debug$${DIR_PREFIX}
+                DLLDESTDIR = ../../bin/debug
 	}
 	else {
-		DESTDIR = ../../bin/debug$${DIR_PREFIX}
+                DESTDIR = ../../bin/debug
 	}
 }
 else {
 	windows {
-		DLLDESTDIR = ../../bin/release$${DIR_PREFIX}
+                DLLDESTDIR = ../../bin/release
 	}
 	else {
-		DESTDIR = ../../bin/release$${DIR_PREFIX}
+                DESTDIR = ../../bin/release
 	}
 }
 
@@ -38,8 +38,6 @@ unix|mac {
 }
 
 INCLUDEPATH = src
-
-LIBS -= -L../lib$${DIR_PREFIX}
 
 SOURCES += \
 	src/fmi2common/fmi2Functions.cpp \
