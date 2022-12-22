@@ -38,6 +38,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QRectF>
+#include <QStaticText>
 
 #include <cmath>
 
@@ -111,10 +112,13 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 		if (m_segmentIdx == idxText) {
 			double x = line().p1().x() + line().dx()/2;
 			double y = line().p1().y() + line().dy()/2;
-			QRect br = painter->boundingRect((int)x, (int)y, 150, 30, 0, m_connector->m_text);
-			double width = 1.2*br.width();
-			double height = 1.2*br.height();
-			const QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
+
+			QStaticText st(m_connector->m_text);
+			st.setTextOption(QTextOption(Qt::AlignHCenter));
+			QSizeF textSize = st.size();
+			double width = textSize.width()+10;  // 5 pixels left and right
+			double height = textSize.height()+6; // 3 pixels top and bottom
+			QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
 			QPen p;
 			p.setWidthF(1);
 			p.setColor(m_connector->m_color);
@@ -123,7 +127,8 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 			QBrush b(Qt::white);
 			painter->setBrush(b);
 			painter->drawRect(rectangle);
-			painter->drawText(rectangle, Qt::AlignCenter, m_connector->m_text);
+
+			painter->drawStaticText(rectangle.topLeft()+ QPointF(5,3), st);
 		}
 	}
 	painter->restore();
