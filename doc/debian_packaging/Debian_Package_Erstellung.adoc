@@ -650,6 +650,13 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 - Anleitung für GPG und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
 
+#### Umgebungsvariablen einrichten
+
+```
+export DEBFULLNAME="Bob Dobbs"
+export DEBEMAIL="subgenius@example.com"
+```
+
 ##### GPG Schlüssel
 
 Neuen Schlüssel erstellen:
