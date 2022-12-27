@@ -4,7 +4,7 @@ ADOC=MasterSim_manual
 
 echo '*** Generating html ***' &&
 python3 ../adoc_utils/adoc-image-prep.py html . &&
-asciidoctor -a lang=en $ADOC.adoc &&
+asciidoctor -a lang=en -a webfonts! $ADOC.adoc &&
 
 echo &&
 echo '*** Generating pdf ***' &&
