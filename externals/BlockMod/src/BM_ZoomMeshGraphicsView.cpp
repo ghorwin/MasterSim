@@ -42,6 +42,7 @@
 #include <cmath>
 
 #include "BM_SceneManager.h"
+#include "qscrollbar.h"
 
 namespace BLOCKMOD {
 
@@ -63,7 +64,8 @@ ZoomMeshGraphicsView::ZoomMeshGraphicsView(QWidget *parent) :
 
 
 void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
-
+	if(m_middleButtonPressed)
+		return;
 	if (i_event->angleDelta().y() < 0) {
 		zoomOut();
 	}
@@ -71,6 +73,26 @@ void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
 		zoomIn();
 	}
 	i_event->accept();
+}
+
+void ZoomMeshGraphicsView::mousePressEvent(QMouseEvent *event) {
+	if (event->button() == Qt::MiddleButton) {
+		m_middleButtonPressed = true;
+		m_pos = event->pos();
+		setCursor(Qt::ClosedHandCursor);
+		event->accept();
+		return;
+	}
+}
+
+void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
+	if (event->button() == Qt::MiddleButton) {
+		m_middleButtonPressed = false;
+		setCursor(Qt::ArrowCursor);
+		event->accept();
+		return;
+	}
+	event->ignore();
 }
 
 
@@ -204,9 +226,20 @@ void ZoomMeshGraphicsView::leaveEvent(QEvent *event) {
 
 
 void ZoomMeshGraphicsView::mouseMoveEvent(QMouseEvent *i_event) {
-	QGraphicsView::mouseMoveEvent(i_event);
-	m_pos = mapToScene(i_event->pos());
-	viewport()->update();
+	if (m_middleButtonPressed) {
+		horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (i_event->x() - m_pos.x()));
+		verticalScrollBar()->setValue(verticalScrollBar()->value() - (i_event->y() - m_pos.y()));
+		m_pos = i_event->pos();
+		i_event->accept();
+		return;
+	}
+	else {
+
+
+		QGraphicsView::mouseMoveEvent(i_event);
+		m_pos = mapToScene(i_event->pos());
+		viewport()->update();
+	}
 }
 
 
