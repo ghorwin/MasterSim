@@ -64,8 +64,10 @@ ZoomMeshGraphicsView::ZoomMeshGraphicsView(QWidget *parent) :
 
 
 void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
-	if(m_middleButtonPressed)
+	if(m_middleButtonPressed) {
+		i_event->ignore();
 		return;
+	}
 	if (i_event->angleDelta().y() < 0) {
 		zoomOut();
 	}
@@ -90,6 +92,7 @@ void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
 		m_middleButtonPressed = false;
 		setCursor(Qt::ArrowCursor);
 		event->accept();
+		mouseMoveEvent(event);
 		return;
 	}
 	event->ignore();
@@ -234,8 +237,6 @@ void ZoomMeshGraphicsView::mouseMoveEvent(QMouseEvent *i_event) {
 		return;
 	}
 	else {
-
-
 		QGraphicsView::mouseMoveEvent(i_event);
 		m_pos = mapToScene(i_event->pos());
 		viewport()->update();
