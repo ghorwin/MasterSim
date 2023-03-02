@@ -99,6 +99,12 @@ protected:
 	/*! Enables the zoom. */
 	void wheelEvent(QWheelEvent *i_event) override;
 
+	/*! Enables dragging via middle click. */
+	void mousePressEvent(QMouseEvent *event) override;
+
+	/*! Disables dragging via middle click. */
+	void mouseReleaseEvent(QMouseEvent *event) override;
+
 	/*! Draws the mesh. */
 	void paintEvent(QPaintEvent *i_event) override;
 
@@ -139,6 +145,8 @@ private:
 	/*! Cached window size used during last grid update. */
 	QSize							m_windowSizeLast;
 
+	/*! Indicates whether the mouse middle button has been pressed. */
+	bool							m_middleButtonPressed;
 };
 
 } // namespace BLOCKMOD
