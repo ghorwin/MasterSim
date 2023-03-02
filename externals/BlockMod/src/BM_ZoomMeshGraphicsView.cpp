@@ -85,6 +85,8 @@ void ZoomMeshGraphicsView::mousePressEvent(QMouseEvent *event) {
 		event->accept();
 		return;
 	}
+	m_pos = event->pos();
+	QGraphicsView::mousePressEvent(event);
 }
 
 void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
@@ -95,7 +97,8 @@ void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
 		mouseMoveEvent(event);
 		return;
 	}
-	event->ignore();
+	m_pos = event->pos();
+	QGraphicsView::mouseReleaseEvent(event);
 }
 
 
