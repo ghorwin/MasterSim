@@ -43,6 +43,12 @@ void qDebugMsgHandler(QtMsgType type, const char *msg) {
 int main(int argc, char *argv[]) {
 	const char * const FUNC_ID = "[main]";
 
+#if QT_VERSION >= 0x050E00
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#endif
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
 	MSIMDebugApplication a(argc, argv);
 
 #if QT_VERSION >= 0x050000
@@ -77,6 +83,7 @@ int main(int argc, char *argv[]) {
 
 	qApp->setApplicationName(ProgramVersionName);
 	qApp->setWindowIcon(QIcon(":/gfx/logo/Icon_64.png"));
+
 
 	// *** Create and initialize setting object ***
 	MSIMSettings settings(ORG_NAME, ProgramVersionName);
