@@ -187,6 +187,9 @@ void MSIMViewSimulation::updateCommandLine() {
 
 	m_commandLineArgs.append(QString("--verbosity-level=%1").arg(m_ui->comboBoxVerbosityLevel->currentIndex()));
 
+	if (m_ui->checkBoxSkipUnzip->isChecked())
+		m_commandLineArgs.append("--skip-unzip");
+
 	QString appName = MSIMSettings::instance().m_installDir;
 #ifdef Q_OS_WIN
 	appName += "/MasterSimulator.exe";
@@ -526,3 +529,8 @@ void MSIMViewSimulation::on_checkBoxPreventOversteppingOfEndTime_toggled(bool ch
 void MSIMViewSimulation::on_comboBoxTermEmulator_currentIndexChanged(int index) {
 	MSIMSettings::instance().m_terminalEmulator = (MSIMSettings::TerminalEmulators)(index);
 }
+
+void MSIMViewSimulation::on_checkBoxSkipUnzip_toggled(bool) {
+	updateCommandLine();
+}
+
