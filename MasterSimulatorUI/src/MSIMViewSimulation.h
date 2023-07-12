@@ -70,6 +70,8 @@ private slots:
 
 	void on_comboBoxTermEmulator_currentIndexChanged(int index);
 
+	void on_checkBoxSkipUnzip_toggled(bool checked);
+
 private:
 	void updateCommandLine();
 
