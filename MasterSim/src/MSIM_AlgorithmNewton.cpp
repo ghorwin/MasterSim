@@ -163,7 +163,7 @@ AlgorithmNewton::Result AlgorithmNewton::doStep() {
 				m_master->m_realytNext[varIdx] = m_master->m_realytNextIter[varIdx] + m_rhs[i];
 			}
 			norm = std::sqrt(norm/varCount);
-			IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("  NEWTON: WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("  NEWTON: WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 			if (norm < 1)
 				break; // break iteration loop
 		} // while (++iteration <= m_master->m_project.m_maxIterations)

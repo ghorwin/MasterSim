@@ -1462,8 +1462,8 @@ void MasterSim::syncSlaveOutputs(const AbstractSlave * slave,
 
 void MasterSim::storeCurrentSlaveStates(std::vector<void *> & slaveStates) {
 	const char * const FUNC_ID = "[MasterSim::storeCurrentSlaveStates]";
-	IBK_FastMessage(IBK::VL_INFO)(IBK::FormatString("MASTER: Retrieving slave states at t=%1 (calling getFMUState() in FMI 2 slaves)\n")
-		.arg(m_t), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("MASTER: Retrieving slave states at t=%1 (calling getFMUState() in FMI 2 slaves)\n")
+		.arg(m_t), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 	IBK::StopWatch w;
 	for (unsigned int s=0; s<m_slaves.size(); ++s) {
 		AbstractSlave * slave = m_slaves[s];
