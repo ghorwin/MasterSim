@@ -115,10 +115,10 @@ void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 		m_lastElapsedSecondsWithOutput = elapsedSeconds;
 	}
 	else
-		IBK_FastMessage(IBK::VL_INFO)( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		IBK_FastMessage(IBK::VL_DETAILED)( strm.str(), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 
 	// write progress log
-	if (m_progressLog != NULL && !betweenOutputs && elapsedSimTime != 0) {
+	if (m_progressLog != NULL && !betweenOutputs && elapsedSimTime != 0.0) {
 		*m_progressLog << std::setprecision(14) << std::setw(15) << std::right << t << '\t'
 					   << std::setprecision(7) << std::setw(15) << std::right << elapsedSeconds << '\t'
 					   << std::setprecision(2) << std::setw(15) << std::right << t*100/m_progressTEnd << std::endl;
