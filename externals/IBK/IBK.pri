@@ -430,6 +430,11 @@ equals(TEMPLATE,lib) {
 		CONFIG += shared
 	}
 
+	win32 {
+		CONFIG += static
+	}
+
+
 	DESTDIR = ../lib
 	LIBS += -L../lib
 
