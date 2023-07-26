@@ -54,19 +54,7 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 
 	std::ifstream in;
 
-#if defined(_WIN32)
-	#if defined(_MSC_VER)
-		in.open(prjFile.wstr());
-	#else
-		std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
-		in.open(filenameAnsi.c_str());
-	#endif
-#else
-	in.open(prjFile.str().c_str());
-#endif // _WIN32
-
-
-	if (!in)
+	if (!IBK::open_ifstream(in, prjFile))
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
 
 

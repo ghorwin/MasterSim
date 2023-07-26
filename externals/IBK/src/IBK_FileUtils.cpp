@@ -100,18 +100,8 @@ std::vector<unsigned char> read_some_bytes(const IBK::Path& filename, unsigned i
 	errmsg.clear();
 	std::ifstream in;
 	in.rdbuf()->pubsetbuf(0, 0);
-#if defined(_WIN32)
-	#if defined(_MSC_VER)
-			in.open(filename.wstr().c_str(), std::ios_base::binary);
-	#else
-			std::string filenameAnsi = IBK::WstringToANSI(filename.wstr(), false);
-			in.open(filenameAnsi.c_str(), std::ios_base::binary);
-	#endif
-#else // _WIN32
-			in.open(filename.c_str(), std::ios_base::binary);
-#endif
 	std::vector<unsigned char> result;
-	if (!in) {
+	if (!IBK::open_ifstream(in, filename, std::ios_base::binary)) {
 		errmsg = "Cannot open file";
 		return result;
 	}
@@ -126,11 +116,7 @@ std::vector<unsigned char> read_some_bytes(const IBK::Path& filename, unsigned i
 
 std::string file2String(const IBK::Path & fname) {
 	std::ifstream in;
-#if defined(_WIN32) && !defined(__MINGW32__)
-	in.open(fname.wstr().c_str());
-#else
-	in.open(fname.c_str());
-#endif // _WIN32
+	IBK::open_ifstream(in, fname, std::ios_base::binary);
 	std::stringstream strm;
 	strm << in.rdbuf();
 	return strm.str();
@@ -139,11 +125,7 @@ std::string file2String(const IBK::Path & fname) {
 
 std::string read_one_line(const IBK::Path & fname) {
 	std::ifstream in;
-#if defined(_WIN32) && !defined(__MINGW32__)
-	in.open(fname.wstr().c_str());
-#else
-	in.open(fname.c_str());
-#endif // _WIN32
+	IBK::open_ifstream(in, fname);
 	std::string line;
 	if (!std::getline(in, line))
 		throw IBK::Exception("Error reading file '"+ fname.str() + "'", "[IBK::readFirstLine]");
