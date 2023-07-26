@@ -53,11 +53,18 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 	const char * const FUNC_ID = "[Project::read]";
 
 	std::ifstream in;
-#if defined(_WIN32) && !defined(__MINGW32__)
-	in.open(prjFile.wstr().c_str());
+
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		in.open(prjFile.str().c_str());
+	#else
+		std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
+		in.open(filenameAnsi.c_str());
+	#endif
 #else
 	in.open(prjFile.str().c_str());
 #endif // _WIN32
+
 
 	if (!in)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
@@ -281,11 +288,17 @@ void Project::write(const IBK::Path & prjFile) const {
 	const char * const FUNC_ID = "[Project::write]";
 
 	std::ofstream out;
-#if defined(_WIN32) && !defined(__MINGW32__)
-	out.open(prjFile.wstr().c_str());
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		out.open(prjFile.wstr().c_str());
+	#else
+		std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
+		out.open(filenameAnsi.c_str());
+	#endif
 #else
-	out.open(prjFile.str().c_str());
+	out.open(prjFile.c_str());
 #endif // _WIN32
+
 
 	if (!out)
 		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
