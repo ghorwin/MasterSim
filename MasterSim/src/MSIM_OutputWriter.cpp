@@ -10,6 +10,7 @@
 #include <IBK_messages.h>
 #include <IBK_StringUtils.h>
 #include <IBK_UnitList.h>
+#include <IBK_FileUtils.h>
 
 #include "MSIM_AbstractSlave.h"
 #include "MSIM_FMUSlave.h"
@@ -75,18 +76,11 @@ void OutputWriter::openOutputFiles(bool reopen) {
 						  IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
 		// if we restart, we simply re-open the files for writing
 		if (reopen) {
-#ifdef _MSC_VER
-			m_stringOutputs = new std::ofstream(stringOutputFilename.wstr().c_str(), std::ios_base::app);
-#else
-			m_stringOutputs = new std::ofstream(stringOutputFilename.c_str(), std::ios_base::app);
-#endif
+			m_stringOutputs = IBK::create_ofstream(stringOutputFilename, std::ios_base::app);
 		}
 		else {
-#ifdef _MSC_VER
-			m_stringOutputs = new std::ofstream(stringOutputFilename.wstr().c_str());
-#else
-			m_stringOutputs = new std::ofstream(stringOutputFilename.c_str());
-#endif
+			m_stringOutputs = IBK::create_ofstream(stringOutputFilename);
+
 			// write first line
 			*m_stringOutputs << descriptions << std::endl;
 		}
@@ -164,18 +158,11 @@ void OutputWriter::openOutputFiles(bool reopen) {
 		IBK::Path outputFilename = m_resultsDir / "values.csv";
 		// if we restart, we simply re-open the files for writing
 		if (reopen) {
-#ifdef _MSC_VER
-			m_valueOutputs = new std::ofstream(outputFilename.wstr().c_str(), std::ios_base::app);
-#else
-			m_valueOutputs = new std::ofstream(outputFilename.c_str(), std::ios_base::app);
-#endif
+			m_valueOutputs = IBK::create_ofstream(outputFilename, std::ios_base::app);
 		}
 		else {
-#ifdef _MSC_VER
-			m_valueOutputs = new std::ofstream(outputFilename.wstr().c_str());
-#else
-			m_valueOutputs = new std::ofstream(outputFilename.c_str());
-#endif
+			m_valueOutputs = IBK::create_ofstream(outputFilename);
+
 			// write first line
 			*m_valueOutputs << descriptions // XXX needs to be same order as we write the data
 				<< boolDescriptions
@@ -222,7 +209,7 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	if (fileContent.size() != 0) {
 		IBK::Path synFilename = m_resultsDir / "synonymous_variables.txt";
 	#ifdef _MSC_VER
-		std::ofstream synStream(synFilename.wstr().c_str());
+		std::ofstream synStream(synFilename.wstr());
 	#else
 		std::ofstream synStream(synFilename.c_str());
 	#endif
@@ -235,11 +222,7 @@ void OutputWriter::setupProgressReport() {
 
 	// statistics and progress file
 	IBK::Path progressOutputFilename = m_logDir / "progress.txt";
-#ifdef _MSC_VER
-	m_progressOutputs = new std::ofstream(progressOutputFilename.wstr().c_str());
-#else
-	m_progressOutputs = new std::ofstream(progressOutputFilename.c_str());
-#endif
+	m_progressOutputs = IBK::create_ofstream(progressOutputFilename);
 
 	/// \todo For restart, add elapsed seconds + simtime
 	m_progressFeedback.setup(m_progressOutputs, m_project->m_tStart.value, m_project->m_tEnd.value, m_projectFile, 0, 0);
