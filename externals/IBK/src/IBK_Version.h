@@ -69,7 +69,6 @@ namespace IBK {
 	IBK::Version::writeHeader(out, magicNumberFirstBinary, magicNumberSecondBinary, magicNumberFirstASCII, magicNumberSecondASCII,
 							  isBinary, majorVersion, minorVersion);
 	\endcode
-
 */
 class Version {
 public:
