@@ -231,25 +231,26 @@ IBK::Path userDirectory() {
 }
 
 std::ofstream * create_ofstream(const IBK::Path& file, std::ios_base::openmode mode) {
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 
 #if defined(_MSC_VER)
-	return new std::ofstream(file.wstr().c_str(), mode);
+	return new std::ofstream(file.wstr(), mode);
 #else
 	std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
 	return new std::ofstream(filenameAnsi.c_str(), mode);
 #endif // _MSC_VER
 
 #else //_WIN32
-	return new std::ofstream(file.c_str(), mode);
+	return new std::ofstream(file.c_str(), mode); // file.c_str() is utf8
 #endif // _WIN32
 }
 
-std::ifstream * open_ifstream(const IBK::Path& file, std::ios_base::openmode mode) {
+
+std::ifstream * create_ifstream(const IBK::Path& file, std::ios_base::openmode mode) {
 #if defined(_WIN32)
 
 #if defined(_MSC_VER)
-		return new std::ifstream(file.wstr().c_str(), mode);
+		return new std::ifstream(file.wstr(), mode);
 #else
 		std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
 		return new std::ifstream(filenameAnsi.c_str(), mode);
@@ -257,8 +258,43 @@ std::ifstream * open_ifstream(const IBK::Path& file, std::ios_base::openmode mod
 
 #else // _WIN32
 
-	return new std::ifstream(file.c_str(), mode);
+	return new std::ifstream(file.c_str(), mode);  // file.c_str() is utf8
 #endif
+}
+
+
+bool open_ofstream(std::ofstream & ostrm, const Path & file, std::ios_base::openmode mode) {
+#if defined(_WIN32)
+
+#if defined(_MSC_VER)
+	ostrm.open(file.wstr(), mode);
+#else
+	std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
+	ostrm.open(filenameAnsi.c_str(), mode);
+#endif // _MSC_VER
+
+#else //_WIN32
+	ostrm.open(file.c_str(), mode);  // file.c_str() is utf8
+#endif // _WIN32
+	return ostrm.good();
+}
+
+
+bool open_ifstream(std::ifstream & istrm, const Path & file, std::ios_base::openmode mode) {
+#if defined(_WIN32)
+
+#if defined(_MSC_VER)
+		istrm.open(file.wstr(), mode);
+#else
+		std::string filenameAnsi = IBK::WstringToANSI(file.wstr(), false);
+		istrm.open(filenameAnsi.c_str(), mode);
+#endif // _MSC_VER
+
+#else // _WIN32
+
+	istrm.open(file.c_str(), mode);  // file.c_str() is utf8
+#endif
+	return istrm.good();
 }
 
 
