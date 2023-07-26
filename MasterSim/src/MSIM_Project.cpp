@@ -56,7 +56,7 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 
 #if defined(_WIN32)
 	#if defined(_MSC_VER)
-		in.open(prjFile.str().c_str());
+		in.open(prjFile.wstr());
 	#else
 		std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
 		in.open(filenameAnsi.c_str());
@@ -287,16 +287,18 @@ void writeParameter(const IBK::Parameter & p, std::ostream& out, unsigned int in
 void Project::write(const IBK::Path & prjFile) const {
 	const char * const FUNC_ID = "[Project::write]";
 
-	std::ofstream out;
+
 #if defined(_WIN32)
-	#if defined(_MSC_VER)
-		out.open(prjFile.wstr().c_str());
-	#else
-		std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
-		out.open(filenameAnsi.c_str());
-	#endif
+
+#if defined(_MSC_VER)
+	std::ofstream out(prjFile.wstr());
 #else
-	out.open(prjFile.c_str());
+	std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
+	std::ofstream out(filenameAnsi.c_str());
+#endif
+
+#else
+	std::ofstream out(prjFile.c_str());
 #endif // _WIN32
 
 

@@ -392,7 +392,24 @@ void MasterSim::writeMetrics() const {
 
 	// create summary.txt file
 	IBK::Path summaryFilePath = m_args.m_workingDir / "log/summary.txt";
+
+#if defined(_WIN32)
+
+#if defined(_MSC_VER)
+	std::ofstream sumFile(summaryFilePath.wstr());
+#else
+	std::string filenameAnsi = IBK::WstringToANSI(summaryFilePath.wstr(), false);
+	std::ofstream sumFile(filenameAnsi.c_str());
+#endif
+
+#else
 	std::ofstream sumFile(summaryFilePath.c_str());
+#endif // _WIN32
+
+	if (!sumFile) {
+		IBK::IBK_Message(IBK::FormatString("Cannot open file '%1' for writing.").arg(summaryFilePath), IBK::MSG_WARNING, FUNC_ID);
+	}
+
 	sumFile << "WallClockTime=" << wct << std::endl;
 	sumFile << "FrameworkTimeWriteOutputs=" << m_statOutputTime << std::endl;
 	sumFile << "MasterAlgorithmSteps=" << m_statStepCounter << std::endl;
@@ -1490,8 +1507,18 @@ void MasterSim::restoreSlaveStates(double t, const std::vector<void*> & slaveSta
 void MasterSim::writeStepStatistics() {
 	// if log file hasn't been created yet, initialize log file now
 	if (m_stepStatsOutput == nullptr) {
-		std::string statsFile = (m_outputWriter.m_logDir / "stepstats.tsv").str();
+		IBK::Path statsFile = (m_outputWriter.m_logDir / "stepstats.tsv");
+#if defined(_WIN32)
+	#if defined(_MSC_VER)
+		m_stepStatsOutput = new std::ofstream(statsFile.wstr());
+	#else
+		std::string filenameAnsi = IBK::WstringToANSI(statsFile.wstr(), false);
+		m_stepStatsOutput = new std::ofstream(filenameAnsi.c_str());
+	#endif
+#else
 		m_stepStatsOutput = new std::ofstream(statsFile.c_str());
+#endif // _WIN32
+
 		std::ostream & out = *m_stepStatsOutput;
 		out << std::setw(14) << std::left << "Time [s]" << '\t'
 			   << std::setw(10) << std::left << "Steps" << '\t'

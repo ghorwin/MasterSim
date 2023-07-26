@@ -350,9 +350,21 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 	argv[0]="miniunz";
 	argv[1]="-x";
 	argv[2]="-o";
+
+#if defined(_WIN32)
+	std::string filenameAnsi = IBK::WstringToANSI(pathToFMU.wstr(), false);
+	argv[3]=filenameAnsi.c_str();
+#else
 	argv[3]=pathToFMU.c_str();
+#endif // _WIN32
+
 	argv[4]="-d";
+#if defined(_WIN32)
+	std::string extractionPathAnsi = IBK::WstringToANSI(extractionPath.wstr(), false);
+	argv[5]=extractionPathAnsi.c_str();
+#else
 	argv[5]=extractionPath.c_str();
+#endif // _WIN32
 
 	if (!IBK::Path::makePath(extractionPath))
 		throw IBK::Exception(IBK::FormatString("Cannot create extraction path '%1'").arg(extractionPath), FUNC_ID);
@@ -361,9 +373,15 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 	IBK::Path currentWd = IBK::Path::current();
 	int res = miniunz(6, argv);
 	IBK::Path::setCurrent(currentWd); // reset working directory
-	if (res != 0)
+	if (res != 0) {
+#if defined(_WIN32)
+		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'")
+							 .arg(filenameAnsi).arg(extractionPathAnsi), "[FMUManager::unzipFMU]");
+#else
 		throw IBK::Exception(IBK::FormatString("Error extracting fmu '%1' into target directory '%2'")
 							 .arg(pathToFMU).arg(extractionPath), "[FMUManager::unzipFMU]");
+#endif
+	}
 }
 
 
