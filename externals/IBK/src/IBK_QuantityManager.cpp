@@ -100,20 +100,10 @@ void QuantityManager::write(std::ostream & out) {
 void QuantityManager::readFromFile(const IBK::Path & fname) {
 	FUNCID(QuantityManager::readFromFile);
 
-#if defined(_WIN32)
-	#if defined(_MSC_VER)
-		std::ifstream in(fname.wstr().c_str());
-	#else  // MinGW
-		std::string filenameAnsi = IBK::WstringToANSI(fname.wstr(), false);
-		std::ifstream in(filenameAnsi.c_str());
-	#endif
-#else  // !defined(_WIN32)
-	std::ifstream in(fname.c_str());
-#endif
-
-	if (!in) {
+	std::ifstream in;
+	if (!IBK::open_ifstream(in, fname))
 		throw IBK::Exception(IBK::FormatString("Cannot open quantity file '%1'.").arg(fname), FUNC_ID);
-	}
+
 	std::stringstream strm;
 	strm << in.rdbuf();
 	try {

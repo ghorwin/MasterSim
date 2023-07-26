@@ -274,7 +274,8 @@ void write_matrix_binary(const T & mat, const std::string & filename) {
 template <typename T>
 void read_matrix_binary(const std::string & filename, T & mat) {
 	FUNCID(IBK::read_matrix_binary);
-	std::ifstream binFile(filename.c_str(), std::ios_base::binary);
+	std::ifstream binFile;
+	IBK::open_ifstream(binFile, IBK::Path(filename), std::ios_base::binary);
 	// read size of data storage in file
 	std::size_t matSize;
 	if (!binFile.read((char*)&matSize, sizeof(uint64_t)))

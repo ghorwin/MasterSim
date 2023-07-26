@@ -82,16 +82,8 @@ UnitList & UnitList::instance() {
 
 // Reads the unit list from a file
 bool UnitList::read_file(const std::string& filename, bool overwrite) {
-#if defined(_WIN32)
-	#if defined(_MSC_VER)
-			std::ifstream in(IBK::Path(filename).wstr().c_str());
-	#else
-			std::string filenameAnsi = IBK::WstringToANSI(IBK::Path(filename).wstr(), false);
-			std::ifstream in(filenameAnsi.c_str());
-	#endif
-#else // _WIN32
-			std::ifstream in(IBK::Path(filename).c_str());
-#endif
+	std::ifstream in;
+	IBK::open_ifstream(in, IBK::Path(filename));
 	return read(in, overwrite);
 }
 // ---------------------------------------------------------------------------
