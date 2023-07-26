@@ -1,6 +1,8 @@
 #include "MSIM_ArgParser.h"
 
+#include <iostream>
 #include <IBK_StringUtils.h>
+
 #include "MSIM_Constants.h"
 
 namespace MASTER_SIM {
@@ -36,6 +38,8 @@ void ArgParser::parse(int argc, const char * const argv[]) {
 	// parse parent
 	IBK::ArgParser::parse(argc, argv);
 
+//	for (const std::string & a : args())
+//		std::cout << a << std::endl;
 
 	// now extract arguments
 	if (args().size() > 0) {
