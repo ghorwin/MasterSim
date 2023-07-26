@@ -1269,7 +1269,7 @@ std::string WstringToANSI(const std::wstring& wide, bool OEMPage) {
 	std::vector<char> str(reslength, '\0');
 	int writtenLength = WideCharToMultiByte(pageFlag, 0, wide.c_str(), -1, &str[0], reslength, 0, 0);
 	if(writtenLength == 0)
-		throw std::logic_error("Cannot create  UTF8 string from wide string.");
+		throw std::logic_error("Cannot create ansi string from wide string.");
 	return std::string(&str[0]);
 }
 
