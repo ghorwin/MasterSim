@@ -652,7 +652,7 @@ bool MSIMProjectHandler::write(const QString & fname) const {
 	try {
 
 		// save thumbnail of project scematics
-		QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + QFileInfo(projectFile() + ".png").fileName();
+		QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + QFileInfo(fname + ".png").fileName();
 		QFileInfo thumbDir(thumbPath);
 		if (!thumbDir.dir().exists())
 			QDir().mkpath(thumbDir.dir().absolutePath());
