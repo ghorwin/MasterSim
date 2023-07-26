@@ -208,11 +208,10 @@ void OutputWriter::openOutputFiles(bool reopen) {
 	std::string fileContent = synonymousVars.str();
 	if (fileContent.size() != 0) {
 		IBK::Path synFilename = m_resultsDir / "synonymous_variables.txt";
-	#ifdef _MSC_VER
-		std::ofstream synStream(synFilename.wstr());
-	#else
-		std::ofstream synStream(synFilename.c_str());
-	#endif
+		std::ofstream synStream;
+		if (!IBK::open_ofstream(synStream, synFilename)) {
+			IBK::IBK_Message(IBK::FormatString("Cannot open file '%1' for writing.").arg(synFilename), IBK::MSG_WARNING, FUNC_ID);
+		}
 		synStream << synonymousVars.rdbuf();
 	}
 }

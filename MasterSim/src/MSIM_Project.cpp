@@ -287,23 +287,9 @@ void writeParameter(const IBK::Parameter & p, std::ostream& out, unsigned int in
 void Project::write(const IBK::Path & prjFile) const {
 	const char * const FUNC_ID = "[Project::write]";
 
-
-#if defined(_WIN32)
-
-#if defined(_MSC_VER)
-	std::ofstream out(prjFile.wstr());
-#else
-	std::string filenameAnsi = IBK::WstringToANSI(prjFile.wstr(), false);
-	std::ofstream out(filenameAnsi.c_str());
-#endif
-
-#else
-	std::ofstream out(prjFile.c_str());
-#endif // _WIN32
-
-
-	if (!out)
-		throw IBK::Exception( IBK::FormatString("Cannot open file '%1'").arg(prjFile), FUNC_ID);
+	std::ofstream out;
+	if (!IBK::open_ofstream(out, prjFile))
+		throw IBK::Exception( IBK::FormatString("Cannot open file '%1' for writing.").arg(prjFile), FUNC_ID);
 
 	// write created and last-modified strings
 	out << "# Created:\t" << m_created << std::endl;

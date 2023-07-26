@@ -160,7 +160,14 @@ bool MSIMViewSlaves::extractFMUAndParseModelDesc(const IBK::Path & fmuFilePath,
 	msgLog.append( tr("Extracting '%1'\n").arg(QString::fromStdString(fmuFilePath.str())));
 
 	std::string fileContent;
+
+	// on windows, unzOpen() needs the filename in local encoding
+#ifdef _WIN32
+	std::string filenameAnsi = IBK::WstringToANSI(fmuFilePath.wstr(), false);
+	unzFile zip = unzOpen(filenameAnsi.c_str());
+#else
 	unzFile zip = unzOpen(fmuFilePath.c_str());
+#endif
 	if (zip) {
 		if (unzLocateFile(zip, "modelDescription.xml", 1) != UNZ_OK) {
 			msgLog.append( tr("ERROR: FMU does not contain the file modelDescription.xml.\n"));

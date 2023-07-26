@@ -276,7 +276,7 @@ private:
 	std::vector<Cycle>		m_cycles;
 
 	/*! Pointer to the actual master algorithm implementation (owned). */
-	AbstractAlgorithm		*m_masterAlgorithm;
+	AbstractAlgorithm		*m_masterAlgorithm = nullptr;
 
 	/*! Current simulation time point. */
 	double					m_t;
@@ -291,7 +291,7 @@ private:
 	OutputWriter			m_outputWriter;
 
 	/*! Output file stream for master statistics. */
-	std::ofstream			*m_stepStatsOutput;
+	std::ofstream			*m_stepStatsOutput = nullptr;
 
 	/*! Mapping of all connected variables of type real. */
 	std::vector<VariableMapping>	m_realVariableMapping;

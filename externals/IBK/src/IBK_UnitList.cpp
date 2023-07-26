@@ -58,6 +58,7 @@
 #include "IBK_Exception.h"
 #include "IBK_FormatString.h"
 #include "IBK_Path.h"
+#include "IBK_FileUtils.h"
 
 namespace IBK {
 
@@ -246,7 +247,8 @@ bool UnitList::read(const std::string& str, bool overwrite) {
 bool UnitList::write(const std::string& filename) const {
 	if (empty()) return false;
 //        throw IBK::Exception( "[UnitList::write]  Unit list is empty!");
-	std::ofstream out(filename.c_str());
+	std::ofstream out;
+	IBK::open_ofstream(out, IBK::Path(filename));
 	// write first base unit
 	out << std::setw(10) << std::left << list_.front()->name() << "   ";
 	// remember last base unit index
