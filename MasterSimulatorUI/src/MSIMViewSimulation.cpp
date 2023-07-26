@@ -152,7 +152,7 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 #endif
 
 	// check if solver exists
-	if (!QFileInfo(m_solverName).exists()) {
+	if (!QFileInfo::exists(m_solverName)) {
 		QMessageBox::critical(this, tr("Solver error"), tr("Cannot find solver executable '%1'.").arg(m_solverName));
 		return;
 	}
