@@ -249,6 +249,37 @@ bool MSIMSettings::openFileInTextEditor(QWidget * parent, const QString & filepa
 	return res;
 }
 
+#ifdef Q_OS_WIN
+bool startSimulationWin(const QString& projectFile, const QString& solverName, const QStringList& commandLineArgs) {
+	// Use WinAPI to create a solver process
+	STARTUPINFOW si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory( &si, sizeof(si) );
+	si.cb = sizeof(si);
+	std::wstring wideString = projectFile.toStdWString();
+	si.lpTitle = const_cast<LPWSTR>(wideString.c_str());
+	ZeroMemory( &pi, sizeof(pi) );
+	const unsigned int lower_priority = 0x00004000;
+	QString cmdLine = QString("\"%1\" %2 \"%3\"")
+		.arg(solverName)
+		.arg(commandLineArgs.join(" "))
+		.arg(projectFile);
+
+	std::wstring cmd = cmdLine.toStdWString();
+	// Start the child process.
+	return CreateProcessW( NULL,   // No module name (use command line).
+		&cmd[0], 				// Command line.
+		NULL,             		// Process handle not inheritable.
+		NULL,             		// Thread handle not inheritable.
+		FALSE,            		// Set handle inheritance to FALSE.
+		lower_priority,   		// Create with priority lower then normal.
+		NULL,             		// Use parent's environment block.
+		NULL,             		// Use parent's starting directory.
+		&si,              		// Pointer to STARTUPINFO structure.
+		&pi );             		// Pointer to PROCESS_INFORMATION structure.
+}
+#endif // Q_OS_WIN
+
 
 bool MSIMSettings::startProcess(const QString & executable,
 									QStringList commandLineArgs,
