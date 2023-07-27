@@ -261,9 +261,10 @@ bool startSimulationWin(const QString& projectFile, const QString& solverName, c
 	ZeroMemory( &pi, sizeof(pi) );
 	const unsigned int lower_priority = 0x00004000;
 	QString cmdLine = QString("\"%1\" %2 \"%3\"")
-		.arg(solverName)
-		.arg(commandLineArgs.join(" "))
-		.arg(projectFile);
+		.arg(solverName,
+			 commandLineArgs.join(" "),
+			 projectFile
+			 );
 
 	std::wstring cmd = cmdLine.toStdWString();
 	// Start the child process.
@@ -289,45 +290,7 @@ bool MSIMSettings::startProcess(const QString & executable,
 	(void)terminalEmulator; // to get rid of compiler warning - only used for Linux
 	// spawn process
 #ifdef Q_OS_WIN
-
-	// Use WinAPI to create a solver process
-	// our executable path and the project file may be utf8 encoded, which Windows cannot handle natively.
-	// As we want to support both VC and MinGW, we rely on Ansi-conversion and convert all strings to Ansi OEM page encoding first.
-
-	std::string projectFileUtf8 = projectFile.toStdString().data();
-	std::string projectFileLatin1 = IBK::UTF8ToANSIString(projectFileUtf8); // Mind: buffer must exist until CreateProcess call is through
-	QString cmdLine = QString("\"%1\" %2 \"%3\"")
-		.arg(executable,
-			 commandLineArgs.join(" "),
-			 projectFile);
-
-	std::string cmdLatin1 = IBK::UTF8ToANSIString(cmdLine.toStdString());
-
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	ZeroMemory( &si, sizeof(si) );
-	si.cb = sizeof(si);
-	si.lpTitle = (LPSTR)projectFileLatin1.data();
-//	si.dwFlags = STARTF_USESHOWWINDOW;
-//	si.wShowWindow = SW_SHOW;
-	ZeroMemory( &pi, sizeof(pi) );
-	const unsigned int lower_priority = 0x00004000;
-	// Start the child process.
-	if( !CreateProcess( nullptr,	// No module name (use command line).
-		&cmdLatin1[0],				// Command line.
-		nullptr,					// Process handle not inheritable.
-		nullptr,					// Thread handle not inheritable.
-		FALSE,						// Set handle inheritance to FALSE.
-		lower_priority,				// Create with priority lower then normal.
-		nullptr,					// Use parent's environment block.
-		nullptr,					// Use parent's starting directory.
-		&si,						// Pointer to STARTUPINFO structure.
-		&pi )						// Pointer to PROCESS_INFORMATION structure.
-	)
-	{
-		return false;
-	}
-	return true;
+	return startSimulationWin(projectFile, executable, commandLineArgs);
 
 #elif defined(Q_OS_MAC)
 
