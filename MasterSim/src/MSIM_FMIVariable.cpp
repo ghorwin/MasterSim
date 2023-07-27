@@ -39,6 +39,10 @@ void FMIVariable::read(const TiXmlElement * element) {
 			m_variability = "continuous";
 
 		// read child element
+		const TiXmlNode* firstChildNode = element->FirstChild();
+		if (firstChildNode == NULL)
+			throw IBK::Exception("Child node of tag 'ScalarVariable' required.", FUNC_ID);
+
 		const TiXmlElement * child = element->FirstChild()->ToElement();
 		if (child == NULL)
 			throw IBK::Exception("Missing variable type declaration.", FUNC_ID);
