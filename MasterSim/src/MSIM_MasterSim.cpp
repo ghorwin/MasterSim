@@ -715,7 +715,8 @@ void MasterSim::initialConditions() {
 			// process all FMI variables and parameters and set their start values
 			for (unsigned int v=0; v<slave->fmu()->m_modelDescription.m_variables.size(); ++v) {
 				const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[v];
-				if (var.m_causality != FMIVariable::C_INPUT && var.m_causality != FMIVariable::C_PARAMETER)
+				// input variables receive their content from other modes and therefore have no start attribute
+				if (var.m_causality == FMIVariable::C_INPUT)
 					continue;
 
 				// get start value
