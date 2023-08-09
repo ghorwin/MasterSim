@@ -715,8 +715,19 @@ void MasterSim::initialConditions() {
 			// process all FMI variables and parameters and set their start values
 			for (unsigned int v=0; v<slave->fmu()->m_modelDescription.m_variables.size(); ++v) {
 				const FMIVariable & var = slave->fmu()->m_modelDescription.m_variables[v];
-				// input variables receive their content from other modes and therefore have no start attribute
-				if (var.m_causality == FMIVariable::C_INPUT)
+				// The "start" attribute is required for parameters, though the FMU should have a matching
+				// start value for the parameter already.
+				//
+				// "Input" variables only need a start value, if they are NOT CONNECTED to an output variable.
+				// Otherwise, they will receive the output variables value during the initial condition iteration loop, and
+				// hence the "start" attribute will be overwritten. However, for _some_ FMU slaves setting the
+				// "start" value of an input variable will trigger a recalculation thouse causing them to update their
+				// output variables. In these cases setting the start value for inputs may (but does not need to) affect
+				// the outcome of the initial calculation.
+				//
+				// "Output" variables may have a "start" value, but we ignore this and rather use the output variable's value
+				// provided by each FMU slave. Same for variables of causality "local".
+				if (var.m_causality != FMIVariable::C_INPUT && var.m_causality != FMIVariable::C_PARAMETER)
 					continue;
 
 				// get start value
