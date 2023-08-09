@@ -173,7 +173,23 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 #endif
 	bool success = MSIMSettings::startProcess(m_solverName, commandLineArgs, projectFile, runOption);
 	if (!success) {
+#if defined(Q_OS_LINUX)
+		switch (runOption) {
+			case MSIMSettings::TE_None:
+				QMessageBox::critical(this, QString(), tr("Could not run solver '%1'").arg(m_solverName));
+				break;
+			case MSIMSettings::TE_XTerm:
+				QMessageBox::critical(this, QString(), tr("Could not run XTerm terminal emulator (xterm). "
+														  "Please install XTerm or select a different terminal emulator from the list!") );
+				break;
+			case MSIMSettings::TE_GnomeTerminal:
+				QMessageBox::critical(this, QString(), tr("Could not run Gnome terminal emulator (gnome-terminal). "
+														  "Please install GNOME terminal or select a different terminal emulator from the list!") );
+				break;
+		}
+#else
 		QMessageBox::critical(this, QString(), tr("Could not run solver '%1'").arg(m_solverName));
+#endif
 		return;
 	}
 
