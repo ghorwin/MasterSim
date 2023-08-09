@@ -3,25 +3,25 @@
 	<!--Blocks-->
 	<Blocks>
 		<Block name="Part1">
-			<Position>16, -96</Position>
-			<Size>40, 80</Size>
+			<Position>-32, 176</Position>
+			<Size>96, 48</Size>
 			<!--Sockets-->
 			<Sockets>
 				<Socket name="x1">
-					<Position>40, 16</Position>
+					<Position>96, 16</Position>
 					<Orientation>Horizontal</Orientation>
 					<Inlet>false</Inlet>
 				</Socket>
 				<Socket name="x2">
-					<Position>40, 32</Position>
+					<Position>96, 32</Position>
 					<Orientation>Horizontal</Orientation>
 					<Inlet>false</Inlet>
 				</Socket>
 			</Sockets>
 		</Block>
 		<Block name="Part2">
-			<Position>160, 0</Position>
-			<Size>40, 80</Size>
+			<Position>176, 176</Position>
+			<Size>96, 64</Size>
 			<!--Sockets-->
 			<Sockets>
 				<Socket name="x1">
@@ -40,15 +40,15 @@
 					<Inlet>true</Inlet>
 				</Socket>
 				<Socket name="x3">
-					<Position>40, 16</Position>
+					<Position>96, 16</Position>
 					<Orientation>Horizontal</Orientation>
 					<Inlet>false</Inlet>
 				</Socket>
 			</Sockets>
 		</Block>
 		<Block name="Part3">
-			<Position>272, 0</Position>
-			<Size>40, 80</Size>
+			<Position>320, 176</Position>
+			<Size>96, 32</Size>
 			<!--Sockets-->
 			<Sockets>
 				<Socket name="x3">
@@ -57,7 +57,7 @@
 					<Inlet>true</Inlet>
 				</Socket>
 				<Socket name="x4">
-					<Position>40, 16</Position>
+					<Position>96, 16</Position>
 					<Orientation>Horizontal</Orientation>
 					<Inlet>false</Inlet>
 				</Socket>
@@ -73,11 +73,11 @@
 			<Segments>
 				<Segment>
 					<Orientation>Vertical</Orientation>
-					<Offset>96</Offset>
+					<Offset>0</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>40</Offset>
+					<Offset>48</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
@@ -87,16 +87,12 @@
 			<!--Connector segments (between start and end lines)-->
 			<Segments>
 				<Segment>
-					<Orientation>Horizontal</Orientation>
-					<Offset>16</Offset>
-				</Segment>
-				<Segment>
 					<Orientation>Vertical</Orientation>
-					<Offset>96</Offset>
+					<Offset>0</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>24</Offset>
+					<Offset>48</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
@@ -111,7 +107,7 @@
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>8</Offset>
+					<Offset>-16</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
@@ -122,19 +118,15 @@
 			<Segments>
 				<Segment>
 					<Orientation>Vertical</Orientation>
-					<Offset>96</Offset>
+					<Offset>64</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Horizontal</Orientation>
-					<Offset>-248</Offset>
+					<Offset>-304</Offset>
 				</Segment>
 				<Segment>
 					<Orientation>Vertical</Orientation>
-					<Offset>-64</Offset>
-				</Segment>
-				<Segment>
-					<Orientation>Horizontal</Orientation>
-					<Offset>32</Offset>
+					<Offset>-32</Offset>
 				</Segment>
 			</Segments>
 		</Connector>
