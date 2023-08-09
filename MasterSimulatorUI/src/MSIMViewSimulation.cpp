@@ -163,8 +163,11 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 
 	// remove existing directory structure
 	QString targetPath = projectFile.left(projectFile.lastIndexOf('.'));
-	QDir resultDir( targetPath );
-	resultDir.removeRecursively();
+	// remove result directory completed, unless we have "skip-unzip" checked
+	if (!m_ui->checkBoxSkipUnzip->isChecked() ) {
+		QDir resultDir( targetPath );
+		resultDir.removeRecursively();
+	}
 
 #if defined(Q_OS_LINUX)
 	MSIMSettings::TerminalEmulators runOption = (MSIMSettings::TerminalEmulators)m_ui->comboBoxTermEmulator->currentIndex();
