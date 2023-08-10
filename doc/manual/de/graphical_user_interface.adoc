@@ -109,7 +109,7 @@ Sie können die gleiche FMU mehrere Male importieren. In diesem Fall werden die 
 Unterhalb der Tabelle mit den verwendeten Slaves ist eine Liste der von den FMUs publizierten Parameter. Die Liste gilt für den  _gegenwärtig ausgewählten_ Slave. Ein Simulations-Slave kann in der Slave-Tabelle oder durch Anklicken eines Blocks in der Netzwerkansicht ausgewählt werden. 
 
 .Tabelle mit Slave-spezifischen Parameterwerten
-image::gui_slave_view_properties.png[alt="Slave parameter table"]
+image::gui_slave_view_properties.png[alt="Slave-Parametertabelle"]
 
 [horizontal]
 (1):: Schwarze und fette Schrift gibt an, dass dieser Parameter modifiziert oder auf einen bestimmten Wert gesetzt worden ist. Grauer, kursiver Text zeigt einen standardmäßigen, unveränderten Wert.
@@ -117,6 +117,18 @@ image::gui_slave_view_properties.png[alt="Slave parameter table"]
 (3):: Parameter, die in schwarzer Fettschrift geschrieben sind, wurden von _MasterSim_ gesetzt (während der Initialisierung).
 
 Parameter können durch *Doppeklicken* der Wertezelle editiert werden. Das Löschen des Inhalts der Zelle setzt die Parameter auf ihre standardmäßigen Werte zurück. 
+
+### Eigenschaften/Parameterwerte der Verbindungen
+
+Sobald Verbindungen ausgewählt/markiert wurden, kann man die visuellen und Umrechungseigenschaften der Verknüpfungen definieren:
+
+.Tabelle mit Verknüpfungs-spezifischen Parameterwerten
+image::gui_slave_view_line_properties.png[alt="Verknüpfungseigenschaften"]
+
+MASTERSIM ermöglicht es, Einheitenumrechungen oder sonstige Konvertierungen zwischen Ausgangs- und Eingangsvariablen von verschiedenen Slaves durchzuführen. Dazu kann man die Parameter einer einfache Umrechnungsformel definieren (siehe auch Abschnitt <<connection_graph>>).
+
+Sobald ein von 0 verschiedener Offset und/oder ein Faktor ungleich 1 eingegeben wurde, wird die dazugehörige Umrechnungsformel in der Netzwerkansicht angezeigt.
+
 
 ### Netzwerkansicht
 
@@ -238,7 +250,8 @@ Die automatische Verbindung erstellt:
 Die dritte Verbindung wird nicht hergestellt, da _Raum1.Betriebstemperatur_ namentlich nicht zu _Raum2.OperativeTemperatur_ passt.
 ====
 
-### Eine Umrechnungsoperation zwischen Variablen definieren
+[[connector_conversion_operation]]
+### Umrechnungsoperationen zwischen Variablen definieren
 
 Falls Sie die Umwandlung einer Einheit oder andere Änderungen (Zeichenumkehrung, Skalierung) zwischen Ausgangs- und Eingangsvariablen vornehmen wollen, können Sie in der dritten Spalte der Tabelle *(6)* *doppelklicken*, um einen Dialog für das Bearbeiten der Umrechungsoperation zu öffnen (siehe Abschnitt <<connection_graph>> für eine detaillierte Beschreibung).
 

@@ -151,12 +151,13 @@ Treten Fehler während der Initialisierung auf, führt dies zu einem Abbruch des
 
 Die erste Aufgabe des Simulators ist es, für alle Slaves konsistente Anfangswerte zu erhalten. Das ist bereits eine nicht-triviale Aufgabe und nicht in allen Fällen überhaupt möglich. Die einzige Prozedur, die sowohl für FMI 1 und FMI 2-Slaves zum Einsatz kommen kann, ist das  schrittweise Lesen und Setzen von Eingangs- und Ausgangsgrößen in allen Slaves. Dieses wird wiederholt, bis keine Änderungen mehr beobachtet werden.
 
+
 Der Algorithmus in _MasterSim_ ist:
 
 ----
 Schleife über alle Slaves:
   - setupExperiment() für den aktuellen Slave aufrufen
-  - setzen aller Variablen der Kausalitäten INPUT oder PARAMETER auf ihre Standardwerte, wie sie in der modelDescription.xml gegeben sind
+  - setzen aller Variablen der Kausalitäten INPUT oder PARAMETER auf ihre Standardwerte, wie sie in der modelDescription.xml durch das 'start'-Attribut gegeben sind
   - setzen aller Parameter auf die in der Projektdatei angegebenen Werte (falls Werte zugewiesen wurden)
 
 nur für FMI 2: in allen Slaves enterInitializationMode() aufrufen
@@ -170,6 +171,11 @@ Schreife mit max. 3 Wiederholungen:
 nur für FMI 2: in allen Slaves exitInitializationMode() aufrufen
 ----
 
+[NOTE]
+====
+Wenn ein Signaleingang eines FMU-Slave mit dem Ausgang eines anderen FMU-Slaves verbunden wird, dann werden bei der Initialisierung _stets_ die Werte der OUTPUT Variablen an die INPUT-Variablen übergeben. Dabei werden _immer_ die OUTPUT Variablenwerte aus den `getXXX()` Funktionen benutzt, und nicht die via _start_-Attribut in der `modelDescription.xml`-Datei gegebenen Werte. Diese haben nur dann einen Einfluss, wenn sie für eine INPUT Variable gegeben sind, welche _nicht_ verknüpft ist. _start_-Attribute von OUTPUT Variablen werden von MASTERSIM selbst ignoriert und haben keinen Einfluss auf die Initialisierung, da sie sonst möglicherweise den FMU-internen Gleichungen wiedersprechen würden (hier ist der FMI-Standard etwas unsauber, da er das festlegen von _start_-Attributen von OUTPUT Variablen erlaubt, was aber redundant zu dem FMU-internen Zustand und somit potenziell unstimmig sein kann).
+====
+
 Der Berechnungsalgorithmus für die Anfangsbedingungen ist derzeit ein Gauss-Jacobi-Algorithmus und als solcher nicht übermäßig stabil oder effizient. 
 
 [CAUTION]
@@ -180,6 +186,7 @@ Durch eine Uneindeutigkeit im aktuellen FMI-Standard wird von Co-Simulations-Sla
 
 _MasterSim_ wählt hier die Funktionalität von FMI 1.0, d.h. keine Schleifen innerhalb einer Iteration nur um Ein- und Ausgänge zu synchronisieren. Dies erfolgt unter der Annahme, dass die Ausgangsgrößen sich nicht direkt ändern, sobald neue Eingangsvariablen gesetzt wurden (dies gilt für die meisten FMUs). Unter dieser Bedingung sind 3 Wiederholungen immer ausreichend.
 ====
+
 
 ### Start- und Endzeit der Simulation
 
