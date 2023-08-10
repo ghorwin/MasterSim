@@ -116,6 +116,17 @@ image::gui_slave_view_properties.png[alt="Slave parameter table"]
 
 Parameters can be edited by *double-clicking* on the value cell and entering a value. Clearing the content of the cell will reset the parameter to its default value. 
 
+### Properties of connections
+
+When a connection was selected/marked its properties are shown in the property view:
+
+.Table with connection-specific properties
+image::gui_slave_view_line_properties.png[alt="Connection properties"]
+
+MASTERSIM allows specifying unit conversions or other calculations between output and inlet variable connections between slaves. Hereby, the parameters for the simple conversion function (see section <<connection_graph>>) may be specified.
+
+As soon as an offset different from 0 and/or factor different from 1 are entered, the respective conversion equation is shown in the graphical network view.
+
 === Network view
 
 The network view *(9)* shows a simple schematic of all FMU slaves and their connections. This network view is optional and not really needed for the simulation. Still, a visual representation of the simulation scenario is important for communication.

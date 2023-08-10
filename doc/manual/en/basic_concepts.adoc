@@ -156,6 +156,11 @@ loop with 3 iterations:
 for FMI 2: tell all slaves to exitInitializationMode()
 ----
 
+[NOTE]
+====
+If a signal input of an FMU slave is connected to the outlet of another slave, then the initial value set to the inlet variable will _always_ be taken from the connect slave's output variable. Hereby, MASTERSIM _always_ uses the OUTPUT variable value provided via the `getXXX()` functions, and not those defined via  _start_-attribute in the `modelDescription.xml`-file. Those are only relevant if they are given for an INPUT variable that is _not_ connected to any output. _start_-attributes of OUTPUT variables  will be ignored by MASTERSIM itself and have no impact on the initialization, as they might be in conflict with FMU-internal equations (the FMI-Standard is a bit unclean here, as it does permit specifying _start_-attributes of OUTPUT variables, though this information is redundant to the internal state of the FMU and thus may be potentially inconsistent).
+====
+
 Note, the initial calculation algorithm is actually a Gauss-Jacobi algorithm, and as such not overly stable or efficient.
 
 [CAUTION]
