@@ -2,7 +2,6 @@
 
 #include <QPainter>
 #include <QColor>
-#include <QTextDocument>
 #include <QColorDialog>
 #include <QSpinBox>
 
@@ -35,8 +34,8 @@ QWidget * MSIMSlaveItemDelegate::createEditor ( QWidget * parent, const QStyleOp
 		case 0 : {
 			QColorDialog * editor = new QColorDialog(parent);
 			editor->setOption(QColorDialog::DontUseNativeDialog, true);
-			connect(editor, SIGNAL(accepted()), this, SLOT(commitAndCloseEditor()));
-			connect(editor, SIGNAL(rejected()), this, SLOT(rejectCloseEditor()));
+			connect(editor, &QColorDialog::accepted, this, &MSIMSlaveItemDelegate::commitAndCloseEditor);
+			connect(editor, &QColorDialog::rejected, this, &MSIMSlaveItemDelegate::rejectCloseEditor);
 			return editor;
 		}
 		case 3 : {

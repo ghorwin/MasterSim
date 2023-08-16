@@ -7,7 +7,7 @@
 class MSIMSlaveItemDelegate : public QItemDelegate {
 	Q_OBJECT
 public:
-	explicit MSIMSlaveItemDelegate(QObject *parent = 0);
+	explicit MSIMSlaveItemDelegate(QObject *parent = nullptr);
 
 protected:
 	virtual void paint( QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
