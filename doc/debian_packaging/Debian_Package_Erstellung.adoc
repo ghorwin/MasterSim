@@ -650,6 +650,22 @@ Passt. Nun ist alles fertig für die Erstellung von Debian-Paketen.
 
 - Anleitung für GPG und SSH folgen: https://packaging.ubuntu.com/html/getting-set-up.html
 
+- alternativ existierenden Schlüssel von einem System auf ein nächstes exportieren/importieren:
+
+```
+gpg --list-secret-keys andreas.nicolai@gmx.net
+
+gpg --export-secret-keys 34FC6FB934502913B4C1DCA86E0814BD3FCA8338 > private.key
+```
+
+und dann auf dem Zielcomputer:
+
+```
+gpg --import private.key
+```
+
+
+
 #### Umgebungsvariablen einrichten
 
 ```
