@@ -60,15 +60,7 @@ sudo apt-get update
 sudo apt install mastersim
 ```
 
-Available Ubuntu/Kubuntu/*buntu versions:
-
-| Distro | Version | 
-|--------|---------|
-| 18.04 LTS (Bionic Beaver) | 0.9.4 |
-| 20.04 LTS (Focal Fossa) | 0.9.5 |
-| 21.10 (Impish Indri) | 0.9.4 |
-| 22.04 LTS (Jammy Jellyfish) | 0.9.5 |
-| 22.10 (Kinetic Kudu) | 0.9.5 |
+Available Ubuntu/Kubuntu/*buntu versions, see [launchpad](https://launchpad.net/~ghorwin/+archive/ubuntu/sim) or releases page.
 
 If you require a deb package for a different release, just let me know by creating an issue.
 
