@@ -50,7 +50,7 @@ The welcome page of the software gives you a project overview and up-to-date dev
 
 #### Debian/Ubuntu Packages
 
-Ubuntu users can now simply install _MasterSim_ via private package repository (https://launchpad.net/~ghorwin/+archive/ubuntu/sim):
+Ubuntu users can now simply install _MasterSim_ via private package repository [launchpad](https://launchpad.net/~ghorwin/+archive/ubuntu/sim):
 
 ```bash
 # add repository
