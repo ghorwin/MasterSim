@@ -38,11 +38,11 @@
 #include <QGraphicsItem>
 #include <QDebug>
 #include <QApplication>
+#include <QScrollBar>
 
 #include <cmath>
 
 #include "BM_SceneManager.h"
-#include "qscrollbar.h"
 
 namespace BLOCKMOD {
 
@@ -62,7 +62,6 @@ ZoomMeshGraphicsView::ZoomMeshGraphicsView(QWidget *parent) :
 }
 
 
-
 void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
 	if(m_middleButtonPressed) {
 		i_event->ignore();
@@ -77,6 +76,7 @@ void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
 	i_event->accept();
 }
 
+
 void ZoomMeshGraphicsView::mousePressEvent(QMouseEvent *event) {
 	if (event->button() == Qt::MiddleButton) {
 		m_middleButtonPressed = true;
@@ -89,6 +89,7 @@ void ZoomMeshGraphicsView::mousePressEvent(QMouseEvent *event) {
 	QGraphicsView::mousePressEvent(event);
 }
 
+
 void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
 	if (event->button() == Qt::MiddleButton) {
 		m_middleButtonPressed = false;
@@ -100,7 +101,6 @@ void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
 	m_pos = event->pos();
 	QGraphicsView::mouseReleaseEvent(event);
 }
-
 
 
 void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
