@@ -441,7 +441,7 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 		if (explodeFlags & EF_UseQuotes) {
 			if (*it == '"') {
 				// check for escaped "
-				if (it > str.begin() && *(it-1) != '\\')
+				if (it == str.begin() || *(it-1) != '\\')
 					inQuotes = !inQuotes;
 			}
 		}
