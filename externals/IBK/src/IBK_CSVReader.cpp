@@ -73,7 +73,7 @@ bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
 	IBK::explode(line1, tokens1, "\t", IBK::EF_NoFlags);
 	IBK::explode(line2, tokens2, "\t", IBK::EF_NoFlags);
 	if (tokens1.size() < 2 || tokens1.size() != tokens2.size()) {
-		// try tab format
+		// try "comma-separated with quotes" format
 		IBK::explode(line1, tokens1, ",", IBK::EF_UseQuotes);
 		IBK::explode(line2, tokens2, ",", IBK::EF_UseQuotes);
 		// still no luck?
