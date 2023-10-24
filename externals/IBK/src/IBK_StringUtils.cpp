@@ -434,25 +434,42 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 	tokens.clear();
 	std::string tmp;
 
+	bool inQuotes = false;
+	// process string char by char
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
+		// if we consider Quotes, handle this first before checking for delimiters
+		if (explodeFlags & EF_UseQuotes) {
+			if (*it == '"') {
+				// check for escaped "
+				if (it > str.begin() && *(it-1) != '\\')
+					inQuotes = !inQuotes;
+			}
+		}
+		// only check for delimiters if we are not in quotes
 		bool delim_found = false;
-		for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
-			if (*it==*tit) {
-				if (explodeFlags & EF_TrimTokens)
-					IBK::trim(tmp, " \t\r\n");
-				if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
-					tokens.push_back(tmp);
-				tmp.clear();
-				delim_found = true;
-				break;
+		if (!inQuotes) {
+			for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
+				if (*it==*tit) {
+					if (explodeFlags & EF_TrimTokens)
+						IBK::trim(tmp, " \t\r\n");
+					if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
+						tokens.push_back(tmp);
+					tmp.clear();
+					delim_found = true;
+					break;
+				}
 			}
 		}
 		if (!delim_found)
 			tmp += *it;
 	}
 	if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens)) {
-		if (explodeFlags & EF_TrimTokens)
-			IBK::trim(tmp, " \t\r\n"); // may cause tmp to become empty
+		if (explodeFlags & EF_TrimTokens) {
+			std::string trimChars = " \t\r\n";
+			if (explodeFlags & EF_UseQuotes)
+				trimChars += "\"";
+			IBK::trim(tmp, trimChars); // may cause tmp to become empty
+		}
 		if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 			tokens.push_back(tmp);
 	}
