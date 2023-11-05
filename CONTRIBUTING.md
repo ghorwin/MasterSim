@@ -12,7 +12,7 @@ Please create pull-requests for any changes, ideally by creating issues with a d
 Contributions to the repository must be compatible with the license for MASTERSIM. Hence, any contributor must agree to the following license agreement and transfer of licensing rights.
 
 By contributing anything (code, documentation, ideas, UI design etc.) to the repository, you as author keep full (but not exclusive) rights to your contribution. This way you may use
-your contribution freely anywhere else. ALSO you transfer full (but not exclusive) rights to the repository owner for your constributions and agree, that your contributions may be placed 
-under an open-source license, currently BSD-3 license for MASTERSIM.
+your contribution freely anywhere else. ALSO you transfer full (but not exclusive) rights to the repository owner (Andreas Nicolai aka ghorwin) for your constributions and agree, that 
+your contributions may be placed under an open-source license, currently BSD-3 license for MASTERSIM.
 
 This license agreement applies automatically to all contributions made directly to the repository by authorized developers.
