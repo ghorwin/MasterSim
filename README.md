@@ -88,4 +88,6 @@ Note that (unless there is a specific demand) I will not create x86 releases any
 For MacOS 10.11 ("El Capitan") or newer, there is a dmg for download: see [releases](https://github.com/ghorwin/MasterSim/releases).
 
 
-[Download stats...](https://tooomm.github.io/github-release-stats/?username=ghorwin&repository=mastersim)
+- [Download stats (github)...](https://tooomm.github.io/github-release-stats/?username=ghorwin&repository=mastersim)
+- [Download stats (debian repository/launchpad)...](https://ppa-stats.sheth.io/#/?ppaName=sim&ppaOwner=ghorwin&packageName=mastersim)
+- 
