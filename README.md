@@ -90,4 +90,4 @@ For MacOS 10.11 ("El Capitan") or newer, there is a dmg for download: see [relea
 
 - [Download stats (github)...](https://tooomm.github.io/github-release-stats/?username=ghorwin&repository=mastersim)
 - [Download stats (debian repository/launchpad)...](https://ppa-stats.sheth.io/#/?ppaName=sim&ppaOwner=ghorwin&packageName=mastersim)
-- 
+
