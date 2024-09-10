@@ -883,6 +883,10 @@ void MasterSim::composeVariableVector() {
 	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::IBK_Message("Resolving connection graph and building variable mapping\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	IBK::MessageIndentor indent; (void)indent;
+
+	// NOTE: we process all connections and if we have a file reader slave (with type-less columns), we try to identify
+	//       the datatype of the source column based on the target FMU connector, where we feed the value into.
+	//       If the source value (from the file reader) is used in several FMU inlets, their types must be always the same.
 	for (unsigned int i=0; i<m_project.m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_project.m_graph[i];
 		// resolve variable references
@@ -948,9 +952,12 @@ void MasterSim::composeVariableVector() {
 						}
 						// remember variable type
 						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_DOUBLE;
+						// remember the index of the target slot where the value in colIndex goes into
+						fileReaderSlave->m_columnVariableOutputVectorIndex[colIndex] = fileReaderSlave->m_doubleVarNames.size();
 						// copy variable info to respective vector
 						fileReaderSlave->m_doubleVarNames.push_back(varName);
 						fileReaderSlave->m_doubleVarUnits.push_back(fileReaderSlave->m_typelessVarUnits[colIndex]);
+
 						// adjust colIndex to point to the newly registered double variable
 						colIndex = fileReaderSlave->m_doubleVarNames.size()-1;
 						fileReaderSlave->m_doubleOutputs.resize(fileReaderSlave->m_doubleVarNames.size());
@@ -983,6 +990,7 @@ void MasterSim::composeVariableVector() {
 											 .arg(edge.m_outputVariableRef), FUNC_ID);
 						}
 						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_INT;
+						fileReaderSlave->m_columnVariableOutputVectorIndex[colIndex] = fileReaderSlave->m_intVarNames.size();
 						fileReaderSlave->m_intVarNames.push_back(varName);
 						colIndex = fileReaderSlave->m_intVarNames.size()-1;
 						fileReaderSlave->m_intOutputs.resize(fileReaderSlave->m_intVarNames.size());
@@ -1015,6 +1023,7 @@ void MasterSim::composeVariableVector() {
 											 .arg(edge.m_outputVariableRef), FUNC_ID);
 						}
 						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_BOOL;
+						fileReaderSlave->m_columnVariableOutputVectorIndex[colIndex] = fileReaderSlave->m_boolVarNames.size();
 						fileReaderSlave->m_boolVarNames.push_back(varName);
 						colIndex = fileReaderSlave->m_boolVarNames.size()-1;
 						fileReaderSlave->m_boolOutputs.resize(fileReaderSlave->m_boolVarNames.size());
@@ -1047,6 +1056,7 @@ void MasterSim::composeVariableVector() {
 											 .arg(edge.m_outputVariableRef), FUNC_ID);
 						}
 						fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_STRING;
+						fileReaderSlave->m_columnVariableOutputVectorIndex[colIndex] = fileReaderSlave->m_stringVarNames.size();
 						fileReaderSlave->m_stringVarNames.push_back(varName);
 						colIndex = fileReaderSlave->m_stringVarNames.size()-1;
 						fileReaderSlave->m_stringOutputs.resize(fileReaderSlave->m_stringVarNames.size());
