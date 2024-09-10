@@ -65,8 +65,11 @@ void FileReaderSlave::instantiate() {
 	unsigned int varCount = m_fileReader->m_nColumns-1;
 	m_valueSplines.resize(varCount);
 	m_columnVariableTypes.resize(varCount);
-	for (unsigned int i=0; i<varCount; ++i)
+	m_columnVariableOutputVectorIndex.resize(varCount);
+	for (unsigned int i=0; i<varCount; ++i) {
 		m_columnVariableTypes[i] = MASTER_SIM::FMIVariable::NUM_VT;
+		m_columnVariableOutputVectorIndex[i] = (unsigned int)-1; // not assigned
+	}
 
 	// store variable names and units from captions
 	for (unsigned int i=0; i<varCount; ++i) {
@@ -177,20 +180,18 @@ void FileReaderSlave::cacheOutputs() {
 	const char * const FUNC_ID = "[FileReaderSlave::cacheOutputs]";
 	int res = fmi2OK;
 
-	unsigned int idxDouble = 0;
-	unsigned int idxInt = 0;
-	unsigned int idxBool = 0;
-//	unsigned int idxString = 0;
+	// transfer values by type
 	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
+		IBK_ASSERT(m_columnVariableOutputVectorIndex[j] != (unsigned int)-1);
 		switch (m_columnVariableTypes[j]) {
 			case MASTER_SIM::FMIVariable::VT_DOUBLE :
-				m_doubleOutputs[idxDouble++] = m_valueSplines[j]->value(m_t);
+				m_doubleOutputs[ m_columnVariableOutputVectorIndex[j] ] = m_valueSplines[j]->value(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_INT :
-				m_intOutputs[idxInt++] = (int)m_valueSplines[j]->nonInterpolatedValue(m_t);
+				m_intOutputs[ m_columnVariableOutputVectorIndex[j] ] = (int)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_BOOL :
-				m_boolOutputs[idxBool++] = (bool)m_valueSplines[j]->nonInterpolatedValue(m_t);
+				m_boolOutputs[ m_columnVariableOutputVectorIndex[j] ] = (bool)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_STRING : break; // TODO : later store string variables
 			case MASTER_SIM::FMIVariable::NUM_VT : break; // nothing to do

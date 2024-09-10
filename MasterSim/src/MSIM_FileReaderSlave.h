@@ -93,6 +93,14 @@ public:
 	*/
 	std::vector<MASTER_SIM::FMIVariable::VarType>	m_columnVariableTypes;
 
+	/*! For each of the variables holds index of this variable in the respective outputXXX vector.
+		For example, if m_columnVariableTypes[5] == VT_DOUBLE, then the value should be stored
+		in m_doubleOutputs[ m_columnVariableOutputVectorIndex[5] ].
+		For example, if m_columnVariableTypes[2] == VT_INT, then the value should be stored
+		in m_intOutputs[ m_columnVariableOutputVectorIndex[2] ].
+	*/
+	std::vector<unsigned int>						m_columnVariableOutputVectorIndex;
+
 private:
 
 	IBK::CSVReader					*m_fileReader;
