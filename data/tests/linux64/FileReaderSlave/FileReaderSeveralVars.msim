@@ -1,0 +1,30 @@
+# Created:	Mo. Sept. 9 13:02:52 2024
+# LastModified:	Mo. Sept. 9 13:06:04 2024
+
+tStart                   0 a
+tEnd                     1 d
+hMax                     30 min
+hMin                     1e-05 s
+hFallBackLimit           0.001 s
+hStart                   10 min
+hOutputMin               1 h
+outputTimeUnit           h
+adjustStepSize           no
+preventOversteppingOfEndTime yes
+absTol                   1e-06
+relTol                   1e-05
+MasterMode               GAUSS_SEIDEL
+ErrorControlMode         NONE
+maxIterations            1
+writeInternalVariables   yes
+
+simulator 0 0 MoistureCtrl #6a5acd "fmus/OpenModelica/MoistureCtrl.fmu"
+simulator 1 0 TestSchedule #4682b4 "TestSchedule.tsv"
+
+graph TestSchedule.PhiSet MoistureCtrl.phiSet
+graph TestSchedule.Phi MoistureCtrl.phi
+graph TestSchedule.PhiNeg MoistureCtrl.phiNegativ
+graph TestSchedule.PhiPos MoistureCtrl.phiPositive
+graph TestSchedule.mDotNeg MoistureCtrl.mDotNegativ
+graph TestSchedule.mDotPos MoistureCtrl.mDotPositiv
+
