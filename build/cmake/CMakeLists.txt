@@ -156,6 +156,7 @@ add_subdirectory( ../../TestFMUs/Math003Part2/projects/cmake Math003Part2)
 add_subdirectory( ../../TestFMUs/Math003Part3/projects/cmake Math003Part3)
 add_subdirectory( ../../TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
 add_subdirectory( ../../TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
+add_subdirectory( ../../TestFMUs/FourRealInputVars/projects/cmake FourRealInputVars)
 
 # Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
@@ -173,6 +174,7 @@ if (UNIX AND NOT APPLE)
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/FourRealInputVars.fmu
 		COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh ${CMAKE_CURRENT_BINARY_DIR}
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../../TestFMUs
 		COMMENT "Generating example FMUs"
@@ -187,6 +189,7 @@ if (UNIX AND NOT APPLE)
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
 				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
+				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/FourRealInputVars.fmu
 	)
 
 	# -------------------------------------------------------------
@@ -231,6 +234,7 @@ if (UNIX AND NOT APPLE)
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
 	install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/description
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
+
 	# we install newly generated FMUs
 	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
