@@ -347,7 +347,7 @@
   </action>
   <action name="actionFilePrint">
    <property name="text">
-    <string>Print schematics...</string>
+    <string>Export/print schematics...</string>
    </property>
   </action>
  </widget>
