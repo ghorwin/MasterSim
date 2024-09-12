@@ -15,7 +15,8 @@ SUBDIRS += MasterSim \
 	FMUTestMath003Part2 \
 	FMUTestMath003Part3 \
 	FMUTestLotkaVolterraPrey \
-	FMUTestLotkaVolterraPredator
+	FMUTestLotkaVolterraPredator \
+	FourRealInputVars
 
 win32|macx {
 	SUBDIRS += zlib
@@ -38,6 +39,7 @@ FMUTestMath003Part2.file = TestFMUs/Math003Part2/Math003Part2.pro
 FMUTestMath003Part3.file = TestFMUs/Math003Part3/Math003Part3.pro
 FMUTestLotkaVolterraPrey.file = TestFMUs/LotkaVolterraPrey/LotkaVolterraPrey.pro
 FMUTestLotkaVolterraPredator.file = TestFMUs/LotkaVolterraPredator/LotkaVolterraPredator.pro
+FourRealInputVars.file = TestFMUs/FourRealInputVars/FourRealInputVars.pro
 
 # dependencies
 MasterSim.depends = IBK IBKMK TiCPP minizip

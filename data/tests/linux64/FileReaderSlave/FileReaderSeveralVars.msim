@@ -3,7 +3,7 @@
 
 tStart                   0 a
 tEnd                     6 h
-hMax                     30 min
+hMax                     10 min
 hMin                     1e-05 s
 hFallBackLimit           0.001 s
 hStart                   10 min
@@ -18,8 +18,8 @@ ErrorControlMode         NONE
 maxIterations            1
 writeInternalVariables   yes
 
-simulator 0 0 RealInputVars #6a5acd "fmus/IBK/FourRealInputVars.fmu"
-simulator 1 0 FourRealValues #4682b4 "FourRealValues.tsv"
+simulator 0 0 FourRealValues #4682b4 "FourRealValues.tsv"
+simulator 1 0 RealInputVars #6a5acd "fmus/IBK/FourRealInputVars.fmu"
 
 # connect them in order - "FourRealValues.tsv" holds these in mixed order
 graph FourRealValues.Var1 RealInputVars.V1
