@@ -24,4 +24,7 @@ jobs:
       run: sudo apt install qtbase5-dev qt5-qmake libqt5svg5-dev libqt5sql5 libqt5sql5-psql
     - name: build
       working-directory: build/cmake
-      run: ./build.sh 2 release
+      run: ./build.sh 2 release skip-test
+    - name: test
+      working-directory: build/cmake
+      run: ./run_tests.sh
