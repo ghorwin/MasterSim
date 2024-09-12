@@ -33,6 +33,7 @@ INCLUDEPATH = \
 
 SOURCES += \
 	src/MSIMColorButton.cpp \
+	src/MSIMExportConnectionGraphDialog.cpp \
 	src/main.cpp \
 	src/MSIMAboutDialog.cpp \
 	src/MSIMBlockEditorDialog.cpp \
@@ -84,6 +85,7 @@ HEADERS  += \
 	src/MSIMConversion.h \
 	src/MSIMDebugApplication.h \
 	src/MSIMDirectories.h \
+	src/MSIMExportConnectionGraphDialog.h \
 	src/MSIMGUIMessageHandler.h \
 	src/MSIMLanguageHandler.h \
 	src/MSIMLogFileDialog.h \
@@ -119,6 +121,7 @@ FORMS    += \
 	src/MSIMAboutDialog.ui \
 	src/MSIMBlockEditorDialog.ui \
 	src/MSIMConnectionPropertiesEditDialog.ui \
+	src/MSIMExportConnectionGraphDialog.ui \
 	src/MSIMLogFileDialog.ui \
 	src/MSIMMainWindow.ui \
 	src/MSIMPreferencesDialog.ui \

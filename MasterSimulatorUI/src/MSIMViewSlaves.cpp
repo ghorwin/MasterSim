@@ -36,6 +36,7 @@
 #include "MSIMSlaveBlock.h"
 #include "MSIMBlockEditorDialog.h"
 #include "MSIMUndoProject.h"
+#include "MSIMExportConnectionGraphDialog.h"
 
 #include "MSIMUndoSlaves.h"
 #include "MSIMUndoConnections.h"
@@ -443,7 +444,7 @@ void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 	Q_ASSERT(currentIdx != -1);
 
 	// create copy of all connections not made to this slave
-	std::string slaveName = p.m_simulators[currentIdx].m_name;
+	std::string slaveName = p.m_simulators[(unsigned int)currentIdx].m_name;
 
 	std::vector<MASTER_SIM::Project::GraphEdge>	graph;
 	for (unsigned int i=0; i<p.m_graph.size(); ++i) {
@@ -456,7 +457,7 @@ void MSIMViewSlaves::on_toolButtonRemoveSlave_clicked() {
 
 	// remove slave instance
 	p.m_simulators.erase( p.m_simulators.begin() + currentIdx);
-	n.removeBlock(currentIdx);
+	n.removeBlock((unsigned int)currentIdx);
 
 	// create undo action
 	MSIMUndoSlaves * cmd = new MSIMUndoSlaves(tr("Slave removed"), p, n);
@@ -470,32 +471,34 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 	MASTER_SIM::Project p = project();
 	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
 
+	unsigned int simIdx = (unsigned int)row;
+
 	QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(row, column);
 	switch (column) {
-		case 0 : p.m_simulators[row].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
+		case 0 : p.m_simulators[simIdx].m_color = IBK::Color::fromQRgb( item->data(Qt::UserRole).value<QColor>().rgba()); break;
 		case 1 : {
 			std::string newSlaveName = m_ui->tableWidgetSlaves->item(row, column)->text().trimmed().toStdString();
-			if (newSlaveName != p.m_simulators[row].m_name) {
+			if (newSlaveName != p.m_simulators[simIdx].m_name) {
 				if (newSlaveName.find_first_of(" \t") != std::string::npos) {
 					QMessageBox::critical(this, tr("Invalid input"), tr("Slave names may not contain spaces or tabulator characters."));
-					item->setText( QString::fromUtf8(p.m_simulators[row].m_name.c_str()) );
+					item->setText( QString::fromUtf8(p.m_simulators[simIdx].m_name.c_str()) );
 					return;
 				}
 				// check for ambiguous name
 				bool found = false;
 				for (unsigned int i=0; i<p.m_simulators.size(); ++i) {
-					if (i == (unsigned int)row) continue;
-					if (newSlaveName == p.m_simulators[row].m_name)
+					if (i == simIdx) continue;
+					if (newSlaveName == p.m_simulators[simIdx].m_name)
 						found = true;
 				}
 				if (found) {
 					QMessageBox::critical(this, tr("Invalid input"), tr("Slave names must be unique identifiers."));
-					item->setText( QString::fromUtf8(p.m_simulators[row].m_name.c_str()) );
+					item->setText( QString::fromUtf8(p.m_simulators[simIdx].m_name.c_str()) );
 					return;
 				}
 			}
-			std::string oldName = p.m_simulators[row].m_name;
-			p.m_simulators[row].m_name = newSlaveName;
+			std::string oldName = p.m_simulators[simIdx].m_name;
+			p.m_simulators[simIdx].m_name = newSlaveName;
 
 			// now rename all connections with this slave name
 			for (unsigned int i=0; i<p.m_graph.size(); ++i) {
@@ -509,7 +512,7 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 			}
 
 			// and also update the connections in the network
-			n.renameBlock(row, QString::fromStdString(newSlaveName));
+			n.renameBlock(simIdx, QString::fromStdString(newSlaveName));
 
 		} break;
 		case 2 : {
@@ -519,9 +522,9 @@ void MSIMViewSlaves::on_tableWidgetSlaves_cellChanged(int row, int column) {
 				path = projectFilePath.parentPath() / path;
 				path.removeRelativeParts();
 			}
-			p.m_simulators[row].m_pathToFMU = path;
+			p.m_simulators[simIdx].m_pathToFMU = path;
 		} break;
-		case 3 : p.m_simulators[row].m_cycle = item->text().toUInt(); break;
+		case 3 : p.m_simulators[simIdx].m_cycle = item->text().toUInt(); break;
 	}
 
 	// create undo action
@@ -666,14 +669,18 @@ void MSIMViewSlaves::onSelectionCleared() {
 
 
 void MSIMViewSlaves::printScene() {
-	// open print preview dialog and print schematics
-	QPrinter prn;
-	QPrintDialog printDlg(&prn, this);
-	if (printDlg.exec() == QDialog::Accepted) {
-		QPainter painter;
-		painter.begin(&prn);
-		m_ui->blockModWidget->render(&painter);
-	}
+	if (m_exportConnectionGraphDialog == nullptr)
+		m_exportConnectionGraphDialog = new MSIMExportConnectionGraphDialog(this, m_ui->blockModWidget);
+
+	m_exportConnectionGraphDialog->exec();
+//	// open print preview dialog and print schematics
+//	QPrinter prn;
+//	QPrintDialog printDlg(&prn, this);
+//	if (printDlg.exec() == QDialog::Accepted) {
+//		QPainter painter;
+//		painter.begin(&prn);
+//		m_ui->blockModWidget->render(&painter);
+//	}
 }
 
 
@@ -711,8 +718,8 @@ void MSIMViewSlaves::updateSlaveTable() {
 	QSet<QString> fmuPaths;
 
 	m_ui->tableWidgetSlaves->setRowCount(project().m_simulators.size());
-	for (unsigned int i=0; i<project().m_simulators.size(); ++i) {
-		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[i];
+	for (int i=0; i<(int)project().m_simulators.size(); ++i) {
+		const MASTER_SIM::Project::SimulatorDef & simDef = project().m_simulators[(unsigned int)i];
 		QTableWidgetItem * item = new QTableWidgetItem();
 		item->setData(Qt::UserRole, QColor(simDef.m_color.toQRgb()));
 		m_ui->tableWidgetSlaves->setItem(i, 0, item);
@@ -744,15 +751,15 @@ void MSIMViewSlaves::updateSlaveTable() {
 	m_ui->tableWidgetSlaves->resizeColumnsToContents();
 	m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(0,m_ui->tableWidgetSlaves->verticalHeader()->defaultSectionSize());
 	// if there is space, stretch 2nd column
-	unsigned int colSizeSum = 0;
-	for (unsigned int i=0; i<4; ++i)
+	int colSizeSum = 0;
+	for (int i=0; i<4; ++i)
 		colSizeSum += m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(i);
-	unsigned int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
+	int contentsRectWith = m_ui->tableWidgetSlaves->contentsRect().width();
 
 	if (colSizeSum < contentsRectWith-20) {
-		unsigned int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
-								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
-								 m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
+		int totalSize = m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(0) +
+				m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(1) +
+				m_ui->tableWidgetSlaves->horizontalHeader()->sectionSize(3);
 		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
 	}
 
@@ -1039,3 +1046,7 @@ void MSIMViewSlaves::on_textEditDescription_editingFinished() {
 	undo->push();
 }
 
+
+void MSIMViewSlaves::on_pushButtonExportImage_clicked() {
+	printScene();
+}

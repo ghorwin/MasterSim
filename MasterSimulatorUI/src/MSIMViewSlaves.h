@@ -27,6 +27,7 @@ namespace BLOCKMOD {
 
 class MSIMBlockEditorDialog;
 class QTableWidgetItem;
+class MSIMExportConnectionGraphDialog;
 
 /*! The view containing FMU and slave definition tables. */
 class MSIMViewSlaves : public QWidget {
@@ -49,7 +50,7 @@ public:
 	/*! Looks up the block item corresponding to the given slave and opens the block editor. */
 	void editBlockItem(const QString & slaveName);
 
-	/*! Opens printer dialog and exports scene to printer. */
+	/*! Opens print/export dialog and exports/prints scene. */
 	void printScene();
 
 	/*! Extract the FMU with the given absolute file path, and determined properties for analysis.
@@ -122,6 +123,8 @@ private slots:
 
 	void on_textEditDescription_editingFinished();
 
+	void on_pushButtonExportImage_clicked();
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
@@ -143,7 +146,9 @@ private:
 	Ui::MSIMViewSlaves				*m_ui;
 
 	/*! The manager for the properties. */
-	QPW::VariantPropertyManager		*m_variantManager;
+	QPW::VariantPropertyManager		*m_variantManager = nullptr;
+
+	MSIMExportConnectionGraphDialog	*m_exportConnectionGraphDialog = nullptr;
 
 	MSIMBlockEditorDialog			*m_blockEditorDialog;
 
