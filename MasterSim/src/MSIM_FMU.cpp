@@ -131,6 +131,7 @@ void FMU::addIndexIfNotInList(std::vector<unsigned int> & valueRefList, const st
 
 
 void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
+	FUNCID(FMU::collectOutputVariableReferences);
 	// clear map m_synonymousVars
 	m_synonymousVars.clear();
 	// now collect all output variable valueReferences
@@ -148,9 +149,14 @@ void FMU::collectOutputVariableReferences(bool includeInternalVariables) {
 		}
 	}
 	if (includeInternalVariables) {
+		IBK::IBK_Message( "\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::IBK_Message( "Outputs from internal (all) variables:\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+		IBK::MessageIndentor indent; (void)indent;
 		// now append internal variables
 		for (unsigned int i=0; i<m_modelDescription.m_variables.size(); ++i) {
 			const FMIVariable & var = m_modelDescription.m_variables[i];
+			if (var.m_causality == FMIVariable::C_OUTPUT)
+				continue; // skip outputs, as they have already been processed
 			switch (var.m_type) {
 				case FMIVariable::VT_BOOL	: addIndexIfNotInList(m_boolValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
 				case FMIVariable::VT_INT	: addIndexIfNotInList(m_intValueRefsOutput, var.m_name, var.m_type,  var.m_valueReference, std::string()); break;
