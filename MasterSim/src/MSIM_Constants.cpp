@@ -4,7 +4,7 @@ namespace MASTER_SIM {
 
 const char * const VERSION			= "0.9";
 const char * const LONG_VERSION		= "0.9.7";
-const char * const RELEASE_DATE		= "October 01st, 2024";
+const char * const RELEASE_DATE		= "October 1st, 2024";
 
 const unsigned int KEYWORD_INDENTATION = 0;
 

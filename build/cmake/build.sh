@@ -148,11 +148,13 @@ cd $CMAKELISTSDIR &&
 mkdir -p ../../bin/release &&
 if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
   echo "*** Copying MasterSimulator to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulator/MasterSimulator ../../bin/release/MasterSimulator
+  cp $BUILDDIR/MasterSimulator/MasterSimulator ../../bin/release/MasterSimulator && 
+  ../../bin/release/MasterSimulator --man-page > ../../MasterSimulator/doc/MasterSimulator.1
 fi &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
   echo "*** Copying MasterSimulatorUI to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI
+  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI && 
+  ../../bin/release/MasterSimulatorUI --man-page > ../../MasterSimulatorUI/doc/MasterSimulatorUI.1
 fi &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
   if [ -e ../../bin/release/MasterSimulatorUI.app ]; then
