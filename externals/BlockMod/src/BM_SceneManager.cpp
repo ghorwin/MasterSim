@@ -116,6 +116,8 @@ QPixmap SceneManager::generatePixmap(QSize targetSize) {
 
 	QRectF sourceRect;
 
+	// TODO : rethink this
+
 	// the bigger of the scales determines the layout
 	// if the scene rect is more wide than high, we use
 	// x as scale, otherwise the height.
