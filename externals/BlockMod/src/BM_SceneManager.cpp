@@ -116,12 +116,13 @@ QPixmap SceneManager::generatePixmap(QSize targetSize) {
 
 	QRectF sourceRect;
 
-	// TODO : rethink this
+	// compute scale factors from source to target size for both directions
+	double scaleX = targetSize.width() / (r.width() + 0.1);
+	double scaleY = targetSize.height() / (r.height() + 0.1);
 
-	// the bigger of the scales determines the layout
-	// if the scene rect is more wide than high, we use
-	// x as scale, otherwise the height.
-	if (r.width() > r.height()) {
+	// whatever scale is smaller, rules
+
+	if (scaleX < scaleY) {
 		m = r.width();
 		// also, we adjust the target height to the aspect ratio
 		targetSize.setHeight( r.height()/r.width()*w + 2*borderSize);
@@ -133,9 +134,13 @@ QPixmap SceneManager::generatePixmap(QSize targetSize) {
 	}
 	else {
 		m = r.height();
-		sourceRect = QRectF(r.center().x() - 0.5*m*eps,
+		// also, we adjust the target width to the aspect ratio
+		targetSize.setWidth( r.width()/r.height()*h + 2*borderSize);
+		w = targetSize.width() + 2*borderSize;
+
+		sourceRect = QRectF(r.center().x() - 0.5*r.width()*eps,
 							  r.center().y() - 0.5*m*eps,
-							  eps*m, eps*m);
+							  eps*r.width(), eps*m);
 	}
 
 	// set the target rectangle within the thumbnail pixmap
