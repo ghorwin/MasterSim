@@ -47,7 +47,7 @@ namespace BLOCKMOD {
 class ZoomMeshGraphicsView : public QGraphicsView {
 	Q_OBJECT
 public:
-	explicit ZoomMeshGraphicsView(QWidget *parent=0);
+	explicit ZoomMeshGraphicsView(QWidget *parent=nullptr);
 
 	/*! Returns current zoom level. */
 	int zoomLevel() const { return m_zoomLevel; }
