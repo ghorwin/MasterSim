@@ -45,24 +45,19 @@ MSIMExportConnectionGraphDialog::~MSIMExportConnectionGraphDialog() {
 }
 
 
-void MSIMExportConnectionGraphDialog::renderPrintPreview(QPrinter *printer) {
+void MSIMExportConnectionGraphDialog::print(QPrinter *printer, bool showMarginFrame) {
 	QPainter painter(printer);
 	// NOTE: painter's coordinate system is located already at (margin-left, margin-top)
 
-//	QTransform trans;
 	double scale = m_ui->spinBoxScaleFactor->value()/100.;
-//	trans.scale(scale, scale);
-//	painter.setTransform(trans);
-
 	BLOCKMOD::SceneManager * scene = qobject_cast<BLOCKMOD::SceneManager *>(m_blockModWidget->scene());
 
-	// get scene rect
-	QRectF sceneRect = scene->itemsBoundingRect();
+	QRectF sourceRect = scene->itemsBoundingRect();
 	// scale scene rect
-	QRectF scaledSourceRect = QRectF(0,0, sceneRect.width()*scale, sceneRect.height()*scale);
+	QRectF scaledSourceRect = QRectF(sourceRect.left()*scale, sourceRect.top()*scale, sourceRect.width()*scale, sourceRect.height()*scale);
 
 	// we now need to compute source rect in scene
-	QSizeF pageSize = printer->pageLayout().pageSize().sizePixels(printer->resolution());
+	QSizeF pageSize = printer->pageLayout().paintRectPixels(printer->resolution()).size();
 
 	double xleft = 0;
 	double ytop = 0;
@@ -84,12 +79,14 @@ void MSIMExportConnectionGraphDialog::renderPrintPreview(QPrinter *printer) {
 	else if (m_ui->toolButtonAlignBottom->isChecked()) {
 		ytop = pageSize.height() - scaledSourceRect.height();
 	}
-	painter.save();
-	QPen dash(Qt::DashLine);
-	dash.setColor(Qt::gray);
-	painter.setPen(dash);
-	painter.drawRect(0,0,(int)pageSize.width(),(int)pageSize.height());
-	painter.restore();
+	if (showMarginFrame) {
+		painter.save();
+		QPen dash(Qt::DashLine);
+		dash.setColor(Qt::gray);
+		painter.setPen(dash);
+		painter.drawRect(0,0,(int)pageSize.width(),(int)pageSize.height());
+		painter.restore();
+	}
 
 	// now we can compute the target rectangle
 	QRectF targetRect(xleft, ytop, scaledSourceRect.width(), scaledSourceRect.height());
@@ -98,29 +95,31 @@ void MSIMExportConnectionGraphDialog::renderPrintPreview(QPrinter *printer) {
 	if (targetRect.left() < 0) {
 		double deltaX = - targetRect.left();
 		targetRect.setLeft( targetRect.left() + deltaX);
-		sceneRect.setLeft( sceneRect.left() + deltaX/scale); // Mind the scale here
+		scaledSourceRect.setLeft( scaledSourceRect.left() + deltaX);
 	}
 
 	if (targetRect.right() > pageSize.width()) {
 		double deltaX = targetRect.right() - pageSize.width();
 		targetRect.setRight( targetRect.right() - deltaX);
-		sceneRect.setRight( sceneRect.right() + deltaX/scale); // Mind the scale here
+		scaledSourceRect.setRight( scaledSourceRect.right() - deltaX);
 	}
 
 	if (targetRect.top() < 0) {
 		double deltaY = - targetRect.top();
 		targetRect.setTop( targetRect.top() + deltaY);
-		sceneRect.setTop( sceneRect.top() + deltaY/scale); // Mind the scale here
+		scaledSourceRect.setTop( scaledSourceRect.top() + deltaY);
 	}
 
 	if (targetRect.bottom() > pageSize.height()) {
 		double deltaY = targetRect.bottom() - pageSize.height();
 		targetRect.setBottom( targetRect.bottom() - deltaY);
-		sceneRect.setBottom( sceneRect.bottom() - deltaY/scale); // Mind the scale here
+		scaledSourceRect.setBottom( scaledSourceRect.bottom() - deltaY);
 	}
 
-	// as target rect might now be out of page rect, we need to clip the source rect
-	scene->render(&painter, targetRect, sceneRect, Qt::IgnoreAspectRatio);
+	// scale source rect back to scene rect
+	sourceRect = QRectF(scaledSourceRect.left()/scale, scaledSourceRect.top()/scale, scaledSourceRect.width()/scale, scaledSourceRect.height()/scale);
+	scene->render(&painter, targetRect, sourceRect, Qt::IgnoreAspectRatio);
+
 }
 
 
@@ -138,8 +137,10 @@ void MSIMExportConnectionGraphDialog::on_pushButtonPageSetup_clicked() {
 
 void MSIMExportConnectionGraphDialog::on_pushButtonPrint_clicked() {
 	QPrintDialog dlg(m_printer, this);
-	if (dlg.exec() == QDialog::Accepted)
+	if (dlg.exec() == QDialog::Accepted) {
+		print(m_printer, false);
 		close();
+	}
 }
 
 
