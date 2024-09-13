@@ -346,6 +346,10 @@
    </property>
   </action>
   <action name="actionFilePrint">
+   <property name="icon">
+    <iconset resource="../resources/MasterSimulator.qrc">
+     <normaloff>:/gfx/actions/24x24/print.png</normaloff>:/gfx/actions/24x24/print.png</iconset>
+   </property>
    <property name="text">
     <string>Export/print schematics...</string>
    </property>
