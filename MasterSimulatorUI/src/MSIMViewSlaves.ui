@@ -333,7 +333,11 @@
        <item row="2" column="2">
         <widget class="QPushButton" name="pushButtonExportImage">
          <property name="text">
-          <string>Export image...</string>
+          <string>Export/print image...</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../resources/MasterSimulator.qrc">
+           <normaloff>:/gfx/actions/24x24/print.png</normaloff>:/gfx/actions/24x24/print.png</iconset>
          </property>
         </widget>
        </item>
