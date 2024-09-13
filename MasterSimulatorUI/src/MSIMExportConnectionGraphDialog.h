@@ -25,8 +25,7 @@ public:
 private slots:
 
 	// Print-related stuff
-
-	void renderPrintPreview(QPrinter * printer);
+	void renderPrintPreview(QPrinter * printer) { print(printer, true); }
 
 	void on_spinBoxScaleFactor_valueChanged(int);
 
@@ -45,6 +44,8 @@ protected:
 	void showEvent(QShowEvent * event) override;
 
 private:
+	void print(QPrinter * printer, bool showMarginFrame);
+
 	Ui::MSIMExportConnectionGraphDialog	*m_ui;
 
 	/*! The printer object (owned). */
