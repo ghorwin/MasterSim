@@ -186,6 +186,7 @@ void SceneManager::blockMoved(const Block * block, const QPointF /*oldPos*/) {
 
 void SceneManager::blockSelected(const Block * block) {
 	emit newBlockSelected(block->m_name);
+	qDebug() << block->m_pos << block->m_size;
 }
 
 

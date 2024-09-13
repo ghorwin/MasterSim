@@ -4,6 +4,7 @@
 #include <QDialog>
 class QPrinter;
 class QPrintPreviewWidget;
+class QAbstractButton;
 
 namespace Ui {
 class MSIMExportConnectionGraphDialog;
@@ -22,11 +23,26 @@ public:
 	~MSIMExportConnectionGraphDialog() override;
 
 private slots:
+
+	// Print-related stuff
+
 	void renderPrintPreview(QPrinter * printer);
 
-	void on_spinBoxScaleFactor_valueChanged(int arg1);
+	void on_spinBoxScaleFactor_valueChanged(int);
 
-	void on_pushButtonPrintSetup_clicked();
+	void on_pushButtonPageSetup_clicked();
+	void on_pushButtonPrint_clicked();
+
+	// Image export stuff
+
+
+	// General stuff
+
+	void on_buttonBox_clicked(QAbstractButton *button);
+
+	// QWidget interface
+protected:
+	void showEvent(QShowEvent * event) override;
 
 private:
 	Ui::MSIMExportConnectionGraphDialog	*m_ui;
@@ -35,6 +51,7 @@ private:
 	QPrinter							*m_printer = nullptr;
 	QPrintPreviewWidget					*m_printPreviewWidget = nullptr;
 	BLOCKMOD::ZoomMeshGraphicsView		*m_blockModWidget = nullptr;
+
 };
 
 #endif // MSIMExportConnectionGraphDialogH

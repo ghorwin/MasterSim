@@ -28,16 +28,20 @@
         <widget class="QWidget" name="widgetPrintOptions" native="true">
          <layout class="QVBoxLayout" name="verticalLayoutPrintOptions">
           <item>
-           <widget class="QPushButton" name="pushButtonPrintSetup">
+           <widget class="QPushButton" name="pushButtonPageSetup">
             <property name="text">
-             <string>Print setup...</string>
+             <string>Page setup...</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton">
+           <widget class="QPushButton" name="pushButtonPrint">
             <property name="text">
-             <string>Print</string>
+             <string>Print...</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../resources/MasterSimulator.qrc">
+              <normaloff>:/gfx/actions/24x24/print.png</normaloff>:/gfx/actions/24x24/print.png</iconset>
             </property>
            </widget>
           </item>
@@ -49,10 +53,165 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>582</height>
+              <height>40</height>
              </size>
             </property>
            </spacer>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Vertical alignment:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widgetVAlignment" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignTop">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_top_aligned.png</normaloff>:/gfx/actions/24x24/image_top_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignVCenter">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_vcenter_aligned.png</normaloff>:/gfx/actions/24x24/image_vcenter_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignBottom">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_bottom_aligned.png</normaloff>:/gfx/actions/24x24/image_bottom_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Horizontal alignment:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QWidget" name="widgetVAlignment_2" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignLeft">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_left_aligned.png</normaloff>:/gfx/actions/24x24/image_left_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignHCenter">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_hcenter_aligned.png</normaloff>:/gfx/actions/24x24/image_hcenter_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QToolButton" name="toolButtonAlignRight">
+               <property name="icon">
+                <iconset resource="../resources/MasterSimulator.qrc">
+                 <normaloff>:/gfx/actions/24x24/image_right_aligned.png</normaloff>:/gfx/actions/24x24/image_right_aligned.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <widget class="QLabel" name="label_3">
@@ -200,6 +359,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/MasterSimulator.qrc"/>
+ </resources>
  <connections/>
 </ui>
