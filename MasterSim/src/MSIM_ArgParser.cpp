@@ -19,7 +19,7 @@ ArgParser::ArgParser() : m_verbosityLevel(1) {
 	// Note: mind the line breaks that end format commands!
 	m_manLongDescription = ".B MasterSimulator\n"
 			"simulates the co-simulation scenario defined in the msim "
-			"project file. By default all temporary files and all output is created in a subdirectory "
+			"project file. By default all temporary and output files are created in a subdirectory "
 			"with the same name as the project. You can change that with the\n"
 			".BR --working-dir\n"
 			"option.";
