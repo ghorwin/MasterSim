@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabPrint">
       <attribute name="title">
@@ -309,7 +309,7 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Width:</string>
+            <string>Max. width:</string>
            </property>
           </widget>
          </item>
@@ -324,7 +324,7 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Height:</string>
+            <string>Max. height:</string>
            </property>
           </widget>
          </item>
