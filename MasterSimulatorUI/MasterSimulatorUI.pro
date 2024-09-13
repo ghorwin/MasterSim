@@ -7,7 +7,7 @@ TEMPLATE = app
 # this pri must be sourced from all our applications
 include( ../externals/IBK/IBK.pri )
 
-QT += xml core gui network printsupport widgets
+QT += xml core gui network printsupport widgets svg
 
 LIBS += -L../lib \ # for our top-level MasterSim lib
 	-lMasterSim \

@@ -4,8 +4,13 @@
 #include <QPrintPreviewWidget>
 #include <QPrintDialog>
 #include <QPageSetupDialog>
+#include <QFileDialog>
+#include <QSvgGenerator>
+
 #include <BM_ZoomMeshGraphicsView.h>
 #include <BM_SceneManager.h>
+
+#include "MSIMProjectHandler.h"
 
 MSIMExportConnectionGraphDialog::MSIMExportConnectionGraphDialog(QWidget *parent, BLOCKMOD::ZoomMeshGraphicsView * blockModWidget) :
 	QDialog(parent),
@@ -15,6 +20,8 @@ MSIMExportConnectionGraphDialog::MSIMExportConnectionGraphDialog(QWidget *parent
 {
 	m_ui->setupUi(this);
 	m_ui->verticalLayoutPrintOptions->setMargin(0);
+	m_ui->scrollAreaWidgetContents->layout()->setMargin(0);
+	on_radioButtonBitmap_toggled(true);
 
 	// construct print preview widget
 	m_printPreviewWidget = new QPrintPreviewWidget(m_printer, this);
@@ -123,6 +130,13 @@ void MSIMExportConnectionGraphDialog::print(QPrinter *printer, bool showMarginFr
 }
 
 
+void MSIMExportConnectionGraphDialog::updatePreviewPixmap() {
+	BLOCKMOD::SceneManager * scene = qobject_cast<BLOCKMOD::SceneManager *>(m_blockModWidget->scene());
+	QPixmap pm = scene->generatePixmap(QSize(m_ui->spinBoxWidth->value(), m_ui->spinBoxHeight->value()));
+	m_ui->labelPreview->setPixmap(pm);
+}
+
+
 void MSIMExportConnectionGraphDialog::on_spinBoxScaleFactor_valueChanged(int) {
 	m_printPreviewWidget->updatePreview();
 }
@@ -152,4 +166,60 @@ void MSIMExportConnectionGraphDialog::on_buttonBox_clicked(QAbstractButton *) {
 void MSIMExportConnectionGraphDialog::showEvent(QShowEvent * event) {
 	QWidget::showEvent(event);
 	m_printPreviewWidget->updatePreview();
+	updatePreviewPixmap();
+}
+
+
+void MSIMExportConnectionGraphDialog::on_spinBoxWidth_valueChanged(int) {
+	updatePreviewPixmap();
+}
+
+
+void MSIMExportConnectionGraphDialog::on_spinBoxHeight_valueChanged(int) {
+	updatePreviewPixmap();
+}
+
+
+void MSIMExportConnectionGraphDialog::on_radioButtonBitmap_toggled(bool checked) {
+	m_ui->spinBoxWidth->setEnabled(checked);
+	m_ui->spinBoxHeight->setEnabled(checked);
+	m_ui->labelW->setEnabled(checked);
+	m_ui->labelH->setEnabled(checked);
+}
+
+
+void MSIMExportConnectionGraphDialog::on_pushButtonExportImage_clicked() {
+	QString filter;
+	QString baseFile = QFileInfo(MSIMProjectHandler::instance().projectFile()).baseName();
+	if (m_ui->radioButtonBitmap->isChecked()) {
+		filter =  tr("PNG files (*.png);;All files (*)");
+	}
+	else {
+		filter =  tr("SVG files (*.svg);;All files (*)");
+	}
+	QString selectedFilter;
+	QString saveName = QFileDialog::getSaveFileName(this, tr("Select export file"), baseFile, filter, &selectedFilter);
+	if (saveName.isEmpty())
+		return;
+
+	BLOCKMOD::SceneManager * scene = qobject_cast<BLOCKMOD::SceneManager *>(m_blockModWidget->scene());
+	if (m_ui->radioButtonBitmap->isChecked()) {
+		if (QFileInfo(saveName).suffix().isEmpty())
+			saveName += ".png";
+		QPixmap pm = scene->generatePixmap(QSize(m_ui->spinBoxWidth->value(), m_ui->spinBoxHeight->value()));
+		pm.save(saveName);
+	}
+	else {
+		if (!saveName.endsWith(".svg", Qt::CaseInsensitive))
+			saveName += ".svg";
+		QSvgGenerator generator;
+		generator.setFileName(saveName);
+		QSize s = scene->itemsBoundingRect().size().toSize();
+		generator.setSize(s);
+		generator.setViewBox(QRect(0, 0, s.width(), s.height()));
+		generator.setTitle(QFileInfo(MSIMProjectHandler::instance().projectFile()).fileName());
+//		generator.setDescription(MSIMProjectHandler::instance().project().m_comment);
+		QPainter p(&generator);
+		scene->render(&p, QRectF(0,0,s.width(),s.height()));
+	}
 }

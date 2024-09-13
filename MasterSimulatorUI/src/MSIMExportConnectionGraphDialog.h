@@ -33,18 +33,25 @@ private slots:
 	void on_pushButtonPrint_clicked();
 
 	// Image export stuff
+	void on_spinBoxWidth_valueChanged(int arg1);
+	void on_spinBoxHeight_valueChanged(int arg1);
 
 
 	// General stuff
 
 	void on_buttonBox_clicked(QAbstractButton *button);
 
-	// QWidget interface
+
+	void on_radioButtonBitmap_toggled(bool checked);
+
+	void on_pushButtonExportImage_clicked();
+
 protected:
 	void showEvent(QShowEvent * event) override;
 
 private:
 	void print(QPrinter * printer, bool showMarginFrame);
+	void updatePreviewPixmap();
 
 	Ui::MSIMExportConnectionGraphDialog	*m_ui;
 

@@ -242,13 +242,26 @@
       <attribute name="title">
        <string>Export</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0" colspan="2">
-        <widget class="QRadioButton" name="radioButtonBitmap">
+      <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,0,1">
+       <item row="4" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButtonExportImage">
          <property name="text">
-          <string>Bitmap</string>
+          <string>Export...</string>
          </property>
         </widget>
+       </item>
+       <item row="3" column="0" colspan="2">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
        <item row="1" column="0">
         <spacer name="horizontalSpacer_2">
@@ -266,17 +279,27 @@
          </property>
         </spacer>
        </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QPushButton" name="pushButtonExportImage">
+       <item row="0" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioButtonBitmap">
          <property name="text">
-          <string>Export...</string>
+          <string>Bitmap</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2">
+        <widget class="QRadioButton" name="radioButtonVector">
+         <property name="text">
+          <string>Vector graphics</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="labelW">
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -291,7 +314,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="labelH">
            <property name="font">
             <font>
              <pointsize>9</pointsize>
@@ -306,45 +329,103 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLineEdit" name="lineEditWidth"/>
+          <widget class="QSpinBox" name="spinBoxWidth">
+           <property name="minimumSize">
+            <size>
+             <width>89</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>800</number>
+           </property>
+          </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEditHeight"/>
+          <widget class="QSpinBox" name="spinBoxHeight">
+           <property name="minimumSize">
+            <size>
+             <width>80</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>10000</number>
+           </property>
+           <property name="singleStep">
+            <number>10</number>
+           </property>
+           <property name="value">
+            <number>600</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
-       <item row="1" column="2">
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="2" rowspan="5">
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="sizeAdjustPolicy">
+          <enum>QAbstractScrollArea::AdjustIgnored</enum>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>301</width>
-           <height>20</height>
-          </size>
+         <property name="widgetResizable">
+          <bool>true</bool>
          </property>
-        </spacer>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QRadioButton" name="radioButton_2">
-         <property name="text">
-          <string>Vector graphics</string>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
          </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>759</width>
+            <height>718</height>
+           </rect>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayoutScrollArea">
+           <item>
+            <widget class="QLabel" name="labelPreview">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="autoFillBackground">
+              <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background:white</string>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-       </item>
-       <item row="3" column="0" colspan="2">
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
        </item>
       </layout>
      </widget>
