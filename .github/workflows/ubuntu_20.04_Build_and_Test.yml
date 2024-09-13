@@ -2,16 +2,16 @@ name: Ubuntu 20.04 build and tests
 
 on:
   # run nightly at 2:00 am
-  schedule:
-    - cron: "0 2 * * *"
+#  schedule:
+#    - cron: "0 2 * * *"
   # allow to be triggered on github webpage manually
   workflow_dispatch:
   # run whenever someone pushes data
-  # WARNING: this may give excessive build times which need to be paid!
-#  push:
-#    branches: [ "master" ]
-#  pull_request:
-#    branches: [ "master" ]
+  # as we do not have much development, this will not cause much traffic/build times
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
