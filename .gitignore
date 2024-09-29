@@ -53,6 +53,10 @@ Makefile*
 *.odg\#
 *.ilk
 
-
+moc/
+ui/
+qrc_*.cpp
 /lib_x64/
 /release/
+/bin/debug/MasterSimulator
+/bin/debug/MasterSimulatorUI
