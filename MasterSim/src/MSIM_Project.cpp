@@ -111,10 +111,12 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				std::string graphEdges = line.substr(5);
 				IBK::trim(graphEdges);
 				std::vector<std::string> tokens;
-				IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens);
+				IBK::explode(graphEdges, tokens, " \t", IBK::EF_TrimTokens | IBK::EF_UseQuotes);
 				if (tokens.size() != 2 && tokens.size() != 4 && tokens.size() != 6)
 					throw IBK::Exception(IBK::FormatString("Expected format 'graph <connectorStart> <connectorEnd> [<offset> <scaleFactor> <linewidth> <html-color>]', got '%1'.").arg(line), FUNC_ID);
 				GraphEdge g;
+				IBK::trim(tokens[0],"\"");
+				IBK::trim(tokens[1],"\"");
 				g.m_outputVariableRef = tokens[0];
 				g.m_inputVariableRef = tokens[1];
 				if (tokens.size() >= 4) {
@@ -334,7 +336,13 @@ void Project::write(const IBK::Path & prjFile) const {
 	// write graph
 	for (unsigned int i=0; i<m_graph.size(); ++i) {
 		const Project::GraphEdge & edge = m_graph[i];
-		out << "graph " << edge.m_outputVariableRef << " " << edge.m_inputVariableRef;
+		std::string outVarRef = edge.m_outputVariableRef;
+		std::string inVarRef = edge.m_inputVariableRef;
+		if (outVarRef.find(" ") != std::string::npos)
+			outVarRef = "\"" + outVarRef + "\"";
+		if (inVarRef.find(" ") != std::string::npos)
+			inVarRef = "\"" + inVarRef + "\"";
+		out << "graph " << outVarRef << " " << inVarRef;
 		if (edge.m_offset != 0.0 || edge.m_scaleFactor != 1.0 || edge.m_color != IBK::Color(0,0,0) || edge.m_linewidth != 0.8) {
 			out << " " << edge.m_offset << " " << edge.m_scaleFactor;
 			if (edge.m_color != IBK::Color(0,0,0) || edge.m_linewidth != 0.8) {
