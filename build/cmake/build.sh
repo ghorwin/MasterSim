@@ -153,9 +153,10 @@ if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
 fi &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
   echo "*** Copying MasterSimulatorUI to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI && 
+  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI 
+  # next call may fail on GitHub actions, so we do not require this to succeed
   ../../bin/release/MasterSimulatorUI --man-page > ../../MasterSimulatorUI/doc/MasterSimulatorUI.1
-fi &&
+fi 
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
   if [ -e ../../bin/release/MasterSimulatorUI.app ]; then
     rm -rf ../../bin/release/MasterSimulatorUI.app
