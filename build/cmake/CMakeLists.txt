@@ -1,11 +1,11 @@
 # CMakeLists.txt file for MasterSim library and applications
 # Author: Andreas Nicolai (andreas.nicolai -at- tu-dresden.de)
 
+# Require a fairly recent cmake version
+cmake_minimum_required( VERSION 2.8...3.10 )
+
 # The project name
 project( MasterSimBundle )
-
-# Require a fairly recent cmake version
-cmake_minimum_required( VERSION 2.8.12 )
 
 # enable @rpath on MacOS
 cmake_policy(SET CMP0042 NEW)
