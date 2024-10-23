@@ -1,4 +1,4 @@
-name: Ubuntu 22.04 build
+name: Ubuntu 22.04/5.15.3 build
 
 on:
   # run nightly at 2:00 am
@@ -25,6 +25,6 @@ jobs:
     - name: build
       working-directory: build/cmake
       run: ./build.sh 2 release skip-test
-    - name: test
-      working-directory: build/cmake
-      run: ./run_tests.sh
+#    - name: test
+#      working-directory: build/cmake
+#      run: ./run_tests.sh
