@@ -39,7 +39,6 @@
 #ifndef IBK_ScalarFunctionH
 #define IBK_ScalarFunctionH
 
-#include <functional>
 #include <cmath>
 
 namespace IBK {
@@ -49,7 +48,7 @@ namespace IBK {
 	derivative functionality is not needed by LinearSpline and only by minimization routines, this may be moved to
 	the IBKMK library.
 */
-class ScalarFunction : public std::unary_function<double, double> {
+class ScalarFunction {
 public:
 
 	ScalarFunction() {}
