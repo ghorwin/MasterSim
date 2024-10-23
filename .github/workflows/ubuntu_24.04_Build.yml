@@ -1,4 +1,4 @@
-name: Ubuntu 22.04/5.15.3 build
+name: Ubuntu 24.04/Qt 5.15 build
 
 on:
   # run nightly at 2:00 am
@@ -8,16 +8,16 @@ on:
   workflow_dispatch:
   # run whenever someone pushes data
   # as we do not have much development, this will not cause much traffic/build times
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
 
 jobs:
   build:
 
     # Test suite results are created on Ubuntu 20.04, hence we need to use this for testing
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - name: install qt5
