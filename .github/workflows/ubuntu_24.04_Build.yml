@@ -21,7 +21,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: install qt5
-      run: sudo apt install qtbase5-dev qt5-qmake libqt5svg5-dev libqt5sql5 libqt5sql5-psql
+      run: sudo apt install qtbase5-dev qt5-qmake libqt5svg5-dev 
     - name: build
       working-directory: build/cmake
       run: ./build.sh 2 release skip-test
