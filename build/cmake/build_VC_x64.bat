@@ -1,8 +1,15 @@
 @echo off
 
 :: setup VC environment variables
-set VCVARSALL_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-call %VCVARSALL_PATH%
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat" (
+	echo Loading VCVars64 Community
+	call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+)
+
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat" (
+	echo Loading VCVars64 Enterprise
+	call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+)
 
 :: For different Qt installations, please set the environment variables JOM_PATH and CMAKE_PREFIX_PATH
 :: for the current Windows user. Also, make sure cmake is in the PATH variable.
