@@ -78,6 +78,7 @@
 /* MODIFICATION Replace all stdout prints with this function for better control */
 static int minizip_printf( const char * format, ... )
 {
+	(void)format;
 	return 1;
 }
 
