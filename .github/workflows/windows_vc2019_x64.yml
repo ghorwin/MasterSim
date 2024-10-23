@@ -1,0 +1,45 @@
+name: Windows VC2019 x64
+
+on:
+  # run nightly at 4:00 am
+#  schedule:
+#    - cron: "0 4 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # WARNING: this may give excessive build times which need to be paid!
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: windows-2019
+
+    steps:
+    - name: install jom
+      run: choco install jom -y
+    - name: install qt5
+      uses: jurplel/install-qt-action@v4.0.0
+      with:
+        host: 'windows'
+        target: 'desktop'
+        install-deps: 'true'
+        arch: win64_msvc2019_64
+        archives: 'qtbase qtsvg'
+        cache: 'false'
+        cache-key-prefix: 'install-qt-action'
+#        setup-python: 'true'
+#        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
+        set-env: 'true'
+        tools-only: 'false'
+        aqtversion: '==3.1.*'
+        py7zrversion: '==0.20.*'
+        extra: '--external 7z'
+    - uses: actions/checkout@v4
+    - name: build
+      working-directory: build/cmake
+      shell: cmd
+      run: build.bat 2 release skip-test
