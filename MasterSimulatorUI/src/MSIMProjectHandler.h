@@ -171,6 +171,11 @@ public:
 	/*! Returns the time stamp of the last modification of the current project. */
 	const QDateTime lastReadTime() const { return m_lastReadTime; }
 
+	/*! Attempts to find the block and variable from the flat name and return
+		the description text.
+	*/
+	void fmiVariableInfosForSocket(const QString & flatname, bool inlet, QString & description, QString & unit) const;
+
 	/*! Updates time stamp of the last modification of the current project, but only if project is present. */
 	void updateLastReadTime();
 

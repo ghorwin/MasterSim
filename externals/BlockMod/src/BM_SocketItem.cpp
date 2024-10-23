@@ -59,6 +59,7 @@ SocketItem::SocketItem(BlockItem * parent, Socket * socket) :
 	updateSocketItem();
 	setZValue(12);
 	setAcceptHoverEvents(true);
+	setToolTip(m_socket->m_description);
 }
 
 
@@ -88,7 +89,7 @@ QRectF SocketItem::boundingRect() const {
 	QFont f;
 	f.setPointSizeF(Globals::LabelFontSize);
 	QFontMetricsF metrics(f);
-	QRectF textBoundingRect = metrics.boundingRect(m_socket->m_name);
+	QRectF textBoundingRect = metrics.boundingRect(m_socket->nameWithUnit());
 	textBoundingRect.setWidth(textBoundingRect.width()+6); // add some space to avoid clipping of italic fonts to the right
 
 	switch (m_socket->direction()) {
@@ -255,33 +256,33 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 	f.setPointSizeF(Globals::LabelFontSize);
 	QFontMetricsF metrics(f);
 	painter->setFont(f);
-	QRectF textBoundingRect = metrics.boundingRect(m_socket->m_name);
+	QRectF textBoundingRect = metrics.boundingRect(m_socket->nameWithUnit());
 	textBoundingRect.setWidth(textBoundingRect.width()+6); // add some space to avoid clipping of italic fonts to the right
 
 	switch (m_socket->direction()) {
 		case Socket::Left		:
 			// left side
 			textBoundingRect.moveTo(r.left()-textBoundingRect.width(), r.top()-textBoundingRect.height()+3);
-			painter->drawText(textBoundingRect, Qt::AlignRight | Qt::AlignTop, m_socket->m_name);
+			painter->drawText(textBoundingRect, Qt::AlignRight | Qt::AlignTop, m_socket->nameWithUnit());
 		break;
 		case Socket::Right		:
 			// right side
 			textBoundingRect.moveTo(r.right(), r.top()-textBoundingRect.height()+3);
-			painter->drawText(textBoundingRect, Qt::AlignLeft | Qt::AlignTop, m_socket->m_name);
+			painter->drawText(textBoundingRect, Qt::AlignLeft | Qt::AlignTop, m_socket->nameWithUnit());
 		break;
 		case Socket::Top		:
 			// top side
 			painter->translate(r.left(), r.top());
 			painter->rotate(-90);
 			textBoundingRect.moveTo(0, -textBoundingRect.height());
-			painter->drawText(textBoundingRect, Qt::AlignLeft | Qt::AlignTop, m_socket->m_name);
+			painter->drawText(textBoundingRect, Qt::AlignLeft | Qt::AlignTop, m_socket->nameWithUnit());
 		break;
 		case Socket::Bottom		:
 			// bottom side
 			painter->translate(r.left(), r.bottom());
 			painter->rotate(-90);
 			textBoundingRect.moveTo(-textBoundingRect.width(), -textBoundingRect.height());
-			painter->drawText(textBoundingRect, Qt::AlignRight | Qt::AlignTop, m_socket->m_name);
+			painter->drawText(textBoundingRect, Qt::AlignRight | Qt::AlignTop, m_socket->nameWithUnit());
 		break;
 	}
 	//	painter->setBrush(Qt::NoBrush);
