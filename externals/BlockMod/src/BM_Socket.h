@@ -105,7 +105,16 @@ public:
 	/*! Comparison operator to find socket by name. */
 	bool operator==(const QString & s) const { return m_name == s; }
 
+	QString nameWithUnit() const {
+		if (m_unit.isEmpty())		return m_name;
+		else						return m_name + " [" + m_unit + "]";
+	}
+
 	QString			m_name;
+	/*! Optional FMI variable description (shown as tooltip when hovering over socket). */
+	QString			m_description;
+	/*! Optional FMI variable unit (shown behind variable name, when not empty). */
+	QString			m_unit;
 
 	/*! Position (connection point) of Socket.
 		Relative to parent block.
@@ -121,6 +130,7 @@ public:
 
 	/*! If true, painted as a socket, if false, painted as an outgoing arrow. */
 	bool			m_inlet;
+
 };
 
 } // namespace BLOCKMOD

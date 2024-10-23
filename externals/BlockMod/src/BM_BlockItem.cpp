@@ -57,12 +57,12 @@ BlockItem::BlockItem(Block * b) :
 	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
 	setZValue(10);
 
-	createSocketItems();
+	BlockItem::createSocketItems();
 }
 
 
 SocketItem * BlockItem::inletSocketAcceptingConnection(const QPointF & scenePos) {
-	for (SocketItem * si : m_socketItems) {
+	for (SocketItem * si : qAsConst(m_socketItems)) {
 		QPointF socketScenePos = si->mapToScene(si->socket()->m_pos);
 
 //		QPointF socketScenePos2(socketScenePos);
@@ -101,7 +101,7 @@ void BlockItem::resize(int newWidth, int newHeight) {
 	}
 
 	// tell all sockest to update
-	for (QGraphicsItem * item : childItems()) {
+	for (QGraphicsItem * item : childItems() ) {
 		SocketItem * sitem = (SocketItem*)(item);
 		sitem->updateSocketItem();
 		item->update();

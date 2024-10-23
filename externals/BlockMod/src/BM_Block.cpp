@@ -265,7 +265,7 @@ void Block::autoUpdateSockets(const QStringList & inletSockets, const QStringLis
 	// first remove all sockets from block that are not in the list of inlet/outlet sockets
 	// this ensures that afterwards we only have valid
 	QList<BLOCKMOD::Socket> remainingSockets;
-	for (const BLOCKMOD::Socket & s : m_sockets) {
+	for (const BLOCKMOD::Socket & s : qAsConst(m_sockets) ) {
 		if (s.m_inlet) {
 			if (inletSockets.contains(s.m_name)) {
 				remainingSockets.append(s);

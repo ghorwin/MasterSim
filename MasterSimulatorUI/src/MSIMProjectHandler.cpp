@@ -327,6 +327,37 @@ const MASTER_SIM::Project & MSIMProjectHandler::project() const {
 }
 
 
+void MSIMProjectHandler::fmiVariableInfosForSocket(const QString & flatname, bool inlet, QString & description, QString & unit) const {
+	QString blockName, socketName;
+	BLOCKMOD::Network::splitFlatName(flatname, blockName, socketName);
+
+	// lookup simulation definition by block name
+	for (const MASTER_SIM::Project::SimulatorDef & s : m_project->m_simulators) {
+		if (s.m_name == blockName.toStdString()) {
+			// retrieve FMU for given slave
+			for (const auto & fmuDesc : MSIMMainWindow::instance().modelDescriptions()) {
+				if (fmuDesc.first == s.m_pathToFMU) {
+					const MASTER_SIM::ModelDescription & modDesc = fmuDesc.second;
+					for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
+						if (inlet && var.m_causality == MASTER_SIM::FMIVariable::C_INPUT && var.m_name == socketName.toStdString()) {
+							description = QString::fromStdString(var.m_description);
+							unit = QString::fromStdString(var.m_unit);
+							return;
+						}
+						else if (!inlet && var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT && var.m_name == socketName.toStdString()) {
+							description = QString::fromStdString(var.m_description);
+							unit = QString::fromStdString(var.m_unit);
+							return;
+						}
+					}
+				}
+			}
+			break;
+		}
+	}
+}
+
+
 void MSIMProjectHandler::updateLastReadTime() {
 	const char * const FUNC_ID = "[MSIMProjectHandler::updateLastReadTime]";
 	if (!isValid())
@@ -392,7 +423,7 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		// now process current block definition and remove all defined sockets from lists - remaining
 		// items must
 		bool missingSocket = false;
-		for (const BLOCKMOD::Socket & s : b.m_sockets) {
+		for (const BLOCKMOD::Socket & s : qAsConst(b.m_sockets)) {
 			if (s.m_inlet) {
 				if (inletSocketNames.contains(s.m_name))
 					inletSocketNames.removeOne(s.m_name);
@@ -420,6 +451,21 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 					b.m_properties.remove("Pixmap");
 				else
 					b.m_properties["Pixmap"] = QVariant(p);
+			}
+		}
+
+		// now process again all defined sockets and update their description and unit
+		for (BLOCKMOD::Socket & s : b.m_sockets) {
+			// loop over all FMI variables
+			for (const MASTER_SIM::FMIVariable & var : modDesc.m_variables) {
+				if (var.m_causality == MASTER_SIM::FMIVariable::C_INPUT && s.m_inlet && s.m_name.toStdString() == var.m_name) {
+					s.m_description = QString::fromStdString(var.m_description);
+					s.m_unit = QString::fromStdString(var.m_unit);
+				}
+				else if (var.m_causality == MASTER_SIM::FMIVariable::C_OUTPUT && !s.m_inlet && s.m_name.toStdString() == var.m_name) {
+					s.m_description = QString::fromStdString(var.m_description);
+					s.m_unit = QString::fromStdString(var.m_unit);
+				}
 			}
 		}
 	}
