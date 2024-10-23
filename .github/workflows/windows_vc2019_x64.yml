@@ -22,24 +22,17 @@ jobs:
     - name: install jom
       run: choco install jom -y
     - name: install qt5
-      uses: jurplel/install-qt-action@v4.0.0
+      uses: jurplel/install-qt-action@v4
       with:
         host: 'windows'
         target: 'desktop'
         install-deps: 'true'
         arch: win64_msvc2019_64
         archives: 'qtbase qtsvg'
-        cache: 'false'
+        cache: 'true'
         cache-key-prefix: 'install-qt-action'
-#        setup-python: 'true'
-#        tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
-        set-env: 'true'
-        tools-only: 'false'
-        aqtversion: '==3.1.*'
-        py7zrversion: '==0.20.*'
-        extra: '--external 7z'
     - uses: actions/checkout@v4
     - name: build
       working-directory: build/cmake
       shell: cmd
-      run: build.bat 2 release skip-test
+      run: build_VC_x64.bat
