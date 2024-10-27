@@ -60,3 +60,4 @@ qrc_*.cpp
 /release/
 /bin/debug/MasterSimulator
 /bin/debug/MasterSimulatorUI
+/bb/
