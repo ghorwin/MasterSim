@@ -14,7 +14,7 @@ confinement: devmode # use 'strict' once you have the right plugs and slots
 
 parts:
   mastersim:
-    source: MasterSim-master
+    source: mastersim-src
     plugin: cmake
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
