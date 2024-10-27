@@ -143,9 +143,16 @@ if [ ! -d $BUILDDIR ]; then
     mkdir -p $BUILDDIR
 fi
 
-cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT &&
+cd $BUILDDIR && 
+cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && 
+make -j$MAKE_CPUCOUNT &&
+
+# back to top-level
 cd $CMAKELISTSDIR &&
+# create top-level dir
 mkdir -p bin/release &&
+echo "*** Copying executables to bin/release ***" &&
+ls -l $BUILDDIR/* &&
 if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
   echo "*** Copying MasterSimulator to bin/release ***" &&
   cp $BUILDDIR/MasterSimulator/MasterSimulator bin/release/MasterSimulator && 
