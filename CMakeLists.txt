@@ -128,35 +128,35 @@ endif( APPLE )
 
 # add subdirectories for all builds
 if (NOT UNIX)
-    add_subdirectory( ../../externals/zlib/src libz)
+    add_subdirectory( externals/zlib/src libz)
 endif (NOT UNIX)
-add_subdirectory( ../../externals/minizip/projects/cmake_local minizip)
-add_subdirectory( ../../externals/IBK/projects/cmake_local IBK )
-add_subdirectory( ../../externals/IBKMK/projects/cmake_local IBKMK )
-add_subdirectory( ../../externals/BlockMod/projects/cmake BlockMod )
-add_subdirectory( ../../externals/TiCPP/projects/cmake_local TiCPP )
-add_subdirectory( ../../MasterSim/projects/cmake_local MasterSim)
+add_subdirectory( externals/minizip/projects/cmake_local minizip)
+add_subdirectory( externals/IBK/projects/cmake_local IBK )
+add_subdirectory( externals/IBKMK/projects/cmake_local IBKMK )
+add_subdirectory( externals/BlockMod/projects/cmake BlockMod )
+add_subdirectory( externals/TiCPP/projects/cmake_local TiCPP )
+add_subdirectory( MasterSim/projects/cmake_local MasterSim)
 
 # -------------------------------------------------------------
 # Executables/applications
 # -------------------------------------------------------------
 
-add_subdirectory( ../../MasterSimulator/projects/cmake_local MasterSimulator)
+add_subdirectory( MasterSimulator/projects/cmake_local MasterSimulator)
 
 if (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
-	add_subdirectory( ../../MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
+	add_subdirectory( MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
 endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
 
 # -------------------------------------------------------------
 # Test FMUs Libraries
 # -------------------------------------------------------------
 
-add_subdirectory( ../../TestFMUs/Math003Part1/projects/cmake Math003Part1)
-add_subdirectory( ../../TestFMUs/Math003Part2/projects/cmake Math003Part2)
-add_subdirectory( ../../TestFMUs/Math003Part3/projects/cmake Math003Part3)
-add_subdirectory( ../../TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
-add_subdirectory( ../../TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
-add_subdirectory( ../../TestFMUs/FourRealInputVars/projects/cmake FourRealInputVars)
+add_subdirectory( TestFMUs/Math003Part1/projects/cmake Math003Part1)
+add_subdirectory( TestFMUs/Math003Part2/projects/cmake Math003Part2)
+add_subdirectory( TestFMUs/Math003Part3/projects/cmake Math003Part3)
+add_subdirectory( TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
+add_subdirectory( TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
+add_subdirectory( TestFMUs/FourRealInputVars/projects/cmake FourRealInputVars)
 
 # Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
@@ -169,14 +169,14 @@ if (UNIX AND NOT APPLE)
 	# it depends on the compiled shared libraries
 	add_custom_command(
 		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator
-		OUTPUT	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/FourRealInputVars.fmu
-		COMMAND  ${PROJECT_SOURCE_DIR}/../../TestFMUs/generate_FMUs.sh ${CMAKE_CURRENT_BINARY_DIR}
-		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/../../TestFMUs
+		OUTPUT	${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part1.fmu 
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part2.fmu 
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part3.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Predator.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Prey.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/FourRealInputVars.fmu
+		COMMAND  ${PROJECT_SOURCE_DIR}/TestFMUs/generate_FMUs.sh ${CMAKE_CURRENT_BINARY_DIR}
+		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/TestFMUs
 		COMMENT "Generating example FMUs"
 	)
 	
@@ -184,12 +184,12 @@ if (UNIX AND NOT APPLE)
 	# of the example fmu files and if they are missing/out of date it
 	# executes the command above to generate/update the FMUs
 	add_custom_target(ExampleFMUs ALL
-		DEPENDS	${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu
-				${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/FourRealInputVars.fmu
+		DEPENDS	${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part1.fmu 
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part2.fmu 
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part3.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Predator.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Prey.fmu
+				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/FourRealInputVars.fmu
 	)
 
 	# -------------------------------------------------------------
@@ -202,43 +202,43 @@ if (UNIX AND NOT APPLE)
 	# Math_003_control_loop
 
 	set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Math_003_control_loop)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.bm
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.bm
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim.png
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.msim.png
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.p2
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Math_003_control_loop/Math003_GaussSeidel_2iters_adaptive_Richardson.p2
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Math_003_control_loop/description
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/data/examples/linux64/Math_003_control_loop/description
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
 	# we install newly generated FMUs
-	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part1.fmu 
+	install(FILES ${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part1.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part2.fmu 
+	install(FILES ${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part2.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Part3.fmu 
+	install(FILES ${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part3.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
 
 
 	# Lotka_Volterra_System
 
 	set(EXAMPLE_DESTINATION_DIR ${CMAKE_INSTALL_DATAROOTDIR}/mastersim/examples/Lotka_Volterra_System)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.bm
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.bm
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim.png
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.msim.png
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(FILES ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.p2
+	install(FILES ${PROJECT_SOURCE_DIR}/data/examples/linux64/Lotka_Volterra_System/LV_Richardson_noiter.p2
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
-	install(DIRECTORY ${PROJECT_SOURCE_DIR}/../../data/examples/linux64/Lotka_Volterra_System/description
+	install(DIRECTORY ${PROJECT_SOURCE_DIR}/data/examples/linux64/Lotka_Volterra_System/description
 			DESTINATION ${EXAMPLE_DESTINATION_DIR})
 
 	# we install newly generated FMUs
-	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Prey.fmu 
+	install(FILES ${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Prey.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
-	install(FILES ${PROJECT_SOURCE_DIR}/../../TestFMUs/fmus/Predator.fmu 
+	install(FILES ${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Predator.fmu 
 			DESTINATION ${EXAMPLE_DESTINATION_DIR}/fmus/IBK)
 
 endif (UNIX AND NOT APPLE)
