@@ -27,7 +27,7 @@ mkdir bb_VC
 pushd bb_VC
 
 :: configure makefiles and build
-cmake -G "NMake Makefiles JOM" .. -DCMAKE_BUILD_TYPE:String="Release"
+cmake -G "NMake Makefiles JOM" ../../.. -DCMAKE_BUILD_TYPE:String="Release"
 jom
 if ERRORLEVEL 1 GOTO fail
 
