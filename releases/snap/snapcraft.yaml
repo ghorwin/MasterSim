@@ -1,0 +1,49 @@
+name: mastersim # you probably want to 'snapcraft register <name>'
+base: core24 # the base snap is the execution environment for this snap
+version: '0.9.7' # just for humans, typically '1.2+git' or '1.3.2'
+summary: FMI Co-Simulation Masterprogramm # 79 char long summary
+description: |
+  MasterSim is an FMI Co-Simulation master and programming library. It
+  supports the Functional Mock-Up Interface for Co-Simulation in Version
+  1.0 and 2.0. Using the functionality of version 2.0, it implements
+  various iteration algorithms that rollback FMU slaves and increase
+  stability of coupled simulations.
+
+grade: devel # must be 'stable' to release into candidate/stable channels
+confinement: devmode # use 'strict' once you have the right plugs and slots
+
+parts:
+  mastersim:
+    source: MasterSim-master
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-packages:
+      - build-essential
+      - qtbase5-dev
+      - qt5-qmake  
+      - libqt5svg5-dev
+      - p7zip-full
+      
+    # stage packages are added based on Lint warning output
+    stage-packages:
+      - libgl1
+      - libglx0
+      - libglvnd0
+      - libqt5core5t64
+      - libqt5gui5t64
+      - libqt5network5t64
+      - libqt5printsupport5t64
+      - libqt5svg5
+      - libqt5widgets5t64
+      - libx11-6
+      - libxdmcp6
+      - libdouble-conversion3
+      - libgraphite2-3
+      - libharfbuzz0b
+      - libicu74
+      - libicu74
+      - libicu74
+      - libmd4c0
+      - libpcre2-16-0
+      - libxcb1
