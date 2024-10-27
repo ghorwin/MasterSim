@@ -18,7 +18,7 @@
 # path export for mac
 export PATH=~/Qt/5.11.3/gcc_64/bin:~/Qt/5.11.3/clang_64/bin:$PATH
 
-CMAKELISTSDIR=$(pwd)
+CMAKELISTSDIR=$(pwd)/../..
 BUILDDIR="bb"
 
 # set defaults
@@ -145,25 +145,27 @@ fi
 
 cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT &&
 cd $CMAKELISTSDIR &&
-mkdir -p ../../bin/release &&
+mkdir -p bin/release &&
 if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
   echo "*** Copying MasterSimulator to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulator/MasterSimulator ../../bin/release/MasterSimulator && 
-  ../../bin/release/MasterSimulator --man-page > ../../MasterSimulator/doc/MasterSimulator.1
+  cp $BUILDDIR/MasterSimulator/MasterSimulator bin/release/MasterSimulator && 
+  bin/release/MasterSimulator --man-page > MasterSimulator/doc/MasterSimulator.1
 fi &&
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
   echo "*** Copying MasterSimulatorUI to bin/release ***" &&
   cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ../../bin/release/MasterSimulatorUI 
   # next call may fail on GitHub actions, so we do not require this to succeed
-  ../../bin/release/MasterSimulatorUI --man-page > ../../MasterSimulatorUI/doc/MasterSimulatorUI.1
+  bin/release/MasterSimulatorUI --man-page > MasterSimulatorUI/doc/MasterSimulatorUI.1
 fi 
 if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
-  if [ -e ../../bin/release/MasterSimulatorUI.app ]; then
-    rm -rf ../../bin/release/MasterSimulatorUI.app
+  if [ -e bin/release/MasterSimulatorUI.app ]; then
+    rm -rf bin/release/MasterSimulatorUI.app
   fi &&
   echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
-  cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ../../bin/release/MasterSimulatorUI.app
+  cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app bin/release/MasterSimulatorUI.app
 fi &&
+cd - &&
+cd .. &&
 
 echo "*** Build MasterSimulator ***" &&
 if [[ $SKIP_TESTS = "false"  ]]; then
