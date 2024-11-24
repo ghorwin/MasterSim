@@ -1,6 +1,6 @@
 # About MasterSim ...
 
-_MasterSim_ is an FMI Co-Simulation master and programming library. It supports the 
+_MasterSim_ is an FMI ([_Functional Mock-Up Interface_](https://fmi-standard.org)) Co-Simulation master and programming library. It supports the 
 Functional Mock-Up Interface for Co-Simulation in Version 1.0 and 2.0. Using the functionality of 
 version 2.0, it implements various iteration algorithms that rollback FMU slaves and increase stability of coupled simulations.
 
