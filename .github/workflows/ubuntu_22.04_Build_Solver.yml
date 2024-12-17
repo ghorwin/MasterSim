@@ -1,0 +1,27 @@
+name: Ubuntu 20.04 build and tests
+
+on:
+  # run nightly at 2:00 am
+#  schedule:
+#    - cron: "0 2 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # as we do not have much development, this will not cause much traffic/build times
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    # Test suite results are created on Ubuntu 20.04, hence we need to use this for testing
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v4
+    - name: install qt5
+      run: sudo apt install qtbase5-dev qt5-qmake libqt5svg5-dev
+    - name: build
+      working-directory: build/cmake
+      run: ./build_only_solver.sh 2 release skip-test

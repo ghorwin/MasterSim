@@ -24,7 +24,7 @@ jobs:
       run: sudo apt install qtbase5-dev qt5-qmake libqt5svg5-dev
     - name: build
       working-directory: build/cmake
-      run: ./build.sh 2 release skip-test
+      run: ./build_only_solver.sh 2 release skip-test
     - name: test
       working-directory: build/cmake
       run: ./run_tests.sh
