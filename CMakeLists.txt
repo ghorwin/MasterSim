@@ -1,5 +1,5 @@
 # CMakeLists.txt file for MasterSim library and applications
-# Author: Andreas Nicolai (andreas.nicolai -at- tu-dresden.de)
+# Author: Andreas Nicolai (andreas.nicolai -at- gmx.net)
 
 # Require a fairly recent cmake version
 cmake_minimum_required( VERSION 2.8...3.10 )
@@ -9,6 +9,11 @@ project( MasterSimBundle )
 
 # enable @rpath on MacOS
 cmake_policy(SET CMP0042 NEW)
+
+if (${CMAKE_VERSION} VERSION_GREATER "3.11") 
+  # use new OpenGL libs when having both new and legacy OpenGL libs on Linux
+  cmake_policy(SET CMP0072 NEW) 
+endif()
 
 # enable this to test deb-deployment
 # use in conjunction with `cmake -DCMAKE_INSTALL_PREFIX=/some/local/path`
@@ -73,12 +78,14 @@ endif (MSVC)
 # automatically add CMAKE_CURRENT_SOURCE_DIR and CMAKE_CURRENT_BINARY_DIR to the include directories in every processed CMakeLists.txt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Test for Qt5
-find_package(Qt5Widgets)
 
-if (Qt5Widgets_INCLUDE_DIRS)
+if (DISABLE_QT)
+	message("*** Building without Qt5 ***")
+else (DISABLE_QT)
+
 	message("*** Building with Qt5 ***")
 
+	find_package(Qt5Widgets REQUIRED)
 	find_package(Qt5Xml REQUIRED)
 	find_package(Qt5Svg REQUIRED)
 	find_package(Qt5Network REQUIRED)
@@ -93,20 +100,7 @@ if (Qt5Widgets_INCLUDE_DIRS)
 		endif (APPLE)
 	endif (NOT MSVC)
 
-else (Qt5Widgets_INCLUDE_DIRS)
-
-	# not found, fall back to Qt4
-	message("*** Building with Qt4 ***")
-
-	# We need Qt for building
-	find_package( Qt4  REQUIRED )
-
-	set( QT_USE_QTXML TRUE )
-	set( QT_USE_QTSVG TRUE )
-	set( QT_USE_QTNETWORK TRUE )
-	include( ${QT_USE_FILE} )
-
-endif (Qt5Widgets_INCLUDE_DIRS)
+endif (DISABLE_QT)
 
 if( APPLE )
 	find_library(IOKIT NAMES IOKit REQUIRED)
@@ -133,9 +127,13 @@ endif (NOT UNIX)
 add_subdirectory( externals/minizip/projects/cmake_local minizip)
 add_subdirectory( externals/IBK/projects/cmake_local IBK )
 add_subdirectory( externals/IBKMK/projects/cmake_local IBKMK )
-add_subdirectory( externals/BlockMod/projects/cmake BlockMod )
 add_subdirectory( externals/TiCPP/projects/cmake_local TiCPP )
 add_subdirectory( MasterSim/projects/cmake_local MasterSim)
+
+if (NOT DISABLE_QT)
+	message("*** Building Qt-based libs ***")
+	add_subdirectory( externals/BlockMod/projects/cmake BlockMod )
+endif (NOT DISABLE_QT)
 
 # -------------------------------------------------------------
 # Executables/applications
@@ -143,9 +141,9 @@ add_subdirectory( MasterSim/projects/cmake_local MasterSim)
 
 add_subdirectory( MasterSimulator/projects/cmake_local MasterSimulator)
 
-if (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
+if (NOT DISABLE_QT)
 	add_subdirectory( MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
-endif (DEFINED Qt5Widgets_INCLUDE_DIRS OR DEFINED QT4_FOUND )
+endif (NOT DISABLE_QT)
 
 # -------------------------------------------------------------
 # Test FMUs Libraries
