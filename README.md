@@ -16,7 +16,7 @@ We have continuous integration scripts running (build-test of all C/C++ code).
 
 | Test | Result|
 |-----|-----|
-| CI - Linux 64-bit (Ubuntu 20.04 LTS; Qt 5.12.8) (GitHub) | [![Ubuntu 20.04 build and tests](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_and_Test.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_and_Test.yml) |
+| CI - Linux 64-bit (Ubuntu 20.04 LTS; Qt 5.12.8) (GitHub) | [![Ubuntu 20.04 build and tests](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_Solver_and_Test.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_Solver_and_Test.yml) |
 | CI - Linux 64-bit (Ubuntu 22.04 LTS; Qt 5.15.3) (GitHub) | [![Ubuntu 22.04/5.15.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build.yml) |
 | CI - Linux 64-bit (Ubuntu 22.04 LTS; Qt 5.15.13) (GitHub) | [![Ubuntu 24.04/Qt 5.15.13 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Build.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Build.yml) |
 | CI - Windows 64-bit (Win10, VC 2019, Qt 5.15.2) (GitHub) | [![Windows VC2019 x64](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2019_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2019_x64.yml) |
