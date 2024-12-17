@@ -1,4 +1,4 @@
-name: Ubuntu 20.04 build and tests
+name: Ubuntu 22.04 build and tests
 
 on:
   # run nightly at 2:00 am
@@ -16,8 +16,8 @@ on:
 jobs:
   build:
 
-    # Test suite results are created on Ubuntu 20.04, hence we need to use this for testing
-    runs-on: ubuntu-20.04
+    # Test suite results are created on Ubuntu 20.04, hence we skip testing for this build
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
     - name: install qt5
