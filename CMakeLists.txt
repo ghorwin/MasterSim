@@ -166,7 +166,7 @@ if (UNIX AND NOT APPLE)
 	# define a command that re-generates the FMUs from the already compiled libraries
 	# it depends on the compiled shared libraries
 	add_custom_command(
-		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator
+		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator FourRealInputVars
 		OUTPUT	${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part1.fmu 
 				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part2.fmu 
 				${PROJECT_SOURCE_DIR}/TestFMUs/fmus/Part3.fmu
