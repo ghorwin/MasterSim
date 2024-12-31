@@ -62,3 +62,4 @@ qrc_*.cpp
 /bin/debug/MasterSimulatorUI
 /bb/
 /.qtc_clangd/
+/build/Desktop-*/
