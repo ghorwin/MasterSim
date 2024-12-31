@@ -240,6 +240,8 @@ Time& Time::operator-=(const Time& rhs) {
 	return *this;
 }
 // ---------------------------------------------------------------------------
+
+
 unsigned int Time::hour() const {
 
 	unsigned int sec = static_cast<unsigned int>(m_sec);
@@ -248,6 +250,8 @@ unsigned int Time::hour() const {
 
 	return h;
 }
+// ---------------------------------------------------------------------------
+
 
 unsigned int Time::minute() const {
 
@@ -258,6 +262,8 @@ unsigned int Time::minute() const {
 
 	return m;
 }
+// ---------------------------------------------------------------------------
+
 
 unsigned int Time::seconds() const {
 
@@ -267,6 +273,7 @@ unsigned int Time::seconds() const {
 
 	return s;
 }
+// ---------------------------------------------------------------------------
 
 
 std::string Time::toHourFormat() const {
@@ -337,7 +344,7 @@ std::string Time::toShortDateFormatUS() const {
 // ---------------------------------------------------------------------------
 
 
-std::string Time::toDateTimeFormat() const {
+std::string Time::toDateTimeFormat(char dateSeparator) const {
 	int y;
 	unsigned int m, d;
 	double s;
@@ -345,9 +352,26 @@ std::string Time::toDateTimeFormat() const {
 	IBK::Time t(0, s);
 	std::stringstream strm;
 	strm.fill('0');
-	strm << std::setw(2) << std::right << d+1 << "."
-		 << std::setw(2) << std::right << m+1 << "."
+	strm << std::setw(2) << std::right << d+1 << dateSeparator
+		 << std::setw(2) << std::right << m+1 << dateSeparator
 		 << std::setw(4) << std::right << y << " "
+		 << t.toHourFormat();
+	return strm.str();
+}
+// ---------------------------------------------------------------------------
+
+
+std::string Time::toDateTimeFormatUS(char dateSeparator) const {
+	int y;
+	unsigned int m, d;
+	double s;
+	decomposeDate(y, m, d, s);
+	IBK::Time t(0, s);
+	std::stringstream strm;
+	strm.fill('0');
+	strm << std::setw(4) << std::right << y<< dateSeparator
+		 << std::setw(2) << std::right << m+1 << dateSeparator
+		 << std::setw(2) << std::right << d+1 << " "
 		 << t.toHourFormat();
 	return strm.str();
 }
@@ -650,6 +674,7 @@ IBK::Time Time::fromTOY(const std::string & formatted_time, TOYFormat format) {
 }
 // ---------------------------------------------------------------------------
 
+
 Time::TimeFormatInfo Time::formatInfo(const std::string& format) {
 	Time::TimeFormatInfo res;
 	const char* strOrg = format.c_str();
@@ -699,13 +724,15 @@ Time::TimeFormatInfo Time::formatInfo(const std::string& format) {
 			if(i == 2)
 				res.m_secondStart = start;
 		}
-
-		++str;
+		if (*str != '\0')
+			++str;
 	}
 	if(res.m_year4Start > -1 && res.m_year2Start > -1)
 		return Time::TimeFormatInfo();
 	return res;
 }
+// ---------------------------------------------------------------------------
+
 
 Time Time::fromString(const std::string & formatted_time, const TimeFormatInfo& formatInfo, bool useLeapYear) {
 	if(!formatInfo.valid())
@@ -817,10 +844,10 @@ Time Time::fromString(const std::string & formatted_time, const TimeFormatInfo& 
 		int seconds = (ch1 - 48) * 10 + (ch2 - 48);
 		result.m_sec += seconds;
 	}
-	str = strStart;
 
 	return result;
 }
+// ---------------------------------------------------------------------------
 
 
 // *** STATIC FUNCTIONS ***
@@ -829,7 +856,9 @@ Time Time::fromString(const std::string & formatted_time, const TimeFormatInfo& 
 std::string Time::format_time_difference(double delta_t) {
 	std::stringstream strm;
 	strm << std::fixed << std::setprecision(3) << std::setw(6) << std::right;
-	if (delta_t<60)
+	if (delta_t<1)
+		strm << std::setprecision(0) << delta_t*1000 << " ms";
+	else if (delta_t<60)
 		strm << delta_t << " s";
 	else if (delta_t<3600)
 		strm << delta_t/60.0 << " min";
@@ -849,8 +878,10 @@ std::string Time::format_time_difference(double delta_t, const std::string & ust
 	/// \todo implement usage for uniformUnitLength
 	(void) uniformUnitLength;
 	std::stringstream strm;
-	strm << std::fixed << std::setprecision(3) << std::setw(6) << std::right;
+	strm << std::fixed << std::setprecision(3) << std::setw(7) << std::right; // 150 s -> 150.000 = 7 digits
 	UnitList::instance().convert(Unit("s"), Unit(ustr), delta_t);
+	if (ustr == "ms")
+		strm << std::setprecision(0);
 	strm << delta_t << " " << ustr;
 	if (ustr.size() < 3)
 		strm << std::string(4-ustr.size(), ' ');
@@ -919,74 +950,8 @@ std::string Time::dateRFC2822(const std::string& timeFormat ) {
 	else
 		return std::string(buffer);
 }
-
-/*
-
-Time& Time::operator-=(unsigned int secs) {
-	while (sec_ < secs)
-		sec_ += SECS_PER_DAY;
-	sec_ -= secs;
-	return *this;
-}
 // ---------------------------------------------------------------------------
 
-void Time::set(const std::string& timestr) {
-	std::string str = timestr;
-	for (std::string::iterator it=str.begin(); it!=str.end(); ++it)
-		if (*it==':')    *it=' ';
-	std::stringstream strm(str);
-	unsigned int hour, min, sec;
-	if (!(strm >> hour >> min))
-		throw IBK::Exception("Invalid time string '" + timestr + "'!","[Time::set]");
-	if (!(strm >> sec))
-		sec = 0;
-	set(hour, min, sec);
-}
-// ---------------------------------------------------------------------------
-
-
-
-
-
-std::ostream& operator<<(std::ostream& out, const Time& t) {
-	return out << t.toString();
-}
-// ---------------------------------------------------------------------------
-
-std::istream& operator>>(std::istream& in, Time& t) {
-	std::string tmp;
-	if (in >> tmp) {
-		try { t.set(tmp); }
-		catch (...) { in.setstate(std::ios_base::badbit); }
-	}
-	return in;
-}
-// ---------------------------------------------------------------------------
-
-void Time::set(int year, unsigned int month, unsigned int day, unsigned int seconds) {
-	if (month>11)
-		throw IBK::Exception("Month out of range!","[Time::set]");
-	for (unsigned int i=0; i<month; ++i)
-		seconds += SECONDS_PER_MONTH[i];
-	// TODO : check that 'day' is valid
-	seconds += day*86400;
-	m_sec = seconds;
-	m_year = year;
-}
-
-
-const Time& Time::operator+=(double s) {
-	m_sec+=s;
-	return *this;
-}
-
-Time Time::operator+(double s) const {
-	Time newTime(*this);
-	return newTime+=(s);
-}
-
-
-*/
 
 TimeFormat::TimeFormat(const std::string& format) :
 	m_formatString(format),
@@ -1164,6 +1129,8 @@ TimeFormat::TimeFormat(const std::string& format) :
 		m_valid = false;
 	}
 }
+// ---------------------------------------------------------------------------
+
 
 static double secondsTilMonth(int month, bool useLeapYear) {
 	if(month > 1) {
@@ -1176,6 +1143,8 @@ static double secondsTilMonth(int month, bool useLeapYear) {
 		return 0;
 	}
 }
+// ---------------------------------------------------------------------------
+
 
 static int valueFromSingleEntityString(const char* str, int length, TimeFormat::FormatEntity type, std::string& errstr) {
 	unsigned int numDigits = 0;
@@ -1250,6 +1219,8 @@ static int valueFromSingleEntityString(const char* str, int length, TimeFormat::
 		return val;
 	}
 }
+// ---------------------------------------------------------------------------
+
 
 double TimeFormat::valueToSeconds(int value, TimeFormat::FormatEntity type, bool useLeapYear) {
 	switch(type) {
@@ -1282,11 +1253,15 @@ double TimeFormat::valueToSeconds(int value, TimeFormat::FormatEntity type, bool
 		default: return 0;
 	}
 }
+// ---------------------------------------------------------------------------
+
 
 double TimeFormat::secondsFromSingleEntityString(const char* str, int length, TimeFormat::FormatEntity type, std::string& errstr, bool useLeapYear) {
 	int val = valueFromSingleEntityString(str, length, type, errstr);
 	return valueToSeconds(val, type, useLeapYear);
 }
+// ---------------------------------------------------------------------------
+
 
 double TimeFormat::seconds(const std::string& timeString, std::string& errstr, bool useLeapYear) {
 	errstr.clear();
@@ -1344,6 +1319,8 @@ double TimeFormat::seconds(const std::string& timeString, std::string& errstr, b
 		return val;
 	}
 }
+// ---------------------------------------------------------------------------
+
 
 IBK::Time TimeFormat::time(const std::string& timeString, std::string& errstr, bool useLeapYear) {
 	errstr.clear();
@@ -1435,6 +1412,8 @@ IBK::Time TimeFormat::time(const std::string& timeString, std::string& errstr, b
 	}
 	return IBK::Time();
 }
+// ---------------------------------------------------------------------------
+
 
 bool TimeFormat::hasYear() const {
 	for(size_t i=0; i<m_formatVect.size(); ++i) {
@@ -1443,6 +1422,8 @@ bool TimeFormat::hasYear() const {
 	}
 	return false;
 }
+// ---------------------------------------------------------------------------
+
 
 bool TimeFormat::hasMonth() const {
 	for(size_t i=0; i<m_formatVect.size(); ++i) {
@@ -1451,6 +1432,8 @@ bool TimeFormat::hasMonth() const {
 	}
 	return false;
 }
+// ---------------------------------------------------------------------------
+
 
 bool TimeFormat::hasDay() const {
 	for(size_t i=0; i<m_formatVect.size(); ++i) {
@@ -1459,5 +1442,7 @@ bool TimeFormat::hasDay() const {
 	}
 	return false;
 }
+// ---------------------------------------------------------------------------
+
 
 } // namespace IBK

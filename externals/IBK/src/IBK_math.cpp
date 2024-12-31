@@ -46,6 +46,7 @@
 #include "IBK_math.h"
 #include "IBK_Exception.h"
 #include "IBK_FormatString.h"
+#include "IBK_physics.h"
 
 namespace IBK {
 
@@ -123,14 +124,13 @@ double f_sqrt(double x) {
 
 double scale(double x) {
 #ifdef USE_COSINE
-	return 0.5 - 0.5*std::cos(x*3.141592654);
+	return 0.5 - 0.5*std::cos(x*PI);
 #else //USE_COSINE
 	double xinv = 1-x;
 	// alternatively, you can also add an exponent to xinv
 	return 1 + xinv*xinv*(-3 + 2*xinv);
 #endif // USE_COSINE
 }
-// -----------------------------------------------------------------------------
 
 double scale2(double x, double epsilon) {
 	if (x <= 0)
@@ -140,7 +140,7 @@ double scale2(double x, double epsilon) {
 		return 1;
 
 #ifdef USE_COSINE
-	return 0.5 - 0.5 * std::cos(x * 3.141592654 / epsilon);
+	return 0.5 - 0.5 * std::cos(x * PI / epsilon);
 #else //USE_COSINE
 	double xinv = 1-x/epsilon;
 	// alternatively, you can also add an exponent to xinv
@@ -159,12 +159,10 @@ double error_function(double x) {
 	double b = 1.0 - ex * (T * (0.3480242 - T * (0.0958798 - T * 0.7478556) ) );
 	return sign * b;
 }
-// -----------------------------------------------------------------------------
-
 
 void min_max_values(const std::vector<double> & vec, double & minVal, double & maxVal) {
 	minVal = std::numeric_limits<double>::max();
-	maxVal = 0;
+	maxVal = -std::numeric_limits<double>::max();
 	for (unsigned int i=0; i<vec.size(); ++i) {
 		if (minVal > vec[i])
 			minVal = vec[i];
@@ -172,7 +170,38 @@ void min_max_values(const std::vector<double> & vec, double & minVal, double & m
 			maxVal = vec[i];
 	}
 }
-// -----------------------------------------------------------------------------
+
+double f_atan2(double x, double y) {
+	if(x > 0)
+		return std::atan(y / x);
+	if(x < 0) {
+		if(y >= 0 && x < 0)
+			return std::atan(y / x) + PI;
+
+		return std::atan(y / x) - PI;
+	}
+	if(IBK::near_zero(x)) {
+		if(y > 0)
+			return PI / 2.0;
+		if(y < 0)
+			return PI / -2.0;
+	}
+	return 0;
+
+}
+
+double meanDeg(double a, double b) {
+	double ar = a * PI / 180.0;
+	double br = b * PI / 180.0;
+
+	double sm = (std::sin(ar) + std::sin(br)) / 2.0;
+	double cm = (std::cos(ar) + std::cos(br)) / 2.0;
+
+	double res = f_atan2(cm,sm) * 180.0 / PI;
+	if(res < 0)
+		return 360 + res;
+	return res;
+}
 
 
 } // namespace IBK

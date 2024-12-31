@@ -83,6 +83,9 @@ class StopWatch {
 public:
 	/*! Default constructor, creates a stop watch and starts it. */
 	StopWatch();
+	StopWatch(const StopWatch &);
+	StopWatch & operator=(const StopWatch &);
+
 	/*! Cleanup of p-impl object. */
 	~StopWatch();
 	/*! Restarts the clock. */

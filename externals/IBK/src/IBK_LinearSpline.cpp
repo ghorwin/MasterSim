@@ -240,7 +240,7 @@ double LinearSpline::value(double x) const {
 //	if (m_extrapolationMethod > EM_Constant) {
 	IBK_ASSERT_X( (m_extrapolationMethod <= EM_Constant), "Invalid or unknown extrapolation method!" );
 //	}
-	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" );
+	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first! value()" );
 
 	if (m_xStep != 0) {
 		if (x>m_xMax) {
@@ -290,7 +290,7 @@ double LinearSpline::value(double x) const {
 
 double LinearSpline::nonInterpolatedValue(double x) const {
 
-	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first!" );
+	IBK_ASSERT_X( m_valid, "Linear spline not properly initialized. Call makeSpline() first! nonInterpolatedValue()" );
 
 	if (m_x.size() == 1)
 		return m_y[0];

@@ -9,31 +9,8 @@
 # This option enables extensive runtime checks.
 #OPTIONS += sanitize_checks
 
-#
-# This option enables (default) mpi support and switches to MPICC compiler
-#
-#OPTIONS += mpi
-
-#
-# This option eables explicit mpi + icc support
-#
-#OPTIONS += mpiICC
-
-#
-# This option eables explicit mpi + gcc support
-#
-#OPTIONS += mpiGCC
-
-#
-# This option eables explicit vampire trace + mpi + icc support
-#
-#OPTIONS += vapireTraceICC
-
-
-#
-# This option eables explicit vampire trace + mpi + gcc support
-#
-#OPTIONS += vapireTraceGCC
+# This option lets binaries/dlls be created in shadow build directories, rather in repo-root/bin/xxx dirs
+#OPTIONS += binaries_to_shadow_dir
 
 
 #
@@ -42,22 +19,7 @@
 #OPTIONS += openmp
 
 #
-# This option enables vampire openmp support in compiler.
-#
-#OPTIONS += openmpVapireTraceICC
-
-#
-# This option enables vampire openmp support in compiler.
-#
-#OPTIONS += openmpVapireTraceGCC
-
-
-#
 # This option enables gprof support in compiler.
 #
 #OPTIONS += gprof
 
-#
-# This option enables Lapack/Blas support on Linux
-#
-#OPTIONS += lapack

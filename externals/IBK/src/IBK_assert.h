@@ -39,10 +39,9 @@
 #ifndef IBK_assertH
 #define IBK_assertH
 
-#include "IBK_configuration.h"
-
 #include <cstring>
 
+#include "IBK_configuration.h"
 #include "IBK_Exception.h"
 #include "IBK_StringUtils.h"
 
@@ -142,7 +141,7 @@ inline const char * myFilename(const char * fullFilePath){
 #else
 
 /*! IBK-style runtime assertion macro, throws an IBK::Exception if condition fails. */
-#define IBK_ASSERT(p)		(void)0;
+#define IBK_ASSERT(p)		(void)0
 /*! IBK-style runtime assertion macro with additional message, throws an IBK::Exception if condition fails.
 	\code
 	double b = 15;
@@ -151,7 +150,7 @@ inline const char * myFilename(const char * fullFilePath){
 	// gives: CHECK: 12*6 == b, "Value was: " << b
 	\endcode
 */
-#define IBK_ASSERT_X(p,m)	(void)0;
+#define IBK_ASSERT_X(p,m)	(void)0
 /*! IBK-style runtime assertion macro with additional message, throws an IBK::Exception if condition fails.
 	\code
 	double b = 15;
@@ -161,7 +160,7 @@ inline const char * myFilename(const char * fullFilePath){
 	// gives: CHECK: 12*6 == b, Value was: 15
 	\endcode
 */
-#define IBK_ASSERT_XX(p,m)	(void)0;
+#define IBK_ASSERT_XX(p,m)	(void)0
 
 #endif
 

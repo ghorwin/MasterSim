@@ -410,6 +410,28 @@ std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 }
 // ---------------------------------------------------------------------------
 
+
+Unit extract_unit(const std::string & headerLabel) {
+	std::string::size_type openBracketPos = headerLabel.rfind("[");
+	std::string::size_type closeBracketPos = headerLabel.rfind("]");
+	if (openBracketPos != std::string::npos &&
+		closeBracketPos != std::string::npos &&
+		openBracketPos < closeBracketPos)
+	{
+		std::string ustr = headerLabel.substr(openBracketPos+1, closeBracketPos-openBracketPos-1);
+		try {
+			IBK::Unit u = IBK::Unit(ustr); // may throw in case of invalid unit
+			return u;
+		}
+		catch (IBK::Exception &) {
+			return IBK::Unit();
+		}
+	}
+	return IBK::Unit();
+}
+// ---------------------------------------------------------------------------
+
+
 std::vector<std::string> explode(const std::string & str, char delim, int maxTokens) {
 	std::vector<std::string> tokens;
 	std::string tmp;
@@ -434,42 +456,25 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 	tokens.clear();
 	std::string tmp;
 
-	bool inQuotes = false;
-	// process string char by char
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
-		// if we consider Quotes, handle this first before checking for delimiters
-		if (explodeFlags & EF_UseQuotes) {
-			if (*it == '"') {
-				// check for escaped "
-				if (it == str.begin() || *(it-1) != '\\')
-					inQuotes = !inQuotes;
-			}
-		}
-		// only check for delimiters if we are not in quotes
 		bool delim_found = false;
-		if (!inQuotes) {
-			for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
-				if (*it==*tit) {
-					if (explodeFlags & EF_TrimTokens)
-						IBK::trim(tmp, " \t\r\n");
-					if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
-						tokens.push_back(tmp);
-					tmp.clear();
-					delim_found = true;
-					break;
-				}
+		for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
+			if (*it==*tit) {
+				if (explodeFlags & EF_TrimTokens)
+					IBK::trim(tmp, " \t\r\n");
+				if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
+					tokens.push_back(tmp);
+				tmp.clear();
+				delim_found = true;
+				break;
 			}
 		}
 		if (!delim_found)
 			tmp += *it;
 	}
 	if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens)) {
-		if (explodeFlags & EF_TrimTokens) {
-			std::string trimChars = " \t\r\n";
-			if (explodeFlags & EF_UseQuotes)
-				trimChars += "\"";
-			IBK::trim(tmp, trimChars); // may cause tmp to become empty
-		}
+		if (explodeFlags & EF_TrimTokens)
+			IBK::trim(tmp, " \t\r\n"); // may cause tmp to become empty
 		if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 			tokens.push_back(tmp);
 	}
@@ -928,7 +933,7 @@ bool isInCharType(char ch, unsigned int types) {
 }
 
 /*! Functor for creating a random character in the given chart type range.*/
-struct random_char  {
+struct random_char {
 public:
 	/*! Constructor set the char type.*/
 	random_char(unsigned int charTypes) :

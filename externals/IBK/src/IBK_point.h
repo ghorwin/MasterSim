@@ -64,6 +64,19 @@ public:
 	/*! Sets both coordinates. */
 	void set(T a, T b) { m_x=a; m_y=b; }
 
+	/*! String representation. */
+	std::string toString() const {
+		std::stringstream strm; strm << *this;
+		return strm.str();
+	}
+	/*! String representation. */
+	static point2D<T> fromString(const std::string & str) {
+		std::stringstream strm(str);
+		point2D p;
+		strm >> p;
+		return p;
+	}
+
 	/*! Comparison function specialized for double-precision points. */
 	bool similar(const typename IBK::point2D<double> & other, const double eps = 1e-6) {
 		return (IBK::near_equal(other.m_x, m_x, eps) && IBK::near_equal(other.m_y, m_y, eps));
@@ -139,6 +152,19 @@ public:
 		m_x = x;
 		m_y = y;
 		m_z = z;
+	}
+
+	/*! String representation. */
+	std::string toString() const {
+		std::stringstream strm; strm << *this;
+		return strm.str();
+	}
+	/*! String representation. */
+	static point3D<T> fromString(const std::string & str) {
+		std::stringstream strm(str);
+		point3D p;
+		strm >> p;
+		return p;
 	}
 
 	T				m_x;	///< The X-coordinate.

@@ -39,6 +39,7 @@
 #ifndef IBK_ScalarFunctionH
 #define IBK_ScalarFunctionH
 
+#include <functional>
 #include <cmath>
 
 namespace IBK {
