@@ -36,16 +36,12 @@
 
 */
 
-#include "IBK_configuration.h"
-
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <ctime>
 #include <algorithm>
 #include <string>
-#include <fstream>
-#include <locale>
 #include <cctype>
 #include <cmath>
 
@@ -62,14 +58,12 @@
 #include "IBK_StringUtils.h"
 #include "IBK_Unit.h"
 #include "IBK_UnitList.h"
-#include "IBK_messages.h"
 #include "IBK_Exception.h"
-#include "IBK_assert.h"
-#include "utf8/utf8.h"
-
+#include "utf8/core.h"
 
 #ifdef _WIN32
 
+  #include "utf8/utf8.h"
   #ifndef _WIN64
 
 	#define IBK_USE_STOD
@@ -455,18 +449,29 @@ std::vector<std::string> explode(const std::string & str, char delim, int maxTok
 size_t explode(const std::string& str, std::vector<std::string>& tokens, const std::string& delims, int explodeFlags) {
 	tokens.clear();
 	std::string tmp;
+	std::string trimChars = " \t\r\n";
+	if (explodeFlags & EF_UseQuotes)
+		trimChars += "\"";
 
+	// if we are using quotes, we only allow splitting when we are not within quotes
+	bool inQuotation = false;
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
+		// toggle inQuotation flag if we are considering quotes
+		if (explodeFlags & EF_UseQuotes && *it=='\"')
+			inQuotation = !inQuotation;
 		bool delim_found = false;
-		for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
-			if (*it==*tit) {
-				if (explodeFlags & EF_TrimTokens)
-					IBK::trim(tmp, " \t\r\n");
-				if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
-					tokens.push_back(tmp);
-				tmp.clear();
-				delim_found = true;
-				break;
+		// only search for delimiters if we are not inside a quotation
+		if (!inQuotation) {
+			for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
+				if (*it==*tit) {
+					if (explodeFlags & EF_TrimTokens)
+						IBK::trim(tmp, trimChars); // may cause tmp to become empty
+					if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
+						tokens.push_back(tmp);
+					tmp.clear();
+					delim_found = true;
+					break;
+				}
 			}
 		}
 		if (!delim_found)
@@ -474,7 +479,7 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 	}
 	if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens)) {
 		if (explodeFlags & EF_TrimTokens)
-			IBK::trim(tmp, " \t\r\n"); // may cause tmp to become empty
+			IBK::trim(tmp, trimChars); // may cause tmp to become empty
 		if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 			tokens.push_back(tmp);
 	}

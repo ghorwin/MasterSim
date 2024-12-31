@@ -85,6 +85,7 @@ enum ExplodeFlags {
 	EF_NoFlags          = 0x00,
 	EF_TrimTokens       = 0x01,
 	EF_KeepEmptyTokens  = 0x02,
+	/*! Strings in " " are not taken apart during split, even if a delimiter is found inside the quotation. */
 	EF_UseQuotes        = 0x04
 };
 
