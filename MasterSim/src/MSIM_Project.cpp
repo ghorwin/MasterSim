@@ -473,7 +473,7 @@ void Project::SimulatorDef::parse(const std::string & simulatorDef) {
 		m_cycle = IBK::string2val<unsigned int>(tokens[1]);
 		m_name = IBK::trim_copy(tokens[2]);
 		m_color = IBK::Color::fromHtml(tokens[3]);
-		m_pathToFMU = IBK::Path( IBK::trim_copy(tokens[4], "\"") ); // mind: may be a relative path to project, and we keep it that way
+		m_pathToFMU = IBK::Path( tokens[4] ); // mind: may be a relative path to project, and we keep it that way
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception(ex, IBK::FormatString("Bad format of simulator definition line '%1'.").arg(simulatorDef), FUNC_ID);
