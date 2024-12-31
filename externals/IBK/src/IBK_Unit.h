@@ -59,6 +59,10 @@ public:
 	/*! Default constructor (creates an undefined unit). */
 	Unit() : m_id(0) {}
 
+	Unit(const Unit & src);
+
+	Unit& operator=(Unit src);
+
 	/*! Constructor (creates a unit with the id number 'unitid').
 		This function throws an out_of_range exception if the 'unitid' is invalid.
 	*/
@@ -102,7 +106,7 @@ public:
 	unsigned int base_id() const;
 
 	/*! Returns the matching SI base unit to the IO_unit. */
-	Unit base_unit() const { return Unit(base_id()); }
+	Unit base_unit() const { unsigned int id = base_id(); return Unit(id); }
 
 	/*! Retrieves the calculation factor/summand and the operation necessary to relate a value
 		of the unit to the unit given by 'unitid'.
@@ -143,7 +147,7 @@ protected:
 /*! Hardcoded define of the unit ID for meters, to allow fast and efficient checks for unit 'm' */
 #define IBK_UNIT_ID_METERS 1
 /*! Hardcoded define of the unit ID for seconds, to allow fast and efficient checks for unit 's' */
-#define IBK_UNIT_ID_SECONDS 13
+#define IBK_UNIT_ID_SECONDS 14
 
 /*! Comparison operator== tests, whether two units are equal. */
 inline bool operator==(const Unit& lhs, const Unit& rhs) { return lhs.m_id==rhs.m_id; }

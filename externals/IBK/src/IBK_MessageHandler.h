@@ -181,7 +181,7 @@ protected:
 		While you can adjust indentation level manually in your derived class,
 		it is recommended to use the MessageHandler::Indentor class to do so.
 	*/
-	unsigned int	m_indentation;
+	int				m_indentation;
 
 private:
 

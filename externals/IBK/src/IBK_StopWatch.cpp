@@ -40,8 +40,6 @@
 
 #include <sstream>
 #include <iomanip>
-#include <limits>
-#include <cmath>
 #include <iostream>
 
 #include "IBK_StopWatch.h"
@@ -250,6 +248,22 @@ StopWatch::StopWatch() :
 	m_p(new StopWatchImpl)
 {
 	m_p->start();
+}
+
+StopWatch::StopWatch(const StopWatch & other) :
+	m_intervalLengthInSeconds(other.m_intervalLengthInSeconds),
+	m_lastIntervalDiff(other.m_lastIntervalDiff),
+	m_p( new StopWatchImpl(*other.m_p))
+{
+}
+
+StopWatch & StopWatch::operator=(const StopWatch & other) {
+	if (&other != this) {
+		m_intervalLengthInSeconds = other.m_intervalLengthInSeconds;
+		m_lastIntervalDiff = other.m_lastIntervalDiff;
+		*m_p = *other.m_p;
+	}
+	return *this;
 }
 
 StopWatch::~StopWatch() {

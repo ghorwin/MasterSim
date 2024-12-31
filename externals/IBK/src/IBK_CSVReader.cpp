@@ -73,7 +73,7 @@ bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
 	IBK::explode(line1, tokens1, "\t", IBK::EF_NoFlags);
 	IBK::explode(line2, tokens2, "\t", IBK::EF_NoFlags);
 	if (tokens1.size() < 2 || tokens1.size() != tokens2.size()) {
-		// try "comma-separated with quotes" format
+		// try tab format
 		IBK::explode(line1, tokens1, ",", IBK::EF_UseQuotes);
 		IBK::explode(line2, tokens2, ",", IBK::EF_UseQuotes);
 		// still no luck?
@@ -149,8 +149,8 @@ void CSVReader::parse(istream & in, bool headerOnly, bool extractUnits) {
 	if (extractUnits) {
 		for (unsigned int i=0; i<m_captions.size(); ++i) {
 			const std::string & c = m_captions[i];
-			std::size_t pos = c.find("[");
-			std::size_t pos2 = c.find("]");
+			std::size_t pos = c.find_last_of("[");
+			std::size_t pos2 = c.find_last_of("]");
 			if (pos != std::string::npos && pos != std::string::npos && pos < pos2) {
 				m_units.push_back(c.substr(pos+1, pos2-pos-1));
 				m_captions[i] = c.substr(0, pos);

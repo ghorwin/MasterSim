@@ -113,10 +113,10 @@ public:
 			maxPos = std::max(maxPos, m_hourStart);
 			maxPos = std::max(maxPos, m_minuteStart);
 			maxPos = std::max(maxPos, m_secondStart);
-			if(maxPos > m_year4Start) {
-				return maxPos + 2;
+			if (maxPos > m_year4Start) {
+				return (unsigned int)maxPos + 2;
 			}
-			return m_year4Start + 4;
+			return m_year4Start + 4; // BUG: might be -3!
 		}
 
 		int	m_year4Start;
@@ -276,7 +276,9 @@ public:
 	/*! Returns the simulation time in the 17-character short english format '02/27/05 22:10:40'. */
 	std::string toShortDateFormatUS() const;
 	/*! Returns regular date/time format 'dd.MM.yyyy hh:mm:ss'. Very similar to toShortDateFormat(), but with 4-digit year. */
-	std::string toDateTimeFormat() const;
+	std::string toDateTimeFormat(char dateSeparator='.') const;
+	/*! Returns regular date/time format 'yyyy-MM-dd hh:mm:ss'. Very similar to toShortDateFormat(), but with 4-digit year. */
+	std::string toDateTimeFormatUS(char dateSeparator='-') const;
 	/*! Returns just the day and month in format 'dd.MM.'. */
 	std::string toDayMonthFormat() const;
 
@@ -433,7 +435,7 @@ public:
 		All of these restrictions will be tested in constructor.
 		If the format string is not valid the error text will contain more informations (\sa errorMsg).
 	*/
-	bool valid() const { return m_valid; };
+	bool valid() const { return m_valid; }
 
 	/*! Returns an error message in case of non valid format string.*/
 	const std::string errorMsg() const { return m_error; }

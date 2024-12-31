@@ -100,6 +100,14 @@ public:
 		The default implementation calls notify().
 	*/
 	virtual void notify(double ) { notify(); }
+	virtual void notify(double, const char *) { notify(); }
+};
+
+/*! Notification class, also stores  if notification has been aborted by user. */
+class Notification : public IBK::NotificationHandler {
+public:
+	// indicates, if prgress bar is aborted
+	bool	m_aborted = false;
 };
 
 } // namespace IBK

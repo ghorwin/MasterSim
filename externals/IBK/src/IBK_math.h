@@ -351,6 +351,12 @@ double error_function(double x);
 /*! Determines min and max values in a vector. */
 void min_max_values(const std::vector<double> & vec, double & minVal, double & maxVal);
 
+/*! Own version of atan2 which works for all quadrants.*/
+double f_atan2(double x, double y);
+
+/*! Circular mean for avaraging angels.*/
+double meanDeg(double a, double b);
+
 } // namespace IBK
 
 /*! \file IBK_math.h

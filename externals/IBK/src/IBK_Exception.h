@@ -85,7 +85,7 @@ public:
 	};
 
 	/*! Destructor declaration needed because std::~exception() has throw specifier. */
-	~Exception() {}
+	~Exception() override {}
 
 	/*! Default constructor. */
 	Exception();
@@ -121,10 +121,13 @@ public:
 	*/
 	Exception(const std::exception & old, const IBK::FormatString& what, const std::string& loc);
 
+	/*! Require auto-generation of default copy c'tor */
+	Exception(const Exception &) = default;
+
 	/*! Accesses the top-most (last) exception message.
 		\return Error message string.
 	*/
-	const char* what() 	const noexcept;
+	const char* what() 	const noexcept override;
 	/*! Accesses the top-most (last) exception location.
 		\return Location string.
 	*/

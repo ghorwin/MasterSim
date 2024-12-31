@@ -306,6 +306,11 @@ std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 													std::pair<unsigned int, double> defaultValue);
 
 
+/*! Takes a header in format 'text [h]' and extracts the unit.
+	Returns invalid unit if header does not have [] or does not contain a valid unit.
+*/
+IBK::Unit extract_unit(const std::string & headerLabel);
+
 /*! Reads in (\a src) until char (\a ch)
 	(\a src) stores the first part
 	\return Rest of the string

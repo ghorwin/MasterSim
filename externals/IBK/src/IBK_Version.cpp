@@ -49,16 +49,16 @@ namespace IBK {
 
 
 /*! Mask for the major version number. */
-unsigned majorMaskBinary = 0x000000ff;
+static unsigned majorMaskBinary = 0x000000ff;
 
 /*! Mask for the minor version number. */
-unsigned int minorMaskBinary = 0x0000ff00;
+static unsigned int minorMaskBinary = 0x0000ff00;
 
 /*! Mask for the major version number. */
-unsigned int majorMaskASCII = 0x0000ff00;
+static unsigned int majorMaskASCII = 0x0000ff00;
 
 /*! Mask for the minor version number. */
-unsigned int minorMaskASCII = 0x000000ff;
+static unsigned int minorMaskASCII = 0x000000ff;
 
 
 /*! Returns the complete version number as unsigned int formated for a binary output little endian. */
@@ -97,6 +97,45 @@ unsigned int majorFromVersionASCII(unsigned int version) {
 */
 unsigned int minorFromVersionASCII( unsigned int version ) {
 	return ( version & minorMaskASCII );
+}
+
+
+Version::Version(const std::string & version) {
+	unsigned int maj, minor, pat;
+	if (extractMajorMinorPatchVersionNumber(version, maj, minor, pat)) {
+		m_major = maj;
+		m_minor = minor;
+		m_patch = pat;
+	}
+	else if (extractMajorMinorVersionNumber(version, maj, minor)) {
+		m_major = maj;
+		m_minor = minor;
+		m_patch = 0;
+	}
+	else {
+		// fallback to default version number
+		m_major = 1;
+		m_minor = 0;
+		m_patch = 0;
+	}
+}
+
+
+bool Version::operator<(const Version & other) const {
+	if (m_major < other.m_major) return true;
+	if (m_major > other.m_major) return false;
+	if (m_minor < other.m_minor) return true;
+	if (m_minor > other.m_minor) return false;
+	return m_patch < other.m_patch;
+}
+
+
+std::string Version::toString(bool includePathVersion) const {
+	std::stringstream strm;
+	strm << m_major << '.' << m_minor;
+	if (includePathVersion)
+		strm << '.' << m_patch;
+	return strm.str();
 }
 
 
