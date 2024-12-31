@@ -59,9 +59,8 @@ public:
 	/*! Default constructor (creates an undefined unit). */
 	Unit() : m_id(0) {}
 
-	Unit(const Unit & src);
-
-	Unit& operator=(Unit src);
+	Unit(const Unit & src) = default;
+	Unit& operator=(const Unit & src) = default;
 
 	/*! Constructor (creates a unit with the id number 'unitid').
 		This function throws an out_of_range exception if the 'unitid' is invalid.
