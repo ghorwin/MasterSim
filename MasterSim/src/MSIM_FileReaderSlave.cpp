@@ -182,15 +182,17 @@ void FileReaderSlave::cacheOutputs() {
 
 	// transfer values by type
 	for (unsigned int j=0; j<m_columnVariableTypes.size(); ++j) {
-		IBK_ASSERT(m_columnVariableOutputVectorIndex[j] != (unsigned int)-1);
 		switch (m_columnVariableTypes[j]) {
 			case MASTER_SIM::FMIVariable::VT_DOUBLE :
+				IBK_ASSERT(m_columnVariableOutputVectorIndex[j] != (unsigned int)-1);
 				m_doubleOutputs[ m_columnVariableOutputVectorIndex[j] ] = m_valueSplines[j]->value(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_INT :
+				IBK_ASSERT(m_columnVariableOutputVectorIndex[j] != (unsigned int)-1);
 				m_intOutputs[ m_columnVariableOutputVectorIndex[j] ] = (int)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_BOOL :
+				IBK_ASSERT(m_columnVariableOutputVectorIndex[j] != (unsigned int)-1);
 				m_boolOutputs[ m_columnVariableOutputVectorIndex[j] ] = (bool)m_valueSplines[j]->nonInterpolatedValue(m_t);
 			break;
 			case MASTER_SIM::FMIVariable::VT_STRING : break; // TODO : later store string variables
