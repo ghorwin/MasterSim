@@ -85,11 +85,15 @@ public:
 	/*! Units for quantities, to be appended when writing output files as ' [unit]' text. */
 	std::vector<std::string>	m_typelessVarUnits;
 
-	/*! After reading the csv file, this vector holds undefined type NUM_VT.
-		During connection of slaves and assigning variable mappings,
-		this vector is filled with types.
+	/*! After reading the tsv file, this vector holds for each column the identified type.
+		During connection of slaves and assigning variable mappings (see MasterSim::composeVariableVector()),
+		this vector is filled with types based on the connected FMU slave variable type.
+		Each tsv variable must have exactly one type associated, so it is not possible to
+		connect a file reader variable to both double and int FMU variable slots.
 		When evaluating the different spline data values, these types are used to identify which
 		of the m_xxxOutputs vectors to copy the data to and which columns linear interpolation need.
+		Any unconnected variable is assumed to be of type double (the vector is initially filled with
+		type NUM_VT).
 	*/
 	std::vector<MASTER_SIM::FMIVariable::VarType>	m_columnVariableTypes;
 

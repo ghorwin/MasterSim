@@ -1093,6 +1093,37 @@ void MasterSim::composeVariableVector() {
 		}
 	}
 
+	if (m_project.m_writeUnconnectedFileReaderVars) {
+		// Some of the variables in file reader slaves may not be connected to FMU variables and hence have no type assigned, yet.
+		// In order to be able to get results, we assume double as data type and append all these variables to our list of available
+		// outputs.
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			FileReaderSlave * fileReaderSlave = dynamic_cast<FileReaderSlave *>(m_slaves[i]);
+			if (fileReaderSlave == nullptr)
+				continue; // not a file reader slave
+
+			// now process all variables and those without type are added to the output vector as double
+			for (unsigned int colIndex=0; colIndex<fileReaderSlave->m_columnVariableTypes.size(); ++colIndex) {
+				// already have a type?
+				if (fileReaderSlave->m_columnVariableTypes[colIndex] != MASTER_SIM::FMIVariable::NUM_VT)
+					continue;
+				fileReaderSlave->m_columnVariableTypes[colIndex] = FMIVariable::VT_DOUBLE;
+				// remember the index of the target slot where the value in colIndex goes into
+				fileReaderSlave->m_columnVariableOutputVectorIndex[colIndex] = fileReaderSlave->m_doubleVarNames.size();
+				// copy variable info to respective vector
+				const std::string varName = fileReaderSlave->m_typelessVarNames[colIndex];
+				fileReaderSlave->m_doubleVarNames.push_back(varName);
+				fileReaderSlave->m_doubleVarUnits.push_back(fileReaderSlave->m_typelessVarUnits[colIndex]);
+
+				// adjust colIndex to point to the newly registered double variable
+				colIndex = fileReaderSlave->m_doubleVarNames.size()-1;
+				fileReaderSlave->m_doubleOutputs.resize(fileReaderSlave->m_doubleVarNames.size());
+				IBK::IBK_Message(IBK::FormatString("Unconnected variable '%1' from csv slave '%2' is assigned type 'Real'\n")
+								 .arg(varName).arg(fileReaderSlave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+			}
+		}
+	}
+
 	// need at least one real variable to compute vector norms
 	if (m_realVariableMapping.empty())
 		IBK::IBK_Message("No real variables in connection graph. This may be an error since FMUs won't communicate with each other.", IBK::MSG_WARNING, FUNC_ID);

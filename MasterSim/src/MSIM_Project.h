@@ -200,30 +200,30 @@ public:
 
 
 	/*! Operation mode of the master algorithm. */
-	MasterMode					m_masterMode;
+	MasterMode					m_masterMode = MM_GAUSS_SEIDEL;
 
 	/*! Type of error control/time step adjustment scheme used. */
-	ErrorControlMode			m_errorControlMode;
+	ErrorControlMode			m_errorControlMode = EM_NONE;
 
 	/*! If error control mode is not adjusting step size, this option can be used for iterative
 		methods to enable step size adjustment.
 		If adjustStepSize is off, and error control mode does not adjust step size, any iterative
 		algorithm that fails to converge will cause the simulation to stop.
 	*/
-	bool						m_adjustStepSize;
+	bool						m_adjustStepSize = false;
 
 	/*! If true (the default), MasterSim will truncate the last step such, that the end time will be hit exactly.
 		This is also done when constant-step size is defined by the FMU.
 	*/
-	bool						m_preventOversteppingOfEndTime;
+	bool						m_preventOversteppingOfEndTime = true;
 
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
-	unsigned int				m_maxIterations;
+	unsigned int				m_maxIterations = 1;
 
 	/*! Absolute tolerance - used for convergence check and for time integration error control. */
-	double						m_absTol;
+	double						m_absTol = 1e-6;
 	/*! Relative tolerance - used for convergence check and for time integration error control. */
-	double						m_relTol;
+	double						m_relTol = 1e-5;
 
 	/*! Minimum output time step. */
 	IBK::Parameter				m_hOutputMin;
@@ -231,8 +231,11 @@ public:
 	/*! Unit defined as output time for output files. */
 	IBK::Unit					m_outputTimeUnit;
 
-	/*! If true (disabled by default), internal variables are handled just as regular output variables. */
-	bool						m_writeInternalVariables;
+	/*! If true, internal variables are handled just as regular output variables. */
+	bool						m_writeInternalVariables = false;
+
+	/*! If true, file reader variables, that are not in graph connections, are also written to output file. */
+	bool						m_writeUnconnectedFileReaderVars = false;
 
 	/*! All simulators coupled in this master scenario. */
 	std::vector<SimulatorDef>	m_simulators;
