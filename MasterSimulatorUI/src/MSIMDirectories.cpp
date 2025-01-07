@@ -65,9 +65,9 @@ QString MSIMDirectories::resourcesRootDir() {
 QString MSIMDirectories::translationsFilePath(const QString & langID) {
 #ifdef IBK_BUILDING_DEBIAN_PACKAGE
 	QString installPath = qApp->applicationDirPath();
-	return installPath + QString("/../share/locale/%1/LC_MESSAGES/MasterSimulatorUI.qm").arg(langID);
+	return installPath + QString("/../share/locale/%1/LC_MESSAGES/mastersim-gui.qm").arg(langID);
 #else // IBK_BUILDING_DEBIAN_PACKAGE
-	return QFileInfo(resourcesRootDir() + QString("/translations/MasterSimulatorUI_%1.qm").arg(langID)).absoluteFilePath();
+	return QFileInfo(resourcesRootDir() + QString("/translations/mastersim-gui_%1.qm").arg(langID)).absoluteFilePath();
 #endif // IBK_BUILDING_DEBIAN_PACKAGE
 }
 

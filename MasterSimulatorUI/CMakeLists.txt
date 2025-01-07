@@ -94,6 +94,9 @@ target_link_libraries( ${PROJECT_NAME}
 	${WIN_FRAMEWORKS}
 )
 
+# we want the binary to be named 'mastersim-gui'
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "mastersim-gui")
+
 # Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
 
@@ -102,13 +105,11 @@ if (UNIX AND NOT APPLE)
 
 	# MasterSimulator -> /usr/bin/mastersim-gui
 	install(TARGETS ${PROJECT_NAME} RUNTIME 
-			DESTINATION bin 
-			RENAME mastersim-gui)
+			DESTINATION bin)
 
 	# Man-page -> /usr/share/man/man1/mastersim-gui.1.gz
-	install(FILES ${PROJECT_SOURCE_DIR}/doc/${PROJECT_NAME}.1 
-			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
-			RENAME mastersim-gui.1)
+	install(FILES ${PROJECT_SOURCE_DIR}/doc/mastersim-gui.1 
+			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 
 	# Translation files
 	install(FILES ${PROJECT_SOURCE_DIR}/resources/translations/MasterSimulatorUI_de.qm 

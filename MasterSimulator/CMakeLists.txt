@@ -32,6 +32,8 @@ target_link_libraries( ${PROJECT_NAME}
 	${LINK_Z_LIBS}
 )
 
+# we want the binary to be named 'mastersim'
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "mastersim")
 
 if (UNIX AND NOT APPLE)
 
@@ -40,12 +42,10 @@ if (UNIX AND NOT APPLE)
 	
 	# MasterSimulator -> /usr/bin/mastersim
 	install(TARGETS ${PROJECT_NAME} RUNTIME 
-		DESTINATION bin 
-		RENAME mastersim)
+		DESTINATION bin)
 	
 	# Man-page -> /usr/share/man/man1/mastersim.1.gz
-	install(FILES ${PROJECT_SOURCE_DIR}/doc/${PROJECT_NAME}.1 
-		DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 
-		RENAME mastersim.1)
+	install(FILES ${PROJECT_SOURCE_DIR}/doc/mastersim.1 
+		DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 
 endif (UNIX AND NOT APPLE)
