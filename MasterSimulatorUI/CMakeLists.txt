@@ -4,13 +4,13 @@ project( MasterSimulatorUI )
 
 # add include directories
 include_directories(
-	${PROJECT_SOURCE_DIR}/../../src			# needed so that ui-generated header files find our own headers
-	${PROJECT_SOURCE_DIR}/../../../externals/IBK/src
-	${PROJECT_SOURCE_DIR}/../../../externals/BlockMod/src
-	${PROJECT_SOURCE_DIR}/../../../MasterSim/src
-	${PROJECT_SOURCE_DIR}/../../../externals/zlib/src
-	${PROJECT_SOURCE_DIR}/../../../externals/minizip/src
-	${PROJECT_SOURCE_DIR}/../../../externals/TiCPP/src
+	${PROJECT_SOURCE_DIR}/src			# needed so that ui-generated header files find our own headers
+	${PROJECT_SOURCE_DIR}/../externals/IBK/src
+	${PROJECT_SOURCE_DIR}/../externals/BlockMod/src
+	${PROJECT_SOURCE_DIR}/../MasterSim/src
+	${PROJECT_SOURCE_DIR}/../externals/zlib/src
+	${PROJECT_SOURCE_DIR}/../externals/minizip/src
+	${PROJECT_SOURCE_DIR}/../externals/TiCPP/src
 	${Qt5Widgets_INCLUDE_DIRS}
 	${Qt5Network_INCLUDE_DIRS}
 	${Qt5Svg_INCLUDE_DIRS}
@@ -18,19 +18,19 @@ include_directories(
 )
 
 # collect a list of all source files
-file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
+file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
 
 # collect a list of all form files
-file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/../../src/*.ui )
+file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/src/*.ui )
 
 # The Qt resource file (*.qrc)
 set( APP_QRCS 
-	${PROJECT_SOURCE_DIR}/../../resources/MasterSimulator.qrc
+	${PROJECT_SOURCE_DIR}/resources/MasterSimulator.qrc
 )
 
 # set rc file
 set ( APP_WIN_RC
-	${PROJECT_SOURCE_DIR}/../../resources/MasterSimulator.rc
+	${PROJECT_SOURCE_DIR}/resources/MasterSimulator.rc
 )
 
 # automatically generate .moc and moc_xxx.cpp files when needed
@@ -73,7 +73,7 @@ if( UNIX )
 	else( APPLE )
 		add_executable( ${PROJECT_NAME} 
 						${APP_SRCS} ${APP_MOC_SRCS} ${APP_RC_SRCS} ${APP_UI_SRCS} 
-						${PROJECT_SOURCE_DIR}/../../resources/MasterSimulatorUI.icns
+						${PROJECT_SOURCE_DIR}/resources/MasterSimulatorUI.icns
 		)
 	endif( APPLE ) 
 
@@ -100,35 +100,38 @@ if (UNIX AND NOT APPLE)
 	# installation targets for Unix systems
 	include(GNUInstallDirs)
 
-	# MasterSimulator -> /usr/bin
-	install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin )
+	# MasterSimulator -> /usr/bin/mastersim-gui
+	install(TARGETS ${PROJECT_NAME} RUNTIME 
+			DESTINATION bin 
+			RENAME mastersim-gui)
 
-	# Man-page
-	install(FILES ${PROJECT_SOURCE_DIR}/../../doc/${PROJECT_NAME}.1 
-			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+	# Man-page -> /usr/share/man/man1/mastersim-gui.1.gz
+	install(FILES ${PROJECT_SOURCE_DIR}/doc/${PROJECT_NAME}.1 
+			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+			RENAME mastersim-gui.1)
 
 	# Translation files
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/translations/${PROJECT_NAME}_de.qm 
+	install(FILES ${PROJECT_SOURCE_DIR}/resources/translations/MasterSimulatorUI_de.qm 
 			DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/de/LC_MESSAGES/
-			RENAME ${PROJECT_NAME}.qm)
+			RENAME mastersim-gui.qm)
 
 	# Desktop file
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.desktop 
+	install(FILES ${PROJECT_SOURCE_DIR}/resources/mastersim.desktop 
 			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
 
 	# Mime type
-	install(FILES ${PROJECT_SOURCE_DIR}/../../resources/mastersim.xml 
+	install(FILES ${PROJECT_SOURCE_DIR}/resources/mastersim.xml 
 			DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/mime/packages )
 
 	# Icons
 	set(ICON_ROOT_DIR ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor)
 
 	foreach(ICON_SIZE 512 256 64 48 32 16)
-		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+		install(FILES ${PROJECT_SOURCE_DIR}/resources/gfx/logo/Icon_${ICON_SIZE}.png 
 				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/apps 
 				RENAME mastersim.png)
 
-		install(FILES ${PROJECT_SOURCE_DIR}/../../resources/gfx/logo/Icon_${ICON_SIZE}.png 
+		install(FILES ${PROJECT_SOURCE_DIR}/resources/gfx/logo/Icon_${ICON_SIZE}.png 
 				DESTINATION ${ICON_ROOT_DIR}/${ICON_SIZE}x${ICON_SIZE}/mimetypes 
 				RENAME application-mastersim.png)
 	endforeach()
