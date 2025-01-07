@@ -34,6 +34,7 @@ INCLUDEPATH = \
 SOURCES += \
 	src/MSIMColorButton.cpp \
 	src/MSIMExportConnectionGraphDialog.cpp \
+	src/MSIMSignalingTextEdit.cpp \
 	src/main.cpp \
 	src/MSIMAboutDialog.cpp \
 	src/MSIMBlockEditorDialog.cpp \

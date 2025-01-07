@@ -5,9 +5,6 @@ project( BlockMod )
 # collect a list of all source files
 file( GLOB LIB_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
 
-# collect a list of all header files (to be used in MOC compiler)
-file( GLOB LIB_HDRS ${PROJECT_SOURCE_DIR}/../../src/*.h )
-
 # collect a list of all form files
 file( GLOB LIB_UIS ${PROJECT_SOURCE_DIR}/../../src/*.ui )
 
@@ -28,9 +25,11 @@ include_directories(
 	${Qt5BinaryDir}/../../Src/qtbase/include/QtZlib # for using Qt's own zlib 
 )
 
+# automatically generate .moc and moc_xxx.cpp files when needed
+set( CMAKE_AUTOMOC ON )
+
 qt5_add_resources( LIB_RC_SRCS ${LIB_QRCS} )
 qt5_wrap_ui( LIB_UI_SRCS ${LIB_UIS} )
-qt5_wrap_cpp( LIB_MOC_SRCS ${LIB_HDRS} )
 
 # add build target for library
 add_library( ${PROJECT_NAME} STATIC
