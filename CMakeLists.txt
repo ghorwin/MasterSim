@@ -128,7 +128,7 @@ add_subdirectory( externals/minizip/projects/cmake_local minizip)
 add_subdirectory( externals/IBK/projects/cmake_local IBK )
 add_subdirectory( externals/IBKMK/projects/cmake_local IBKMK )
 add_subdirectory( externals/TiCPP/projects/cmake_local TiCPP )
-add_subdirectory( MasterSim/projects/cmake_local MasterSim)
+add_subdirectory( MasterSim )
 
 if (NOT DISABLE_QT)
 	message("*** Building Qt-based libs ***")
@@ -139,10 +139,10 @@ endif (NOT DISABLE_QT)
 # Executables/applications
 # -------------------------------------------------------------
 
-add_subdirectory( MasterSimulator/projects/cmake_local MasterSimulator)
+add_subdirectory( MasterSimulator )
 
 if (NOT DISABLE_QT)
-	add_subdirectory( MasterSimulatorUI/projects/cmake_local MasterSimulatorUI)
+	add_subdirectory( MasterSimulatorUI )
 endif (NOT DISABLE_QT)
 
 # -------------------------------------------------------------
