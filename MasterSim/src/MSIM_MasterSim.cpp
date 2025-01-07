@@ -962,7 +962,7 @@ void MasterSim::composeVariableVector() {
 						colIndex = fileReaderSlave->m_doubleVarNames.size()-1;
 						fileReaderSlave->m_doubleOutputs.resize(fileReaderSlave->m_doubleVarNames.size());
 						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Real'\n")
-										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 					}
 				break;
 
@@ -995,7 +995,7 @@ void MasterSim::composeVariableVector() {
 						colIndex = fileReaderSlave->m_intVarNames.size()-1;
 						fileReaderSlave->m_intOutputs.resize(fileReaderSlave->m_intVarNames.size());
 						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Integer'\n")
-										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 					}
 				break;
 
@@ -1028,7 +1028,7 @@ void MasterSim::composeVariableVector() {
 						colIndex = fileReaderSlave->m_boolVarNames.size()-1;
 						fileReaderSlave->m_boolOutputs.resize(fileReaderSlave->m_boolVarNames.size());
 						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'Boolean'\n")
-										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 					}
 				break;
 
@@ -1061,7 +1061,7 @@ void MasterSim::composeVariableVector() {
 						colIndex = fileReaderSlave->m_stringVarNames.size()-1;
 						fileReaderSlave->m_stringOutputs.resize(fileReaderSlave->m_stringVarNames.size());
 						IBK::IBK_Message(IBK::FormatString("  Variable '%1' from csv slave is assigned type 'String'\n")
-										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+										 .arg(edge.m_outputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 					}
 				break;
 				case MASTER_SIM::FMIVariable::NUM_VT : IBK_ASSERT(false); // must not ever happen, only to make compiler happy
@@ -1115,11 +1115,9 @@ void MasterSim::composeVariableVector() {
 				fileReaderSlave->m_doubleVarNames.push_back(varName);
 				fileReaderSlave->m_doubleVarUnits.push_back(fileReaderSlave->m_typelessVarUnits[colIndex]);
 
-				// adjust colIndex to point to the newly registered double variable
-				colIndex = fileReaderSlave->m_doubleVarNames.size()-1;
 				fileReaderSlave->m_doubleOutputs.resize(fileReaderSlave->m_doubleVarNames.size());
-				IBK::IBK_Message(IBK::FormatString("Unconnected variable '%1' from csv slave '%2' is assigned type 'Real'\n")
-								 .arg(varName).arg(fileReaderSlave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_STANDARD);
+				IBK::IBK_Message(IBK::FormatString("Assuming type 'Real' for unconnected variable '%1' from file reader slave '%2'\n")
+								 .arg(varName).arg(fileReaderSlave->m_name), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 			}
 		}
 	}
