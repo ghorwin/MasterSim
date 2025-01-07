@@ -6,7 +6,7 @@
 class MSIMSignalingTextEdit : public QPlainTextEdit {
 	Q_OBJECT
 public:
-	MSIMSignalingTextEdit(QWidget *parent) : QPlainTextEdit(parent) {}
+	MSIMSignalingTextEdit(QWidget *parent);
 
 protected:
 	/*! Emits the editingFinished() signal. */
