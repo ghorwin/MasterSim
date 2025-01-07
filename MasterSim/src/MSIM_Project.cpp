@@ -20,16 +20,8 @@ Project::Project() :
 	m_hMin("hMin", 1e-5, "s"),
 	m_hMax("hMax", 30, "min"),
 	m_hStart("hStart", 10, "min"),
-	m_masterMode(MM_GAUSS_SEIDEL),
-	m_errorControlMode(EM_NONE),
-	m_adjustStepSize(false),
-	m_preventOversteppingOfEndTime(true),
-	m_maxIterations(1),
-	m_absTol(1e-6),
-	m_relTol(1e-5),
 	m_hOutputMin("hOutputMin", 10, "min"),
-	m_outputTimeUnit("s"),
-	m_writeInternalVariables(false)
+	m_outputTimeUnit("s")
 {
 }
 
@@ -250,6 +242,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 				m_maxIterations = IBK::string2val<unsigned int>(value);
 			else if (keyword == "writeInternalVariables")
 				m_writeInternalVariables = (value == "true" || value == "yes" || value == "1");
+			else if (keyword == "writeUnconnectedFileReaderVars")
+				m_writeUnconnectedFileReaderVars = (value == "true" || value == "yes" || value == "1");
 			else
 				throw IBK::Exception(IBK::FormatString("Unknown keyword '%1'").arg(keyword), FUNC_ID);
 		}
@@ -320,6 +314,7 @@ void Project::write(const IBK::Path & prjFile) const {
 	out << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "maxIterations" << " " << m_maxIterations << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "writeInternalVariables" << " " << (m_writeInternalVariables ? "yes" : "no") << std::endl;
+	out << std::setw(KEYWORD_WIDTH) << std::left << "writeUnconnectedFileReaderVars" << " " << (m_writeUnconnectedFileReaderVars ? "yes" : "no") << std::endl;
 	out << std::endl;
 
 	// write simulators
