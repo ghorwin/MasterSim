@@ -8,7 +8,7 @@ const char * const RELEASE_DATE		= "December 31st, 2024";
 
 const unsigned int KEYWORD_INDENTATION = 0;
 
-const unsigned int KEYWORD_WIDTH = 24;
+const unsigned int KEYWORD_WIDTH = 32;
 
 
 } // namespace MASTER_SIM

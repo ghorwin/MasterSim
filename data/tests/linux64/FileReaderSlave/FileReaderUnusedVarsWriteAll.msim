@@ -1,0 +1,29 @@
+# Created:	Di. Jan. 7 08:53:10 2025
+# LastModified:	Di. Jan. 7 08:53:10 2025
+
+tStart                           0 a
+tEnd                             6 h
+hMax                             10 min
+hMin                             1e-05 s
+hFallBackLimit                   0.001 s
+hStart                           10 min
+hOutputMin                       1 h
+outputTimeUnit                   h
+adjustStepSize                   no
+preventOversteppingOfEndTime     yes
+absTol                           1e-06
+relTol                           1e-05
+MasterMode                       GAUSS_SEIDEL
+ErrorControlMode                 NONE
+maxIterations                    1
+writeInternalVariables           yes
+writeUnconnectedFileReaderVars   yes
+
+simulator 0 0 FileReader #4682b4 "SixRealValues.tsv"
+simulator 1 0 RealInputVars #6a5acd "fmus/IBK/FourRealInputVars.fmu"
+
+graph FileReader.Var1 RealInputVars.V1
+graph FileReader.Var2 RealInputVars.V2
+graph FileReader.Var3 RealInputVars.V3
+graph FileReader.Var4 RealInputVars.V4
+
