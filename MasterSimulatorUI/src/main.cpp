@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	parser.parse(argc, argv);
 
 	// configure man page output
-	parser.m_appname = "MasterSimulatorUI";
+	parser.m_appname = "mastersim-gui";
 	parser.m_syntaxArguments = "[flags] [options] [project file]";
 	parser.m_manManualName = "MasterSim Manual";
 	parser.m_manReleaseDate = MASTER_SIM::RELEASE_DATE;
@@ -123,10 +123,10 @@ int main(int argc, char *argv[]) {
 	parser.m_manShortDescription = "FMI Co-Simulation Graphical Configuration Tool";
 
 	// Note: mind the line breaks that end format commands!
-	parser.m_manLongDescription = ".B MasterSimulatorUI\n"
+	parser.m_manLongDescription = ".B mastersim-gui\n"
 			"is a graphical user interface to configure/define FMI co-simulation "
 			"scenarios and generate MasterSim project files. These project files "
-			"are used by the commandline co-simulator \n.BR MasterSimulator\\fR.";
+			"are used by the commandline co-simulator \n.BR mastersim\\fR.";
 
 	// handle default arguments (--help and --man-page)
 	if (parser.handleDefaultFlags(std::cout))

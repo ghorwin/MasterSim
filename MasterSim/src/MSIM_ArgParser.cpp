@@ -8,7 +8,7 @@
 namespace MASTER_SIM {
 
 ArgParser::ArgParser() : m_verbosityLevel(1) {
-	m_appname = "MasterSimulator";
+	m_appname = "mastersim";
 	m_syntaxArguments = "[flags] [options] <project file>";
 	// configure man page output
 	m_manManualName = "MasterSim Manual";
@@ -17,7 +17,7 @@ ArgParser::ArgParser() : m_verbosityLevel(1) {
 	m_manShortDescription = "FMI Co-Simulation Master";
 
 	// Note: mind the line breaks that end format commands!
-	m_manLongDescription = ".B MasterSimulator\n"
+	m_manLongDescription = ".B mastersim\n"
 			"simulates the co-simulation scenario defined in the msim "
 			"project file. By default all temporary and output files are created in a subdirectory "
 			"with the same name as the project. You can change that with the\n"

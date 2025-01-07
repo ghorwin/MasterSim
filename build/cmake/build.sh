@@ -150,27 +150,27 @@ cd $CMAKELISTSDIR &&
 # create top-level dir
 mkdir -p bin/release &&
 echo "*** Copying executables to bin/release ***" &&
-if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
-  echo "*** Copying MasterSimulator to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulator/MasterSimulator $CMAKELISTSDIR/bin/release/MasterSimulator && 
-  bin/release/MasterSimulator --man-page > $CMAKELISTSDIR/MasterSimulator/doc/MasterSimulator.1
+if [ -e $BUILDDIR/MasterSimulator/mastersim ]; then
+  echo "*** Copying mastersim to bin/release ***" &&
+  cp $BUILDDIR/MasterSimulator/mastersim $CMAKELISTSDIR/bin/release/mastersim && 
+  bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1
 fi &&
-if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
-  echo "*** Copying MasterSimulatorUI to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI $CMAKELISTSDIR/bin/release/MasterSimulatorUI 
+if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui ]; then
+  echo "*** Copying mastersim-gui to bin/release ***" &&
+  cp $BUILDDIR/MasterSimulatorUI/mastersim-gui $CMAKELISTSDIR/bin/release/mastersim-gui &&
   # next call may fail on GitHub actions, so we do not require this to succeed
-  bin/release/MasterSimulatorUI --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/MasterSimulatorUI.1
+  bin/release/mastersim-gui --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/mastersim-gui.1
 fi 
-if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
-  if [ -e bin/release/MasterSimulatorUI.app ]; then
-    rm -rf $CMAKELISTSDIR/bin/release/MasterSimulatorUI.app
+if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui.app ]; then
+  if [ -e bin/release/MasterSim.app ]; then
+    rm -rf $CMAKELISTSDIR/bin/release/MasterSim.app
   fi &&
   echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
-  cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app $CMAKELISTSDIR/bin/release/MasterSimulatorUI.app
+  cp -r $BUILDDIR/MasterSimulatorUI/mastersim-gui.app $CMAKELISTSDIR/bin/release/MasterSim.app
 fi &&
 cd $BUILDDIR/.. &&
 
-echo "*** Build MasterSimulator ***" &&
+echo "*** Build MasterSim ***" &&
 if [[ $SKIP_TESTS = "false"  ]]; then
 ./run_tests.sh
 fi
