@@ -38,8 +38,8 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 {
 	m_ui->setupUi(this);
 
-	connect(&MSIMProjectHandler::instance(), SIGNAL(modified(unsigned int,void*)),
-			this, SLOT(onModified(unsigned int,void*)));
+	connect(&MSIMProjectHandler::instance(), &MSIMProjectHandler::modified,
+			this, &MSIMViewSimulation::onModified);
 
 	blockMySignals(this, true);
 
@@ -117,6 +117,7 @@ void MSIMViewSimulation::onModified(unsigned int modificationType, void * /*data
 	m_ui->checkBoxAdjustStepSize->setChecked( project().m_adjustStepSize);
 
 	m_ui->checkBoxWriteInternalVariables->setChecked( project().m_writeInternalVariables);
+	m_ui->checkBoxWriteUnconnectedVariables->setChecked( project().m_writeUnconnectedFileReaderVars);
 	m_ui->checkBoxPreventOversteppingOfEndTime->setChecked( project().m_preventOversteppingOfEndTime);
 
 	blockMySignals(this, false);
@@ -536,6 +537,15 @@ void MSIMViewSimulation::on_checkBoxWriteInternalVariables_toggled(bool checked)
 }
 
 
+void MSIMViewSimulation::on_checkBoxWriteUnconnectedVariables_toggled(bool checked) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_writeUnconnectedFileReaderVars = checked;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push();
+}
+
+
 void MSIMViewSimulation::on_checkBoxPreventOversteppingOfEndTime_toggled(bool checked) {
 	MASTER_SIM::Project p = project(); // create copy of project
 	p.m_preventOversteppingOfEndTime = checked;
@@ -552,4 +562,6 @@ void MSIMViewSimulation::on_comboBoxTermEmulator_currentIndexChanged(int index) 
 void MSIMViewSimulation::on_checkBoxSkipUnzip_toggled(bool) {
 	updateCommandLine();
 }
+
+
 
