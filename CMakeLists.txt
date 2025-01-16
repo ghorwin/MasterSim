@@ -149,12 +149,12 @@ endif (NOT DISABLE_QT)
 # Test FMUs Libraries
 # -------------------------------------------------------------
 
-add_subdirectory( TestFMUs/Math003Part1/projects/cmake Math003Part1)
-add_subdirectory( TestFMUs/Math003Part2/projects/cmake Math003Part2)
-add_subdirectory( TestFMUs/Math003Part3/projects/cmake Math003Part3)
-add_subdirectory( TestFMUs/LotkaVolterraPrey/projects/cmake LotkaVolterraPrey)
-add_subdirectory( TestFMUs/LotkaVolterraPredator/projects/cmake LotkaVolterraPredator)
-add_subdirectory( TestFMUs/FourRealInputVars/projects/cmake FourRealInputVars)
+add_subdirectory( TestFMUs/Math003Part1 )
+add_subdirectory( TestFMUs/Math003Part2 )
+add_subdirectory( TestFMUs/Math003Part3 )
+add_subdirectory( TestFMUs/LotkaVolterraPrey )
+add_subdirectory( TestFMUs/LotkaVolterraPredator )
+add_subdirectory( TestFMUs/FourRealInputVars )
 
 # Support for 'make install' on Unix/Linux (not on MacOS!)
 if (UNIX AND NOT APPLE)
