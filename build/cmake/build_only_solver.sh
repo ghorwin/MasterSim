@@ -144,35 +144,18 @@ done
 BUILDDIR=$BUILDDIR-$BUILD_DIR_SUFFIX
 if [ ! -d $BUILDDIR ]; then
     mkdir -p $BUILDDIR
-fi
+fi &&
 
 cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT &&
 
 # back to top-level
 cd $CMAKELISTSDIR &&
 # create top-level dir
-mkdir -p bin/release &&
-echo "*** Copying executables to bin/release ***" &&
-if [ -e $BUILDDIR/MasterSimulator/MasterSimulator ]; then
-  echo "*** Copying MasterSimulator to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulator/MasterSimulator $CMAKELISTSDIR/bin/release/MasterSimulator && 
-  bin/release/MasterSimulator --man-page > $CMAKELISTSDIR/MasterSimulator/doc/MasterSimulator.1
-fi &&
-if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI ]; then
-  echo "*** Copying MasterSimulatorUI to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI $CMAKELISTSDIR/bin/release/MasterSimulatorUI 
-  # next call may fail on GitHub actions, so we do not require this to succeed
-  bin/release/MasterSimulatorUI --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/MasterSimulatorUI.1
-fi 
-if [ -e $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app ]; then
-  if [ -e bin/release/MasterSimulatorUI.app ]; then
-    rm -rf $CMAKELISTSDIR/bin/release/MasterSimulatorUI.app
-  fi &&
-  echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
-  cp -r $BUILDDIR/MasterSimulatorUI/MasterSimulatorUI.app $CMAKELISTSDIR/bin/release/MasterSimulatorUI.app
-fi &&
+mkdir -p $CMAKELISTSDIR/bin/release &&
+echo "*** Copying mastersim to bin/release ***" &&
+cp $BUILDDIR/MasterSimulator/mastersim $CMAKELISTSDIR/bin/release/mastersim && 
+$CMAKELISTSDIR/bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1 &&
 cd $BUILDDIR/.. &&
-
 echo "*** Build MasterSimulator ***" &&
 if [[ $SKIP_TESTS = "false"  ]]; then
 ./run_tests.sh
