@@ -112,7 +112,6 @@ do
 
 done
 
-
 # override compiler options
 for var in "$@"
 do
@@ -148,21 +147,23 @@ cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $
 # back to top-level
 cd $CMAKELISTSDIR &&
 # create top-level dir
-mkdir -p bin/release &&
-echo "*** Copying executables to bin/release ***" &&
-if [ -e $BUILDDIR/MasterSimulator/mastersim ]; then
-  echo "*** Copying mastersim to bin/release ***" &&
-  cp $BUILDDIR/MasterSimulator/mastersim $CMAKELISTSDIR/bin/release/mastersim && 
-  bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1
-fi &&
+mkdir -p $CMAKELISTSDIR/bin/release &&
+echo "*** Copying mastersim to bin/release ***" &&
+cp $BUILDDIR/MasterSimulator/mastersim $CMAKELISTSDIR/bin/release/mastersim && 
+$CMAKELISTSDIR/bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1 &&
+
+# UI only exists when Qt is enabled
 if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui ]; then
   echo "*** Copying mastersim-gui to bin/release ***" &&
   cp $BUILDDIR/MasterSimulatorUI/mastersim-gui $CMAKELISTSDIR/bin/release/mastersim-gui &&
   # next call may fail on GitHub actions, so we do not require this to succeed
-  bin/release/mastersim-gui --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/mastersim-gui.1
+  $CMAKELISTSDIR/bin/release/mastersim-gui --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/mastersim-gui.1
 fi 
+
+# UI on Mac only exists when Qt is enabled and buiding on Mac
 if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui.app ]; then
-  if [ -e bin/release/MasterSim.app ]; then
+  # remove potentially existing app bundle
+  if [ -e $CMAKELISTSDIR/bin/release/MasterSim.app ]; then
     rm -rf $CMAKELISTSDIR/bin/release/MasterSim.app
   fi &&
   echo "*** Copying MasterSimulatorUI.app to bin/release ***" &&
