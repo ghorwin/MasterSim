@@ -12,7 +12,8 @@
 #   [off|omp]					openmp (gcc and icc)
 #   [verbose]					enable cmake to call verbose makefiles
 #   [lapack]					enable cmake to build with lapack support
-#   [skip-test]                 does not execute test script after successful build
+#   [skip-test]					does not execute test script after successful build
+#   [skip-man]					skips generation of man pages
 #   []
 
 # path export for mac
@@ -27,6 +28,7 @@ MAKE_CPUCOUNT="2"
 BUILD_DIR_SUFFIX="gcc"
 COMPILER=""
 SKIP_TESTS="false"
+SKIP_MANPAGE="false"
 
 # parse parameters, except gprof and threadchecker
 for var in "$@"
@@ -99,16 +101,21 @@ do
 		CMAKE_OPTIONS="$CMAKE_OPTIONS -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON"
 	  fi
 
-    if [[ $var = "skip-test"  ]];
-  	then
+	if [[ $var = "skip-test"  ]];
+	then
 		SKIP_TESTS="true"
-	  fi
+	fi
 
-    if [[ $var = "lapack"  ]];
-    then
+	if [[ $var = "skip-man"  ]];
+	then
+		SKIP_MANPAGE="true"
+	fi
+
+	if [[ $var = "lapack"  ]];
+	then
 		CMAKE_OPTIONS="$CMAKE_OPTIONS -DLAPACK_ENABLE:BOOL=ON"
 		echo "Building with lapack support for CVODE"
-    fi
+	fi
 
 done
 
@@ -150,15 +157,21 @@ cd $CMAKELISTSDIR &&
 mkdir -p $CMAKELISTSDIR/bin/release &&
 echo "*** Copying mastersim to bin/release ***" &&
 cp $BUILDDIR/MasterSimulator/mastersim $CMAKELISTSDIR/bin/release/mastersim && 
-$CMAKELISTSDIR/bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1 &&
+if [[ $SKIP_MANPAGE = "false"  ]]; then
+  echo "  ** Generating man page mastersim.1 **"
+  $CMAKELISTSDIR/bin/release/mastersim --man-page > $CMAKELISTSDIR/MasterSimulator/doc/mastersim.1
+fi &&
 
 # UI only exists when Qt is enabled
 if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui ]; then
   echo "*** Copying mastersim-gui to bin/release ***" &&
   cp $BUILDDIR/MasterSimulatorUI/mastersim-gui $CMAKELISTSDIR/bin/release/mastersim-gui &&
   # next call may fail on GitHub actions, so we do not require this to succeed
-  $CMAKELISTSDIR/bin/release/mastersim-gui --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/mastersim-gui.1
-fi 
+  if [[ $SKIP_MANPAGE = "false"  ]]; then
+	echo "  ** Generating man page mastersim-gui.1 **"
+	$CMAKELISTSDIR/bin/release/mastersim-gui --man-page > $CMAKELISTSDIR/MasterSimulatorUI/doc/mastersim-gui.1
+  fi
+fi &&
 
 # UI on Mac only exists when Qt is enabled and buiding on Mac
 if [ -e $BUILDDIR/MasterSimulatorUI/mastersim-gui.app ]; then
