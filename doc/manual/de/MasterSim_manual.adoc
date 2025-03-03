@@ -1,7 +1,7 @@
 MasterSim Benutzerhandbuch
 ==========================
 Andreas Nicolai <andreas.nicolai@gmx.net>
-v0.9.6 (10.08.2023)
+v0.9.6 (15.02.2025)
 // v0.9.6 date_on_line_above
 :Author Initials: AN
 :toc: left

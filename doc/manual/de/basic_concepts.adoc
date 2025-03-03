@@ -12,11 +12,11 @@ image::DataFlowDiagram.png[alt="Datenaustausch zwischen Programmkomponenten",pdf
 _MasterSim_ besteht aus zwei Teilen:
 
 a. einer grafischen Benutzeroberfläche (_graphical user interface_ - GUI) und
-b. dem Simulationsprogramm _MasterSimulator_ für die Befehlszeile
+b. dem Simulationsprogramm _mastersim_ für die Befehlszeile
 
 Die Oberfläche macht es sehr einfach, Simulations-Projekte zu erzeugen, anzupassen und abzuändern. Ein Simulations-Projekt wird in zwei Dateien gespeichert, dem _MasterSim_-Projekt und der grafischen Darstellung (Verknüpfungsschematik). Letzteres ist optional und nicht notwendig für die Simulation.
 
-Die Simulation wird durch das Befehlszeilen-Programm  _MasterSimulator_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _MasterSimulator_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (das kostenfreie Analysetool mit https://bauklimatik-dresden.de/postproc[PostProc 2] ist dafür sehr gut geeignet und meine Empfehlung für die _MasterSim_ Ergebnisauswertung).
+Die Simulation wird durch das Befehlszeilen-Programm  _mastersim_ ausgeführt, welches Projekt-Dateien liest, referenzierte FMUs importiert und die Simulation durchführt. Die erzeugten Ergebnisse, sowohl von _mastersim_ selbst als auch diejenigen der Slaves werden dann von weiterverarbeitenden Werkzeugen genutzt, um die Ergebnisse zu visualisieren und zu analysieren (das kostenfreie Analysetool mit https://bauklimatik-dresden.de/postproc[PostProc 2] ist dafür sehr gut geeignet und meine Empfehlung für die _MasterSim_ Ergebnisauswertung).
 
 Die Trennung zwischen der Benutzeroberfläche und dem eigentlichen Simulator macht es sehr einfach, _MasterSim_ in einer geskripteten Umgebung oder für eine systematische Variantenuntersuchung zu nutzen, wie sie weiter unten im Abschnitt <<workflow>> beschrieben wird.
 
@@ -117,7 +117,7 @@ In dieser Situation, in der ein Parameter in _MasterSim_ konfiguriert worden ist
 
 Wenn eine importierte FMU einen Teil ihrer Schnittstelle ändert (z. B.  Ein- oder Ausgangsgrößen wurden modifiziert), dann wird dies in der Benutzeroberfläche durch Hervorhebung der falschen/nun fehlenden Verbindungen angezeigt.  Wenn nur Variablennamen verändert wurden, editieren Sie am besten die Projekt-Datei und benennen dort die Größenbezeichnung um. Ansonsten sollte man einfach die Verbindung entfernen und eine neue erzeugen.
 
-Wenn sich der Variablentyp einer Eingangs-/Ausgangsgröße ändert, sodass eine ungültige Verbindung entsteht (oder die Kausalität geändert wird), dann zeigt die Benutzeroberfläche die ungültige Verbindung nicht unbedingt direkt an. Allerdings wird das Befehlszeilenprogramm des  _MasterSimulator_ den Fehler während der Initialisierung anzeigen und abbrechen. Auch hier ist empfehlenswert, die fehlerhafte Verbindung zu löschen und neu zu erstellen.
+Wenn sich der Variablentyp einer Eingangs-/Ausgangsgröße ändert, sodass eine ungültige Verbindung entsteht (oder die Kausalität geändert wird), dann zeigt die Benutzeroberfläche die ungültige Verbindung nicht unbedingt direkt an. Allerdings wird das Befehlszeilenprogramm  _mastersim_ den Fehler während der Initialisierung anzeigen und abbrechen. Auch hier ist empfehlenswert, die fehlerhafte Verbindung zu löschen und neu zu erstellen.
 
 ## Ein Überblick über den Simulations-Algorithmus
 
@@ -134,7 +134,7 @@ Diese Bausteine werden nachfolgend näher erläutert.
 
 ## Initialisierung
 
-Zu Beginn der aktuellen Simulation (das Befehlszeilenprogramm _MasterSimulator_, siehe Abschnitt <<command_line_arguments, Befehlszeilen-Argumente >> zu Details zum Simulationsstart) wird die Struktur des Arbeitsverzeichnisses erzeugt und das Schreiben der Log-Datei gestartet.
+Zu Beginn der aktuellen Simulation (das Befehlszeilenprogramm _mastersim_, siehe Abschnitt <<command_line_arguments, Befehlszeilen-Argumente >> zu Details zum Simulationsstart) wird die Struktur des Arbeitsverzeichnisses erzeugt und das Schreiben der Log-Datei gestartet.
 
 Danach wird die Projekt-Datei gelesen und alle referenzierten FMUs werden entpackt. Wenn Verweise auf CSV-Dateien auftauchen (siehe Abschnitt <<csv_filereader_slaves, CSV-FileReader-Slaves>>), werden diese Dateien eingelesen und für die Berechnung ausgewertet/vorbereitet.
 
