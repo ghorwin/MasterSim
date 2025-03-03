@@ -146,7 +146,7 @@ private:
 	QSize							m_windowSizeLast;
 
 	/*! Indicates whether the mouse middle button has been pressed. */
-	bool							m_middleButtonPressed;
+	bool							m_middleButtonPressed = false;
 };
 
 } // namespace BLOCKMOD
