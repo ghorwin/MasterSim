@@ -1,6 +1,6 @@
-# _MasterSimulator_ - Das Befehlszeilen-Programm
+# _mastersim_ - Das Befehlszeilen-Programm
 
-Die eigentliche Simulation wird mit dem Befehlszeilen-Programm _MasterSimulator_ durchgeführt. Es führt  grundsätzlich die folgenden Schritte aus:
+Die eigentliche Simulation wird mit dem Befehlszeilen-Programm _mastersim_ durchgeführt. Es führt  grundsätzlich die folgenden Schritte aus:
 
 1. Es liest die msim-Projektdatei (die Netzwerkdarstellung wird ignoriert, da sie nur visuelle Informationen enthält).
 2. Danach wird ein Arbeitsverzeichnis für die Simulationsdaten erzeugt (der Pfad kann angepasst werden, siehe: `--working-dir`-Befehlzeilen-Option unten). 
@@ -16,10 +16,10 @@ Da die _MasterSim_-Projekt-Datei einfacher ASCII-Text ist und der Rechenkern dur
 [[command_line_arguments]]
 ## Befehlszeilenargumente
 
-Allgemeine Syntax für das _MasterSimulator_ Kommandozeilenprogramm:
+Allgemeine Syntax für das _mastersim_ Kommandozeilenprogramm:
 
 --------------
-Syntax: MasterSimulator [Schalter] [Optionen] <Projektdatei>
+Syntax: mastersim [Schalter] [Optionen] <Projektdatei>
 
 Schalter:
   --help            Zeigt diese Hilfsseite.
@@ -57,7 +57,7 @@ Im Abschnitt <<working_directory_structure>> wird der Inhalt und die Struktur de
 
 ### Anpassung der Ausgabedetailstufe
 
-_MasterSimulator_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailstufe wird durch den `--verbosity-level` Parameter kontrolliert, welcher die Menge der erzeugten Fehler-/Analyseinformationen festlegt.
+_MasterSim_ schreibt Fortschrittsinformationen/Warnungen und Fehlermeldungen in das Konsolenfenster und in die Datei `<working-dir>/logs/screenlog.txt`. Die Menge an geschriebenem Text und die Detailstufe wird durch den `--verbosity-level` Parameter kontrolliert, welcher die Menge der erzeugten Fehler-/Analyseinformationen festlegt.
 
 Bei der Detailstufe 0 (`--verbosity-level=0`) wird so ziemlich je Ausgabe abgeschaltet. Die Detailstufe 1 ist der Standard mit normalen Fortschrittsmeldungen. Nutzen Sie eine höhere Ausgabedetailstufe zur Analyse der integrierten Algorithmen oder zur Eingrenzung von Fehlern.
 
@@ -151,7 +151,7 @@ Grundsätzlich wird jede FMU-Datei nur einmal entpackt.
 [TIP]
 ====
 .Überspringen des FMU-Extraktions-Schritts
-_MasterSim_ unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr nützlich ist, um FMUs durch Korrektur einer fehlerhaften `modelDescription.xml`-Datei oder fehlender Ressourcen zu reparieren. Wenn solch eine FMU auftaucht, können Sie _MasterSimulater_ einmal durchlaufen lassen, um die FMUs in die Verzeichnisse zu extrahieren. Dann kann man die fehlerhaften Dateien im jeweiligen Entpack-Verzeichnis überarbeiten/anpassen und danach die Simulation noch einmal mit `--skip-unzip` durchlaufen lassen. _MasterSim_ wird nun die (veränderten) Dateien direkt lesen und Sie können sich selbst die Mühe des Komprimierens und Umbenennens der FMUs sparen. Ebenso können Sie die `modelDescription.xml` im Editor geöffnet lassen und die wiederholte "Bearbeiten-und-Testsimulieren"-Prozedur schnell durchlaufen, bis alles funktioniert.
+_MasterSim_ unterstützt die Befehlszeilen-Option `--skip-unzip`, welche sehr nützlich ist, um FMUs durch Korrektur einer fehlerhaften `modelDescription.xml`-Datei oder fehlender Ressourcen zu reparieren. Wenn solch eine FMU auftaucht, können Sie _MasterSim_ einmal durchlaufen lassen, um die FMUs in die Verzeichnisse zu extrahieren. Dann kann man die fehlerhaften Dateien im jeweiligen Entpack-Verzeichnis überarbeiten/anpassen und danach die Simulation noch einmal mit `--skip-unzip` durchlaufen lassen. _MasterSim_ wird nun die (veränderten) Dateien direkt lesen und Sie können sich selbst die Mühe des Komprimierens und Umbenennens der FMUs sparen. Ebenso können Sie die `modelDescription.xml` im Editor geöffnet lassen und die wiederholte "Bearbeiten-und-Testsimulieren"-Prozedur schnell durchlaufen, bis alles funktioniert.
 
 Siehe auch Erläuterungen im Abschnitt <<skip_FMU_extraction>>.
 ====
@@ -174,9 +174,9 @@ Wenn allerdings kein Wert in der Projekt-Datei für diesen Parameter festgelegt 
 Das Analysetool _PostProc_ wird bei Angabe des Projektbasisverzeichnis auch die Ausgaben in den Slave-Verzeichnissen finden und zur Analyse anzeigen.
 ====
 
-## Return-Code des _MasterSimulator_ -Programms
+## Return-Code des _mastersim_ -Programms
 
-_MasterSimulator_ gibt folgende Return-Code zurück:
+_MasterSim_ gibt folgende Return-Code zurück:
 
 [horizontal]
 0:: bei Erfolg
@@ -328,7 +328,7 @@ Error test time and failure count:: Anzahl der Fehlertest-Überschreitungen (`Er
 
 Die übrigen Zeilen zeigen Dauer und Aufrufhäufigkeiten individuell für jeden Slave. Die Zeilen zeigen die genutzte Zeit in den Funktionsaufrufen `doStep()`, `getState()` und `setState()` und die jeweilige Häufigkeit des Aufrufs. Die den Zustand betreffenden Funktionen (state) werden nur für iterierende Master-Algorithmen genutzt, falls die FMUs diese FMI 2 Funktionalität unterstützt. Es ist zu beachten, dass diese Funktionen sowohl vom Master-Algorithmus als auch vom Fehlertest aufgerufen werden (wenn eingeschaltet).
 
-Das Schreiben von Ausgaben (*Output writing*) und Ausführen des Master-Algorithmus (*Master-Algorithm*) sind die beiden Hauptkomponenten des _MasterSimulator_-Pogramms, sodass ihre addierten Zeiten nahe der Gesamtlaufzeit liegen sollten.
+Das Schreiben von Ausgaben (*Output writing*) und Ausführen des Master-Algorithmus (*Master-Algorithm*) sind die beiden Hauptkomponenten des _MasterSim_-Pogramms, sodass ihre addierten Zeiten nahe der Gesamtlaufzeit liegen sollten.
 
 Die dritte Spalte in der Konsolen-Ausgabe-Statistik beinhaltet Zähler. Der Zähler für den Master-Algorithmus ist die Gesamtzahl der Ausführungen des Master-Algorithmus, also die Gesamtschrittzahl bzw. Gesamtzahl an _erfolgreich_ absolvierten Kommunikationsintervallen. Neuversuche und Wiederholungen _innerhalb_ des Master-Algorithmus werden hier nicht beachtet.
 

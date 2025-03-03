@@ -39,8 +39,8 @@ Damit die Skripte funktionieren, muss Qt am folgenden Ort installiert sein:
 C:\Qt\5.15.2\msvc2019 <1>
 C:\Qt\5.15.2\msvc2019_64 <2>
 -----
-<1> für Aufbauten x86 
-<2> für Aufbauten x64 
+<1> für Erstellung mit x86 
+<2> für Erstellung mit x64 
 
 und **jom.exe** findet man unter:
 
