@@ -212,16 +212,16 @@ void MSIMViewSimulation::updateCommandLine() {
 
 	QString appName = MSIMSettings::instance().m_installDir;
 #ifdef Q_OS_WIN
-	appName += "/MasterSimulator.exe";
+	appName += "/mastersim.exe";
 #else // Q_OS_WIN
-	appName += "/MasterSimulator";
+	appName += "/mastersim";
 
 
 #ifdef Q_OS_MAC
 	// on MAC we check if the executable is inside the application bundle (deployment mode), or if not, we
-	// expect it alongside the MasterSimulatorUI.app file
+	// expect it alongside the mastersim-ui.app file
 	if (!QFile::exists(appName))
-		appName = MSIMSettings::instance().m_installDir + "/../../../MasterSimulator";
+		appName = MSIMSettings::instance().m_installDir + "/../../../mastersim";
 #endif
 
 #endif // Q_OS_WIN
@@ -229,10 +229,11 @@ void MSIMViewSimulation::updateCommandLine() {
 
 	QString projectFile = MSIMProjectHandler::instance().projectFile();
 
-	m_commandLine = QString("%1 %2 \"%3\"")
-		.arg(appName)
-		.arg(m_commandLineArgs.join(" "))
-		.arg(projectFile);
+	m_commandLine = QString("%1 %2 \"%3\"").arg(
+				appName,
+				m_commandLineArgs.join(" "),
+				projectFile
+			);
 
 	m_ui->lineEditCommandLine->setText( m_commandLine );
 }
