@@ -48,12 +48,6 @@ SOURCES += \
 	src/MSIM_Project.cpp
 
 HEADERS += \
-	src/fmi/fmi2FunctionTypes.h \
-	src/fmi/fmi2Functions.h \
-	src/fmi/fmi2TypesPlatform.h \
-	src/fmi/fmiFunctions.h \
-	src/fmi/fmiModelTypes.h \
-	src/fmi/fmiPlatformTypes.h \
 	src/MSIM_AbstractAlgorithm.h \
 	src/MSIM_AbstractSlave.h \
 	src/MSIM_AlgorithmGaussJacobi.h \
@@ -71,4 +65,10 @@ HEADERS += \
 	src/MSIM_ModelDescription.h \
 	src/MSIM_OutputWriter.h \
 	src/MSIM_ProgressFeedback.h \
-	src/MSIM_Project.h
+	src/MSIM_Project.h \
+	src/fmi/fmi2FunctionTypes.h \
+	src/fmi/fmi2Functions.h \
+	src/fmi/fmi2TypesPlatform.h \
+	src/fmi/fmiFunctions.h \
+	src/fmi/fmiModelTypes.h \
+	src/fmi/fmiPlatformTypes.h

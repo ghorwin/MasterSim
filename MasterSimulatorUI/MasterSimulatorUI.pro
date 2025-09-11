@@ -32,19 +32,17 @@ INCLUDEPATH = \
 
 
 SOURCES += \
-	src/MSIMColorButton.cpp \
-	src/MSIMExportConnectionGraphDialog.cpp \
-	src/MSIMSignalingTextEdit.cpp \
-	src/main.cpp \
 	src/MSIMAboutDialog.cpp \
 	src/MSIMBlockEditorDialog.cpp \
 	src/MSIMBrowseFilenameWidget.cpp \
 	src/MSIMButtonBar.cpp \
+	src/MSIMColorButton.cpp \
 	src/MSIMConnectionItemDelegate.cpp \
 	src/MSIMConnectionPropertiesEditDialog.cpp \
 	src/MSIMConversion.cpp \
 	src/MSIMDebugApplication.cpp \
 	src/MSIMDirectories.cpp \
+	src/MSIMExportConnectionGraphDialog.cpp \
 	src/MSIMGUIMessageHandler.cpp \
 	src/MSIMLanguageHandler.cpp \
 	src/MSIMLogFileDialog.cpp \
@@ -57,6 +55,7 @@ SOURCES += \
 	src/MSIMProjectHandler.cpp \
 	src/MSIMSceneManager.cpp \
 	src/MSIMSettings.cpp \
+	src/MSIMSignalingTextEdit.cpp \
 	src/MSIMSimulationMonitorWidget.cpp \
 	src/MSIMSlaveBlock.cpp \
 	src/MSIMSlaveItemDelegate.cpp \
@@ -73,7 +72,8 @@ SOURCES += \
 	src/MSIMViewConnections.cpp \
 	src/MSIMViewSimulation.cpp \
 	src/MSIMViewSlaves.cpp \
-	src/MSIMWelcomeScreen.cpp
+	src/MSIMWelcomeScreen.cpp \
+	src/main.cpp
 
 HEADERS  += \
 	src/MSIMAboutDialog.h \
