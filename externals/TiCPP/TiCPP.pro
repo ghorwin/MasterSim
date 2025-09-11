@@ -23,11 +23,11 @@ INCLUDEPATH += \
 DEPENDPATH = $${INCLUDEPATH}
 
 SOURCES += \
-	src/tinyxmlparser.cpp \
-	src/tinyxmlerror.cpp \
+	src/tinystr.cpp \
 	src/tinyxml.cpp \
-	src/tinystr.cpp
+	src/tinyxmlerror.cpp \
+	src/tinyxmlparser.cpp
 HEADERS += \
-	src/tinyxml.h \
+	src/ticppIBKconfig.h \
 	src/tinystr.h \
-	src/ticppIBKconfig.h
+	src/tinyxml.h
