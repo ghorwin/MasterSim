@@ -84,6 +84,12 @@ public:
 
 private:
 
+	/*! Central parsing function. Upon return (without exception) consistency is guaranteed:
+		m_nRows = m_values.size()
+		m_values[...].size() = m_nColumns
+		m_captions.size() = m_nColumns
+		m_units.size() = m_nColumns (if extractUnits = true)
+	*/
 	void parse(std::istream & in, bool headerOnly = false, bool extractUnits = false);
 };
 

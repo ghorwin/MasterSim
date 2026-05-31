@@ -52,6 +52,8 @@
 #include "IBK_InputOutput.h"
 #include "IBK_StringUtils.h"
 #include "IBK_FormatString.h"
+#include "IBK_Path.h"
+#include "IBK_FileUtils.h"
 
 using namespace std;
 
@@ -553,6 +555,23 @@ void recreate_vector(void *& dataPtr, std::vector<long int> & vec) {
 	size_t dataSize = n*sizeof(long int);
 	std::memcpy(vec.data(), dataPtr, dataSize);
 	dataPtr = (char*)dataPtr + dataSize;
+}
+
+
+std::string read_file_to_string(const std::string & fpath) {
+	std::ifstream in;
+	open_ifstream(in, IBK::Path(fpath));
+	std::stringstream strm;
+	strm << in.rdbuf();
+	return strm.str();
+}
+
+
+void write_string_to_file(const std::string & fpath, const std::string & text) {
+	std::ofstream out;
+	open_ofstream(out, IBK::Path(fpath));
+	std::stringstream strm(text);
+	out << strm.rdbuf();
 }
 
 

@@ -49,11 +49,11 @@
 #endif
 
 #include <string>
+#include <vector>
 #include <map>
-#include <iosfwd>
+#include <istream>
+#include <ostream>
 #include <ctime>
-
-#include "IBK_StringUtils.h"
 
 namespace IBK {
 
@@ -205,17 +205,18 @@ public:
 	bool canCreateRelativePath(const Path& toPath, std::string& errstr) const;
 
 	/*! Tries to transform the currently stored path into a relative path
-		to the path passed as argument.
-		Returns an empty/invalid path if the path itself (this object) is empty.
+		to the path passed as argument, i.e. the path from 'toPath' to the current path.
+
+		If either path is empty, returns the original path.
 		\code
 			Path("/home/myfiles/data/datfile.txt").relativePath("/home/myfiles/otherfiles") == "../data/datfile.txt";
 			Path("bla/blub.txt").relativePath("bla"); == "blub.txt";
-			Path("").relativePath("/blubb") --> Exception
 			Path(".").relativePath("file.txt") --> ".."
 			Path("file.txt").relativePath(".") --> "file.txt"
 			Path("bla/blubber").relativePath("bla/blub"); == "../blubber";
+			Path("C:/blubber").relativePath("D:/blub"); == "C:/blubber";
 		\endcode
-		Throws an IBK::Exception if path or toPath is invalid or relative path cannot be created.
+		Does not throw exceptions.
 	*/
 	Path relativePath(const Path& toPath) const;
 
@@ -321,6 +322,7 @@ public:
 		\sa extension()
 	*/
 	IBK::Path withoutExtension() const;
+
 
 
 	// ** Modification Routines **
@@ -508,6 +510,10 @@ public:
 
 	// ** static functions **
 
+	/*! Returns a list of subdirectories of a given path. */
+	static void subdirectories(const IBK::Path & parentDir, std::vector<std::string> & subdirNames);
+	/*! Returns a list of files within a given path. */
+	static void files(const Path & parentDir, std::vector<std::string> & fileNames);
 
 	/*! Set the file date to given date and time
 		\param filename Filename with path (must exist).
@@ -633,6 +639,13 @@ public:
 	*/
 	static Path fromURI(std::string uripath);
 
+	/*! Takes the string and replaces all characters not in [0..9][a..z][A...Z][-_[]() ] with _. Also
+		trims the string from leading/trailing whitespaces.
+		Spaces in the middle of the string are allowed.
+		\note When passing a path with extension, the . will be replaced by a _
+	*/
+	static std::string replaceInvalidPathChars(const std::string & pathWithoutExtension);
+
 	// Operators
 
 	/*! Compares the two paths by just comparing there string represantation.*/
@@ -703,21 +716,21 @@ protected:
 	bool isDrive() const;
 #endif // defined(_WIN32)
 
-	/*! Helper function for user in removeRelativeParts().*/
-	static void removeRelativeParts(std::vector<std::string>& branches);
-
-	/*! Removes any trailing slashes or backslashes from file path. */
-	void remove_trailing_slash(std::string& path) const;
-
-	/*! Removes any leading slashes or backslashes from file path and returns the result. */
-	std::string remove_trailing_slash_copy(const std::string& path) const;
-
 	/*!	Set the internal path, trims it and replaces
 		backslashes by slashes, relative path parts, a leading local path
 		and trailing slashes are removed. Windows drive letters are converted
 		to upper case letters.
 	*/
 	void set(const std::string& path);
+
+	/*! Helper function for user in removeRelativeParts().*/
+	static void removeRelativeParts(std::vector<std::string>& branches);
+
+	/*! Removes any trailing slashes or backslashes from file path. */
+	static void removeTrailingSlash(std::string& path);
+
+	/*! Removes any leading slashes or backslashes from file path and returns the result. */
+	static std::string removeTrailingSlashCopy(const std::string& path);
 
 	/*! Internal string representation of path.
 		UTF8 encoded, other rules see description of IBK::Path.

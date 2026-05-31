@@ -48,12 +48,11 @@
 #include <omp.h>
 #endif // _OPENMP
 
-#include "IBK_StringUtils.h"
-#include "IBK_UnitList.h"
-#include "IBK_Unit.h"
 #include "IBK_Constants.h"
-
-using namespace std;
+#include "IBK_StringUtils.h"
+#include "IBK_Unit.h"
+#include "IBK_UnitList.h"
+#include "IBK_messages.h"
 
 namespace IBK {
 
@@ -105,7 +104,7 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 		// parse argument
 		std::stringstream strm(option(GO_RESTART_FROM));
 		// extract value and unit
-		string ustr;
+		std::string ustr;
 		double val;
 		if (strm >> val >> ustr) {
 			// convert into seconds
@@ -314,8 +313,8 @@ bool SolverArgsParser::handleErrors(std::ostream & errstrm) {
 	}
 	catch (std::exception & ex) {
 		IBK::set_console_text_color(IBK::CF_BRIGHT_RED);
-		errstrm << ex.what() << endl;
-		errstrm << "\nUse '" << m_appname << " --help' for help." << endl;
+		errstrm << ex.what() << std::endl;
+		errstrm << "\nUse '" << m_appname << " --help' for help." << std::endl;
 		IBK::set_console_text_color(IBK::CF_GREY);
 		return true;
 	}

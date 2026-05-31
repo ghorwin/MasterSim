@@ -23,8 +23,8 @@ public:
 	void set(const std::vector<double> baseValues, const std::vector<std::pair<std::vector<double>,std::vector<double>>>& values);
 
 	/*! It returns the value for the given first and second base values (x1 and x2).
-	 *  \param x1 First base (see baseValues in set()).
-	 *  \param x2 Second base (see first part of the pair of values in set()).
+		\param x1 First base (see baseValues in set()).
+		\param x2 Second base (see first part of the pair of values in set()).
 	*/
 	double value(double x1, double x2);
 
@@ -34,7 +34,7 @@ private:
 	std::vector<IBK::LinearSpline>	m_values;		///< Vector of spline with second base (x2) and values (y)
 
 	/*! Find out the place of the given x1 value in the first base vector.
-	 *  The result show left and right bound of the indices in the vector. The indices can be equel in case the value lays exactly at a vector value.
+		The result show left and right bound of the indices in the vector. The indices can be equel in case the value lays exactly at a vector value.
 		Internal function which is used from value().
 	*/
 	std::pair<size_t,size_t> indexArea(double x1);

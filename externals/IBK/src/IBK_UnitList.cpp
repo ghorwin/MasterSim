@@ -125,6 +125,7 @@ bool UnitList::read_default() {
 // Reads the unitlist from an input filestream
 bool UnitList::read(std::istream& stream, bool overwrite) {
 	FUNCID(UnitList::read);
+	if (!overwrite && !empty())  return true; // do not read the list again
 	if (!stream)  return false;
 
 	unsigned int base_index=0, current_index=0;
@@ -563,9 +564,11 @@ IBK::Unit UnitList::integralQuantity(const IBK::Unit & srcUnit, bool spaceIntegr
 			if (base_name.size() > 4 && base_name.rfind("/m3s") == base_name.size()-4) {
 				base_name = base_name.substr(0, base_name.size()-4);
 			}
+			// search for strings ending in "/m2s"
 			else if (base_name.size() > 4 && base_name.rfind("/m2s") == base_name.size()-4) {
 				base_name = base_name.substr(0, base_name.size()-4);
 			}
+			// search for strings ending in "/ms"
 			else if (base_name.size() > 3 && base_name.rfind("/ms") == base_name.size()-3) {
 				base_name = base_name.substr(0, base_name.size()-3);
 			}
@@ -588,6 +591,10 @@ IBK::Unit UnitList::integralQuantity(const IBK::Unit & srcUnit, bool spaceIntegr
 			}
 			else if (base_name.size() > 3 && base_name.rfind("/m2") == base_name.size()-3) {
 				base_name = base_name.substr(0, base_name.size()-3);
+			}
+			// outputs in m can be directly summerized (expansion)
+			else if (base_name == "m") {
+				// do nothing
 			}
 			else {
 				converted = false;

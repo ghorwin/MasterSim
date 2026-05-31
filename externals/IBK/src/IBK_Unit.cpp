@@ -69,6 +69,7 @@ Unit::Unit(unsigned int unitid) {
 #endif // IBK_ENABLE_UNIT_NAME
 }
 
+
 void Unit::set(unsigned int unitid) {
 	if (unitid>=UnitList::instance().size())
 		throw IBK::Exception( FormatString("Unit index %1 out of range 0..%2.")

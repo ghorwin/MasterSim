@@ -6,7 +6,7 @@
 
 namespace IBK {
 
-namespace CONST {
+namespace CONST_VARS {
 	static const double DEG2RAD = PI / 180.0;
 	static const double inverseFlattening = 1.0 / 298.257222101;
 	static const double radiusEarth = 6378137;
@@ -35,46 +35,46 @@ static double calcRadius(const double & radius,const double & phi, const double 
 
 void transformWSG84ToLambertProjection(double longitude, double latitude, double& lambertEast, double& lambertNorth)  {
 	//double R2 = m_radiusEarth * (1 - m_inverseFlattening);	//second earth radius
-	double ex = std::sqrt(2 * CONST::inverseFlattening - std::pow(CONST::inverseFlattening, 2));	//eccentricity
+	double ex = std::sqrt(2 * CONST_VARS::inverseFlattening - std::pow(CONST_VARS::inverseFlattening, 2));	//eccentricity
 
-	double n = (std::log(calcM(CONST::phi1, ex)) - std::log(calcM(CONST::phi2, ex)))
-				/ (std::log(calcT(CONST::phi1, ex)) - std::log(calcT(CONST::phi2, ex)));
-	double F = calcM(CONST::phi1, ex) / (n * std::pow(calcT(CONST::phi1, ex), n));
+	double n = (std::log(calcM(CONST_VARS::phi1, ex)) - std::log(calcM(CONST_VARS::phi2, ex)))
+				/ (std::log(calcT(CONST_VARS::phi1, ex)) - std::log(calcT(CONST_VARS::phi2, ex)));
+	double F = calcM(CONST_VARS::phi1, ex) / (n * std::pow(calcT(CONST_VARS::phi1, ex), n));
 
-	double r = calcRadius(CONST::radiusEarth, latitude * CONST::DEG2RAD, ex, F, n);
-	double rF = calcRadius(CONST::radiusEarth, CONST::falseLatitude, ex, F, n);
-	double theta = n * (longitude * CONST::DEG2RAD - CONST::falseLongitude);
+	double r = calcRadius(CONST_VARS::radiusEarth, latitude * CONST_VARS::DEG2RAD, ex, F, n);
+	double rF = calcRadius(CONST_VARS::radiusEarth, CONST_VARS::falseLatitude, ex, F, n);
+	double theta = n * (longitude * CONST_VARS::DEG2RAD - CONST_VARS::falseLongitude);
 
-	double easting = CONST::falseEast + r * sin(theta);
-	double northing = CONST::falseNorth + rF - r * cos(theta);
+	double easting = CONST_VARS::falseEast + r * sin(theta);
+	double northing = CONST_VARS::falseNorth + rF - r * cos(theta);
 
 	lambertEast = easting;
 	lambertNorth = northing;
 }
 
 void transformLambertProjectionToWSG84(double lambertEast, double lambertNorth, double& longitude, double& latitude) {
-	double ex = std::sqrt(2 * CONST::inverseFlattening - std::pow(CONST::inverseFlattening, 2));	//eccentricity
+	double ex = std::sqrt(2 * CONST_VARS::inverseFlattening - std::pow(CONST_VARS::inverseFlattening, 2));	//eccentricity
 
 	double latitudeDeg = 0;
 	double longitudeDeg = 0;
 
 
-	double n = (std::log(calcM(CONST::phi1, ex)) - std::log(calcM(CONST::phi2, ex)))
-			/ (std::log(calcT(CONST::phi1, ex)) - std::log(calcT(CONST::phi2, ex)));
-	double F = calcM(CONST::phi1, ex) / (n * std::pow(calcT(CONST::phi1, ex), n));
+	double n = (std::log(calcM(CONST_VARS::phi1, ex)) - std::log(calcM(CONST_VARS::phi2, ex)))
+			/ (std::log(calcT(CONST_VARS::phi1, ex)) - std::log(calcT(CONST_VARS::phi2, ex)));
+	double F = calcM(CONST_VARS::phi1, ex) / (n * std::pow(calcT(CONST_VARS::phi1, ex), n));
 
-	double rF = calcRadius(CONST::radiusEarth, CONST::falseLatitude, ex, F, n);
+	double rF = calcRadius(CONST_VARS::radiusEarth, CONST_VARS::falseLatitude, ex, F, n);
 
-	double diffEast = lambertEast - CONST::falseEast;
-	double diffNorth = rF - (lambertNorth - CONST::falseNorth);
+	double diffEast = lambertEast - CONST_VARS::falseEast;
+	double diffNorth = rF - (lambertNorth - CONST_VARS::falseNorth);
 	double rS =sqrt(std::pow(diffEast,2) + std::pow(diffNorth,2));
 
 	if( std::signbit(n))
 		rS *= -1;
 
-	double tS = std::pow(rS / (CONST::radiusEarth * F),1/n);
+	double tS = std::pow(rS / (CONST_VARS::radiusEarth * F),1/n);
 	double thetaS = atan2(diffEast, diffNorth);
-	longitudeDeg = thetaS / n + CONST::falseLongitude;
+	longitudeDeg = thetaS / n + CONST_VARS::falseLongitude;
 
 	double oldLati = 800;
 	unsigned int i=0;
@@ -96,8 +96,8 @@ void transformLambertProjectionToWSG84(double lambertEast, double lambertNorth, 
 	} while (std::fabs(oldLati - latitudeDeg) > 0.00001);
 
 
-	latitude = latitudeDeg / CONST::DEG2RAD;
-	longitude = longitudeDeg / CONST::DEG2RAD;
+	latitude = latitudeDeg / CONST_VARS::DEG2RAD;
+	longitude = longitudeDeg / CONST_VARS::DEG2RAD;
 }
 
 } // end namespace

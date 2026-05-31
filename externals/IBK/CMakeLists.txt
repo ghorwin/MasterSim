@@ -16,12 +16,12 @@ if( UNIX )
 endif( UNIX )
 
 configure_file(
-	${PROJECT_SOURCE_DIR}/../../src/IBK_configuration.h.in
-	${PROJECT_SOURCE_DIR}/../../src/IBK_configuration.h
+	${PROJECT_SOURCE_DIR}/src/IBK_configuration.h.in
+	${PROJECT_SOURCE_DIR}/src/IBK_configuration.h
 )
 
 # collect a list of all source files of the IBK library
-file( GLOB IBK_LIB_SRCS ${PROJECT_SOURCE_DIR}/../../src/*.cpp )
+file( GLOB IBK_LIB_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
 SET( IBK_LIB_SRCS ${IBK_LIB_SRCS} )
 
 # build the library
@@ -29,3 +29,4 @@ add_library( IBK STATIC
 	${IBK_LIB_SRCS}
 )
 
+target_precompile_headers (IBK PUBLIC ${PROJECT_SOURCE_DIR}/src/IBK_headers.h)

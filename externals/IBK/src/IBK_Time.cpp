@@ -159,6 +159,19 @@ void Time::set(int year, unsigned int month, unsigned int day, double sec) {
 // ---------------------------------------------------------------------------
 
 
+void Time::adjustYear() {
+	while (m_sec < 0) {
+		m_sec += SECONDS_PER_YEAR;
+		--m_year;
+	}
+	while (m_sec >= SECONDS_PER_YEAR) {
+		m_sec -= SECONDS_PER_YEAR;
+		++m_year;
+	}
+}
+// ---------------------------------------------------------------------------
+
+
 bool Time::isValid() const {
 	return m_year != INVALID_YEAR;
 }
@@ -388,6 +401,24 @@ std::string Time::toDayMonthFormat() const {
 	strm.fill('0');
 	strm << std::setw(2) << std::right << d+1 << "."
 		 << std::setw(2) << std::right << m+1 << ".";
+	return strm.str();
+}
+// ---------------------------------------------------------------------------
+
+
+std::string Time::toPostProcDateFormat() const {
+	int y;
+	unsigned int m, d;
+	double s;
+	decomposeDate(y, m, d, s);
+	IBK::Time t(0, s);
+	std::stringstream strm;
+	strm.fill('0');
+	strm << std::setw(4) << std::right << y << "-"
+		 << std::setw(2) << std::right << m+1 << "-"
+		 << std::setw(2) << std::right << d+1 << " "
+		 << std::setw(2) << std::right << t.hour() << ":"
+		 << std::setw(2) << std::right << t.minute();
 	return strm.str();
 }
 // ---------------------------------------------------------------------------
@@ -724,6 +755,7 @@ Time::TimeFormatInfo Time::formatInfo(const std::string& format) {
 			if(i == 2)
 				res.m_secondStart = start;
 		}
+
 		if (*str != '\0')
 			++str;
 	}

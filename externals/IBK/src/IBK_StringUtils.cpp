@@ -36,12 +36,16 @@
 
 */
 
+#include "IBK_configuration.h"
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <ctime>
 #include <algorithm>
 #include <string>
+#include <fstream>
+#include <locale>
 #include <cctype>
 #include <cmath>
 
@@ -58,12 +62,14 @@
 #include "IBK_StringUtils.h"
 #include "IBK_Unit.h"
 #include "IBK_UnitList.h"
+#include "IBK_messages.h"
 #include "IBK_Exception.h"
-#include "utf8/core.h"
+#include "IBK_assert.h"
+#include "utf8/utf8.h"
+
 
 #ifdef _WIN32
 
-  #include "utf8/utf8.h"
   #ifndef _WIN64
 
 	#define IBK_USE_STOD
@@ -351,6 +357,17 @@ bool extract_keyword(const std::string& line, std::string& keyword, std::string&
 }
 // ---------------------------------------------------------------------------
 
+ExtractResultType extractFromParenthesis(const std::string & src, std::string & str) {
+	std::string::size_type pos = src.find("(");
+	std::string::size_type pos2 = (pos != std::string::npos) ? src.find(")", pos+1) : src.find(")");
+	if (pos != std::string::npos && pos2 != std::string::npos && pos2 > pos) {
+		str = src.substr(pos + 1, pos2 - pos - 1);
+		return ERT_Success;
+	}
+	return ERT_NoParenthesis;
+}
+// ---------------------------------------------------------------------------
+
 unsigned int extractFromParenthesis(const std::string & src, unsigned int defaultValue) {
 	unsigned int val = 0; // just to make compiler happy
 	std::string str;
@@ -360,6 +377,7 @@ unsigned int extractFromParenthesis(const std::string & src, unsigned int defaul
 		return defaultValue;
 }
 // ---------------------------------------------------------------------------
+
 
 std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 													std::pair<unsigned int, double> defaultValue) {
@@ -404,28 +422,6 @@ std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 }
 // ---------------------------------------------------------------------------
 
-
-Unit extract_unit(const std::string & headerLabel) {
-	std::string::size_type openBracketPos = headerLabel.rfind("[");
-	std::string::size_type closeBracketPos = headerLabel.rfind("]");
-	if (openBracketPos != std::string::npos &&
-		closeBracketPos != std::string::npos &&
-		openBracketPos < closeBracketPos)
-	{
-		std::string ustr = headerLabel.substr(openBracketPos+1, closeBracketPos-openBracketPos-1);
-		try {
-			IBK::Unit u = IBK::Unit(ustr); // may throw in case of invalid unit
-			return u;
-		}
-		catch (IBK::Exception &) {
-			return IBK::Unit();
-		}
-	}
-	return IBK::Unit();
-}
-// ---------------------------------------------------------------------------
-
-
 std::vector<std::string> explode(const std::string & str, char delim, int maxTokens) {
 	std::vector<std::string> tokens;
 	std::string tmp;
@@ -449,23 +445,25 @@ std::vector<std::string> explode(const std::string & str, char delim, int maxTok
 size_t explode(const std::string& str, std::vector<std::string>& tokens, const std::string& delims, int explodeFlags) {
 	tokens.clear();
 	std::string tmp;
-	std::string trimChars = " \t\r\n";
-	if (explodeFlags & EF_UseQuotes)
-		trimChars += "\"";
 
-	// if we are using quotes, we only allow splitting when we are not within quotes
-	bool inQuotation = false;
+	bool inQuotes = false;
+	// process string char by char
 	for (std::string::const_iterator it=str.begin(); it!=str.end(); ++it) {
-		// toggle inQuotation flag if we are considering quotes
-		if (explodeFlags & EF_UseQuotes && *it=='\"')
-			inQuotation = !inQuotation;
+		// if we consider Quotes, handle this first before checking for delimiters
+		if (explodeFlags & EF_UseQuotes) {
+			if (*it == '"') {
+				// check for escaped "
+				if (it == str.begin() || *(it-1) != '\\')
+					inQuotes = !inQuotes;
+			}
+		}
+		// only check for delimiters if we are not in quotes
 		bool delim_found = false;
-		// only search for delimiters if we are not inside a quotation
-		if (!inQuotation) {
+		if (!inQuotes) {
 			for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
 				if (*it==*tit) {
 					if (explodeFlags & EF_TrimTokens)
-						IBK::trim(tmp, trimChars); // may cause tmp to become empty
+						IBK::trim(tmp, " \t\r\n");
 					if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 						tokens.push_back(tmp);
 					tmp.clear();
@@ -478,8 +476,12 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 			tmp += *it;
 	}
 	if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens)) {
-		if (explodeFlags & EF_TrimTokens)
+		if (explodeFlags & EF_TrimTokens) {
+			std::string trimChars = " \t\r\n";
+			if (explodeFlags & EF_UseQuotes)
+				trimChars += "\"";
 			IBK::trim(tmp, trimChars); // may cause tmp to become empty
+		}
 		if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 			tokens.push_back(tmp);
 	}
@@ -938,7 +940,7 @@ bool isInCharType(char ch, unsigned int types) {
 }
 
 /*! Functor for creating a random character in the given chart type range.*/
-struct random_char {
+struct random_char  {
 public:
 	/*! Constructor set the char type.*/
 	random_char(unsigned int charTypes) :
@@ -1034,6 +1036,30 @@ std::string delete_chars(const std::string& src, const std::string& pattern) {
 		res = res.replace(pos, 1, "");
 	return res;
 }
+
+
+
+Unit extract_unit(const std::string & headerLabel) {
+	std::string::size_type openBracketPos = headerLabel.rfind("[");
+	std::string::size_type closeBracketPos = headerLabel.rfind("]");
+	if (openBracketPos != std::string::npos &&
+		closeBracketPos != std::string::npos &&
+		openBracketPos < closeBracketPos)
+	{
+		std::string ustr = headerLabel.substr(openBracketPos+1, closeBracketPos-openBracketPos-1);
+		try {
+			IBK::Unit u = IBK::Unit(ustr); // may throw in case of invalid unit
+			return u;
+		}
+		catch (IBK::Exception &) {
+			return IBK::Unit();
+		}
+	}
+	return IBK::Unit();
+}
+// ---------------------------------------------------------------------------
+
+
 
 
 std::string tolower_string(std::string input) {
@@ -1301,6 +1327,7 @@ std::string WstringToANSI(const std::wstring& wide, bool OEMPage) {
 }
 
 #endif // _WIN32
+
 
 }  // namespace IBK
 

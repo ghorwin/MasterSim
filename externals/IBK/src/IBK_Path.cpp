@@ -47,23 +47,26 @@
 	#include <utime.h>
 	#include <errno.h>
 	#include <dirent.h>
+	#include <sys/stat.h>
+	#include <cstring>
 #endif
 
 #include <sys/stat.h>
 
-#include <locale>
 #include <ctime>
 #include <cctype>
 #include <algorithm>
 #include <cerrno>
 #include <cstdio>
-#include <fstream>
 #include <string>
+#include <fstream>
 
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201703L) || __cplusplus >= 201703L)
+#include <filesystem>
+#endif
 
 #include "IBK_messages.h"
 #include "IBK_assert.h"
-//#include "utf8/utf8.h"
 
 
 namespace IBK {
@@ -284,8 +287,10 @@ Path Path::relativePath(const Path& toPath) const {
 	FUNCID(Path::relativePath);
 
 	std::string errstr;
-	if( !canCreateRelativePath(toPath, errstr))
-		throw IBK::Exception(errstr, FUNC_ID);
+	if( !canCreateRelativePath(toPath, errstr)) {
+		IBK::IBK_Message(IBK::FormatString("Cannot create relative paths: %1").arg(errstr), IBK::MSG_DEBUG, FUNC_ID, IBK::VL_STANDARD);
+		return *this;
+	}
 
 	Path absolute = absolutePath();
 	Path absoluteToPath = toPath.absolutePath();
@@ -309,11 +314,13 @@ Path Path::relativePath(const Path& toPath) const {
 	}
 
 	if (orgBranches.empty()) {
-		throw IBK::Exception( IBK::FormatString("Invalid original path: '%1'").arg(m_path), FUNC_ID );
+		IBK::IBK_Message(IBK::FormatString("Cannot create relative paths, invalid original path: '%1'").arg(m_path), IBK::MSG_DEBUG, FUNC_ID, IBK::VL_STANDARD);
+		return *this;
 	}
 
 	if (toBranches.empty()) {
-		throw IBK::Exception( IBK::FormatString("Invalid to path: '%1'").arg(absoluteToPath.m_path), FUNC_ID );
+		IBK::IBK_Message(IBK::FormatString("Cannot create relative paths, invalid to path: '%1'").arg(absoluteToPath.m_path), IBK::MSG_DEBUG, FUNC_ID, IBK::VL_STANDARD);
+		return *this;
 	}
 
 	unsigned int equalCount = 0;
@@ -350,7 +357,8 @@ Path Path::relativePath(const Path& toPath) const {
 		return finalPath;
 	}
 	catch(IBK::Exception& e) {
-		throw IBK::Exception(e, "Error while creating final path", FUNC_ID);
+		IBK::IBK_Message(IBK::FormatString("Cannot create final path: '%1'").arg(e.what()), IBK::MSG_DEBUG, FUNC_ID, IBK::VL_STANDARD);
+		return *this;
 	}
 }
 
@@ -1025,6 +1033,141 @@ void Path::makeFatCompatible() {
 }
 
 
+#if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201703L) || __cplusplus >= 201703L)
+
+void Path::subdirectories(const Path & parentDir, std::vector<std::string> & subdirNames) {
+	std::string dirPath = parentDir.str();
+	subdirNames.clear();
+	// Check if the directory exists
+	if (!std::filesystem::exists(dirPath) || !std::filesystem::is_directory(dirPath))
+		return;
+
+	// Iterate through the directory and list subdirectories
+	for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
+		if (std::filesystem::is_directory(entry))
+			subdirNames.push_back(entry.path().filename().string());
+	}
+}
+
+void Path::files(const Path & parentDir, std::vector<std::string> & fileNames) {
+	std::string dirPath = parentDir.str();
+	fileNames.clear();
+	// Check if the directory exists
+	if (!std::filesystem::exists(dirPath) || !std::filesystem::is_directory(dirPath))
+		return;
+
+	// Iterate through the directory and list subdirectories
+	for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
+		if (!std::filesystem::is_directory(entry))
+			fileNames.push_back(entry.path().filename().string());
+	}
+}
+
+#else
+
+#if defined(_WIN32)
+
+// MinGW specific code, using WinAPI
+
+void Path::subdirectories(const Path & parentDir, std::vector<std::string> & subdirNames) {
+	std::string search_path = parentDir.str() + "\\*";
+
+	// Check if the directory exists
+	WIN32_FIND_DATAA find_data;
+	HANDLE hFind = FindFirstFileA(search_path.c_str(), &find_data);
+	if (hFind == INVALID_HANDLE_VALUE) {
+		return;
+	}
+
+	// Iterate through the directory and list subdirectories
+	do {
+		const std::string name = find_data.cFileName;
+		if (name == "." || name == "..") continue;
+		if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+			subdirNames.push_back(name);
+	} while (FindNextFileA(hFind, &find_data));
+
+	FindClose(hFind);
+}
+
+
+void Path::files(const Path & parentDir, std::vector<std::string> & fileNames) {
+	std::string search_path = parentDir.str() + "\\*";
+
+	// Check if the directory exists
+	WIN32_FIND_DATAA find_data;
+	HANDLE hFind = FindFirstFileA(search_path.c_str(), &find_data);
+	if (hFind == INVALID_HANDLE_VALUE) {
+		return;
+	}
+
+	// Iterate through the directory and list files in this directory
+	do {
+		const std::string name = find_data.cFileName;
+		if (name == "." || name == "..") continue;
+		std::string full_path = parentDir.str() + "\\" + name;
+		if (!(find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+			fileNames.push_back(name);
+	} while (FindNextFileA(hFind, &find_data));
+
+	FindClose(hFind);
+}
+
+#else
+
+// posix-code for Linux without C++17 support
+
+void Path::subdirectories(const Path & parentDir, std::vector<std::string> & subdirNames)  {
+	DIR *d;
+	struct dirent *dir;
+	d = opendir(parentDir.c_str());
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			// Skip the special directories "." and ".."
+			if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+				continue;
+			}
+
+			std::string fullPath = (parentDir / + dir->d_name).str();
+			struct stat statbuf;
+			if (stat(fullPath.c_str(), &statbuf) != -1) {
+				if (S_ISDIR(statbuf.st_mode)) {
+					subdirNames.push_back(dir->d_name);
+				}
+			}
+		}
+		closedir(d);
+	}
+}
+
+void Path::files(const Path & parentDir, std::vector<std::string> & fileNames) {
+	DIR *d;
+	struct dirent *dir;
+	d = opendir(parentDir.c_str());
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			// Skip the special directories "." and ".."
+			if (strcmp(dir->d_name, ".") == 0 || strcmp(dir->d_name, "..") == 0) {
+				continue;
+			}
+
+			std::string fullPath = (parentDir / + dir->d_name).str();
+			struct stat statbuf;
+			if (stat(fullPath.c_str(), &statbuf) != -1) {
+				if (!S_ISDIR(statbuf.st_mode)) {
+					fileNames.push_back(dir->d_name);
+				}
+			}
+		}
+		closedir(d);
+	}
+}
+
+#endif
+
+#endif // #if ((defined(_MSVC_LANG) && _MSVC_LANG >= 201703L) || __cplusplus >= 201703L)
+
+
 bool Path::setFileTime(	const IBK::Path& filename,
 						int hour,
 						int minute,
@@ -1615,7 +1758,6 @@ bool Path::move(const IBK::Path & source, const IBK::Path & target){
 	#error Write this for your compiler
 	return false;
 #endif
-
 }
 
 
@@ -1637,6 +1779,40 @@ Path Path::fromURI(std::string uripath) {
 		}
 	}
 	return IBK::Path(uripath);
+}
+
+
+std::string Path::replaceInvalidPathChars(const std::string & pathWithoutExtension) {
+	static std::string allowedChars;
+	if (allowedChars.empty()) {
+		for (int i='0'; i<='9'; ++i)
+			allowedChars += (char)i;
+		for (int i='a'; i<='z'; ++i)
+			allowedChars += (char)i;
+		for (int i='A'; i<='Z'; ++i)
+			allowedChars += (char)i;
+		// '.' is allowed so callers can safely pass filenames with extensions (the dot is not stripped).
+		allowedChars += "-_.[]() ";
+	}
+	// Transliterate German umlauts before the byte-by-byte filter below — UTF-8 encodes ä/ö/ü/ß as
+	// multi-byte sequences and the loop would otherwise replace each byte with '_', producing
+	// hard-to-read names like "W__rme" instead of "Waerme". The mapping is encoded as raw byte
+	// sequences (\xC3\xXX) so the result is independent of the source-file encoding the compiler
+	// happens to use.
+	std::string res = pathWithoutExtension;
+	res = IBK::replace_string(res, "\xC3\xA4", "ae"); // ä
+	res = IBK::replace_string(res, "\xC3\xB6", "oe"); // ö
+	res = IBK::replace_string(res, "\xC3\xBC", "ue"); // ü
+	res = IBK::replace_string(res, "\xC3\x84", "Ae"); // Ä
+	res = IBK::replace_string(res, "\xC3\x96", "Oe"); // Ö
+	res = IBK::replace_string(res, "\xC3\x9C", "Ue"); // Ü
+	res = IBK::replace_string(res, "\xC3\x9F", "ss"); // ß
+	for (unsigned int r=0; r<res.size(); ++r) {
+		if (std::find(allowedChars.begin(), allowedChars.end(), res[r]) == allowedChars.end())
+			res[r] = '_';
+	}
+	IBK::trim(res);
+	return res;
 }
 
 
@@ -1697,7 +1873,7 @@ void Path::removeRelativeParts(std::vector<std::string>& branches) {
 }
 
 
-void Path::remove_trailing_slash(std::string& path) const {
+void Path::removeTrailingSlash(std::string& path) {
 	if (path.empty() || path.size() == 1)
 		return;
 	std::string::size_type pos1 = path.rfind('/');
@@ -1709,7 +1885,7 @@ void Path::remove_trailing_slash(std::string& path) const {
 }
 
 
-std::string Path::remove_trailing_slash_copy(const std::string& path) const {
+std::string Path::removeTrailingSlashCopy(const std::string& path) {
 	if (path.empty())
 		return path;
 	std::string res = path;
@@ -1732,7 +1908,7 @@ void Path::set(const std::string& path) {
 	if (!m_path.empty())
 		std::replace(m_path.begin(), m_path.end(), '\\', '/');
 
-	remove_trailing_slash(m_path);
+	removeTrailingSlash(m_path);
 	removeRelativeParts();
 
 	// IBK::Path("./blub.txt") == "blub.txt"; //  (leading ./ is not stored)
@@ -1744,8 +1920,8 @@ void Path::set(const std::string& path) {
 	if ( m_path.size() >= 2 && m_path[1] == ':' ){
 		m_path = firstCharToUpperUtf8(m_path);
 	}
-
 }
+
 
 /*******************************
  *
@@ -1773,7 +1949,7 @@ Path::DirExistsResult Path::directoryExists(const std::string& dirname) const {
 
 #elif __GNUC__
 	struct stat buf;
-	std::string cleanPath = remove_trailing_slash_copy(dirname);
+	std::string cleanPath = removeTrailingSlashCopy(dirname);
 	int res = stat(cleanPath.c_str(), &buf);
 	if (res == -1) {
 		switch (errno) {

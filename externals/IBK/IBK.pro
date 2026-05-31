@@ -14,7 +14,7 @@ include( IBK.pri )
 # like version number etc., we also may reset all
 unix|mac {
 	VER_MAJ = 5
-	VER_MIN = 0
+	VER_MIN = 1
 	VER_PAT = 0
 	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
 }
@@ -33,8 +33,10 @@ SOURCES += \
 	src/IBK_FormatString.cpp \
 	src/IBK_InputOutput.cpp \
 	src/IBK_IntPara.cpp \
+	src/IBK_Isopleths.cpp \
 	src/IBK_Line.cpp \
 	src/IBK_LinearSpline.cpp \
+	src/IBK_LinearSplineArray.cpp \
 	src/IBK_Logfile.cpp \
 	src/IBK_MessageHandler.cpp \
 	src/IBK_MessageHandlerRegistry.cpp \
@@ -48,6 +50,7 @@ SOURCES += \
 	src/IBK_StopWatch.cpp \
 	src/IBK_StringUtils.cpp \
 	src/IBK_Time.cpp \
+	src/IBK_UTM.cpp \
 	src/IBK_Unit.cpp \
 	src/IBK_UnitList.cpp \
 	src/IBK_UnitVector.cpp \
@@ -77,8 +80,10 @@ HEADERS += \
 	src/IBK_FormatString.h \
 	src/IBK_InputOutput.h \
 	src/IBK_IntPara.h \
+	src/IBK_Isopleths.h \
 	src/IBK_Line.h \
 	src/IBK_LinearSpline.h \
+	src/IBK_LinearSplineArray.h \
 	src/IBK_Logfile.h \
 	src/IBK_MessageHandler.h \
 	src/IBK_MessageHandlerRegistry.h \
@@ -95,12 +100,14 @@ HEADERS += \
 	src/IBK_StopWatch.h \
 	src/IBK_StringUtils.h \
 	src/IBK_Time.h \
+	src/IBK_UTM.h \
 	src/IBK_Unit.h \
 	src/IBK_UnitData.h \
 	src/IBK_UnitList.h \
 	src/IBK_UnitVector.h \
 	src/IBK_Version.h \
 	src/IBK_WaitOnExit.h \
+	src/IBK_WorldCoordinateOrigin.h \
 	src/IBK_algorithm.h \
 	src/IBK_array.h \
 	src/IBK_assert.h \
@@ -128,7 +135,11 @@ HEADERS += \
 	src/fast_float/fast_table.h \
 	src/fast_float/float_common.h \
 	src/fast_float/parse_number.h \
-	src/fast_float/simple_decimal_conversion.h
+	src/fast_float/simple_decimal_conversion.h \
+	src/utf8/checked.h \
+	src/utf8/core.h \
+	src/utf8/unchecked.h \
+	src/utf8/utf8.h
 
 DISTFILES += \
 	doc/LICENSE

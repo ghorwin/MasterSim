@@ -42,9 +42,6 @@
 #include <iostream>
 #include <sstream>
 
-#include "IBK_Exception.h"
-#include "IBK_FormatString.h"
-
 namespace IBK {
 
 /*! A type that represents a rectangle.
@@ -54,9 +51,10 @@ namespace IBK {
 */
 template <class T>
 class rectangle {
-  public:
+public:
 	/*! Default contructor (initialises the rectangle with default value of type T). */
-	rectangle() : left(T()), top(T()), right(T()), bottom(T()) {}
+	rectangle() = default;
+
 	/*! Constructor (initialises the rectangle with given parameters for the coordinates).
 		\param newLeft		Left coordinate.
 		\param newTop		Top coordinate.
@@ -66,9 +64,6 @@ class rectangle {
 	rectangle(T newLeft, T newTop, T newRight, T newBottom) {
 		set(newLeft, newTop, newRight, newBottom);
 	}
-
-	/*! Virtual destructor, so that destructor of derived classes is called. */
-	virtual ~rectangle(){}
 
 	/*! Initializes a rectangle.
 		\param newLeft		New left coordinate.
@@ -151,8 +146,7 @@ class rectangle {
 	\param rect	Rectangle to be printed.
 */
 template <class T>
-std::ostream& operator << (std::ostream& out, const rectangle<T>& rect)
-{
+std::ostream& operator << (std::ostream& out, const rectangle<T>& rect) {
 	return rect.output(out);
 }
 
