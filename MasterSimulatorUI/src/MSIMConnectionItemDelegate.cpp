@@ -4,8 +4,6 @@
 #include <QColor>
 #include <QTextDocument>
 
-#include "MSIMUIConstants.h"
-
 MSIMConnectionItemDelegate::MSIMConnectionItemDelegate(QObject *parent) :
 	QItemDelegate(parent)
 {
