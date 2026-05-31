@@ -11,21 +11,24 @@ include_directories(
 	${PROJECT_SOURCE_DIR}/../externals/zlib/src
 	${PROJECT_SOURCE_DIR}/../externals/minizip/src
 	${PROJECT_SOURCE_DIR}/../externals/TiCPP/src
-	${Qt5Widgets_INCLUDE_DIRS}
-	${Qt5Network_INCLUDE_DIRS}
-	${Qt5Svg_INCLUDE_DIRS}
-	${Qt5PrintSupport_INCLUDE_DIRS}
+	${Qt6Widgets_INCLUDE_DIRS}
+	${Qt6Network_INCLUDE_DIRS}
+	${Qt6Svg_INCLUDE_DIRS}
+	${Qt6PrintSupport_INCLUDE_DIRS}
 )
 
 # collect a list of all source files
 file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
 
+# collect a list of all header files
+file( GLOB MOC_SRCS ${PROJECT_SOURCE_DIR}/src/*.h )
+
 # collect a list of all form files
-file( GLOB APP_UIS ${PROJECT_SOURCE_DIR}/src/*.ui )
+file( GLOB APP_UI_SRCS ${PROJECT_SOURCE_DIR}/src/*.ui )
 
 # The Qt resource file (*.qrc)
 set( APP_QRCS 
-	${PROJECT_SOURCE_DIR}/resources/MasterSimulator.qrc
+	${PROJECT_SOURCE_DIR}/resources/MasterSimulator.qrc 
 )
 
 # set rc file
@@ -35,17 +38,15 @@ set ( APP_WIN_RC
 
 # automatically generate .moc and moc_xxx.cpp files when needed
 set( CMAKE_AUTOMOC ON )
-
-# run uic compiler, add resources
-qt5_add_resources( APP_RC_SRCS ${APP_QRCS} )
-qt5_wrap_ui( APP_UI_SRCS ${APP_UIS} )
+set( CMAKE_AUTORCC ON )
+set( CMAKE_AUTOUIC ON )
 
 # generate list of all required QT_LIBRARIES
 set ( QT_LIBRARIES 
-	Qt5::Widgets
-	Qt5::Svg
-	Qt5::Network
-	Qt5::PrintSupport
+	Qt6::Widgets
+	Qt6::Svg
+	Qt6::Network
+	Qt6::PrintSupport
 )
 
 if( WIN32 )
