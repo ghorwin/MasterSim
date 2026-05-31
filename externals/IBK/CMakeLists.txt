@@ -17,7 +17,7 @@ endif( UNIX )
 
 configure_file(
 	${PROJECT_SOURCE_DIR}/src/IBK_configuration.h.in
-	${PROJECT_SOURCE_DIR}/src/IBK_configuration.h
+	${CMAKE_CURRENT_BINARY_DIR}/IBK_configuration.h
 )
 
 # collect a list of all source files of the IBK library
@@ -27,6 +27,13 @@ SET( IBK_LIB_SRCS ${IBK_LIB_SRCS} )
 # build the library
 add_library( IBK STATIC
 	${IBK_LIB_SRCS}
+)
+
+# Propagate include dirs to all consumers: source dir for IBK headers,
+# binary dir for the generated IBK_configuration.h
+target_include_directories( IBK PUBLIC
+	${PROJECT_SOURCE_DIR}/src
+	${CMAKE_CURRENT_BINARY_DIR}
 )
 
 target_precompile_headers (IBK PUBLIC ${PROJECT_SOURCE_DIR}/src/IBK_headers.h)
