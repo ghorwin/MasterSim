@@ -1,0 +1,36 @@
+mastersim (0.9.7-1~bionic~ppa1) bionic; urgency=medium
+
+  * Update to version 0.9.7
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 01 Jan 2025 16:55:55 +0100
+
+mastersim (0.9.6-1~bionic~ppa1) bionic; urgency=medium
+
+  * Upgrade to Version 0.9.6
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 16 Aug 2023 17:20:46 +0200
+
+mastersim (0.9.4-1~bionic~ppa1) bionic; urgency=medium
+
+  * Upgrade to Version 0.9.4 (linking dynamic lib fix)
+  * update of man pages
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Sun, 23 Jan 2022 14:56:36 +0100
+
+mastersim (0.9.3-1~bionic~ppa1) bionic; urgency=medium
+
+  * Added examples and updated build dependencies.
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 13 Jan 2022 19:58:34 +0100
+
+mastersim (0.9.2-2~bionic~ppa1) bionic; urgency=medium
+
+  * Fixed target architecture to amd64
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 06 Jan 2022 17:05:19 +0100
+
+mastersim (0.9.2-1~bionic~ppa1) bionic; urgency=medium
+
+  * First release of MasterSim as Ubuntu package
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 06 Jan 2022 08:07:01 +0100
