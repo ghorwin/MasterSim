@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(qmake --version)",
+      "Bash(qmake6 --version)",
+      "Bash(mkdir -p /tmp/mastersim-qmake-build)",
+      "Read(//tmp/**)",
+      "Bash(qmake /home/kiworker/git/_MyOpenSource/MasterSim/MasterSim-session.pro)"
+    ]
+  }
+}

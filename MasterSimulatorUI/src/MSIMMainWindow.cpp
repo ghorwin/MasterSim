@@ -97,7 +97,7 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 	QHBoxLayout * lay = new QHBoxLayout;
 	m_welcomeScreen = new MSIMWelcomeScreen(this);
 	lay->addWidget(m_welcomeScreen);
-	lay->setMargin(0);
+	lay->setContentsMargins(0, 0, 0, 0);
 	lay->setSpacing(0);
 
 	m_ui->centralWidget->setLayout(lay);
@@ -175,16 +175,16 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 
 	QAction * undoAction = m_undoStack->createUndoAction(this, tr("Undo"));
 	undoAction->setIcon(QIcon(":/gfx/actions/24x24/undo.png"));
-	undoAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Z));
+	undoAction->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_Z));
 	QAction * redoAction = m_undoStack->createRedoAction(this, tr("Redo"));
-	redoAction->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_Z));
+	redoAction->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z));
 	redoAction->setIcon(QIcon(":/gfx/actions/24x24/redo.png"));
 
-	m_ui->actionFileNew->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_N));
-	m_ui->actionFileSave->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_S));
-	m_ui->actionFileSaveAs->setShortcut(QKeySequence(Qt::CTRL + Qt::SHIFT + Qt::Key_S));
-	m_ui->actionFileOpen->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_O));
-	m_ui->actionFileClose->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_W));
+	m_ui->actionFileNew->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_N));
+	m_ui->actionFileSave->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_S));
+	m_ui->actionFileSaveAs->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
+	m_ui->actionFileOpen->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_O));
+	m_ui->actionFileClose->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_W));
 
 	// this is a bit messy, but there seems to be no other way, unless we create the whole menu ourselves
 	QList<QAction*> acts = m_ui->menu_Edit->actions();

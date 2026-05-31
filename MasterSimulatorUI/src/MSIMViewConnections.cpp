@@ -123,7 +123,7 @@ void MSIMViewConnections::onModified(unsigned int modificationType, void * /* da
 		QString slaveName = QString::fromStdString(simDef.m_name);
 		QTableWidgetItem * item = new QTableWidgetItem( slaveName );
 		item->setFlags(Qt::ItemIsEnabled);
-		item->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+		item->setData(Qt::ForegroundRole, QColor(simDef.m_color.toQRgb()));
 		m_ui->tableWidgetSlaves->setItem((int)i, 0, item);
 
 		m_ui->comboBoxSlave1->addItem(slaveName);
@@ -378,7 +378,7 @@ void MSIMViewConnections::updateConnectionsTable() {
 			edge.splitReference(edge.m_outputVariableRef, outputSlaveName, varName);
 			// find slave in list of slaves
 			const MASTER_SIM::Project::SimulatorDef & simDef = project().simulatorDefinition(outputSlaveName);
-			outItem->setData(Qt::TextColorRole, QColor(simDef.m_color.toQRgb()));
+			outItem->setData(Qt::ForegroundRole, QColor(simDef.m_color.toQRgb()));
 		}
 		catch (IBK::Exception & ex) {
 			ex.writeMsgStackToError();
@@ -468,38 +468,38 @@ void MSIMViewConnections::updateConnectionsTable() {
 			break;
 			case MASTER_SIM::Project::GEC_TargetSocketNotInlet :
 				inItem->setFont(f);
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Not an inlet socket!"));
 				outItem->setToolTip(tr("Not an inlet socket!"));
 				transformItem->setToolTip(tr("Not an inlet socket!"));
 			break;
 			case MASTER_SIM::Project::GEC_SourceSocketNotOutlet :
 				outItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				outItem->setToolTip(tr("Not an outlet socket!"));
 				inItem->setToolTip(tr("Not an outlet socket!"));
 				transformItem->setToolTip(tr("Not an outlet socket!"));
 			break;
 			case MASTER_SIM::Project::GEC_TargetSocketAlreadyConnected :
 				outItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				outItem->setToolTip(tr("Inlet socket is connected twice."));
 				inItem->setFont(f);
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Inlet socket is connected twice."));
 				transformItem->setFont(f);
-				transformItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				transformItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				transformItem->setToolTip(tr("Inlet socket is connected twice."));
 			break;
 			default : {
 				outItem->setFont(f);
-				outItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				outItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				outItem->setToolTip(tr("Invalid connection"));
 				inItem->setFont(f);
-				inItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				inItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				inItem->setToolTip(tr("Invalid connection"));
 				transformItem->setFont(f);
-				transformItem->setData(Qt::TextColorRole, QColor(Qt::gray));
+				transformItem->setData(Qt::ForegroundRole, QColor(Qt::gray));
 				transformItem->setToolTip(tr("Invalid connection"));
 			}
 		}

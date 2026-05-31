@@ -18,7 +18,7 @@ MSIMBrowseFilenameWidget::MSIMBrowseFilenameWidget(QWidget *parent) :
 	lay->addWidget(m_lineEdit);
 	lay->addWidget(m_toolBtn);
 	setLayout(lay);
-	lay->setMargin(0);
+	lay->setContentsMargins(0, 0, 0, 0);
 
 	connect(m_toolBtn, SIGNAL(clicked()), this, SLOT(onToolBtnClicked()));
 	connect(m_lineEdit, SIGNAL(editingFinished()), this, SIGNAL(editingFinished()));

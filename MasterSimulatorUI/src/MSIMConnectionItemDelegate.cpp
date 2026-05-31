@@ -31,7 +31,7 @@ void MSIMConnectionItemDelegate::paint( QPainter * painter, const QStyleOptionVi
 		QStyleOptionViewItem option2(option);
 		option2.state = QStyle::State_Enabled;
 		QString text = index.data().toString();
-		QColor textColor = index.data(Qt::TextColorRole).value<QColor>();
+		QColor textColor = index.data(Qt::ForegroundRole).value<QColor>();
 		painter->setPen(textColor);
 		painter->drawText(displayRect.adjusted(3,0,0,0), Qt::AlignVCenter | Qt::AlignLeft, text);
 //		QColor foregroundColor = index.data(Qt::ForegroundRole).value<QColor>();
