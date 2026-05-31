@@ -11,13 +11,12 @@
 #include <QDebug>
 
 #include <MSIM_Project.h>
+#include <MSIM_Constants.h>
 
 #include "MSIMSettings.h"
 #include "MSIMDirectories.h"
 #include "MSIMConversion.h"
 #include "MSIMLanguageHandler.h"
-#include "MSIMUIConstants.h"
-#include "MSIMProjectHandler.h"
 
 extern const char * const HTML_TEMPLATE;
 extern const char * const RECENT_PROJECT_TABLE_TEMPLATE;
@@ -292,7 +291,7 @@ void MSIMWelcomeScreen::downloadFinished(QNetworkReply *reply) {
 			for (int i=0; i<langTexts.count(); ++i) {
 				QString langId = langTexts[i].left(2);
 				if (langId == MSIMLanguageHandler::instance().langId()) {
-					news = langTexts[i].right(langTexts[i].count()-3);
+					news = langTexts[i].right(langTexts[i].size()-3);
 					break;
 				}
 			}

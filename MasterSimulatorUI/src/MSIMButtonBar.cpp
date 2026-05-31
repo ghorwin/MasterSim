@@ -41,7 +41,7 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	toolButtonEditFMUs = new QToolButton(this); lay->addWidget(toolButtonEditFMUs);
 	toolButtonEditConnections = new QToolButton(this); lay->addWidget(toolButtonEditConnections);
 	toolButtonSimulate = new QToolButton(this); lay->addWidget(toolButtonSimulate);
-	toolButtonSimulate->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_R) );
+	toolButtonSimulate->setShortcut(QKeySequence(Qt::CTRL | Qt::Key_R) );
 	lay->addSpacerItem( new QSpacerItem(20,20, QSizePolicy::Preferred, QSizePolicy::Fixed) );
 	toolButtonUndo = new QToolButton(this); lay->addWidget(toolButtonUndo);
 	toolButtonRedo = new QToolButton(this); lay->addWidget(toolButtonRedo);
