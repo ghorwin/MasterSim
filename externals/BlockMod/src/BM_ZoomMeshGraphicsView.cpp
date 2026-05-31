@@ -207,7 +207,7 @@ void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
 }
 
 
-void ZoomMeshGraphicsView::enterEvent(QEvent *event) {
+void ZoomMeshGraphicsView::enterEvent(QEnterEvent * event) {
 	Q_ASSERT(event->type() == QEvent::Enter);
 
 	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());

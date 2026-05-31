@@ -88,7 +88,7 @@ public slots:
 
 protected:
 	/*! Overloaded to set cross/arrow cursor, depending on connection-mode state of scene. */
-	void enterEvent(QEvent *event) override;
+	void enterEvent(QEnterEvent *event) override;
 
 	/*! Overloaded to set arrow cursor. */
 	void leaveEvent(QEvent *event) override;

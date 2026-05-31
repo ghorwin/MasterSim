@@ -71,7 +71,7 @@ MSIMButtonBar::MSIMButtonBar(QWidget * parent) :
 	connect(toolButtonSwitchLanguage, SIGNAL(clicked()),
 			this, SLOT(onToolButtonSwitchLanguageClicked()));
 
-	lay->setMargin(4);
+	lay->setContentsMargins(4,4,4,4);
 	setLayout(lay);
 
 	setFocusPolicy(Qt::StrongFocus);

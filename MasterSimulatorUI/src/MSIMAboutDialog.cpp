@@ -24,7 +24,7 @@ MSIMAboutDialog::MSIMAboutDialog(QWidget *parent) :
 	linkLabel->move(28,487);
 	linkLabel->setAttribute(Qt::WA_TranslucentBackground);
 
-	layout()->setMargin(0);
+	layout()->setContentsMargins(0,0,0,0);
 	layout()->setSizeConstraint( QLayout::SetFixedSize );
 }
 

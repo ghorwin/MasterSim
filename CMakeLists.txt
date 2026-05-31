@@ -128,7 +128,7 @@ add_subdirectory( MasterSim )
 
 if (NOT DISABLE_QT)
 	message("*** Building Qt-based libs ***")
-	add_subdirectory( externals/BlockMod/projects/cmake BlockMod )
+	add_subdirectory( externals/BlockMod BlockMod )
 endif (NOT DISABLE_QT)
 
 # -------------------------------------------------------------
