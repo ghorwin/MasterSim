@@ -5,7 +5,18 @@
       "Bash(qmake6 --version)",
       "Bash(mkdir -p /tmp/mastersim-qmake-build)",
       "Read(//tmp/**)",
-      "Bash(qmake /home/kiworker/git/_MyOpenSource/MasterSim/MasterSim-session.pro)"
+      "Bash(qmake /home/kiworker/git/_MyOpenSource/MasterSim/MasterSim-session.pro)",
+      "Bash(xargs ls)",
+      "Bash(mkdir -p /tmp/mastersim-cmake-build)",
+      "Bash(cmake /home/kiworker/git/_MyOpenSource/MasterSim -DCMAKE_BUILD_TYPE=RelWithDebInfo)",
+      "Bash(mkdir -p /home/kiworker/git/_MyOpenSource/MasterSim/build/bb-cmake-test)",
+      "Bash(cmake ../.. -DCMAKE_BUILD_TYPE=RelWithDebInfo)",
+      "Bash(python3 *)",
+      "Bash(cmake -E copy /home/kiworker/git/_MyOpenSource/MasterSim/externals/IBK/src/IBK_configuration.h.in /home/kiworker/git/_MyOpenSource/MasterSim/externals/IBK/src/IBK_configuration.h.testwrite)",
+      "Bash(rm -rf /home/kiworker/git/_MyOpenSource/MasterSim/build/bb-cmake-test)",
+      "Bash(cmake ../.. -DCMAKE_BUILD_TYPE=RelWithDebInfo --trace-redirect=/tmp/cmake-trace.txt)",
+      "Bash(cat)",
+      "Bash(cmake -DIBK_ENABLE_SAFE_MATH=ON -DIBK_ENABLE_UNIT_NAME=ON -DIBK_ENABLE_COLORED_CONSOLE=ON -P /tmp/test_configure.cmake)"
     ]
   }
 }
