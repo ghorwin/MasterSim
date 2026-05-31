@@ -42,13 +42,8 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
-#include <stdexcept>
 #include <list>
 #include <vector>
-#include <typeinfo>
-#include <map>
-#include <limits>
-#include <locale>
 
 #include "IBK_Exception.h"
 
@@ -267,9 +262,15 @@ std::string vector2string(const std::vector<T>& vec, std::string separator = ", 
 */
 bool extract_keyword(const std::string& line, std::string& keyword, std::string& value);
 
+/*! Extracts the content between parentheses from a string, e.g. "blabla(some text)" returns "some text".
+	\param src Source string of format "Band(some text)" or "Band"
+	\param str Content between parentheses (only set if ERT_Success is returned).
+	\return Returns ERT_Success if () was part of the string, ERT_NoParenthesis otherwise.
+*/
+ExtractResultType extractFromParenthesis(const std::string & src, std::string & str);
+
 /*! Extracts a value from paranthesis within a string, "blabla(15)". */
 unsigned int extractFromParenthesis(const std::string & src, unsigned int defaultValue);
-
 
 /*! Extracts a value from paranthesis within a string, "blabla(15)".
 	\param src Source string of format "Band(12)" or "Band"
@@ -306,11 +307,6 @@ ExtractResultType extractFromParenthesis(const std::string & src, std::string & 
 std::pair<unsigned int, double> extractFromParenthesis(const std::string & src,
 													std::pair<unsigned int, double> defaultValue);
 
-
-/*! Takes a header in format 'text [h]' and extracts the unit.
-	Returns invalid unit if header does not have [] or does not contain a valid unit.
-*/
-IBK::Unit extract_unit(const std::string & headerLabel);
 
 /*! Reads in (\a src) until char (\a ch)
 	(\a src) stores the first part
@@ -648,6 +644,11 @@ std::string replace_string(const std::string& src, const std::string& old_patter
 	\return Returns a copy of the string 'src' without the characters in 'pattern'.
 */
 std::string delete_chars(const std::string& src, const std::string& pattern);
+
+/*! Takes a header in format 'text [h]' and extracts the unit.
+	Returns invalid unit if header does not have [] or does not contain a valid unit.
+*/
+IBK::Unit extract_unit(const std::string & headerLabel);
 
 /*! Returns the Levenshtein distance of two strings.
 	Usefull for implementation of a fuzzy search.

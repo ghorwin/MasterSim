@@ -50,7 +50,6 @@
 
 #include "IBK_messages.h"
 #include "IBK_MessageHandler.h"
-#include "IBK_StringUtils.h"
 #include "IBK_FileUtils.h"
 #include "IBK_Path.h"
 
@@ -91,12 +90,24 @@ MessageHandler::MessageHandler() :
 	// by default, print all messages within IBK library to console
 	m_requestedConsoleVerbosityLevel(VL_DEVELOPER),
 	// by default, write only messages up to VL_INFO to logfile
+
+#if defined(IBK_DEBUG)
+	m_requestedLogfileVerbosityLevel(VL_DEVELOPER),
+#else
 	m_requestedLogfileVerbosityLevel(VL_INFO),
+#endif
 	m_logfile(nullptr),
 	m_timeStampFormat("%Y-%m-%d %H:%M:%S"),
 	m_indentation(0)
 {
+	// we set our default console color globally
+#ifdef _WIN32
+	IBK::set_console_text_color(IBK::CF_WHITE);
+#else // _WIN32
+	IBK::set_console_text_color(IBK::CF_GREY);
+#endif // _WIN32
 }
+
 
 MessageHandler::~MessageHandler() {
 	closeLogFile();
@@ -112,6 +123,7 @@ MessageHandler::~MessageHandler() {
 void MessageHandler::setConsoleVerbosityLevel(int verbosity) {
 	m_requestedConsoleVerbosityLevel = (verbosity_levels_t)verbosity;
 }
+
 
 void MessageHandler::setLogfileVerbosityLevel(int verbosity) {
 	m_requestedLogfileVerbosityLevel = (verbosity_levels_t)verbosity;

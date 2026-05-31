@@ -48,7 +48,7 @@ double NusseltNumberTurbulent(double reynolds, double prandtl, double l, double 
 /*! Calculates nusselt number [-] for a turbulent fluid through a pipe.
 	For Reynolds number below RE_LAMINAR NusseltNumberLaminar is used.
 	For values higher than RE_TURBULENT NusseltNumberTurbulent is used.
-	Between thses two numbers (transition area) a interpolation algorithm according (VDI Wärmeatlas G1 4.2 is used.
+	Between these two numbers (transition area) a interpolation algorithm according (VDI Wärmeatlas G1 4.2 is used.
 	\param reynolds Reynolds number [-]
 	\param prandtl Prandtl number [-]
 	\param l Length of the pipe [m]
@@ -69,6 +69,29 @@ double FrictionFactorSwamee(double reynolds, double d, double roughness);
 	\param di Inner diameter of the pipe
 */
 double SurfaceTransmission(double nusselt, double lambda, double di);
+
+/*! Calculates the darcy friction factor [-] according to swamee-jain equation (approximation of colebrook-white)
+	\param reynolds Reynolds number [-]
+	\param d Pipe outside diameter [m]
+	\param roughness Pipe wall roughness [m]
+*/
+double FrictionFactorSwamee(const double &reynolds, const double &d, const double &roughness);
+
+/*! Calculates the darcy friction factor [-] interpolating between laminar and turbulent states. Uses Colebrook equation for turbulent state.
+	\param reynolds Reynolds number [-]
+	\param d Pipe outside diameter [m]
+	\param roughness Pipe wall roughness [m]
+*/
+double PipeFrictionFactor(const double &reynolds, const double &d, const double &roughness);
+
+
+/*! Calculates the darcy friction factor [-] for turbulent state using the iterative Colebrook-White equation.
+	\param reynolds Reynolds number [-]
+	\param relativeRoughness roughness divivded by diameter [-]
+	\param maxIterations [-]
+	\param tolerance of calculation [-]
+*/
+double FrictionFactorColebrook(double reynolds, double relativeRoughness, int maxIterations = 10, double tolerance = 1e-6);
 
 /*! Class which can deliver fluid properties for a Water-Glycol mixture depending on temperature.*/
 class WaterMixProperties {
@@ -122,6 +145,7 @@ public:
 	/*! Freezing temperature in °C for the given mixture.*/
 	double freezeTemperature();
 
+	
 private:
 	double								m_glycolContent;		///< Glycol content as volume fraction
 	GlycolKind							m_glycolKind;			///< Glycol kind (Ethylene or Propylene)

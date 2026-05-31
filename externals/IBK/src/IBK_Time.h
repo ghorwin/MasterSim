@@ -108,15 +108,15 @@ public:
 			if(!valid())
 				return 0;
 
-			int maxPos = std::max(m_monthStart, m_year2Start);
-			maxPos = std::max(maxPos, m_dayStart);
-			maxPos = std::max(maxPos, m_hourStart);
-			maxPos = std::max(maxPos, m_minuteStart);
-			maxPos = std::max(maxPos, m_secondStart);
+			int maxPos = std::max<int>(m_monthStart, m_year2Start);
+			maxPos = std::max<int>(maxPos, m_dayStart);
+			maxPos = std::max<int>(maxPos, m_hourStart);
+			maxPos = std::max<int>(maxPos, m_minuteStart);
+			maxPos = std::max<int>(maxPos, m_secondStart);
 			if (maxPos > m_year4Start) {
 				return (unsigned int)maxPos + 2;
 			}
-			return m_year4Start + 4; // BUG: might be -3!
+			return m_year4Start + 4;
 		}
 
 		int	m_year4Start;
@@ -209,6 +209,11 @@ public:
 	*/
 	void set(int year, unsigned int month, unsigned int day, double seconds);
 
+	/*! If seconds is negative or < SECS_PER_YEAR, the year will be changed and seconds updated
+		until m_sec is between 0 <= secs <= SECS_PER_YEAR.
+	*/
+	void adjustYear();
+
 	/*! Returns true, if time object contains a valid time.
 		Usually, this function returns always true, except if the time object
 		was created with one of the static input conversion functions with invalid string data.
@@ -281,6 +286,8 @@ public:
 	std::string toDateTimeFormatUS(char dateSeparator='-') const;
 	/*! Returns just the day and month in format 'dd.MM.'. */
 	std::string toDayMonthFormat() const;
+	/*! Returns date/time in format 'yyyy-MM-dd hh:mm' as needed by PostProc. */
+	std::string toPostProcDateFormat() const;
 
 	/*! Format types for Time-Of-Year formats. */
 	enum TOYFormat {

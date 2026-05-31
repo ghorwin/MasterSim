@@ -63,6 +63,7 @@
 #include "IBK_assert.h"
 #include "IBK_Exception.h"
 #include "IBK_ScalarFunction.h"
+#include "IBK_messages.h"
 
 namespace IBK {
 

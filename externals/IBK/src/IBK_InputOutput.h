@@ -333,6 +333,7 @@ void write_matrix(std::ostream & out, const T & mat, double * b, bool eulerForma
 			}
 			out << "];\n";
 		}
+		out.flush();
 	}
 	// standard screen output
 	else {
@@ -381,6 +382,17 @@ void recreate_vector(void* & dataPtr, std::vector<unsigned int> & vec);
 	memory block data into vector and advances the pointer past the memory block.
 */
 void recreate_vector(void* & dataPtr, std::vector<long int> & vec);
+
+
+/*! Reads entire content of file to string.
+	This function handles utf8-encoded file paths correctly.
+*/
+std::string read_file_to_string(const std::string & fpath);
+
+/*! Dumps string to file.
+	This function handles utf8-encoded file paths correctly.
+*/
+void write_string_to_file(const std::string & fpath, const std::string & text);
 
 } // namespace IBK
 

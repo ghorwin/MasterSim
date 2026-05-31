@@ -59,9 +59,6 @@ public:
 	/*! Default constructor (creates an undefined unit). */
 	Unit() : m_id(0) {}
 
-	Unit(const Unit & src) = default;
-	Unit& operator=(const Unit & src) = default;
-
 	/*! Constructor (creates a unit with the id number 'unitid').
 		This function throws an out_of_range exception if the 'unitid' is invalid.
 	*/
@@ -105,7 +102,7 @@ public:
 	unsigned int base_id() const;
 
 	/*! Returns the matching SI base unit to the IO_unit. */
-	Unit base_unit() const { unsigned int id = base_id(); return Unit(id); }
+	Unit base_unit() const { return Unit(base_id()); }
 
 	/*! Retrieves the calculation factor/summand and the operation necessary to relate a value
 		of the unit to the unit given by 'unitid'.

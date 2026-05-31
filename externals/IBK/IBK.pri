@@ -29,37 +29,51 @@
 
 CONFIG			+= silent
 greaterThan(QT_MAJOR_VERSION, 5) {
-	# Qt requires c++17 itself
+	# Qt 6 requires c++17 itself
 	CONFIG			+= c++17
 }
 else {
-	# our code requites at least C++11
+	# our code requires at least C++11
 	CONFIG			+= c++11
 }
+
+# On Linux switch to c++17 already
+linux-g++ | linux-g++-64 | macx {
+	CONFIG			+= c++17
+}
+
 CONFIG			+= warn_on
 CONFIG			+= no_batch
 
 # enable function/file info also in release mode
 DEFINES += QT_MESSAGELOGCONTEXT
+# enable asserts also in release mode
+DEFINES += QT_FORCE_ASSERTS
 
 CONFIG(release, debug|release) {
 #	message( "Setting NDEBUG define" )
 	DEFINES += NDEBUG
 }
 
+win32 {
 
-# windows-VC specific options
-win32-msvc* {
-	# disable warning for unsafe functions if using MS compiler
-	QMAKE_CXXFLAGS += /wd4996
-	QMAKE_CFLAGS += /wd4996
-	DEFINES += NOMINMAX
-	DEFINES += _CRT_SECURE_NO_WARNINGS
+	# windows-VC specific options
+	win32-msvc* {
+		# disable warning for unsafe functions if using MS compiler
+		QMAKE_CXXFLAGS += /wd4996
+		QMAKE_CFLAGS += /wd4996
+		DEFINES += NOMINMAX
+		DEFINES += _CRT_SECURE_NO_WARNINGS
 
-	# In Debug mode add warnings for access to uninitialized variables
-	# and out-of-bounds access for static arrays (and vectors)
-	CONFIG(debug, debug|release) {
-		QMAKE_CXXFLAGS += /GS /RTC1
+		# In Debug mode add warnings for access to uninitialized variables
+		# and out-of-bounds access for static arrays (and vectors)
+		CONFIG(debug, debug|release) {
+			QMAKE_CXXFLAGS += /GS /RTC1
+		}
+	}
+	else {
+		#message("Added MinGW Big Files flag")
+		QMAKE_CXXFLAGS += -Wa,-mbig-obj
 	}
 }
 
@@ -192,7 +206,7 @@ equals(TEMPLATE,app) {
 		QMAKE_LIBDIR += ../externals/lib/release ../lib/release
 		LIBS += -L../lib/release -L../externals/lib/release
 	}
-
+	#message("DESTDIR    =" $$DESTDIR)
 }
 
 
@@ -223,8 +237,8 @@ equals(TEMPLATE,lib) {
 		# Note: when library is located top-level, ie. <repo-root>/Library/...
 		#       we need to set the linker path such, that it finds other libraries in <repo-root>/externals/lib
 		contains( OPTIONS, top_level_libs ) {
-			LIBS += -L../externals/lib/debug
-			QMAKE_LIBDIR += ../externals/lib/debug
+			LIBS += -L../externals/lib/debug -L../lib/debug
+			QMAKE_LIBDIR += ../externals/lib/debug ../lib/debug
 			windows {
 				# place windows DLLs into executable target directory
 				DLLDESTDIR = $$BINARYDESTDIR
@@ -235,7 +249,12 @@ equals(TEMPLATE,lib) {
 			LIBS += -L../lib/debug
 			windows {
 				# place windows DLLs into executable target directory (two levels up)
-				DLLDESTDIR = ../$$BINARYDESTDIR
+				contains( OPTIONS, binaries_to_shadow_dir ) {
+					DLLDESTDIR = ../$$BINARYDESTDIR
+				}
+				else {
+					DLLDESTDIR = $$BINARYDESTDIR
+				}
 			}
 		}
 
@@ -243,8 +262,8 @@ equals(TEMPLATE,lib) {
 	else {
 		DESTDIR = ../lib/release
 		contains( OPTIONS, top_level_libs ) {
-			LIBS += -L../externals/lib/release
-			QMAKE_LIBDIR += ../externals/lib/release
+			LIBS += -L../externals/lib/release -L../lib/release
+			QMAKE_LIBDIR += ../externals/lib/release ../lib/release
 			windows {
 				# place windows DLLs into executable target directory
 				DLLDESTDIR = $$BINARYDESTDIR
@@ -255,10 +274,14 @@ equals(TEMPLATE,lib) {
 			LIBS += -L../lib/release
 			windows {
 				# place windows DLLs into executable target directory (two levels up)
-				DLLDESTDIR = ../$$BINARYDESTDIR
+				contains( OPTIONS, binaries_to_shadow_dir ) {
+					DLLDESTDIR = ../$$BINARYDESTDIR
+				}
+				else {
+					DLLDESTDIR = $$BINARYDESTDIR
+				}
 			}
 		}
 	}
-
-
+	#message("DLLDESTDIR =" $$DLLDESTDIR)
 }

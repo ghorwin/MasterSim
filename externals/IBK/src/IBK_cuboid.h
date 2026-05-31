@@ -43,28 +43,21 @@
 #include <sstream>
 
 #include "IBK_rectangle.h"
+#include "IBK_Exception.h"
 
 namespace IBK {
 
 /*!
 	A type that represents a cuboid.
-	The class can be used whenever ccordinates describing a cuboid have to
+	The class can be used whenever coordinates describing a cuboid have to
 	be stored together, such as for 3d coordinates or when describing a
 	geometrical shape. Note, that we use a right hand coordinate system.
-	\todo Clarify the definition of 'top' and 'bottom' and its direct
-	use from other libraries (Delphin 5?)!
 */
 template <class T>
-class cuboid : public rectangle<T> {
-
+class cuboid {
 public:
-
 	/*! Default contructor (initialises the cuboid with default value of type T). */
-	cuboid() :
-		rectangle< T >(),
-		front(T()),
-		back(T())
-	{}
+	cuboid() = default;
 
 	/*! Constructor (initialises the cuboid with given parameters for the coordinates).
 		\param newLeft		Lower x-coordinate.
@@ -74,36 +67,15 @@ public:
 		\param newBack		Lower z-coordinate.
 		\param newFront		Upper z-coordinate.
 	*/
-	cuboid(T newLeft, T newTop, T newRight, T newBottom, T newBack, T newFront ) :
-		rectangle< T >( newLeft, newTop, newRight, newBottom )
-	{
-    	FUNCID(cuboid::cuboid);
-
-		if(newBack > newFront) {
-			throw IBK::Exception(IBK::FormatString(
-				"Invalid cuboid coordinates (%1,%3)x(%2,%4)x(%5,%6)!")
-				.arg(newLeft).arg(newBottom).arg(newRight).arg(newTop).arg(newBack)
-				.arg(newFront), FUNC_ID);
-		}
-		front = newFront;
-		back  = newBack;
+	cuboid(T newLeft, T newTop, T newRight, T newBottom, T newBack, T newFront ) {
+		set( newLeft, newTop, newRight, newBottom, newBack, newFront);
 	}
 
-	/*! Copy constructor
-		\param other	Cuboid to copy data from.
-	*/
-	cuboid( const cuboid& other ) :
-		rectangle< T >( other.left, other.top, other.right, other.bottom ),
-		front( other.front ),
-		back( other.back )
-	{}
-
 	/*! Prints the cuboid range.
-		\param out	 Stream buffer for data output.
+		\param out Stream buffer for data output.
 	*/
-	virtual std::ostream& output(std::ostream& out) const
-	{
-		return out << this->left << " " << this->top << " " << this->back << " " << this->right << " " << this->bottom << " " << this->front;
+	virtual std::ostream& output(std::ostream& out) const {
+		return out << left << " " << top << " " << back << " " << right << " " << bottom << " " << front;
 	}
 
 	/*! Initializes a rectangle inside a 3D space using IBK::rectangle equivalence function.
@@ -116,7 +88,6 @@ public:
 		set( newLeft, newTop, newRight, newBottom, T() , T());
 	}
 
-
 	/*! Initializes a rectangle or a cuboid.
 		\param newLeft		Lower x-coordinate.
 		\param newTop		Lower y-coordinate.
@@ -125,14 +96,13 @@ public:
 		\param newBack		Lower z-coordinate: only for cuboid.
 		\param newFront		Upper z-coordinate: only for cuboid.
 	*/
-	void set(T newLeft, T newTop, T newBottom, T newRight, T newBack = T(), T newFront = T() ) {
+	void set(T newLeft, T newTop, T newBottom, T newRight, T newBack, T newFront) {
+		FUNCID(cuboid::set);
 
-    	FUNCID(cuboid::set);
-
-		if(newLeft > newRight || newTop > newBottom || newBack > newFront) {
+		if (newLeft > newRight || newTop > newBottom || newBack > newFront) {
 			// decide which error message to use:
 			// 2D
-			if(newBack == newFront) {
+			if (newBack == newFront) {
 				throw IBK::Exception(IBK::FormatString(
 					"Invalid cuboid coordinates (%1,%3)x(%2,%4)!")
 					.arg(newLeft).arg(newBottom).arg(newRight).arg(newTop), FUNC_ID);
@@ -144,12 +114,12 @@ public:
 					.arg(newFront), FUNC_ID);
 			}
 		}
-		this->left=newLeft;
-		this->top=newTop;
-		this->right=newRight;
-		this->bottom=newBottom;
-		this->front=newFront;
-		this->back=newBack;
+		left=newLeft;
+		top=newTop;
+		right=newRight;
+		bottom=newBottom;
+		front=newFront;
+		back=newBack;
 	}
 
 	/*! Depth of the cuboid.
@@ -160,24 +130,24 @@ public:
 	/*! Cuboid projection to xy plane.
 		\return Rectangle with coordinates on xy plane.
 	*/
-	rectangle<T> XY() const { return rectangle< T >( this->left, this->top, this->right, this->bottom ); }
+	rectangle<T> XY() const { return rectangle< T >( left, top, right, bottom ); }
 
 	/*! Cuboid projection to xz plane.
 		\return Rectangle with coordinates (xmin,xmax)x(ymin,ymax) = (left,right)x(front,back).
 	*/
-	rectangle<T> XZ() const { return rectangle< T >( this->left, this->back, this->right, this->front ); }
+	rectangle<T> XZ() const { return rectangle< T >( left, back, right, front ); }
 
 	/*! Cuboid projection to yz plane.
 		\return Rectangle with coordinates (xmin,xmax)x(ymin,ymax) = (top,bottom)x(front,back).
 	*/
-	rectangle<T> YZ() const { return rectangle< T >( this->top, this->back, this->bottom, this->front ); }
+	rectangle<T> YZ() const { return rectangle< T >( top, back, bottom, front ); }
 
 	/*! Formatted output of the cuboid.
 		\return String with format: [x_left, y_top, z_back] - [x_right, y_bottom, z_front].
 	*/
 	std::string formattedString() const {
 		std::stringstream strm;
-		strm << "[" << this->left << "," << this->top << "," << this->back  << "] - [" << this->right << "," << this->bottom  << "," << this->front << "]";
+		strm << "[" << left << "," << top << "," << back  << "] - [" << right << "," << bottom  << "," << front << "]";
 		return strm.str();
 	}
 
@@ -190,6 +160,10 @@ public:
 		return strm.str();
 	}
 
+	T left;		///< The left coordinate.
+	T top;		///< The top coordinate.
+	T right;	///< The right coordinate.
+	T bottom;	///< The bottom coordinate.
 	T front;	///< The front coordinate.
 	T back;		///< The back coordinate.
 };
@@ -216,23 +190,13 @@ inline std::istream& operator>>(std::istream& in, cuboid<T>& cube) {
 	cuboid<T> tmp;
 	T a,b,c,d,e,f;
 	// in >> tmp.left >> tmp.top >> tmp.right >> tmp.bottom
-	if (in >> a >> b >> c >> d ){
-
-		// in >> tmp.left >> tmp.top >> tmp.back >> tmp.right >> tmp.bottom >> tmp.front
-		if ( in >> e >> f ) {
-
+	if (in >> a >> b >> c >> d ) {
+		if ( in >> e >> f ) // can we read another two coordinates?
 			tmp.set( a, b, c, d, e, f );
-
-		} else {
-
-			// just four coordinates
-			tmp.set( a, b, c, d, 0, 0 );
-
-		}
-
+		else
+			tmp.set( a, b, c, d, 0, 0 );  // just four coordinates
 		// put data to the top level
 		std::swap(tmp,cube);
-
 	}
 
 	return in;
@@ -245,14 +209,16 @@ inline std::istream& operator>>(std::istream& in, cuboid<T>& cube) {
 */
 template <class T>
 inline bool operator==(const cuboid<T>& lhs, const cuboid<T>& rhs) {
-	if ( !( (rectangle< T >&)lhs == (rectangle< T >&)rhs) ) return false;
-	return (lhs.front==rhs.front && lhs.back==rhs.back);
+	return (lhs.left == rhs.left && lhs.top==rhs.top &&
+			lhs.right==rhs.right && lhs.bottom==rhs.bottom &&
+			lhs.front==rhs.front && lhs.back==rhs.back);
 }
+
 
 } // namespace IBK
 
-/*! \file IBK_CSVReader.h
-	\brief A simple CSV reader class.
+/*! \file IBK_Cuboid.h
+	\brief Contains the declaration of template class cuboid.
 */
 
 #endif // IBK_cuboidH

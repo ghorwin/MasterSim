@@ -40,7 +40,7 @@ namespace utf8
 		uint32_t cp;
 	public:
 		invalid_code_point(uint32_t cp) : cp(cp) {}
-		virtual const char* what() const throw() { return "Invalid code point"; }
+		virtual const char* what() const noexcept override { return "Invalid code point"; }
 		uint32_t code_point() const {return cp;}
 	};
 
@@ -48,7 +48,7 @@ namespace utf8
 		uint8_t u8;
 	public:
 		invalid_utf8 (uint8_t u) : u8(u) {}
-		virtual const char* what() const throw() { return "Invalid UTF-8"; }
+		virtual const char* what() const noexcept override { return "Invalid UTF-8"; }
 		uint8_t utf8_octet() const {return u8;}
 	};
 
@@ -56,13 +56,13 @@ namespace utf8
 		uint16_t u16;
 	public:
 		invalid_utf16 (uint16_t u) : u16(u) {}
-		virtual const char* what() const throw() { return "Invalid UTF-16"; }
+		virtual const char* what() const noexcept override { return "Invalid UTF-16"; }
 		uint16_t utf16_word() const {return u16;}
 	};
 
 	class not_enough_room : public std::exception {
 	public:
-		virtual const char* what() const throw() { return "Not enough space"; }
+		virtual const char* what() const noexcept override { return "Not enough space"; }
 	};
 
 	/// The library API - functions intended to be called by the users
@@ -258,12 +258,17 @@ namespace utf8
 
 	// The iterator class
 	template <typename octet_iterator>
-	class iterator : public std::iterator <std::bidirectional_iterator_tag, uint32_t> {
+	class iterator {
 	  octet_iterator it;
 	  octet_iterator range_start;
 	  octet_iterator range_end;
+	  using iterator_category = std::bidirectional_iterator_tag;
+	  using value_type = uint32_t;
+	  using difference_type = uint32_t;
+	  using pointer = uint32_t*;
+	  using reference = uint32_t&;
 	  public:
-	  iterator () {};
+	  iterator () {}
 	  explicit iterator (const octet_iterator& octet_it,
 						 const octet_iterator& range_start,
 						 const octet_iterator& range_end) :

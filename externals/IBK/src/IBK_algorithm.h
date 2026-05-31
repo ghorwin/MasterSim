@@ -44,8 +44,6 @@
 #include <sstream>
 #include <map>
 
-#include "IBK_configuration.h"
-#include "IBK_messages.h"
 #include "IBK_Exception.h"
 
 namespace IBK {
@@ -266,6 +264,34 @@ bool all_empty(Iterator first, const Iterator & last) {
 	while (first != last)
 		empty &= (first++)->empty();
 	return empty;
+}
+
+
+/*! Algorithm that searches a std-container (with begin(), end() and const_iterator) for a given value,
+	usually requiring a matching comparison operator.
+
+	\code
+	std::vector<double> vals;
+	std::vector<double>::const_iterator it;
+
+	// example with std c++ find()
+	it = std::find(vals.begin(), vals.end(), 10);
+	// example with IBK::find()
+	it = IBK::find(vals, 10);
+
+	if (it != vals.end()) {
+		///
+	}
+
+	\endcode
+*/
+template <typename Container, typename Var>
+typename Container::const_iterator find(const Container & c, Var & v) {
+	typename Container::const_iterator it = c.begin();
+	while (it != c.end())
+		if (*it == v) return it;
+		else ++it;
+	return it;
 }
 
 

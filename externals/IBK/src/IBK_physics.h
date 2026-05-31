@@ -59,7 +59,7 @@ extern const double R_VAPOR;						///< Gas constant for water vapour in [J/kgK] 
 extern const double R_AIR;			 				///< Gas constant for dry air in [J/kgK]
 extern const double GRAVITY;						///< Gravitational acceleration in [m/s2]
 
-// The constants below are used by several physical programs: Cond, Delphin, WallModel, Therakles, Nandrad
+// The constants below are used by several physical simulation programs
 extern const double RHO_W;							///< Density of water in [kg/m3]
 extern const double RHO_AIR;						///< Density of air at 20 degC in [kg/m3] RHO_AIR = GASPRESS_REF/(R_AIR*T_REF_20)
 extern const double RHO_ICE;						///< Density of water ice at 0 degC in [kg/m3]

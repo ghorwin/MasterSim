@@ -69,26 +69,6 @@
 	#error Define this for your compiler
 #endif
 
-#ifndef IBK_DEBUG
-/*! If defined, all applications/libraries based on IBK library will build in Deployment mode.
-	\warning All files accessing the IBK_DEPLOYMENT flag need to include this file!!!
-
-	!!!! This flag must only be modified by Stefan and/or Andreas !!!!!
-
-	This flag must not be committed in enabled state to the subversion repository.
-*/
-
-// DO NOT CHANGE THE FORMAT OF THE FOLLOWING LINE, IT IS RECOGNIZED BY THE RELEASE SCRIPTS
-//#define IBK_DEPLOYMENT
-
-#endif // IBK_DEBUG
-
-
-// IBK_BUILDING_DEBIAN_PACKAGE always also defines IBK_DEPLOYMENT
-#ifdef IBK_BUILDING_DEBIAN_PACKAGE
-	#define IBK_DEPLOYMENT
-#endif
-
 /*! \file IBK_BuildFlags.h
 	\brief Build-related defines and macros.
 */

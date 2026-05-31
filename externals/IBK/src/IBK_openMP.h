@@ -44,7 +44,6 @@
 // we have openmp
 #include <omp.h>
 
-
 #else
 
 // no openmp, disable warnings
@@ -64,6 +63,20 @@
 
 #	endif
 
+// in case of no openmp, define the functions used for single-thread
+#ifdef __cplusplus
+
+constexpr int omp_get_num_threads() { return 1; }
+constexpr int omp_get_thread_num() { return 0; }
+constexpr int omp_in_parallel() { return 0; }
+
+#else //  __cplusplus
+
+inline int omp_get_num_threads() { return 1; }
+inline int omp_get_thread_num() { return 0; }
+inline int omp_in_parallel() { return 0; }
+
+#endif //  __cplusplus
 
 #endif // _OPENMP
 
