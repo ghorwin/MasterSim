@@ -2,7 +2,7 @@
 # Author: Andreas Nicolai (andreas.nicolai -at- gmx.net)
 
 # Require a fairly recent cmake version
-cmake_minimum_required( VERSION 2.8...3.10 )
+cmake_minimum_required( VERSION 3.16...3.31 )
 
 # The project name
 project( MasterSimBundle )
@@ -10,10 +10,7 @@ project( MasterSimBundle )
 # enable @rpath on MacOS
 cmake_policy(SET CMP0042 NEW)
 
-if (${CMAKE_VERSION} VERSION_GREATER "3.11") 
-  # use new OpenGL libs when having both new and legacy OpenGL libs on Linux
-  cmake_policy(SET CMP0072 NEW) 
-endif()
+cmake_policy(SET CMP0072 NEW)
 
 # enable this to test deb-deployment
 # use in conjunction with `cmake -DCMAKE_INSTALL_PREFIX=/some/local/path`
@@ -94,7 +91,12 @@ else (DISABLE_QT)
 
 	# C++17 needed for Qt6
 	set( CMAKE_CXX_STANDARD 17 )
+	set( CMAKE_CXX_STANDARD_REQUIRED ON )
 	find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml Svg Network PrintSupport)
+
+	set( CMAKE_AUTOMOC ON )
+	set( CMAKE_AUTORCC ON )
+	set( CMAKE_AUTOUIC ON )
 
 endif (DISABLE_QT)
 
