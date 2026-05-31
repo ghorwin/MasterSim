@@ -19,8 +19,8 @@ MSIMExportConnectionGraphDialog::MSIMExportConnectionGraphDialog(QWidget *parent
 	m_blockModWidget(blockModWidget)
 {
 	m_ui->setupUi(this);
-	m_ui->verticalLayoutPrintOptions->setMargin(0);
-	m_ui->scrollAreaWidgetContents->layout()->setMargin(0);
+	m_ui->verticalLayoutPrintOptions->setContentsMargins(0, 0, 0, 0);
+	m_ui->scrollAreaWidgetContents->layout()->setContentsMargins(0, 0, 0, 0);
 	on_radioButtonBitmap_toggled(true);
 
 	// construct print preview widget

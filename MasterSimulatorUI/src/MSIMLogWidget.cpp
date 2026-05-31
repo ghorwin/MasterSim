@@ -21,7 +21,7 @@ MSIMLogWidget::MSIMLogWidget(QWidget *parent) :
 	m_textBrowser->setWordWrapMode(QTextOption::NoWrap);
 
 	lay->addWidget(m_textBrowser);
-	lay->setMargin(0);
+	lay->setContentsMargins(0, 0, 0, 0);
 	setLayout(lay);
 
 	resize(800,250);

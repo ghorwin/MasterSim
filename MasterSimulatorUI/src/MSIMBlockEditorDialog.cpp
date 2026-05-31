@@ -19,7 +19,7 @@ MSIMBlockEditorDialog::MSIMBlockEditorDialog(QWidget *parent) :
 	m_blockItem(nullptr)
 {
 	m_ui->setupUi(this);
-	m_ui->verticalLayoutGraphicsView->setMargin(0);
+	m_ui->verticalLayoutGraphicsView->setContentsMargins(0, 0, 0, 0);
 	m_ui->graphicsView->setResolution(1);
 	m_ui->graphicsView->setGridStep(BLOCKMOD::Globals::GridSpacing*10);
 }
