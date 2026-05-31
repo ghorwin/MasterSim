@@ -115,10 +115,9 @@ public:
 
 	const Polygon2D & polyline() const { return m_polyline; }
 
-
 	// Transformation functions
 
-	/*! Totates the polygon/plane and updates the y-axis.
+	/*! Rotates the polygon/plane and updates the y-axis.
 		Throws an exception if either normal or xAxis do not have unit length, or if both vectors are colliniar.
 	*/
 	void setRotation(const IBKMK::Vector3D & normal, const IBKMK::Vector3D & localX);
@@ -129,9 +128,9 @@ public:
 	/*! Inverts normal vector (this is a convenience function for setting a new orientation
 		with negated normal vector.
 	*/
-	void flip();
-
-	// *** PRIVATE MEMBER FUNCTIONS ***
+	Vector2D flip();
+	/*! Switches the x and y axes. */
+	void switchLocalAxes();
 
 	// Calculation functions
 
@@ -152,6 +151,49 @@ public:
 	*/
 	void enlargeBoundingBox(IBKMK::Vector3D & lowerValues, IBKMK::Vector3D & upperValues) const;
 
+	/*! Helper function, that takes a point and two other points in 3d space, and tests if the point is
+		located inbetween or nearly equal to the other points in all 3 dimensions.
+		\param point Vector3D point
+		\param edgeA Vector3D point
+		\param edgeB Vector3D point
+		\returns Returns true if point is contained within two points in all 3 dimensions. Else returns false.
+	*/
+	bool pointBetweenPoints(const Vector3D &point, const Vector3D &otherA, const Vector3D &otherB) const;
+
+	/*! Helper function for polyCyclesAfterTrimming.
+		This function detects disjunct polygons within a shape (that remain after trimming with a plane) and divides it into multiple polygons accordingly.
+		Therefore it checks if any polygon edges along the trimming plane are contained within each other.
+		\param verts input Polygon that may contain multiple disjunct polygons
+		\param trimPlaneNormal normal vector of the plane that has been used to trim
+		\param offset offset of the plane that has been used to trim
+		\param outputVerts
+		\returns true if disjunct polygons have been found and separated, else false.
+	*/
+	bool dividePolyCycles(const std::vector<Vector3D> &verts, const IBKMK::Vector3D trimPlaneNormal,
+						  const double offset, std::vector<std::vector<Vector3D>> & outputVerts) const;
+
+	/*! Helper function for trimByPlane.
+	 *  After vertices have been sorted by sides of the trim plane they're located on, these two "side" groups might still contain more than 1 polygon each
+	 *  (e.g. after trimming a U shape horizontally).
+	 *  This function manages running the dividePolyCycles function on the output, which detects disjunct polygons that remain after trimming with a plane
+	 *  and divides it into multiple polygons accordingly.
+	 *  Returns nothing but works on the input itself.
+		\param polys Vector of polygons (each being one side of the plane) that remain after trimming.
+		\param trimPlaneNormal Normalvector of the trimming plane that has been used for trimming
+		\param offset Offset of the trimming plane that has been used for trimming
+	*/
+	void polyCyclesAfterTrimming(std::vector<IBKMK::Polygon3D> &polys, const IBKMK::Vector3D &trimPlaneNormal,
+								 const double offset) const;
+
+	/*! Trims a polygon along the plane of another support polygon.
+		The intersection line is calculated, and the first polygon is trimmed along.
+		Last polygon in vertsA is trimmed against vertsB, and replaced with resulting polygons.
+		\param plane Trimming plane in form of a IBKMK::Polygon3D, needs at least 3 Points ;)
+		\param trimmedPolygons Contains all the trimmed polygons
+		\returns Retruns true after success, returns false if planes are coplanar or intersection
+				 line does not intersect with polygon.
+	 */
+	bool trimByPlane(const IBKMK::Polygon3D &plane, std::vector<Polygon3D> &trimmedPolygons, bool writeWarnings = false) const;
 
 
 private:
@@ -173,8 +215,33 @@ private:
 	/*! Checks if the vector is smaller zero. */
 	bool smallerVectZero(const IBKMK::Vector3D &vect);
 
+	/*! Determines if intersection occurs between polygon and other polygon.
+		Touching is not counted as intersecting.
+		Returns true in case of intersection.
+
+		Algorithm design:
+
+			 * first we test if planes actually intersect
+			 * if so, we have 2 consecutive concepts for detecting intersection:
+			 *
+			 *	 we iterate over all edges of both polygons and calculate the intersection points with the respective other polygon plane
+			 *   if these intersection points are contained within the other polygon, an intersection is detected (true)
+			 *
+			 *   then we calculate the intersection line between the two planes, and list all polygon vertices which lie on the line
+			 *   if there are >=2 (after duplicate elimination) we iterate over the center-points between each neighboring vertices on the line
+			 *   if any of the center points is contained within both polygons, an intersection is detected (true)
+
+		This 2-step algorithm ensures we won't miss any edge cases, e.g. polygons sharing intersection points or lines
+	*/
+	bool intersects(const Polygon3D &other) const;
+
 	/*! Calculates a normalized normal of a polyline. If an error occurs the vector (1,0,0) is output.  */
 	IBKMK::Vector3D computeNormal(const std::vector<IBKMK::Vector3D>& polygon);
+
+	/*! Newell method for calculating a surface normal, taken from
+		\sa https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+	*/
+	IBKMK::Vector3D computeNormalNewell(const std::vector<IBKMK::Vector3D> &polygon);
 
 	// *** PRIVATE MEMBER VARIABLES ***
 

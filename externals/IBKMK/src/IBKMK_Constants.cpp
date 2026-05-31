@@ -36,43 +36,11 @@
 
 */
 
-#include "IBKMK_Vector3D.h"
-
-#include <sstream>
+#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
-
-std::string Vector3D::toString() const {
-	std::stringstream strm;
-	strm << m_x << " " << m_y << " " << m_z;
-	return strm.str();
-}
-
-std::string IBKMK::Vector3D::toString(int precision) const {
-	std::stringstream strm;
-	strm << std::setprecision(precision) << m_x << " " << m_y << " " << m_z;
-	return strm.str();
-}
-
-
-Vector3D Vector3D::fromString(const std::string & vecString) {
-	FUNCID(Vector3D::fromString);
-
-	std::vector<double> vec;
-	try {
-		IBK::string2valueVector(vecString, vec);
-	} catch (IBK::Exception & ex) {
-		throw IBK::Exception(ex, "Error parsing 3D vector from string '"+ vecString + "'", FUNC_ID);
-	}
-	if (vec.size() != 3)
-		throw IBK::Exception("Size mismatch, expected 3 numbers.", FUNC_ID);
-	Vector3D res;
-	res.m_x = vec[0];
-	res.m_y = vec[1];
-	res.m_z = vec[2];
-	return res;
-}
+const double GEOM_TOL = 1e-4;
+const double NUM_EPS  = 1e-12;
 
 } // namespace IBKMK
-

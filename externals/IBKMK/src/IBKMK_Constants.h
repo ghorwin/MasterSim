@@ -36,43 +36,23 @@
 
 */
 
-#include "IBKMK_Vector3D.h"
-
-#include <sstream>
+#ifndef IBKMK_ConstantsH
+#define IBKMK_ConstantsH
 
 namespace IBKMK {
 
+/*! Global operative geometric tolerance in [m].
+	Single source of truth for all geometric operations: vertex deduplication,
+	coplanarity tests, point-on-plane checks, line-line/line-plane intersection,
+	collinearity elimination, polygon hole insertion. */
+extern const double GEOM_TOL;
 
-std::string Vector3D::toString() const {
-	std::stringstream strm;
-	strm << m_x << " " << m_y << " " << m_z;
-	return strm.str();
-}
-
-std::string IBKMK::Vector3D::toString(int precision) const {
-	std::stringstream strm;
-	strm << std::setprecision(precision) << m_x << " " << m_y << " " << m_z;
-	return strm.str();
-}
-
-
-Vector3D Vector3D::fromString(const std::string & vecString) {
-	FUNCID(Vector3D::fromString);
-
-	std::vector<double> vec;
-	try {
-		IBK::string2valueVector(vecString, vec);
-	} catch (IBK::Exception & ex) {
-		throw IBK::Exception(ex, "Error parsing 3D vector from string '"+ vecString + "'", FUNC_ID);
-	}
-	if (vec.size() != 3)
-		throw IBK::Exception("Size mismatch, expected 3 numbers.", FUNC_ID);
-	Vector3D res;
-	res.m_x = vec[0];
-	res.m_y = vec[1];
-	res.m_z = vec[2];
-	return res;
-}
+/*! Numerical degeneracy guard (dimensionless / squared length).
+	Used ONLY for null-vector tests and determinant-near-zero checks before
+	division. NOT a geometric distance threshold and must remain orders of
+	magnitude tighter than GEOM_TOL. */
+extern const double NUM_EPS;
 
 } // namespace IBKMK
 
+#endif // IBKMK_ConstantsH

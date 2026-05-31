@@ -74,6 +74,11 @@ public:
 	/*! Comparison operator. */
 	bool operator!=(const Polygon2D &other) const;
 
+	/*! Comparison operator. */
+	bool operator==(const Polygon2D &other) const {
+		return !(*this != other);
+	}
+
 	/*! Returns the type of the polygon (can be used to optimize some algorithms). */
 	type_t type() const { return m_type; }
 
@@ -109,7 +114,8 @@ public:
 	/*! Calculates surface area in m2.
 		\note Throws an exception for invalid polygons, otherwise computes the area.
 	*/
-	double area(int digits = 1) const;
+	double area(int digits = 2) const;
+
 	/*! Calculates surface area in m2 but the result is signed. */
 	double areaSigned(int digits) const;
 
@@ -124,6 +130,8 @@ public:
 	*/
 	bool isSimplePolygon() const;
 
+	/*! Takes a second polygon and checks for intersections. */
+	bool intersects(const IBKMK::Polygon2D &other) const;
 
 protected:
 

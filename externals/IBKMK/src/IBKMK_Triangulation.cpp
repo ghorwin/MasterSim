@@ -41,15 +41,16 @@
 #include <IBK_messages.h>
 
 #include "CDT/CDT.h"
+#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
 bool Triangulation::setPoints(const std::vector<IBK::point2D<double> > & points,
-							  const std::vector<std::pair<unsigned int, unsigned int> > & edges)
-{
-//	FUNCID(Triangulation::setPoints);
+							  const std::vector<std::pair<unsigned int, unsigned int> > & edges) {
+	// FUNCID(Triangulation::setPoints);
 
-	CDT::Triangulation<double> cdt(CDT::FindingClosestPoint::ClosestRandom); // Note: we don't want to use boost
+	CDT::Triangulation<double> cdt(CDT::VertexInsertionOrder::Auto,
+								   CDT::IntersectingConstraintEdges::TryResolve, GEOM_TOL); // Note: we don't want to use boost
 
 	IBK_ASSERT(sizeof(CDT::V2d<double>) == sizeof(IBK::point2D<double>));
 	// since IBK::point2D<double> and CDT::V2d<double> are internally the same, we can just re-interpret our original
@@ -65,6 +66,12 @@ bool Triangulation::setPoints(const std::vector<IBK::point2D<double> > & points,
 	cdt.insertVertices(*vertices);
 	cdt.insertEdges(edgeVec);
 	cdt.eraseOuterTrianglesAndHoles();
+
+	// Transfer the final vertex list. CDT may have inserted Steiner vertices to resolve
+	// intersecting constraint edges, so this list can be larger than the input 'points'.
+	m_vertices.resize(cdt.vertices.size());
+	for (unsigned int i=0; i<cdt.vertices.size(); ++i)
+		m_vertices[i] = IBK::point2D<double>(cdt.vertices[i].x, cdt.vertices[i].y);
 
 	// now transfer the triangle
 

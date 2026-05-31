@@ -45,13 +45,9 @@
 #include <IBK_messages.h>
 
 #include "IBKMK_2DCalculations.h"
+#include "IBKMK_Constants.h"
 
 namespace IBKMK {
-
-// this might also be a relative erro, for example based on the bounding box of the polygon.
-// However, for use in SIM-VICUS we are happy with 0.1 mm accuracy?
-const double TOLERANCE = 1e-4; // 0.1 mm should be fine enough
-
 
 Polygon2D::Polygon2D(const std::vector<IBKMK::Vector2D> & vertexes) {
 	setVertexes(vertexes);
@@ -64,8 +60,28 @@ Polygon2D::Polygon2D(const std::vector<IBKMK::Vector2D> & vertexes) {
 bool Polygon2D::operator!=(const Polygon2D &other) const {
 	if (m_type != other.m_type)
 		return true;
-	if (m_vertexes != other.m_vertexes)
+	if (m_vertexes.size() != other.m_vertexes.size())
 		return true;
+
+	int startIdx = 0;
+	bool foundStart = false;
+	for (unsigned int j = 0; j < other.m_vertexes.size(); ++j) {
+		if (m_vertexes[0].equal<2>(other.m_vertexes[j])) {
+			startIdx = j;
+			foundStart = true;
+			break;
+		}
+	}
+
+	if (!foundStart)
+		return true;
+
+	for (unsigned int i = 0; i < m_vertexes.size(); ++i) {	
+		int idx = (startIdx + i) % other.m_vertexes.size();
+		if (!m_vertexes[i].equal<2>(other.m_vertexes[idx]))
+			return true;
+	}
+
 	return false;
 }
 
@@ -122,7 +138,6 @@ double Polygon2D::area(int digits) const {
 		const IBKMK::Vector2D &p1 = m_vertexes[(i+1)%sizeV];
 		const IBKMK::Vector2D &p2 = m_vertexes[(i+2)%sizeV];
 		surfArea += p1.m_x * (p2.m_y - p0.m_y);
-
 	}
 
 	surfArea *= 0.5;
@@ -181,6 +196,33 @@ bool Polygon2D::isSimplePolygon() const {
 	return true;
 }
 
+bool Polygon2D::intersects(const Polygon2D &other) const {
+
+	const std::vector<IBKMK::Vector2D> &vertsA = m_vertexes;
+	const std::vector<IBKMK::Vector2D> &vertsB = other.vertexes();
+
+	IBKMK::Vector2D intersectP;
+	for (unsigned int i = 0, count = vertsA.size(); i<count; ++i ) {
+		// check if any of the edge centerpoints are contained within the other polygon
+		// this is a catch-all solution for all cases of partial overlapping intersections that
+		// would go undetected by testing for edge intersections, as well as edge-intersection-free containment
+		IBKMK::Vector2D middleVec(0.5 * (vertsA[(i+1) % count] + vertsA[i]));
+		if (IBKMK::pointInPolygon(vertsB, middleVec)  == 1)
+			return true;
+		// check for 2D polygon line intersections
+		else if (IBKMK::intersectsLine2D(vertsB, vertsA[(i+1) % count], vertsA[i], intersectP))
+			return true;
+	}
+
+	for (unsigned int i = 0, count = vertsB.size(); i < count; ++i ) {
+		IBKMK::Vector2D middleVec(0.5  * (vertsB[(i+1) % count] + vertsB[i]));
+		if (IBKMK::pointInPolygon(vertsA, middleVec) == 1)
+			return true;
+		else if (IBKMK::intersectsLine2D(vertsA, vertsB[(i+1) % count], vertsB[i], intersectP))
+			return true;
+	}
+	return false;
+}
 
 
 // *** PRIVATE MEMBER FUNCTIONS ***
@@ -220,13 +262,13 @@ void Polygon2D::detectType() {
 	IBKMK::Vector2D c2 = b + (d-a);
 	c2 -= c;
 	// both points must within our acceptable tolerance
-	if (c2.magnitude() < TOLERANCE)
+	if (c2.magnitude() < GEOM_TOL)
 		m_type = T_Rectangle;
 }
 
 
 void Polygon2D::eleminateColinearPts() {
-	IBKMK::eliminateCollinearPoints(m_vertexes, TOLERANCE);
+	IBKMK::eliminateCollinearPoints(m_vertexes, GEOM_TOL);
 }
 
 

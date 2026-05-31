@@ -15,40 +15,60 @@
 
 #include "CDT.hpp"
 #include "CDTUtils.hpp"
+#include "InitializeWithGrid.h"
+#include "Triangulation.hpp"
+#include "VerifyTopology.h"
 
 namespace CDT
 {
 
-template class Triangulation<float>;
-template class Triangulation<double>;
-template struct V2d<float>;
-template struct V2d<double>;
-template struct Box2d<float>;
-template struct Box2d<double>;
-template struct Vertex<float>;
-template struct Vertex<double>;
+template struct CDT_EXPORT V2d<float>;
+template struct CDT_EXPORT V2d<double>;
 
-template Box2d<float> envelopBox<float>(const std::vector<V2d<float> >&);
-template Box2d<double> envelopBox<double>(const std::vector<V2d<double> >&);
+template struct CDT_EXPORT Box2d<float>;
+template struct CDT_EXPORT Box2d<double>;
 
-template DuplicatesInfo RemoveDuplicates<float>(std::vector<V2d<float> >&);
-template DuplicatesInfo RemoveDuplicates<double>(std::vector<V2d<double> >&);
+template class CDT_EXPORT Triangulation<float>;
+template class CDT_EXPORT Triangulation<double>;
 
-template DuplicatesInfo RemoveDuplicatesAndRemapEdges<float>(
+template CDT_EXPORT Box2d<float>
+envelopBox<float>(const std::vector<V2d<float> >&);
+template CDT_EXPORT Box2d<double>
+envelopBox<double>(const std::vector<V2d<double> >&);
+
+template CDT_EXPORT DuplicatesInfo
+RemoveDuplicates<float>(std::vector<V2d<float> >&);
+template CDT_EXPORT DuplicatesInfo
+RemoveDuplicates<double>(std::vector<V2d<double> >&);
+
+template CDT_EXPORT DuplicatesInfo RemoveDuplicatesAndRemapEdges<float>(
     std::vector<V2d<float> >&,
     std::vector<Edge>&);
-template DuplicatesInfo RemoveDuplicatesAndRemapEdges<double>(
+template CDT_EXPORT DuplicatesInfo RemoveDuplicatesAndRemapEdges<double>(
     std::vector<V2d<double> >&,
     std::vector<Edge>&);
 
-template std::vector<unsigned short> CalculateTriangleDepths(
-    const std::vector<Vertex<float> >& vertices,
-    const TriangleVec& triangles,
-    const EdgeUSet& fixedEdges);
-template std::vector<unsigned short> CalculateTriangleDepths(
-    const std::vector<CDT::Vertex<double> >& vertices,
-    const TriangleVec& triangles,
-    const EdgeUSet& fixedEdges);
+template CDT_EXPORT bool
+verifyTopology<float>(const CDT::Triangulation<float>&);
+template CDT_EXPORT bool
+verifyTopology<double>(const CDT::Triangulation<double>&);
+
+template CDT_EXPORT void initializeWithRegularGrid<float>(
+    float,
+    float,
+    float,
+    float,
+    std::size_t,
+    std::size_t,
+    Triangulation<float>&);
+template CDT_EXPORT void initializeWithRegularGrid<double>(
+    double,
+    double,
+    double,
+    double,
+    std::size_t,
+    std::size_t,
+    Triangulation<double>&);
 
 } // namespace CDT
 

@@ -41,8 +41,10 @@
 #include <IBK_Line.h>
 #include <IBK_math.h>
 #include <IBK_messages.h>
+#include <IBK_BuildFlags.h>
 
 #include "IBKMK_3DCalculations.h"
+#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
@@ -82,6 +84,9 @@ Polygon3D::Polygon3D(const Polygon2D & polyline, const IBKMK::Vector3D & offset,
 		m_valid = true; // assume polygon is valid
 		setRotation(normal, localX); // also sets the m_dirty flag
 	} catch (...) {
+#ifdef IBK_DEBUG
+		IBK_Message("Rotation vectors wrong!", IBK::MSG_ERROR, FUNC_ID);
+#endif
 		m_valid = false;
 	}
 }
@@ -156,8 +161,7 @@ bool Polygon3D::setVertexes(const std::vector<Vector3D> & vertexes, bool heal) {
 
 				// we find our projected points onto the plane
 				double x, y;
-				// allow a fairly large tolerance here
-				if (IBKMK::planeCoordinates(offset, a, b, vertex, x, y, 1e-2)) {
+				if (IBKMK::planeCoordinates(offset, a, b, vertex, x, y, GEOM_TOL)) {
 
 					// now we construct our projected points and find the deviation between the original points
 					// and their projection
@@ -204,10 +208,10 @@ bool Polygon3D::setVertexes(const std::vector<Vector3D> & vertexes, bool heal) {
 bool Polygon3D::operator!=(const Polygon3D &other) const {
 
 	if (m_valid != other.m_valid ||
-		m_normal != other.m_normal ||
-		m_offset != other.m_offset ||
-		m_localX != other.m_localX ||
-		m_polyline != other.m_polyline)
+			m_normal != other.m_normal ||
+			m_offset != other.m_offset ||
+			m_localX != other.m_localX ||
+			m_polyline != other.m_polyline)
 	{
 		return true;
 	}
@@ -223,7 +227,6 @@ const std::vector<Vector3D> & Polygon3D::vertexes() const {
 
 	if (m_dirty) {
 		// recompute 3D vertex cache
-
 		const std::vector<IBKMK::Vector2D> &polylineVertexes = m_polyline.vertexes();
 		m_vertexes.resize(polylineVertexes.size());
 		m_vertexes[0] = m_offset;
@@ -234,6 +237,7 @@ const std::vector<Vector3D> & Polygon3D::vertexes() const {
 	}
 	return m_vertexes;
 }
+
 
 const std::vector<Vector3D> &Polygon3D::rawVertexes() const {
 	return m_vertexes;
@@ -251,7 +255,7 @@ void Polygon3D::setRotation(const IBKMK::Vector3D & normal, const IBKMK::Vector3
 		throw IBK::Exception("xAxis vector does not have unit length!", FUNC_ID);
 	// check that the vectors are (nearly) orthogonal
 	double sp = normal.scalarProduct(xAxis);
-	if (!IBK::nearly_equal<4>(sp, 0.0))
+	if (!IBK::nearly_equal<3>(sp, 0.0))
 		throw IBK::Exception("Normal and xAxis vectors must be orthogonal!", FUNC_ID);
 
 	// we only modify our vectors if all input data is correct - hence we ensure validity of the polygon
@@ -263,7 +267,17 @@ void Polygon3D::setRotation(const IBKMK::Vector3D & normal, const IBKMK::Vector3
 }
 
 
-void Polygon3D::flip() {
+void Polygon3D::switchLocalAxes() {
+	std::swap(m_localX, m_localY);
+	for (const IBKMK::Vector2D &v2D : m_polyline.vertexes()) {
+		IBKMK::Vector2D &v = const_cast<IBKMK::Vector2D&>(v2D);
+		std::swap(v.m_x, v.m_y);
+	}
+	m_dirty = true;
+}
+
+
+IBKMK::Vector2D Polygon3D::flip() {
 	IBK_ASSERT(isValid());
 	m_normal = -1.0*m_normal;
 	// we need to swap x and y axes to keep right-handed coordinate system
@@ -286,8 +300,17 @@ void Polygon3D::flip() {
 		vertexes2DNew.push_back(vertexes2D[i-1]-offset2D);
 
 	m_polyline.setVertexes(vertexes2DNew);
+	if (m_polyline.vertexes()[0] == IBKMK::Vector2D(0,0)) {
+		IBKMK::Vector2D oldOffset = m_polyline.vertexes()[0];
+		for (const IBKMK::Vector2D &p : m_polyline.vertexes())
+			const_cast<IBKMK::Vector2D&>(p) -= oldOffset;
+		m_offset -= m_localX * oldOffset.m_x + m_localY * oldOffset.m_y;
+	}
+
 	m_dirty = true;
-	vertexes();
+	vertexes(); // update 3D points
+
+	return offset2D;
 }
 
 
@@ -296,8 +319,10 @@ void Polygon3D::flip() {
 
 IBKMK::Vector3D Polygon3D::centerPoint() const {
 	FUNCID(Polygon3D::centerPoint);
-	if (!isValid())
-		throw IBK::Exception("Invalid polygon.", FUNC_ID);
+	if (!isValid()) {
+		IBK::IBK_Message("Polygon is broken. Returning (0,0,0) as center-point", IBK::MSG_WARNING, FUNC_ID, IBK::VL_DEVELOPER);
+		return IBKMK::Vector3D();
+	}
 
 	size_t counter=0;
 	IBKMK::Vector3D vCenter;
@@ -319,9 +344,9 @@ void Polygon3D::boundingBox(Vector3D & lowerValues, Vector3D & upperValues) cons
 	// Note: do not access m_vertexes directly, as this array may be dirty
 	const std::vector<Vector3D> & points = vertexes();
 	// initialize bounding box with first point
-	lowerValues = points[0];
-	upperValues = points[0];
-	for (unsigned int i=1; i<points.size(); ++i)
+	// lowerValues = points[0];
+	// upperValues = points[0];
+	for (unsigned int i=0; i<points.size(); ++i)
 		IBKMK::enlargeBoundingBox(points[i], lowerValues, upperValues);
 }
 
@@ -356,6 +381,159 @@ bool Polygon3D::smallerVectZero(const IBKMK::Vector3D& vect) {
 	return false;
 }
 
+bool Polygon3D::intersects(const Polygon3D &other) const {
+	struct IntersectionPoint {
+		IntersectionPoint(double factor, const IBKMK::Vector3D &point) :
+			m_factor(factor),
+			m_point(point)
+		{}
+
+		bool operator<(const IntersectionPoint &other) const {
+			return m_factor < other.m_factor;
+		}
+
+		double				m_factor;
+		IBKMK::Vector3D		m_point;
+	};
+
+	if (m_vertexes.size() < 3 || other.m_vertexes.size() < 3)
+		return false;
+
+	const double COORDINATE_TOLERANCE = 1e4;
+	std::vector<IBKMK::Vector3D> vertsA(m_vertexes.size());
+	std::vector<IBKMK::Vector3D> vertsB(other.m_vertexes.size());
+
+	// Coordinate rounding
+	auto roundCoordinates = [COORDINATE_TOLERANCE](const IBKMK::Vector3D &vert) -> IBKMK::Vector3D {
+		return IBKMK::Vector3D(std::round(vert.m_x * COORDINATE_TOLERANCE) / COORDINATE_TOLERANCE,
+							   std::round(vert.m_y * COORDINATE_TOLERANCE) / COORDINATE_TOLERANCE,
+							   std::round(vert.m_z * COORDINATE_TOLERANCE) / COORDINATE_TOLERANCE);
+	};
+
+	// Round coordinates with COORDINATE_TOLERANCE
+	std::transform(m_vertexes.begin(), m_vertexes.end(), vertsA.begin(), roundCoordinates);
+	std::transform(other.m_vertexes.begin(), other.m_vertexes.end(), vertsB.begin(), roundCoordinates);
+
+	auto getScaledVector = [](const IBKMK::Vector3D &v1, const IBKMK::Vector3D &v2) -> IBKMK::Vector3D {
+		IBKMK::Vector3D vector = v2 - v1;
+		return vector * (10 / vector.magnitude());
+	};
+
+	IBKMK::Vector3D vectorA1 = getScaledVector(vertsA[0], vertsA[1]);
+	IBKMK::Vector3D vectorA2 = getScaledVector(vertsA[0], vertsA[2]);
+	IBKMK::Vector3D vectorB1 = getScaledVector(vertsB[0], vertsB[1]);
+	IBKMK::Vector3D vectorB2 = getScaledVector(vertsB[0], vertsB[2]);
+
+	IBKMK::Vector3D normalVectorA = vectorA1.crossProduct(vectorA2);
+	IBKMK::Vector3D normalVectorB = vectorB1.crossProduct(vectorB2);
+
+	double offsetA = normalVectorA.scalarProduct(vertsA[0]);
+	double offsetB = normalVectorB.scalarProduct(vertsB[0]);
+
+	// Handle coplanar polygons
+	if (IBK::nearly_equal<1>(normalVectorA.crossProduct(normalVectorB).magnitude(), 0)) {
+#ifdef COPLANAR_CALCULATION
+		double distBFromPlaneA = normalVectorA.scalarProduct(vertsB[0]) - offsetA;
+		if (!IBK::near_zero(distBFromPlaneA)) {
+			return false;
+		} else {
+			// Handle coplanar polygons
+			// ...
+			return polyIntersect2D(vertsA2D, vertsB2D);
+		}
+#endif
+		return false;
+	}
+
+	// Polygons are not co-planar
+
+	std::vector<IBKMK::Vector3D> intersectionPoints;
+
+	auto findIntersectionPoints = [&](const std::vector<IBKMK::Vector3D> &verts, const IBKMK::Vector3D &normalVector, double offset, std::vector<IBKMK::Vector3D> &intersectionPoints) -> bool {
+		for (size_t i = 0; i < verts.size(); ++i) {
+
+			IBKMK::Vector3D edgeVector = verts[(i + 1) % verts.size()] - verts[i];
+
+			if ( !IBK::near_zero(normalVector.scalarProduct(edgeVector)) ) {
+				double r = (offset - normalVector.scalarProduct(verts[i])) / normalVector.scalarProduct(edgeVector);
+				IBKMK::Vector3D pointOfIntersection = verts[i] + r * edgeVector;
+				intersectionPoints.push_back(pointOfIntersection);
+
+				if (pointInPolygon3D(verts, pointOfIntersection) == 1)
+					return true;
+			}
+		}
+		return false;
+	};
+
+	if (findIntersectionPoints(vertsA, normalVectorB, offsetB, intersectionPoints) ||
+			findIntersectionPoints(vertsB, normalVectorA, offsetA, intersectionPoints))
+		return true;
+
+	IBKMK::Vector3D dirVector = normalVectorA.crossProduct(normalVectorB);
+	IBKMK::Vector3D vectorParallelPlaneA = dirVector.crossProduct(normalVectorA);
+	IBKMK::Vector3D vectorParallelPlaneB = dirVector.crossProduct(normalVectorB);
+
+	double factorVectorBPlaneA = offsetA / normalVectorA.scalarProduct(vectorParallelPlaneB);
+	double factorVectorAPlaneB = offsetB / normalVectorB.scalarProduct(vectorParallelPlaneA);
+
+	IBKMK::Vector3D supportVector = (vectorParallelPlaneA * factorVectorAPlaneB) + (vectorParallelPlaneB * factorVectorBPlaneA);
+
+	std::vector<IntersectionPoint> polyPointsOnIntersectionLine;
+	auto addPolyPointsOnLine = [&](const std::vector<IBKMK::Vector3D> &verts) {
+		for (const IBKMK::Vector3D &vert : verts) {
+			double factor = 0;
+
+			if (dirVector.m_x != 0)
+				factor = (vert.m_x - supportVector.m_x) / dirVector.m_x;
+			else if (dirVector.m_y != 0)
+				factor = (vert.m_y - supportVector.m_y) / dirVector.m_y;
+			else if (dirVector.m_z != 0)
+				factor = (vert.m_z - supportVector.m_z) / dirVector.m_z;
+
+			IBKMK::Vector3D tempVector = supportVector + factor * dirVector;
+			if (IBK::nearly_equal<5>(tempVector.m_x, vert.m_x) &&
+					IBK::nearly_equal<5>(tempVector.m_y, vert.m_y) &&
+					IBK::nearly_equal<5>(tempVector.m_z, vert.m_z)) {
+				polyPointsOnIntersectionLine.emplace_back(factor, vert);
+			}
+		}
+	};
+
+	addPolyPointsOnLine(vertsA);
+	addPolyPointsOnLine(vertsB);
+
+	for (const IBKMK::Vector3D &point : intersectionPoints) {
+
+		double factor = 0;
+		if (dirVector.m_x != 0)
+			factor = (point.m_x - supportVector.m_x) / dirVector.m_x;
+		else if (dirVector.m_y != 0)
+			factor = (point.m_y - supportVector.m_y) / dirVector.m_y;
+		else if (dirVector.m_z != 0)
+			factor = (point.m_z - supportVector.m_z) / dirVector.m_z;
+
+		polyPointsOnIntersectionLine.emplace_back(factor, point);
+	}
+
+	std::sort(polyPointsOnIntersectionLine.begin(), polyPointsOnIntersectionLine.end());
+
+	if (polyPointsOnIntersectionLine.size() > 1) {
+		for (unsigned int i = 0; i < polyPointsOnIntersectionLine.size() - 1; ++i) {
+
+			IBKMK::Vector3D &p1 = polyPointsOnIntersectionLine[i    ].m_point;
+			IBKMK::Vector3D &p2 = polyPointsOnIntersectionLine[i + 1].m_point;
+
+			IBKMK::Vector3D centerpoint = p1 + 0.5 * (p2 - p1);
+			if (pointInPolygon3D(vertsA, centerpoint) == 1 && pointInPolygon3D(vertsB, centerpoint) == 1)
+				return true;
+		}
+	}
+
+	return false;
+}
+
+
 IBKMK::Vector3D Polygon3D::computeNormal(const std::vector<IBKMK::Vector3D>& polygon) {
 	FUNCID(Polygon3D::computeNormal);
 
@@ -371,7 +549,7 @@ IBKMK::Vector3D Polygon3D::computeNormal(const std::vector<IBKMK::Vector3D>& pol
 	e /= polygon.size();
 
 
-	for(unsigned int i=0; i<polygon.size(); ++i) {
+	for (unsigned int i=0; i<polygon.size(); ++i) {
 		unsigned int s = polygon.size();
 		unsigned int j = (i + s - 1)%s;
 
@@ -428,6 +606,40 @@ IBKMK::Vector3D Polygon3D::computeNormal(const std::vector<IBKMK::Vector3D>& pol
 	return n.normalized();
 }
 
+
+IBKMK::Vector3D Polygon3D::computeNormalNewell(const std::vector<IBKMK::Vector3D>& polygon) {
+	FUNCID(Polygon3D::computeNormalNewell);
+
+	if (polygon.size() < 3)
+		return IBKMK::Vector3D(1,0,0); // fallback normal
+
+	IBKMK::Vector3D n(0,0,0);
+	unsigned int s = polygon.size();
+
+	if (s == 3) {
+		IBKMK::Vector3D v1 = polygon[1] - polygon[0];
+		IBKMK::Vector3D v2 = polygon[2] - polygon[0];
+		return v1.crossProduct(v2).normalized();
+	}
+	else {
+		for (unsigned int i = 0; i < s; ++i) {
+			const IBKMK::Vector3D& current = polygon[i];
+			const IBKMK::Vector3D& next = polygon[(i + 1) % s];
+
+			n.m_x += (current.m_y - next.m_y) * (current.m_z + next.m_z);
+			n.m_y += (current.m_z - next.m_z) * (current.m_x + next.m_x);
+			n.m_z += (current.m_x - next.m_x) * (current.m_y + next.m_y);
+		}
+	}
+
+	if (n.magnitudeSquared() < NUM_EPS)
+		throw IBK::Exception("Could not determine reliable polygon normal.", FUNC_ID);
+
+	return n.normalized();
+}
+
+
+
 void Polygon3D::updateLocalCoordinateSystem(const std::vector<IBKMK::Vector3D> & verts) {
 	// NOTE: DO NOT ACCESS m_vertexes IN THIS FUNCTION!
 
@@ -446,57 +658,15 @@ void Polygon3D::updateLocalCoordinateSystem(const std::vector<IBKMK::Vector3D> &
 
 	// calculate normal with first 3 points
 	m_localX = verts[1] - verts[0];
-//	IBKMK::Vector3D y = verts.back() - verts[0];
-	IBKMK::Vector3D n1 = computeNormal(verts);
-//	IBKMK::Vector3D n2;
-
-//	m_localX.crossProduct(y, n2);
-
-
-//	if(n1 != n2) {
-//		IBK::IBK_Message(IBK::FormatString("Normal 1 - X: %1 Y: %2 Z: %3")
-//						 .arg(n1.m_x).arg(n1.m_y).arg(n1.m_z), IBK::MSG_WARNING);
-
-//		IBK::IBK_Message(IBK::FormatString("Normal 2 - X: %1 Y: %2 Z: %3")
-//						 .arg(n2.m_x).arg(n2.m_y).arg(n2.m_z), IBK::MSG_WARNING);
-//	}
-
-	// if we interpret n as area between y and localX vectors, this should
-	// be reasonably large (> 1 mm2). If we, however, have a very small magnitude
-	// the vectors y and localX are (nearly) collinear, which should have been prevented by
-	// eliminateColliniarPoints() before.
-	if (n1.magnitude() < 1e-9)
-		return; // invalid vertex input
-	//n2.normalize();
-
-	/* das ist alt und kann weg da die richtung der normalen nicht immer richtig ist.
-	 * das wird an anderer stelle entschieden
-
-	int sameDirectionCount = 0;
-	// now process all other points and generate their normal vectors as well
-	for (unsigned int i=1; i<verts.size(); ++i) {
-		IBKMK::Vector3D vx = verts[(i+1) % verts.size()] - verts[i];
-		IBKMK::Vector3D vy = verts[i-1] - verts[i];
-		IBKMK::Vector3D vn;
-		vx.crossProduct(vy, vn);
-		// again, we check for not collinear points here (see explanation above)
-		if (vn.magnitude() < 1e-9)
-			return; // invalid vertex input
-		vn.normalize();
-
-
-		// adding reference normal to current vertexes normal and checking magnitude works
-		if ((vn + n).magnitude() > 1) // can be 0 or 2, so comparing against 1 is good even for rounding errors
-			++sameDirectionCount;
-		else
-			--sameDirectionCount;
+	//	IBKMK::Vector3D y = verts.back() - verts[0];
+	IBKMK::Vector3D n1;
+	try {
+		n1 = computeNormalNewell(verts);
 	}
-
-	if (sameDirectionCount < 0) {
-		// invert our normal vector
-		n *= -1;
+	catch (IBK::Exception &ex) {
+		return; // No valid normal of polygon
+		// ToDo all: What to do now?
 	}
-	*/
 
 	// save-guard against degenerate polygons (i.e. all points close to each other or whatever error may cause
 	// the normal vector to have near zero magnitude... this may happen for extremely small polygons, when
@@ -510,7 +680,6 @@ void Polygon3D::updateLocalCoordinateSystem(const std::vector<IBKMK::Vector3D> &
 	// store first point as offset
 	m_offset = verts[0];
 }
-
 
 
 void Polygon3D::update2DPolyline(const std::vector<Vector3D> & verts) {
@@ -554,6 +723,301 @@ void Polygon3D::update2DPolyline(const std::vector<Vector3D> & verts) {
 		}
 	}
 
+}
+
+
+bool Polygon3D::pointBetweenPoints(const Vector3D &point, const Vector3D &otherA, const Vector3D &otherB) const {
+	return ((point.m_x > std::min(otherA.m_x, otherB.m_x) || IBK::nearly_equal<5>(point.m_x, std::min(otherA.m_x, otherB.m_x)))
+			&& (point.m_x < std::max(otherA.m_x, otherB.m_x) || IBK::nearly_equal<5>(point.m_x, std::max(otherA.m_x, otherB.m_x)))
+			&& (point.m_y > std::min(otherA.m_y, otherB.m_y) || IBK::nearly_equal<5>(point.m_y, std::min(otherA.m_y, otherB.m_y)))
+			&& (point.m_y < std::max(otherA.m_y, otherB.m_y) || IBK::nearly_equal<5>(point.m_y, std::max(otherA.m_y, otherB.m_y)))
+			&& (point.m_z > std::min(otherA.m_z, otherB.m_z) || IBK::nearly_equal<5>(point.m_z, std::min(otherA.m_z, otherB.m_z)))
+			&& (point.m_z < std::max(otherA.m_z, otherB.m_z) || IBK::nearly_equal<5>(point.m_z, std::max(otherA.m_z, otherB.m_z))));
+}
+
+
+bool Polygon3D::dividePolyCycles(const std::vector<Vector3D> & verts, const IBKMK::Vector3D trimPlaneNormal,
+								 const double offset, std::vector<std::vector<Vector3D>> & outputVerts) const {
+
+	if (verts.size() > 3) {
+
+		// we test for edges on the trimPlane that are contained within each other, which means the polygon needs to be divided
+		for (unsigned int i = 0, count = verts.size(); i<count; ++i ) {
+			// j+3 because we dont need to match the same edge, neither the neighbouring edges
+			for (unsigned int j = 0, count = verts.size(); (j+3)<count; ++j ) {
+
+				// the vertex indices of the edges to be matched for containment
+				int indexIStart =  i;
+				int indexIEnd =   (i+1)   % verts.size();
+				int indexJStart = (j+i+2) % verts.size();
+				int indexJEnd =   (j+i+3) % verts.size();
+
+				IBKMK::Vector3D iStart = verts[indexIStart];
+				IBKMK::Vector3D iEnd =   verts[indexIEnd];
+				IBKMK::Vector3D jStart = verts[indexJStart];
+				IBKMK::Vector3D jEnd =   verts[indexJEnd];
+
+				// test if edge i lies on the trimPlane
+				if (IBK::nearly_equal<6>(trimPlaneNormal.scalarProduct(iStart)-offset,0)
+						&& IBK::nearly_equal<6>(trimPlaneNormal.scalarProduct(iEnd)-offset,0)) {
+
+					// test if first vertex of edge j is contained within edge i
+					// near equal is necessary because the edges might be constant regarding 1 or 2 coordinates, and won't be "contained" in all 3 dimensions
+					if (pointBetweenPoints(jStart, iStart, iEnd) && IBK::nearly_equal<5>(trimPlaneNormal.scalarProduct(jStart)-offset,0)) {
+
+						// test if second vertex of edge j is contained within edge i
+						if (pointBetweenPoints(jEnd, iStart, iEnd) && IBK::nearly_equal<5>(trimPlaneNormal.scalarProduct(jEnd)-offset,0)) {
+							//     _    _
+							//  __|_|__|_|__
+
+							std::vector<Vector3D> subPolyA = {};
+							std::vector<Vector3D> subPolyB = {};
+
+							// we create two new polygons:
+							// iEnd...jStart and jEnd...iStart
+
+							for (int k = 0, count = ((indexJStart - indexIEnd + verts.size())%verts.size())+1; k<count; ++k ) {
+								subPolyA.push_back(verts[(indexIEnd + k)%verts.size()]);
+							}
+
+							for (int k = 0, count = ((indexIStart - indexJEnd + verts.size())%verts.size())+1; k<count; ++k ) {
+								subPolyB.push_back(verts[(indexJEnd + k)%verts.size()]);
+							}
+
+							// recursive cycle divison on resulting polygons
+
+							std::vector<std::vector<Vector3D>> outputVertsA = {};
+							std::vector<std::vector<Vector3D>> outputVertsB = {};
+							if (dividePolyCycles(subPolyA, trimPlaneNormal, offset, outputVertsA)) {
+								for (const std::vector<Vector3D> & verts : outputVertsA) {
+									outputVerts.push_back(verts);
+								}
+							} else {
+								outputVerts.push_back(subPolyA);
+							}
+
+							if (dividePolyCycles(subPolyB, trimPlaneNormal, offset, outputVertsB)) {
+								for (const std::vector<Vector3D> & verts : outputVertsB) {
+									outputVerts.push_back(verts);
+								}
+							} else {
+								outputVerts.push_back(subPolyB);
+							}
+
+							return true;
+
+						} else {
+							// ___/\/\___ where point jStart divides edge i
+							// mark current polygon for removal
+
+							// append new polygons after recursive processing
+							std::vector<Vector3D> subPolyA = {};
+							std::vector<Vector3D> subPolyB = {};
+
+							// we create two new polygons:
+							// iEnd...jStart and jStart...iStart
+							for (int k = 0, count = ((indexJStart - indexIEnd + verts.size())%verts.size())+1; k<count; ++k ) {
+								subPolyA.push_back(verts[(indexIEnd + k)%verts.size()]);
+							}
+
+							for (int k = 0, count = ((indexIStart - indexJStart + verts.size())%verts.size())+1; k<count; ++k ) {
+								subPolyB.push_back(verts[(indexJStart + k)%verts.size()]);
+							}
+
+							// recursive cycle divison on resulting polygons
+							std::vector<std::vector<Vector3D>> outputVertsA = {};
+							std::vector<std::vector<Vector3D>> outputVertsB = {};
+
+							if (dividePolyCycles(subPolyA, trimPlaneNormal, offset, outputVertsA)) {
+								for (const std::vector<Vector3D> & verts : outputVertsA) {
+									outputVerts.push_back(verts);
+								}
+							} else {
+								outputVerts.push_back(subPolyA);
+							}
+
+							if (dividePolyCycles(subPolyB, trimPlaneNormal, offset, outputVertsB)) {
+								for (const std::vector<Vector3D> & verts : outputVertsB) {
+									outputVerts.push_back(verts);
+								}
+							} else {
+								outputVerts.push_back(subPolyB);
+							}
+
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+
+
+void Polygon3D::polyCyclesAfterTrimming(std::vector<IBKMK::Polygon3D> &polys,
+										const IBKMK::Vector3D &trimPlaneNormal,
+										const double offset) const {
+
+	std::vector<int> indicesToBeRemovedAfter;
+	for (unsigned int polysIterator = 0, count = polys.size(); polysIterator<count; ++polysIterator ) {
+		std::vector<std::vector<Vector3D>> outputVerts;
+		std::vector<Vector3D> verts;
+		try {
+			verts = polys[polysIterator].vertexes();
+		}
+		catch (IBK::Exception &ex) {
+			IBK::IBK_Message("Vertexes of polygon after trimming are empty. Skipping.");
+			continue;
+		}
+
+		if (!dividePolyCycles(verts, trimPlaneNormal, offset, outputVerts))
+			continue;
+
+		// dividePolyCycles returned true, therefore remove "before" state
+		indicesToBeRemovedAfter.push_back(polysIterator);
+
+		// Add back polygon
+		for (const std::vector<Vector3D> &vertsOut : outputVerts) {
+			polys.push_back(vertsOut);
+		}
+	}
+
+	// reverse indices so we don't interfere with the iterator
+	// remove polygons
+	for (unsigned int i = indicesToBeRemovedAfter.size(); i > 0; --i) {
+		polys.erase(polys.begin() + indicesToBeRemovedAfter.at(i-1));
+	}
+}
+
+
+bool Polygon3D::trimByPlane(const IBKMK::Polygon3D &plane, std::vector<IBKMK::Polygon3D> &trimmedPolygons,
+							bool writeWarnings) const {
+
+	// ToDo: REVIEW!!!
+
+	const std::vector<Vector3D> &vertsA = vertexes();
+	const std::vector<Vector3D> &vertsB = plane.vertexes();
+
+	IBK_ASSERT(vertsA.size() > 2);
+	IBK_ASSERT(plane.vertexes().size() > 2);
+
+	int vertsSize = vertsA.size();
+
+	// get arbitrary base vectors for polygon A and B's planes
+	// compensating for different sizes of span vectors to have later calculations in the same order of magnitude
+	// use cross product to obtain normal vectors
+	const IBKMK::Vector3D &normalVectorA = normal();
+	const IBKMK::Vector3D &normalVectorB = plane.normal();
+
+	const double offsetB = normalVectorB.scalarProduct(vertsB[0]);
+
+	// check if polygon planes A & B are parallel
+	// if crossProduct of normal vectors returns 0-vector then normal vectors are parallel
+	// magnitude of normal vector will quickly exceed 1e+2 for small rotations, so 1e-1 check is suited
+	if (IBK::nearly_equal<6>(normalVectorA.crossProduct(normalVectorB).magnitude(), 0)) {
+		// planes are parallel
+		if (writeWarnings)
+			IBK::IBK_Message("Trimming plane is coplanar", IBK::MSG_WARNING);
+		return false;
+	}
+
+	// planes intersect
+	// iterate over all vertices in A
+	// create a vector of vertex locations -1 / 0 / 1 depending on the vertex's side of the trimming plane
+	std::vector<int> vertsAsorted;
+	double distVertToPlane;
+
+	for (unsigned int i = 0, count = vertsSize; i<count; ++i) {
+		distVertToPlane = normalVectorB.scalarProduct(vertsA[i])-offsetB;
+		if (IBK::nearly_equal<5>(distVertToPlane, 0))
+			vertsAsorted.push_back(0);
+		else if (distVertToPlane > 0)
+			vertsAsorted.push_back(1);
+		else /* distVertToPlane < 0 */
+			vertsAsorted.push_back(-1);
+	}
+
+	// sort vertices by the side of the trimming plane they're located on
+	std::vector<IBKMK::Vector3D> vertsPos;
+	std::vector<IBKMK::Vector3D> vertsNeg;
+	IBKMK::Vector3D edgeA;
+	IBKMK::Vector3D pointOfIntersection;
+	double r = 0;
+
+	for (unsigned int i = 0, count = vertsSize; i<count; ++i ) {
+		// if vertex lies on plane
+		if (vertsAsorted[i] == 0) {
+			// if predecessor and successor are on different sides: add vertex to both halves
+			if (vertsAsorted[(i-1+vertsSize)%vertsSize] * vertsAsorted[(i+1)%vertsSize] == -1) {
+
+				vertsPos.push_back(vertsA[i]);
+				vertsNeg.push_back(vertsA[i]);
+
+			}
+			// else if they are on the same side
+			else if (vertsAsorted[(i-1+vertsSize)%vertsSize] * vertsAsorted[(i+1)%vertsSize] == 1) {
+				if (vertsAsorted[(i+1)%vertsSize] == 1)
+					vertsPos.push_back(vertsA[i]);
+				else /* vertsAsorted[i+1] == -1 */
+					vertsNeg.push_back(vertsA[i]);
+			}
+			else {
+				// one of the neighbouring vertices lies on the intersection plane too, so only add vertex to one side.
+				// if both neighboring vertices lie on plane, the polygon is malformatted. This case is not regarded here anymore.
+				if (vertsAsorted[(i-1+vertsSize)%vertsSize] == 1 || vertsAsorted[(i+1)%vertsSize] == 1)
+					vertsPos.push_back(vertsA[i]); 	// either one of the neighbouring points is on the positive side
+				else
+					vertsNeg.push_back(vertsA[i]);
+			}
+		}
+		else {
+			// vertex is not on the plane
+			if (vertsAsorted[i] == 1)
+				vertsPos.push_back(vertsA[i]);
+			else /* vertsAsorted[i] == -1 */
+				vertsNeg.push_back(vertsA[i]);
+
+			// if the next vertex lies on the other trim-plane side
+			if (vertsAsorted[i] * vertsAsorted[(i+1)%vertsSize] == -1) {
+				// add intersection point to both halves
+				edgeA = vertsA[(i+1)%vertsSize] - vertsA[i];
+				// calculating point of intersection
+				// ...by inserting edgeA into plane B to get factor r, for our edge equation
+				// equation: normalVectorB * (vertsA[i] + r * edgeA) == offsetB;
+				// division by zero can't occure because the end points lie on different plane sides -> edgeA not coplanar
+				r = (offsetB - normalVectorB.scalarProduct(vertsA[i])) / normalVectorB.scalarProduct(edgeA);
+				// get point of intersection:
+				pointOfIntersection = vertsA[i] + r * edgeA;
+
+				// ToDo Stephan: Find out where slight offset is occuring
+				// IBKMK::Vector3D fixedIntersection;
+				// IBKMK::pointProjectedOnPlane(plane.offset(), plane.normal(), pointOfIntersection, fixedIntersection);
+
+				vertsPos.push_back(pointOfIntersection);
+				vertsNeg.push_back(pointOfIntersection);
+			} // otherwise the next one is either on the same side or on the plane (do nothing yet in this iteration)
+		}
+	}
+
+	if (vertsPos.size() == 0 || vertsNeg.size() == 0) {
+		if (writeWarnings)
+			IBK::IBK_Message("Plane does not intersect polygon", IBK::MSG_WARNING);
+		return false;
+	}
+
+
+	// we need to detect if Pos / Neg side is divided into multiple polygons
+	std::vector<IBKMK::Polygon3D> tempPolygons;
+	tempPolygons.push_back(vertsPos);
+	tempPolygons.push_back(vertsNeg);
+
+	polyCyclesAfterTrimming(tempPolygons, normalVectorB, offsetB);
+
+	for (const IBKMK::Polygon3D &polygon : tempPolygons)
+		trimmedPolygons.push_back(polygon);
+
+	return true;
 }
 
 
