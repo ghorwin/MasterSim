@@ -1,0 +1,23 @@
+mastersim (0.9.7-1~jammy~ppa1) jammy; urgency=medium
+
+  * Update to release 0.9.7
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 01 Jan 2025 10:16:16 +0100
+
+mastersim (0.9.6-1~jammy~ppa1) jammy; urgency=medium
+
+  * Update to release 0.9.6
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 17 Aug 2023 08:53:05 +0200
+
+mastersim (0.9.5-1~jammy~ppa1) jammy; urgency=medium
+
+  * update for release 0.9.5
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 22 Dec 2022 18:54:11 +0100
+
+mastersim (0.9.4-1~jammy~ppa1) jammy; urgency=medium
+
+  * first release for Jammy
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 19 May 2022 16:15:10 +0200

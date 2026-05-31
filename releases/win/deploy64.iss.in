@@ -1,0 +1,93 @@
+[Setup]
+Compression=lzma
+SolidCompression=true
+OutputDir=.
+UsePreviousAppDir=false
+UsePreviousGroup=false
+InternalCompressLevel=ultra
+
+AppName=MasterSimulator 64-Bit
+AppVerName=MasterSimulator ${Version} 64-Bit
+AppVersion=${LongVersion}
+DefaultDirName={pf}\IBK\MasterSimulator ${Version}
+DefaultGroupName=IBK\MasterSimulator ${Version} 64-Bit
+OutputBaseFilename=${OutputFileBasename}
+VersionInfoVersion=${LongVersion}
+VersionInfoDescription=MasterSimulator 64-Bit
+UninstallDisplayIcon={app}\MasterSimulatorUI.exe
+
+AppPublisher=MasterSim Developers
+AppPublisherURL=http://mastersim.sourceforge.net
+AppSupportURL=https://sourceforge.net/p/mastersim/wiki/Home/
+AppUpdatesURL=http://www.bauklimatik-dresden.de/downloads.php
+VersionInfoCompany=Bauklimatik Dresden
+VersionInfoCopyright=${CurrentYear} Andreas Nicolai
+AppCopyright=${CurrentYear} Andreas Nicolai
+LicenseFile=..\..\LICENSE
+ArchitecturesInstallIn64BitMode=x64
+
+
+[Files]
+
+; Program files
+Source: ..\..\bin\release_x64\mastersim.exe; DestDir: {app}
+Source: ..\..\bin\release_x64\mastersim-gui.exe; DestDir: {app}
+
+; Dependencies 
+Source: VC19_x64\Qt5Core.dll; DestDir: {app}
+Source: VC19_x64\Qt5Gui.dll; DestDir: {app}
+Source: VC19_x64\Qt5Widgets.dll; DestDir: {app}
+Source: VC19_x64\Qt5Network.dll; DestDir: {app}
+Source: VC19_x64\Qt5Svg.dll; DestDir: {app}
+Source: VC19_x64\Qt5PrintSupport.dll; DestDir: {app}
+
+Source: VC19_x64\msvcp140.dll; DestDir: {app}
+Source: VC19_x64\vcruntime140_1.dll; DestDir: {app}
+Source: VC19_x64\vcruntime140.dll; DestDir: {app}
+
+Source: VC19_x64\bearer\*; DestDir: {app}\bearer
+Source: VC19_x64\iconengines\*; DestDir: {app}\iconengines
+Source: VC19_x64\imageformats\*; DestDir: {app}\imageformats
+Source: VC19_x64\platforms\qwindows.dll; DestDir: {app}\platforms
+Source: VC19_x64\styles\*; DestDir: {app}\styles
+Source: VC19_x64\printsupport\*; DestDir: {app}\printsupport
+
+; Files for OpenSSL support (i.e. when accessing https://bauklimatik-dresden.de)
+Source: VC19_x64\libcrypto-1_1-x64.dll; DestDir: {app}
+Source: VC19_x64\libssl-1_1-x64.dll; DestDir: {app}
+
+; Translation files
+Source: ..\..\MasterSimulatorUI\resources\translations\*.qm; DestDir: {app}\resources\translations
+
+; Examples
+Source: ..\..\data\examples\win64\*; DestDir: {app}\resources\examples; Flags: recursesubdirs
+
+; Auxiliary files
+Source: ..\..\LICENSE ; DestDir: {app}\resources;
+
+
+[InstallDelete]
+Name: {app}; Type: filesandordirs
+
+[UninstallDelete]
+Name: {app}; Type: filesandordirs
+
+[Icons]
+Name: {group}\MasterSimulator ${Version} 64-Bit; Filename: {app}\mastersim-gui.exe; WorkingDir: {app}; IconIndex: 0
+Name: {group}\MasterSimulator ${Version} 64-Bit Manual; Filename: "https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_en.html"; Languages: English
+Name: {group}\MasterSimulator ${Version} 64-Bit Handbuch; Filename: "https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual_de.html"; Languages: Deutsch
+
+[Registry]
+Root: HKCR; Subkey: .msim; ValueType: string; ValueData: MasterSim.Project; Flags: uninsdeletekey deletekey
+Root: HKCR; Subkey: MasterSim.Project; ValueType: string; ValueData: MasterSim Project File; Flags: uninsdeletekey deletekey
+Root: HKCR; Subkey: MasterSim.Project\shell\open\command; ValueType: string; ValueData: """{app}\mastersim-gui.exe"" ""%1"""; Flags: uninsdeletekey deletekey
+
+[Run]
+Filename: {app}\mastersim-gui.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Starte MasterSimulator ${Version} 64-Bit; Languages: Deutsch
+Filename: {app}\mastersim-gui.exe; WorkingDir: {app}; Flags: postinstall unchecked; Description: Run MasterSimulator ${Version} 64-Bit; Languages: English
+
+[Languages]
+Name: English; MessagesFile: compiler:Default.isl
+Name: Deutsch; MessagesFile: compiler:Languages\German.isl
+
+

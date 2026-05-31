@@ -1,0 +1,42 @@
+mastersim (0.9.7-1~focal~ppa1) focal; urgency=medium
+
+  * Update to release 0.9.7
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 01 Jan 2025 16:44:51 +0100
+
+mastersim (0.9.6-1~focal~ppa1) focal; urgency=medium
+
+  * Update to release 0.9.6
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 16 Aug 2023 20:38:24 +0200
+
+mastersim (0.9.5-1~focal~ppa1) focal; urgency=medium
+
+  * update to release 0.9.5
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 22 Dec 2022 19:40:45 +0100
+
+mastersim (0.9.4-1~focal~ppa1) focal; urgency=medium
+
+  * Upgrade to Version 0.9.4 (linking dynamic lib fix)
+  * update of man pages
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Sun, 23 Jan 2022 14:56:36 +0100
+
+mastersim (0.9.3-2~focal~ppa1) focal; urgency=medium
+
+  * Added missing build-dependency 7z.
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 13 Jan 2022 09:32:00 +0100
+
+mastersim (0.9.3-1~focal~ppa1) focal; urgency=medium
+
+  * Update to release 0.9.3, package now includes examples and fixes mime types
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Wed, 12 Jan 2022 22:16:59 +0100
+
+mastersim (0.9.2-1~focal~ppa1) focal; urgency=medium
+
+  * First release of MasterSim as Ubuntu package
+
+ -- Andreas Nicolai <andreas.nicolai@gmx.net>  Thu, 06 Jan 2022 08:07:01 +0100
