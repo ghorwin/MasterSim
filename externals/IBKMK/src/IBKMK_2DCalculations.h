@@ -40,6 +40,8 @@
 #define IBKMK_2DCalculationsH
 
 #include "IBKMK_Vector2D.h"
+#include "IBKMK_Polygon2D.h"
+#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
@@ -58,15 +60,63 @@ bool intersectsLine2D(const std::vector<Vector2D> & polygon,
 	Source https://de.wikipedia.org/wiki/Punkt-in-Polygon-Test_nach_Jordan
 
 */
-int pointInPolygon(const std::vector<Vector2D> & poly, const IBK::point2D<double> &p);
+int pointInPolygon(const std::vector<Vector2D> & poly, const IBK::point2D<double> &p, unsigned int *idx = nullptr);
+
+/*! Polygon in Polygon function:
+ *  if poly1 in poly2, returns 1
+ *  if poly2 in poly1, returns 2
+ *  if intersect or disjuct, returns 0 */
+int polygonInPolygon(const std::vector<Vector2D> & poly1, const std::vector<Vector2D> & poly2);
+
+/*! TODO Stephan, document. */
+bool polygonInOrOnPolygon(const std::vector<Vector2D> & poly1, const std::vector<Vector2D> & poly2, double epsilon = 0.1);
+
+/*! checks if 3 points are in counterclockwise order */
+bool counterClockwise(const Vector2D & a, const Vector2D & b, const Vector2D & c);
+
+bool polygonClockwise(const std::vector<Vector2D>& polyline);
+
+/*! checks if 2 linesegments intersect. https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/ */
+bool lineSegmentIntersect(const Vector2D &a, const Vector2D &b, const Vector2D &c, const Vector2D &d);
+
+/*! checks if 2 polylines intersect */
+bool lineIntersect(const std::vector<IBKMK::Vector2D> line1, const std::vector<IBKMK::Vector2D> line2);
+
+/*! checks if a point is near the segment defined by points a and b. epsilon defines the distance the point can have from the segment
+ * to be considered near */
+bool isPointNearSegment(const Vector2D& p, const Vector2D& a, const Vector2D& b, double epsilon = 0.1);
+
+int crossProdTestWithEps(const Vector2D& p, const Vector2D& a, const Vector2D& b, double epsilon = 0.1);
+
+/*! Point in Polygon function. Result:
+	-1 point not in polyline
+	0 point on polyline
+	1 point in polyline
+*/
+int pointInPolygonFuzzy(const std::vector<Vector2D>& polygon, const Vector2D& p, double epsilon = 0.1);
 
 /*! Eliminates collinear points in a polygon.
 	All points that are closer together than the provided epsilon will be merged.
 */
-void eliminateCollinearPoints(std::vector<IBKMK::Vector2D> & polygon, double epsilon = 1e-4);
+void eliminateCollinearPoints(std::vector<IBKMK::Vector2D> & polygon, double epsilon = GEOM_TOL);
 
 /*! Takes the vector v and enlarges the current bounding box defined through 'minVec' and 'maxVec'. */
 void enlargeBoundingBox(const IBKMK::Vector2D & v, IBKMK::Vector2D & minVec, IBKMK::Vector2D & maxVec);
+
+/*! Takes two 2D polygons and checks for intersection.
+	\returns true, if they intersect each other.
+*/
+bool polyIntersect2D(const std::vector<IBKMK::Vector2D> & vertsA, const std::vector<IBKMK::Vector2D> & vertsB);
+
+/*! Finds shrunken polygon(s) by the defined percentage (of area).
+	\param poly is the original poly, where the newly created polygons need to be found
+	\param percentage is the area ratio of the newly created polygon(s), goes from 0 to 1
+	\param createdPolygons are the newly created polygons if process converges
+	\return true if succesful otherwise false and no polygons are populated in createdPolygons
+*/
+bool findPolyonsByPercentage(const IBKMK::Polygon2D &poly, double percentage, std::vector<IBKMK::Polygon2D> &createdPolygons);
+
+
 
 } // namespace IBKMK
 

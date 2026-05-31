@@ -40,6 +40,7 @@
 #define IBKMK_BlockSparseMatrixH
 
 #include <vector>
+#include <iosfwd>
 #include <cstring>
 
 #include <IBK_assert.h>
@@ -95,7 +96,7 @@ public:
 	BlockSparseMatrix(	unsigned int n,
 						unsigned int blocksPerRow,
 						unsigned int nSubMatrix,
-						const unsigned int * indices = NULL)
+						const unsigned int * indices = nullptr)
 	{
 		resize(n, blocksPerRow, nSubMatrix, indices);
 	}
@@ -103,7 +104,7 @@ public:
 	/*! Resizes the matrix.
 		\param n Number of block-rows of matrix.
 		\param blocksPerRow Number of blocks per row.
-		\param indices Vector of size n*blocksPerRow holding the indices. If a NULL pointer (the default),
+		\param indices Vector of size n*blocksPerRow holding the indices. If a nullptr pointer (the default),
 				the index vector is initialized with -1 and need to be clean up afterwards.
 
 		The total dimension of the matrix if given in scalars is n*blocksPerRow x n*blocksPerRow.
@@ -111,7 +112,7 @@ public:
 		\warning If an invalid index vector is passed, or none at all, populate the index vector
 				manually using member function index() before using an multiplication functions.
 	*/
-	void resize(unsigned int n, unsigned int blocksPerRow, unsigned int nSubMatrix, const unsigned int * indices = NULL);
+	void resize(unsigned int n, unsigned int blocksPerRow, unsigned int nSubMatrix, const unsigned int * indices = nullptr);
 
 	/*! Returns size of matrix. */
 	unsigned int n() const { return m_n; }
@@ -186,13 +187,13 @@ public:
 
 	/*! Dumps the matrix to an output stream in human-readibly.
 		\param out Output stream (ASCII).
-		\param b Pointer to vector to print alongside matrix, size = n, NULL if no vector to print.
+		\param b Pointer to vector to print alongside matrix, size = n, nullptr if no vector to print.
 		\param eulerFormat If true, prints in Euler-Mathtoolbox format
 		\param width Column width for matrix output (precision is expected to be set as stream property)
 		\param matrixLabel The label to be used for defining the matrix in Euler format, defaults to 'A'
 		\param vectorLabel The label to be used for defining the vector b in Euler format, defaults to 'b'
 	*/
-	void write(std::ostream & out, double * b = NULL, bool eulerFormat = false, unsigned int width=4,
+	void write(std::ostream & out, double * b = nullptr, bool eulerFormat = false, unsigned int width=4,
 					   const char * const matrixLabel = "A", const char * const vectorLabel = "b") const;
 
 private:

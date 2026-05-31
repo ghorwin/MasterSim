@@ -80,7 +80,17 @@ public:
 	*/
 	double	m_tolerance;
 
-	/*! Contains the generated triangles after triangulation has completed. */
+	/*! Final vertex list used by m_triangles.
+		Equal to the input 'points' plus any Steiner vertices that the underlying CDT
+		library had to insert to resolve intersecting constraint edges. Callers must use
+		this vector (not the original 'points') to look up triangle coordinates, otherwise
+		triangle indices may run past the end of the input point list.
+	*/
+	std::vector<IBK::point2D<double> >	m_vertices;
+
+	/*! Contains the generated triangles after triangulation has completed.
+		Indices reference m_vertices.
+	*/
 	std::vector<triangle_t>		m_triangles;
 };
 

@@ -31,22 +31,27 @@
 #define IBKMK_3DCalculationsH
 
 #include "IBKMK_Vector3D.h"
+#include "IBKMK_Polygon3D.h"
+#include "IBKMK_Constants.h"
+
 #include <IBK_physics.h>
 
 namespace IBKMK {
 
-/*! Computes the coordinates x, y of a point 'p' in a plane spanned by vectors a and b from a point 'offset', where rhs = p-offset.
+/*! Computes the coordinates x, y of a point 'v' in a plane spanned by vectors a and b from a point 'offset', where rhs = p-offset.
 	The computed plane coordinates are stored in variables x and y (the factors for vectors a and b, respectively).
 	If no solution could be found (only possible if a and b are collinear or one of the vectors has length 0?),
 	the function returns false.
-	Note: when the point p is not in the plane, this function will still get a valid result.
+
+	\note: when the point v is not in the plane, this function will still get a valid result.
+
 	Optional argument tolerance defines the allowed distance (magnitude of distance vector) of a point from
 	the projected point on the plane. This can be used to correct rounding errors. If the distance is larger than
 	the given tolerance, the function returns false (rounding error too large).
 */
 bool planeCoordinates(const Vector3D & offset, const Vector3D & a, const Vector3D & b,
 					  const Vector3D & v, double & x, double & y,
-					  double tolerance = 1e-4, bool showWarings = false);
+					  double tolerance = GEOM_TOL, bool showWarings = false);
 
 
 /*! Computes the distance between a line (defined through offset point a, and directional vector d) and a point p.
@@ -69,7 +74,7 @@ double lineToLineDistance(const Vector3D & a1, const Vector3D & d1,
 	Returns true if line intersects sphere. Returns 'lineFactor' from point 'a' to sphere intersection point.
 	Also returns lotpoint (closest point on line to sphere center).
 */
-bool lineShereIntersection(const Vector3D & a, const Vector3D & d, const Vector3D & p, double r,
+bool lineSphereIntersection(const Vector3D & a, const Vector3D & d, const Vector3D & p, double r,
 						   double & lineFactor, Vector3D & lotpoint);
 
 /*! Calculates intersection of a line with a plane.
@@ -80,11 +85,11 @@ bool lineShereIntersection(const Vector3D & a, const Vector3D & d, const Vector3
 		point in 'intersectionPoint' and the line factor 'dist'.
 */
 bool linePlaneIntersectionWithNormalCheck(const Vector3D & a, const Vector3D & normal, const Vector3D & p,
-						   const IBKMK::Vector3D & lineVector, IBKMK::Vector3D & intersectionPoint, double & dist, bool checkNormal = true);
+										  const IBKMK::Vector3D & lineVector, IBKMK::Vector3D & intersectionPoint, double & dist, bool checkNormal = true);
 
 /*! Calculates intersection of a line with a plane.
 	Plane is given by offset 'a' and normal vector 'normal'.
-	Line is given by point 'p' and its line vector 'd'.
+	Line is given by point 'p' and its line vector 'lineVector'.
 	\return Returns false if line is parallel to plane (normal vector and line vector are perpendicular).
 		Otherwise returns true and the intersection point in 'intersectionPoint' and the line factor 'dist'.
 */
@@ -95,18 +100,53 @@ bool linePlaneIntersection(const Vector3D & a, const Vector3D & normal, const Ve
 	Returns projected point coordinates.
 */
 void pointProjectedOnPlane(const Vector3D & a, const Vector3D & normal,
-						  const Vector3D & p, Vector3D & projectedP);
+						   const Vector3D & p, Vector3D & projectedP);
+
+bool isCollinear(const Vector3D & a1, const Vector3D & d1,
+				 const Vector3D & a2, const Vector3D & d2, double epsilon = GEOM_TOL);
 
 /*! Eleminates colinear points in a polygon. */
-void eliminateCollinearPoints(std::vector<IBKMK::Vector3D> & polygon, double epsilon = 1e-5);
+void eliminateCollinearPoints(std::vector<IBKMK::Vector3D> & polygon, double epsilon = GEOM_TOL);
+
+/*! Returns the inner Angle between two Vectors of a Polygon in Degree (0..180). */
+inline double angleBetweenVectorsDeg ( const IBKMK::Vector3D &v1, const IBKMK::Vector3D &v2) {
+	return std::acos(std::max(-1.0, std::min(1.0, v1.scalarProduct(v2) / (v1.magnitude() * v2.magnitude())))) / IBK::DEG2RAD;
+}
 
 /*! Returns the inner Angle between two Vectors of a Polygon in Degree (0..360). */
-inline double angleBetweenVectorsDeg ( const IBKMK::Vector3D &v1, const IBKMK::Vector3D &v2) {
-	return std::acos( v1.scalarProduct(v2) / sqrt(v1.magnitude() * v2.magnitude() ) ) / IBK::DEG2RAD;
+inline double angleBetweenVectorsDeg360(const IBKMK::Vector3D &v1, const IBKMK::Vector3D &v2, const IBKMK::Vector3D &normal) {
+	double angle = angleBetweenVectorsDeg(v1, v2);
+	IBKMK::Vector3D cross = v1.crossProduct(v2);
+	if (normal.scalarProduct(cross) < 0)
+		angle = 360 - angle;
+	return angle;
 }
+
+/*! p_prev The vertex preceding p.
+  * p The vertex where the angle is measured.
+  * p_next The vertex following p.
+  * returns The angle in degrees in range [0, 180]. */
+double angleAtVertexDeg180(const IBKMK::Vector3D& p_prev, const IBKMK::Vector3D& p, const IBKMK::Vector3D& p_next);
+
 
 /*! Takes the vector v and enlarges the current bounding box defined through 'minVec' and 'maxVec'. */
 void enlargeBoundingBox(const IBKMK::Vector3D & v, IBKMK::Vector3D & minVec, IBKMK::Vector3D & maxVec);
+
+
+/*! Transforms 3D Polygon to 2D using planeCoordinates and applies 2D Point in Polygon.
+	It's assumed the point is already coplanar. This should previously be tested.
+
+	\param point 3D Point to be evaluated
+
+	\note: Throws an exception, if plane coordinates cannot be calculated!
+
+	Point in Polygon function.
+	\return point in polygon result:
+	-1 point not in polyline
+	0 point on polyline
+	1 point in polyline
+*/
+int pointInPolygon3D(const IBKMK::Polygon3D &poly3D, const IBK::point3D<double> &point);
 
 /*! Transforms 3D Polygon to 2D by eliminating one dimension and applies 2D Point in Polygon.
 	It's assumed the point is already coplanar. This should previously be tested.
@@ -133,6 +173,22 @@ int coplanarPointInPolygon3D(const std::vector<Vector3D> poly, const IBK::point3
 	This 2-step algorithm ensures we won't miss any edge cases, e.g. polygons sharing intersection points or lines
  */
 bool polyIntersect(const std::vector<IBKMK::Vector3D> & vertsA, const std::vector<IBKMK::Vector3D> & vertsB);
+
+/*! Calculates the bounding box and center point for the given polygons.
+	\param	polygons All polygons where the bounding box is needed
+	\param	center Is the center point of the bounding box
+	\returns boundingBox in global R3 for specified polygons
+*/
+Vector3D boundingBox(const std::vector<IBKMK::Polygon3D> &polygons, IBKMK::Vector3D &center);
+
+/*! Checks if the given vertices form a valid planar polygon.
+	Verifies that all vertices lie within a tolerance from the plane defined by the first three vertices.
+	\param vertices Vector of 3D vertices to check
+	\param tolerance Maximum distance [m] from the plane (default: GEOM_TOL = 1e-4)
+	\return True if all vertices are coplanar within the given tolerance, false otherwise
+*/
+bool checkVerticesPlanarity(const std::vector<Vector3D> & vertices, double tolerance = GEOM_TOL);
+
 
 } // namespace IBKMK
 

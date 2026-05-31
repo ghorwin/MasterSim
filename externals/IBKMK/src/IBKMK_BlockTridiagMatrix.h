@@ -41,6 +41,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <vector>
 
 #include <IBK_assert.h>
 
