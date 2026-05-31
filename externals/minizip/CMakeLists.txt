@@ -6,7 +6,7 @@ set(BUILD_SHARED_LIBS OFF)
 set(SKIP_INSTALL_HEADERS ON)
 set(SKIP_INSTALL_FILES ON)
 
-set(MINIZP_SRC ${PROJECT_SOURCE_DIR}/../../src)
+set(MINIZP_SRC ${PROJECT_SOURCE_DIR}/src)
 
 if(CMAKE_CL_64)
 	set_target_properties(zlib PROPERTIES STATIC_LIBRARY_FLAGS "/machine:x64")
@@ -31,7 +31,7 @@ endif()
 
 include_directories( 
 	${CMAKE_BINARY_DIR}/libz # add binary dir to include paths so that auto-generated zconf.h is found
-	${PROJECT_SOURCE_DIR}/../../../zlib/src
+	${PROJECT_SOURCE_DIR}/../zlib/src
 ) 
 
 set(SOURCE

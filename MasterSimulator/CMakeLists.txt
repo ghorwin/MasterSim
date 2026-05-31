@@ -2,6 +2,13 @@
 
 project( MasterSimulator )
 
+if (CMAKE_COMPILER_IS_GNUCC)
+	if (NOT APPLE)
+		# link solver statically
+		set( CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++" )
+	endif (NOT APPLE)
+endif (CMAKE_COMPILER_IS_GNUCC)
+
 # add include directories
 include_directories(
 	${PROJECT_SOURCE_DIR}/../externals/IBK/src

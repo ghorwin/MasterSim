@@ -61,15 +61,22 @@ if (NOT CMAKE_BUILD_TYPE)
 		"Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-# on Unix we want really detailed warnings
-if (UNIX)
-	ADD_DEFINITIONS( -Wall -fPIC )
-endif (UNIX)
+# Nightly build mode - shows startup warning dialog
+option(BUILD_NIGHTLY "Build as nightly version with startup warning" OFF)
+if(BUILD_NIGHTLY)
+	add_definitions(-DNIGHTLY_BUILD)
+endif()
 
-# add VC compiler-specific flags (NONMINMAX define and disable "unsafe" warnings)
-if (MSVC)
-	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D\"NOMINMAX\" /wd4996 /GS-" )
-endif (MSVC)
+# Deployment build mode
+option(IBK_DEPLOYMENT "Build in deployment mode" OFF)
+if(IBK_DEPLOYMENT)
+	add_definitions(-DIBK_DEPLOYMENT)
+endif()
+
+# -----------------------
+# Support for build flags
+# -----------------------
+include( externals/IBK/CMakeLists.pri )
 
 # -------------------------------------------------------------
 # Required packages
@@ -80,25 +87,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
 if (DISABLE_QT)
-	message("*** Building without Qt5 ***")
+	message("*** Building without Qt ***")
 else (DISABLE_QT)
 
-	message("*** Building with Qt5 ***")
+	message("*** Building with Qt ***")
 
-	find_package(Qt5Widgets REQUIRED)
-	find_package(Qt5Xml REQUIRED)
-	find_package(Qt5Svg REQUIRED)
-	find_package(Qt5Network REQUIRED)
-	find_package(Qt5PrintSupport REQUIRED)
-
-	# when building with gcc/icc add compile flag 
-	if (NOT MSVC)
-		if (APPLE)
-			set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++" )
-		else (APPLE)
-			set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=gnu++11" )
-		endif (APPLE)
-	endif (NOT MSVC)
+	# C++17 needed for Qt6
+	set( CMAKE_CXX_STANDARD 17 )
+	find_package(Qt6 REQUIRED COMPONENTS Core Widgets Xml Svg Network PrintSupport)
 
 endif (DISABLE_QT)
 
@@ -124,10 +120,10 @@ endif( APPLE )
 if (NOT UNIX)
     add_subdirectory( externals/zlib/src libz)
 endif (NOT UNIX)
-add_subdirectory( externals/minizip/projects/cmake_local minizip)
-add_subdirectory( externals/IBK/projects/cmake_local IBK )
-add_subdirectory( externals/IBKMK/projects/cmake_local IBKMK )
-add_subdirectory( externals/TiCPP/projects/cmake_local TiCPP )
+add_subdirectory( externals/minizip minizip)
+add_subdirectory( externals/IBK IBK )
+add_subdirectory( externals/IBKMK IBKMK )
+add_subdirectory( externals/TiCPP TiCPP )
 add_subdirectory( MasterSim )
 
 if (NOT DISABLE_QT)

@@ -1,2 +1,4 @@
-/build-*/
-/Qt*/
+/bb-gcc/
+/bb_VC_x64/
+/bb_VC/
+/bb-gcc-debug/
