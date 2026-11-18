@@ -42,7 +42,6 @@ SOURCES += \
 	src/IBKMK_2DCalculations.cpp \
 	src/IBKMK_3DCalculations.cpp \
 	src/IBKMK_BandMatrix.cpp \
-	src/IBKMK_BlockBandMatrix.cpp \
 	src/IBKMK_BlockSparseMatrix.cpp \
 	src/IBKMK_BlockTridiagMatrix.cpp \
 	src/IBKMK_CRSpline.cpp \
@@ -75,7 +74,6 @@ HEADERS += \
 	src/IBKMK_2DCalculations.h \
 	src/IBKMK_3DCalculations.h \
 	src/IBKMK_BandMatrix.h \
-	src/IBKMK_BlockBandMatrix.h \
 	src/IBKMK_BlockSparseMatrix.h \
 	src/IBKMK_BlockTridiagMatrix.h \
 	src/IBKMK_BlockVector.h \
