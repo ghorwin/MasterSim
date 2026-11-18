@@ -36,11 +36,42 @@
 
 */
 
-#include "IBKMK_Constants.h"
+#ifndef IBKMK_RectDecomposition_H
+#define IBKMK_RectDecomposition_H
+
+#include <set>
+#include <vector>
+#include <string>
 
 namespace IBKMK {
 
-const double GEOM_TOL = 1e-4;
-const double NUM_EPS  = 1e-12;
+struct Rectangle {
+	int			m_x1;
+	int			m_y1;
+	int			m_x2;
+	int			m_y2;
+	std::string	m_name;
+};
+
+/*!
+ * This algorithm implements the Graph-Based Decomposition (page 6 of appended source).
+ * input takes a set of x/y coordinates of elements contained by a shape.
+ * output returns a set of corner elements ((x_min, y_min), (x_max, y_max)) of the rectangles.
+ *
+ *  https://library.utia.cas.cz/separaty/2012/ZOI/suk-rectangular%20decomposition%20of%20binary%20images.pdf
+*/
+void rectDecomposition(std::set<std::pair<unsigned int,unsigned int>> & input,
+					   std::set<std::pair<std::pair<unsigned int,unsigned int>,std::pair<unsigned int, unsigned int>>> & output);
+
+/*!
+ * This algorithm implements a simple greedy decomposition algorithm.
+ * \param input Takes a vector of vector (grid) of strings. The string is the name or content of the cell
+ * \return A vector of rectangles.
+ *
+ *
+*/
+std::vector<Rectangle> rectDecomposition_Greedy(const std::vector<std::vector<std::string>>& input);
 
 } // namespace IBKMK
+
+#endif // IBKMK_RectDecomposition_H

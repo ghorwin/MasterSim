@@ -22,6 +22,7 @@
 #include "IBK_crypt.h"
 #include "IBK_CSVReader.h"
 #include "IBK_cuboid.h"
+#include "IBK_DependencyObject.h"
 #include "IBK_Differ.h"
 #include "IBK_EOLStreamBuffer.h"
 #include "IBK_Exception.h"
@@ -29,6 +30,7 @@
 #include "IBK_FileUtils.h"
 #include "IBK_Flag.h"
 #include "IBK_FluidPhysics.h"
+#include "IBK_SolidPhysics.h"
 #include "IBK_FormatString.h"
 #include "IBK_geographic.h"
 #include "IBK_InputOutput.h"
@@ -73,7 +75,6 @@
 #include "IBK_Version.h"
 #include "IBK_WaitOnExit.h"
 #include "IBK_WorldCoordinateOrigin.h"
-
 
 
 

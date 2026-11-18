@@ -445,6 +445,7 @@ std::vector<std::string> explode(const std::string & str, char delim, int maxTok
 size_t explode(const std::string& str, std::vector<std::string>& tokens, const std::string& delims, int explodeFlags) {
 	tokens.clear();
 	std::string tmp;
+	bool isQuotedToken = false;
 
 	bool inQuotes = false;
 	// process string char by char
@@ -452,6 +453,7 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 		// if we consider Quotes, handle this first before checking for delimiters
 		if (explodeFlags & EF_UseQuotes) {
 			if (*it == '"') {
+				isQuotedToken = true;
 				// check for escaped "
 				if (it == str.begin() || *(it-1) != '\\')
 					inQuotes = !inQuotes;
@@ -462,11 +464,14 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 		if (!inQuotes) {
 			for (std::string::const_iterator tit = delims.begin(); tit != delims.end(); ++tit) {
 				if (*it==*tit) {
+					if (isQuotedToken)
+						IBK::trim(tmp, "\"");
 					if (explodeFlags & EF_TrimTokens)
 						IBK::trim(tmp, " \t\r\n");
 					if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 						tokens.push_back(tmp);
 					tmp.clear();
+					isQuotedToken = false;
 					delim_found = true;
 					break;
 				}
@@ -476,12 +481,10 @@ size_t explode(const std::string& str, std::vector<std::string>& tokens, const s
 			tmp += *it;
 	}
 	if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens)) {
-		if (explodeFlags & EF_TrimTokens) {
-			std::string trimChars = " \t\r\n";
-			if (explodeFlags & EF_UseQuotes)
-				trimChars += "\"";
-			IBK::trim(tmp, trimChars); // may cause tmp to become empty
-		}
+		if (isQuotedToken)
+			IBK::trim(tmp, "\"");
+		if (explodeFlags & EF_TrimTokens)
+			IBK::trim(tmp, " \t\r\n");
 		if (!tmp.empty() || (explodeFlags & EF_KeepEmptyTokens))
 			tokens.push_back(tmp);
 	}

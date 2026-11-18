@@ -24,12 +24,12 @@ LIBS += -lIBK
 
 contains( OPTIONS, USE_SUNDIALS_TRIDIAG) {
 	DEFINES += USE_SUNDIALS_BTTRF
-        LIBS += -lsundials
+	LIBS += -lsundials
 }
 
 
 INCLUDEPATH = \
-    ../IBK/src
+	../IBK/src
 
 
 SOURCES += \
@@ -42,7 +42,6 @@ SOURCES += \
 	src/IBKMK_2DCalculations.cpp \
 	src/IBKMK_3DCalculations.cpp \
 	src/IBKMK_BandMatrix.cpp \
-	src/IBKMK_Constants.cpp \
 	src/IBKMK_BlockBandMatrix.cpp \
 	src/IBKMK_BlockSparseMatrix.cpp \
 	src/IBKMK_BlockTridiagMatrix.cpp \
@@ -53,6 +52,7 @@ SOURCES += \
 	src/IBKMK_Polygon2D.cpp \
 	src/IBKMK_Polygon3D.cpp \
 	src/IBKMK_Quaternion.cpp \
+	src/IBKMK_RectangleDecomposition.cpp \
 	src/IBKMK_SparseMatrixCSR.cpp \
 	src/IBKMK_SparseMatrixEID.cpp \
 	src/IBKMK_SparseMatrixPattern.cpp \
@@ -75,7 +75,6 @@ HEADERS += \
 	src/IBKMK_2DCalculations.h \
 	src/IBKMK_3DCalculations.h \
 	src/IBKMK_BandMatrix.h \
-	src/IBKMK_Constants.h \
 	src/IBKMK_BlockBandMatrix.h \
 	src/IBKMK_BlockSparseMatrix.h \
 	src/IBKMK_BlockTridiagMatrix.h \
@@ -87,6 +86,7 @@ HEADERS += \
 	src/IBKMK_Polygon2D.h \
 	src/IBKMK_Polygon3D.h \
 	src/IBKMK_Quaternion.h \
+	src/IBKMK_RectangleDecomposition.h \
 	src/IBKMK_SparseMatrix.h \
 	src/IBKMK_SparseMatrixCSR.h \
 	src/IBKMK_SparseMatrixEID.h \

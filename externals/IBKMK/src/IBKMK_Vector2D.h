@@ -72,8 +72,8 @@ public:
 				IBK::nearly_equal<digits>(m_y, other.m_y);
 	}
 
-	/*! Returns distance to other vector. */
-	double distanceTo(const Vector2D & v) const {
+	/*! returns distance to other vector */
+	double distanceTo(const Vector2D &v){
 		return Vector2D(*this - v).magnitude();
 	}
 

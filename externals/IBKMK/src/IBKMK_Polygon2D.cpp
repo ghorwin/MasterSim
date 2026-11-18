@@ -45,9 +45,13 @@
 #include <IBK_messages.h>
 
 #include "IBKMK_2DCalculations.h"
-#include "IBKMK_Constants.h"
 
 namespace IBKMK {
+
+// this might also be a relative erro, for example based on the bounding box of the polygon.
+// However, for use in SIM-VICUS we are happy with 0.1 mm accuracy?
+const double TOLERANCE = 1e-4; // 0.1 mm should be fine enough
+
 
 Polygon2D::Polygon2D(const std::vector<IBKMK::Vector2D> & vertexes) {
 	setVertexes(vertexes);
@@ -138,6 +142,7 @@ double Polygon2D::area(int digits) const {
 		const IBKMK::Vector2D &p1 = m_vertexes[(i+1)%sizeV];
 		const IBKMK::Vector2D &p2 = m_vertexes[(i+2)%sizeV];
 		surfArea += p1.m_x * (p2.m_y - p0.m_y);
+
 	}
 
 	surfArea *= 0.5;
@@ -262,13 +267,13 @@ void Polygon2D::detectType() {
 	IBKMK::Vector2D c2 = b + (d-a);
 	c2 -= c;
 	// both points must within our acceptable tolerance
-	if (c2.magnitude() < GEOM_TOL)
+	if (c2.magnitude() < TOLERANCE)
 		m_type = T_Rectangle;
 }
 
 
 void Polygon2D::eleminateColinearPts() {
-	IBKMK::eliminateCollinearPoints(m_vertexes, GEOM_TOL);
+	IBKMK::eliminateCollinearPoints(m_vertexes, TOLERANCE);
 }
 
 

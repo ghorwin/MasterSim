@@ -40,8 +40,6 @@
 #define IBKMK_2DCalculationsH
 
 #include "IBKMK_Vector2D.h"
-#include "IBKMK_Polygon2D.h"
-#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
@@ -98,25 +96,13 @@ int pointInPolygonFuzzy(const std::vector<Vector2D>& polygon, const Vector2D& p,
 /*! Eliminates collinear points in a polygon.
 	All points that are closer together than the provided epsilon will be merged.
 */
-void eliminateCollinearPoints(std::vector<IBKMK::Vector2D> & polygon, double epsilon = GEOM_TOL);
+void eliminateCollinearPoints(std::vector<IBKMK::Vector2D> & polygon, double epsilon = 1e-4);
 
 /*! Takes the vector v and enlarges the current bounding box defined through 'minVec' and 'maxVec'. */
 void enlargeBoundingBox(const IBKMK::Vector2D & v, IBKMK::Vector2D & minVec, IBKMK::Vector2D & maxVec);
 
-/*! Takes two 2D polygons and checks for intersection.
-	\returns true, if they intersect each other.
-*/
+/*! Takes two 2D polygons and checks for intersection */
 bool polyIntersect2D(const std::vector<IBKMK::Vector2D> & vertsA, const std::vector<IBKMK::Vector2D> & vertsB);
-
-/*! Finds shrunken polygon(s) by the defined percentage (of area).
-	\param poly is the original poly, where the newly created polygons need to be found
-	\param percentage is the area ratio of the newly created polygon(s), goes from 0 to 1
-	\param createdPolygons are the newly created polygons if process converges
-	\return true if succesful otherwise false and no polygons are populated in createdPolygons
-*/
-bool findPolyonsByPercentage(const IBKMK::Polygon2D &poly, double percentage, std::vector<IBKMK::Polygon2D> &createdPolygons);
-
-
 
 } // namespace IBKMK
 

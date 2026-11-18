@@ -41,10 +41,8 @@
 #include <IBK_Line.h>
 #include <IBK_math.h>
 #include <IBK_messages.h>
-#include <IBK_BuildFlags.h>
 
 #include "IBKMK_3DCalculations.h"
-#include "IBKMK_Constants.h"
 
 namespace IBKMK {
 
@@ -161,7 +159,8 @@ bool Polygon3D::setVertexes(const std::vector<Vector3D> & vertexes, bool heal) {
 
 				// we find our projected points onto the plane
 				double x, y;
-				if (IBKMK::planeCoordinates(offset, a, b, vertex, x, y, GEOM_TOL)) {
+				// allow a fairly large tolerance here
+				if (IBKMK::planeCoordinates(offset, a, b, vertex, x, y, 1e-2)) {
 
 					// now we construct our projected points and find the deviation between the original points
 					// and their projection
@@ -227,6 +226,7 @@ const std::vector<Vector3D> & Polygon3D::vertexes() const {
 
 	if (m_dirty) {
 		// recompute 3D vertex cache
+
 		const std::vector<IBKMK::Vector2D> &polylineVertexes = m_polyline.vertexes();
 		m_vertexes.resize(polylineVertexes.size());
 		m_vertexes[0] = m_offset;
@@ -237,7 +237,6 @@ const std::vector<Vector3D> & Polygon3D::vertexes() const {
 	}
 	return m_vertexes;
 }
-
 
 const std::vector<Vector3D> &Polygon3D::rawVertexes() const {
 	return m_vertexes;
@@ -255,7 +254,7 @@ void Polygon3D::setRotation(const IBKMK::Vector3D & normal, const IBKMK::Vector3
 		throw IBK::Exception("xAxis vector does not have unit length!", FUNC_ID);
 	// check that the vectors are (nearly) orthogonal
 	double sp = normal.scalarProduct(xAxis);
-	if (!IBK::nearly_equal<3>(sp, 0.0))
+	if (!IBK::nearly_equal<4>(sp, 0.0))
 		throw IBK::Exception("Normal and xAxis vectors must be orthogonal!", FUNC_ID);
 
 	// we only modify our vectors if all input data is correct - hence we ensure validity of the polygon
@@ -264,16 +263,6 @@ void Polygon3D::setRotation(const IBKMK::Vector3D & normal, const IBKMK::Vector3
 	normal.crossProduct(xAxis, m_localY); // Y = N x X - right-handed coordinate system
 	m_localY.normalize();
 	m_dirty = true; // mark 3D vertexes as dirty
-}
-
-
-void Polygon3D::switchLocalAxes() {
-	std::swap(m_localX, m_localY);
-	for (const IBKMK::Vector2D &v2D : m_polyline.vertexes()) {
-		IBKMK::Vector2D &v = const_cast<IBKMK::Vector2D&>(v2D);
-		std::swap(v.m_x, v.m_y);
-	}
-	m_dirty = true;
 }
 
 
@@ -319,10 +308,8 @@ IBKMK::Vector2D Polygon3D::flip() {
 
 IBKMK::Vector3D Polygon3D::centerPoint() const {
 	FUNCID(Polygon3D::centerPoint);
-	if (!isValid()) {
-		IBK::IBK_Message("Polygon is broken. Returning (0,0,0) as center-point", IBK::MSG_WARNING, FUNC_ID, IBK::VL_DEVELOPER);
-		return IBKMK::Vector3D();
-	}
+	if (!isValid())
+		throw IBK::Exception("Invalid polygon.", FUNC_ID);
 
 	size_t counter=0;
 	IBKMK::Vector3D vCenter;
@@ -344,9 +331,9 @@ void Polygon3D::boundingBox(Vector3D & lowerValues, Vector3D & upperValues) cons
 	// Note: do not access m_vertexes directly, as this array may be dirty
 	const std::vector<Vector3D> & points = vertexes();
 	// initialize bounding box with first point
-	// lowerValues = points[0];
-	// upperValues = points[0];
-	for (unsigned int i=0; i<points.size(); ++i)
+	lowerValues = points[0];
+	upperValues = points[0];
+	for (unsigned int i=1; i<points.size(); ++i)
 		IBKMK::enlargeBoundingBox(points[i], lowerValues, upperValues);
 }
 
@@ -632,7 +619,7 @@ IBKMK::Vector3D Polygon3D::computeNormalNewell(const std::vector<IBKMK::Vector3D
 		}
 	}
 
-	if (n.magnitudeSquared() < NUM_EPS)
+	if (n.magnitudeSquared() < 1e-9)
 		throw IBK::Exception("Could not determine reliable polygon normal.", FUNC_ID);
 
 	return n.normalized();

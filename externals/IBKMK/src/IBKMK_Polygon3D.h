@@ -115,6 +115,7 @@ public:
 
 	const Polygon2D & polyline() const { return m_polyline; }
 
+
 	// Transformation functions
 
 	/*! Rotates the polygon/plane and updates the y-axis.
@@ -129,8 +130,6 @@ public:
 		with negated normal vector.
 	*/
 	Vector2D flip();
-	/*! Switches the x and y axes. */
-	void switchLocalAxes();
 
 	// Calculation functions
 
@@ -152,17 +151,17 @@ public:
 	void enlargeBoundingBox(IBKMK::Vector3D & lowerValues, IBKMK::Vector3D & upperValues) const;
 
 	/*! Helper function, that takes a point and two other points in 3d space, and tests if the point is
-		located inbetween or nearly equal to the other points in all 3 dimensions.
-		\param point Vector3D point
-		\param edgeA Vector3D point
-		\param edgeB Vector3D point
+	 *  located inbetween or nearly equal to the other points in all 3 dimensions.
+	 *  \param point Vector3D point
+	 *  \param edgeA Vector3D point
+	 *  \param edgeB Vector3D point
 		\returns Returns true if point is contained within two points in all 3 dimensions. Else returns false.
 	*/
 	bool pointBetweenPoints(const Vector3D &point, const Vector3D &otherA, const Vector3D &otherB) const;
 
 	/*! Helper function for polyCyclesAfterTrimming.
-		This function detects disjunct polygons within a shape (that remain after trimming with a plane) and divides it into multiple polygons accordingly.
-		Therefore it checks if any polygon edges along the trimming plane are contained within each other.
+	 *  This function detects disjunct polygons within a shape (that remain after trimming with a plane) and divides it into multiple polygons accordingly.
+	 *  Therefore it checks if any polygon edges along the trimming plane are contained within each other.
 		\param verts input Polygon that may contain multiple disjunct polygons
 		\param trimPlaneNormal normal vector of the plane that has been used to trim
 		\param offset offset of the plane that has been used to trim
@@ -232,7 +231,7 @@ private:
 			 *   if any of the center points is contained within both polygons, an intersection is detected (true)
 
 		This 2-step algorithm ensures we won't miss any edge cases, e.g. polygons sharing intersection points or lines
-	*/
+	 */
 	bool intersects(const Polygon3D &other) const;
 
 	/*! Calculates a normalized normal of a polyline. If an error occurs the vector (1,0,0) is output.  */

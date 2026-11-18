@@ -91,6 +91,9 @@ class MessageIndentor {
 public:
 	/*! Constructor increases indentation. */
 	MessageIndentor() {
+#ifdef _OPENMP
+	#pragma omp master
+#endif
 		++(MessageHandlerRegistry::instance().messageHandler()->m_indentation);
 	}
 	/*! Destructor decreases indentation. */

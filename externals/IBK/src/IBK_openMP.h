@@ -44,6 +44,32 @@
 // we have openmp
 #include <omp.h>
 
+inline int IBK_get_num_threads() {
+	int numThreads;
+#pragma omp parallel
+	{
+#pragma omp master
+		{
+			numThreads = omp_get_num_threads();
+		}
+	}
+	return numThreads;
+}
+
+
+inline int IBK_get_thread_num() {
+	int threadNum;
+#pragma omp parallel
+	{
+#pragma omp master
+		{
+			threadNum = omp_get_thread_num();
+		}
+	}
+	return threadNum;
+}
+
+
 #else
 
 // no openmp, disable warnings
@@ -70,11 +96,17 @@ constexpr int omp_get_num_threads() { return 1; }
 constexpr int omp_get_thread_num() { return 0; }
 constexpr int omp_in_parallel() { return 0; }
 
+constexpr int IBK_get_num_threads() { return 1; }
+constexpr int IBK_get_thread_num() { return 0; }
+
 #else //  __cplusplus
 
 inline int omp_get_num_threads() { return 1; }
 inline int omp_get_thread_num() { return 0; }
 inline int omp_in_parallel() { return 0; }
+
+inline int IBK_get_num_threads() { return 1; }
+inline int IBK_get_thread_num() { return 0; }
 
 #endif //  __cplusplus
 

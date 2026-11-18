@@ -32,7 +32,6 @@
 
 #include "IBKMK_Vector3D.h"
 #include "IBKMK_Polygon3D.h"
-#include "IBKMK_Constants.h"
 
 #include <IBK_physics.h>
 
@@ -51,7 +50,7 @@ namespace IBKMK {
 */
 bool planeCoordinates(const Vector3D & offset, const Vector3D & a, const Vector3D & b,
 					  const Vector3D & v, double & x, double & y,
-					  double tolerance = GEOM_TOL, bool showWarings = false);
+					  double tolerance = 1e-4, bool showWarings = false);
 
 
 /*! Computes the distance between a line (defined through offset point a, and directional vector d) and a point p.
@@ -102,11 +101,8 @@ bool linePlaneIntersection(const Vector3D & a, const Vector3D & normal, const Ve
 void pointProjectedOnPlane(const Vector3D & a, const Vector3D & normal,
 						   const Vector3D & p, Vector3D & projectedP);
 
-bool isCollinear(const Vector3D & a1, const Vector3D & d1,
-				 const Vector3D & a2, const Vector3D & d2, double epsilon = GEOM_TOL);
-
 /*! Eleminates colinear points in a polygon. */
-void eliminateCollinearPoints(std::vector<IBKMK::Vector3D> & polygon, double epsilon = GEOM_TOL);
+void eliminateCollinearPoints(std::vector<IBKMK::Vector3D> & polygon, double epsilon = 1e-5);
 
 /*! Returns the inner Angle between two Vectors of a Polygon in Degree (0..180). */
 inline double angleBetweenVectorsDeg ( const IBKMK::Vector3D &v1, const IBKMK::Vector3D &v2) {
@@ -121,12 +117,6 @@ inline double angleBetweenVectorsDeg360(const IBKMK::Vector3D &v1, const IBKMK::
 		angle = 360 - angle;
 	return angle;
 }
-
-/*! p_prev The vertex preceding p.
-  * p The vertex where the angle is measured.
-  * p_next The vertex following p.
-  * returns The angle in degrees in range [0, 180]. */
-double angleAtVertexDeg180(const IBKMK::Vector3D& p_prev, const IBKMK::Vector3D& p, const IBKMK::Vector3D& p_next);
 
 
 /*! Takes the vector v and enlarges the current bounding box defined through 'minVec' and 'maxVec'. */
@@ -173,22 +163,6 @@ int coplanarPointInPolygon3D(const std::vector<Vector3D> poly, const IBK::point3
 	This 2-step algorithm ensures we won't miss any edge cases, e.g. polygons sharing intersection points or lines
  */
 bool polyIntersect(const std::vector<IBKMK::Vector3D> & vertsA, const std::vector<IBKMK::Vector3D> & vertsB);
-
-/*! Calculates the bounding box and center point for the given polygons.
-	\param	polygons All polygons where the bounding box is needed
-	\param	center Is the center point of the bounding box
-	\returns boundingBox in global R3 for specified polygons
-*/
-Vector3D boundingBox(const std::vector<IBKMK::Polygon3D> &polygons, IBKMK::Vector3D &center);
-
-/*! Checks if the given vertices form a valid planar polygon.
-	Verifies that all vertices lie within a tolerance from the plane defined by the first three vertices.
-	\param vertices Vector of 3D vertices to check
-	\param tolerance Maximum distance [m] from the plane (default: GEOM_TOL = 1e-4)
-	\return True if all vertices are coplanar within the given tolerance, false otherwise
-*/
-bool checkVerticesPlanarity(const std::vector<Vector3D> & vertices, double tolerance = GEOM_TOL);
-
 
 } // namespace IBKMK
 

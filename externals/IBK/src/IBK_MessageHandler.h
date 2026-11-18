@@ -50,6 +50,8 @@ class MessageIndentor;
 /*! Different categories of messages.
 	For MSG_PROGRESS, MSG_CONTINUED and MSG_WARNING the verbosity level determines whether
 	a message is shown or not. MSG_ERROR, and MSG_DEBUG are always printed.
+
+	MSG_WARNING, MSG_ERROR and MSG_DEBUG always append a line-break \n after the message.
 */
 enum msg_type_t {
 	/*! General progress/informative messages, printed indented. */
