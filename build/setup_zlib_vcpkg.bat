@@ -9,9 +9,10 @@ echo ============================================
 echo Setting up zlib via vcpkg for Qt6/CMake
 echo ============================================
 
-:: Configuration - VCPKG_ROOT can be set externally
+:: Configuration - VCPKG_ROOT and VCPKG_TRIPLET can be set externally
+:: (MSVC builds use x64-windows, MinGW builds use x64-mingw-static)
 if not defined VCPKG_ROOT set "VCPKG_ROOT=C:\vcpkg"
-set VCPKG_TRIPLET=x64-windows
+if not defined VCPKG_TRIPLET set VCPKG_TRIPLET=x64-windows
 
 :: Check if vcpkg is already installed
 if exist "%VCPKG_ROOT%\vcpkg.exe" (
