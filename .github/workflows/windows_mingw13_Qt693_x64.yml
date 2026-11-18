@@ -1,0 +1,52 @@
+name: Windows MinGW 13 x64/Qt 6.9.3 build
+
+on:
+  # run nightly at 4:00 am
+#  schedule:
+#    - cron: "0 4 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # WARNING: this may give excessive build times which need to be paid!
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
+env:
+  QT_DETAILED_VERSION: '6.9.3'
+
+jobs:
+  build:
+
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # installs Qt via aqtinstall into C:\Qt\6.9.3\mingw_64 and the matching MinGW 13.1 tool chain
+    # into C:\Qt\Tools\mingw1310_64 (the default locations expected by the build script)
+    - name: Install Qt ${{ env.QT_DETAILED_VERSION }} and MinGW 13.1
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_DETAILED_VERSION }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_mingw'
+        archives: 'qtbase qtsvg'
+        tools: 'tools_mingw1310,qt.tools.win64_mingw1310'
+        dir: 'C:\'
+        cache: 'true'
+        cache-key-prefix: 'install-qt-action-mingw'
+
+    # The runner image ships its own MinGW/GCC in the PATH, so put the Qt MinGW tool chain first.
+    # zlib is taken from the MinGW tool chain.
+    - name: Build
+      working-directory: build
+      shell: cmd
+      run: |
+        set PATH=C:\Qt\Tools\mingw1310_64\bin;%PATH%
+        set CMAKE_PREFIX_PATH=%QT_ROOT_DIR%
+        where gcc
+        gcc --version
+        call build_Mingw13_64.bat

@@ -1,0 +1,36 @@
+name: Ubuntu 24.04/Qt6 build
+
+on:
+  # run nightly at 2:00 am
+#  schedule:
+#    - cron: "0 2 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # as we do not have much development, this will not cause much traffic/build times
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Qt6 from the distribution (Ubuntu 24.04 ships Qt 6.4), 7za is needed to pack the test FMUs,
+    # colorama is used by the test suite runner
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake zlib1g-dev p7zip-full python3-colorama \
+          qt6-base-dev qt6-svg-dev libgl-dev
+
+    - name: Build
+      run: build/build.sh release skip-test
+
+    - name: Test
+      run: build/run_tests.sh

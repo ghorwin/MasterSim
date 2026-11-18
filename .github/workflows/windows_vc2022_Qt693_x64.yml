@@ -1,0 +1,52 @@
+name: Windows VC2022 x64/Qt 6.9.3 build
+
+on:
+  # run nightly at 4:00 am
+#  schedule:
+#    - cron: "0 4 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # WARNING: this may give excessive build times which need to be paid!
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
+env:
+  QT_DETAILED_VERSION: '6.9.3'
+
+jobs:
+  build:
+
+    # windows-2022 image comes with Visual Studio 2022 Enterprise and vcpkg in C:\vcpkg
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install jom
+      run: choco install jom -y
+
+    # installs Qt via aqtinstall into C:\Qt\6.9.3\msvc2022_64 (the default location expected by the build script)
+    - name: Install Qt ${{ env.QT_DETAILED_VERSION }}
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_DETAILED_VERSION }}
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2022_64'
+        archives: 'qtbase qtsvg'
+        dir: 'C:\'
+        cache: 'true'
+        cache-key-prefix: 'install-qt-action-msvc'
+
+    # zlib is installed via vcpkg (C:\vcpkg on the runner) by the build script itself
+    - name: Build
+      working-directory: build
+      shell: cmd
+      env:
+        VCPKG_ROOT: C:\vcpkg
+      run: |
+        set QT_ROOT=%QT_ROOT_DIR%
+        call build_VC2022_Qt693_x64.bat
