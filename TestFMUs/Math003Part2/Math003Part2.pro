@@ -11,22 +11,6 @@ include( ../../externals/IBK/IBK.pri )
 
 QT -= core gui
 
-CONFIG(debug, debug|release) {
-	windows {
-                DLLDESTDIR = ../../bin/debug
-	}
-	else {
-                DESTDIR = ../../bin/debug
-	}
-}
-else {
-	windows {
-                DLLDESTDIR = ../../bin/release
-	}
-	else {
-                DESTDIR = ../../bin/release
-	}
-}
 
 #DEFINES += FMI2_FUNCTION_PREFIX=Math003Part2_
 

@@ -1,9 +1,10 @@
 ###########################################################################
 #
-# Common configuration settings for all derived libraries and applications.
+# Common configuration settings for all libraries and applications of this
+# session/repository.
 #
 ###########################################################################
-
+#
 # This is the central configuration file for all IBK libraries/applications.
 # First define the target type:
 #
@@ -15,9 +16,24 @@
 #
 # then
 #
-#   include( ../externals/IBK/IBK.pri )
+#   include( <relative-path>/externals/IBK/IBK.pri )
 #
-# in dependent projects, but mind the directory structure.
+# in dependent projects. The include must appear *after* the TEMPLATE line,
+# because output paths and library search paths are selected based on the
+# template type.
+#
+# Directory layout created by this file:
+#
+#   <repo-root>/bin/<debug|release>     all executables and (on Windows) all DLLs
+#   <shadow-build-root>/lib             all libraries and Windows import libraries
+#
+# The library directory lives inside the shadow build directory (as created by
+# QtCreator by default, e.g. build/Desktop-Debug), so that libraries of
+# different build configurations and toolchains never overwrite each other.
+# The binary directory, in contrast, is a fixed path within the source tree, so
+# that the relative path from an executable to the development resources is
+# always the same, no matter where the shadow build directory is located.
+#
 
 # Build-Configurations are stored in CONFIG.pri
 !include( CONFIG.pri ){
@@ -28,19 +44,8 @@
 # general Qt CONFIG options
 
 CONFIG			+= silent
-greaterThan(QT_MAJOR_VERSION, 5) {
-	# Qt 6 requires c++17 itself
-	CONFIG			+= c++17
-}
-else {
-	# our code requires at least C++11
-	CONFIG			+= c++11
-}
-
-# On Linux switch to c++17 already
-linux-g++ | linux-g++-64 | macx {
-	CONFIG			+= c++17
-}
+# Qt 6 requires c++17
+CONFIG			+= c++17
 
 CONFIG			+= warn_on
 CONFIG			+= no_batch
@@ -142,7 +147,7 @@ else {
 
 
 #
-# openmp settings added for gcc and min-gw
+# gprof settings added for gcc and min-gw
 #
 contains( OPTIONS, gprof ) {
 
@@ -158,130 +163,119 @@ contains( OPTIONS, gprof ) {
 
 
 #
-# Output directories for temporary files
-# Note: for shadow builds, the generated files end up in configuration-specific directory trees anyway,
-#       so that we wouldn't need to distinguish between release/debug subdirs. However, if used
-#       for non-shadow-builds, we need to separate debug/release mode files.
+# Output directories
 #
+
+# Top-level build directory, i.e. the shadow build directory that corresponds to the
+# root directory of the session, for example <repo-root>/build/Desktop-Debug.
+# Note: $$PWD is always <repo-root>/externals/IBK, no matter which pro-file includes
+#       this file, hence $$PWD/../.. is always the root directory of the session.
+#       For non-shadow-builds $$shadowed() simply returns the source directory itself.
+BUILD_ROOT = $$shadowed($$PWD/../..)
+
+# Directory that collects the libraries of all sub-projects. Since it lives inside the
+# shadow build directory, debug/release (and different toolchains) are separated
+# automatically without any further subdirectories.
+LIB_DIR = $$BUILD_ROOT/lib
+
+# Directory that collects the executables of all sub-projects, and on Windows also all
+# DLLs. In contrast to LIB_DIR this is a fixed location in the source tree, so binaries
+# built by different toolchains overwrite each other - this is intentional, see the
+# comment at the top of this file.
 CONFIG(debug, debug|release) {
-	OBJECTS_DIR = debug/obj
-	MOC_DIR = debug/moc
-	RCC_DIR = debug/rcc
-	UI_DIR = debug/ui
 	contains( OPTIONS, binaries_to_shadow_dir ) {
-		BINARYDESTDIR = ../bin/debug
+		BINARYDESTDIR = $$BUILD_ROOT/bin/debug
 	}
 	else {
 		BINARYDESTDIR = $$PWD/../../bin/debug
 	}
 }
 else {
-	OBJECTS_DIR = release/obj
-	MOC_DIR = release/moc
-	RCC_DIR = release/rcc
-	UI_DIR = release/ui
 	contains( OPTIONS, binaries_to_shadow_dir ) {
-		BINARYDESTDIR = ../bin/release
+		BINARYDESTDIR = $$BUILD_ROOT/bin/release
 	}
 	else {
 		BINARYDESTDIR = $$PWD/../../bin/release
 	}
 }
 
-
-#
-# *** Applications ***
-#
-# This section contains all application specific settings. It can be enabled
-# by setting 'app' the TEMPLATE environment variable.
-# It defines DESTDIR and library search paths.
-equals(TEMPLATE,app) {
-	DESTDIR = $$BINARYDESTDIR
-
-	CONFIG(debug, debug|release) {
-		QMAKE_LIBDIR += ../externals/lib/debug ../lib/debug
-		LIBS += -L../lib/debug -L../externals/lib/debug
-	}
-	else {
-		QMAKE_LIBDIR += ../externals/lib/release ../lib/release
-		LIBS += -L../lib/release -L../externals/lib/release
-	}
-	#message("DESTDIR    =" $$DESTDIR)
-}
+# Relative subdirectories for the generated intermediate files. Since these paths are
+# relative, they are resolved within the shadow build directory of the individual
+# sub-project, so generated files of different sub-projects never collide.
+OBJECTS_DIR = obj
+MOC_DIR = moc
+RCC_DIR = rcc
+UI_DIR = ui
 
 
 #
 # *** Libraries ***
 #
-# This section contains all library specific settings. It can be enabled
-# by setting 'lib' as qmake project TEMPLATE
-equals(TEMPLATE,lib) {
+# This section contains all library specific settings. It is enabled
+# by setting 'lib' as qmake project TEMPLATE.
+equals( TEMPLATE, lib ) {
 
 #	message(Setting up ordinary library support.)
 	QT -=	core gui
 
-	# MIND: MS compiler needs explicit export statements in case of shared libs
-	#       Shared libs should provide dll_import.pri files on Windows for libraries that use
-	#       the DLLs and import symbols.
-	win32-msvc* {
-		# if you really need shared libs on Windows, manually override this setting after the pri-include
+	# MIND: MS compiler needs explicit export statements in case of shared libs, hence such
+	#       libraries must also set the defines that enable their XXX_EXPORT macros, and
+	#       all projects using the DLL must set the corresponding import define.
+
+	win32 {
+		# On Windows, we build static by default. 
+		# If you really need shared libs on Windows, manually override this setting after 
+		# the pri-include with:
+		#  CONFIG -= static
+		#  CONFIG += shared
+		# 
 		CONFIG += static
 	}
 	else {
 		# on Unix/MacOS we always build our libraries as dynamic libs
+		# we override this in libraries that are meant for static building
 		CONFIG += shared
 	}
 
-	CONFIG(debug, debug|release) {
-		DESTDIR = ../lib/debug
-		# Note: when library is located top-level, ie. <repo-root>/Library/...
-		#       we need to set the linker path such, that it finds other libraries in <repo-root>/externals/lib
-		contains( OPTIONS, top_level_libs ) {
-			LIBS += -L../externals/lib/debug -L../lib/debug
-			QMAKE_LIBDIR += ../externals/lib/debug ../lib/debug
-			windows {
-				# place windows DLLs into executable target directory
-				DLLDESTDIR = $$BINARYDESTDIR
-			}
-		}
-		else {
-			QMAKE_LIBDIR += ../lib/debug
-			LIBS += -L../lib/debug
-			windows {
-				# place windows DLLs into executable target directory (two levels up)
-				contains( OPTIONS, binaries_to_shadow_dir ) {
-					DLLDESTDIR = ../$$BINARYDESTDIR
-				}
-				else {
-					DLLDESTDIR = $$BINARYDESTDIR
-				}
-			}
-		}
+	DESTDIR = $$LIB_DIR
 
+	# on Windows the DLLs are placed next to the executables that use them
+	# (ignored by qmake on all other platforms)
+	DLLDESTDIR = $$BINARYDESTDIR
+
+	# our libraries link against each other, so they need the library search path, too
+	LIBS += -L$$LIB_DIR
+
+	# tells the dynamic linker where to find the dependent libraries at runtime;
+	# RUNPATH is not searched transitively, hence each library needs its own entry
+	unix {
+		QMAKE_RPATHDIR += $$LIB_DIR
 	}
-	else {
-		DESTDIR = ../lib/release
-		contains( OPTIONS, top_level_libs ) {
-			LIBS += -L../externals/lib/release -L../lib/release
-			QMAKE_LIBDIR += ../externals/lib/release ../lib/release
-			windows {
-				# place windows DLLs into executable target directory
-				DLLDESTDIR = $$BINARYDESTDIR
-			}
-		}
-		else {
-			QMAKE_LIBDIR += ../lib/release
-			LIBS += -L../lib/release
-			windows {
-				# place windows DLLs into executable target directory (two levels up)
-				contains( OPTIONS, binaries_to_shadow_dir ) {
-					DLLDESTDIR = ../$$BINARYDESTDIR
-				}
-				else {
-					DLLDESTDIR = $$BINARYDESTDIR
-				}
-			}
-		}
-	}
+
+	#message("DESTDIR    =" $$DESTDIR)
 	#message("DLLDESTDIR =" $$DLLDESTDIR)
+}
+
+
+#
+# *** Applications ***
+#
+# This section contains all application specific settings. It is enabled
+# by setting 'app' as qmake project TEMPLATE.
+# It defines DESTDIR and the library search paths.
+else:equals( TEMPLATE, app ) {
+
+	DESTDIR = $$BINARYDESTDIR
+
+	# library search path used when linking against the libraries of this session
+	LIBS += -L$$LIB_DIR
+
+	# tells the dynamic linker where to find the shared libraries at runtime, so that
+	# the executable can be started without adding the library directory to
+	# LD_LIBRARY_PATH (or DYLD_FALLBACK_LIBRARY_PATH on MacOS)
+	unix {
+		QMAKE_RPATHDIR += $$LIB_DIR
+	}
+
+	#message("DESTDIR    =" $$DESTDIR)
 }

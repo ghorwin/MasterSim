@@ -4,9 +4,7 @@
 TARGET = MasterSim
 TEMPLATE = lib
 
-OPTIONS += top_level_libs
-
-# this pri must be sourced from all our applications
+# this pri must be sourced from all our libraries
 include( ../externals/IBK/IBK.pri )
 
 unix|mac {
@@ -22,12 +20,21 @@ INCLUDEPATH = \
 	../externals/IBKMK/src \
 	../externals/TiCPP/src
 
-LIBS += -L../externals/lib \
+LIBS += \
 	-lIBKMK \
-	-lIBK \
 	-lTiCPP \
 	-lminizip \
-	-lz
+	-lIBK
+
+unix {
+	LIBS += \
+		-lz \
+		-ldl
+}
+
+win32 {
+	LIBS += -lzlib
+}
 
 SOURCES += \
 	src/MSIM_AlgorithmGaussJacobi.cpp \
