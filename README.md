@@ -12,7 +12,7 @@ The main webpage of _MasterSim_ is https://bauklimatik-dresden.de/mastersim.
 
 ## Quality Assurance
 
-We have continuous integration scripts running as GitHub runners for Linux (Ubuntu) and Windows. The GitHub workflows are currently triggered manually.
+We have continuous integration scripts running as GitHub runners for Linux (Ubuntu), Windows and MacOS. The GitHub workflows are currently triggered manually.
 
 | Test | Result|
 |-----|-----|
@@ -20,13 +20,8 @@ We have continuous integration scripts running as GitHub runners for Linux (Ubun
 | CI - Linux 64-bit (Ubuntu 26.04 LTS; Qt 6.10) Solver, user interface and test suite (GitHub) | [![Ubuntu 26.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml) |
 | CI - Windows 64-bit (VC 2022, Qt 6.9.3) (GitHub) | [![Windows VC2022 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml) |
 | CI - Windows 64-bit (MinGW 13.1, Qt 6.9.3) (GitHub) | [![Windows MinGW 13 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml) |
-| | |
-| CI - Linux 64-bit - nightly release (Ubuntu 20.04.3 LTS; Qt 5.12.9) (Jenkins) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-Linux-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-Linux-MasterSim/)    |
-| CI - Windows 64-bit - nightly release (Win10, VC 2019, Qt 5.15.2) (Jenkins) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR64-Win-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR64-Win-MasterSim/)   |
-| CI - MacOS 64-bit - nightly release (10.11 "El Capitan", Qt 5.11.3) (Jenkins) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-IOS-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-IOS-MasterSim/) |
+| CI - MacOS (Apple Silicon, Qt 6.9.3) (GitHub) | [![macOS/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml) |
 
-
-*Note:* the MacOS daily build service is currently offline. MacOS releases are built on demand.
 
 ## Quick Overview
 

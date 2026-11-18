@@ -1,0 +1,46 @@
+name: macOS/Qt 6.9.3 build
+
+on:
+  # run nightly at 3:00 am
+#  schedule:
+#    - cron: "0 3 * * *"
+  # allow to be triggered on github webpage manually
+  workflow_dispatch:
+  # run whenever someone pushes data
+  # WARNING: macOS runners are expensive, this may give excessive build times which need to be paid!
+#  push:
+#    branches: [ "master" ]
+#  pull_request:
+#    branches: [ "master" ]
+
+env:
+  QT_DETAILED_VERSION: '6.9.3'
+
+jobs:
+  build:
+
+    # Apple Silicon (arm64) runner with Xcode/clang and cmake
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # installs Qt via aqtinstall into <workspace>/Qt/6.9.3/macos (universal binaries)
+    - name: Install Qt ${{ env.QT_DETAILED_VERSION }}
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: ${{ env.QT_DETAILED_VERSION }}
+        host: 'mac'
+        target: 'desktop'
+        arch: 'clang_64'
+        archives: 'qtbase qtsvg'
+        cache: 'true'
+        cache-key-prefix: 'install-qt-action-macos'
+
+    # build.sh picks up Qt from AQT_QT_PREFIX (defaults to the Linux gcc_64 location otherwise).
+    # The test suite is not run: the macOS test cases (data/tests/darwin64) contain outdated
+    # x86_64-only FMU binaries, which cannot be loaded on the arm64 runner.
+    - name: Build
+      env:
+        AQT_QT_PREFIX: ${{ env.QT_ROOT_DIR }}
+      run: build/build.sh release skip-test
