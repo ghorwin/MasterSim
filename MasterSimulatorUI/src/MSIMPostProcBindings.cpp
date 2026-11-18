@@ -137,28 +137,26 @@ int MSIMPostProcHandler::reopenIfActive() {
 
 bool MSIMPostProcHandler::spawnPostProc(const std::string & sessionFile) {
 #if _WIN32
-	IBK::FormatString cmdLine;
+	QString cmdLine;
 	if (sessionFile.empty()) {
-		cmdLine = IBK::FormatString("\"%1\"")
-				.arg(MSIMSettings::instance().m_postProcExecutable.toStdString());
+		cmdLine = QString("\"%1\"").arg(MSIMSettings::instance().m_postProcExecutable);
 	}
 	else {
-		cmdLine = IBK::FormatString("\"%1\" \"%2\"")
-		.arg(MSIMSettings::instance().m_postProcExecutable.toStdString())
-		.arg(sessionFile);
+		cmdLine = QString("\"%1\" \"%2\"")
+			.arg(MSIMSettings::instance().m_postProcExecutable, QString::fromStdString(sessionFile));
 	}
 
 	// Use WinAPI to create a PostProc process
-	STARTUPINFO si;
+	STARTUPINFOW si;
 	PROCESS_INFORMATION pi;
 	ZeroMemory( &si, sizeof(si) );
 	si.cb = sizeof(si);
 	ZeroMemory( &pi, sizeof(pi) );
 	const unsigned int lower_priority = 0x00004000;
 
-	std::string cmd = cmdLine.str();
+	std::wstring cmd = cmdLine.toStdWString();
 	// Start the child process.
-	if( !CreateProcess( NULL,	// No module name (use command line).
+	if( !CreateProcessW( NULL,	// No module name (use command line).
 		&cmd[0],				// Command line.
 		NULL,					// Process handle not inheritable.
 		NULL,					// Thread handle not inheritable.
