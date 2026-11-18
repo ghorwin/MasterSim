@@ -13,6 +13,14 @@
 :: This allows calling this batch file several times within the same command window.
 setlocal enabledelayedexpansion
 
+:: vcvars64.bat sets VCPKG_ROOT to the vcpkg bundled with Visual Studio (manifest mode only),
+:: hence remember the externally set vcpkg location (or the default) and restore it afterwards
+if defined VCPKG_ROOT (
+	set "MSIM_VCPKG_ROOT=%VCPKG_ROOT%"
+) else (
+	set "MSIM_VCPKG_ROOT=C:\vcpkg"
+)
+
 :: setup VC environment variables - check multiple possible locations
 set VC_FOUND=0
 for %%e in (BuildTools Community Professional Enterprise) do (
@@ -33,9 +41,7 @@ if %VC_FOUND%==0 (
 if not defined QT_ROOT (
 	set QT_ROOT=C:\Qt\6.9.3\msvc2022_64
 )
-if not defined VCPKG_ROOT (
-	set VCPKG_ROOT=C:\vcpkg
-)
+set "VCPKG_ROOT=%MSIM_VCPKG_ROOT%"
 if not defined JOM_PATH (
 	set JOM_PATH=c:\Qt\Tools\QtCreator\bin\jom
 )
@@ -76,7 +82,7 @@ if not exist %BUILD_DIR% mkdir %BUILD_DIR%
 pushd %BUILD_DIR%
 
 :: configure makefiles and build
-cmake -G "NMake Makefiles JOM" ..\.. %CMAKE_OPTIONS% -DCMAKE_BUILD_TYPE:String="Release" -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake
+cmake -G "NMake Makefiles JOM" ..\.. %CMAKE_OPTIONS% -DCMAKE_BUILD_TYPE:String="Release" -DCMAKE_TOOLCHAIN_FILE="%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake"
 if ERRORLEVEL 1 GOTO fail
 jom
 if ERRORLEVEL 1 GOTO fail

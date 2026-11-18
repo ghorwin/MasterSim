@@ -9,8 +9,8 @@ echo ============================================
 echo Setting up zlib via vcpkg for Qt6/CMake
 echo ============================================
 
-:: Configuration - adjust these paths as needed
-set VCPKG_ROOT=C:\vcpkg
+:: Configuration - VCPKG_ROOT can be set externally
+if not defined VCPKG_ROOT set "VCPKG_ROOT=C:\vcpkg"
 set VCPKG_TRIPLET=x64-windows
 
 :: Check if vcpkg is already installed
