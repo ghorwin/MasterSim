@@ -16,11 +16,11 @@ We have continuous integration scripts running as GitHub runners for Linux (Ubun
 
 | Test | Result|
 |-----|-----|
-| CI - Linux 64-bit (Ubuntu 24.04 LTS; Qt 6.4) Solver, user interface and test suite (GitHub) | [![Ubuntu 24.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml) |
-| CI - Linux 64-bit (Ubuntu 26.04 LTS; Qt 6.10) Solver, user interface and test suite (GitHub) | [![Ubuntu 26.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml) |
-| CI - Windows 64-bit (VC 2022, Qt 6.9.3) (GitHub) | [![Windows VC2022 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml) |
-| CI - Windows 64-bit (MinGW 13.1, Qt 6.9.3) (GitHub) | [![Windows MinGW 13 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml) |
-| CI - MacOS (Apple Silicon, Qt 6.9.3) (GitHub) | [![macOS/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml) |
+| Linux 64-bit (Ubuntu 24.04 LTS; Qt 6.4 via apt)  | [![Ubuntu 24.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml) |
+| Linux 64-bit (Ubuntu 26.04 LTS; Qt 6.10 via apt)  | [![Ubuntu 26.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml) |
+| Windows 64-bit (VC 2022, Qt 6.9.3)  | [![Windows VC2022 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml) |
+| Windows 64-bit (MinGW 13.1, Qt 6.9.3)  | [![Windows MinGW 13 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml) |
+| MacOS (Apple Silicon, Qt 6.9.3) | [![macOS/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/macos_Qt693.yml) |
 
 
 ## Quick Overview
