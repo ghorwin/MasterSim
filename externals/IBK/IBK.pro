@@ -12,12 +12,7 @@ include( IBK.pri )
 
 # finally we setup our custom library specific things
 # like version number etc., we also may reset all
-unix|mac {
-	VER_MAJ = 5
-	VER_MIN = 1
-	VER_PAT = 0
-	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
-}
+unix:VERSION = 6.0.0
 
 SOURCES += \
 	src/IBK_ArgParser.cpp \
@@ -30,6 +25,7 @@ SOURCES += \
 	src/IBK_FileUtils.cpp \
 	src/IBK_Flag.cpp \
 	src/IBK_FluidPhysics.cpp \
+	src/IBK_SolidPhysics.cpp \
 	src/IBK_FormatString.cpp \
 	src/IBK_InputOutput.cpp \
 	src/IBK_IntPara.cpp \
@@ -62,14 +58,13 @@ SOURCES += \
 	src/IBK_physics.cpp \
 	src/IBK_system.cpp
 
-OTHER_FILES +=
-
 HEADERS += \
 	src/IBK_ArgParser.h \
 	src/IBK_BuildFlags.h \
 	src/IBK_CSVReader.h \
 	src/IBK_Color.h \
 	src/IBK_Constants.h \
+	src/IBK_DependencyObject.h \
 	src/IBK_Differ.h \
 	src/IBK_EOLStreamBuffer.h \
 	src/IBK_Exception.h \
@@ -77,6 +72,7 @@ HEADERS += \
 	src/IBK_FileUtils.h \
 	src/IBK_Flag.h \
 	src/IBK_FluidPhysics.h \
+	src/IBK_SolidPhysics.h \
 	src/IBK_FormatString.h \
 	src/IBK_InputOutput.h \
 	src/IBK_IntPara.h \
@@ -143,4 +139,3 @@ HEADERS += \
 
 DISTFILES += \
 	doc/LICENSE
-

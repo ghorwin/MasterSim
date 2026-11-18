@@ -39,6 +39,9 @@
 #ifndef IBK_BuildFlagsH
 #define IBK_BuildFlagsH
 
+// consistently define IBK_DEBUG for different compilers/platforms
+
+
 #if defined(_MSC_VER)
 
 	#if defined(_DEBUG)

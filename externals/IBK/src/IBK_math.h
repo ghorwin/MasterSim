@@ -157,7 +157,7 @@ inline bool betweenOrEqual(const double & v, const double & vMin, const double &
 
 
 /*! Utility function that can be used to set all elements of a Vector to zero very quickly. */
-inline void set_zero(std::vector<double>& v) { std::memset(&v[0], 0, sizeof(double)*v.size()); }
+inline void set_zero(std::vector<double>& v) { if (v.empty()) return; std::memset(&v[0], 0, sizeof(double)*v.size()); }
 
 /*! Rounds to given number of digits. */
 template <unsigned int digits>

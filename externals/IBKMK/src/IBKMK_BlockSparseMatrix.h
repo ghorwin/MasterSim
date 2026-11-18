@@ -40,7 +40,6 @@
 #define IBKMK_BlockSparseMatrixH
 
 #include <vector>
-#include <iosfwd>
 #include <cstring>
 
 #include <IBK_assert.h>

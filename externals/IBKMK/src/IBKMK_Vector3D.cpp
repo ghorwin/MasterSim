@@ -42,7 +42,6 @@
 
 namespace IBKMK {
 
-
 std::string Vector3D::toString() const {
 	std::stringstream strm;
 	strm << m_x << " " << m_y << " " << m_z;

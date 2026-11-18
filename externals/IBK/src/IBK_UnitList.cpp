@@ -661,7 +661,14 @@ std::string UnitList::replaceUnitWithIntegralUnit(const std::string & original) 
 ///
 
 
-// The units defined per default in the unitlist
+// The units defined per default in the unitlist.
+
+// Parse the unit list as follows:
+// - first unit in each line is the <base unit>
+// - this if followed by n tuples (operation, value, related unit) such that
+//      <target unit> = <value> <operation> <base unit>
+//   for example:
+//      mm = 1e3 * m
 const char * const DEFAULT_UNITS =
 "undefined    \n"
 "m            * 1e+03 mm          * 1e+02 cm          * 1e+01 dm       \n"
@@ -679,7 +686,7 @@ const char * const DEFAULT_UNITS =
 "kg/s         * 3600 kg/h         * 86400 kg/d        * 1000 g/s          * 3.6e6 g/h         * 8.64e+07 g/d      * 31536e6 g/a   * 1e6 mg/s      * 1e9 µg/s    \n"
 "kg/m2        / 100 kg/dm2        * 10 g/dm2          / 10 g/cm2          * 1e6 mg/m2         \n"
 "kg/m2s       * 1000 g/m2s        * 3.6e+06 g/m2h     * 86.4e+06 g/m2d    * 3600 kg/m2h       * 1e6 mg/m2s        * 1e9 µg/m2s  * 3.6e9 mg/m2h    * 3.6e12 µg/m2h \n"
-"kg/m3        / 1000 kg/dm3       * 1 g/dm3           / 1000 g/cm3        * 1000 g/m3         * 1e6 mg/m3         * 1000 kg/L   * 1 g/L         / 1000 mg/L     * 1e9 µg/m3       % 0      log(kg/m3)    % 0    log(g/m3)    % 0    log(mg/m3)    % 0    log(µg/m3) \n"
+"kg/m3        / 1000 kg/dm3       * 1 g/dm3           / 1000 g/cm3        * 1000 g/m3         * 1e6 mg/m3         / 1000 kg/L   * 1 g/L         * 1000 mg/L     * 1e9 µg/m3       % 0      log(kg/m3)    % 0    log(g/m3)    % 0    log(mg/m3)    % 0    log(µg/m3) \n"
 "kg/m3s       * 1000 g/m3s        * 3.6e+06 g/m3h     * 3600 kg/m3h       * 1e6 mg/m3s        * 1e9 µg/m3s        * 3.6e9 mg/m3h  * 3.6e12 µg/m3h \n"
 "kg/m         * 1000 g/m          * 1 g/mm            / 1000 kg/mm        \n"
 "kg/kg        * 1000 g/kg         * 1e6 mg/kg         \n"
@@ -702,7 +709,7 @@ const char * const DEFAULT_UNITS =
 "L/m3s        * 3600 L/m3h\n"
 "m3/m2s       * 3600 m3/m2h       * 1000 dm3/m2s      * 3.6e+06 dm3/m2h   \n"
 "m3/m2sPa     * 3600 m3/m2hPa     \n"
-"m3/s         * 3600 m3/h         * 1000 dm3/s        * 3.6e+06 dm3/h   \n"
+"m3/s         * 3600 m3/h         * 1000 dm3/s        * 3.6e+06 dm3/h    * 86400 m3/d    * 31536000 m3/a \n"
 "m3/m3        * 100 Vol%          \n"
 "m3/m3d       * 100 Vol%/d        \n"
 "---          * 100 %             * 1 1               * 10 1/10           * 8 1/8         \n"
@@ -711,7 +718,7 @@ const char * const DEFAULT_UNITS =
 "1/K          \n"
 "K/m          \n"
 "m2s/kg       \n"
-"Pa           / 100 hPa           / 1000 kPa          * 1e-02 mBar          * 1e-05 Bar        * 0.000145038 PSI         * 0.00750062 Torr          \n"
+"Pa           / 100 hPa           / 1000 kPa          * 1e-02 mbar          * 1e-02 mBar          * 1e-05 bar        * 1e-05 Bar        * 0.000145038 PSI         * 0.00750062 Torr          \n"
 "1/Pa         \n"
 "Pa/m         / 1000 kPa/m        \n"
 "Lux          / 1000 kLux         \n"
@@ -724,11 +731,16 @@ const char * const DEFAULT_UNITS =
 "logPa        \n"
 "K/Pa         \n"
 "mol/kg       / 1000 mol/g        \n"
+"eq/kg        * 1000 meq/kg       \n"
 "kg/mol       * 1000 g/mol        \n"
 "J/mol        / 1000 kJ/mol       \n"
 "1/logcm      \n"
 "mol/m3       / 1000 mol/L      / 1000 mol/dm3         / 1e+06 mol/cm3     / 1 mmol/L      / 1 mM \n"
-"mol          * 1e+03 mmol        \n"
+"mol/s        * 1e+03 mmol/s    * 3600 mol/h           * 86400 mol/d       * 31536000 mol/a \n"
+"mol          * 1e+03 mmol      / 1000 kmol  \n"
+"mol/m3s      \n"
+"1/m3s        \n"
+"eq           / 1000 keq          \n"
 "-            \n"
 "mm/mK        / 1000 m/mK	\n"
 "m3m/m3m      * 1000 m3mm/m3m     * 1 m/m              * 1000 mm/m \n"
@@ -743,6 +755,7 @@ const char * const DEFAULT_UNITS =
 "kWh/a        \n"
 "m2/m3        \n"
 "Kh           \n"
+"Pas          \n"
 ;
 
 

@@ -1,5 +1,5 @@
-#ifndef EM_IsoplethsH
-#define EM_IsoplethsH
+#ifndef IBK_IsoplethsH
+#define IBK_IsoplethsH
 
 
 #include <string>

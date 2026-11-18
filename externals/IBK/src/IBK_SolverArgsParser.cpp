@@ -44,15 +44,12 @@
 #include <list>
 #include <cstring>
 
-#if defined(_OPENMP)
-#include <omp.h>
-#endif // _OPENMP
-
 #include "IBK_Constants.h"
 #include "IBK_StringUtils.h"
 #include "IBK_Unit.h"
 #include "IBK_UnitList.h"
 #include "IBK_messages.h"
+#include "IBK_openMP.h"
 
 namespace IBK {
 
@@ -144,17 +141,7 @@ void SolverArgsParser::parse(int argc, const char * const argv[]) {
 	} // if (hasOption(GO_PARALLEL_THREADS))
 	else {
 
-#if defined(_OPENMP)
-#pragma omp parallel
-{
-
-		// no-user argument, initialize numParallelThreads with environment variable
-#pragma omp master
-		m_numParallelThreads = omp_get_num_threads();
-}
-#else // defined(_OPENMP)
-		m_numParallelThreads = 1; // sequential code
-#endif // defined(_OPENMP)
+		m_numParallelThreads = IBK_get_num_threads(); // will set 1 for sequential code
 
 	} // else (hasOption(GO_PARALLEL_THREADS))
 
@@ -329,7 +316,7 @@ char SolverArgsParser::keywordChar( int index ) const {
 		case GO_RESTART						: return 'r';
 		case GO_TEST_INIT					: return 't';
 		case GO_OUTPUT_DIR					: return 'o';
-		case GO_PARALLEL_THREADS			: return 'p';
+		case GO_PARALLEL_THREADS			: return 'n';
 	}
 	return 0; // no short version available for this option
 }
@@ -348,7 +335,7 @@ std::string SolverArgsParser::keyword( int index ) const {
 		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "disable-periodic-restart-file-writing";
 		case GO_TEST_INIT					: return "test-init";
 		case GO_OUTPUT_DIR					: return "output-dir";
-		case GO_PARALLEL_THREADS			: return "parallel-threads";
+		case GO_PARALLEL_THREADS			: return "num-threads";
 		case OO_INTEGRATOR					: return "integrator";
 		case OO_LES_SOLVER					: return "les-solver";
 		case OO_PRECONDITIONER				: return "precond";
@@ -397,7 +384,7 @@ std::string SolverArgsParser::descriptionValue( int index ) const {
 		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "true|false";
 		case GO_TEST_INIT					: return "true|false";
 		case GO_OUTPUT_DIR					: return "directory";
-		case GO_PARALLEL_THREADS			: return "0...MaxNumThreads";
+		case GO_PARALLEL_THREADS			: return "0...<MaxNumThreads>";
 		case OO_LES_SOLVER					: return "auto|BTridiag|Band|GMRES|BiCGStab|TFQMR";
 		case OO_PRECONDITIONER				: return "auto|Band|ILU";
 		case OO_INTEGRATOR					: return "auto|CVode|ImplicitEuler";
@@ -422,7 +409,7 @@ std::string SolverArgsParser::defaultValue( int index ) const {
 		case GO_DISABLE_PERIODIC_RESTART_FILE_WRITING	: return "false";
 		case GO_TEST_INIT					: return "false";
 		case GO_OUTPUT_DIR					: return "";
-		case GO_PARALLEL_THREADS			: return "1"; // by default sequential run
+		case GO_PARALLEL_THREADS			: return "0"; // by default use all available as defined with environment variable
 		case OO_INTEGRATOR					: return "auto";
 		case OO_LES_SOLVER					: return "auto";
 		case OO_PRECONDITIONER				: return "auto";

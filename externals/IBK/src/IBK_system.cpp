@@ -42,6 +42,7 @@
 
 #if defined(_WIN32)
 	#include <windows.h>
+    #include <shellapi.h>
 #else
 	#include <sys/statvfs.h>
 #endif
@@ -93,6 +94,66 @@ unsigned int getFreeDiskSpace(const IBK::Path& dir) {
 	return 0;
 
 #endif
+}
+
+namespace {
+
+#ifdef _WIN32
+std::string wideToUtf8(const wchar_t *wstr) {
+    if (wstr == nullptr)
+        return std::string();
+
+    const int size = WideCharToMultiByte(
+        CP_UTF8, 0,
+        wstr, -1,
+        nullptr, 0,
+        nullptr, nullptr
+        );
+
+    if (size <= 0)
+        return std::string();
+
+    std::string result(static_cast<size_t>(size - 1), '\0');
+
+    WideCharToMultiByte(
+        CP_UTF8, 0,
+        wstr, -1,
+        &result[0], size,
+        nullptr, nullptr
+        );
+
+    return result;
+}
+#endif
+
+} // anonymer Namespace
+
+std::vector<std::string> argumentsUtf8(int argc, char *argv[]) {
+
+    std::vector<std::string> args;
+
+#ifdef _WIN32
+    int wargc = 0;
+    wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &wargc);
+
+    if (wargv == nullptr)
+        return args;
+
+    args.reserve(static_cast<size_t>(wargc));
+
+    for (int i = 0; i < wargc; ++i)
+        args.push_back(wideToUtf8(wargv[i]));
+
+    LocalFree(wargv);
+
+#else
+    args.reserve(static_cast<size_t>(argc));
+
+    for (int i = 0; i < argc; ++i)
+        args.push_back(std::string(argv[i]));
+#endif
+
+    return args;
 }
 
 

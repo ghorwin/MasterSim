@@ -477,6 +477,25 @@ std::string pick_name(const std::string& basename, iterator first, const_iterato
 	return name;
 }
 
+/*! Convenience template function to lookup definition in vector by name.
+	Class type must implement comparison operator with std::string.
+	Use like:
+	\code
+		// lookup a solution object in std::vector<Solution> by comparison operator with std::string
+		const Solution * sol = find_by_name(m_project->m_aqSolutions, solName);
+		// if sol is a nullptr, the solution name is not in the list of solutions
+	\endcode
+*/
+template<typename T>
+static const T* find_by_name(const std::vector<T> & vec, const std::string & name) {
+	typename std::vector<T>::const_iterator it = std::find(vec.begin(), vec.end(), name);
+	if (it == vec.end())
+		return nullptr;
+	else
+		return &(*it);
+}
+
+
 } // namespace IBK
 
 /*! \file IBK_algorithm.h

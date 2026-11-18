@@ -8,25 +8,20 @@ TEMPLATE = lib
 # it contains all functions defined for casual libraries
 include( ../IBK/IBK.pri )
 
-unix|mac {
-	VER_MAJ = 1
-	VER_MIN = 1
-	VER_PAT = 0
-	VERSION = $${VER_MAJ}.$${VER_MIN}.$${VER_PAT}
-}
+unix:VERSION = 1.1.0
 
 LIBS += -lIBK
 
 INCLUDEPATH += \
 	../IBK/src
 
-DEPENDPATH = $${INCLUDEPATH}
 
 SOURCES += \
 	src/tinystr.cpp \
 	src/tinyxml.cpp \
 	src/tinyxmlerror.cpp \
 	src/tinyxmlparser.cpp
+
 HEADERS += \
 	src/ticppIBKconfig.h \
 	src/tinystr.h \

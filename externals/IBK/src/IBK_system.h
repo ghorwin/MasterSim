@@ -39,6 +39,9 @@
 #ifndef IBK_systemH
 #define IBK_systemH
 
+#include <string>
+#include <vector>
+
 namespace IBK {
 
 class Path;
@@ -50,7 +53,9 @@ class Path;
  */
 unsigned int getFreeDiskSpace(const IBK::Path& dir);
 
-
+#ifdef _WIN32
+std::vector<std::string> utf8CommandLineArguments(int argc, char *argv[]);
+#endif
 
 } // namespace IBK
 

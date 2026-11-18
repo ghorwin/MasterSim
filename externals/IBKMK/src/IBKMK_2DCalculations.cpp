@@ -38,8 +38,6 @@
 
 #include "IBKMK_2DCalculations.h"
 #include "IBK_Line.h"
-#include "IBK_MessageHandler.h"
-#include "IBK_messages.h"
 
 namespace IBKMK {
 
@@ -191,7 +189,7 @@ void erasePoint(std::vector<IBKMK::Vector2D> & polygon, unsigned int idx) {
 	IBK_ASSERT(idx < polygon.size());
 	std::vector<IBKMK::Vector2D>::iterator it = polygon.begin() + idx;
 #ifdef IBK_DEBUG
-	//		IBK::IBK_Message(IBK::FormatString("Point to be erased: X %1 Y %2").arg(it->m_x).arg(it->m_y), IBK::MSG_DEBUG);
+//		IBK::IBK_Message(IBK::FormatString("Point to be erased: X %1 Y %2").arg(it->m_x).arg(it->m_y), IBK::MSG_DEBUG);
 #endif
 	polygon.erase(it);
 }
@@ -366,7 +364,5 @@ bool polygonClockwise(const std::vector<Vector2D>& polyline) {
 
 	return area > 0;
 }
-
-
 
 } // namespace IBKMK

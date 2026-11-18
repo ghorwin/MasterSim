@@ -39,7 +39,6 @@
 #include "IBKMK_3DCalculations.h"
 #include "IBKMK_2DCalculations.h"
 
-#include "IBKMK_Polygon3D.h"
 #include "IBKMK_Vector3D.h"
 #include <IBK_messages.h>
 
@@ -99,10 +98,7 @@ bool planeCoordinates(const Vector3D & offset, const Vector3D & a, const Vector3
 	// compute project of rhs vector to a and b vectors
 	IBKMK::Vector3D anorm = a.normalized();
 	IBKMK::Vector3D bnorm = b.normalized();
-	// near-orthogonality check between normalized basis vectors selects analytic
-	// branch; tighter than GEOM_TOL because anorm/bnorm are unit-length and we
-	// only want to skip the closed-form path when truly perpendicular.
-	if (std::fabs(anorm.scalarProduct(bnorm)) < NUM_EPS) {
+	if (std::fabs(anorm.scalarProduct(bnorm)) < 1e-10) {
 		//		IBK::IBK_Message("scalar");
 		x = rhs.scalarProduct(anorm);
 		x /= a.magnitude();
@@ -199,15 +195,14 @@ double lineToLineDistance(const Vector3D & a1, const Vector3D & d1,
 	// compute the line parameters of the two closest points
 	if (d < 1e-4) { // the lines are almost parallel
 		l1 = 0.0; // we have to set one factor to determine a point since there are infinite
-		l2 = (std::fabs(d1d2Scalar)>std::fabs(d2Scalar)) ?
-					d1vScalar/d1d2Scalar : d2vScalar/d2Scalar;    // use the largest denominator
+		l2 = (d1d2Scalar>d2Scalar ? d1vScalar/d1d2Scalar : d2vScalar/d2Scalar);    // use the largest denominator
 	}
 	else {
 		l1 = (d1d2Scalar*d2vScalar - d2Scalar*d1vScalar) / d;
 		l2 = (d1Scalar*d2vScalar - d1d2Scalar*d1vScalar) / d;
 	}
 
-	p1 = a1 + ( l1 * d1 );			// point 1
+	p1 = a1 + ( l1 * d1 );					// point 1
 	Vector3D p2 = a2 + (l2 * d2 );	// point 2
 
 	// get the difference of the two closest points
@@ -643,94 +638,6 @@ bool polyIntersect(const std::vector<Vector3D> & vertsAexact, const std::vector<
 		}
 	}
 return false;
-}
-
-bool isCollinear(const Vector3D & a1, const Vector3D & d1, const Vector3D & a2, const Vector3D & d2, double epsilon) {
-
-	// calculate direction vectors
-	IBKMK::Vector3D vectorEdge0Direction = a1 - d1;
-	IBKMK::Vector3D vectorEdge1Direction = a2 - d2;
-
-	// calculate the cross product of the two direction vectors.
-	IBKMK::Vector3D crossProd = vectorEdge0Direction.crossProduct(vectorEdge1Direction);
-
-	double crossProdMagn = crossProd.magnitudeSquared();
-
-	return std::abs(crossProdMagn) < epsilon;
-}
-
-double angleAtVertexDeg180(const Vector3D & p_prev, const Vector3D & p, const Vector3D & p_next) {
-	// 1. Calculate the two vectors originating from the vertex p.
-	const IBKMK::Vector3D v1 = p_prev - p;
-	const IBKMK::Vector3D v2 = p_next - p;
-
-	// 2. Calculate the squared magnitudes for the dot product formula.
-	double mag_sq_product = v1.magnitude() * v2.magnitude();
-
-	// Avoid division by zero if one of the vectors has zero length.
-	if (mag_sq_product < 1e-24) {
-		return 0.0;
-	}
-
-	// 3. Calculate cos(theta) using the dot product formula.
-	double cos_theta = v1.scalarProduct(v2) / mag_sq_product;
-
-	// 4. Clamp the value to the valid acos range [-1.0, 1.0] to prevent
-	cos_theta = std::max(-1.0, std::min(1.0, cos_theta));
-
-	// 5. Return the angle in degrees.
-	return std::acos(cos_theta) / IBK::DEG2RAD;
-}
-
-Vector3D boundingBox(const std::vector<Polygon3D> &polygons, Vector3D &center) {
-	// Return zero-size vector if no polygons are provided
-	if (polygons.empty())
-		return IBKMK::Vector3D(0, 0, 0);
-
-	// Initialize lower und upper values with numerical limits
-	IBKMK::Vector3D lowerValues(std::numeric_limits<double>::max(),
-								std::numeric_limits<double>::max(),
-								std::numeric_limits<double>::max());
-	IBKMK::Vector3D upperValues(std::numeric_limits<double>::lowest(),
-								std::numeric_limits<double>::lowest(),
-								std::numeric_limits<double>::lowest());
-
-	// MIND: Always use a const reference, since without the objects will be copied in memory
-	for (const Polygon3D &polygon: polygons){
-		if (!polygon.isValid())
-			continue;
-
-		// compute local bbox for this polygon
-		polygon.boundingBox(lowerValues, upperValues);
-	}
-
-	// Compute bounding box center and dimensions
-	center = 0.5 * (lowerValues + upperValues);
-	return upperValues - lowerValues;
-}
-
-
-bool checkVerticesPlanarity(const std::vector<Vector3D> & vertices, double tolerance) {
-	if (vertices.size() < 3)
-		return false;
-
-	Vector3D v1 = vertices[1] - vertices[0];
-	Vector3D v2 = vertices[2] - vertices[0];
-	Vector3D normal = v1.crossProduct(v2);
-
-	if (normal.magnitude() < NUM_EPS)
-		return false;
-
-	normal.normalize();
-
-	for (size_t i = 0; i < vertices.size(); ++i) {
-		Vector3D toVertex = vertices[i] - vertices[0];
-		double distance = std::abs(toVertex.scalarProduct(normal));
-		if (distance > tolerance)
-			return false;
-	}
-
-	return true;
 }
 
 

@@ -36,16 +36,15 @@
 
 */
 
-#include <vector>
-#include <cstring>
-#include <fstream>
 #include <algorithm>
-#include <functional>
+#include <cstring>
 #include <limits>
+#include <vector>
 
-#include "IBKMK_SparseMatrixCSR.h"
-#include "IBKMKC_sparse_matrix.h"
 #include <IBK_InputOutput.h>
+
+#include "IBKMKC_sparse_matrix.h"
+#include "IBKMK_SparseMatrixCSR.h"
 
 namespace IBKMK {
 
@@ -172,8 +171,15 @@ void SparseMatrixCSR::resizeFromEID(unsigned int n, unsigned int elementsPerRow,
 			++nValidIndices;
 		}
 		// store row offset
-		std::transform(m_ia.begin() + i + 1, m_ia.end(), m_ia.begin() + i + 1,
-			std::bind(std::plus<unsigned int>(), nValidIndices, std::placeholders::_1));
+		for (std::vector<unsigned int>::iterator ia_it = m_ia.begin() + i + 1;
+			 ia_it != m_ia.end(); ++ia_it)
+		{
+			*ia_it += nValidIndices;
+		}
+		// Note: the code above corresponds to the next std::transform call, but that is less readable
+		// std::transform(m_ia.begin() + i + 1, m_ia.end(), m_ia.begin() + i + 1,
+		//	std::bind(std::plus<unsigned int>(), nValidIndices, std::placeholders::_1));
+
 	}
 	// set number of nonzero elements
 	m_nnz = (unsigned int)m_ja.size();

@@ -1026,10 +1026,10 @@ std::time_t Path::fileTime() const{
 
 
 void Path::makeFatCompatible() {
-	IBK::replace_string(m_path, ":", "_");
-	IBK::replace_string(m_path, "&", "_");
-	IBK::replace_string(m_path, "?", "_");
-	IBK::replace_string(m_path, "*", "_");
+	m_path = IBK::replace_string(m_path, ":", "_");
+	m_path = IBK::replace_string(m_path, "&", "_");
+	m_path = IBK::replace_string(m_path, "?", "_");
+	m_path = IBK::replace_string(m_path, "*", "_");
 }
 
 
@@ -1469,8 +1469,9 @@ bool Path::makePath( const IBK::Path & p ) {
 bool Path::remove(const IBK::Path & p, bool quiet) {
 	(void)quiet;
 
-	// change current path to higher level before executing delete
-	if ( isRootPath( current(), p ) ) {
+	// change current path to higher level before executing delete, but only if the
+	// current directory is inside the path to be removed
+	if ( isRootPath( p, current() ) ) {
 		setCurrent( p.parentPath() );
 	}
 
@@ -1622,7 +1623,7 @@ bool Path::copy(const IBK::Path & source, const IBK::Path & target){
 				targetDir.push_back(L'\0');
 				targetDir.push_back(L'\0');
 
-				SHFILEOPSTRUCTW s = {0};
+				SHFILEOPSTRUCTW s{};
 				s.wFunc = FO_COPY;
 				s.pTo = &targetDir[0];
 				s.pFrom = &sourceDir[0];
@@ -1696,8 +1697,8 @@ bool Path::move(const IBK::Path & source, const IBK::Path & target){
 
 	FUNCID(Path::move);
 
-	// prevent recursive path move
-	if ( target.isRootPath(source) ) {
+	// prevent recursive path move, i.e. target must not be inside source
+	if ( Path::isRootPath(source, target) ) {
 		return false;
 	}
 
@@ -1717,7 +1718,7 @@ bool Path::move(const IBK::Path & source, const IBK::Path & target){
 	targetDir.push_back(L'\0');
 	targetDir.push_back(L'\0');
 
-	SHFILEOPSTRUCTW s = {0};
+	SHFILEOPSTRUCTW s{};
 	s.wFunc = FO_MOVE;
 	s.pTo = &targetDir[0];
 	s.pFrom = &sourceDir[0];

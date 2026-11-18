@@ -56,9 +56,9 @@ public:
 	/*! Reads table from a file.
 		\param filename Input file name.
 	*/
-	void read(const IBK::Path & filename, bool headerOnly = false, bool extractUnits = false);
+	void read(const IBK::Path & filename, bool headerOnly = false, bool extractUnits = false, bool treatEmptyCellsAsNAN = false);
 	/*! Same as read, but this time the content is read from string. */
-	void parse(const std::string & data, bool headerOnly = false, bool extractUnits = false);
+	void parse(const std::string & data, bool headerOnly = false, bool extractUnits = false, bool treatEmptyCellsAsNAN = false);
 
 	/*! Convenience function to extract data of a given column (colIndex starts with index 0). */
 	std::vector<double> colData(unsigned int colIndex) const;
@@ -90,7 +90,7 @@ private:
 		m_captions.size() = m_nColumns
 		m_units.size() = m_nColumns (if extractUnits = true)
 	*/
-	void parse(std::istream & in, bool headerOnly = false, bool extractUnits = false);
+	void parse(std::istream & in, bool headerOnly, bool extractUnits, bool treatEmptyCellsAsNAN);
 };
 
 } // namespace IBK

@@ -41,6 +41,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stdexcept>
+#include <sstream>
 
 #include "IBK_Exception.h"
 #include "IBK_FormatString.h"

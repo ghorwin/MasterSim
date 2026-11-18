@@ -39,6 +39,7 @@
 #include "IBK_CSVReader.h"
 
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <fstream>
 #include <vector>
@@ -80,14 +81,14 @@ bool CSVReader::haveTabSeparationChar(const IBK::Path & filename) {
 }
 
 
-void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUnits) {
+void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUnits, bool treatEmptyCellsAsNAN) {
 	FUNCID(CSVReader::read);
 	try {
 		std::ifstream in;
 		if (!IBK::open_ifstream(in, filename))
 			throw IBK::Exception( IBK::FormatString("File doesn't exist or cannot open/access file."), FUNC_ID);
 
-		parse(in, headerOnly, extractUnits);
+		parse(in, headerOnly, extractUnits, treatEmptyCellsAsNAN);
 	}
 	catch (IBK::Exception & ex) {
 		throw IBK::Exception( ex, IBK::FormatString("Error reading file '%1'.").arg(filename), FUNC_ID);
@@ -95,11 +96,11 @@ void CSVReader::read(const IBK::Path & filename, bool headerOnly, bool extractUn
 }
 
 
-void CSVReader::parse(const std::string & data, bool headerOnly, bool extractUnits) {
+void CSVReader::parse(const std::string & data, bool headerOnly, bool extractUnits, bool treatEmptyCellsAsNAN) {
 	FUNCID(CSVReader::parse);
 	try {
 		std::stringstream in(data);
-		parse(in, headerOnly, extractUnits);
+		parse(in, headerOnly, extractUnits, treatEmptyCellsAsNAN);
 	} catch (IBK::Exception & ex) {
 		throw IBK::Exception( ex, IBK::FormatString("Error parsing data."), FUNC_ID);
 	}
@@ -125,17 +126,17 @@ std::vector<double> CSVReader::colData(unsigned int colIndex) const {
 
 // PRIVATE FUNCTIONS
 
-void CSVReader::parse(std::istream & in, bool headerOnly, bool extractUnits) {
+void CSVReader::parse(std::istream & in, bool headerOnly, bool extractUnits, bool treatEmptyCellsAsNAN) {
 	FUNCID(CSVReader::parse);
 
 	std::string line;
 	std::getline(in, line);
 	std::string sepChars;
 	sepChars.push_back(m_separationCharacter);
-	if (m_separationCharacter == ',')
-		IBK::explode(line, m_captions, sepChars, IBK::EF_UseQuotes);
-	else
-		IBK::explode(line, m_captions, sepChars, IBK::EF_NoFlags);
+	int flags = IBK::EF_NoFlags;
+	if (treatEmptyCellsAsNAN)
+		flags = IBK::EF_KeepEmptyTokens;
+	IBK::explode(line, m_captions, sepChars, IBK::EF_UseQuotes | flags);
 	m_nColumns = (unsigned int)m_captions.size();
 	m_nRows = 0;
 	m_units.clear();
@@ -163,14 +164,9 @@ void CSVReader::parse(std::istream & in, bool headerOnly, bool extractUnits) {
 		if (line.empty() || line.find_first_not_of("\n\r\t ") == std::string::npos)
 			continue;
 		std::vector<std::string> tokens;
-		if (m_separationCharacter == ',') {
-			IBK::explode(line, tokens, sepChars, IBK::EF_UseQuotes);
-			for (unsigned int i=0; i<tokens.size(); ++i) {
-				IBK::trim(tokens[i], " \t\r\"");
-			}
-		}
-		else
-			IBK::explode(line, tokens, sepChars, IBK::EF_NoFlags);
+		IBK::explode(line, tokens, sepChars, IBK::EF_UseQuotes | flags);
+		for (unsigned int i=0; i<tokens.size(); ++i)
+			IBK::trim(tokens[i], " \t\r\"");
 		// error: wrong column size
 		if (tokens.size() != m_nColumns) {
 			throw IBK::Exception(IBK::FormatString("Wrong number of columns in line #%1!")
@@ -182,8 +178,11 @@ void CSVReader::parse(std::istream & in, bool headerOnly, bool extractUnits) {
 				values[i] = IBK::string2val<double>(tokens[i]);
 			}
 			catch (IBK::Exception & ex) {
-				throw IBK::Exception( ex, IBK::FormatString("Error reading value in column %1 in line #%2.")
-									  .arg(i).arg(rowCount), FUNC_ID);
+				if (treatEmptyCellsAsNAN)
+					values[i] = std::numeric_limits<double>::quiet_NaN();
+				else
+					throw IBK::Exception( ex, IBK::FormatString("Error reading value in column %1 in line #%2.")
+										  .arg(i).arg(rowCount), FUNC_ID);
 			}
 		}
 		m_values.push_back(values);
