@@ -23,7 +23,7 @@ build/build.sh debug no-gui
 build/build.sh release skip-test
 ```
 
-Common CMake settings (C++17, output directories, rpath, `DEPLOYMENT`/`USE_OMP`/`DISABLE_QT` options, Qt AUTOMOC/UIC/RCC) live in `externals/IBK/build.cmake`, which is included by the top-level `CMakeLists.txt`. That file is shared verbatim with other IBK projects, so put MasterSim-specific settings in the top-level `CMakeLists.txt` instead. Libraries are CMake targets that export their include paths/dependencies (`target_link_libraries(... PUBLIC ...)`), so do not use `include_directories()`. zlib comes from `find_package(ZLIB)` (system zlib on Linux/macOS, vcpkg on Windows).
+Common CMake settings (C++17, output directories, rpath, `DEPLOYMENT`/`USE_OMP`/`DISABLE_QT` options, Qt AUTOMOC/UIC/RCC) live in `externals/IBK/build.cmake`, which is included by the top-level `CMakeLists.txt`. That file is shared verbatim with other IBK projects, so put MasterSim-specific settings in the top-level `CMakeLists.txt` instead. Libraries are CMake targets that export their include paths/dependencies (`target_link_libraries(... PUBLIC ...)`), so do not use `include_directories()`. zlib comes from `find_package(ZLIB)` (system zlib on Linux/macOS, vcpkg on Windows: triplet `x64-windows` for MSVC, `x64-mingw-static` for MinGW; both build scripts install it via `build/setup_zlib_vcpkg.bat` if missing).
 
 Executables are written directly to `bin/release/` (or `bin/debug/` for debug builds):
 - `bin/release/mastersim` — CLI solver
@@ -72,7 +72,7 @@ Test cases live in `data/tests/linux64/` (one subdirectory per scenario). Refere
 | `externals/TiCPP/` | TinyXML with IBK extensions — XML parsing |
 | `externals/BlockMod/` | Block-diagram schematic widget (GUI only) |
 | `externals/minizip/` | Zip extraction for FMU archives |
-| `externals/zlib/` | zlib (Windows only; Linux/Mac use system zlib) |
+| `externals/zlib/` | zlib sources (only used by the qmake build; CMake uses system/vcpkg zlib) |
 | `TestFMUs/` | Source for test FMUs; compiled to `.fmu` files by `TestFMUs/generate_FMUs.sh` |
 | `data/tests/linux64/` | Regression test cases and reference results |
 | `data/examples/` | Example `.msim` project files |

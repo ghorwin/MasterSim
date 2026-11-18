@@ -40,10 +40,12 @@ jobs:
         cache-key-prefix: 'install-qt-action-mingw'
 
     # The runner image ships its own MinGW/GCC in the PATH, so put the Qt MinGW tool chain first.
-    # zlib is taken from the MinGW tool chain.
+    # zlib is installed via vcpkg (C:\vcpkg on the runner, triplet x64-mingw-static) by the build script itself
     - name: Build
       working-directory: build
       shell: cmd
+      env:
+        VCPKG_ROOT: C:\vcpkg
       run: |
         set PATH=C:\Qt\Tools\mingw1310_64\bin;%PATH%
         set CMAKE_PREFIX_PATH=%QT_ROOT_DIR%
