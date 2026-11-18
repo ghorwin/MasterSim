@@ -12,15 +12,14 @@ The main webpage of _MasterSim_ is https://bauklimatik-dresden.de/mastersim.
 
 ## Quality Assurance
 
-We have continuous integration scripts running as github runners for Linux (Ubuntu), Mac and Windows.
+We have continuous integration scripts running as GitHub runners for Linux (Ubuntu) and Windows. The GitHub workflows are currently triggered manually.
 
 | Test | Result|
 |-----|-----|
-| CI - Linux 64-bit (Ubuntu 20.04 LTS) Solver only and test suite (GitHub) | [![Ubuntu 20.04 build and tests](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_Solver_and_Test.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_20.04_Build_Solver_and_Test.yml) |
-| CI - Linux 64-bit (Ubuntu 22.04 LTS) Solver only (GitHub) | [![Ubuntu 22.04 build (solver only)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build_Solver.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build_Solver.yml) |
-| CI - Linux 64-bit (Ubuntu 22.04 LTS; Qt 5.15.3) (GitHub) | [![Ubuntu 22.04/5.15.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_22.04_Build.yml) |
-| CI - Linux 64-bit (Ubuntu 22.04 LTS; Qt 5.15.13) (GitHub) | [![Ubuntu 24.04/Qt 5.15.13 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Build.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Build.yml) |
-| CI - Windows 64-bit (Win10, VC 2019, Qt 5.15.2) (GitHub) | [![Windows VC2019 x64](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2019_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2019_x64.yml) |
+| CI - Linux 64-bit (Ubuntu 24.04 LTS; Qt 6.4) Solver, user interface and test suite (GitHub) | [![Ubuntu 24.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_24.04_Qt6.yml) |
+| CI - Linux 64-bit (Ubuntu 26.04 LTS; Qt 6.10) Solver, user interface and test suite (GitHub) | [![Ubuntu 26.04/Qt6 build](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/ubuntu_26.04_Qt6.yml) |
+| CI - Windows 64-bit (VC 2022, Qt 6.9.3) (GitHub) | [![Windows VC2022 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_vc2022_Qt693_x64.yml) |
+| CI - Windows 64-bit (MinGW 13.1, Qt 6.9.3) (GitHub) | [![Windows MinGW 13 x64/Qt 6.9.3 build](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml/badge.svg)](https://github.com/ghorwin/MasterSim/actions/workflows/windows_mingw13_Qt693_x64.yml) |
 | | |
 | CI - Linux 64-bit - nightly release (Ubuntu 20.04.3 LTS; Qt 5.12.9) (Jenkins) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR-Linux-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR-Linux-MasterSim/)    |
 | CI - Windows 64-bit - nightly release (Win10, VC 2019, Qt 5.15.2) (Jenkins) | [![Build Status](https://baukli01.arch.tu-dresden.de/jenkins/buildStatus/icon?job=NR64-Win-MasterSim&style=plastic)](https://baukli01.arch.tu-dresden.de/jenkins/job/NR64-Win-MasterSim/)   |
