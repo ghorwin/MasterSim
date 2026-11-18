@@ -1,5 +1,3 @@
-# CMakeLists.txt file for IBK library
-
 project( IBK )
 
 # configuration file options
@@ -7,33 +5,26 @@ option( IBK_ENABLE_SAFE_MATH "Turns checking of function arguments to math routi
 option( IBK_ENABLE_UNIT_NAME "Adds a member variable with unit ID name to the IBK::Unit for better debugging." ON )
 option( IBK_ENABLE_COLORED_CONSOLE "Enables colored outputs in the console window." ON )
 
-# The top-level CMakeLists.txt file for debian package building sets this option
-option( IBK_BUILDING_DEBIAN_PACKAGE "Set to true if a debian package is being built." OFF )
-
-# avoid warning about unknown pragmas
-if( UNIX )
-	add_definitions( -Wunknown-pragmas )
-endif( UNIX )
-
 configure_file(
-	${PROJECT_SOURCE_DIR}/src/IBK_configuration.h.in
-	${CMAKE_CURRENT_BINARY_DIR}/IBK_configuration.h
+	src/IBK_configuration.h.in
+	src/IBK_configuration.h
 )
 
-# collect a list of all source files of the IBK library
-file( GLOB IBK_LIB_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
-SET( IBK_LIB_SRCS ${IBK_LIB_SRCS} )
+# collect a list of all source files
+file( GLOB SRCS src/*.cpp )
 
-# build the library
-add_library( IBK STATIC
-	${IBK_LIB_SRCS}
+# add build target for library - static (only c++)
+add_library( ${PROJECT_NAME} STATIC
+	${SRCS}
 )
 
-# Propagate include dirs to all consumers: source dir for IBK headers,
-# binary dir for the generated IBK_configuration.h
-target_include_directories( IBK PUBLIC
-	${PROJECT_SOURCE_DIR}/src
-	${CMAKE_CURRENT_BINARY_DIR}
+target_include_directories(${PROJECT_NAME} PUBLIC 
+	src
 )
 
-target_precompile_headers (IBK PUBLIC ${PROJECT_SOURCE_DIR}/src/IBK_headers.h)
+# Note: the precompiled header is a c++-only header, hence we must restrict its use
+#       to c++ sources - otherwise c-sources in libraries linking against IBK (i.e. IBKMK)
+#       would attempt to precompile it as c-header and fail.
+target_precompile_headers(${PROJECT_NAME} PUBLIC 
+	$<$<COMPILE_LANGUAGE:CXX>:${PROJECT_SOURCE_DIR}/src/IBK_headers.h>
+)

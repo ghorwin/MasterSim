@@ -1,19 +1,23 @@
-# CMakeLists.txt file for IBKMK library
-
 project( IBKMK )
 
-# add include directories
-include_directories(
-	${PROJECT_SOURCE_DIR}/../IBK/src
-	${PROJECT_SOURCE_DIR}/src/CDT
+# collect a list of all source files
+file( GLOB SRCS src/*.cpp )
+file( GLOB C_SRCS src/*.c )
+SET( SRCS ${SRCS} ${C_SRCS} )
+
+# add build target for library - static (only c++)
+add_library( ${PROJECT_NAME} STATIC
+	${SRCS}
 )
 
-# collect a list of all source files of the IBK library
-file( GLOB IBKMK_LIB_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
-file( GLOB IBKMK_LIB_C_SRCS  ${PROJECT_SOURCE_DIR}/src/*.c )
-SET( IBKMK_LIB_SRCS ${IBKMK_LIB_SRCS} ${IBKMK_LIB_C_SRCS} )
+target_include_directories(${PROJECT_NAME} PUBLIC 
+	src
+	src/CDT
+)
 
-# build the library
-add_library( IBKMK STATIC
-	${IBKMK_LIB_SRCS}
+# Link against depending library. For a static library
+# this automatically imports the include paths needed
+# to compile against the library.
+target_link_libraries(${PROJECT_NAME} PUBLIC
+	IBK
 )

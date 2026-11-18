@@ -9,13 +9,19 @@ include( ../externals/IBK/IBK.pri )
 
 QT += xml core gui network printsupport widgets svg
 
-LIBS += -L../lib \ # for our top-level MasterSim lib
+LIBS += \
 	-lMasterSim \
 	-lminizip \
 	-lBlockMod \
 	-lIBKMK \
-	-lIBK \
-	-lTiCPP
+	-lTiCPP \
+	-lIBK
+
+unix {
+	LIBS += \
+		-lz \
+		-ldl
+}
 
 win32 {
 	LIBS += -lzlib -luser32

@@ -1,58 +1,56 @@
-# CMakeLists.txt file for MasterSimulator
+# CMakeLists.txt file for MasterSimulator application (command line solver)
+#
+# Note: This CMakeLists.txt file is not for stand-alone builds.
+#       Requires toplevel CMakeLists.txt file.
 
 project( MasterSimulator )
 
-if (CMAKE_COMPILER_IS_GNUCC)
-	if (NOT APPLE)
-		# link solver statically
-		set( CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++" )
-	endif (NOT APPLE)
-endif (CMAKE_COMPILER_IS_GNUCC)
-
-# add include directories
-include_directories(
-	${PROJECT_SOURCE_DIR}/../externals/IBK/src
-	${PROJECT_SOURCE_DIR}/../MasterSim/src
-)
-
-# collect a list of all source files
-file( GLOB APP_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
-
-if( WIN32 )
-	set (LINK_Z_LIBS zlibstatic)
-else( WIN32 )
-	# unix Linux/Unix/Darwin we use the system libz package
-	set (LINK_Z_LIBS z dl)
-endif( WIN32 )
+# collect a list of all source files of the application
+file( GLOB APP_SRCS src/*.cpp )
 
 add_executable( ${PROJECT_NAME}
 	${APP_SRCS}
 )
 
-# link against the dependent libraries
-target_link_libraries( ${PROJECT_NAME} 
+target_include_directories( ${PROJECT_NAME} PRIVATE
+	src
+)
+
+# The console solver is distributed as a stand-alone binary and is run on
+# machines without a matching version of the GCC runtime, hence we link the
+# runtime statically. On MacOS clang/libc++ is used and the flags do not apply.
+if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND NOT APPLE )
+	target_link_options( ${PROJECT_NAME} PRIVATE
+		-static-libgcc
+		-static-libstdc++
+	)
+endif()
+
+# Link against depending libraries. The include paths of these libraries are
+# imported automatically.
+#
+# Note: MasterSim pulls in the remaining libraries (IBKMK, TiCPP, minizip, zlib, IBK)
+#       as public dependencies.
+target_link_libraries( ${PROJECT_NAME}
 	MasterSim
-	IBKMK
 	IBK
-	TiCPP
-	minizip
-	${LINK_Z_LIBS}
 )
 
 # we want the binary to be named 'mastersim'
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "mastersim")
+set_target_properties( ${PROJECT_NAME} PROPERTIES OUTPUT_NAME "mastersim" )
 
-if (UNIX AND NOT APPLE)
+# Support for 'make install' on Unix/Linux (not on MacOS!)
+if( UNIX AND NOT APPLE )
 
 	# installation targets for Unix systems
-	include(GNUInstallDirs)
-	
-	# MasterSimulator -> /usr/bin/mastersim
-	install(TARGETS ${PROJECT_NAME} RUNTIME 
-		DESTINATION bin)
-	
-	# Man-page -> /usr/share/man/man1/mastersim.1.gz
-	install(FILES ${PROJECT_SOURCE_DIR}/doc/mastersim.1 
-		DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+	include( GNUInstallDirs )
 
-endif (UNIX AND NOT APPLE)
+	# MasterSimulator -> /usr/bin/mastersim
+	install( TARGETS ${PROJECT_NAME} RUNTIME
+		DESTINATION ${CMAKE_INSTALL_BINDIR} )
+
+	# Man-page -> /usr/share/man/man1/mastersim.1.gz
+	install( FILES ${PROJECT_SOURCE_DIR}/doc/mastersim.1
+		DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
+
+endif()

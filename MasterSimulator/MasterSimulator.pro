@@ -12,20 +12,18 @@ QT -= core gui
 CONFIG += console
 CONFIG -= app_bundle
 
-LIBS += -L../lib \ # for our top-level MasterSim lib
+LIBS += \
 	-lMasterSim \
 	-lminizip \
 	-lIBKMK \
-	-lIBK \
-	-lTiCPP
+	-lTiCPP \
+	-lIBK
 
 unix {
 	LIBS += \
 		-lz \
 		-ldl
 }
-
-DEPENDPATH += $${INCLUDEPATH}
 
 win32 {
 	LIBS += -lzlib
@@ -34,6 +32,8 @@ win32 {
 INCLUDEPATH = \
 	../MasterSim/src \
 	../externals/IBK/src
+
+DEPENDPATH = $${INCLUDEPATH}
 
 SOURCES += \
 	src/main.cpp

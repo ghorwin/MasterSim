@@ -8,25 +8,30 @@ MasterSim is an FMI (Functional Mock-Up Interface) Co-Simulation master and libr
 
 ## Build System
 
-The project uses CMake. All build scripts live in `build/` and must be run from that directory.
+The project uses CMake (target-based; qmake `.pro` files are kept in sync for QtCreator). The build scripts live in `build/` and can be run from any directory.
 
 ```bash
-# Full build (solver + Qt GUI)
-cd build && ./build.sh
+# Full build (solver + Qt GUI), release mode by default
+build/build.sh
 
 # Solver only (no Qt dependency)
-cd build && ./build_only_solver.sh
+build/build_only_solver.sh
 
-# Common options: debug | release | reldeb | no-gui | verbose | deploy
-cd build && ./build.sh debug no-gui
-cd build && ./build.sh release
+# Options: debug | release | reldeb | <cpu count> | no-gui | verbose | deployment (alias: deploy)
+#          | nightly | omp | gprof | skip-test   (unknown options abort the script)
+build/build.sh debug no-gui
+build/build.sh release skip-test
 ```
 
-Build artifacts are copied to `bin/release/` after a successful build:
+Common CMake settings (C++17, output directories, rpath, `DEPLOYMENT`/`USE_OMP`/`DISABLE_QT` options, Qt AUTOMOC/UIC/RCC) live in `externals/IBK/build.cmake`, which is included by the top-level `CMakeLists.txt`. That file is shared verbatim with other IBK projects, so put MasterSim-specific settings in the top-level `CMakeLists.txt` instead. Libraries are CMake targets that export their include paths/dependencies (`target_link_libraries(... PUBLIC ...)`), so do not use `include_directories()`. zlib comes from `find_package(ZLIB)` (system zlib on Linux/macOS, vcpkg on Windows).
+
+Executables are written directly to `bin/release/` (or `bin/debug/` for debug builds):
 - `bin/release/mastersim` — CLI solver
 - `bin/release/mastersim-gui` — Qt GUI
 
-The CMake build directory is named `bb-gcc-qt-debug` (or similar) inside `build/`; don't edit files there.
+Libraries (including the test FMU shared libraries) go to `build/bb-<...>/lib`. The CMake build directory is named `bb-gcc-qt-release` (or similar) inside `build/`; don't edit files there.
+
+The qmake build (`MasterSim-session.pro`) uses `externals/IBK/IBK.pri`: libraries go to `<shadow-build-dir>/lib` and executables to `bin/<debug|release>` (or to the shadow dir with `OPTIONS += binaries_to_shadow_dir` in `externals/IBK/CONFIG.pri`).
 
 **Qt requirement:** Qt 6 is required. The build script auto-detects Qt installed via `aqtinstall` at `~/Qt/${AQT_QT_VERSION}/gcc_64` (default version 6.9.3). Override with `AQT_QT_VERSION` / `AQT_QT_PREFIX` env vars. Use `no-gui` to skip Qt and build only the solver and test FMUs.
 

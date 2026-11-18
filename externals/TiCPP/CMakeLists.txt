@@ -1,16 +1,20 @@
-# CMakeLists.txt file
-
 project( TiCPP )
 
-include_directories(
-	${PROJECT_SOURCE_DIR}/../IBK/src
+# collect a list of all source files
+file( GLOB SRCS src/*.cpp )
+
+# add build target for library - static (only c++)
+add_library( ${PROJECT_NAME} STATIC
+	${SRCS}
 )
 
-# collect a list of all source files of the library
-file (GLOB TiCPP_LIB_SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp )
-
-# build the library
-add_library( TiCPP STATIC
-	${TiCPP_LIB_SRCS}
+target_include_directories(${PROJECT_NAME} PUBLIC 
+	src
 )
 
+# Link against depending library. For a static library
+# this automatically imports the include paths needed
+# to compile against the library.
+target_link_libraries(${PROJECT_NAME} PUBLIC
+	IBK
+)

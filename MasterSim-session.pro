@@ -1,4 +1,7 @@
 # Project for MasterSim session and all its libraries
+#
+# NOTE: All projects include externals/IBK/IBK.pri, which places the libraries
+#       in <shadow-build-dir>/lib and the executables in <repo-root>/bin/<debug|release>.
 
 TEMPLATE=subdirs
 
@@ -18,15 +21,16 @@ SUBDIRS += MasterSim \
 	FMUTestLotkaVolterraPredator \
 	FourRealInputVars
 
-win32|macx {
+# on Linux/MacOS we use the system zlib
+win32 {
 	SUBDIRS += zlib
 	zlib.file = externals/zlib/zlib.pro
 }
 
 # where to find the sub projects
-#MasterSimulator.file = MasterSimulator/MasterSimulator.pro
-#MasterSim.file = MasterSim/MasterSim.pro
-#MasterSimulatorUI.file = MasterSimulatorUI/MasterSimulatorUI.pro
+MasterSim.file = MasterSim/MasterSim.pro
+MasterSimulator.file = MasterSimulator/MasterSimulator.pro
+MasterSimulatorUI.file = MasterSimulatorUI/MasterSimulatorUI.pro
 
 BlockMod.file = externals/BlockMod/BlockMod.pro
 IBK.file = externals/IBK/IBK.pro
@@ -43,7 +47,7 @@ FourRealInputVars.file = TestFMUs/FourRealInputVars/FourRealInputVars.pro
 
 # dependencies
 MasterSim.depends = IBK IBKMK TiCPP minizip
-win32|macx {
+win32 {
 	MasterSim.depends += zlib
 	minizip.depends += zlib
 }
