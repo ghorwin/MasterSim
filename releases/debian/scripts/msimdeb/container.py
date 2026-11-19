@@ -66,7 +66,8 @@ def run_in(codename, host_dir, workdir, script):
 	"""Runs a bash script in the series container, host_dir mounted at /work."""
 	cmd = _engine_cmd() + ["run", "--rm", "--volume", f"{host_dir}:/work:Z", "--workdir", workdir]
 	if engine() == "docker":
-		# make files written in the container belong to the calling user
-		cmd += ["--user", f"{os.getuid()}:{os.getgid()}"]
+		# make files written in the container belong to the calling user;
+		# that user has no home directory in the image, so give it a writable one
+		cmd += ["--user", f"{os.getuid()}:{os.getgid()}", "--env", "HOME=/tmp"]
 	cmd += [image_name(codename), "bash", "-euo", "pipefail", "-c", script]
 	run(cmd)
