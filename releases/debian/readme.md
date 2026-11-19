@@ -24,6 +24,12 @@ releases/debian/
 
 Alle Debian-Werkzeuge (`dpkg-buildpackage`, `lintian`, Build-Abhängigkeiten) laufen in einem **Ubuntu-Container pro Serie**. Auf dem Host werden nur `python3`, `git`, `gpg` und `podman` (oder `docker`) gebraucht, also keine VMs und kein Debian-System. Der private gpg-Schlüssel bleibt auf dem Host.
 
+Unter Ubuntu einmalig installieren:
+
+```bash
+sudo apt install podman python3 git gnupg
+```
+
 ### Versionsschema
 
 Aus dem Changelog-Eintrag `mastersim (0.9.8-1)` in der Vorlage wird pro Serie automatisch:
@@ -47,9 +53,14 @@ Das Define `IBK_BUILDING_DEBIAN_PACKAGE` wird über `debian/rules` gesetzt. Der 
 
 ## Einmalige Einrichtung
 
+Das Werkzeug läuft auf jedem Linux mit Python ≥ 3.10 (getestet: Fedora, Ubuntu 22.04 und 24.04). Der erzeugte orig-Tarball ist auf allen Systemen byte-identisch.
+
 ```bash
-sudo dnf install podman python3 git gnupg2     # Fedora (auf Ubuntu: apt install podman …)
+sudo dnf install podman python3 git gnupg2        # Fedora
+sudo apt install podman python3 git gnupg         # Ubuntu/Debian
 ```
+
+Statt podman geht auch docker (`CONTAINER_ENGINE=docker`). Der Benutzer muss dann in der Gruppe `docker` sein.
 
 Den gpg-Schlüssel, der bei Launchpad registriert ist, im Schlüsselbund des Hosts haben. Bei Bedarf das Ablaufdatum verlängern und den Schlüssel neu hochladen:
 
