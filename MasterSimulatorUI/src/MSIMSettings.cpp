@@ -219,8 +219,7 @@ void MSIMSettings::read(QString regName) {
 	}
 
 	m_postProcExecutable = settings.value("PostProcExecutable", QString()).toString();
-	m_terminalEmulator = (TerminalEmulators)settings.value("TerminalEmulator", TE_XTerm).toInt();
-
+	m_terminalEmulator = (TerminalEmulators)settings.value("TerminalEmulator", TE_None).toInt();
 }
 
 
