@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- MasterSim loads FMU shared libraries (binaries/darwin64/*.dylib) via dlopen().
+	     These are signed by third parties or not at all, so library validation of the
+	     hardened runtime must be disabled, otherwise dlopen() fails. -->
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
+</dict>
+</plist>
