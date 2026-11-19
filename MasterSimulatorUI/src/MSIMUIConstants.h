@@ -19,6 +19,7 @@ extern const int TABLE_FONT_SIZE;
 /*! Fixed-size font family to be used in tables. */
 extern const char * const FIXED_FONT_FAMILY;
 
+extern const char * const MASTERSIM_NEWS_URL;
 extern const char * const MASTERSIM_URL;
 extern const char * const MASTERSIM_BUG_REPORT;
 

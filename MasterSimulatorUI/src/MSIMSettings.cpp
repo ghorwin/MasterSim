@@ -10,6 +10,8 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QTextStream>
+#include <QFileInfo>
+#include <QStandardPaths>
 
 #include "MSIMConversion.h"
 #include <MSIM_Constants.h>
@@ -74,18 +76,46 @@ void MSIMSettings::setDefaults() {
 	// determine text executable
 	m_textEditorExecutable.clear();
 
-	// default to XTerm
-	m_terminalEmulator = TE_XTerm;
+	// default to background process
+	m_terminalEmulator = TE_None;
 
-	/// \todo Improve default text editor detection
-#ifdef Q_OS_UNIX
-	m_textEditorExecutable = "gedit";
+#if defined(Q_OS_MACOS)
+	// Note: Q_OS_UNIX is also defined on macOS, hence this check must come first.
+	// Prefer command-line launchers of popular editors (if installed), fall back to TextEdit,
+	// which is always available. The executable is started with the project file as sole argument.
+	for (const char * editor : {"bbedit", "code"}) {
+		QString exe = QStandardPaths::findExecutable(editor);
+		if (!exe.isEmpty()) {
+			m_textEditorExecutable = exe;
+			break;
+		}
+	}
+	if (m_textEditorExecutable.isEmpty()) {
+		for (const char * editor : {"/System/Applications/TextEdit.app/Contents/MacOS/TextEdit",  // macOS 10.15 and newer
+									"/Applications/TextEdit.app/Contents/MacOS/TextEdit"})         // older macOS versions
+		{
+			if (QFileInfo(editor).isExecutable()) {
+				m_textEditorExecutable = editor;
+				break;
+			}
+		}
+	}
+#elif defined(Q_OS_UNIX)
+	// pick the first available editor from the list of preferred editors
+	for (const char * editor : {"geany", "gedit", "kate"}) {
+		QString exe = QStandardPaths::findExecutable(editor);
+		if (!exe.isEmpty()) {
+			m_textEditorExecutable = exe;
+			break;
+		}
+	}
+	// fall back to geany, even if not installed, so that the user gets a meaningful error message
+	if (m_textEditorExecutable.isEmpty())
+		m_textEditorExecutable = "geany";
 #elif defined(Q_OS_WIN)
 	m_textEditorExecutable = "C:\\Program Files\\Notepad++\\notepad++.exe";
 	if (!QFileInfo(m_textEditorExecutable).exists())
 		m_textEditorExecutable = "C:\\Program Files (x86)\\Notepad++\\notepad++.exe";
-#else
-	// OS x editor?
 #endif
 
 	m_flags[NoSplashScreen] = false;

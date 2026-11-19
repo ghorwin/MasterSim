@@ -10,8 +10,9 @@
 const char * const ORG_NAME				= "IBK";
 const char * const DOT_FILE_EXTENSION	= ".msim";
 
+const char * const MASTERSIM_NEWS_URL				= "https://bauklimatik-dresden.de/downloads/mastersim/news.html";
 const char * const MASTERSIM_URL					= "https://bauklimatik-dresden.de/mastersim";
-const char * const MASTERSIM_BUG_REPORT				= "https://sourceforge.net/p/mastersim/tickets";
+const char * const MASTERSIM_BUG_REPORT				= "https://github.com/ghorwin/MasterSim/issues";
 const char * const MASTERSIM_ONLINE_MANUAL_URL		= "https://bauklimatik-dresden.de/mastersim/help/MasterSim_manual";
 
 
@@ -31,16 +32,6 @@ const int TABLE_FONT_SIZE = 10;
 const char * const FIXED_FONT_FAMILY = "Courier New";
 
 #endif
-
-//void formatTable(QTableWidget * tab) {
-//	QFont f;
-//	f.setPointSize(TABLE_FONT_SIZE);
-//	tab->setFont(f);
-//	QFontMetrics fm(f);
-//	int pixels = fm.lineSpacing()+8;
-//	tab->verticalHeader()->setDefaultSectionSize(pixels);
-//}
-
 
 void formatTable(QTableView * tab, bool caption) {
 	QFont f = qApp->font();
