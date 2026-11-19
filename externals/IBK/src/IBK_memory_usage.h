@@ -146,8 +146,6 @@ namespace IBK {
 #	elif defined(__APPLE__)
 
 		// APPLE
-		/// \todo find solution for apple, and test this code
-
 		struct task_basic_info t_info;
 		mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
 
@@ -155,31 +153,11 @@ namespace IBK {
 									  TASK_BASIC_INFO, (task_info_t)&t_info,
 									  &t_info_count))
 		{
-			return -1;
+			return 1;
 		}
-		// resident size is
-		*(vmrss_kb)=t_info.resident_size;
-		// virtual size is in t_info.virtual_size;
-
-		vm_size_t page_size;
-		mach_port_t mach_port;
-		mach_msg_type_number_t count;
-		vm_statistics_data_t vm_stats;
-
-		mach_port = mach_host_self();
-		count = sizeof(vm_stats) / sizeof(natural_t);
-		if (KERN_SUCCESS == host_page_size(mach_port, &page_size) &&
-			KERN_SUCCESS == host_statistics(mach_port, HOST_VM_INFO,
-											(host_info_t)&vm_stats, &count))
-		{
-			myFreeMemory = (int64_t)vm_stats.free_count * (int64_t)page_size;
-
-			used_memory = ((int64_t)vm_stats.active_count +
-						   (int64_t)vm_stats.inactive_count +
-						   (int64_t)vm_stats.wire_count) *  (int64_t)page_size;
-		}
-
-		*(vmsize_kb) = used_memory;
+		// sizes are reported in bytes, convert to kB
+		*(vmrss_kb) = t_info.resident_size / 1024;
+		*(vmsize_kb) = t_info.virtual_size / 1024;
 
 		return 0;
 
