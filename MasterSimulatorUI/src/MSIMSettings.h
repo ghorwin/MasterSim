@@ -223,6 +223,11 @@ public:
 	/*! Defines whether equations of connectors shall be shown in slave view. */
 	bool						m_drawConnectorEquations = true;
 
+	/*! Defines whether all connectors between the same pair of blocks shall be merged into a single
+		connector in slave view (for visual checking of the network).
+	*/
+	bool						m_mergeConnectors = false;
+
 	/*! Enumeration values for different properties to be managed in settings.
 	*/
 	enum PropertyType {

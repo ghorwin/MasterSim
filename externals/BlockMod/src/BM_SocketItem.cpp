@@ -252,6 +252,12 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 	}
 
 
+	// labels may be suppressed via block property (e.g. for overview displays)
+	if (bi->block()->m_properties.value("HideSocketLabels").toBool()) {
+		painter->restore();
+		return;
+	}
+
 	// now draw the label on the socket
 	QFont f(painter->font());
 	f.setPointSizeF(Globals::LabelFontSize);

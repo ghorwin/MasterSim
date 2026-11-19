@@ -91,6 +91,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->tableWidgetSlaves->setStyleSheet("selection-background-color: #dfe7fd;");
 
 	m_ui->checkBoxShowEquations->setChecked(MSIMSettings::instance().m_drawConnectorEquations);
+	m_ui->checkBoxMergeConnectors->setChecked(MSIMSettings::instance().m_mergeConnectors);
 
 	// Escape clears the selection; window-wide shortcut, but only active while this view is visible.
 	// Item editors (table cells) consume Escape themselves via ShortcutOverride, so cancelling an edit still works.
@@ -620,7 +621,8 @@ void MSIMViewSlaves::onBlockActionTriggered(const BLOCKMOD::BlockItem * blockIte
 
 
 void MSIMViewSlaves::onBlockEditingCompleted() {
-	BLOCKMOD::Network n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
+	// use the project's network, since the scene may show a merged (reduced) network
+	BLOCKMOD::Network n = MSIMProjectHandler::instance().network();
 	auto bit = n.m_blocks.begin(); std::advance(bit, m_blockEditorDialog->m_modifiedBlockIdx);
 	*bit = m_blockEditorDialog->m_modifiedBlock;
 	MSIMUndoSlaves * undo = new MSIMUndoSlaves(tr("Changed block definition"), project(), n);
@@ -630,8 +632,16 @@ void MSIMViewSlaves::onBlockEditingCompleted() {
 
 void MSIMViewSlaves::onNewConnectionCreated() {
 	// get the last connection made from network
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
-	const BLOCKMOD::Connector & con = n.m_connectors.back();
+	const BLOCKMOD::Network & sceneNetwork = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
+	const BLOCKMOD::Connector & con = sceneNetwork.m_connectors.back();
+
+	// in merged display mode, the scene's network lacks the hidden connectors - add the new
+	// connector to the project's network instead so that no routing information is lost
+	BLOCKMOD::Network n = sceneNetwork;
+	if (MSIMSettings::instance().m_mergeConnectors) {
+		n = MSIMProjectHandler::instance().network();
+		n.m_connectors.push_back(con);
+	}
 
 	MASTER_SIM::Project::GraphEdge edge;
 	edge.m_outputVariableRef = con.m_sourceSocket.toStdString();
@@ -647,7 +657,29 @@ void MSIMViewSlaves::onNewConnectionCreated() {
 
 
 void MSIMViewSlaves::onNetworkGeometryChanged() {
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // new network
+	const BLOCKMOD::Network & sceneNetwork = MSIMProjectHandler::instance().sceneManager()->network(); // new network
+	BLOCKMOD::Network n = sceneNetwork;
+	if (MSIMSettings::instance().m_mergeConnectors) {
+		// scene shows merged network - transfer geometry changes to the full project network
+		n = MSIMProjectHandler::instance().network();
+		Q_ASSERT(n.m_blocks.size() == sceneNetwork.m_blocks.size());
+		auto sbit = sceneNetwork.m_blocks.begin();
+		for (auto bit = n.m_blocks.begin(); bit != n.m_blocks.end() && sbit != sceneNetwork.m_blocks.end(); ++bit, ++sbit) {
+			bit->m_pos = sbit->m_pos;
+			bit->m_size = sbit->m_size;
+		}
+		// copy routing of the visible (representative) connectors
+		for (const BLOCKMOD::Connector & sceneCon : sceneNetwork.m_connectors) {
+			for (BLOCKMOD::Connector & con : n.m_connectors) {
+				if (con.m_sourceSocket == sceneCon.m_sourceSocket && con.m_targetSocket == sceneCon.m_targetSocket) {
+					con.m_segments = sceneCon.m_segments;
+					break;
+				}
+			}
+		}
+		// hidden connectors follow the moved blocks
+		n.adjustConnectors();
+	}
 	// add undo action
 	MSIMUndoNetworkGeometry * cmd = new MSIMUndoNetworkGeometry(tr("Network geometry modified"), n);
 	cmd->push();
@@ -677,6 +709,12 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
 	if (m_syncingSceneSelection)
 		return;
+	// in merged display mode there is no one-to-one mapping between connector and graph edge
+	if (MSIMSettings::instance().m_mergeConnectors) {
+		m_selectedEdgeIdx = -1;
+		updatePropertyStackedWidget(SS_NothingSelected);
+		return;
+	}
 	// find selected GraphEdge, store its index and update its properties
 	m_selectedEdgeIdx = -1;
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
@@ -1078,7 +1116,7 @@ void MSIMViewSlaves::on_pushButtonDeleteConnection_clicked() {
 	Q_ASSERT(p.m_graph.size() > (unsigned int)m_selectedEdgeIdx);
 	p.m_graph.erase(p.m_graph.begin() + m_selectedEdgeIdx);
 
-	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().sceneManager()->network(); // access new network here!
+	const BLOCKMOD::Network & n = MSIMProjectHandler::instance().network();
 	MSIMUndoConnections * cmd = new MSIMUndoConnections(tr("Connection removed"), p, n);
 	cmd->push();
 }
@@ -1113,6 +1151,17 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 void MSIMViewSlaves::on_checkBoxShowEquations_clicked(bool checked) {
 	MSIMSettings::instance().m_drawConnectorEquations = checked;
 	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+	// network items were re-created, restore selection in scene
+	syncSceneSelection();
+}
+
+
+void MSIMViewSlaves::on_checkBoxMergeConnectors_clicked(bool checked) {
+	MSIMSettings::instance().m_mergeConnectors = checked;
+	// merged connectors cannot be edited - leave connector property page
+	if (m_selectionState == SS_ConnectorSelected)
+		updatePropertyStackedWidget(SS_NothingSelected);
+	MSIMProjectHandler::instance().refreshSceneNetwork();
 	// network items were re-created, restore selection in scene
 	syncSceneSelection();
 }
