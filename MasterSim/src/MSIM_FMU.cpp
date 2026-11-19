@@ -28,6 +28,15 @@
 #include <IBK_FormatString.h>
 #include <IBK_assert.h>
 
+// Platform-specific file extension of the shared library inside an FMU
+#if defined(_WIN32)
+static const char * const SHARED_LIBRARY_EXTENSION = ".dll";
+#elif defined(__APPLE__)
+static const char * const SHARED_LIBRARY_EXTENSION = ".dylib";
+#else
+static const char * const SHARED_LIBRARY_EXTENSION = ".so";
+#endif
+
 namespace MASTER_SIM {
 
 /*! Implementation class for the FMU interface, hides all platform specific details about
@@ -190,19 +199,31 @@ void FMU::import(ModelDescription::FMUType typeToImport) {
 	if (!m_fmuDir.exists())
 		throw IBK::Exception(IBK::FormatString("FMU directory '%1' does not exist.").arg(m_fmuDir), FUNC_ID);
 
-	// compose platform specific shared library name
-	IBK::Path sharedLibraryPath = m_fmuDir / FMU::binarySubDirectory();
-
 	// first check if selected FMU-type is provided by the FMU
 	if (!(m_modelDescription.m_fmuType & typeToImport))
 		throw IBK::Exception("Requested FMU type is not provided by the FMU.", FUNC_ID);
 
-	// append model identifier for selected model
+	// model identifier = file name of the shared library (without extension)
+	std::string modelIdentifier;
 	switch (typeToImport) {
 		case ModelDescription::ME_v1 : // same as for CS_v1
-		case ModelDescription::CS_v1 : sharedLibraryPath /= m_modelDescription.m_modelIdentifier; break;
-		case ModelDescription::ME_v2 : sharedLibraryPath /= m_modelDescription.m_meV2ModelIdentifier; break;
-		case ModelDescription::CS_v2 : sharedLibraryPath /= m_modelDescription.m_csV2ModelIdentifier; break;
+		case ModelDescription::CS_v1 : modelIdentifier = m_modelDescription.m_modelIdentifier; break;
+		case ModelDescription::ME_v2 : modelIdentifier = m_modelDescription.m_meV2ModelIdentifier; break;
+		case ModelDescription::CS_v2 : modelIdentifier = m_modelDescription.m_csV2ModelIdentifier; break;
+	}
+
+	// compose platform specific shared library name: use the first binary directory that
+	// contains the library; if none does, use the preferred one (loadLibrary() reports the error)
+	std::vector<IBK::Path> subDirs = FMU::binarySubDirectories();
+	IBK::Path sharedLibraryPath = m_fmuDir / subDirs.front() / modelIdentifier;
+	for (const IBK::Path & subDir : subDirs) {
+		IBK::Path candidate = m_fmuDir / subDir / modelIdentifier;
+		IBK::Path candidateWithExt = candidate;
+		candidateWithExt.addExtension(SHARED_LIBRARY_EXTENSION);
+		if (candidateWithExt.exists()) {
+			sharedLibraryPath = candidate;
+			break;
+		}
 	}
 
 	try {
@@ -391,26 +412,51 @@ void FMU::unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath
 }
 
 
-IBK::Path FMU::binarySubDirectory() {
-#ifdef _WIN32
+std::vector<IBK::Path> FMU::binarySubDirectories() {
+	std::vector<IBK::Path> dirs;
 
-#ifdef _WIN64
-	return IBK::Path("binaries/win64");
-#else
-	return IBK::Path("binaries/win32");
-#endif
-
+	// FMI 1.0/2.0 platform directory (primary, since MasterSim imports FMI 1.0 and 2.0 FMUs).
+	// Note: on macOS "darwin64" does not specify the CPU architecture. FMUs supporting Apple Silicon
+	//       usually ship a universal (x86_64 + arm64) dylib in this directory.
+#if defined(_WIN32)
+#  if defined(_WIN64)
+	dirs.push_back(IBK::Path("binaries/win64"));
+#  else
+	dirs.push_back(IBK::Path("binaries/win32"));
+#  endif
 #elif defined(__APPLE__)
-	if (sizeof(void*) == 8)
-		return IBK::Path("binaries/darwin64");
-	else
-		return IBK::Path("binaries/darwin32");
+	dirs.push_back(IBK::Path("binaries/darwin64"));
 #else
 	if (sizeof(void*) == 8)
-		return IBK::Path("binaries/linux64");
+		dirs.push_back(IBK::Path("binaries/linux64"));
 	else
-		return IBK::Path("binaries/linux32");
+		dirs.push_back(IBK::Path("binaries/linux32"));
 #endif
+
+	// Fallback: FMI 3.0 platform tuple <arch>-<sys>, sometimes also used by FMI 2.0 exporters,
+	// and the only way to provide architecture-specific binaries (e.g. aarch64-darwin).
+#if defined(__aarch64__) || defined(_M_ARM64)
+	const char * const arch = "aarch64";
+#elif defined(__x86_64__) || defined(_M_X64)
+	const char * const arch = "x86_64";
+#elif defined(__i386__) || defined(_M_IX86)
+	const char * const arch = "x86";
+#else
+	const char * const arch = nullptr;
+#endif
+
+#if defined(_WIN32)
+	const char * const sys = "windows";
+#elif defined(__APPLE__)
+	const char * const sys = "darwin";
+#else
+	const char * const sys = "linux";
+#endif
+
+	if (arch != nullptr)
+		dirs.push_back(IBK::Path("binaries") / (std::string(arch) + "-" + sys));
+
+	return dirs;
 }
 
 
@@ -469,7 +515,7 @@ void * FMUPrivate::importFunctionAddress(const char* functionName ) {
 void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
 	IBK::Path sharedLibraryPath = sharedLibraryDir;
-	sharedLibraryPath.addExtension(".dll");
+	sharedLibraryPath.addExtension(SHARED_LIBRARY_EXTENSION);
 	IBK::IBK_Message(IBK::FormatString("Loading DLL '%1'.\n").arg(sharedLibraryPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("DLL '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
@@ -507,11 +553,7 @@ void * FMUPrivate::importFunctionAddress(const char* functionName) {
 void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	const char * const FUNC_ID = "[FMUPrivate::loadLibrary]";
 	IBK::Path sharedLibraryPath = sharedLibraryDir;
-#ifdef __APPLE__
-	sharedLibraryPath.addExtension(".dylib");
-#else
-	sharedLibraryPath.addExtension(".so");
-#endif
+	sharedLibraryPath.addExtension(SHARED_LIBRARY_EXTENSION);
 	IBK::IBK_Message(IBK::FormatString("Loading shared library '%1'.\n").arg(sharedLibraryPath), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
 	if (!sharedLibraryPath.exists())
 		throw IBK::Exception(IBK::FormatString("Shared library '%1' does not exist.").arg(sharedLibraryPath), FUNC_ID);
@@ -528,9 +570,24 @@ void FMUPrivate::loadLibrary(const IBK::Path & sharedLibraryDir) {
 	m_soHandle = dlopen( sharedLibraryPath.c_str(), RTLD_LAZY|RTLD_DEEPBIND );
 #endif
 
-	if (m_soHandle == nullptr)
+	if (m_soHandle == nullptr) {
+		std::string errMsg = dlerror(); // can only be called once
+#ifdef __APPLE__
+		// A process can only load dylibs matching its own architecture (Rosetta 2 translates whole
+		// processes only). Give the user a hint how to run x86_64-only FMUs on Apple Silicon.
+		if (errMsg.find("incompatible architecture") != std::string::npos) {
+#  if defined(__aarch64__)
+			errMsg += "\nThe FMU does not contain an arm64 (Apple Silicon) binary. To use x86_64-only FMUs, "
+					  "run MasterSim under Rosetta 2, e.g. 'arch -x86_64 mastersim <project.msim>'.";
+#  else
+			errMsg += "\nThe FMU does not contain an x86_64 binary. Use an FMU compiled for x86_64 "
+					  "(or as universal binary).";
+#  endif
+		}
+#endif
 		throw IBK::Exception(IBK::FormatString("%1\nCannot load shared library '%2' (maybe missing dependencies).")
-							 .arg(dlerror()).arg(sharedLibraryPath), FUNC_ID);
+							 .arg(errMsg).arg(sharedLibraryPath), FUNC_ID);
+	}
 }
 
 

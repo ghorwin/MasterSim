@@ -1,165 +1,112 @@
 #!/bin/bash
 
-# This script is executed as part of the build to create the FMUs 
-# needed for installation on Unix/Linux systems.
-# 
-# Syntax: generate_FMUs.sh <path/to/cmake_library dir>
-# Working directory should be data/TestFMUs
+# This script is executed as part of the build to create the test/example FMUs
+# on Linux and macOS.
 #
-# Example so-location: <path/to/cmake_library dir>/libMath003Part1.so  (i.e. <cmake binary dir>/lib)
+# Syntax: generate_FMUs.sh <path/to/cmake_library dir>
+#
+# Example library location: <path/to/cmake_library dir>/libMath003Part1.so  (i.e. <cmake binary dir>/lib)
+#
+# The FMUs are created in TestFMUs/fmus and copied into the matching test case
+# directories in data/tests/<platform> (if they exist).
+#
+# Platform directories inside the FMU (FMI 1.0/2.0):
+#   Linux: binaries/linux64/<modelIdentifier>.so
+#   macOS: binaries/darwin64/<modelIdentifier>.dylib
+#
+# On macOS, darwin64 does not specify the CPU architecture. The dylibs should be
+# universal binaries (arm64 + x86_64, see MSIM_UNIVERSAL_BINARIES in CMakeLists.txt),
+# so that the FMUs work on Apple Silicon and Intel Macs. The script prints the
+# contained architectures and warns if a library is not universal.
 
 if [ "$#" -ne 1 ]; then
-    echo "Syntax: generate_FMUs.sh <path/to/cmake_library dir>"
-    exit 1
+	echo "Syntax: generate_FMUs.sh <path/to/cmake_library dir>"
+	exit 1
 fi
 
-mkdir -p fmus
-cd fmus &&
+# resolve library dir to absolute path before changing the working directory
+LIB_DIR="$(cd -- "$1" && pwd)" || { echo "ERROR: library directory '$1' not found" >&2; exit 1; }
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR" || exit 1
 
-# --- Part 1 ---
-
-if [ -d Part1 ]; then
-  rm -rf Part1
-fi &&
-
-mkdir -p Part1/binaries/linux64 &&
-cd Part1 &&
-
-cp $1/libMath003Part1.so binaries/linux64/Part1.so &&
-cp ../../Math003Part1/data/modelDescription.xml . &&
-
-if [ -f ../Part1.fmu ]; then
-    rm ../Part1.fmu
-fi &&
-
-7za a ../Part1.zip . | cat > /dev/null &&
-cd .. && 
-mv Part1.zip Part1.fmu &&
-echo "Created Part1.fmu" &&
-
-
-# --- Part 2 ---
-
-if [ -d Part2 ]; then
-  rm -rf Part2
-fi &&
-
-mkdir -p Part2/binaries/linux64 &&
-cd Part2 &&
-
-cp $1/libMath003Part2.so binaries/linux64/Part2.so &&
-cp ../../Math003Part2/data/modelDescription.xml . &&
-
-if [ -f ../Part2.fmu ]; then
-    rm ../Part2.fmu
-fi &&
-
-7za a ../Part2.zip . | cat > /dev/null &&
-cd .. &&
-mv Part2.zip Part2.fmu &&
-echo "Created Part2.fmu" &&
-
-
-# --- Part 3 ---
-
-if [ -d Part3 ]; then
-  rm -rf Part3
-fi &&
-
-mkdir -p Part3/binaries/linux64 &&
-cd Part3 &&
-
-cp $1/libMath003Part3.so binaries/linux64/Part3.so &&
-cp ../../Math003Part3/data/modelDescription.xml . &&
-
-if [ -f ../Part3.fmu ]; then
-    rm ../Part3.fmu
-fi &&
-
-7za a ../Part3.zip . | cat > /dev/null &&
-cd .. &&
-mv Part3.zip Part3.fmu &&
-echo "Created Part3.fmu" &&
-
-
-# --- Prey ---
-
-if [ -d Prey ]; then
-  rm -rf Prey
-fi &&
-
-mkdir -p Prey/binaries/linux64 &&
-cd Prey &&
-
-cp $1/libLotkaVolterraPrey.so binaries/linux64/Prey.so &&
-cp ../../LotkaVolterraPrey/data/modelDescription.xml . &&
-
-if [ -f ../Prey.fmu ]; then
-    rm ../Prey.fmu
-fi &&
-
-7za a ../Prey.zip . | cat > /dev/null &&
-cd .. &&
-mv Prey.zip Prey.fmu &&
-echo "Created Prey.fmu" &&
-
-
-# --- Predator ---
-
-if [ -d Predator ]; then
-  rm -rf Predator
-fi &&
-
-mkdir -p Predator/binaries/linux64 &&
-cd Predator &&
-
-cp $1/libLotkaVolterraPredator.so binaries/linux64/Predator.so &&
-cp ../../LotkaVolterraPredator/data/modelDescription.xml . &&
-
-if [ -f ../Predator.fmu ]; then
-    rm ../Predator.fmu
-fi &&
-
-7za a ../Predator.zip . | cat > /dev/null &&
-cd .. &&
-mv Predator.zip Predator.fmu &&
-echo "Created Predator.fmu" &&
-
-
-# --- FourRealInputVars ---
-
-if [ -d FourRealInputVars ]; then
-  rm -rf FourRealInputVars
-fi &&
-
-mkdir -p FourRealInputVars/binaries/linux64 &&
-cd FourRealInputVars &&
-
-cp $1/libFourRealInputVars.so binaries/linux64/FourRealInputVars.so &&
-cp ../../FourRealInputVars/data/modelDescription.xml . &&
-
-if [ -f ../FourRealInputVars.fmu ]; then
-    rm ../FourRealInputVars.fmu
-fi &&
-
-7za a ../FourRealInputVars.zip . | cat > /dev/null &&
-cd .. &&
-mv FourRealInputVars.zip FourRealInputVars.fmu &&
-echo "Created FourRealInputVars.fmu" &&
-
-
-
-# go back to original directory
-cd .. &&
-
-# copy generated FMUs to test directory, if it exists (in Debian deployment mode this
-# directory is omitted)
-if [ -d ../data/tests/linux64 ]; then
-	echo "Updating test FMUs in data/tests/linux64" &&
-	cp fmus/Part1.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-	cp fmus/Part2.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-	cp fmus/Part3.fmu ../data/tests/linux64/Math_003_control_loop/fmus/IBK &&
-	cp fmus/Prey.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK &&
-	cp fmus/Predator.fmu ../data/tests/linux64/Lotka_Volterra_System/fmus/IBK &&
-	cp fmus/FourRealInputVars.fmu ../data/tests/linux64/FileReaderSlave/fmus/IBK
+if [[ "$(uname)" = "Darwin" ]]; then
+	PLATFORM=darwin64
+	LIB_EXT=dylib
+else
+	PLATFORM=linux64
+	LIB_EXT=so
 fi
+
+# archive tool: 7za (as previously used on Linux), otherwise zip (always available on macOS)
+if command -v 7za >/dev/null 2>&1; then
+	ZIP_TOOL=7za
+elif command -v zip >/dev/null 2>&1; then
+	ZIP_TOOL=zip
+else
+	echo "ERROR: neither 7za nor zip found" >&2
+	exit 1
+fi
+
+# Creates an FMU
+#   $1 - FMU name = model identifier (name of shared library inside FMU)
+#   $2 - name of CMake library target = source directory in TestFMUs
+create_fmu() {
+	local FMU_NAME=$1
+	local LIB_NAME=$2
+	local LIB_FILE="$LIB_DIR/lib$LIB_NAME.$LIB_EXT"
+
+	if [ ! -f "$LIB_FILE" ]; then
+		echo "ERROR: shared library '$LIB_FILE' not found" >&2
+		return 1
+	fi
+
+	if [[ "$PLATFORM" = "darwin64" ]]; then
+		local ARCHS
+		ARCHS="$(lipo -archs "$LIB_FILE")"
+		if [[ "$ARCHS" != *arm64* || "$ARCHS" != *x86_64* ]]; then
+			echo "WARNING: $LIB_FILE is not a universal binary (architectures: $ARCHS)"
+		fi
+	fi
+
+	rm -rf "$FMU_NAME" "$FMU_NAME.fmu" "$FMU_NAME.zip" &&
+	mkdir -p "$FMU_NAME/binaries/$PLATFORM" &&
+	cp "$LIB_FILE" "$FMU_NAME/binaries/$PLATFORM/$FMU_NAME.$LIB_EXT" &&
+	cp "../$LIB_NAME/data/modelDescription.xml" "$FMU_NAME/" || return 1
+
+	if [[ "$ZIP_TOOL" = "7za" ]]; then
+		(cd "$FMU_NAME" && 7za a "../$FMU_NAME.zip" . > /dev/null) || return 1
+	else
+		(cd "$FMU_NAME" && zip -qrX "../$FMU_NAME.zip" .) || return 1
+	fi
+	mv "$FMU_NAME.zip" "$FMU_NAME.fmu" &&
+	echo "Created $FMU_NAME.fmu ${ARCHS:+($ARCHS)}"
+}
+
+# Copies an FMU into a test case directory, if that exists
+# (in Debian deployment mode the test directories are omitted)
+#   $1 - FMU name
+#   $2 - test case directory, relative to data/tests/<platform>
+copy_to_test() {
+	local TARGET_DIR="../../data/tests/$PLATFORM/$2/fmus/IBK"
+	if [ -d "$TARGET_DIR" ]; then
+		cp "$1.fmu" "$TARGET_DIR/" || return 1
+	fi
+}
+
+mkdir -p fmus && cd fmus || exit 1
+
+create_fmu Part1             Math003Part1          &&
+create_fmu Part2             Math003Part2          &&
+create_fmu Part3             Math003Part3          &&
+create_fmu Prey              LotkaVolterraPrey     &&
+create_fmu Predator          LotkaVolterraPredator &&
+create_fmu FourRealInputVars FourRealInputVars     || exit 1
+
+echo "Updating test FMUs in data/tests/$PLATFORM"
+copy_to_test Part1             Math_003_control_loop &&
+copy_to_test Part2             Math_003_control_loop &&
+copy_to_test Part3             Math_003_control_loop &&
+copy_to_test Prey              Lotka_Volterra_System &&
+copy_to_test Predator          Lotka_Volterra_System &&
+copy_to_test Prey              FileReaderSlave       &&
+copy_to_test FourRealInputVars FileReaderSlave       || exit 1

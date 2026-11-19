@@ -2,6 +2,35 @@
 
 cmake_minimum_required( VERSION 3.16 )
 
+# -------------------------------------------------------------
+# macOS: universal binaries (Apple Silicon + Intel)
+#
+# MasterSim and the test FMUs are built for arm64 and x86_64. A process can only
+# load FMU binaries of its own architecture, so an x86_64 slice of the solver is
+# needed to run x86_64-only FMUs on Apple Silicon (via Rosetta 2: 'arch -x86_64 mastersim')
+# and to support Intel Macs. FMI 1.0/2.0 has only one macOS platform directory
+# (binaries/darwin64), hence the test FMUs contain universal dylibs as well.
+#
+# Must be set before project(). Use -DMSIM_UNIVERSAL_BINARIES=OFF to build only for
+# the host architecture, or set CMAKE_OSX_ARCHITECTURES explicitly.
+# All dependencies (Qt, zlib) must be universal as well; the official Qt binaries
+# and the SDK zlib are, Homebrew libraries usually are not.
+# -------------------------------------------------------------
+if( APPLE )
+	option( MSIM_UNIVERSAL_BINARIES "Build universal (arm64 + x86_64) binaries on macOS" ON )
+	if( MSIM_UNIVERSAL_BINARIES AND NOT CMAKE_OSX_ARCHITECTURES )
+		set( CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE STRING "macOS target architectures" FORCE )
+	endif()
+	if( NOT CMAKE_OSX_DEPLOYMENT_TARGET AND NOT DEFINED ENV{MACOSX_DEPLOYMENT_TARGET} )
+		# Qt 6.9 requires macOS 12; the solver alone runs on macOS 11 (first version with arm64 support)
+		if( DISABLE_QT )
+			set( CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING "Minimum macOS version" FORCE )
+		else()
+			set( CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING "Minimum macOS version" FORCE )
+		endif()
+	endif()
+endif()
+
 project( MasterSimBundle )
 
 # -------------------------------------------------------------
@@ -28,6 +57,12 @@ endif()
 # The MasterSim sources check for IBK_DEPLOYMENT rather than DEPLOYMENT
 if( DEPLOYMENT )
 	add_compile_definitions( IBK_DEPLOYMENT )
+endif()
+
+# Disable fused multiply-add contraction (default of clang/gcc on arm64), so that results
+# are identical on all CPU architectures and match the regression test reference results.
+if( CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" )
+	add_compile_options( -ffp-contract=off )
 endif()
 
 # enable this to test deb-deployment
@@ -101,12 +136,10 @@ add_subdirectory( TestFMUs/LotkaVolterraPrey )
 add_subdirectory( TestFMUs/LotkaVolterraPredator )
 add_subdirectory( TestFMUs/FourRealInputVars )
 
-# Support for 'make install' on Unix/Linux (not on MacOS!)
-if (UNIX AND NOT APPLE)
-
-	# -------------------------------------------------------------
-	# Generate FMUs to be shipped with examples
-	# -------------------------------------------------------------
+# -------------------------------------------------------------
+# Generate FMUs (test cases and examples) on Linux and macOS
+# -------------------------------------------------------------
+if (UNIX)
 
 	set( EXAMPLE_FMU_DIR ${PROJECT_SOURCE_DIR}/TestFMUs/fmus )
 	set( EXAMPLE_FMUS
@@ -134,6 +167,11 @@ if (UNIX AND NOT APPLE)
 	add_custom_target( ExampleFMUs ALL
 		DEPENDS	${EXAMPLE_FMUS}
 	)
+
+endif (UNIX)
+
+# Support for 'make install' on Unix/Linux (not on MacOS!)
+if (UNIX AND NOT APPLE)
 
 	# -------------------------------------------------------------
 	# Install example FMUs

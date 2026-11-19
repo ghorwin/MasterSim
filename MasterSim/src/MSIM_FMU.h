@@ -166,8 +166,11 @@ public:
 	*/
 	static void unzipFMU(const IBK::Path & pathToFMU, const IBK::Path & extractionPath);
 
-	/*! Composes the shared library directory for the current platform. */
-	static IBK::Path binarySubDirectory();
+	/*! Returns the shared library directories for the current platform, in order of preference.
+		The first entry is the FMI 1.0/2.0 platform directory (e.g. "binaries/darwin64"), followed by
+		the FMI 3.0 platform tuple directory (e.g. "binaries/aarch64-darwin") as fallback.
+	*/
+	static std::vector<IBK::Path> binarySubDirectories();
 
 
 private:
