@@ -20,10 +20,51 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 CMAKELISTSDIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
 BUILDDIR="${SCRIPT_DIR}/${MASTERSIM_BUILD_DIR_PREFIX:-bb}"
 
-# Qt installed via aqtinstall (see ~/install-qt-6.9.3.sh).
+# Qt installed via aqtinstall (see ~/install-qt-6.9.3.sh) or the Qt online installer.
 # Override AQT_QT_VERSION / AQT_QT_PREFIX in the environment to point at a different install.
+# The Qt kit directory depends on the platform: gcc_64 on Linux, macos (Qt 6) or clang_64 (older
+# installs) on macOS.
 AQT_QT_VERSION="${AQT_QT_VERSION:-6.9.3}"
-AQT_QT_PREFIX="${AQT_QT_PREFIX:-$HOME/Qt/${AQT_QT_VERSION}/gcc_64}"
+if [[ -z "$AQT_QT_PREFIX" ]]; then
+	if [[ "$(uname)" = "Darwin" ]]; then
+		QT_KIT_CANDIDATES="macos clang_64"
+	else
+		QT_KIT_CANDIDATES="gcc_64"
+	fi
+	for kit in $QT_KIT_CANDIDATES; do
+		AQT_QT_PREFIX="$HOME/Qt/${AQT_QT_VERSION}/$kit"
+		if [ -d "$AQT_QT_PREFIX" ]; then
+			break
+		fi
+	done
+fi
+
+# Locate cmake: use the one in PATH, otherwise fall back to common install locations
+# (the CMake shipped with the Qt installer, the CMake.app bundle and Homebrew on macOS).
+# Override with the CMAKE environment variable.
+if [[ -z "$CMAKE" ]]; then
+	if command -v cmake >/dev/null 2>&1; then
+		CMAKE=cmake
+	else
+		for candidate in \
+			"$HOME/Qt/Tools/CMake/bin/cmake" \
+			"$HOME/Qt/Tools/CMake/CMake.app/Contents/bin/cmake" \
+			"/Applications/CMake.app/Contents/bin/cmake" \
+			"/opt/homebrew/bin/cmake" \
+			"/usr/local/bin/cmake"
+		do
+			if [ -x "$candidate" ]; then
+				CMAKE="$candidate"
+				break
+			fi
+		done
+	fi
+	if [[ -z "$CMAKE" ]]; then
+		echo "ERROR: cmake not found. Install cmake, add it to PATH or set the CMAKE environment variable." >&2
+		exit 1
+	fi
+fi
+echo "Using cmake: $CMAKE"
 
 # set defaults
 CMAKE_BUILD_TYPE=" -DCMAKE_BUILD_TYPE:STRING=Release"
@@ -156,7 +197,7 @@ if [ ! -d $BUILDDIR ]; then
 	mkdir -p $BUILDDIR
 fi &&
 
-cd $BUILDDIR && cmake $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT &&
+cd $BUILDDIR && "$CMAKE" $CMAKE_OPTIONS $CMAKE_BUILD_TYPE $CMAKE_COMPILER_OPTIONS $CMAKELISTSDIR && make -j$MAKE_CPUCOUNT &&
 cd $SCRIPT_DIR &&
 echo "*** Success ***" || exit 1
 
