@@ -2,6 +2,9 @@
 #define MSIMVIEWSIMULATION_H
 
 #include <QWidget>
+#include <QProcess>
+
+class QTimer;
 
 namespace Ui {
 class MSIMViewSimulation;
@@ -20,6 +23,9 @@ class MSIMViewSimulation : public QWidget {
 public:
 	explicit MSIMViewSimulation(QWidget *parent = nullptr);
 	~MSIMViewSimulation();
+
+	/*! Returns true if a simulation started as background process is still running. */
+	bool isBackgroundSimulationRunning() const;
 
 public slots:
 	/*! Connected to MSIMProjectHandler::modified() */
@@ -73,15 +79,41 @@ private slots:
 
 	void on_checkBoxSkipUnzip_toggled(bool checked);
 
+	/*! Connected to QProcess::errorOccurred() of background solver process. */
+	void onSolverProcessErrorOccurred(QProcess::ProcessError error);
+	/*! Connected to QProcess::finished() of background solver process. */
+	void onSolverProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+	/*! Connected to progress timer, reads progress.txt and updates progress bar. */
+	void onUpdateProgress();
 
 private:
 	void updateCommandLine();
+
+	/*! Starts solver as background process (no terminal), monitors errors and progress. */
+	void startBackgroundProcess(const QString & projectFile, const QStringList & commandLineArgs);
+
+	/*! Re-enables UI after background process has ended. */
+	void backgroundProcessEnded();
+
+	/*! Shows an error message with reference to the solver log file, and offers to show the log file. */
+	void showSolverErrorMessage(const QString & msg);
 
 	static void setupLineEditUnitCombo(QLineEdit * lineEdit, QComboBox * combo, const IBK::Parameter & p);
 
 	QStringList				m_commandLineArgs;
 	QString					m_solverName;
 	QString					m_commandLine;
+
+	/*! Background solver process (only used for run option "None (background process)"). */
+	QProcess				*m_solverProcess = nullptr;
+	/*! Timer to poll progress.txt while background solver process is running. */
+	QTimer					*m_progressTimer = nullptr;
+	/*! Path to progress.txt of currently running background simulation. */
+	QString					m_progressFile;
+	/*! Path to screenlog.txt of currently running background simulation. */
+	QString					m_logFile;
+	/*! Project file of currently running background simulation. */
+	QString					m_runningProjectFile;
 
 	Ui::MSIMViewSimulation *m_ui;
 };

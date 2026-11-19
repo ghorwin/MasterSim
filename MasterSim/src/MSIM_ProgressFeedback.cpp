@@ -121,7 +121,8 @@ void ProgressFeedback::writeFeedback(double t, bool betweenOutputs) {
 	if (m_progressLog != NULL && !betweenOutputs && elapsedSimTime != 0.0) {
 		*m_progressLog << std::setprecision(14) << std::setw(15) << std::right << t << '\t'
 					   << std::setprecision(7) << std::setw(15) << std::right << elapsedSeconds << '\t'
-					   << std::setprecision(2) << std::setw(15) << std::right << t*100/m_progressTEnd << std::endl;
+					   << std::fixed << std::setprecision(1) << std::setw(15) << std::right << t*100/m_progressTEnd
+					   << std::defaultfloat << std::endl; // reset to default float format for next line's columns
 	}
 
 	m_notifyTime = 0.001*m_stopWatch.difference() + 15; // Notify again in 15 seconds

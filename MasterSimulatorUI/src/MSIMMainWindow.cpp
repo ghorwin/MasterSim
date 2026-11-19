@@ -333,6 +333,19 @@ void MSIMMainWindow::closeEvent(QCloseEvent * event) {
 	// move input focus away from any input fields (to allow editingFinished() events to fire)
 	setFocus();
 
+	// a background simulation is a child process of the UI and would be killed when closing
+	if (m_viewSimulation->isBackgroundSimulationRunning()) {
+		if (QMessageBox::warning(this, tr("Simulation running"),
+								 tr("A simulation is still running in the background. "
+									"Closing MasterSim will abort the simulation.\n\n"
+									"Do you really want to quit?"),
+								 QMessageBox::Yes | QMessageBox::No, QMessageBox::No) != QMessageBox::Yes)
+		{
+			event->ignore();
+			return;
+		}
+	}
+
 	// remember current project
 	if ( m_projectHandler.isValid() ) {
 		// make sure we have saved and closed our project
