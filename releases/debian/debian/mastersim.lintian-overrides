@@ -1,0 +1,5 @@
+# externals/TiCPP is a copy of TinyXML with IBK-specific extensions
+# (ticppIBKconfig.h, IBK string/unit handling), so it cannot be replaced
+# by the system library libtinyxml.
+mastersim: embedded-library tinyxml [usr/bin/mastersim]
+mastersim: embedded-library tinyxml [usr/bin/mastersim-gui]
