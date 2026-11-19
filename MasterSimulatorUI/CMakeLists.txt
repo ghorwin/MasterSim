@@ -109,7 +109,7 @@ if( UNIX AND NOT APPLE )
 			DESTINATION ${CMAKE_INSTALL_MANDIR}/man1 )
 
 	# Translation files
-	install( FILES ${PROJECT_SOURCE_DIR}/resources/translations/MasterSimulatorUI_de.qm
+	install( FILES ${PROJECT_SOURCE_DIR}/resources/translations/mastersim-gui_de.qm
 			DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/de/LC_MESSAGES/
 			RENAME mastersim-gui.qm )
 
