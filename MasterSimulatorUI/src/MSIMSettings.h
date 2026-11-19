@@ -47,7 +47,8 @@ public:
 	enum TerminalEmulators {
 		TE_None, // background process; no terminal window
 		TE_XTerm,
-		TE_GnomeTerminal
+		TE_GnomeTerminal,
+		TE_Ptyxis
 	};
 
 	/*! Returns the instance of the singleton. */

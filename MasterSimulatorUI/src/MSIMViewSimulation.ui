@@ -293,6 +293,11 @@
             <string>Gnome Terminal</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Ptyxis</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="1" column="0">
