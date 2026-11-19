@@ -107,6 +107,9 @@ public:
 	/*! Toggles high-lighting of connector segments. */
 	void highlightConnectorSegments(const Connector & con, bool highlighted);
 
+	/*! Toggles high-lighting of all connectors attached to the given block (called when hovering a block). */
+	void highlightBlockConnectors(const Block * block, bool highlighted);
+
 	/*! This will select all not yet selected segments of this connector.
 		\note Item change flag will be turned off for all touched items, so that
 		this function is not called several times.

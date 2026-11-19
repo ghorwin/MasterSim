@@ -240,6 +240,7 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 				p.lineTo(m_symbolRect.right(), m_symbolRect.top());
 			break;
 		}
+		p.closeSubpath(); // so that the outline is also drawn along the back edge of the triangle
 		QPen pen(Qt::black);
 		pen.setCapStyle(Qt::RoundCap);
 		painter->setPen(pen);

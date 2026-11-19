@@ -73,10 +73,10 @@ public slots:
 	void resetZoom();
 
 	/*! Sets a new grid step/grid spacing (this is the major grid).
-		A minor grid is shown with 10 % smaller grid spacing.
+		A minor grid is shown with 10 times finer grid spacing.
 		\param gridStep Grid spacing in [m], must be > 0.
 
-		\note Grid lines will not be printed when gridStep*resolution*scene scale is < 2 Pixel.
+		\note Grid lines will not be printed when gridStep*resolution*scene scale is < 5 Pixel.
 	*/
 	void setGridStep(double gridStep);
 
@@ -93,7 +93,7 @@ protected:
 	/*! Overloaded to set arrow cursor. */
 	void leaveEvent(QEvent *event) override;
 
-	/*! set the zoom center. */
+	/*! Pans the view while the middle mouse button is pressed. */
 	void mouseMoveEvent(QMouseEvent *event) override;
 
 	/*! Enables the zoom. */
@@ -125,8 +125,14 @@ protected:
 	int		m_zoomLevel;
 
 private:
+	/*! Generates horizontal and vertical grid lines (in view coordinates) passing through
+		origin with given spacing and covering the given window size. No lines are generated
+		if spacing is < 5 pixels.
+	*/
+	static void computeGridLines(QVarLengthArray<QLineF, 100> & lines, const QPointF & origin,
+								 double gridSpacingPix, const QSize & windowSize);
 
-	/*! The current mouse point. */
+	/*! Last mouse position in view coordinates (used for panning). */
 	QPointF							m_pos;
 
 	/*! The major grid lines. */

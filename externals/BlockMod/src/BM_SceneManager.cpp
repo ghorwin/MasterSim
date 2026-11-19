@@ -193,7 +193,6 @@ void SceneManager::blockMoved(const Block * block, const QPointF /*oldPos*/) {
 
 void SceneManager::blockSelected(const Block * block) {
 	emit newBlockSelected(block->m_name);
-	// qDebug() << block->m_pos << block->m_size;
 }
 
 
@@ -212,6 +211,15 @@ void SceneManager::highlightConnectorSegments(const Connector & con, bool highli
 		}
 	}
 	this->update();
+}
+
+
+void SceneManager::highlightBlockConnectors(const Block * block, bool highlighted) {
+	QMap<const Block*, QSet<Connector*> >::const_iterator it = m_blockConnectorMap.find(block);
+	if (it == m_blockConnectorMap.end())
+		return;
+	for (const Connector * con : it.value())
+		highlightConnectorSegments(*con, highlighted);
 }
 
 
