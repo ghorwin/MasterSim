@@ -25,6 +25,8 @@ build/build.sh release skip-test
 
 Common CMake settings (C++17, output directories, rpath, `DEPLOYMENT`/`USE_OMP`/`DISABLE_QT` options, Qt AUTOMOC/UIC/RCC) live in `externals/IBK/build.cmake`, which is included by the top-level `CMakeLists.txt`. That file is shared verbatim with other IBK projects, so put MasterSim-specific settings in the top-level `CMakeLists.txt` instead. Libraries are CMake targets that export their include paths/dependencies (`target_link_libraries(... PUBLIC ...)`), so do not use `include_directories()`. zlib comes from `find_package(ZLIB)` (system zlib on Linux/macOS, vcpkg on Windows: triplet `x64-windows` for MSVC, `x64-mingw-static` for MinGW; both build scripts install it via `build/setup_zlib_vcpkg.bat` if missing).
 
+**macOS:** everything (solver, GUI, test FMUs) is built as a universal binary (`arm64;x86_64`, option `MSIM_UNIVERSAL_BINARIES`, qmake: `.qmake.conf`), because FMI 1.0/2.0 only has `binaries/darwin64`. x86_64-only FMUs run on Apple Silicon via `arch -x86_64 bin/release/mastersim`. `-ffp-contract=off` keeps results identical across architectures (needed to match the test references).
+
 Executables are written directly to `bin/release/` (or `bin/debug/` for debug builds):
 - `bin/release/mastersim` — CLI solver
 - `bin/release/mastersim-gui` — Qt GUI
