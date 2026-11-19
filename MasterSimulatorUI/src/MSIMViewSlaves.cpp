@@ -14,6 +14,9 @@
 #include <QtPrintSupport/QPrintDialog>
 #include <QtPrintSupport/QPrinter>
 #include <QColorDialog>
+#include <QShortcut>
+#include <QSignalBlocker>
+#include <QItemSelectionModel>
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 10, 0))
 #include <QRandomGenerator>
 #endif
@@ -27,6 +30,9 @@
 
 #include <BM_Network.h>
 #include <BM_Globals.h>
+#include <BM_BlockItem.h>
+#include <BM_Connector.h>
+#include <BM_ConnectorSegmentItem.h>
 
 #include "MSIMProjectHandler.h"
 #include "MSIMUIConstants.h"
@@ -85,6 +91,12 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 	m_ui->tableWidgetSlaves->setStyleSheet("selection-background-color: #dfe7fd;");
 
 	m_ui->checkBoxShowEquations->setChecked(MSIMSettings::instance().m_drawConnectorEquations);
+
+	// Escape clears the selection; window-wide shortcut, but only active while this view is visible.
+	// Item editors (table cells) consume Escape themselves via ShortcutOverride, so cancelling an edit still works.
+	QShortcut * escShortcut = new QShortcut(QKeySequence(Qt::Key_Escape), this);
+	escShortcut->setContext(Qt::WindowShortcut);
+	connect(escShortcut, &QShortcut::activated, this, &MSIMViewSlaves::clearSelection);
 }
 
 
@@ -315,7 +327,9 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 		} break;
 
 		case MSIMProjectHandler::SlaveParameterModified :
-			updatePropertyStackedWidget(SS_SlaveSelected);
+			// only refresh parameter table if a slave is shown; do not switch away from connector/project page
+			if (m_selectionState == SS_SlaveSelected)
+				updatePropertyStackedWidget(SS_SlaveSelected);
 			return;
 
 		case MSIMProjectHandler::ProjectPathModified :
@@ -333,6 +347,11 @@ void MSIMViewSlaves::onModified(unsigned int modificationType, void * /* data */
 		case MSIMProjectHandler::SingleConnectionModified:
 			// redraw equation text in connections
 			MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+			// refresh connector properties (values may have changed through undo/redo)
+			if (m_selectionState == SS_ConnectorSelected)
+				updatePropertyStackedWidget(SS_ConnectorSelected);
+			// network items were re-created, restore selection in scene
+			syncSceneSelection();
 			return;
 
 		// the remaining undo actions do not affect this view
@@ -539,8 +558,10 @@ void MSIMViewSlaves::on_checkBoxRelativeFMUPaths_toggled(bool /*checked*/) {
 
 
 void MSIMViewSlaves::on_tableWidgetSlaves_currentCellChanged(int /*currentRow*/, int /*currentColumn*/, int /*previousRow*/, int /*previousColumn*/) {
-	// update property browser for currently selected slave
+	// update property browser for currently selected slave (falls back to SS_NothingSelected if current row is -1)
 	updatePropertyStackedWidget(SS_SlaveSelected);
+	// selection originates from table -> select matching block in scene
+	syncSceneSelection();
 }
 
 
@@ -634,13 +655,18 @@ void MSIMViewSlaves::onNetworkGeometryChanged() {
 
 
 void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
-	m_selectedEdgeIdx = -1;
+	if (m_syncingSceneSelection)
+		return;
 	// find corresponding row in table widget
 	for (int i=0; i<m_ui->tableWidgetSlaves->rowCount(); ++i) {
-		if (m_ui->tableWidgetSlaves->item(i,1)->text() == blockName) {
-			m_ui->tableWidgetSlaves->blockSignals(true);
-			m_ui->tableWidgetSlaves->selectRow(i);
-			m_ui->tableWidgetSlaves->blockSignals(false);
+		const QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(i,1);
+		if (item != nullptr && item->text() == blockName) {
+			{
+				// selectRow() also sets the current cell; suppress currentCellChanged() since
+				// selection originates from the scene and must not be synced back
+				const QSignalBlocker blocker(m_ui->tableWidgetSlaves);
+				m_ui->tableWidgetSlaves->selectRow(i);
+			}
 			updatePropertyStackedWidget(SS_SlaveSelected);
 			break;
 		}
@@ -649,22 +675,32 @@ void MSIMViewSlaves::onBlockSelected(const QString & blockName) {
 
 
 void MSIMViewSlaves::onConnectorSelected(const QString & sourceSocketName, const QString & targetSocketName) {
+	if (m_syncingSceneSelection)
+		return;
 	// find selected GraphEdge, store its index and update its properties
 	m_selectedEdgeIdx = -1;
 	for (unsigned int i=0; i<project().m_graph.size(); ++i) {
 		const MASTER_SIM::Project::GraphEdge &edge = project().m_graph[i];
 		if (sourceSocketName.toStdString() == edge.m_outputVariableRef && targetSocketName.toStdString() == edge.m_inputVariableRef) {
 			m_selectedEdgeIdx = (int)i;
-			updatePropertyStackedWidget(SS_ConnectorSelected);
 			break;
 		}
 	}
+	// if no matching edge was found, this falls back to SS_NothingSelected
+	updatePropertyStackedWidget(SS_ConnectorSelected);
 }
 
 
 void MSIMViewSlaves::onSelectionCleared() {
-	m_selectedEdgeIdx = -1;
+	if (m_syncingSceneSelection)
+		return;
 	updatePropertyStackedWidget(SS_NothingSelected);
+}
+
+
+void MSIMViewSlaves::clearSelection() {
+	updatePropertyStackedWidget(SS_NothingSelected);
+	syncSceneSelection();
 }
 
 
@@ -763,15 +799,12 @@ void MSIMViewSlaves::updateSlaveTable() {
 		m_ui->tableWidgetSlaves->horizontalHeader()->resizeSection(2, contentsRectWith-totalSize);
 	}
 
-	m_ui->toolButtonRemoveSlave->setEnabled(!project().m_simulators.empty());
-	if (!project().m_simulators.empty()) {
-		if (currentSlaveIdx == -1)
-			currentSlaveIdx = 0;
+	// restore previously selected row, but do not select anything if nothing was selected before
+	// (otherwise table selection and selection state/property page would be inconsistent);
+	// the enabled state of the remove-slave button is managed by updatePropertyStackedWidget()
+	if (currentSlaveIdx != -1 && !project().m_simulators.empty()) {
 		currentSlaveIdx = qMin<int>(currentSlaveIdx, project().m_simulators.size()-1);
 		m_ui->tableWidgetSlaves->selectRow(currentSlaveIdx);
-	}
-	else {
-		currentSlaveIdx = -1;
 	}
 
 	blockMySignals(this, false);
@@ -917,9 +950,30 @@ void MSIMViewSlaves::updateGraphProperties() {
 
 
 void MSIMViewSlaves::updatePropertyStackedWidget(SelectionState selectionState) {
+	// validate requested state, fall back to "nothing selected" if it cannot be established
+	if (selectionState == SS_SlaveSelected) {
+		int row = m_ui->tableWidgetSlaves->currentRow();
+		if (row < 0 || row >= (int)project().m_simulators.size())
+			selectionState = SS_NothingSelected;
+	}
+	else if (selectionState == SS_ConnectorSelected) {
+		if (m_selectedEdgeIdx < 0 || m_selectedEdgeIdx >= (int)project().m_graph.size())
+			selectionState = SS_NothingSelected;
+	}
+	m_selectionState = selectionState;
 
 	m_ui->pushButtonDeleteConnection->setEnabled(false);
 	m_ui->toolButtonRemoveSlave->setEnabled(false);
+
+	if (selectionState != SS_SlaveSelected) {
+		// Clear selection *and* current cell of the slave table. Only clearing the selection would keep
+		// the current cell, so that clicking the same row again would not emit currentCellChanged() and
+		// the slave properties would not be shown. Signals are blocked, since this is not a user selection.
+		const QSignalBlocker blocker(m_ui->tableWidgetSlaves);
+		m_ui->tableWidgetSlaves->selectionModel()->clear();
+	}
+	if (selectionState != SS_ConnectorSelected)
+		m_selectedEdgeIdx = -1;
 
 	switch (selectionState) {
 		case SS_SlaveSelected:
@@ -929,15 +983,52 @@ void MSIMViewSlaves::updatePropertyStackedWidget(SelectionState selectionState) 
 		break;
 		case SS_ConnectorSelected:
 			m_ui->stackedWidget->setCurrentIndex(1);
-			m_ui->tableWidgetSlaves->clearSelection();
 			m_ui->pushButtonDeleteConnection->setEnabled(true);
 			updateGraphProperties();
 		break;
 		case SS_NothingSelected:
 			m_ui->stackedWidget->setCurrentIndex(2);
-			m_ui->tableWidgetSlaves->clearSelection();
 		break;
 	}
+}
+
+
+void MSIMViewSlaves::syncSceneSelection() {
+	BLOCKMOD::SceneManager * sceneManager = qobject_cast<BLOCKMOD::SceneManager *>(m_ui->blockModWidget->scene());
+	if (sceneManager == nullptr)
+		return;
+
+	// ignore selection signals emitted by the scene while we modify its selection
+	m_syncingSceneSelection = true;
+	sceneManager->clearSelection();
+	switch (m_selectionState) {
+		case SS_SlaveSelected: {
+			const QTableWidgetItem * item = m_ui->tableWidgetSlaves->item(m_ui->tableWidgetSlaves->currentRow(), 1);
+			if (item == nullptr)
+				break;
+			BLOCKMOD::BlockItem * blockItem = const_cast<BLOCKMOD::BlockItem *>(sceneManager->blockItemByName(item->text()));
+			if (blockItem != nullptr)
+				blockItem->setSelected(true);
+		} break;
+
+		case SS_ConnectorSelected: {
+			const MASTER_SIM::Project::GraphEdge & edge = project().m_graph[(unsigned int)m_selectedEdgeIdx];
+			QString sourceSocket = QString::fromStdString(edge.m_outputVariableRef);
+			QString targetSocket = QString::fromStdString(edge.m_inputVariableRef);
+			// select all segments of the connector
+			const QList<QGraphicsItem *> items = sceneManager->items();
+			for (QGraphicsItem * gi : items) {
+				BLOCKMOD::ConnectorSegmentItem * segItem = dynamic_cast<BLOCKMOD::ConnectorSegmentItem *>(gi);
+				if (segItem == nullptr || segItem->m_connector == nullptr)
+					continue;
+				if (segItem->m_connector->m_sourceSocket == sourceSocket && segItem->m_connector->m_targetSocket == targetSocket)
+					segItem->setSelected(true);
+			}
+		} break;
+
+		case SS_NothingSelected: break;
+	}
+	m_syncingSceneSelection = false;
 }
 
 
@@ -1022,6 +1113,8 @@ void MSIMViewSlaves::on_pushButtonSelectColor_colorChanged() {
 void MSIMViewSlaves::on_checkBoxShowEquations_clicked(bool checked) {
 	MSIMSettings::instance().m_drawConnectorEquations = checked;
 	MSIMProjectHandler::instance().syncCoSimNetworkToBlocks();
+	// network items were re-created, restore selection in scene
+	syncSceneSelection();
 }
 
 
