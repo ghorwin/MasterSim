@@ -17,6 +17,7 @@
 #include "MSIMDirectories.h"
 #include "MSIMConversion.h"
 #include "MSIMLanguageHandler.h"
+#include "MSIMUIConstants.h"
 
 extern const char * const HTML_TEMPLATE;
 extern const char * const RECENT_PROJECT_TABLE_TEMPLATE;
@@ -45,7 +46,8 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 	// download news content (only once per application start)
 	if (m_welcomePageNews.isEmpty()) {
 		// download file
-		QNetworkRequest request(QUrl("http://www.bauklimatik-dresden.de/downloads/mastersim/news.html"));
+		QString newsUrls(MASTERSIM_NEWS_URL);
+		QNetworkRequest request(newsUrls);
 		/*QNetworkReply *reply = */m_networkManager->get(request);
 	}
 	// now create overall page

@@ -160,17 +160,12 @@ int main(int argc, char *argv[]) {
 
 
 	// *** Create and show splash-screen ***
-#if QT_VERSION >= 0x050000
 	std::unique_ptr<QSplashScreen> splash;
-#else
-	std::auto_ptr<QSplashScreen> splash;
-#endif
 	if (!settings.m_flags[MSIMSettings::NoSplashScreen]) {
 		QPixmap pixmap;
 		pixmap.load(":/gfx/SplashScreen_MasterSim.png","PNG");
 		splash.reset(new QSplashScreen(pixmap, Qt::WindowStaysOnTopHint | Qt::SplashScreen));
 		splash->show();
-		qApp->processEvents();
 		QTimer::singleShot(2000, splash.get(), SLOT(close()));
 	}
 
@@ -180,7 +175,6 @@ int main(int argc, char *argv[]) {
 	try { // open scope to control lifetime of main window, ensure that main window instance dies before settings or project handler
 
 		MSIMMainWindow w;
-		qApp->processEvents();
 
 		// add user settings related window resize at program start
 #if defined(Q_OS_WIN)
