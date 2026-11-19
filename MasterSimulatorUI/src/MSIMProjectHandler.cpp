@@ -8,6 +8,7 @@
 #include <QDialogButtonBox>
 #include <QSet>
 #include <QPair>
+#include <QColor>
 
 #include <IBK_Exception.h>
 #include <IBK_FileUtils.h>
@@ -395,6 +396,8 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		const MASTER_SIM::Project::SimulatorDef & simDef = prj.m_simulators[i];
 		BLOCKMOD::Block & b = *bit;
 		b.m_properties["state"] = MSIMSlaveBlock::StateNoFMU; // assume noFMU - worst case scenario
+		// store slave color for use as block background color (not written to the .bm file)
+		b.m_properties["Color"] = QColor(QRgb(simDef.m_color.toQRgb()));
 
 		// check if name matches the block with the same index in the network
 		if (QString::fromStdString(simDef.m_name) != b.m_name) {
