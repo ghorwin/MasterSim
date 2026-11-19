@@ -42,9 +42,6 @@ class QString;
 #include <QList>
 #include <QXmlStreamReader>
 
-#include <vector>
-#include <stdexcept>
-
 namespace BLOCKMOD {
 
 /*! Helper function for XML readers. Reads unknown XML elements recursively.
