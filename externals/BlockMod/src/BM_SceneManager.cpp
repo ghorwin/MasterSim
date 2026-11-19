@@ -86,7 +86,7 @@ void SceneManager::setNetwork(const Network & network) {
 	// create new graphics items for connectors
 	for (Connector & c : m_network->m_connectors) {
 		QList<ConnectorSegmentItem *> newConns = createConnectorItems(c);
-		for( BLOCKMOD::ConnectorSegmentItem * item : qAsConst(newConns)) {
+		for( BLOCKMOD::ConnectorSegmentItem * item : asConst(newConns)) {
 			addItem(item);
 			m_connectorSegmentItems.append(item);
 //			qDebug() << item << " : " << item->m_connector << " : " << item->m_segmentIdx << " : " << item->line();
@@ -193,7 +193,7 @@ void SceneManager::blockMoved(const Block * block, const QPointF /*oldPos*/) {
 
 void SceneManager::blockSelected(const Block * block) {
 	emit newBlockSelected(block->m_name);
-	qDebug() << block->m_pos << block->m_size;
+	// qDebug() << block->m_pos << block->m_size;
 }
 
 
@@ -205,7 +205,7 @@ void SceneManager::connectorSegmentMoved(ConnectorSegmentItem * currentItem) {
 
 
 void SceneManager::highlightConnectorSegments(const Connector & con, bool highlighted) {
-	for (ConnectorSegmentItem* segmentItem : qAsConst(m_connectorSegmentItems)) {
+	for (ConnectorSegmentItem* segmentItem : asConst(m_connectorSegmentItems)) {
 		if (segmentItem->m_connector == &con) {
 			segmentItem->m_isHighlighted = highlighted;
 			segmentItem->update();
@@ -217,7 +217,7 @@ void SceneManager::highlightConnectorSegments(const Connector & con, bool highli
 
 void SceneManager::selectConnectorSegments(const Connector & con) {
 	qDebug() << "SceneManager::selectConnectorSegments";
-	for (ConnectorSegmentItem* segmentItem : qAsConst(m_connectorSegmentItems)) {
+	for (ConnectorSegmentItem* segmentItem : asConst(m_connectorSegmentItems)) {
 		if (segmentItem->m_connector == &con) {
 			if (!segmentItem->isSelected())
 				segmentItem->setSelected(true);
@@ -233,7 +233,7 @@ void SceneManager::mergeConnectorSegments(Connector & con) {
 	QList<ConnectorSegmentItem*> segmentItems;
 	for (int i=0; i<con.m_segments.count(); ++i)
 		segmentItems.append(nullptr);
-	for (ConnectorSegmentItem* segmentItem : qAsConst(m_connectorSegmentItems)) {
+	for (ConnectorSegmentItem* segmentItem : asConst(m_connectorSegmentItems)) {
 		if (segmentItem->m_connector == &con) {
 			if (segmentItem->m_segmentIdx == -1 || segmentItem->m_segmentIdx == -2)
 				continue;
@@ -352,9 +352,9 @@ void SceneManager::startSocketConnection(const SocketItem & outletSocketItem, co
 	Q_ASSERT(!outletSocketItem.socket()->m_inlet);
 
 	// deselect all blocks and connectors
-	for (BLOCKMOD::BlockItem * block : qAsConst(m_blockItems))
+	for (BLOCKMOD::BlockItem * block : asConst(m_blockItems))
 		block->setSelected(false);
-	for (BLOCKMOD::ConnectorSegmentItem * segmentItem : qAsConst(m_connectorSegmentItems))
+	for (BLOCKMOD::ConnectorSegmentItem * segmentItem : asConst(m_connectorSegmentItems))
 		segmentItem->setSelected(false);
 
 	// determine block that this outlet socket item belongs to
@@ -403,7 +403,7 @@ void SceneManager::startSocketConnection(const SocketItem & outletSocketItem, co
 	addItem(bi);
 
 	QList<ConnectorSegmentItem*> newConns = createConnectorItems(m_network->m_connectors.back());  // Mind: always pass the object in the m_connectors list
-	for( BLOCKMOD::ConnectorSegmentItem * item : qAsConst(newConns)) {
+	for( BLOCKMOD::ConnectorSegmentItem * item : asConst(newConns)) {
 		addItem(item);
 		m_connectorSegmentItems.append(item);
 	}
@@ -425,7 +425,7 @@ void SceneManager::finishConnection() {
 QList<const Block*> SceneManager::selectedBlocks() const {
 	QList<QGraphicsItem*> selected = selectedItems();
 	QList<const BLOCKMOD::Block *> selectedBlocks;
-	for (QGraphicsItem * item : qAsConst(selected)) {
+	for (QGraphicsItem * item : asConst(selected)) {
 		BLOCKMOD::BlockItem * bi = dynamic_cast<BLOCKMOD::BlockItem *>(item);
 		if (bi != nullptr)
 			selectedBlocks.append(bi->block());
@@ -437,7 +437,7 @@ QList<const Block*> SceneManager::selectedBlocks() const {
 const Connector * SceneManager::selectedConnector() const {
 	QList<QGraphicsItem*> selected = selectedItems();
 	// find selected connector
-	for (QGraphicsItem * item : qAsConst(selected)) {
+	for (QGraphicsItem * item : asConst(selected)) {
 		BLOCKMOD::ConnectorSegmentItem * segi = dynamic_cast<BLOCKMOD::ConnectorSegmentItem *>(item);
 		if (segi != nullptr) {
 			return segi->m_connector;
@@ -599,11 +599,11 @@ void SceneManager::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 	if (m_currentlyConnecting) {
 		if (!m_blockItems.isEmpty() && m_blockItems.back()->block()->m_name == Globals::InvisibleLabel) {
 			QPointF p = m_blockItems.back()->pos();
-			for (BlockItem  * bi : qAsConst(m_blockItems)) {
+			for (BlockItem  * bi : asConst(m_blockItems)) {
 				if (bi->block()->m_name == Globals::InvisibleLabel)
 					continue;
 				// first un-hover all sockets
-				for (SocketItem * si : qAsConst(bi->m_socketItems)) {
+				for (SocketItem * si : asConst(bi->m_socketItems)) {
 					si->m_hovered = false;
 					si->update();
 				}
@@ -636,7 +636,7 @@ void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 		if (m_currentlyConnecting) {
 			if (!m_blockItems.isEmpty() && m_blockItems.back()->block()->m_name == Globals::InvisibleLabel) {
 				QPointF p = m_blockItems.back()->pos();
-				for (BlockItem  * bi : qAsConst(m_blockItems)) {
+				for (BlockItem  * bi : asConst(m_blockItems)) {
 					if (bi->block()->m_name == Globals::InvisibleLabel)
 						continue;
 
@@ -671,13 +671,13 @@ void SceneManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent) {
 		else {
 			// check if any block or connector has been selected
 			bool blockOrConnectorSelected = false;
-			for (const BlockItem *item: qAsConst(m_blockItems)) {
+			for (const BlockItem *item: asConst(m_blockItems)) {
 				if (item->isSelected()) {
 					blockOrConnectorSelected = true;
 					break;
 				}
 			}
-			for (const ConnectorSegmentItem *item: qAsConst(m_connectorSegmentItems)) {
+			for (const ConnectorSegmentItem *item: asConst(m_connectorSegmentItems)) {
 				if (item->isSelected()) {
 					blockOrConnectorSelected = true;
 					break;
@@ -773,7 +773,7 @@ void SceneManager::onSelectionChanged() {
 
 	// search for selected connector items
 	QList<Connector*> selectedCons;
-	for (QGraphicsItem * item : qAsConst(items)) {
+	for (QGraphicsItem * item : asConst(items)) {
 		ConnectorSegmentItem * segItem = dynamic_cast<ConnectorSegmentItem*>(item);
 		if (segItem == nullptr)
 			continue;
@@ -807,7 +807,7 @@ void SceneManager::updateConnectorSegmentItems(const Connector & con, ConnectorS
 	ConnectorSegmentItem*	startSegment = nullptr;
 	ConnectorSegmentItem*	endSegment = nullptr;
 	QList<ConnectorSegmentItem*> segmentItems;
-	for (ConnectorSegmentItem* segmentItem : qAsConst(m_connectorSegmentItems)) {
+	for (ConnectorSegmentItem* segmentItem : asConst(m_connectorSegmentItems)) {
 		if (segmentItem->m_connector == &con) {
 			if (segmentItem->m_segmentIdx == -1)
 				startSegment = segmentItem;
@@ -822,7 +822,7 @@ void SceneManager::updateConnectorSegmentItems(const Connector & con, ConnectorS
 	// re-create entire connector if all pointers are emtpy
 	if (startSegment == nullptr && endSegment == nullptr && segmentItems.isEmpty()) {
 		QList<ConnectorSegmentItem *> newConns = createConnectorItems(const_cast<Connector&>(con)); // const-cast is safe here, since we only expect connector objects that we own ourselves
-		for( BLOCKMOD::ConnectorSegmentItem * item : qAsConst(newConns)) {
+		for( BLOCKMOD::ConnectorSegmentItem * item : asConst(newConns)) {
 			addItem(item);
 			m_connectorSegmentItems.append(item);
 //			qDebug() << item << " : " << item->m_connector << " : " << item->m_segmentIdx << " : " << item->line();

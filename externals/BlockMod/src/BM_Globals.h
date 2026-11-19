@@ -57,4 +57,16 @@ public:
 } // namespace BLOCKMOD
 
 
+#ifndef ASCONST_DEFINED
+#define ASCONST_DEFINED
+/*! Portable replacement for qAsConst() (deprecated Qt 6.6) and std::as_const() (C++17).
+	Works with any C++11 compiler and any Qt version. */
+template <typename T>
+constexpr const T & asConst(T & t) noexcept { return t; }
+/*! Deleted overload prevents binding to rvalues (would produce a dangling reference). */
+template <typename T>
+void asConst(const T &&) = delete;
+#endif // ASCONST_DEFINED
+
+
 #endif // BM_GlobalsH

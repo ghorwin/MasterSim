@@ -423,7 +423,7 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		// now process current block definition and remove all defined sockets from lists - remaining
 		// items must
 		bool missingSocket = false;
-		for (const BLOCKMOD::Socket & s : qAsConst(b.m_sockets)) {
+		for (const BLOCKMOD::Socket & s : asConst(b.m_sockets)) {
 			if (s.m_inlet) {
 				if (inletSocketNames.contains(s.m_name))
 					inletSocketNames.removeOne(s.m_name);

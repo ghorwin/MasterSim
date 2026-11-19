@@ -62,7 +62,7 @@ BlockItem::BlockItem(Block * b) :
 
 
 SocketItem * BlockItem::inletSocketAcceptingConnection(const QPointF & scenePos) {
-	for (SocketItem * si : qAsConst(m_socketItems)) {
+	for (SocketItem * si : asConst(m_socketItems)) {
 		QPointF socketScenePos = si->mapToScene(si->socket()->m_pos);
 
 //		QPointF socketScenePos2(socketScenePos);
