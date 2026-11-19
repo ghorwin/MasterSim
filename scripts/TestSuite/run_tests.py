@@ -57,10 +57,9 @@ import filecmp          # for result file comparison
 import argparse
 import platform         # to detect current OS
 
-from colorama import *
+import config
 from SolverStats import *
 from print_funcs import *
-from config import USE_COLORS
 
 
 def configCommandLineArguments():
@@ -236,9 +235,11 @@ def run_performance_evaluation(args, projects):
 args = configCommandLineArguments()
 
 if not args.no_colors:
-	init() # init ANSI code filtering for windows
-	config.USE_COLORS = True
-	printNotification("Enabling colored console output")
+	if initColors():
+		config.USE_COLORS = True
+		printNotification("Enabling colored console output")
+	else:
+		print("colorama not installed - colored console output disabled")
 
 if args.test_init and args.performance:
 	printError("Either use --test-init or --performance, but not both together.")

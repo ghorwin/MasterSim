@@ -333,7 +333,8 @@ bool MSIMSettings::startProcess(const QString & executable,
 			success = QProcess::startDetached(terminalProgram, commandLineArgs, QString(), &pid);
 		} break;
 
-		case TE_GnomeTerminal : {
+		case TE_GnomeTerminal :
+		case TE_Ptyxis : {
 			// create a bash script in a temporary location with the command line as content
 			QString projectPath = QFileInfo(projectFile).dir().absolutePath();
 			QString tmpPath = projectPath + "/" + QFileInfo(projectFile).baseName() + ".sh";
@@ -348,9 +349,10 @@ bool MSIMSettings::startProcess(const QString & executable,
 			bashFile.setPermissions(QFile::ReadUser | QFile::WriteUser | QFile::ExeUser | QFile::ExeGroup | QFile::ExeOther );
 			bashFile.close();
 
-			// Command line: "gnome-terminal -- /path/to/project/run/script.sh"
+			// Command line: "gnome-terminal --tab -- /path/to/project/run/script.sh"
+			//           or "ptyxis --tab -- /path/to/project/run/script.sh"
 			commandLineArgs = QStringList() << "--tab"  << "--" << tmpPath;
-			QString terminalProgram = "gnome-terminal";
+			QString terminalProgram = (terminalEmulator == TE_Ptyxis) ? "ptyxis" : "gnome-terminal";
 			success = QProcess::startDetached(terminalProgram, commandLineArgs, QString(), &pid);
 		} break;
 

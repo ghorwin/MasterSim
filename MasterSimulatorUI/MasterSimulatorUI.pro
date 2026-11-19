@@ -1,7 +1,7 @@
 # remember to set DYLD_FALLBACK_LIBRARY_PATH on MacOSX
 # set LD_LIBRARY_PATH on Linux
 
-TARGET = MasterSimulatorUI
+TARGET = mastersim-ui
 TEMPLATE = app
 
 # this pri must be sourced from all our applications

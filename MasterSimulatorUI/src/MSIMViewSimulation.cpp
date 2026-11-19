@@ -190,6 +190,10 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 				QMessageBox::critical(this, QString(), tr("Could not run Gnome terminal emulator (gnome-terminal). "
 														  "Please install GNOME terminal or select a different terminal emulator from the list!") );
 				break;
+			case MSIMSettings::TE_Ptyxis:
+				QMessageBox::critical(this, QString(), tr("Could not run Ptyxis terminal emulator (ptyxis). "
+														  "Please install Ptyxis or select a different terminal emulator from the list!") );
+				break;
 		}
 #else
 		QMessageBox::critical(this, QString(), tr("Could not run solver '%1'").arg(m_solverName));
