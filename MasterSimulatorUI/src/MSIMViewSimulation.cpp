@@ -10,6 +10,10 @@
 #include <QThread>
 #include <QStandardPaths>
 #include <QTextStream>
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QPushButton>
 
 #include <memory>
 #include <cstring>
@@ -77,11 +81,28 @@ MSIMViewSimulation::MSIMViewSimulation(QWidget *parent) :
 	m_ui->comboBoxTermEmulator->setVisible(false);
 #endif
 
+	// progress bar is only shown while a background simulation is running
+	m_ui->progressBarSimulation->setRange(0, 1000); // 0.1 % resolution
+	m_ui->progressBarSimulation->setValue(0);
+	m_ui->progressBarSimulation->setVisible(false);
+
+	m_progressTimer = new QTimer(this);
+	m_progressTimer->setInterval(500);
+	connect(m_progressTimer, &QTimer::timeout, this, &MSIMViewSimulation::onUpdateProgress);
+
 	blockMySignals(this, false);
 }
 
 
 MSIMViewSimulation::~MSIMViewSimulation() {
+	if (m_solverProcess != nullptr) {
+		// do not report errors/finished state of a process that we terminate ourselves
+		m_solverProcess->disconnect(this);
+		if (m_solverProcess->state() != QProcess::NotRunning) {
+			m_solverProcess->kill();
+			m_solverProcess->waitForFinished(3000);
+		}
+	}
 	delete m_ui;
 }
 
@@ -175,6 +196,13 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 #else
 	MSIMSettings::TerminalEmulators runOption = (MSIMSettings::TerminalEmulators)-1;
 #endif
+#if defined(Q_OS_LINUX)
+	// background process: run solver ourselves to monitor errors and progress
+	if (runOption == MSIMSettings::TE_None) {
+		startBackgroundProcess(projectFile, commandLineArgs);
+		return;
+	}
+#endif
 	bool success = MSIMSettings::startProcess(m_solverName, commandLineArgs, projectFile, runOption);
 	if (!success) {
 #if defined(Q_OS_LINUX)
@@ -201,6 +229,130 @@ void MSIMViewSimulation::on_toolButtonStartInTerminal_clicked() {
 		return;
 	}
 
+}
+
+
+bool MSIMViewSimulation::isBackgroundSimulationRunning() const {
+	return m_solverProcess != nullptr && m_solverProcess->state() != QProcess::NotRunning;
+}
+
+
+void MSIMViewSimulation::startBackgroundProcess(const QString & projectFile, const QStringList & commandLineArgs) {
+	if (m_solverProcess != nullptr && m_solverProcess->state() != QProcess::NotRunning) {
+		QMessageBox::information(this, QString(), tr("A simulation is already running."));
+		return;
+	}
+
+	// compose paths to log and progress files (solver's working directory is project file path without extension)
+	QFileInfo finfo(projectFile);
+	QString workingDir = finfo.dir().absoluteFilePath(finfo.completeBaseName());
+	m_logFile = workingDir + "/log/screenlog.txt";
+	m_progressFile = workingDir + "/log/progress.txt";
+	m_runningProjectFile = projectFile;
+
+	// remove progress file of a previous run (may still exist when "skip-unzip" is used),
+	// so that we do not show outdated progress
+	QFile::remove(m_progressFile);
+
+	if (m_solverProcess == nullptr) {
+		m_solverProcess = new QProcess(this);
+		connect(m_solverProcess, &QProcess::errorOccurred, this, &MSIMViewSimulation::onSolverProcessErrorOccurred);
+		connect(m_solverProcess, &QProcess::finished, this, &MSIMViewSimulation::onSolverProcessFinished);
+	}
+	// solver writes everything relevant to screenlog.txt; discard console output so that
+	// the process does not block on full stdout/stderr pipes
+	m_solverProcess->setStandardOutputFile(QProcess::nullDevice());
+	m_solverProcess->setStandardErrorFile(QProcess::nullDevice());
+
+	QStringList args = commandLineArgs;
+	args << projectFile; // no quotes needed, Qt takes care of that
+
+	m_ui->toolButtonStartInTerminal->setEnabled(false);
+	m_ui->progressBarSimulation->setValue(0);
+	m_ui->progressBarSimulation->setFormat(tr("Starting simulation..."));
+	m_ui->progressBarSimulation->setVisible(true);
+
+	m_solverProcess->start(m_solverName, args);
+	// errors during startup are reported asynchronously via errorOccurred()
+	m_progressTimer->start();
+}
+
+
+void MSIMViewSimulation::onSolverProcessErrorOccurred(QProcess::ProcessError error) {
+	// Crashed is reported by finished() as well, and other errors (read/write/timeout) are not
+	// relevant since we do not communicate with the process; only handle launch failures here.
+	if (error != QProcess::FailedToStart)
+		return;
+	backgroundProcessEnded();
+	m_ui->progressBarSimulation->setVisible(false);
+	QMessageBox::critical(this, tr("Solver error"), tr("Could not run solver '%1':\n%2")
+						  .arg(m_solverName, m_solverProcess->errorString()));
+}
+
+
+void MSIMViewSimulation::onSolverProcessFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+	onUpdateProgress(); // read final progress
+	backgroundProcessEnded();
+	if (exitStatus == QProcess::CrashExit) {
+		m_ui->progressBarSimulation->setFormat(tr("Simulation crashed"));
+		showSolverErrorMessage(tr("The solver crashed."));
+	}
+	else if (exitCode != 0) {
+		m_ui->progressBarSimulation->setFormat(tr("Simulation failed"));
+		showSolverErrorMessage(tr("The simulation stopped with an error (exit code %1).").arg(exitCode));
+	}
+	else {
+		m_ui->progressBarSimulation->setValue(m_ui->progressBarSimulation->maximum());
+		m_ui->progressBarSimulation->setFormat(tr("Simulation finished"));
+	}
+}
+
+
+void MSIMViewSimulation::onUpdateProgress() {
+	if (m_progressFile.isEmpty())
+		return;
+	QFile f(m_progressFile);
+	if (!f.open(QIODevice::ReadOnly))
+		return; // file not yet created
+	// only read the tail of the file - last line is all we need
+	const qint64 TAIL_SIZE = 512;
+	if (f.size() > TAIL_SIZE)
+		f.seek(f.size() - TAIL_SIZE);
+	QStringList lines = QString::fromUtf8(f.readAll()).split('\n', Qt::SkipEmptyParts);
+	// search backwards for the last complete data line (header line or incomplete lines fail to convert)
+	for (int i = lines.size() - 1; i >= 0; --i) {
+		QStringList cols = lines[i].split('\t');
+		if (cols.size() < 3)
+			continue;
+		bool ok;
+		double percentage = cols.last().trimmed().toDouble(&ok);
+		if (!ok)
+			continue;
+		percentage = qBound(0.0, percentage, 100.0);
+		m_ui->progressBarSimulation->setValue(qRound(percentage*10));
+		m_ui->progressBarSimulation->setFormat(QString("%1 %").arg(percentage, 0, 'f', 1));
+		break;
+	}
+}
+
+
+void MSIMViewSimulation::backgroundProcessEnded() {
+	m_progressTimer->stop();
+	m_ui->toolButtonStartInTerminal->setEnabled(true);
+}
+
+
+void MSIMViewSimulation::showSolverErrorMessage(const QString & msg) {
+	QMessageBox msgBox(QMessageBox::Critical, tr("Simulation error"),
+					   tr("%1\n\nSee log file '%2' for details.").arg(msg, QDir::toNativeSeparators(m_logFile)),
+					   QMessageBox::Close, this);
+	QPushButton * showLogButton = msgBox.addButton(tr("Show log file..."), QMessageBox::ActionRole);
+	msgBox.exec();
+	if (msgBox.clickedButton() == showLogButton) {
+		MSIMLogFileDialog dlg(this);
+		dlg.setLogFile(m_logFile, m_runningProjectFile, false);
+		dlg.exec();
+	}
 }
 
 
