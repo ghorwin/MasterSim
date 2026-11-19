@@ -6,6 +6,8 @@
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QSet>
+#include <QPair>
 
 #include <IBK_Exception.h>
 #include <IBK_FileUtils.h>
@@ -558,7 +560,44 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 
 	// update network without undo-action
 	m_network = n;
-	m_sceneManager->setNetwork(n);
+	setSceneNetwork(n);
+}
+
+
+void MSIMProjectHandler::refreshSceneNetwork() {
+	setSceneNetwork(m_network);
+}
+
+
+BLOCKMOD::Network MSIMProjectHandler::mergedNetwork(const BLOCKMOD::Network & n) {
+	BLOCKMOD::Network merged = n;
+	for (BLOCKMOD::Block & b : merged.m_blocks)
+		b.m_properties["HideSocketLabels"] = true;
+
+	// keep only the first connector for each (source block, target block) pair
+	QSet<QPair<QString, QString> > blockPairs;
+	std::list<BLOCKMOD::Connector> connectors;
+	for (const BLOCKMOD::Connector & con : n.m_connectors) {
+		QString sourceBlock, targetBlock, socketName;
+		BLOCKMOD::Network::splitFlatName(con.m_sourceSocket, sourceBlock, socketName);
+		BLOCKMOD::Network::splitFlatName(con.m_targetSocket, targetBlock, socketName);
+		QPair<QString, QString> blockPair(sourceBlock, targetBlock);
+		if (blockPairs.contains(blockPair))
+			continue;
+		blockPairs.insert(blockPair);
+		connectors.push_back(con);
+		connectors.back().m_text.clear(); // equation is no longer unique
+	}
+	merged.m_connectors = connectors;
+	return merged;
+}
+
+
+void MSIMProjectHandler::setSceneNetwork(const BLOCKMOD::Network & n) {
+	if (MSIMSettings::instance().m_mergeConnectors)
+		m_sceneManager->setNetwork(mergedNetwork(n));
+	else
+		m_sceneManager->setNetwork(n);
 }
 
 
@@ -663,7 +702,7 @@ bool MSIMProjectHandler::read(const QString & fname) {
 		}
 
 		m_network = network; // data is copied into project's own network
-		m_sceneManager->setNetwork(network); // data is copied into the scene manager
+		setSceneNetwork(network); // data is copied into the scene manager
 		m_lastReadTime = QFileInfo(fname).lastModified();
 
 		// after reading the project file, we should update the views

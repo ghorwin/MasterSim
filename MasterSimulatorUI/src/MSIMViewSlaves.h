@@ -147,6 +147,8 @@ private slots:
 
 	void on_checkBoxShowEquations_clicked(bool checked);
 
+	void on_checkBoxMergeConnectors_clicked(bool checked);
+
 
 	void on_textEditDescription_editingFinished();
 

@@ -18,6 +18,6 @@ MASTER_SIM::Project & MSIMUndoCommandBase::theProject() const {
 void MSIMUndoCommandBase::setNetwork(const BLOCKMOD::Network & network, bool projectOnly) {
 	MSIMProjectHandler::instance().m_network = network;
 	if (!projectOnly)
-		MSIMProjectHandler::instance().m_sceneManager->setNetwork(network);
+		MSIMProjectHandler::instance().setSceneNetwork(network);
 }
 

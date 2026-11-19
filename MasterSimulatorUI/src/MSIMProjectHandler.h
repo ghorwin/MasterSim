@@ -204,6 +204,17 @@ public:
 	*/
 	void syncCoSimNetworkToBlocks();
 
+	/*! Re-sets the network in the scene manager from m_network, taking the merge-connectors
+		display option into account (call after toggling MSIMSettings::m_mergeConnectors).
+	*/
+	void refreshSceneNetwork();
+
+	/*! Creates a display-only network for the merged-connectors view: of all connectors between the
+		same pair of source and target blocks only the first is kept (with its routing), and all
+		blocks get the property "HideSocketLabels" set.
+	*/
+	static BLOCKMOD::Network mergedNetwork(const BLOCKMOD::Network & n);
+
 signals:
 	/*! Emitted when the project has been modified.
 
@@ -242,6 +253,12 @@ private:
 		\note Does not emit any signals and does not call setModified()
 	*/
 	void createProject();
+
+	/*! Sets the given network in the scene manager. If the merge-connectors display option is
+		enabled, the merged network (see mergedNetwork()) is passed to the scene manager instead.
+		\note m_network is not modified.
+	*/
+	void setSceneNetwork(const BLOCKMOD::Network & n);
 
 	/*! Deletes the project being wrapped and sets internal m_project to NULL.
 		This function is used internally and called from closeProject().

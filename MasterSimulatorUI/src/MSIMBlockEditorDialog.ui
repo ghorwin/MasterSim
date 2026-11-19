@@ -17,7 +17,7 @@
    <item row="1" column="1">
     <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string>Block modeler</string>
+      <string>Block schematics</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayoutGraphicsView">
       <item>
@@ -26,17 +26,10 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Templates</string>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
@@ -75,7 +68,7 @@
         <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Geometry (columns/rows)::</string>
+           <string>Geometry (columns/rows):</string>
           </property>
          </widget>
         </item>
@@ -103,7 +96,7 @@
         <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+           <enum>Qt::Orientation::Horizontal</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
@@ -132,6 +125,7 @@
    <class>BLOCKMOD::ZoomMeshGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header location="global">BM_ZoomMeshGraphicsView.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
