@@ -77,6 +77,11 @@ protected:
 	/*! Re-implemented to trigger the editor. */
 	virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
+	/*! Re-implemented to highlight all connectors attached to this block. */
+	virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+	/*! Re-implemented to turn off highlighting of all connectors attached to this block. */
+	virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
 	/*! Re-implemented to reset the m_moved flag. */
 	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
 

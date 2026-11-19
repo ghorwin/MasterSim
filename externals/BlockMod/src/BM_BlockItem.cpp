@@ -56,6 +56,7 @@ BlockItem::BlockItem(Block * b) :
 {
 	setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges);
 	setZValue(10);
+	setAcceptHoverEvents(true);
 
 	BlockItem::createSocketItems();
 }
@@ -187,6 +188,24 @@ void BlockItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * optio
 		painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, m_block->m_name);
 	}
 	painter->restore();
+}
+
+
+void BlockItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
+	// no highlighting for the invisible connection-helper block and while dragging a new connection
+	if (sceneManager != nullptr && !isInvisible() && !sceneManager->isCurrentlyConnecting())
+		sceneManager->highlightBlockConnectors(m_block, true);
+	QGraphicsRectItem::hoverEnterEvent(event);
+}
+
+
+void BlockItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+	SceneManager * sceneManager = qobject_cast<SceneManager *>(scene());
+	// always turn highlighting off, even in connection mode, so that no highlight is left behind
+	if (sceneManager != nullptr && !isInvisible())
+		sceneManager->highlightBlockConnectors(m_block, false);
+	QGraphicsRectItem::hoverLeaveEvent(event);
 }
 
 

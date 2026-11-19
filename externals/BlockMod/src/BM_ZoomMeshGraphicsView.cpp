@@ -34,12 +34,11 @@
 #include "BM_ZoomMeshGraphicsView.h"
 
 #include <QWheelEvent>
-#include <QList>
-#include <QGraphicsItem>
-#include <QDebug>
 #include <QApplication>
+#include <QPainter>
 #include <QScrollBar>
 
+#include <algorithm>
 #include <cmath>
 
 #include "BM_SceneManager.h"
@@ -80,12 +79,12 @@ void ZoomMeshGraphicsView::wheelEvent(QWheelEvent *i_event){
 void ZoomMeshGraphicsView::mousePressEvent(QMouseEvent *event) {
 	if (event->button() == Qt::MiddleButton) {
 		m_middleButtonPressed = true;
-		m_pos = event->pos();
+		m_pos = event->position();
 		setCursor(Qt::ClosedHandCursor);
 		event->accept();
 		return;
 	}
-	m_pos = event->pos();
+	m_pos = event->position();
 	QGraphicsView::mousePressEvent(event);
 }
 
@@ -95,10 +94,11 @@ void ZoomMeshGraphicsView::mouseReleaseEvent(QMouseEvent *event) {
 		m_middleButtonPressed = false;
 		setCursor(Qt::ArrowCursor);
 		event->accept();
+		// pass on as regular mouse move to update hover state of scene items
 		mouseMoveEvent(event);
 		return;
 	}
-	m_pos = event->pos();
+	m_pos = event->position();
 	QGraphicsView::mouseReleaseEvent(event);
 }
 
@@ -107,103 +107,68 @@ void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
 
 	if (m_gridEnabled) {
 
-		// get rect
-		QPainter p(viewport());
+		// view coordinates of scene origin
 		QPointF p1 = mapFromScene( QPointF(0,0) );
 
-		// compute nominal pixels using resolution
-		double gridSpacingPix = m_resolution*m_gridStep;
+		// compute grid spacing in pixels using resolution and current scaling
+		const double scaleFactor = transform().m11();
+		const double gridSpacingPix = m_resolution*m_gridStep*scaleFactor;
 
-		// apply scaling
-		double scaleFactor = transform().m11();
-		gridSpacingPix *= scaleFactor;
+		// get dimensions of the drawing area (excluding scroll bars)
+		const QSize windowSize = viewport()->size();
 
-		// get dimensions
-		int h = height();
-		int w = width();
-		QSize windowSize(w,h);
-
-		// if new reference point, grid scale factor and window size still match cached values, do
+		// if reference point, grid spacing and window size still match cached values, do
 		// not recompute grid lines
 		if (gridSpacingPix != m_gridSpacingPixLast ||
 			p1 != m_pLast ||
 			windowSize != m_windowSizeLast)
 		{
-
 			// cache values used for calculation
 			m_pLast = p1;
 			m_gridSpacingPixLast = gridSpacingPix;
 			m_windowSizeLast = windowSize;
 
-			// *** major grid ***
-
-			// clear major grid lines
-			m_majorGrid.clear();
-
-			// only regenerate mesh and draw grid if spacing is big enough
-			if (gridSpacingPix >= 5) {
-
-				// calculate offset - we start at 0 pix in scaled scene coordinates
-				int linesXTillView = std::floor(-p1.x()/gridSpacingPix + 1);
-				double offsetX = linesXTillView*gridSpacingPix + p1.x();
-
-				int linesYTillView = std::floor(-p1.y()/gridSpacingPix + 1);
-				double offsetY = linesYTillView*gridSpacingPix + p1.y();
-
-				for (double x = offsetX; x < w; x += gridSpacingPix) {
-					m_majorGrid.append(QLineF(x, 0, x, h));
-				}
-				for (double y = offsetY; y < h; y += gridSpacingPix) {
-					m_majorGrid.append(QLineF(0, y, w, y));
-				}
-			}
-
-
-			// *** minor grid ***
-
-			// compute nominal pixels using resolution, this time for minor grid
-			gridSpacingPix = m_resolution*m_gridStep*0.1;
-
-			// apply scaling
-			scaleFactor = transform().m11();
-			gridSpacingPix *= scaleFactor;
-
-			// clear minor grid lines
-			m_minorGrid.clear();
-
-			// only draw grid if spacing is big enough
-			if (gridSpacingPix >= 5) {
-
-				// calculate offset - we start at 0 pix in scaled scene coordinates
-				int linesXTillView = std::floor(-p1.x()/gridSpacingPix + 1);
-				double offsetX = linesXTillView*gridSpacingPix + p1.x();
-
-				int linesYTillView = std::floor(-p1.y()/gridSpacingPix + 1);
-				double offsetY = linesYTillView*gridSpacingPix + p1.y();
-
-				// create a vector of lines to draw
-				m_minorGrid.clear();
-
-				for (double x = offsetX; x < w; x += gridSpacingPix) {
-					m_minorGrid.append(QLineF(x, 0, x, h));
-				}
-				for (double y = offsetY; y < h; y += gridSpacingPix) {
-					m_minorGrid.append(QLineF(0, y, w, y));
-				}
-
-			}
+			computeGridLines(m_majorGrid, p1, gridSpacingPix, windowSize);
+			// minor grid has 10 times finer spacing
+			computeGridLines(m_minorGrid, p1, gridSpacingPix*0.1, windowSize);
 		}
+
 		// we paint in view coordinates
+		QPainter p(viewport());
 		p.setPen( QColor(220,220,255) );
 		p.drawLines(m_minorGrid.data(), m_minorGrid.size());
 
-		// we paint in view coordinates
 		p.setPen( m_gridColor );
 		p.drawLines(m_majorGrid.data(), m_majorGrid.size());
-
-	}
+	} // painter must be destroyed before QGraphicsView paints on the viewport
 
 	QGraphicsView::paintEvent(i_event);
+}
+
+
+void ZoomMeshGraphicsView::computeGridLines(QVarLengthArray<QLineF, 100> & lines, const QPointF & origin,
+											double gridSpacingPix, const QSize & windowSize)
+{
+	lines.clear();
+	// only generate grid lines if spacing is big enough
+	if (gridSpacingPix < 5)
+		return;
+
+	const int w = windowSize.width();
+	const int h = windowSize.height();
+
+	// calculate offset of first grid line in view - grid lines pass through scene origin;
+	// number of lines is kept as double to avoid int overflow at extreme zoom levels
+	const double linesXTillView = std::floor(-origin.x()/gridSpacingPix + 1);
+	const double offsetX = linesXTillView*gridSpacingPix + origin.x();
+
+	const double linesYTillView = std::floor(-origin.y()/gridSpacingPix + 1);
+	const double offsetY = linesYTillView*gridSpacingPix + origin.y();
+
+	for (double x = offsetX; x < w; x += gridSpacingPix)
+		lines.append(QLineF(x, 0, x, h));
+	for (double y = offsetY; y < h; y += gridSpacingPix)
+		lines.append(QLineF(0, y, w, y));
 }
 
 
@@ -233,15 +198,16 @@ void ZoomMeshGraphicsView::leaveEvent(QEvent *event) {
 
 void ZoomMeshGraphicsView::mouseMoveEvent(QMouseEvent *i_event) {
 	if (m_middleButtonPressed) {
-		horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (i_event->x() - m_pos.x()));
-		verticalScrollBar()->setValue(verticalScrollBar()->value() - (i_event->y() - m_pos.y()));
-		m_pos = i_event->pos();
+		const QPointF delta = i_event->position() - m_pos;
+		horizontalScrollBar()->setValue(horizontalScrollBar()->value() - qRound(delta.x()));
+		verticalScrollBar()->setValue(verticalScrollBar()->value() - qRound(delta.y()));
+		m_pos = i_event->position();
 		i_event->accept();
 		return;
 	}
 	else {
 		QGraphicsView::mouseMoveEvent(i_event);
-		m_pos = mapToScene(i_event->pos());
+		m_pos = i_event->position(); // view coordinates, same as in mousePressEvent()
 		viewport()->update();
 	}
 }
@@ -260,45 +226,25 @@ void ZoomMeshGraphicsView::setGridEnabled( bool enabled ) {
 
 
 void ZoomMeshGraphicsView::zoomIn() {
-
-	m_zoomLevel = std::min(m_zoomLevel+1, 3000);
-	double factor = std::pow(10,m_zoomLevel/20.0);
-	QTransform m(factor, 0, 0, factor, 0, 0);
-	setTransform(m);
-	changeResolutionEvent();
-
+	setZoomLevel(m_zoomLevel+1);
 }
 
 
 void ZoomMeshGraphicsView::zoomOut() {
-
-	m_zoomLevel = std::max(m_zoomLevel-1, -3000);
-	double factor = std::pow(10,m_zoomLevel/20.0);
-	QTransform m(factor, 0, 0, factor, 0, 0);
-	setTransform(m);
-	changeResolutionEvent();
-
+	setZoomLevel(m_zoomLevel-1);
 }
 
 
 void ZoomMeshGraphicsView::setZoomLevel(int zoomLevel) {
-
-	m_zoomLevel = std::max(zoomLevel, -3000);
-	m_zoomLevel = std::min(m_zoomLevel, 3000);
-
-	double factor = std::pow(10,m_zoomLevel/20.0);
-	QTransform m(factor, 0, 0, factor, 0, 0);
-	setTransform(m);
+	m_zoomLevel = std::clamp(zoomLevel, -3000, 3000);
+	double factor = std::pow(10, m_zoomLevel/20.0);
+	setTransform(QTransform(factor, 0, 0, factor, 0, 0));
 	changeResolutionEvent();
-
 }
 
 
 void ZoomMeshGraphicsView::resetZoom() {
-
-	m_zoomLevel = 0;
-	resetTransform();
-
+	setZoomLevel(0);
 }
 
 
