@@ -16,7 +16,6 @@ MSIMPreferencesPageGeneral::MSIMPreferencesPageGeneral(QWidget *parent) :
 #endif
 
 	// order must match MSIMSettings::ColorScheme
-	m_ui->comboBoxColorScheme->addItem(tr("System setting"));
 	m_ui->comboBoxColorScheme->addItem(tr("Light"));
 	m_ui->comboBoxColorScheme->addItem(tr("Dark"));
 }
