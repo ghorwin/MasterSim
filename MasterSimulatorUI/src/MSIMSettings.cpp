@@ -15,6 +15,9 @@
 #include <QApplication>
 #include <QStyle>
 #include <QStyleHints>
+#include <QStyleFactory>
+
+#include <memory>
 #include <QPalette>
 
 #include <phantomstyle.h>
@@ -312,6 +315,19 @@ static QPalette darkPalette() {
 }
 
 
+/*! Returns a light palette suitable for the Phantom style.
+	PhantomStyle::standardPalette() falls back to QStyle's legacy "Windows 2000" palette, whose
+	window color (212,208,200) is much darker than intended. Hence we use Fusion's neutral light
+	palette (window color 239,239,239), same as in the Phantom style comparison renderings.
+*/
+static QPalette lightPalette() {
+	std::unique_ptr<QStyle> fusion(QStyleFactory::create("Fusion"));
+	QPalette p = fusion ? fusion->standardPalette() : QApplication::style()->standardPalette();
+	p.setColor(QPalette::Highlight, QColor(48, 140, 198));
+	return p;
+}
+
+
 bool MSIMSettings::isDarkPalette() {
 	const QPalette pal = QApplication::palette();
 	return pal.color(QPalette::Window).lightness() < pal.color(QPalette::WindowText).lightness();
@@ -337,7 +353,7 @@ void MSIMSettings::applyWidgetStyle() const {
 	if (m_colorScheme == CS_Dark)
 		QApplication::setPalette(darkPalette());
 	else
-		QApplication::setPalette(QApplication::style()->standardPalette());
+		QApplication::setPalette(lightPalette());
 }
 
 
