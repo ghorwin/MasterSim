@@ -53,7 +53,6 @@ public:
 
 	/*! Color schemes selectable in the preferences dialog. */
 	enum ColorScheme {
-		CS_System,	// follow the platform/desktop color scheme
 		CS_Light,
 		CS_Dark,
 		NUM_CS
@@ -249,7 +248,7 @@ public:
 	bool						m_mergeConnectors = false;
 
 	/*! Color scheme (light/dark) used by the application. */
-	ColorScheme					m_colorScheme = CS_System;
+	ColorScheme					m_colorScheme = CS_Light;
 
 	/*! Enumeration values for different properties to be managed in settings.
 	*/

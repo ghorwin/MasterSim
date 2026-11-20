@@ -334,9 +334,7 @@ void MSIMSettings::applyWidgetStyle() const {
 		QApplication::setStyle(new PhantomStyle);
 
 	// Explicit palettes for light/dark mode, so that this works reliably on all platforms.
-	if (m_colorScheme == CS_System)
-		QApplication::setPalette(QPalette()); // reset to platform palette
-	else if (m_colorScheme == CS_Dark)
+	if (m_colorScheme == CS_Dark)
 		QApplication::setPalette(darkPalette());
 	else
 		QApplication::setPalette(QApplication::style()->standardPalette());
