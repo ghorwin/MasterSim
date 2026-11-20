@@ -51,13 +51,14 @@ MSIMViewConnections::MSIMViewConnections(QWidget *parent) :
 
 	// setup tables
 	m_ui->tableWidgetOutputVariable->verticalHeader()->setVisible(false);
-	m_ui->tableWidgetOutputVariable->setColumnCount(4);
+	m_ui->tableWidgetOutputVariable->setColumnCount(5);
 	headers.clear();
-	headers << tr("Slave") << tr("Variable") << tr("Type") << tr("Unit");
+	headers << QString() << tr("Slave") << tr("Variable") << tr("Type") << tr("Unit");
 	m_ui->tableWidgetOutputVariable->setHorizontalHeaderLabels(headers);
+	m_ui->tableWidgetOutputVariable->horizontalHeaderItem(0)->setToolTip(tr("Checked, if this output variable is connected to anything."));
 	m_ui->tableWidgetOutputVariable->setSortingEnabled(true);
 	m_ui->tableWidgetOutputVariable->horizontalHeader()->setSortIndicatorShown(true);
-	m_ui->tableWidgetOutputVariable->sortByColumn(0, Qt::AscendingOrder);
+	m_ui->tableWidgetOutputVariable->sortByColumn(1, Qt::AscendingOrder);
 
 	m_ui->tableWidgetOutputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
 	m_ui->tableWidgetInputVariable->setItemDelegate(new MSIMConnectionItemDelegate(this));
@@ -170,7 +171,7 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 		return;
 
 	// check for matching variable types
-	MASTER_SIM::FMIVariable::VarType vtOut = (MASTER_SIM::FMIVariable::VarType)m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->data(Qt::UserRole).toInt();
+	MASTER_SIM::FMIVariable::VarType vtOut = (MASTER_SIM::FMIVariable::VarType)m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 3)->data(Qt::UserRole).toInt();
 	MASTER_SIM::FMIVariable::VarType vtIn = (MASTER_SIM::FMIVariable::VarType)m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 2)->data(Qt::UserRole).toInt();
 	if (vtOut != vtIn && vtOut != MASTER_SIM::FMIVariable::NUM_VT) {
 		QMessageBox::critical(this, tr("Connection error"), tr("Cannot connect variables of different type."));
@@ -179,9 +180,9 @@ void MSIMViewConnections::on_toolButtonAddConnection_clicked() {
 
 	// create new graph edge and add it to project
 	MASTER_SIM::Project::GraphEdge edge;
-	edge.m_outputVariableRef = m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 0)->text().toStdString();
+	edge.m_outputVariableRef = m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 1)->text().toStdString();
 	edge.m_outputVariableRef += ".";
-	edge.m_outputVariableRef += m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 1)->text().toStdString();
+	edge.m_outputVariableRef += m_ui->tableWidgetOutputVariable->item(outputVarCurrentIdx, 2)->text().toStdString();
 
 	edge.m_inputVariableRef = m_ui->tableWidgetInputVariable->item(inputVarCurrentIdx, 0)->text().toStdString();
 	edge.m_inputVariableRef += ".";
@@ -587,36 +588,31 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 
 				int currentRow = table->rowCount();
 				table->setRowCount(currentRow+1);
+				int col = 0;
+				if (table == m_ui->tableWidgetOutputVariable) {
+					// leading column shows if this output variable is connected (no header)
+					QTableWidgetItem * connItem = new QTableWidgetItem( outputConnected ? QString(QChar(0x2713)) : QString() );
+					connItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+					connItem->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
+					connItem->setToolTip(tr("Checked, if this output variable is connected to anything."));
+					table->setItem(currentRow, col++, connItem);
+				}
+
 				QTableWidgetItem * item = new QTableWidgetItem( QString::fromStdString(simDef.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
-				if (outputConnected) {
-					QFont f(item->font());
-					f.setBold(true);
-					item->setFont(f);
-				}
-				table->setItem(currentRow, 0, item);
+				table->setItem(currentRow, col++, item);
 
 				item = new QTableWidgetItem( QString::fromStdString(var.m_name));
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
-				if (outputConnected) {
-					QFont f(item->font());
-					f.setBold(true);
-					item->setFont(f);
-				}
-				table->setItem(currentRow, 1, item);
+				table->setItem(currentRow, col++, item);
 
 				item = new QTableWidgetItem( QString( MASTER_SIM::FMIVariable::varType2String(var.m_type) ));
 				item->setData(Qt::UserRole, var.m_type);
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
-				if (outputConnected) {
-					QFont f(item->font());
-					f.setBold(true);
-					item->setFont(f);
-				}
-				table->setItem(currentRow, 2, item);
+				table->setItem(currentRow, col++, item);
 
 				if (var.m_type == MASTER_SIM::FMIVariable::VT_DOUBLE) {
 					QString unit = QString::fromStdString(var.m_unit);
@@ -628,12 +624,7 @@ void MSIMViewConnections::updateInputOutputVariablesTables() {
 					item = new QTableWidgetItem("");
 				item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				item->setForeground( QColor(QRgb(simDef.m_color.toQRgb())) );
-				if (outputConnected) {
-					QFont f(item->font());
-					f.setBold(true);
-					item->setFont(f);
-				}
-				table->setItem(currentRow, 3, item);
+				table->setItem(currentRow, col, item);
 			}
 		}
 		catch (IBK::Exception &) {
@@ -671,22 +662,22 @@ void MSIMViewConnections::resizeTableColumns() {
 	// in case that the slave name very long and there is less 60 pix space for the variable column,
 	// we subtract a little from the first column
 	m_ui->tableWidgetOutputVariable->resizeColumnToContents(0);
-	m_ui->tableWidgetOutputVariable->resizeColumnToContents(2);
 	m_ui->tableWidgetOutputVariable->resizeColumnToContents(3);
+	m_ui->tableWidgetOutputVariable->resizeColumnToContents(4);
 
 	int w = m_ui->tableWidgetOutputVariable->contentsRect().width();
-	w -= m_ui->tableWidgetOutputVariable->columnWidth(2) + m_ui->tableWidgetOutputVariable->columnWidth(3);
-	int w2 = w - m_ui->tableWidgetOutputVariable->columnWidth(0); // size of second column
-	if (w2 < 60) { // too small? space is evenly distributed between first two columns
+	w -= m_ui->tableWidgetOutputVariable->columnWidth(0) + m_ui->tableWidgetOutputVariable->columnWidth(3) + m_ui->tableWidgetOutputVariable->columnWidth(4);
+	int w2 = w - m_ui->tableWidgetOutputVariable->columnWidth(1); // size of variable column
+	if (w2 < 60) { // too small? space is evenly distributed between slave and variable columns
 		w2 = w/2;
 		w = w/2;
 	}
 	else {
-		w -= w2; // w now is width of first column
+		w -= w2; // w now is width of slave column
 	}
 	// remaining space is to be distributed by slave and variable columns
-	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(0, w);
-	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(1, w2);
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(1, w);
+	m_ui->tableWidgetOutputVariable->horizontalHeader()->resizeSection(2, w2);
 
 	m_ui->tableWidgetInputVariable->resizeColumnToContents(0);
 	m_ui->tableWidgetInputVariable->resizeColumnToContents(2);
