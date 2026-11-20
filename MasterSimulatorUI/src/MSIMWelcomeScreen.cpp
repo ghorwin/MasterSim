@@ -9,6 +9,7 @@
 #include <QPixmap>
 #include <QUrl>
 #include <QDebug>
+#include <QApplication>
 
 #include <MSIM_Project.h>
 #include <MSIM_Constants.h>
@@ -30,6 +31,7 @@ MSIMWelcomeScreen::MSIMWelcomeScreen(QWidget *parent) :
 	m_showRecentlyOpenedFiles(true)
 {
 	m_ui->setupUi(this);
+	updateBackgroundColor();
 	connect(m_networkManager, SIGNAL(finished(QNetworkReply*)),
 			this, SLOT(downloadFinished(QNetworkReply*)));
 	connect(m_ui->textBrowser, SIGNAL(anchorClicked(QUrl)),
@@ -44,7 +46,8 @@ MSIMWelcomeScreen::~MSIMWelcomeScreen() {
 
 void MSIMWelcomeScreen::updateWelcomePage() {
 	// download news content (only once per application start)
-	if (m_welcomePageNews.isEmpty()) {
+	if (m_welcomePageNews.isEmpty() && !m_newsRequested) {
+		m_newsRequested = true;
 		// download file
 		QString newsUrls(MASTERSIM_NEWS_URL);
 		QNetworkRequest request(newsUrls);
@@ -52,6 +55,18 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 	}
 	// now create overall page
 	QString htmlPage = HTML_TEMPLATE;
+
+	// insert colors matching the current palette (light/dark)
+	const QPalette pal = QApplication::palette();
+	const bool dark = MSIMSettings::isDarkPalette();
+	htmlPage.replace("${COLOR_TEXT}", pal.color(QPalette::Text).name());
+	htmlPage.replace("${COLOR_BACKGROUND}", pal.color(QPalette::Base).name());
+	htmlPage.replace("${COLOR_LINK}", dark ? "#6CB4FF" : "#0053A6");
+	htmlPage.replace("${COLOR_LINK_HOVER}", dark ? "#A3D0FF" : "#1C7DEF");
+	htmlPage.replace("${COLOR_H1}", dark ? "#8CC4FF" : "#003264");
+	htmlPage.replace("${COLOR_H2}", dark ? "#6FB8E8" : "#0069A8");
+	htmlPage.replace("${COLOR_H3}", dark ? "#7CD68A" : "#00660F");
+	const QString errorColor = dark ? "#FF8080" : "#800000";
 	// insert news
 	if (m_welcomePageNews.isEmpty()) {
 		htmlPage.replace("${NEWS}", QString("<i>%1</i>")
@@ -99,11 +114,11 @@ void MSIMWelcomeScreen::updateWelcomePage() {
 				}
 				catch (IBK::Exception &) {
 					// error reading project file, missing permissions?
-					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project</font></i>");
+					description = tr("<i><font color=\"#800000\">Project not accessible/error reading project</font></i>").replace("#800000", errorColor);
 				}
 			}
 			else {
-				description = tr("<i><font color=\"#800000\">Project not accessible </font></i>");
+				description = tr("<i><font color=\"#800000\">Project not accessible </font></i>").replace("#800000", errorColor);
 			}
 
 			QString thumbPath = MSIMDirectories::userDataDir()  + "/thumbs/" + finfo.fileName() + ".png";
@@ -280,6 +295,29 @@ void MSIMWelcomeScreen::on_toolButtonOpenProject_clicked() {
 }
 
 
+void MSIMWelcomeScreen::changeEvent(QEvent * event) {
+	QWidget::changeEvent(event);
+	if ((event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange) && !m_updatingPalette) {
+		updateBackgroundColor();
+		updateWelcomePage();
+	}
+}
+
+
+void MSIMWelcomeScreen::updateBackgroundColor() {
+	// the welcome page looks like a document page: use the base color (white in light mode)
+	// for the background of the entire widget, including the tool buttons area
+	QPalette pal = palette();
+	const QColor base = QApplication::palette().color(QPalette::Base);
+	if (pal.color(QPalette::Window) == base)
+		return;
+	m_updatingPalette = true;
+	pal.setColor(QPalette::Window, base);
+	setPalette(pal);
+	m_updatingPalette = false;
+}
+
+
 void MSIMWelcomeScreen::downloadFinished(QNetworkReply *reply) {
 	if (reply->error()) {
 		m_welcomePageNews = tr("<p>&nbsp;<p><hr><h1>No news today</h1><p><i>Unable to download news content at this time.</i></p>");
@@ -315,16 +353,16 @@ const char * const HTML_TEMPLATE =
 		"<head>\n"
 		"<!-- <link rel=stylesheet type=\"text/css\" href=\"welcome.css\"> -->\n"
 		"<style type=\"text/css\">\n"
-		"body     { font-size: medium; color: black; background-color: white }\n"
-		"a        { color: #0053A6; text-decoration:none }\n"
-		"a:hover  { color: #1C7DEF; background-color: white }\n"
+		"body     { font-size: medium; color: ${COLOR_TEXT}; background-color: ${COLOR_BACKGROUND} }\n"
+		"a        { color: ${COLOR_LINK}; text-decoration:none }\n"
+		"a:hover  { color: ${COLOR_LINK_HOVER}; background-color: ${COLOR_BACKGROUND} }\n"
 		"p        { font-size: medium; text-align: justify; margin-top:0px; margin-bottom:8px;   }\n"
-		"h1       { font-size: large; color: #003264; font-weight:bold; \n"
+		"h1       { font-size: large; color: ${COLOR_H1}; font-weight:bold; \n"
 		"           text-decoration: none; margin-top:15px; margin-bottom:15px }\n"
-		"h2       { font-size: medium; color: #0069A8; font-weight:bold; margin-top:15px; margin-bottom:6px }\n"
-		"h3       { font-size: medium; color: #00660F; font-weight:bold; margin-top:10px; margin-bottom:2px}\n"
+		"h2       { font-size: medium; color: ${COLOR_H2}; font-weight:bold; margin-top:15px; margin-bottom:6px }\n"
+		"h3       { font-size: medium; color: ${COLOR_H3}; font-weight:bold; margin-top:10px; margin-bottom:2px}\n"
 		"table    { font-size: medium }\n"
-		"b        { color: black }\n"
+		"b        { color: ${COLOR_TEXT} }\n"
 		"li       { text-align: justify }\n"
 		"</style>\n"
 		"\n"

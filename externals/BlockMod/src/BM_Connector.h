@@ -101,8 +101,8 @@ public:
 	/*! Linewidth of drawn line */
 	double			m_linewidth = 0.8;
 
-	/*! Color of drawn line */
-	QColor			m_color = Qt::black;
+	/*! Color of drawn line (if invalid, the connector color of Globals::CurrentTheme is used). */
+	QColor			m_color;
 
 };
 

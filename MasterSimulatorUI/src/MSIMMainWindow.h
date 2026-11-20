@@ -69,10 +69,18 @@ public:
 	const QPixmap & modelPixmap(const std::string & slaveName) const;
 
 protected:
-	/*! Checks if project file has been changed by external application. */
+	/*! Checks if project file has been changed by external application.
+		Also updates diagram colors when the application palette changes (light/dark mode).
+	*/
 	void changeEvent(QEvent *event);
 	/*! Does the confirm-saving-before-close stuff. */
 	void closeEvent(QCloseEvent * event);
+
+private:
+	/*! Selects the BlockMod color theme matching the application palette (light/dark) and
+		repaints all network views.
+	*/
+	void updateDiagramTheme();
 
 private slots:
 	void on_actionFileNew_triggered();

@@ -157,36 +157,37 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 	// 0,0 is the top-left corner of the parent block.
 
 	// distinguish between inlet and outlet sockets
+	const Theme & theme = Globals::CurrentTheme;
 	QRectF r = m_symbolRect;
 	if (m_socket->m_inlet) {
-		painter->setBrush(Qt::white);
+		painter->setBrush(theme.socketInletFill);
 		switch (m_socket->direction()) {
 			case Socket::Left		:
 				// left side
-				painter->setPen(Qt::white);
+				painter->setPen(theme.socketInletFill);
 				painter->drawPie(r, 90*16, -180*16);
-				painter->setPen(Qt::black);
+				painter->setPen(theme.socketOutline);
 				painter->drawArc(r, 90*16, -180*16);
 			break;
 			case Socket::Right		:
 				// right side
-				painter->setPen(Qt::white);
+				painter->setPen(theme.socketInletFill);
 				painter->drawPie(r, 90*16, 180*16);
-				painter->setPen(Qt::black);
+				painter->setPen(theme.socketOutline);
 				painter->drawArc(r, 90*16, 180*16);
 			break;
 			case Socket::Top		:
 				// top side
-				painter->setPen(Qt::white);
+				painter->setPen(theme.socketInletFill);
 				painter->drawPie(r, 0*16, -180*16);
-				painter->setPen(Qt::black);
+				painter->setPen(theme.socketOutline);
 				painter->drawArc(r, 0*16, -180*16);
 			break;
 			case Socket::Bottom		:
 				// bottom side
-				painter->setPen(Qt::white);
+				painter->setPen(theme.socketInletFill);
 				painter->drawPie(r, 0*16, 180*16);
-				painter->setPen(Qt::black);
+				painter->setPen(theme.socketOutline);
 				painter->drawArc(r, 0*16, 180*16);
 			break;
 		}
@@ -196,7 +197,7 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 		if (sceneManager != nullptr && blockItem != nullptr && sceneManager->isConnectedSocket(blockItem->block(), m_socket)) {
 			painter->save();
 			painter->setPen(Qt::NoPen);
-			painter->setBrush(Qt::black);
+			painter->setBrush(theme.socketConnectedMark);
 			QRectF r2(r.x()+2, r.y()+2, r.width() - 4, r.height() - 4);
 			painter->drawEllipse(r2);
 			painter->restore();
@@ -204,9 +205,9 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 
 		if (m_hovered) {
 			painter->save();
-			QPen p(QColor(192,0,0), 0.8);
+			QPen p(theme.socketHoverOutline, 0.8);
 			painter->setPen(p);
-			painter->setBrush(QBrush(QColor(96,0,0)));
+			painter->setBrush(QBrush(theme.socketHoverFill));
 			QRectF r2(r.x()-1, r.y()-1, r.width() + 2, r.height() + 2);
 			painter->drawEllipse(r2);
 			painter->restore();
@@ -241,13 +242,13 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 			break;
 		}
 		p.closeSubpath(); // so that the outline is also drawn along the back edge of the triangle
-		QPen pen(Qt::black);
+		QPen pen(theme.socketOutline);
 		pen.setCapStyle(Qt::RoundCap);
 		painter->setPen(pen);
 		if (m_hovered)
-			painter->fillPath(p, Qt::white);
+			painter->fillPath(p, theme.socketInletFill);
 		else
-			painter->setBrush(QColor(0,0,196));
+			painter->setBrush(theme.socketOutletFill);
 		painter->drawPath(p);
 	}
 
@@ -263,6 +264,7 @@ void SocketItem::paint(QPainter *painter, const QStyleOptionGraphicsItem * /*opt
 	f.setPointSizeF(Globals::LabelFontSize);
 	QFontMetricsF metrics(f);
 	painter->setFont(f);
+	painter->setPen(theme.socketLabel);
 	QRectF textBoundingRect = metrics.boundingRect(m_socket->nameWithUnit());
 	textBoundingRect.setWidth(textBoundingRect.width()+6); // add some space to avoid clipping of italic fonts to the right
 

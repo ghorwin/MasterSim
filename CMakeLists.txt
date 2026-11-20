@@ -113,6 +113,7 @@ if (NOT DISABLE_QT)
 	message("*** Building Qt-based libs ***")
 
 	add_subdirectory( externals/BlockMod )
+	add_subdirectory( externals/phantom-style )
 endif (NOT DISABLE_QT)
 
 # -------------------------------------------------------------

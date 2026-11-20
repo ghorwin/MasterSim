@@ -141,7 +141,7 @@ private:
 	/*! The minor grid lines. */
 	QVarLengthArray<QLineF, 100>	m_minorGrid;
 
-	/*! The grid color (major grid). */
+	/*! The grid color (major grid); if invalid, the major grid color of Globals::CurrentTheme is used. */
 	QColor							m_gridColor;
 
 	/*! Cached reference point used during last grid update. */

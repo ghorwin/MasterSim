@@ -49,6 +49,9 @@
 #include "MSIMPostProcBindings.h"
 #include "MSIMLanguageHandler.h"
 
+#include <QGraphicsView>
+#include <BM_Globals.h>
+
 MSIMMainWindow * MSIMMainWindow::m_self = nullptr;
 
 MSIMMainWindow & MSIMMainWindow::instance() {
@@ -91,6 +94,8 @@ MSIMMainWindow::MSIMMainWindow(QWidget * /*parent*/, Qt::WindowFlags /*flags*/) 
 
 	m_ui->setupUi(this);
 
+	// select diagram colors matching the current palette
+	updateDiagramTheme();
 
 	// *** setup welcome widget ***
 
@@ -295,6 +300,8 @@ const QPixmap & MSIMMainWindow::modelPixmap(const std::string & slaveName) const
 
 void MSIMMainWindow::changeEvent(QEvent *event) {
 	const char * const FUNC_ID = "[MSIMMainWindow::changeEvent]";
+	if (event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange)
+		updateDiagramTheme();
 	if (event->type() == QEvent::ActivationChange && this->isActiveWindow()){
 		if (MSIMProjectHandler::instance().isValid() && !MSIMProjectHandler::instance().projectFile().isEmpty()) {
 			// check for externally modified project file and trigger "reload" action
@@ -325,6 +332,13 @@ void MSIMMainWindow::changeEvent(QEvent *event) {
 	}
 
 	QMainWindow::changeEvent(event);
+}
+
+
+void MSIMMainWindow::updateDiagramTheme() {
+	BLOCKMOD::Globals::CurrentTheme = MSIMSettings::isDarkPalette() ? BLOCKMOD::Theme::dark() : BLOCKMOD::Theme::light();
+	for (QGraphicsView * view : findChildren<QGraphicsView *>())
+		view->viewport()->update();
 }
 
 

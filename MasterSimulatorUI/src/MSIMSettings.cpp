@@ -12,6 +12,12 @@
 #include <QTextStream>
 #include <QFileInfo>
 #include <QStandardPaths>
+#include <QApplication>
+#include <QStyle>
+#include <QStyleHints>
+#include <QPalette>
+
+#include <phantomstyle.h>
 
 #include "MSIMConversion.h"
 #include <MSIM_Constants.h>
@@ -220,6 +226,10 @@ void MSIMSettings::read(QString regName) {
 
 	m_postProcExecutable = settings.value("PostProcExecutable", QString()).toString();
 	m_terminalEmulator = (TerminalEmulators)settings.value("TerminalEmulator", TE_None).toInt();
+
+	int cs = settings.value("ColorScheme", (int)m_colorScheme).toInt();
+	if (cs >= 0 && cs < NUM_CS)
+		m_colorScheme = (ColorScheme)cs;
 }
 
 
@@ -259,6 +269,77 @@ void MSIMSettings::write(QByteArray geometry, QByteArray state) {
 
 	settings.setValue("PostProcExecutable", m_postProcExecutable );
 	settings.setValue("TerminalEmulator", m_terminalEmulator);
+	settings.setValue("ColorScheme", (int)m_colorScheme);
+}
+
+
+/*! Returns a dark palette suitable for the Phantom style. */
+static QPalette darkPalette() {
+	const QColor window(53, 53, 53);
+	const QColor base(42, 42, 42);
+	const QColor text(230, 230, 230);
+	const QColor disabledText(127, 127, 127);
+	const QColor highlight(42, 130, 218);
+
+	QPalette p;
+	p.setColor(QPalette::Window, window);
+	p.setColor(QPalette::WindowText, text);
+	p.setColor(QPalette::Base, base);
+	p.setColor(QPalette::AlternateBase, QColor(66, 66, 66));
+	p.setColor(QPalette::ToolTipBase, window);
+	p.setColor(QPalette::ToolTipText, text);
+	p.setColor(QPalette::PlaceholderText, disabledText);
+	p.setColor(QPalette::Text, text);
+	p.setColor(QPalette::Button, window);
+	p.setColor(QPalette::ButtonText, text);
+	p.setColor(QPalette::BrightText, Qt::red);
+	p.setColor(QPalette::Light, window.lighter(150));
+	p.setColor(QPalette::Midlight, window.lighter(125));
+	p.setColor(QPalette::Mid, window.darker(120));
+	p.setColor(QPalette::Dark, window.darker(150));
+	p.setColor(QPalette::Shadow, QColor(20, 20, 20));
+	p.setColor(QPalette::Highlight, highlight);
+	p.setColor(QPalette::HighlightedText, Qt::white);
+	p.setColor(QPalette::Link, highlight.lighter(130));
+	p.setColor(QPalette::LinkVisited, QColor(160, 120, 220));
+
+	p.setColor(QPalette::Disabled, QPalette::WindowText, disabledText);
+	p.setColor(QPalette::Disabled, QPalette::Text, disabledText);
+	p.setColor(QPalette::Disabled, QPalette::ButtonText, disabledText);
+	p.setColor(QPalette::Disabled, QPalette::Highlight, QColor(80, 80, 80));
+	p.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledText);
+	return p;
+}
+
+
+bool MSIMSettings::isDarkPalette() {
+	const QPalette pal = QApplication::palette();
+	return pal.color(QPalette::Window).lightness() < pal.color(QPalette::WindowText).lightness();
+}
+
+
+void MSIMSettings::applyWidgetStyle() const {
+	// tell the platform which color scheme we want (affects window decorations and native dialogs)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
+	switch (m_colorScheme) {
+		case CS_Light	: QGuiApplication::styleHints()->setColorScheme(Qt::ColorScheme::Light); break;
+		case CS_Dark	: QGuiApplication::styleHints()->setColorScheme(Qt::ColorScheme::Dark); break;
+		default			: QGuiApplication::styleHints()->unsetColorScheme(); break;
+	}
+#endif
+
+	// Phantom style is used on all platforms for a consistent look; set it only once
+	// (QApplication takes ownership)
+	if (qobject_cast<PhantomStyle *>(QApplication::style()) == nullptr)
+		QApplication::setStyle(new PhantomStyle);
+
+	// Explicit palettes for light/dark mode, so that this works reliably on all platforms.
+	if (m_colorScheme == CS_System)
+		QApplication::setPalette(QPalette()); // reset to platform palette
+	else if (m_colorScheme == CS_Dark)
+		QApplication::setPalette(darkPalette());
+	else
+		QApplication::setPalette(QApplication::style()->standardPalette());
 }
 
 

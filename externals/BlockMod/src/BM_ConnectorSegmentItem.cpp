@@ -71,14 +71,16 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	if (Globals::nearZero(l.length()))
 		return;
 
+	const Theme & theme = Globals::CurrentTheme;
+	const QColor connectorColor = m_connector->m_color.isValid() ? m_connector->m_color : theme.connector;
 	painter->save();
 	if (m_isHighlighted) {
 		QPen p;
 		p.setWidthF(1.5 * m_connector->m_linewidth);
 		p.setStyle(Qt::SolidLine);
-		p.setColor(QColor(0,0,110));
+		p.setColor(theme.connectorHighlighted);
 		if (isSelected()) {
-			p.setColor(QColor(192,0,0));
+			p.setColor(theme.connectorSelected);
 			p.setStyle(Qt::DashLine);
 		}
 		painter->setPen(p);
@@ -87,11 +89,11 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	else {
 		QPen p;
 		p.setWidthF(m_connector->m_linewidth);
-		p.setColor(m_connector->m_color);
+		p.setColor(connectorColor);
 		p.setStyle(Qt::SolidLine);
 		if (isSelected()) {
 			p.setWidthF(1.5*m_connector->m_linewidth);
-			p.setColor(QColor(192,0,0));
+			p.setColor(theme.connectorSelected);
 			p.setStyle(Qt::DashLine);
 		}
 		painter->setPen(p);
@@ -121,10 +123,10 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 			QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
 			QPen p;
 			p.setWidthF(1);
-			p.setColor(m_connector->m_color);
+			p.setColor(connectorColor);
 			p.setStyle(Qt::SolidLine);
 			painter->setPen(p);
-			QBrush b(Qt::white);
+			QBrush b(theme.connectorLabelBackground);
 			painter->setBrush(b);
 			painter->drawRect(rectangle);
 

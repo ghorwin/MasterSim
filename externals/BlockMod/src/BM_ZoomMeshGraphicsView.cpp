@@ -42,6 +42,7 @@
 #include <cmath>
 
 #include "BM_SceneManager.h"
+#include "BM_Globals.h"
 
 namespace BLOCKMOD {
 
@@ -51,7 +52,6 @@ ZoomMeshGraphicsView::ZoomMeshGraphicsView(QWidget *parent) :
 	m_gridStep(0.1),
 	m_gridEnabled( true ),
 	m_zoomLevel(0),
-	m_gridColor( 175, 175, 255 ),
 	m_gridSpacingPixLast(0)
 {
 	setTransformationAnchor(AnchorUnderMouse);
@@ -135,10 +135,10 @@ void ZoomMeshGraphicsView::paintEvent(QPaintEvent *i_event){
 
 		// we paint in view coordinates
 		QPainter p(viewport());
-		p.setPen( QColor(220,220,255) );
+		p.setPen( Globals::CurrentTheme.gridMinor );
 		p.drawLines(m_minorGrid.data(), m_minorGrid.size());
 
-		p.setPen( m_gridColor );
+		p.setPen( m_gridColor.isValid() ? m_gridColor : Globals::CurrentTheme.gridMajor );
 		p.drawLines(m_majorGrid.data(), m_majorGrid.size());
 	} // painter must be destroyed before QGraphicsView paints on the viewport
 
