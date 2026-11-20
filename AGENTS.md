@@ -37,6 +37,10 @@ The qmake build (`MasterSim-session.pro`) uses `externals/IBK/IBK.pri`: librarie
 
 **Qt requirement:** Qt 6 is required. The build script auto-detects Qt installed via `aqtinstall` at `~/Qt/${AQT_QT_VERSION}/gcc_64` (default version 6.9.3). Override with `AQT_QT_VERSION` / `AQT_QT_PREFIX` env vars. Use `no-gui` to skip Qt and build only the solver and test FMUs.
 
+## Agents
+
+- never automatically build
+
 ## Running Tests
 
 ```bash
