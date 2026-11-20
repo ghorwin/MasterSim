@@ -150,6 +150,9 @@ QPixmap SceneManager::generatePixmap(QSize targetSize) {
 	// Define source rectangle and enlarge source rect a little to include boundary lines which
 	// would otherwise be clipped during pixel based rendering
 
+	// pixmaps are used for thumbnails and exports, so always use the light theme
+	ScopedTheme lightTheme(Theme::light());
+
 	QPixmap pm(targetSize);
 	pm.fill(Qt::white);
 

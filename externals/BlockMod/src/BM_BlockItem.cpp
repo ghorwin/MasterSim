@@ -168,23 +168,26 @@ void BlockItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * optio
 		painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, m_block->m_name);
 	}
 	else {
+		const Theme & theme = Globals::CurrentTheme;
 		QLinearGradient grad(QPointF(0,0), QPointF(rect().width(),0));
+		QPen borderPen(theme.blockBorder);
 		if (option->state & QStyle::State_Selected) {
-			painter->setPen(QPen(QBrush(QColor(0,128,0)), 1.5));
-			grad.setColorAt(0, QColor(230,255,230));
-			grad.setColorAt(1, QColor(200,240,180));
+			borderPen = QPen(QBrush(theme.blockSelectedBorder), 1.5);
+			grad.setColorAt(0, theme.blockSelectedGradientLeft);
+			grad.setColorAt(1, theme.blockSelectedGradientRight);
 		}
 		else {
-			grad.setColorAt(0, QColor(196,196,255));
-			grad.setColorAt(1, QColor(220,220,255));
+			grad.setColorAt(0, theme.blockGradientLeft);
+			grad.setColorAt(1, theme.blockGradientRight);
 		}
 		painter->setBrush(grad);
 		painter->fillRect(rect(), grad);
-		painter->setPen( Qt::black );
+		painter->setPen(borderPen);
 		painter->drawRect(rect());
 		// now draw the label of the block
 		QRectF r = rect();
 		r.moveTop(4);
+		painter->setPen(theme.blockText);
 		painter->drawText(r, Qt::AlignTop | Qt::AlignHCenter, m_block->m_name);
 	}
 	painter->restore();

@@ -34,7 +34,62 @@
 #ifndef BM_GlobalsH
 #define BM_GlobalsH
 
+#include <QColor>
+
 namespace BLOCKMOD {
+
+/*! Colors used to paint blocks, sockets, connectors and the grid.
+	Use Theme::light() (default) or Theme::dark() or customize individual colors and
+	set them via Globals::CurrentTheme. Afterwards, update the scenes/views.
+*/
+struct Theme {
+	/*! Default light theme (for light widget palettes and printing/exporting). */
+	static Theme light();
+	/*! Dark theme (for dark widget palettes). */
+	static Theme dark();
+
+	QColor gridMinor;
+	QColor gridMajor;
+
+	QColor blockGradientLeft;
+	QColor blockGradientRight;
+	QColor blockSelectedGradientLeft;
+	QColor blockSelectedGradientRight;
+	QColor blockBorder;
+	QColor blockSelectedBorder;
+	QColor blockText;
+	/*! Color that slave-specific block colors are blended with (white in light themes). */
+	QColor blockTintBase;
+
+	QColor socketOutline;
+	QColor socketInletFill;
+	QColor socketConnectedMark;
+	QColor socketOutletFill;
+	QColor socketHoverOutline;
+	QColor socketHoverFill;
+	QColor socketLabel;
+
+	/*! Used for connectors without explicitly set color. */
+	QColor connector;
+	QColor connectorHighlighted;
+	QColor connectorSelected;
+	QColor connectorLabelBackground;
+};
+
+
+/*! Temporarily switches Globals::CurrentTheme (e.g. to light theme for printing/exporting),
+	restores the previous theme on destruction.
+*/
+class ScopedTheme {
+public:
+	explicit ScopedTheme(const Theme & theme);
+	~ScopedTheme();
+private:
+	ScopedTheme(const ScopedTheme &) = delete;
+	ScopedTheme & operator=(const ScopedTheme &) = delete;
+	Theme m_previousTheme;
+};
+
 
 class Globals {
 public:
@@ -52,6 +107,9 @@ public:
 
 	/*! Constant to identify hidden block used during connection operation. */
 	static const char * const InvisibleLabel;
+
+	/*! Colors used for painting (default: Theme::light()). */
+	static Theme CurrentTheme;
 };
 
 } // namespace BLOCKMOD

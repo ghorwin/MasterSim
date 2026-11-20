@@ -154,9 +154,21 @@ private slots:
 
 	void on_pushButtonExportImage_clicked();
 
+protected:
+	/*! Updates the colors of the slave table when the palette changes (light/dark mode). */
+	void changeEvent(QEvent * event) override;
+
 private:
 	/*! Updates the table with all slaves defined for this simulation scenario. */
 	void updateSlaveTable();
+
+	/*! Sets a subtle selection color for the slave table (so that the slave color cell
+		remains visible), matching the current light/dark palette.
+		\note This is done via palette and not via style sheet, because widgets with style sheets
+			  keep the palette from the time they were polished and do not follow later changes
+			  of the application palette.
+	*/
+	void updateSlaveTableColors();
 
 	/*! Populates the slave-specific parameter table which shows all parameters set by MasterSim.
 		\param slaveIndex An index of a slave/simulator in the project. -1 means non selected/available.

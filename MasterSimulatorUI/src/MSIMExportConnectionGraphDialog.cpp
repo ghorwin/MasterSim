@@ -9,6 +9,7 @@
 
 #include <BM_ZoomMeshGraphicsView.h>
 #include <BM_SceneManager.h>
+#include <BM_Globals.h>
 
 #include "MSIMProjectHandler.h"
 
@@ -125,6 +126,7 @@ void MSIMExportConnectionGraphDialog::print(QPrinter *printer, bool showMarginFr
 
 	// scale source rect back to scene rect
 	sourceRect = QRectF(scaledSourceRect.left()/scale, scaledSourceRect.top()/scale, scaledSourceRect.width()/scale, scaledSourceRect.height()/scale);
+	BLOCKMOD::ScopedTheme lightTheme(BLOCKMOD::Theme::light()); // printouts always use the light theme
 	scene->render(&painter, targetRect, sourceRect, Qt::IgnoreAspectRatio);
 
 }
@@ -220,6 +222,7 @@ void MSIMExportConnectionGraphDialog::on_pushButtonExportImage_clicked() {
 		generator.setTitle(QFileInfo(MSIMProjectHandler::instance().projectFile()).fileName());
 //		generator.setDescription(MSIMProjectHandler::instance().project().m_comment);
 		QPainter p(&generator);
+		BLOCKMOD::ScopedTheme lightTheme(BLOCKMOD::Theme::light()); // exported graphics always use the light theme
 		scene->render(&p, QRectF(0,0,s.width(),s.height()));
 	}
 }

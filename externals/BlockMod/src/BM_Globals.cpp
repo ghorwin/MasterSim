@@ -47,5 +47,73 @@ double Globals::LabelFontSize = 8;
 
 const char * const Globals::InvisibleLabel = "[(-I am invisible-)]";
 
+Theme Globals::CurrentTheme = Theme::light();
+
+
+Theme Theme::light() {
+	Theme t;
+	t.gridMinor						= QColor(220,220,255);
+	t.gridMajor						= QColor(175,175,255);
+	t.blockGradientLeft				= QColor(196,196,255);
+	t.blockGradientRight			= QColor(220,220,255);
+	t.blockSelectedGradientLeft		= QColor(230,255,230);
+	t.blockSelectedGradientRight	= QColor(200,240,180);
+	t.blockBorder					= Qt::black;
+	t.blockSelectedBorder			= QColor(0,128,0);
+	t.blockText						= Qt::black;
+	t.blockTintBase					= Qt::white;
+	t.socketOutline					= Qt::black;
+	t.socketInletFill				= Qt::white;
+	t.socketConnectedMark			= Qt::black;
+	t.socketOutletFill				= QColor(0,0,196);
+	t.socketHoverOutline			= QColor(192,0,0);
+	t.socketHoverFill				= QColor(96,0,0);
+	t.socketLabel					= Qt::black;
+	t.connector						= Qt::black;
+	t.connectorHighlighted			= QColor(0,0,110);
+	t.connectorSelected				= QColor(192,0,0);
+	t.connectorLabelBackground		= Qt::white;
+	return t;
+}
+
+
+Theme Theme::dark() {
+	Theme t;
+	t.gridMinor						= QColor(52,52,64);
+	t.gridMajor						= QColor(72,72,110);
+	t.blockGradientLeft				= QColor(58,58,105);
+	t.blockGradientRight			= QColor(72,72,122);
+	t.blockSelectedGradientLeft		= QColor(45,95,45);
+	t.blockSelectedGradientRight	= QColor(60,110,48);
+	t.blockBorder					= QColor(200,200,200);
+	t.blockSelectedBorder			= QColor(110,210,110);
+	t.blockText						= QColor(235,235,235);
+	t.blockTintBase					= QColor(30,30,30);
+	t.socketOutline					= QColor(200,200,200);
+	t.socketInletFill				= QColor(42,42,42);
+	t.socketConnectedMark			= QColor(225,225,225);
+	t.socketOutletFill				= QColor(100,140,255);
+	t.socketHoverOutline			= QColor(255,100,100);
+	t.socketHoverFill				= QColor(200,60,60);
+	t.socketLabel					= QColor(225,225,225);
+	t.connector						= QColor(210,210,210);
+	t.connectorHighlighted			= QColor(120,170,255);
+	t.connectorSelected				= QColor(255,100,100);
+	t.connectorLabelBackground		= QColor(42,42,42);
+	return t;
+}
+
+
+ScopedTheme::ScopedTheme(const Theme & theme) :
+	m_previousTheme(Globals::CurrentTheme)
+{
+	Globals::CurrentTheme = theme;
+}
+
+
+ScopedTheme::~ScopedTheme() {
+	Globals::CurrentTheme = m_previousTheme;
+}
+
 
 } // namespace BLOCKMOD

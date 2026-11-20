@@ -13,6 +13,7 @@ LIBS += \
 	-lMasterSim \
 	-lminizip \
 	-lBlockMod \
+	-lPhantomStyle \
 	-lIBKMK \
 	-lTiCPP \
 	-lIBK
@@ -33,6 +34,7 @@ INCLUDEPATH = \
 	../externals/minizip/src \
 	../externals/IBK/src \
 	../externals/BlockMod/src \
+	../externals/phantom-style/src \
 	../externals/TiCPP/src \
 	../MasterSim/src
 

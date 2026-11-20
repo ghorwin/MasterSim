@@ -41,13 +41,26 @@ private slots:
 	void on_toolButtonOpenProject_clicked();
 	void downloadFinished(QNetworkReply *reply);
 
+protected:
+	/*! Re-renders the page with matching colors when the palette changes (light/dark mode). */
+	void changeEvent(QEvent * event) override;
+
 private:
+	/*! Sets the widget background to the palette's base color (like a document page). */
+	void updateBackgroundColor();
+
 	Ui::MSIMWelcomeScreen	*m_ui;
 
 	QNetworkAccessManager	*m_networkManager;
 
 	/*! Holds the news content for the welcome page. */
 	QString					m_welcomePageNews;
+
+	/*! Set to true once news download was started (avoids duplicate requests). */
+	bool					m_newsRequested = false;
+
+	/*! Guards against recursion when setting the palette in changeEvent(). */
+	bool					m_updatingPalette = false;
 
 	/*! If true, the start page shows recently opened files instead of demos and examples. */
 	bool					m_showRecentlyOpenedFiles;

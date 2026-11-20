@@ -77,6 +77,7 @@ find_package( Qt6 COMPONENTS Core Gui Network PrintSupport Svg Widgets REQUIRED 
 target_link_libraries( ${PROJECT_NAME}
 	MasterSim
 	BlockMod
+	PhantomStyle
 	IBK
 	Qt6::Core
 	Qt6::Gui

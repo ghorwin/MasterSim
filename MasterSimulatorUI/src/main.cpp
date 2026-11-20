@@ -131,6 +131,9 @@ int main(int argc, char *argv[]) {
 		return EXIT_SUCCESS;
 	settings.applyCommandLineArgs(parser);
 
+	// *** Widget style and color scheme (light/dark) ***
+	settings.applyWidgetStyle();
+
 
 	// *** Create log file directory and setup message handler ***
 	QDir baseDir;

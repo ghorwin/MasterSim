@@ -10,6 +10,7 @@ SUBDIRS += MasterSim \
 	MasterSimulator \
 	MasterSimulatorUI \
 	BlockMod \
+	PhantomStyle \
 	IBK \
 	IBKMK \
 	minizip \
@@ -33,6 +34,7 @@ MasterSimulator.file = MasterSimulator/MasterSimulator.pro
 MasterSimulatorUI.file = MasterSimulatorUI/MasterSimulatorUI.pro
 
 BlockMod.file = externals/BlockMod/BlockMod.pro
+PhantomStyle.file = externals/phantom-style/phantom-style.pro
 IBK.file = externals/IBK/IBK.pro
 IBKMK.file = externals/IBKMK/IBKMK.pro
 minizip.file = externals/minizip/minizip.pro
@@ -57,7 +59,7 @@ BlockMod.depends = IBK
 TiCPP.depends = IBK
 
 MasterSimulator.depends = MasterSim IBK IBKMK TiCPP minizip
-MasterSimulatorUI.depends = MasterSim BlockMod IBK IBKMK TiCPP minizip
+MasterSimulatorUI.depends = MasterSim BlockMod PhantomStyle IBK IBKMK TiCPP minizip
 
 FMUTestMath003Part1.depends = MasterSimulator
 FMUTestMath003Part2.depends = MasterSimulator

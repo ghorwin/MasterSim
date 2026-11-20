@@ -61,6 +61,11 @@ Library for block-based schematic modeling, see
 https://sourceforge.net/projects/blockmod
 
 
+8. phantom-style
+----------------
 
+Phantom QStyle for Qt widgets (LGPL 2.1), used by the MasterSim UI, see
+https://github.com/Qt-Widgets/phantom-style
 
-
+Only the style sources (`src/phantom`) are included, adjusted for Qt 6
+(`QStringRef` replaced by `QStringView`).

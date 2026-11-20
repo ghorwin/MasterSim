@@ -1,6 +1,7 @@
 #include "MSIMViewSlaves.h"
 #include "ui_MSIMViewSlaves.h"
 
+#include <QApplication>
 #include <QHeaderView>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -88,7 +89,7 @@ MSIMViewSlaves::MSIMViewSlaves(QWidget *parent) :
 
 	m_ui->doubleSpinBoxLinewidth->setSingleStep(0.1);
 
-	m_ui->tableWidgetSlaves->setStyleSheet("selection-background-color: #dfe7fd;");
+	updateSlaveTableColors();
 
 	m_ui->checkBoxShowEquations->setChecked(MSIMSettings::instance().m_drawConnectorEquations);
 	m_ui->checkBoxMergeConnectors->setChecked(MSIMSettings::instance().m_mergeConnectors);
@@ -780,6 +781,27 @@ void MSIMViewSlaves::on_widgetProperties_itemChanged(QTableWidgetItem *item) {
 
 
 // *** private functions ***
+
+void MSIMViewSlaves::changeEvent(QEvent * event) {
+	QWidget::changeEvent(event);
+	if (event->type() == QEvent::PaletteChange || event->type() == QEvent::ApplicationPaletteChange)
+		updateSlaveTableColors();
+}
+
+
+void MSIMViewSlaves::updateSlaveTableColors() {
+	// only override the selection roles, all other roles are inherited and follow the current color scheme
+	const QPalette appPal = QApplication::palette();
+	const QColor selection = MSIMSettings::isDarkPalette() ? QColor(0x3a, 0x4a, 0x6e) : QColor(0xdf, 0xe7, 0xfd);
+	QPalette pal;
+	pal.setResolveMask(0);
+	for (QPalette::ColorGroup group : {QPalette::Active, QPalette::Inactive}) {
+		pal.setColor(group, QPalette::Highlight, selection);
+		pal.setColor(group, QPalette::HighlightedText, appPal.color(group, QPalette::Text));
+	}
+	m_ui->tableWidgetSlaves->setPalette(pal);
+}
+
 
 void MSIMViewSlaves::updateSlaveTable() {
 	blockMySignals(this, true);

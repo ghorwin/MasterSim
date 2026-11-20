@@ -51,6 +51,14 @@ public:
 		TE_Ptyxis
 	};
 
+	/*! Color schemes selectable in the preferences dialog. */
+	enum ColorScheme {
+		CS_System,	// follow the platform/desktop color scheme
+		CS_Light,
+		CS_Dark,
+		NUM_CS
+	};
+
 	/*! Returns the instance of the singleton. */
 	static MSIMSettings & instance();
 
@@ -131,6 +139,17 @@ public:
 										const QString & desktopAppExec,        // /path/to/bin/MasterSimulatorUI
 										const QString & fileExtension          // msim   (for *.msim)
 										);
+
+	/*! Sets the Phantom widget style and applies m_colorScheme to the running application.
+		May be called repeatedly (e.g. after the preferences dialog was closed); all existing
+		widgets are re-polished.
+	*/
+	void applyWidgetStyle() const;
+
+	/*! Returns true, if the current application palette is a dark palette (light text on dark background).
+		Use this to select colors for custom-painted content (diagrams, HTML pages).
+	*/
+	static bool isDarkPalette();
 
 	// ****** member variables ************
 
@@ -228,6 +247,9 @@ public:
 		connector in slave view (for visual checking of the network).
 	*/
 	bool						m_mergeConnectors = false;
+
+	/*! Color scheme (light/dark) used by the application. */
+	ColorScheme					m_colorScheme = CS_System;
 
 	/*! Enumeration values for different properties to be managed in settings.
 	*/

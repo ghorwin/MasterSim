@@ -543,7 +543,10 @@ void MSIMProjectHandler::syncCoSimNetworkToBlocks() {
 		else
 			newCon.m_text.clear();
 		newCon.m_linewidth = edge.m_linewidth;
-		newCon.m_color = QColor(edge.m_color.m_red, edge.m_color.m_green, edge.m_color.m_blue, edge.m_color.m_alpha);
+		// black is the default connector color (not stored in project file); leave the color invalid
+		// so that BlockMod uses the connector color of the current theme (light/dark)
+		if (edge.m_color != IBK::Color(0,0,0))
+			newCon.m_color = QColor(edge.m_color.m_red, edge.m_color.m_green, edge.m_color.m_blue, edge.m_color.m_alpha);
 
 		// one last thing: we can only keep the connection in the network, if the connected blocks have
 		// a valid layout and geometry

@@ -15,6 +15,10 @@ MSIMPreferencesPageGeneral::MSIMPreferencesPageGeneral(QWidget *parent) :
 	m_ui->filepathTextEditor->setup("", true, true, tr("All files (*.*)"));
 #endif
 
+	// order must match MSIMSettings::ColorScheme
+	m_ui->comboBoxColorScheme->addItem(tr("System setting"));
+	m_ui->comboBoxColorScheme->addItem(tr("Light"));
+	m_ui->comboBoxColorScheme->addItem(tr("Dark"));
 }
 
 
@@ -28,6 +32,7 @@ void MSIMPreferencesPageGeneral::updateUi() {
 	// transfer data to Ui
 	m_ui->filepathTextEditor->setFilename(s.m_textEditorExecutable);
 	m_ui->filepathPostProcExecutable->setFilename(s.m_postProcExecutable);
+	m_ui->comboBoxColorScheme->setCurrentIndex(s.m_colorScheme);
 }
 
 
@@ -41,6 +46,12 @@ bool MSIMPreferencesPageGeneral::storeConfig() {
 	if (pos != -1)
 		s.m_postProcExecutable = s.m_postProcExecutable.left(pos) + "PostProcApp.app/Contents/MacOS/PostProcApp";
 #endif
+
+	MSIMSettings::ColorScheme colorScheme = (MSIMSettings::ColorScheme)m_ui->comboBoxColorScheme->currentIndex();
+	if (colorScheme != s.m_colorScheme) {
+		s.m_colorScheme = colorScheme;
+		s.applyWidgetStyle();
+	}
 
 	return true;
 }
