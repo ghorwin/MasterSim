@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="56mm" viewBox="0 0 800 280" font-family="Liberation Sans, Arial, Helvetica, sans-serif">
+<title>Interpretation der Eingänge in Room und Radiator</title>
+<defs><marker id="arr-ink" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1a1a1a"/></marker><marker id="arrs-ink" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1a1a1a"/></marker><marker id="arr-gray" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#6b6b6b"/></marker><marker id="arrs-gray" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#6b6b6b"/></marker><marker id="arr-accent" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1f5fa8"/></marker><marker id="arrs-accent" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1f5fa8"/></marker><marker id="arr-orange" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#c0601a"/></marker><marker id="arrs-orange" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#c0601a"/></marker><marker id="arr-red" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#b2282e"/></marker><marker id="arrs-red" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#b2282e"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="12" y="18" font-size="14" text-anchor="start" fill="#1a1a1a" font-weight="bold"><tspan>(a) Room: Eingang Q</tspan></text>
+<text x="12" y="36" font-size="12" text-anchor="start" fill="#6b6b6b"><tspan>gesetzter Wert gilt als Q(t</tspan><tspan font-size="8.64" dy="3.36">n+1</tspan><tspan dy="-3.36">), Rampe ab gemerktem Q(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">)</tspan></text>
+<rect x="198.9" y="62" width="131.92" height="163" rx="0" fill="#f4f4f4" stroke="none" stroke-width="0"/>
+<path d="M66.98,176.1 L198.9,143.5" fill="none" stroke="#1f5fa8" stroke-width="1.4" stroke-linejoin="round" stroke-dasharray="4,3"/>
+<path d="M198.9,91.34 L330.83,91.34" fill="none" stroke="#6b6b6b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="7,4"/>
+<path d="M198.9,143.5 L330.83,91.34" fill="none" stroke="#1f5fa8" stroke-width="2.6" stroke-linejoin="round"/>
+<circle cx="66.98" cy="176.1" r="3.6" fill="#1a1a1a"/>
+<circle cx="198.9" cy="143.5" r="3.6" fill="#1a1a1a"/>
+<circle cx="330.83" cy="91.34" r="3.6" fill="#1a1a1a"/>
+<text x="206.9" y="159.5" font-size="12" text-anchor="start" fill="#1a1a1a"><tspan>Q(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">), aus Vorschritt gemerkt</tspan></text>
+<text x="326.83" y="81.34" font-size="12" text-anchor="end" fill="#1a1a1a"><tspan>vor </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">fmi2DoStep</tspan><tspan> gesetzt</tspan></text>
+<text x="192.9" y="95.34" font-size="12" text-anchor="end" fill="#6b6b6b"><tspan>ohne Interpolation</tspan></text>
+<text x="66.98" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n−1</tspan></text>
+<path d="M66.98,225 L66.98,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<text x="198.9" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n</tspan></text>
+<path d="M198.9,225 L198.9,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<text x="330.83" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n+1</tspan></text>
+<path d="M330.83,225 L330.83,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<path d="M34,225 L389,225" fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M34,225 L34,50" fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="391" y="241" font-size="13" text-anchor="end" fill="#1a1a1a" font-style="italic"><tspan>t</tspan></text>
+<text x="40" y="58" font-size="13" text-anchor="start" fill="#1a1a1a" font-style="italic"><tspan>Q</tspan></text>
+<text x="412" y="18" font-size="14" text-anchor="start" fill="#1a1a1a" font-weight="bold"><tspan>(b) Radiator: Eingang T</tspan><tspan font-size="10.08" dy="3.92">room</tspan></text>
+<text x="412" y="36" font-size="12" text-anchor="start" fill="#6b6b6b"><tspan>gesetzter Wert gilt als T(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">), lineare Extrapolation bis t</tspan><tspan font-size="8.64" dy="3.36">n+1</tspan></text>
+<rect x="598.9" y="62" width="131.92" height="163" rx="0" fill="#f4f4f4" stroke="none" stroke-width="0"/>
+<path d="M598.9,143.5 L730.83,143.5" fill="none" stroke="#6b6b6b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="7,4"/>
+<path d="M466.98,184.25 L598.9,143.5" fill="none" stroke="#1f5fa8" stroke-width="1.4" stroke-linejoin="round"/>
+<path d="M598.9,143.5 L730.83,102.75" fill="none" stroke="#1f5fa8" stroke-width="2.6" stroke-linejoin="round" stroke-dasharray="8,4"/>
+<circle cx="466.98" cy="184.25" r="3.6" fill="#1a1a1a"/>
+<circle cx="598.9" cy="143.5" r="3.6" fill="#1a1a1a"/>
+<circle cx="730.83" cy="102.75" r="4.2" fill="#ffffff" stroke="#1f5fa8" stroke-width="1.8"/>
+<text x="474.98" y="200.25" font-size="12" text-anchor="start" fill="#1a1a1a"><tspan>T(t</tspan><tspan font-size="8.64" dy="3.36">n−1</tspan><tspan dy="-3.36">)</tspan></text>
+<text x="590.9" y="135.5" font-size="12" text-anchor="end" fill="#1a1a1a"><tspan>T(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">), gesetzt</tspan></text>
+<text x="724.83" y="90.75" font-size="12" text-anchor="end" fill="#1f5fa8"><tspan>T</tspan><tspan font-size="8.64" dy="3.36">est</tspan><tspan dy="-3.36">(t</tspan><tspan font-size="8.64" dy="3.36">n+1</tspan><tspan dy="-3.36">)</tspan></text>
+<text x="724.83" y="159.5" font-size="12" text-anchor="end" fill="#6b6b6b"><tspan>ohne Interpolation</tspan></text>
+<text x="606.9" y="215" font-size="12" text-anchor="start" fill="#1a1a1a"><tspan>Q</tspan><tspan font-size="8.64" dy="3.36">n+1</tspan><tspan dy="-3.36"> = K</tspan><tspan font-size="8.64" dy="3.36">p</tspan><tspan dy="-3.36">·(T</tspan><tspan font-size="8.64" dy="3.36">set</tspan><tspan dy="-3.36"> − T</tspan><tspan font-size="8.64" dy="3.36">est</tspan><tspan dy="-3.36">)</tspan></text>
+<text x="466.98" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n−1</tspan></text>
+<path d="M466.98,225 L466.98,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<text x="598.9" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n</tspan></text>
+<path d="M598.9,225 L598.9,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<text x="730.83" y="243" font-size="13" text-anchor="middle" fill="#1a1a1a" font-style="italic"><tspan>t</tspan><tspan font-size="9.36" dy="3.64">n+1</tspan></text>
+<path d="M730.83,225 L730.83,229" fill="none" stroke="#1a1a1a" stroke-width="1" stroke-linejoin="round"/>
+<path d="M434,225 L789,225" fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M434,225 L434,50" fill="none" stroke="#1a1a1a" stroke-width="1.2" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="791" y="241" font-size="13" text-anchor="end" fill="#1a1a1a" font-style="italic"><tspan>t</tspan></text>
+<text x="440" y="58" font-size="13" text-anchor="start" fill="#1a1a1a" font-style="italic"><tspan>T</tspan></text>
+</svg>
