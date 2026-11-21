@@ -51,6 +51,8 @@ elseif( APPLE )
 
 	set_target_properties( ${PROJECT_NAME} PROPERTIES
 		MACOSX_BUNDLE_ICON_FILE MasterSimulatorUI.icns
+		# application name shown in the macOS application menu (instead of executable name)
+		MACOSX_BUNDLE_BUNDLE_NAME "MasterSim"
 	)
 
 else()

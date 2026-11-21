@@ -147,3 +147,9 @@ CODECFORSRC = UTF-8
 RESOURCES += \
 	resources/MasterSimulator.qrc
 
+macx {
+	# application name shown in the macOS application menu ("MasterSim" instead of target name)
+	QMAKE_INFO_PLIST = resources/Info.plist
+	ICON = resources/MasterSimulatorUI.icns
+}
+
