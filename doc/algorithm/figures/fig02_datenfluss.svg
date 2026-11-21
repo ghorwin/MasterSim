@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128mm" height="100mm" viewBox="0 0 640 500" font-family="Liberation Sans, Arial, Helvetica, sans-serif">
+<title>Datenfluss der Ableitungsinformation</title>
+<defs><marker id="arr-ink" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1a1a1a"/></marker><marker id="arrs-ink" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1a1a1a"/></marker><marker id="arr-gray" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#6b6b6b"/></marker><marker id="arrs-gray" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#6b6b6b"/></marker><marker id="arr-accent" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1f5fa8"/></marker><marker id="arrs-accent" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1f5fa8"/></marker><marker id="arr-orange" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#c0601a"/></marker><marker id="arrs-orange" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#c0601a"/></marker><marker id="arr-red" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#b2282e"/></marker><marker id="arrs-red" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#b2282e"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="50" y="15" width="250" height="72" rx="4" fill="#e5edf7" stroke="#1f5fa8" stroke-width="1.2"/>
+<text x="175" y="39.04" font-size="13" text-anchor="middle" fill="#1a1a1a" font-weight="bold"><tspan>FMU A (Erzeuger)</tspan></text>
+<text x="175" y="55.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Ausgang y und Ableitungen d</tspan><tspan font-size="9.36" dy="-4.94">k</tspan><tspan dy="4.94">y/dt</tspan><tspan font-size="9.36" dy="-4.94">k</tspan></text>
+<text x="175" y="72.32" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>k ≤ </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">maxOutputDerivativeOrder</tspan></text>
+<rect x="20" y="150" width="600" height="180" rx="6" fill="#f4f4f4" stroke="#6b6b6b" stroke-width="1"/>
+<text x="606" y="172" font-size="14" text-anchor="end" fill="#6b6b6b" font-weight="bold"><tspan>Co-Simulations-Master</tspan></text>
+<rect x="50" y="190" width="250" height="120" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="175" y="229.72" font-size="13" text-anchor="middle" fill="#1a1a1a" font-weight="bold"><tspan>Variablenvektoren</tspan></text>
+<text x="175" y="246.36" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Werte: </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realyt</tspan><tspan>, </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realytNext</tspan></text>
+<text x="175" y="263" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Ableitungen: </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realDerivyt</tspan><tspan>,</tspan></text>
+<text x="175" y="279.64" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realDerivytNext</tspan></text>
+<rect x="340" y="190" width="250" height="120" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="465" y="229.72" font-size="13" text-anchor="middle" fill="#1a1a1a" font-weight="bold"><tspan>Verbindungs-Mapping</tspan></text>
+<text x="465" y="246.36" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>u = c</tspan><tspan font-size="9.36" dy="3.64">0</tspan><tspan dy="-3.64"> + c</tspan><tspan font-size="9.36" dy="3.64">1</tspan><tspan dy="-3.64">·y</tspan></text>
+<text x="465" y="263" font-size="13" text-anchor="middle" fill="#1f5fa8"><tspan>du/dt = c</tspan><tspan font-size="9.36" dy="3.64">1</tspan><tspan dy="-3.64">·dy/dt</tspan></text>
+<text x="465" y="279.64" font-size="13" text-anchor="middle" fill="#6b6b6b"><tspan>(Offset c</tspan><tspan font-size="9.36" dy="3.64">0</tspan><tspan dy="-3.64"> entfällt)</tspan></text>
+<rect x="340" y="405" width="250" height="72" rx="4" fill="#fbeadc" stroke="#c0601a" stroke-width="1.2"/>
+<text x="465" y="429.04" font-size="13" text-anchor="middle" fill="#1a1a1a" font-weight="bold"><tspan>FMU B (Verbraucher)</tspan></text>
+<text x="465" y="445.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">canInterpolateInputs="true"</tspan></text>
+<text x="465" y="462.32" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Polynom u(t) für t ∈ [t</tspan><tspan font-size="9.36" dy="3.64">n</tspan><tspan dy="-3.64">, t</tspan><tspan font-size="9.36" dy="3.64">n</tspan><tspan dy="-3.64"> + h]</tspan></text>
+<path d="M150,87 L150,188" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M195,87 L195,188" fill="none" stroke="#1f5fa8" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="6,4" marker-end="url(#arr-accent)"/>
+<text x="208" y="113" font-size="13" text-anchor="start" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2GetReal</tspan><tspan>(y)</tspan></text>
+<text x="208" y="133" font-size="13" text-anchor="start" fill="#1f5fa8"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2GetRealOutputDerivatives</tspan><tspan>(y, k)</tspan></text>
+<path d="M300,232 L338,232" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M300,268 L338,268" fill="none" stroke="#1f5fa8" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="6,4" marker-end="url(#arr-accent)"/>
+<path d="M420,310 L420,403" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M465,310 L465,403" fill="none" stroke="#1f5fa8" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="6,4" marker-end="url(#arr-accent)"/>
+<text x="405" y="355" font-size="13" text-anchor="end" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2SetReal</tspan><tspan>(u)</tspan></text>
+<text x="405" y="375" font-size="13" text-anchor="end" fill="#1f5fa8"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2SetRealInputDerivatives</tspan><tspan>(u, k)</tspan></text>
+<path d="M30,432 L70,432" fill="none" stroke="#1a1a1a" stroke-width="1.5" stroke-linejoin="round"/>
+<text x="78" y="436" font-size="12" text-anchor="start" fill="#1a1a1a"><tspan>Wert (Ordnung 0)</tspan></text>
+<path d="M30,456 L70,456" fill="none" stroke="#1f5fa8" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="6,4"/>
+<text x="78" y="460" font-size="12" text-anchor="start" fill="#1f5fa8"><tspan>Ableitung (Ordnung ≥ 1)</tspan></text>
+</svg>

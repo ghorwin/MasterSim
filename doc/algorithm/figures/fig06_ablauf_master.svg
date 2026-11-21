@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="160mm" height="166mm" viewBox="0 0 800 830" font-family="Liberation Sans, Arial, Helvetica, sans-serif">
+<title>Ablauf eines Kommunikationsschritts im Master</title>
+<defs><marker id="arr-ink" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1a1a1a"/></marker><marker id="arrs-ink" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1a1a1a"/></marker><marker id="arr-gray" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#6b6b6b"/></marker><marker id="arrs-gray" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#6b6b6b"/></marker><marker id="arr-accent" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#1f5fa8"/></marker><marker id="arrs-accent" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#1f5fa8"/></marker><marker id="arr-orange" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#c0601a"/></marker><marker id="arrs-orange" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#c0601a"/></marker><marker id="arr-red" viewBox="0 0 10 8" refX="9.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#b2282e"/></marker><marker id="arrs-red" viewBox="0 0 10 8" refX="0.5" refY="4" markerWidth="10" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path d="M10,0 L0,4 L10,8 z" fill="#b2282e"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<rect x="280" y="15" width="240" height="38" rx="19" fill="#f4f4f4" stroke="#6b6b6b" stroke-width="1.2"/>
+<text x="400" y="38.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Start: Schritt t</tspan><tspan font-size="9.36" dy="3.64">n</tspan><tspan dy="-3.64"> → t</tspan><tspan font-size="9.36" dy="3.64">n+1</tspan></text>
+<path d="M400,53 L400,72" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<polygon points="400,72 530,110 400,148 270,110" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2" fill-opacity="1"/>
+<text x="400" y="106.36" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Verbindung mit</tspan></text>
+<text x="400" y="123" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>m</tspan><tspan font-size="9.36" dy="3.64">conn</tspan><tspan dy="-3.64"> ≥ 1 ?</tspan></text>
+<path d="M270,110 L105,110 L105,268" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="260" y="102" font-size="12" text-anchor="end" fill="#6b6b6b"><tspan>nein</tspan></text>
+<rect x="20" y="270" width="170" height="60" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="105" y="296.36" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>nur </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2SetReal</tspan></text>
+<text x="105" y="313" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>(Zero-Order-Hold)</tspan></text>
+<path d="M400,148 L400,172" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="408" y="165" font-size="12" text-anchor="start" fill="#6b6b6b"><tspan>ja</tspan></text>
+<polygon points="400,173 515,205 400,237 285,205" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2" fill-opacity="1"/>
+<text x="400" y="209.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Algorithmus ?</tspan></text>
+<path d="M400,237 L400,250 L310,250 L310,268" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M400,250 L540,250 L540,268" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<rect x="210" y="270" width="200" height="76" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="310" y="289.28" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Gauss-Jacobi oder</tspan></text>
+<text x="310" y="304.64" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Erzeuger noch nicht gerechnet:</tspan></text>
+<text x="310" y="320" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>u = c</tspan><tspan font-size="8.64" dy="3.36">0</tspan><tspan dy="-3.36"> + c</tspan><tspan font-size="8.64" dy="3.36">1</tspan><tspan dy="-3.36">·y(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">)</tspan></text>
+<text x="310" y="335.36" font-size="12" text-anchor="middle" fill="#1f5fa8"><tspan>du/dt = c</tspan><tspan font-size="8.64" dy="3.36">1</tspan><tspan dy="-3.36">·dy/dt(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">)</tspan></text>
+<rect x="425" y="270" width="235" height="76" rx="4" fill="#e5edf7" stroke="#1f5fa8" stroke-width="1.2"/>
+<text x="542.5" y="289.28" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Gauss-Seidel,</tspan></text>
+<text x="542.5" y="304.64" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Erzeuger schon gerechnet:</tspan></text>
+<text x="542.5" y="320" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>u = c</tspan><tspan font-size="8.64" dy="3.36">0</tspan><tspan dy="-3.36"> + c</tspan><tspan font-size="8.64" dy="3.36">1</tspan><tspan dy="-3.36">·y(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">)</tspan></text>
+<text x="542.5" y="335.36" font-size="12" text-anchor="middle" fill="#1f5fa8"><tspan>du/dt = c</tspan><tspan font-size="8.64" dy="3.36">1</tspan><tspan dy="-3.36">·(y(t</tspan><tspan font-size="8.64" dy="3.36">n+1</tspan><tspan dy="-3.36">) − y(t</tspan><tspan font-size="8.64" dy="3.36">n</tspan><tspan dy="-3.36">))/h</tspan></text>
+<path d="M310,346 L310,378" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M540,346 L540,378" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<rect x="230" y="380" width="450" height="38" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="455" y="403.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2SetReal</tspan><tspan> + </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2SetRealInputDerivatives</tspan></text>
+<path d="M400,418 L400,448" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M105,330 L105,469 L290,469" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<rect x="290" y="450" width="220" height="38" rx="4" fill="#fbeadc" stroke="#c0601a" stroke-width="1.2"/>
+<text x="400" y="473.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2DoStep</tspan><tspan>(t</tspan><tspan font-size="9.36" dy="3.64">n</tspan><tspan dy="-3.64">, h)</tspan></text>
+<path d="M400,488 L400,513" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<rect x="190" y="515" width="420" height="54" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="400" y="538.36" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2GetReal</tspan><tspan> + </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">fmi2GetRealOutputDerivatives</tspan></text>
+<text x="400" y="555" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>→ </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realytNext</tspan><tspan>, </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.96">realDerivytNext</tspan></text>
+<path d="M400,569 L400,592" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<polygon points="400,593 515,625 400,657 285,625" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2" fill-opacity="1"/>
+<text x="400" y="629.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Iteration nötig ?</tspan></text>
+<path d="M515,625 L598,625" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="524" y="617" font-size="12" text-anchor="start" fill="#6b6b6b"><tspan>ja</tspan></text>
+<rect x="600" y="590" width="185" height="70" rx="4" fill="#f4f4f4" stroke="#6b6b6b" stroke-width="1.2"/>
+<text x="692.5" y="606.28" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Rollback:</tspan></text>
+<text x="692.5" y="621.64" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">fmi2SetFMUstate</tspan></text>
+<text x="692.5" y="637" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>Eingänge und Ableitungen</tspan></text>
+<text x="692.5" y="652.36" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan>neu setzen</tspan></text>
+<path d="M692,590 L692,205 L517,205" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<path d="M400,657 L400,688" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<text x="408" y="678" font-size="12" text-anchor="start" fill="#6b6b6b"><tspan>nein</tspan></text>
+<rect x="225" y="690" width="350" height="54" rx="4" fill="#ffffff" stroke="#1a1a1a" stroke-width="1.2"/>
+<text x="400" y="713.64" font-size="12" text-anchor="middle" fill="#1a1a1a" font-weight="bold"><tspan>Schritt akzeptieren:</tspan></text>
+<text x="400" y="729" font-size="12" text-anchor="middle" fill="#1a1a1a"><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">realyt</tspan><tspan> ← </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">realytNext</tspan><tspan>, </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">realDerivyt</tspan><tspan> ← </tspan><tspan font-family="Liberation Mono, DejaVu Sans Mono, Consolas, monospace" font-size="11.04">realDerivytNext</tspan></text>
+<path d="M400,744 L400,770" fill="none" stroke="#1a1a1a" stroke-width="1.4" stroke-linejoin="round" marker-end="url(#arr-ink)"/>
+<rect x="310" y="772" width="180" height="38" rx="19" fill="#f4f4f4" stroke="#6b6b6b" stroke-width="1.2"/>
+<text x="400" y="795.68" font-size="13" text-anchor="middle" fill="#1a1a1a"><tspan>Ende Schritt</tspan></text>
+</svg>
