@@ -117,12 +117,10 @@ void readNamedString(QXmlStreamReader & reader, QString & name, QString & val);
 template <typename T>
 void readList(QXmlStreamReader & reader, QList<T> & typeList) {
 	// then read all the subsections
-	int count = 0;
 	while (!reader.atEnd() && !reader.hasError()) {
 		reader.readNext();
 		// process elements and attributes
 		if (reader.isStartElement()) {
-			++count;
 			// start reading the type
 			T tmp;
 			tmp.readXML(reader);
@@ -140,12 +138,10 @@ void readList(QXmlStreamReader & reader, QList<T> & typeList) {
 template <typename T>
 void readList(QXmlStreamReader & reader, std::list<T> & typeList) {
 	// then read all the subsections
-	int count = 0;
 	while (!reader.atEnd() && !reader.hasError()) {
 		reader.readNext();
 		// process elements and attributes
 		if (reader.isStartElement()) {
-			++count;
 			// start reading the type
 			T tmp;
 			tmp.readXML(reader);
