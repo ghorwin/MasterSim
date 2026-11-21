@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+	fmiVersion="2.0"
+	modelName="Radiator"
+	guid="{3b7e9d2a-5c8f-4a1b-b6e4-9d0c7a3f5e82}"
+	description="Radiator with step thermostat (12h day / 12h night) controlled by a P-controller. Supports FMI 2.0 input interpolation (canInterpolateInputs, history-based temperature extrapolation) and output derivatives (maxOutputDerivativeOrder=1)."
+	generationTool="C++ Code using FMI support functions from IBK@TU Dresden"
+	generationDateAndTime="2026-11-21T12:00:00Z"
+	variableNamingConvention="flat"
+	numberOfEventIndicators="0">
+
+	<ModelExchange
+		modelIdentifier="Radiator"
+		completedIntegratorStepNotNeeded="true"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<CoSimulation
+		modelIdentifier="Radiator"
+		canHandleVariableCommunicationStepSize="true"
+		canInterpolateInputs="true"
+		maxOutputDerivativeOrder="1"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<LogCategories>
+		<Category name="logStatusWarning" />
+		<Category name="logStatusError" />
+		<Category name="logAll" />
+		<Category name="logFmi2Call" />
+	</LogCategories>
+
+	<DefaultExperiment startTime="0.0" stopTime="14400.0" tolerance="1e-06"/>
+
+	<ModelVariables>
+
+		<!-- Index of variable = "1" -->
+		<ScalarVariable
+			name="roomTemperature"
+			valueReference="1"
+			variability="continuous"
+			causality="input">
+			<Real start="275.15" unit="K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "2" -->
+		<ScalarVariable
+			name="heatingLoad"
+			valueReference="2"
+			variability="continuous"
+			causality="output"
+			initial="exact">
+			<Real start="0.0" unit="W"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "3" -->
+		<ScalarVariable
+			name="controllerGain"
+			valueReference="3"
+			causality="parameter">
+			<Real start="2000" unit="W/K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "4" -->
+		<ScalarVariable
+			name="maxHeatingLoad"
+			valueReference="4"
+			causality="parameter">
+			<Real start="10000" unit="W"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "5" -->
+		<ScalarVariable
+			name="dayLength"
+			valueReference="5"
+			causality="parameter">
+			<Real start="14400" unit="s"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "6" -->
+		<ScalarVariable
+			name="setpointDay"
+			valueReference="6"
+			causality="parameter">
+			<Real start="295.15" unit="K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "7" -->
+		<ScalarVariable
+			name="setpointNight"
+			valueReference="7"
+			causality="parameter">
+			<Real start="289.15" unit="K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "8" -->
+		<ScalarVariable
+			name="useInputInterpolation"
+			valueReference="8"
+			causality="parameter">
+			<Boolean start="true"/>
+		</ScalarVariable>
+
+	</ModelVariables>
+
+	<ModelStructure>
+		<Inputs>
+			<Unknown index="1"/>
+		</Inputs>
+		<Outputs>
+			<Unknown index="2"/>
+		</Outputs>
+	</ModelStructure>
+
+</fmiModelDescription>

@@ -1,0 +1,40 @@
+# Created:	Sat Nov 21 13:32:47 2026
+# LastModified:	Sat Nov 21 13:36:22 2026
+
+# Room + Radiator co-simulation test case WITHOUT input interpolation.
+# 
+# Same as Room_Radiator_GaussSeidel_1iters.msim, but the internal input
+# interpolation of both FMUs is disabled:
+# - the Room FMU uses a zero-order hold for the heating load,
+# - the Radiator FMU uses the current room temperature without history
+#   extrapolation.
+# 
+# This test case demonstrates the loss of accuracy caused by simple
+# stepping (no interpolation) in co-simulation.
+
+tStart                           0 s
+tEnd                             28800 s
+hMax                             30 min
+hMin                             1e-05 s
+hFallBackLimit                   0.01 s
+hStart                           30 s
+hOutputMin                       0.1 s
+outputTimeUnit                   s
+adjustStepSize                   no
+preventOversteppingOfEndTime     yes
+absTol                           1e-06
+relTol                           1e-05
+MasterMode                       GAUSS_SEIDEL
+ErrorControlMode                 NONE
+maxIterations                    1
+writeInternalVariables           no
+writeUnconnectedFileReaderVars   no
+
+simulator 0 0 Radiator #447cb4 "fmus/IBK/Radiator.fmu"
+simulator 1 1 Room #c38200 "fmus/IBK/Room.fmu"
+
+graph Room.roomTemperature Radiator.roomTemperature
+graph Radiator.heatingLoad Room.heatingLoad
+parameter Radiator.useInputInterpolation   false
+parameter Room.useInputInterpolation   false
+

@@ -1,0 +1,25 @@
+# Room + Radiator co-simulation test case.
+#
+# Same as Room_Radiator_GaussSeidel_1iters.msim, but the Gauss-Jacobi
+# master algorithm is used (all slaves step with the inputs of the
+# previous iteration).
+
+tStart               0 s
+tEnd                 14400 s
+hMax                 30 min
+hMin                 1e-05 s
+hFallBackLimit       0.01 s
+hStart               60 s
+hOutputMin           0.1 s
+adjustStepSize       no
+absTol               1e-06
+relTol               1e-05
+MasterMode           GAUSS_JACOBI
+ErrorControlMode     NONE
+maxIterations        1
+
+simulator 0 0 Radiator #ff447cb4 "fmus/IBK/Radiator.fmu"
+simulator 1 1 Room #ffc38200 "fmus/IBK/Room.fmu"
+
+graph Room.roomTemperature Radiator.roomTemperature
+graph Radiator.heatingLoad Room.heatingLoad
