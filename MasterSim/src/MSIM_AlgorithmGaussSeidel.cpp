@@ -163,7 +163,9 @@ bool AlgorithmGaussSeidel::doConvergenceTest() {
 		norm += diff*diff;
 	}
 
-	norm = std::sqrt(norm/nValues);
+	// no real variables: norm stays 0, i.e. converged (avoids division by zero -> NaN)
+	if (nValues > 0)
+		norm = std::sqrt(norm/nValues);
 	IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("  GAUSS-SEIDEL: WRMS norm = %1\n").arg(norm, 12, 'f', 0), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DETAILED);
 	if (norm > 1) {
 		return false;
