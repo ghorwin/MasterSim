@@ -99,6 +99,7 @@ Iteration and convergence parameters:
 maxIterations:: (_default=1=disabled_) max. number of iterations, if == 1 no iteration is done
 absTol:: (_default=1e-5_) absolute tolerance for convergence/error test
 relTol:: (_default=1e-6_) relative tolerance for convergence/error test
+maxInputDerivativeOrder:: (_default=0=disabled_) max. order of output derivatives passed to inputs of FMUs with capability `canInterpolateInputs` (FMI 2.0 only). The order used per connection is also limited by `maxOutputDerivativeOrder` of the producing FMU. Inputs are always set with respect to the begin of the communication step; with Gauss-Seidel and Newton, values already computed at the end of the step are passed as derivatives of an interpolation polynomial (secant for order 1).
 
 *ErrorControlMode* (_default=NONE=disabled_) is one of:
 [horizontal]

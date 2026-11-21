@@ -42,6 +42,7 @@ private slots:
 	void on_comboBoxErrorControl_currentIndexChanged(int index);
 
 	void on_spinBoxMaxIteration_valueChanged(int arg1);
+	void on_spinBoxMaxInputDerivativeOrder_valueChanged(int arg1);
 
 	void on_comboBoxStartTimeUnit_currentIndexChanged(int index);
 	void on_comboBoxEndTimeUnit_currentIndexChanged(int index);

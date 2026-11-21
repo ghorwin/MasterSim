@@ -240,6 +240,8 @@ void Project::read(const IBK::Path & prjFile, bool /* headerOnly */) {
 			}
 			else if (keyword == "maxIterations")
 				m_maxIterations = IBK::string2val<unsigned int>(value);
+			else if (keyword == "maxInputDerivativeOrder")
+				m_maxInputDerivativeOrder = IBK::string2val<unsigned int>(value);
 			else if (keyword == "writeInternalVariables")
 				m_writeInternalVariables = (value == "true" || value == "yes" || value == "1");
 			else if (keyword == "writeUnconnectedFileReaderVars")
@@ -313,6 +315,8 @@ void Project::write(const IBK::Path & prjFile) const {
 	}
 	out << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "maxIterations" << " " << m_maxIterations << std::endl;
+	if (m_maxInputDerivativeOrder != 0)
+		out << std::setw(KEYWORD_WIDTH) << std::left << "maxInputDerivativeOrder" << " " << m_maxInputDerivativeOrder << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "writeInternalVariables" << " " << (m_writeInternalVariables ? "yes" : "no") << std::endl;
 	out << std::setw(KEYWORD_WIDTH) << std::left << "writeUnconnectedFileReaderVars" << " " << (m_writeUnconnectedFileReaderVars ? "yes" : "no") << std::endl;
 	out << std::endl;

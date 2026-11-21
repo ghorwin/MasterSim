@@ -66,6 +66,10 @@ public:
 	bool	m_canSerializeFMUstate;
 	bool	m_canBeInstantiatedOnlyOncePerProcess;
 	bool	m_providesDirectionalDerivative;
+	/*! Maximum order of output derivatives the FMU provides via fmi2GetRealOutputDerivatives()
+		(attribute 'maxOutputDerivativeOrder', 0 = none, the default).
+	*/
+	int		m_maxOutputDerivativeOrder = 0;
 
 	/*! Vector of SimpleType definitions. */
 	std::vector<FMIType>		m_typeDefinitions;

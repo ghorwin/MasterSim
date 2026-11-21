@@ -30,6 +30,9 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 
 	// ** algorithm start **
 
+	// copy derivatives at time t and reset step-end flags (not used by Gauss-Jacobi)
+	m_master->initDerivativesForStep();
+
 	// loop over all cycles
 	for (unsigned int c=0; c<m_master->m_cycles.size(); ++c) {
 		const MasterSim::Cycle & cycle = m_master->m_cycles[c];
@@ -41,7 +44,9 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 			AbstractSlave * slave = cycle.m_slaves[s];
 
 			// update input variables in all slaves, using variables from time t
-			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, false);
+			// inputs and their derivatives are taken from begin of step (Taylor extrapolation)
+			m_master->updateSlaveInputs(slave, m_master->m_realyt, m_master->m_intyt, m_master->m_boolyt, m_master->m_stringyt, false,
+										MasterSim::IDM_TAYLOR);
 
 			// advance slave
 			m_timer.start();
@@ -55,6 +60,7 @@ AbstractAlgorithm::Result AlgorithmGaussJacobi::doStep() {
 			// slave is now at time level t + h and its outputs are updated accordingly
 			// sync results into vector with newly computed quantities
 			m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
+			m_master->syncSlaveOutputDerivatives(slave, m_master->m_realDerivytNext);
 		}
 	}
 

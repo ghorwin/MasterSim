@@ -90,6 +90,9 @@ void MasterSim::initialize() {
 	// select master algorithm
 	initMasterAlgorithm();
 
+	// determine which derivatives are passed between slaves
+	setupInputDerivatives();
+
 	// sets up default parameters like ResultsRootDir
 	setupDefaultParameters();
 
@@ -310,6 +313,7 @@ void MasterSim::doStep() {
 
 	// transfer computed results at end of iteration
 	m_realyt.swap(m_realytNext);
+	m_realDerivyt.swap(m_realDerivytNext);
 	m_intyt.swap(m_intytNext);
 	m_boolyt.swap(m_boolytNext);
 	m_stringyt.swap(m_stringytNext);
@@ -818,6 +822,15 @@ void MasterSim::initialConditions() {
 		AbstractSlave * slave = m_slaves[i];
 		slave->exitInitializationMode();
 	}
+
+	// retrieve output derivatives at start time (only allowed after exitInitializationMode())
+	if (m_maxDerivOrder > 0) {
+		for (unsigned int i=0; i<m_slaves.size(); ++i) {
+			AbstractSlave * slave = m_slaves[i];
+			slave->cacheOutputDerivatives();
+			syncSlaveOutputDerivatives(slave, m_realDerivyt);
+		}
+	}
 }
 
 
@@ -874,6 +887,105 @@ AbstractSlave * MasterSim::splitFlatVariableName(const std::string & flatVarName
 		throw IBK::Exception(IBK::FormatString("Unknown/undefined slave name '%1', used in variable '%2'").arg(slaveName).arg(flatVarName), FUNC_ID);
 	varname = flatVarName.substr(pos+1);
 	return slave;
+}
+
+
+void MasterSim::setupInputDerivatives() {
+	const char * const FUNC_ID = "[MasterSim::setupInputDerivatives]";
+
+	m_maxDerivOrder = 0;
+	if (m_project.m_maxInputDerivativeOrder == 0)
+		return; // feature disabled, nothing to do
+
+	IBK::IBK_Message("\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::IBK_Message(IBK::FormatString("Determining input derivatives (maxInputDerivativeOrder = %1)\n")
+					 .arg(m_project.m_maxInputDerivativeOrder), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	IBK::MessageIndentor indent; (void)indent;
+
+	// determine evaluation position (cycle, slave index in cycle) of each slave
+	std::vector<std::pair<unsigned int, unsigned int> > evalPos(m_slaves.size(), std::make_pair(0u, 0u));
+	for (unsigned int c=0; c<m_cycles.size(); ++c)
+		for (unsigned int s=0; s<m_cycles[c].m_slaves.size(); ++s)
+			evalPos[m_cycles[c].m_slaves[s]->m_slaveIndex] = std::make_pair(c, s);
+
+	// required output derivative order for each slave and local output index
+	std::vector<std::vector<int> > requiredOrders(m_slaves.size());
+	for (unsigned int s=0; s<m_slaves.size(); ++s)
+		requiredOrders[s].resize(m_slaves[s]->m_doubleOutputs.size(), 0);
+
+	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
+		VariableMapping & varMap = m_realVariableMapping[i];
+		varMap.m_derivOrder = 0;
+		varMap.m_outputDerivOrder = 0;
+		if (varMap.m_inputSlave == nullptr) continue;
+
+		const FMUSlave * outSlave = dynamic_cast<const FMUSlave*>(varMap.m_outputSlave);
+		const FMUSlave * inSlave = dynamic_cast<const FMUSlave*>(varMap.m_inputSlave);
+		if (outSlave == nullptr || inSlave == nullptr) continue; // file reader slaves do not provide derivatives (yet)
+
+		const ModelDescription & outMD = outSlave->fmu()->m_modelDescription;
+		const ModelDescription & inMD = inSlave->fmu()->m_modelDescription;
+		// only FMI 2.0 supported
+		if (!(outMD.m_fmuType & ModelDescription::CS_v2) || !(inMD.m_fmuType & ModelDescription::CS_v2)) continue;
+		if (!inMD.m_canInterpolateInputs || outMD.m_maxOutputDerivativeOrder <= 0) continue;
+
+		// both variables must be continuous
+		const Project::GraphEdge & edge = m_project.m_graph[varMap.m_globalIndex];
+		const FMIVariable * outVar = variableByName(edge.m_outputVariableRef).second;
+		const FMIVariable * inVar = variableByName(edge.m_inputVariableRef).second;
+		if (outVar->m_variability != "continuous" || inVar->m_variability != "continuous") {
+			IBK::IBK_Message(IBK::FormatString("'%1' -> '%2': no derivatives passed, variables are not both continuous\n")
+							 .arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef), IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+			continue;
+		}
+
+		varMap.m_derivOrder = std::min<int>(outMD.m_maxOutputDerivativeOrder, (int)m_project.m_maxInputDerivativeOrder);
+
+		// Can this connection be evaluated in Taylor mode, i.e. is the input set before the output slave
+		// has computed the step? In that case we need derivatives up to m_derivOrder, otherwise the
+		// value at the end of the step is known and we only need derivatives up to m_derivOrder-1.
+		std::pair<unsigned int, unsigned int> outPos = evalPos[varMap.m_outputSlave->m_slaveIndex];
+		std::pair<unsigned int, unsigned int> inPos = evalPos[varMap.m_inputSlave->m_slaveIndex];
+		bool taylorPossible = true;
+		switch (m_project.m_masterMode) {
+			case Project::MM_GAUSS_JACOBI :
+				taylorPossible = true;
+				break;
+			case Project::MM_GAUSS_SEIDEL :
+				// output slave is evaluated before input slave
+				taylorPossible = !(outPos < inPos);
+				break;
+			case Project::MM_NEWTON :
+				// all variables of the current and previous cycles are iteration values at t+h
+				taylorPossible = (outPos.first > inPos.first);
+				break;
+		}
+		varMap.m_outputDerivOrder = taylorPossible ? varMap.m_derivOrder : varMap.m_derivOrder-1;
+
+		int & reqOrder = requiredOrders[varMap.m_outputSlave->m_slaveIndex][varMap.m_outputLocalIndex];
+		reqOrder = std::max(reqOrder, varMap.m_outputDerivOrder);
+		m_maxDerivOrder = std::max(m_maxDerivOrder, (unsigned int)varMap.m_derivOrder);
+
+		IBK::IBK_Message(IBK::FormatString("'%1' -> '%2': input derivative order %3, output derivatives retrieved up to order %4 (%5)\n")
+						 .arg(edge.m_outputVariableRef).arg(edge.m_inputVariableRef).arg(varMap.m_derivOrder)
+						 .arg(varMap.m_outputDerivOrder).arg(taylorPossible ? "Taylor extrapolation" : "interpolation"),
+						 IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+	}
+
+	// configure slaves (also those without derivatives, to have consistently sized vectors)
+	for (unsigned int s=0; s<m_slaves.size(); ++s)
+		m_slaves[s]->setRequiredOutputDerivatives(requiredOrders[s]);
+
+	if (m_maxDerivOrder == 0) {
+		IBK::IBK_Message("No connections with input derivatives.\n", IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_INFO);
+		return;
+	}
+
+	// resize derivative vectors
+	m_realDerivyt.assign(m_maxDerivOrder, std::vector<double>(m_realyt.size(), 0.0));
+	m_realDerivytNext = m_realDerivyt;
+	m_errRealDerivyt = m_realDerivyt;
+	m_realytNextAtStepEnd.assign(m_realyt.size(), 0);
 }
 
 
@@ -1168,6 +1280,8 @@ bool MasterSim::doErrorCheckRichardson() {
 	MasterSim::copyVector(m_realytNext, m_errRealytFirst);
 
 	MasterSim::copyVector(m_realyt, m_errRealyt);
+	for (unsigned int k=0; k<m_maxDerivOrder; ++k)
+		MasterSim::copyVector(m_realDerivyt[k], m_errRealDerivyt[k]);
 	MasterSim::copyVector(m_intyt, m_errIntyt);
 	MasterSim::copyVector(m_boolyt, m_errBoolyt);
 	std::copy(m_stringyt.begin(), m_stringyt.end(), m_errStringyt.begin());
@@ -1207,6 +1321,7 @@ bool MasterSim::doErrorCheckRichardson() {
 		else {
 			// complete step: transfer computed results at end of iteration and advance current master time
 			m_realyt.swap(m_realytNext);
+			m_realDerivyt.swap(m_realDerivytNext);
 			m_intyt.swap(m_intytNext);
 			m_boolyt.swap(m_boolytNext);
 			m_stringyt.swap(m_stringytNext);
@@ -1303,6 +1418,8 @@ bool MasterSim::doErrorCheckRichardson() {
 				restoreSlaveStates(m_errTOriginal, m_errorCheckStates);
 				// restore variables from time t
 				MasterSim::copyVector(m_errRealyt, m_realyt);
+				for (unsigned int k=0; k<m_maxDerivOrder; ++k)
+					MasterSim::copyVector(m_errRealDerivyt[k], m_realDerivyt[k]);
 				MasterSim::copyVector(m_errIntyt, m_intyt);
 				MasterSim::copyVector(m_errBoolyt, m_boolyt);
 				std::copy(m_errStringyt.begin(), m_errStringyt.end(), m_stringyt.begin());
@@ -1434,7 +1551,8 @@ void MasterSim::updateSlaveInputs(AbstractSlave * slave, const std::vector<doubl
 								  const std::vector<int> & intVariables,
 								  const std::vector<fmi2Boolean> &boolVariables,
 								  const std::vector<std::string> & stringVariables,
-								  bool realOnly)
+								  bool realOnly,
+								  InputDerivativeMode derivMode)
 {
 	IBK_ASSERT(realVariables.size() == m_realVariableMapping.size());
 	IBK_ASSERT(intVariables.size() == m_intVariableMapping.size());
@@ -1453,7 +1571,52 @@ void MasterSim::updateSlaveInputs(AbstractSlave * slave, const std::vector<doubl
 											  .arg(realValue).arg(varMap.m_offset).arg(varMap.m_scaleFactor)
 											  .arg(realVariables[i]), IBK::MSG_PROGRESS, "[MasterSim::updateSlaveInputs]", IBK::VL_DETAILED);
 		}
-		varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realValue);
+		if (derivMode == IDM_NONE || varMap.m_derivOrder == 0) {
+			varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realValue);
+			continue;
+		}
+
+		// connection with input derivatives; mind: derivatives are always set with respect
+		// to the begin of the communication step (FMI 2.0, section 4.2.1), hence also the value
+		// must be y(t)
+		const int m = varMap.m_derivOrder;
+		if (derivMode == IDM_AUTO && m_realytNextAtStepEnd[i]) {
+			// interpolation mode: realVariables[i] holds y(t+h), m_realyt[i] holds y(t)
+			// construct polynomial p(tau) = sum_{k<m} y^(k)(t) tau^k/k! + c tau^m with p(h) = y(t+h)
+			// and pass its derivatives at tau = 0
+			const double yn = m_realyt[i];
+			const double h = m_h;
+			double pSum = yn;
+			double hk = 1;			// h^k
+			double kFact = 1;		// k!
+			for (int k=1; k<m; ++k) {
+				hk *= h;
+				kFact *= k;
+				pSum += m_realDerivyt[(size_t)k-1][i]*hk/kFact;
+			}
+			hk *= h;
+			kFact *= m;
+			double c = (realVariables[i] - pSum)/hk;
+
+			realValue = varMap.m_offset + varMap.m_scaleFactor*yn;
+			varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realValue);
+			for (int k=1; k<m; ++k)
+				varMap.m_inputSlave->setRealInputDerivative(varMap.m_inputValueReference, k, varMap.m_scaleFactor*m_realDerivyt[(size_t)k-1][i]);
+			double dm = kFact*c; // m! * c
+			varMap.m_inputSlave->setRealInputDerivative(varMap.m_inputValueReference, m, varMap.m_scaleFactor*dm);
+			IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("%1: u = %2, d^%3u/dt^%3 = %4 (interpolation y(t)=%5, y(t+h)=%6)\n")
+											  .arg(varMap.m_globalIndex).arg(realValue).arg(m).arg(varMap.m_scaleFactor*dm)
+											  .arg(yn).arg(realVariables[i]), IBK::MSG_PROGRESS, "[MasterSim::updateSlaveInputs]", IBK::VL_DETAILED);
+		}
+		else {
+			// Taylor mode: value and derivatives at time t
+			varMap.m_inputSlave->setReal(varMap.m_inputValueReference, realValue);
+			for (int k=1; k<=m; ++k)
+				varMap.m_inputSlave->setRealInputDerivative(varMap.m_inputValueReference, k, varMap.m_scaleFactor*m_realDerivyt[(size_t)k-1][i]);
+			IBK_FastMessage(IBK::VL_DETAILED)(IBK::FormatString("%1: u = %2, du/dt = %3 (Taylor)\n")
+											  .arg(varMap.m_globalIndex).arg(realValue).arg(varMap.m_scaleFactor*m_realDerivyt[0][i]),
+											  IBK::MSG_PROGRESS, "[MasterSim::updateSlaveInputs]", IBK::VL_DETAILED);
+		}
 	}
 	if (!realOnly) {
 		for (unsigned int i=0; i<m_intVariableMapping.size(); ++i) {
@@ -1523,6 +1686,40 @@ void MasterSim::syncSlaveOutputs(const AbstractSlave * slave,
 			stringVariables[i] = slave->m_stringOutputs[varMap.m_outputLocalIndex];
 		}
 	}
+}
+
+
+void MasterSim::syncSlaveOutputDerivatives(const AbstractSlave * slave,
+										   std::vector< std::vector<double> > & realDerivatives)
+{
+	if (m_maxDerivOrder == 0)
+		return;
+	IBK_ASSERT(realDerivatives.size() == m_maxDerivOrder);
+	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
+		const VariableMapping & varMap = m_realVariableMapping[i];
+		if (varMap.m_outputSlave != slave || varMap.m_outputDerivOrder == 0) continue;
+		for (int k=0; k<varMap.m_outputDerivOrder; ++k)
+			realDerivatives[(size_t)k][i] = slave->m_doubleOutputDerivatives[(size_t)k][varMap.m_outputLocalIndex];
+	}
+}
+
+
+void MasterSim::markOutputsAtStepEnd(const AbstractSlave * slave) {
+	if (m_maxDerivOrder == 0)
+		return;
+	for (unsigned int i=0; i<m_realVariableMapping.size(); ++i) {
+		if (m_realVariableMapping[i].m_outputSlave == slave)
+			m_realytNextAtStepEnd[i] = 1;
+	}
+}
+
+
+void MasterSim::initDerivativesForStep() {
+	if (m_maxDerivOrder == 0)
+		return;
+	for (unsigned int k=0; k<m_maxDerivOrder; ++k)
+		MasterSim::copyVector(m_realDerivyt[k], m_realDerivytNext[k]);
+	std::fill(m_realytNextAtStepEnd.begin(), m_realytNextAtStepEnd.end(), 0);
 }
 
 

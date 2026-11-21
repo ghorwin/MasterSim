@@ -4,7 +4,11 @@
 #include <string>
 #include <vector>
 
+#include <algorithm>
+
 #include <IBK_Path.h>
+#include <IBK_Exception.h>
+#include <IBK_FormatString.h>
 
 #include "fmi/fmiFunctions.h"
 #include "fmi/fmi2Functions.h"
@@ -55,6 +59,37 @@ public:
 	/*! Retrieve all output quantities from slave and store in local vectors. */
 	virtual void cacheOutputs() = 0;
 
+	/*! Configures which output derivatives are needed by the master.
+		\param orderPerLocalOutput Vector of size m_doubleOutputs.size(), holding for each local real output the
+			highest derivative order required (0 = no derivatives needed).
+		The default implementation resizes m_doubleOutputDerivatives to [maxOrder][m_doubleOutputs.size()]
+		(initialized with 0). Re-implement in derived classes to set up the actual derivative query, but call
+		the base class implementation.
+	*/
+	virtual void setRequiredOutputDerivatives(const std::vector<int> & orderPerLocalOutput) {
+		int maxOrder = 0;
+		for (int o : orderPerLocalOutput)
+			maxOrder = std::max(maxOrder, o);
+		m_doubleOutputDerivatives.assign((size_t)maxOrder, std::vector<double>(m_doubleOutputs.size(), 0.0));
+	}
+
+	/*! Retrieves the output derivatives configured in setRequiredOutputDerivatives() and stores them in
+		m_doubleOutputDerivatives. Default implementation does nothing (all derivatives remain 0).
+	*/
+	virtual void cacheOutputDerivatives() {}
+
+	/*! Sets the derivative of a real input variable in the slave.
+		This is essentially a wrapper function around fmi2SetRealInputDerivatives().
+		\param valueReference Value reference of the input variable.
+		\param order Derivative order (>= 1).
+		\param value Value of the derivative.
+	*/
+	virtual void setRealInputDerivative(unsigned int valueReference, int order, double value) {
+		(void)valueReference; (void)order; (void)value;
+		throw IBK::Exception(IBK::FormatString("Slave '%1' does not support setting input derivatives.").arg(m_name),
+							 "[AbstractSlave::setRealInputDerivative]");
+	}
+
 	/*! Sets an input variable of type real in the slave.
 		This is essentially a wrapper function around fmiSetReal or fmi2SetReal, depending on the
 		standard supported by the FMU.
@@ -99,6 +134,11 @@ public:
 	std::vector<std::string>	m_stringOutputs;
 	/*! Cached output variables of type double, updated at end of doStep(). */
 	std::vector<double>			m_doubleOutputs;
+	/*! Cached output derivatives of type double, updated at end of doStep() and after exitInitializationMode().
+		Index [order-1][local output index]. Only entries requested via setRequiredOutputDerivatives()
+		are updated, all others remain 0.
+	*/
+	std::vector< std::vector<double> >	m_doubleOutputDerivatives;
 
 	/*! Variables names for boolean quantities (used for outputs). */
 	std::vector<std::string>	m_boolVarNames;

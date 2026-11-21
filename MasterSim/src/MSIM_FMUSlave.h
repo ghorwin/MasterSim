@@ -47,6 +47,15 @@ public:
 	/*! Retrieve all output quantities from slave and store in local vectors. */
 	void cacheOutputs() override;
 
+	/*! Sets up the list of (value reference, order) pairs to query via fmi2GetRealOutputDerivatives(). */
+	void setRequiredOutputDerivatives(const std::vector<int> & orderPerLocalOutput) override;
+
+	/*! Calls fmi2GetRealOutputDerivatives() once for all required derivatives (if any). */
+	void cacheOutputDerivatives() override;
+
+	/*! Wrapper around fmi2SetRealInputDerivatives(). */
+	void setRealInputDerivative(unsigned int valueReference, int order, double value) override;
+
 	/*! Pointer to the FMU object that instantiated this slave. */
 	const FMU			* fmu() const { return m_fmu; }
 
@@ -93,6 +102,15 @@ private:
 
 	/*! Component pointer returned by instantiation function of FMU. */
 	void		*m_component;
+
+	/*! Value references of output derivatives requested in cacheOutputDerivatives(). */
+	std::vector<fmi2ValueReference>	m_derivValueRefs;
+	/*! Derivative orders matching m_derivValueRefs. */
+	std::vector<fmi2Integer>		m_derivOrders;
+	/*! Local output indexes (in m_doubleOutputs) matching m_derivValueRefs. */
+	std::vector<unsigned int>		m_derivLocalIndexes;
+	/*! Buffer for values retrieved by fmi2GetRealOutputDerivatives(). */
+	std::vector<fmi2Real>			m_derivValues;
 
 	/*! Structure with function pointers to required call back functions. */
 	static	fmiCallbackFunctions	m_fmiCallBackFunctions;

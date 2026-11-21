@@ -84,10 +84,12 @@
 
 		<!-- Index of variable = "6" -->
 		<ScalarVariable
-			name="useInputInterpolation"
+			name="inputInterpolationMode"
+			description="0 - zero-order hold, 1 - internal input history, 2 - input derivatives set by master"
 			valueReference="6"
-			causality="parameter">
-			<Boolean start="true"/>
+			causality="parameter"
+			variability="fixed">
+			<Integer start="1"/>
 		</ScalarVariable>
 
 	</ModelVariables>

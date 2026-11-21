@@ -114,6 +114,7 @@ Iterations- und Konvergenzparameter:
 maxIterations:: (_default=1=disabled_) max. Anzahl an Iterationen, wenn == 1 wird keine Iteration ausgeführt
 absTol:: (_default=1e-5_) absolute Toleranz für den Konvergenz-/Fehlertest
 relTol:: (_default=1e-6_) relative Toleranz für den Konvergenz-/Fehlertest
+maxInputDerivativeOrder:: (_default=0=disabled_) max. Ordnung der Ausgangsableitungen, die an Eingänge von FMUs mit der Eigenschaft `canInterpolateInputs` weitergereicht werden (nur FMI 2.0). Die Ordnung je Verbindung ist zusätzlich durch `maxOutputDerivativeOrder` der erzeugenden FMU begrenzt. Eingänge beziehen sich immer auf den Beginn des Kommunikationsschritts; bei Gauss-Seidel und Newton werden bereits berechnete Werte am Schrittende als Ableitungen eines Interpolationspolynoms übergeben (Sekante bei Ordnung 1).
 
 *ErrorControlMode* (_default=NONE=disabled_) ist einer von:
 [horizontal]

@@ -123,6 +123,29 @@
         <item row="3" column="1">
          <widget class="QLineEdit" name="lineEditAbsTol"/>
         </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="labelMaxInputDerivativeOrder">
+          <property name="toolTip">
+           <string>Maximum order of output derivatives passed to inputs of FMUs that can interpolate inputs. A value of 0 disables passing of derivatives.</string>
+          </property>
+          <property name="text">
+           <string>Max. input derivative order:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QSpinBox" name="spinBoxMaxInputDerivativeOrder">
+          <property name="alignment">
+           <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+          </property>
+          <property name="minimum">
+           <number>0</number>
+          </property>
+          <property name="maximum">
+           <number>3</number>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
@@ -442,6 +465,7 @@
   <tabstop>spinBoxMaxIteration</tabstop>
   <tabstop>lineEditRelTol</tabstop>
   <tabstop>lineEditAbsTol</tabstop>
+  <tabstop>spinBoxMaxInputDerivativeOrder</tabstop>
   <tabstop>comboBoxErrorControl</tabstop>
   <tabstop>checkBoxAdjustStepSize</tabstop>
   <tabstop>lineEditDtMin</tabstop>

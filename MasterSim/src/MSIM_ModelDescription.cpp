@@ -5,6 +5,7 @@
 #include <IBK_Exception.h>
 #include <IBK_FormatString.h>
 #include <IBK_messages.h>
+#include <IBK_StringUtils.h>
 
 #include <tinyxml.h>
 
@@ -192,6 +193,21 @@ void ModelDescription::readElementCoSimulation(const TiXmlElement * element) {
 	m_canSerializeFMUstate = readBoolAttribute(element, "canSerializeFMUstate");
 	m_canBeInstantiatedOnlyOncePerProcess = readBoolAttribute(element, "canBeInstantiatedOnlyOncePerProcess");
 	m_providesDirectionalDerivative = readBoolAttribute(element, "providesDirectionalDerivative");
+	std::string maxOrder = readOptionalAttribute(element, "maxOutputDerivativeOrder");
+	if (maxOrder.empty())
+		m_maxOutputDerivativeOrder = 0;
+	else {
+		try {
+			m_maxOutputDerivativeOrder = IBK::string2val<int>(maxOrder);
+		}
+		catch (IBK::Exception & ex) {
+			throw IBK::Exception(ex, IBK::FormatString("Invalid value '%1' of attribute 'maxOutputDerivativeOrder'.").arg(maxOrder),
+								 "[ModelDescription::readElementCoSimulation]");
+		}
+		if (m_maxOutputDerivativeOrder < 0)
+			throw IBK::Exception(IBK::FormatString("Invalid value '%1' of attribute 'maxOutputDerivativeOrder'.").arg(maxOrder),
+								 "[ModelDescription::readElementCoSimulation]");
+	}
 	m_fmuType = (FMUType)(m_fmuType | CS_v2);
 }
 

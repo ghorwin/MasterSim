@@ -40,13 +40,14 @@ Radiator::Radiator() :
 	m_realVar[VR_dayLength] = 14400.0;
 	m_realVar[VR_setpointDay] = 295.15;  // 22 degC
 	m_realVar[VR_setpointNight] = 289.15; // 16 degC
-	m_boolVar[VR_useInputInterpolation] = 1;
+	m_integerVar[VR_inputInterpolationMode] = IIM_INTERNAL_HISTORY;
 
 	// model state
 	m_currentTimePoint = 0.0;
 	m_tPrev = -1.0; // no history yet
 	m_TPrev = 275.15;
 	m_dTdt = 0.0;
+	m_inputdTdt = 0.0;
 	m_heatingLoad = 0.0;
 
 	// parameters (updated in init())
@@ -55,7 +56,7 @@ Radiator::Radiator() :
 	m_dayLength = 14400.0;
 	m_setpointDay = 295.15;
 	m_setpointNight = 289.15;
-	m_useInputInterpolation = true;
+	m_inputInterpolationMode = IIM_INTERNAL_HISTORY;
 }
 
 
@@ -73,7 +74,9 @@ void Radiator::init() {
 	m_dayLength = m_realVar[VR_dayLength];
 	m_setpointDay = m_realVar[VR_setpointDay];
 	m_setpointNight = m_realVar[VR_setpointNight];
-	m_useInputInterpolation = (m_boolVar[VR_useInputInterpolation] != 0);
+	m_inputInterpolationMode = m_integerVar[VR_inputInterpolationMode];
+	if (m_inputInterpolationMode < IIM_ZERO_ORDER_HOLD || m_inputInterpolationMode > IIM_MASTER_DERIVATIVES)
+		throw std::runtime_error("Parameter 'inputInterpolationMode' must be 0, 1 or 2.");
 
 	if (m_controllerGain < 0.0)
 		throw std::runtime_error("Parameter 'controllerGain' must not be negative.");
@@ -89,6 +92,7 @@ void Radiator::init() {
 	m_tPrev = -1.0;
 	m_TPrev = m_realVar[VR_roomTemperature];
 	m_dTdt = 0.0;
+	m_inputdTdt = 0.0;
 
 	// compute the initial output
 	m_heatingLoad = computeHeatingLoad(setpointAt(m_currentTimePoint), m_realVar[VR_roomTemperature]);
@@ -121,12 +125,17 @@ void Radiator::integrateTo(double tCommunicationIntervalEnd) {
 	double Tset = setpointAt(tCommunicationIntervalEnd);
 
 	double Test = Tcur;
-	if (m_useInputInterpolation && (m_tPrev >= 0.0)) {
-		// FMI 2.0: the input is assumed to change linearly between the
-		// communication points. Estimate the room temperature at the end of
-		// the current step by linear extrapolation from the two most recent
-		// communication points.
+	if (m_inputInterpolationMode == IIM_INTERNAL_HISTORY && (m_tPrev >= 0.0)) {
+		// the input is assumed to change linearly between the communication
+		// points. Estimate the room temperature at the end of the current step
+		// by linear extrapolation from the two most recent communication points.
 		m_dTdt = (Tcur - m_TPrev) / (m_currentTimePoint - m_tPrev);
+		Test = Tcur + m_dTdt * h;
+	}
+	else if (m_inputInterpolationMode == IIM_MASTER_DERIVATIVES) {
+		// FMI 2.0: input and its derivative are set with respect to the begin
+		// of the communication step: T(t) = T(tn) + dT/dt * (t - tn)
+		m_dTdt = m_inputdTdt;
 		Test = Tcur + m_dTdt * h;
 	}
 	else {
@@ -140,6 +149,8 @@ void Radiator::integrateTo(double tCommunicationIntervalEnd) {
 	// remember the current communication point for the history of the next step
 	m_tPrev = m_currentTimePoint;
 	m_TPrev = Tcur;
+	// input derivatives are only valid for this step
+	m_inputdTdt = 0.0;
 	m_currentTimePoint = tCommunicationIntervalEnd;
 }
 
@@ -170,6 +181,25 @@ fmi2Status Radiator::getRealOutputDerivatives(const unsigned int vr[], size_t nv
 }
 
 
+// FMI 2.0 co-simulation: input derivatives (valid for the next fmi2DoStep() only)
+fmi2Status Radiator::setRealInputDerivatives(const unsigned int vr[], size_t nvr, const int order[], const double value[]) {
+	for (size_t i = 0; i < nvr; ++i) {
+		if (order[i] < 1) {
+			logger(fmi2Error, "logStatusError", "Invalid derivative order in fmi2SetRealInputDerivatives().");
+			return fmi2Error;
+		}
+		if (vr[i] != VR_roomTemperature) {
+			logger(fmi2Error, "logStatusError", "Variable in fmi2SetRealInputDerivatives() is not a continuous real input.");
+			return fmi2Error;
+		}
+		if (order[i] == 1)
+			m_inputdTdt = value[i];
+		// higher order derivatives are ignored (model uses linear extrapolation)
+	}
+	return fmi2OK;
+}
+
+
 double Radiator::setpointAt(double t) const {
 	// step thermostat: first half of the day at day setpoint, second half at night setpoint
 	double tmod = t - std::floor(t / m_dayLength) * m_dayLength;
@@ -189,7 +219,7 @@ double Radiator::computeHeatingLoad(double Tset, double Troom) const {
 
 void Radiator::computeFMUStateSize() {
 	// time and model state
-	m_fmuStateSize = sizeof(double)*5; // m_currentTimePoint, m_tPrev, m_TPrev, m_dTdt, m_heatingLoad
+	m_fmuStateSize = sizeof(double)*6; // m_currentTimePoint, m_tPrev, m_TPrev, m_dTdt, m_inputdTdt, m_heatingLoad
 
 	// we store all cached variables
 	m_fmuStateSize += sizeof(int)*4; // map sizes for sanity checks
@@ -260,6 +290,7 @@ void Radiator::serializeFMUstate(void * FMUstate) {
 	SERIALIZE(double, dataPtr, m_tPrev);
 	SERIALIZE(double, dataPtr, m_TPrev);
 	SERIALIZE(double, dataPtr, m_dTdt);
+	SERIALIZE(double, dataPtr, m_inputdTdt);
 	SERIALIZE(double, dataPtr, m_heatingLoad);
 
 	// write map size for checking
@@ -303,6 +334,7 @@ bool Radiator::deserializeFMUstate(void * FMUstate) {
 	DESERIALIZE(const double, dataPtr, m_tPrev);
 	DESERIALIZE(const double, dataPtr, m_TPrev);
 	DESERIALIZE(const double, dataPtr, m_dTdt);
+	DESERIALIZE(const double, dataPtr, m_inputdTdt);
 	DESERIALIZE(const double, dataPtr, m_heatingLoad);
 	m_realVar[VR_heatingLoad] = m_heatingLoad;
 

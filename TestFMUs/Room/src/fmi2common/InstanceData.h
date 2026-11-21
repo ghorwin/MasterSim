@@ -131,6 +131,18 @@ public:
 		return fmi2Warning;
 	}
 
+	/*! Called from fmi2SetRealInputDerivatives() (Co-Simulation only).
+		Stores time derivatives of input variables, valid with respect to the begin of the
+		next communication step (order 1 = first time derivative, and so on).
+		Re-implement in models that can interpolate inputs (declare canInterpolateInputs="true"
+		in the modelDescription.xml file).
+		By default, the derivatives are ignored.
+	*/
+	virtual fmi2Status setRealInputDerivatives(const unsigned int vr[], size_t nvr, const int order[], const double value[]) {
+		(void)vr; (void)nvr; (void)order; (void)value;
+		return fmi2OK;
+	}
+
 	/*! Send a logging message to FMU environment if logger is present.*/
 	void logger(fmi2Status state, fmi2String category, fmi2String msg);
 

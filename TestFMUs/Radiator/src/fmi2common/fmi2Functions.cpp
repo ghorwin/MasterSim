@@ -688,11 +688,12 @@ fmi2Status fmi2GetNominalsOfContinuousStates(void*, fmi2Real[], size_t) {
 
 
 // CoSim only
-fmi2Status fmi2SetRealInputDerivatives(void*,	const fmi2ValueReference vr[], size_t nvr,
+fmi2Status fmi2SetRealInputDerivatives(void* c,	const fmi2ValueReference vr[], size_t nvr,
 										const fmi2Integer order[], const fmi2Real value[])
 {
-	(void)order; (void)value; (void)vr; (void)nvr;
-	return fmi2OK;
+	InstanceData * modelInstance = static_cast<InstanceData*>(c);
+	FMI_ASSERT(modelInstance != NULL);
+	return modelInstance->setRealInputDerivatives(vr, nvr, order, value);
 }
 
 

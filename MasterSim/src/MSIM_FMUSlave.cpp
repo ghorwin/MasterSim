@@ -228,6 +228,7 @@ int FMUSlave::doStep(double stepSize, bool noSetFMUStatePriorToCurrentPoint) {
 #endif
 
 		cacheOutputs();
+		cacheOutputDerivatives();
 		m_t += stepSize;
 	}
 	return res;
@@ -312,6 +313,59 @@ void FMUSlave::cacheOutputs() {
 		}
 	}
 	if (res != fmi2OK)	throw IBK::Exception("Error retrieving values from slave.", FUNC_ID);
+}
+
+
+void FMUSlave::setRequiredOutputDerivatives(const std::vector<int> & orderPerLocalOutput) {
+	const char * const FUNC_ID = "[FMUSlave::setRequiredOutputDerivatives]";
+	AbstractSlave::setRequiredOutputDerivatives(orderPerLocalOutput);
+	IBK_ASSERT(orderPerLocalOutput.size() == m_fmu->m_doubleValueRefsOutput.size());
+	m_derivValueRefs.clear();
+	m_derivOrders.clear();
+	m_derivLocalIndexes.clear();
+	for (unsigned int i=0; i<orderPerLocalOutput.size(); ++i) {
+		for (int k=1; k<=orderPerLocalOutput[i]; ++k) {
+			m_derivValueRefs.push_back(m_fmu->m_doubleValueRefsOutput[i]);
+			m_derivOrders.push_back(k);
+			m_derivLocalIndexes.push_back(i);
+		}
+	}
+	m_derivValues.resize(m_derivValueRefs.size());
+	if (m_derivValueRefs.empty())
+		return;
+	if (!(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2))
+		throw IBK::Exception(IBK::FormatString("Output derivatives are only supported for FMI 2.0 slaves (slave '%1').").arg(m_name), FUNC_ID);
+	if (m_fmu->m_fmi2Functions.getRealOutputDerivatives == nullptr)
+		throw IBK::Exception(IBK::FormatString("Slave '%1' does not provide function fmi2GetRealOutputDerivatives().").arg(m_name), FUNC_ID);
+}
+
+
+void FMUSlave::cacheOutputDerivatives() {
+	const char * const FUNC_ID = "[FMUSlave::cacheOutputDerivatives]";
+	if (m_derivValueRefs.empty())
+		return;
+	fmi2Status res = m_fmu->m_fmi2Functions.getRealOutputDerivatives(m_component, &m_derivValueRefs[0],
+					m_derivValueRefs.size(), &m_derivOrders[0], &m_derivValues[0]);
+	if (res != fmi2OK)
+		throw IBK::Exception(IBK::FormatString("Error retrieving output derivatives from slave '%1'.").arg(m_name), FUNC_ID);
+	for (unsigned int i=0; i<m_derivValueRefs.size(); ++i) {
+		m_doubleOutputDerivatives[(size_t)m_derivOrders[i]-1][m_derivLocalIndexes[i]] = m_derivValues[i];
+		IBK_FastMessage(IBK::VL_DEVELOPER)(IBK::FormatString("MASTER: realOutputDerivative from slave %1, idx %2, order %3: value=%4\n")
+										   .arg(m_name).arg(m_derivValueRefs[i]).arg(m_derivOrders[i]).arg(m_derivValues[i], 0, 'g', 12),
+										   IBK::MSG_PROGRESS, FUNC_ID, IBK::VL_DEVELOPER);
+	}
+}
+
+
+void FMUSlave::setRealInputDerivative(unsigned int valueReference, int order, double value) {
+	const char * const FUNC_ID = "[FMUSlave::setRealInputDerivative]";
+	if (!(m_fmu->m_modelDescription.m_fmuType & ModelDescription::CS_v2))
+		throw IBK::Exception(IBK::FormatString("Input derivatives are only supported for FMI 2.0 slaves (slave '%1').").arg(m_name), FUNC_ID);
+	fmi2ValueReference vr = valueReference;
+	fmi2Integer ord = order;
+	fmi2Real val = value;
+	if (m_fmu->m_fmi2Functions.setRealInputDerivatives(m_component, &vr, 1, &ord, &val) != fmi2OK)
+		throw IBK::Exception(IBK::FormatString("Error setting input derivative in slave '%1'.").arg(m_name), FUNC_ID);
 }
 
 
