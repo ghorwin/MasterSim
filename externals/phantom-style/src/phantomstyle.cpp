@@ -120,9 +120,16 @@ static const qreal ToolButton_Rounding = 1.25;
 static const qreal ProgressBar_Rounding = 0.0;
 static const qreal GroupBox_Rounding = 0.0;
 static const qreal SliderGroove_Rounding = 2.0;
-static const qreal SliderHandle_Rounding = 0.0;
+static const qreal SliderHandle_Rounding = 2.0;
 
 static const qreal CheckMark_WidthOfHeightScale = 0.8;
+// Size of the check box indicator relative to the font height (slightly
+// smaller than a text line, taken from the VICUS variant).
+static const qreal CheckBox_SizeFontRatio = 0.85;
+// Thin slider groove and handle (Fusion-like); the part of the groove between
+// the minimum and the handle is filled with the highlight color.
+static const qreal SliderGroove_Thickness = 5.0;
+static const int Slider_HandleSize = 13;
 static const qreal PushButton_HorizontalPaddingFontHeightRatio = 1.0 / 2.0;
 static const qreal TabBar_HPaddingFontRatio = 1.25;
 static const qreal TabBar_VPaddingFontRatio = 1.0 / 1.25;
@@ -150,6 +157,10 @@ static const bool BranchesOnEdge = false;
 static const bool OverhangShadows = false;
 static const bool IndicatorShadows = false;
 static const bool ScrollbarShadows = true;
+// Slim scroll bars (cristianadam variant): flat gutter, thin rounded thumb that
+// grows on hover, no arrow buttons. If true, the arrows appear while the
+// mouse is over the scroll bar (the buttons stay clickable either way).
+static const bool ScrollBar_ArrowsOnHover = true;
 static const bool MenuExtraBottomMargin = true;
 static const bool MenuBarLeftMargin = false;
 static const bool AllowToolBarAutoRaise = true;
@@ -1743,53 +1754,87 @@ void PhantomStyle::drawPrimitive(PrimitiveElement elem,
     auto checkbox = qstyleoption_cast<const QStyleOptionButton*>(option);
     if (!checkbox)
       break;
-    QRect r = option->rect;
-    bool isHighlighted = option->state & State_HasFocus &&
-                         option->state & State_KeyboardFocusChange;
-    bool isSelected = option->state & State_Selected;
-    bool isFlat = checkbox->features & QStyleOptionButton::Flat;
-    bool isEnabled = option->state & State_Enabled;
-    bool isPressed = state & State_Sunken;
-    Swatchy outlineColor =
-        isHighlighted ? S_highlight_outline : S_window_outline;
-    Swatchy bgFillColor = isPressed ? S_highlight : S_base;
-    Swatchy fgColor = isFlat ? S_windowText : S_text;
-    if (isPressed && !isFlat) {
-      fgColor = S_highlightedText;
+    // Rounded square box (VICUS style): neutral outline when off, filled with
+    // the highlight color plus a check mark (or hyphen for tri-state) when on.
+    const QRectF r(option->rect);
+    const bool isHighlighted = option->state & State_HasFocus &&
+                               option->state & State_KeyboardFocusChange;
+    const bool isSelected = option->state & State_Selected;
+    const bool isEnabled = option->state & State_Enabled;
+    const bool isPressed = state & State_Sunken;
+    const bool isTristate = checkbox->state & State_NoChange;
+    const bool isFilled = isTristate || (checkbox->state & State_On);
+    const bool isDark = swatch.color(S_window).lightnessF() < 0.5;
+    const QColor accent = swatch.color(S_highlight);
+    const QColor base = swatch.color(S_base);
+    const QColor text = swatch.color(S_windowText);
+
+    QColor fill, border;
+    if (isFilled) {
+      fill = isEnabled ? accent
+                       : (isDark ? QColor(90, 90, 90) : QColor(200, 200, 200));
+      border = isEnabled ? accent
+                         : (isDark ? QColor(100, 100, 100)
+                                   : QColor(180, 180, 180));
+      if (isPressed && isEnabled)
+        fill = fill.darker(115);
+      // In a selected item view row the accent box would merge with the
+      // selection background, so outline it with the selection text color.
+      if (isSelected && isEnabled)
+        border = swatch.color(S_highlightedText);
+    } else if (isEnabled) {
+      // dark: a slightly lifted field with a bright outline, a neutral gray box
+      // would vanish on dark panels and item views
+      fill = isDark ? Ph::lerpQColor(base, text, 0.08) : base;
+      border = isDark ? Ph::lerpQColor(base, text, 0.62) : QColor(160, 160, 160);
+      if (isPressed)
+        fill = Ph::lerpQColor(fill, accent, 0.25);
+    } else {
+      fill = isDark ? QColor(45, 45, 45) : QColor(240, 240, 240);
+      border = isDark ? QColor(90, 90, 90) : QColor(200, 200, 200);
     }
-    // Bare checkmarks that are selected should draw with the highlighted text
-    // color.
-    if (isSelected && isFlat) {
-      fgColor = S_highlightedText;
-    }
-    if (!isFlat) {
-      QRect fillR = r;
-      Ph::fillRectOutline(painter, fillR, 1, swatch.color(outlineColor));
-      fillR.adjust(1, 1, -1, -1);
-      if (Ph::IndicatorShadows && !isPressed && isEnabled) {
-        Ph::fillRectEdges(painter, fillR, Qt::TopEdge, 1,
-                          swatch.color(S_base_shadow));
-        fillR.adjust(0, 1, 0, 0);
+    if (isHighlighted)
+      border = swatch.color(S_highlight_outline);
+
+    const qreal side = qMin(r.width(), r.height());
+    const QRectF box(r.x() + (r.width() - side) / 2.0,
+                     r.y() + (r.height() - side) / 2.0, side, side);
+    const qreal radius = qMax(qreal(2.0), side * qreal(0.2));
+
+    Ph::PSave save(painter);
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setPen(QPen(border, isDark ? 1.5 : 1.2));
+    painter->setBrush(fill);
+    painter->drawRoundedRect(box.adjusted(0.5, 0.5, -0.5, -0.5), radius,
+                             radius);
+
+    if (isFilled) {
+      const qreal inset = side * 0.22;
+      const QRectF markRect = box.adjusted(inset, inset, -inset, -inset);
+      // the mark sits on the accent fill -> color for text on highlight
+      QPen markPen(isEnabled ? swatch.color(S_highlightedText)
+                             : (isDark ? QColor(160, 160, 160)
+                                       : QColor(255, 255, 255)));
+      markPen.setCapStyle(Qt::RoundCap);
+      markPen.setJoinStyle(Qt::RoundJoin);
+      markPen.setWidthF(qMax(qreal(1.4), side * qreal(0.14)));
+      painter->setPen(markPen);
+      painter->setBrush(Qt::NoBrush);
+      if (isTristate) {
+        const qreal cy = markRect.center().y();
+        painter->drawLine(QPointF(markRect.left(), cy),
+                          QPointF(markRect.right(), cy));
+      } else {
+        // same check mark aspect as drawCheck()
+        const qreal dx = markRect.width() *
+                         (qreal(1.0) - Ph::CheckMark_WidthOfHeightScale) / 2.0;
+        const QRectF cr = markRect.adjusted(dx, 0, -dx, 0);
+        const QPointF pts[3] = {
+            QPointF(cr.left(), cr.top() + cr.height() * 0.55),
+            QPointF(cr.left() + cr.width() * 0.4, cr.bottom()),
+            QPointF(cr.right(), cr.top())};
+        painter->drawPolyline(pts, 3);
       }
-      painter->fillRect(fillR, swatch.color(bgFillColor));
-    }
-    if (checkbox->state & State_NoChange) {
-      const qreal insetScale = 0.7;
-      qreal rx, ry, rw, rh;
-      QRectF(r.adjusted(1, 1, -1, -1)).getRect(&rx, &ry, &rw, &rh);
-      qreal dimx = rw * insetScale;
-      qreal dimy = rh * insetScale;
-      QRectF r_(rx + (rw - dimx) / 2, ry + (rh - dimy) / 2, dimx, dimy);
-      Ph::drawHyphen(painter, d->checkBox_pen_scratch, r_, swatch, fgColor);
-    } else if (checkbox->state & State_On) {
-      const qreal insetScale = 0.8;
-      qreal rx, ry, rw, rh;
-      QRectF(r.adjusted(1, 1, -1, -1)).getRect(&rx, &ry, &rw, &rh);
-      // kinda wrong, assumes we're already square, but we probably are
-      qreal dimx = rw * insetScale * Ph::CheckMark_WidthOfHeightScale;
-      qreal dimy = rh * insetScale;
-      QRectF r_(rx + (rw - dimx) / 2, ry + (rh - dimy) / 2, dimx, dimy);
-      Ph::drawCheck(painter, d->checkBox_pen_scratch, r_, swatch, fgColor);
     }
     break;
   }
@@ -3570,7 +3615,6 @@ void PhantomStyle::drawComplexControl(ComplexControl control,
     bool isHorizontal = scrollBar->orientation == Qt::Horizontal;
     bool isLeftToRight = option->direction != Qt::RightToLeft;
     auto pr = proxy();
-    bool isSunken = scrollBar->state & State_Sunken;
     QRect scrollBarSubLine =
         pr->subControlRect(control, scrollBar, SC_ScrollBarSubLine, widget);
     QRect scrollBarAddLine =
@@ -3584,234 +3628,61 @@ void PhantomStyle::drawComplexControl(ComplexControl control,
     bool isEnabled = scrollBar->state & State_Enabled;
     bool hasRange = scrollBar->minimum != scrollBar->maximum;
 
-    // Groove/gutter/trench area
-    if (scrollBarGrooveShown) {
-      QRect r = scrollBarGroove;
-      Qt::Edges edges;
-      if (isHorizontal) {
-        edges = Qt::TopEdge;
-        r.setY(r.y() + 1);
-      } else {
-        if (isLeftToRight) {
-          edges = Qt::LeftEdge;
-          r.setX(r.x() + 1);
-        } else {
-          edges = Qt::RightEdge;
-          r.setWidth(r.width() - 1);
-        }
-      }
-      Swatchy grooveColor =
-          isEnabled ? S_scrollbarGutter : S_scrollbarGutter_disabled;
-      // Top or left dark edge
-      Ph::fillRectEdges(painter, scrollBarGroove, edges, 1,
-                        swatch.color(S_window_outline));
-      // Ring shadow
-      if (Ph::ScrollbarShadows && isEnabled) {
-        for (int i = 0; i < Ph::Num_ShadowSteps; ++i) {
-          Ph::fillRectOutline(painter, r, 1, swatch.scrollbarShadowColors[i]);
-          r.adjust(1, 1, -1, -1);
-        }
-      }
-      // General BG fill
-      painter->fillRect(r, swatch.color(grooveColor));
+    const bool isHovered = scrollBar->state & State_MouseOver;
+    const bool showArrows = Ph::ScrollBar_ArrowsOnHover && isHovered;
+    const QColor gutter = swatch.color(isEnabled ? S_scrollbarGutter
+                                                 : S_scrollbarGutter_disabled);
 
-      // Bonus fun: also draw a shadow cast by the scrollbar slider
-      if (Ph::ScrollbarShadows && scrollBar->subControls & SC_ScrollBarSlider &&
-          isEnabled && hasRange) {
-        if (isHorizontal) {
-          r = scrollBarSlider;
-          int leftwardEnd = scrollBarGroove.left() + 1;
-          int availWidth = r.left() - leftwardEnd;
-          int steps = qMin(availWidth / 2, (int)Ph::Num_ShadowSteps);
-          if (steps < 0)
-            steps = 0;
-          r.adjust(-2, 2, 0, -1);
-          r.setWidth(1);
-          for (int i = 0; i < steps; ++i) {
-            painter->fillRect(r, swatch.scrollbarShadowColors[i]);
-            r.adjust(-1, 1, -1, -1);
-          }
-          r = scrollBarSlider;
-          int rightwardEnd =
-              scrollBarGroove.left() + scrollBarGroove.width() - 2;
-          availWidth = rightwardEnd - r.right();
-          steps = qMin(availWidth / 2, (int)Ph::Num_ShadowSteps);
-          if (steps < 0)
-            steps = 0;
-          r.moveLeft(r.right() + 1);
-          r.adjust(1, 2, 0, -1);
-          r.setWidth(1);
-          for (int i = 0; i < steps; ++i) {
-            painter->fillRect(r, swatch.scrollbarShadowColors[i]);
-            r.adjust(1, 1, 1, -1);
-          }
-        } else {
-          r = scrollBarSlider;
-          int topEnd = scrollBarGroove.top() + 1;
-          int availWidth = r.top() - topEnd;
-          int steps = qMin(availWidth / 2, (int)Ph::Num_ShadowSteps);
-          if (steps < 0)
-            steps = 0;
-          r.adjust(2, -2, -1, 0);
-          r.setHeight(1);
-          if (!isLeftToRight)
-            r.translate(-1, 0);
-          for (int i = 0; i < steps; ++i) {
-            painter->fillRect(r, swatch.scrollbarShadowColors[i]);
-            r.adjust(1, -1, -1, -1);
-          }
-          r = scrollBarSlider;
-          int botEnd = scrollBarGroove.bottom() - 1;
-          availWidth = botEnd - r.bottom();
-          steps = qMin(availWidth / 2, (int)Ph::Num_ShadowSteps);
-          if (steps < 0)
-            steps = 0;
-          r.setTop(r.bottom() + 1);
-          r.setHeight(1);
-          r.adjust(2, 2, -1, 0);
-          if (!isLeftToRight)
-            r.translate(-1, 0);
-          for (int i = 0; i < steps; ++i) {
-            painter->fillRect(r, swatch.scrollbarShadowColors[i]);
-            r.adjust(1, 1, -1, 1);
-          }
-        }
+    // Flat gutter, including the (invisible) arrow button areas
+    if (scrollBarGrooveShown)
+      painter->fillRect(scrollBarGroove, gutter);
+    if (scrollBar->subControls & SC_ScrollBarSubLine)
+      painter->fillRect(scrollBarSubLine, gutter);
+    if (scrollBar->subControls & SC_ScrollBarAddLine)
+      painter->fillRect(scrollBarAddLine, gutter);
+
+    // Slider thumb: thin rounded bar, thicker while hovered
+    if ((scrollBar->subControls & SC_ScrollBarSlider) && hasRange) {
+      const qreal sizeFactor = isHovered ? 4.0 : 2.5;
+      QRect thumb = scrollBarSlider;
+      qreal radius;
+      if (isHorizontal) {
+        const int adj = (int)(thumb.height() / sizeFactor);
+        thumb.adjust(0, adj, 0, -adj);
+        radius = thumb.height() / 2.0;
+      } else {
+        const int adj = (int)(thumb.width() / sizeFactor);
+        thumb.adjust(adj, 0, -adj, 0);
+        radius = thumb.width() / 2.0;
       }
+      Ph::paintSolidRoundRect(painter, thumb, radius, swatch,
+                              S_indicator_current);
     }
 
-    // Slider thumb
-    if (scrollBar->subControls & SC_ScrollBarSlider) {
-      Swatchy thumbFill, thumbSpecular;
-      if (isSunken && scrollBar->activeSubControls & SC_ScrollBarSlider) {
-        thumbFill = S_button_pressed;
-        thumbSpecular = S_button_pressed_specular;
-      } else if (hasRange) {
-        thumbFill = S_button;
-        thumbSpecular = S_button_specular;
-      } else {
-        thumbFill = S_window;
-        thumbSpecular = S_none;
+    // Arrows, only while hovered (or when there is nothing to scroll)
+    if (showArrows) {
+      if (scrollBar->subControls & SC_ScrollBarSubLine) {
+        Qt::ArrowType arrowType;
+        if (isHorizontal)
+          arrowType = isLeftToRight ? Qt::LeftArrow : Qt::RightArrow;
+        else
+          arrowType = Qt::UpArrow;
+        const int adj =
+            qMin(scrollBarSubLine.width(), scrollBarSubLine.height()) / 4;
+        Ph::drawArrow(painter, scrollBarSubLine.adjusted(adj, adj, -adj, -adj),
+                      arrowType, swatch, hasRange);
       }
-      Qt::Edges edges;
-      QRect edgeRect = scrollBarSlider;
-      QRect mainRect = scrollBarSlider;
-      if (isHorizontal) {
-        edges = Qt::LeftEdge | Qt::TopEdge | Qt::RightEdge;
-        edgeRect.adjust(-1, 0, 1, 0);
-        mainRect.setY(mainRect.y() + 1);
-      } else {
-        edgeRect.adjust(0, -1, 0, 1);
-        if (isLeftToRight) {
-          edges = Qt::LeftEdge | Qt::TopEdge | Qt::BottomEdge;
-          mainRect.setX(mainRect.x() + 1);
-        } else {
-          edges = Qt::TopEdge | Qt::BottomEdge | Qt::RightEdge;
-          mainRect.setWidth(mainRect.width() - 1);
-        }
+      if (scrollBar->subControls & SC_ScrollBarAddLine) {
+        Qt::ArrowType arrowType;
+        if (isHorizontal)
+          arrowType = isLeftToRight ? Qt::RightArrow : Qt::LeftArrow;
+        else
+          arrowType = Qt::DownArrow;
+        const int adj =
+            qMin(scrollBarAddLine.width(), scrollBarAddLine.height()) / 4;
+        Ph::drawArrow(painter, scrollBarAddLine.adjusted(adj, adj, -adj, -adj),
+                      arrowType, swatch, hasRange);
       }
-      Ph::fillRectEdges(painter, edgeRect, edges, 1,
-                        swatch.color(S_window_outline));
-      painter->fillRect(mainRect, swatch.color(thumbFill));
-      if (thumbSpecular) {
-        Ph::fillRectOutline(painter, mainRect, 1, swatch.color(thumbSpecular));
-      }
-    }
-
-    // The SubLine (up/left) buttons
-    if (scrollBar->subControls & SC_ScrollBarSubLine) {
-      Swatchy fill, specular;
-      if (isSunken && scrollBar->activeSubControls & SC_ScrollBarSubLine) {
-        fill = S_button_pressed;
-        specular = S_button_pressed_specular;
-      } else if (hasRange) {
-        fill = S_button;
-        specular = S_button_specular;
-      } else {
-        fill = S_window;
-        specular = S_none;
-      }
-
-      QRect btnRect = scrollBarSubLine;
-      QRect bgRect = btnRect;
-      Qt::Edges edges;
-      if (isHorizontal) {
-        if (isLeftToRight) {
-          edges = Qt::TopEdge | Qt::RightEdge;
-          bgRect.adjust(0, 1, -1, 0);
-        } else {
-          edges = Qt::LeftEdge | Qt::TopEdge;
-          bgRect.adjust(1, 1, 0, 0);
-        }
-      } else {
-        if (isLeftToRight) {
-          edges = Qt::LeftEdge | Qt::BottomEdge;
-          bgRect.adjust(1, 0, 0, -1);
-        } else {
-          edges = Qt::RightEdge | Qt::BottomEdge;
-          bgRect.adjust(0, 0, -1, -1);
-        }
-      }
-      // Outline, fill, specular
-      Ph::fillRectEdges(painter, btnRect, edges, 1,
-                        swatch.color(S_window_outline));
-      painter->fillRect(bgRect, swatch.color(fill));
-      if (specular) {
-        Ph::fillRectOutline(painter, bgRect, 1, swatch.color(specular));
-      }
-
-      // Arrows
-      Qt::ArrowType arrowType;
-      if (isHorizontal) {
-        arrowType = isLeftToRight ? Qt::LeftArrow : Qt::RightArrow;
-      } else {
-        arrowType = Qt::UpArrow;
-      }
-      int adj = qMin(bgRect.width(), bgRect.height()) / 4;
-      Ph::drawArrow(painter, bgRect.adjusted(adj, adj, -adj, -adj), arrowType,
-                    swatch, hasRange);
-    }
-
-    // The AddLine (down/right) button
-    if (scrollBar->subControls & SC_ScrollBarAddLine) {
-      Swatchy fill, specular;
-      if (isSunken && scrollBar->activeSubControls & SC_ScrollBarAddLine) {
-        fill = S_button_pressed;
-        specular = S_button_pressed_specular;
-      } else if (hasRange) {
-        fill = S_button;
-        specular = S_button_specular;
-      } else {
-        fill = S_window;
-        specular = S_none;
-      }
-      QRect btnRect = scrollBarAddLine;
-      QRect bgRect = btnRect;
-      Qt::Edges edges;
-      if (isLeftToRight) {
-        edges = Qt::LeftEdge | Qt::TopEdge;
-        bgRect.adjust(1, 1, 0, 0);
-      } else {
-        edges = Qt::TopEdge | Qt::RightEdge;
-        bgRect.adjust(0, 1, -1, 0);
-      }
-      // Outline, fill, specular
-      Ph::fillRectEdges(painter, btnRect, edges, 1,
-                        swatch.color(S_window_outline));
-      painter->fillRect(bgRect, swatch.color(fill));
-      if (specular) {
-        Ph::fillRectOutline(painter, bgRect, 1, swatch.color(specular));
-      }
-
-      // Arrows
-      Qt::ArrowType arrowType;
-      if (isHorizontal) {
-        arrowType = isLeftToRight ? Qt::RightArrow : Qt::LeftArrow;
-      } else {
-        arrowType = Qt::DownArrow;
-      }
-      int adj = qMin(bgRect.width(), bgRect.height()) / 4;
-      Ph::drawArrow(painter, bgRect.adjusted(adj, adj, -adj, -adj), arrowType,
-                    swatch, hasRange);
     }
     break;
   }
@@ -3914,14 +3785,31 @@ void PhantomStyle::drawComplexControl(ComplexControl control,
         option->state & State_KeyboardFocusChange)
       outlineColor = S_highlight_outline;
     if ((option->subControls & SC_SliderGroove) && groove.isValid()) {
-      QRect g0 = groove;
-      if (g0.height() > 5)
-        g0.adjust(0, 1, 0, -1);
+      const bool isEnabled = option->state & State_Enabled;
       Ph::PSave saver(painter);
-      Swatchy gutterColor =
-          option->state & State_Enabled ? S_scrollbarGutter : S_window;
+      Swatchy gutterColor = isEnabled ? S_scrollbarGutter : S_window;
       Ph::paintBorderedRoundRect(painter, groove, Ph::SliderGroove_Rounding,
                                  swatch, outlineColor, gutterColor);
+      // Fill the groove from the minimum end up to the handle center (Fusion
+      // style); the handle covers the end of the filled part.
+      if (isEnabled && (option->subControls & SC_SliderHandle)) {
+        QRect filled = groove;
+        const QPoint c = handle.center();
+        if (horizontal) {
+          if (slider->upsideDown)
+            filled.setLeft(c.x());
+          else
+            filled.setRight(c.x());
+        } else {
+          // vertical sliders are upsideDown by default (minimum at bottom)
+          if (slider->upsideDown)
+            filled.setTop(c.y());
+          else
+            filled.setBottom(c.y());
+        }
+        Ph::paintBorderedRoundRect(painter, filled, Ph::SliderGroove_Rounding,
+                                   swatch, S_highlight_outline, S_highlight);
+      }
     }
     if (option->subControls & SC_SliderTickmarks) {
       Ph::PSave save(painter);
@@ -4095,7 +3983,7 @@ int PhantomStyle::pixelMetric(PixelMetric metric, const QStyleOption* option,
     break;
   case PM_SliderThickness:
   case PM_SliderLength:
-    val = 15;
+    val = Phantom::Slider_HandleSize;
     break;
   case PM_DockWidgetTitleMargin:
     val = 1;
@@ -4204,6 +4092,14 @@ int PhantomStyle::pixelMetric(PixelMetric metric, const QStyleOption* option,
     break;
   case PM_IndicatorHeight:
   case PM_IndicatorWidth:
+    if (option)
+      return qRound(option->fontMetrics.height() *
+                    Phantom::CheckBox_SizeFontRatio);
+    if (widget)
+      return qRound(widget->fontMetrics().height() *
+                    Phantom::CheckBox_SizeFontRatio);
+    val = 12;
+    break;
   case PM_ExclusiveIndicatorHeight:
   case PM_ExclusiveIndicatorWidth:
     if (option)
@@ -4520,6 +4416,13 @@ void PhantomStyle::polish(QApplication* app) { QCommonStyle::polish(app); }
 
 void PhantomStyle::polish(QWidget* widget) {
   QCommonStyle::polish(widget);
+#if QT_CONFIG(scrollbar)
+  // slim scroll bars grow (and show their arrows) on hover
+  if (qobject_cast<QScrollBar*>(widget)) {
+    widget->setAttribute(Qt::WA_Hover, true);
+    widget->setAttribute(Qt::WA_OpaquePaintEvent, false);
+  }
+#endif
   // Leaving this code here to debug/remove hover stuff if necessary
 #if 0
   if (false
@@ -4556,6 +4459,10 @@ void PhantomStyle::polish(QPalette& pal) { QCommonStyle::polish(pal); }
 
 void PhantomStyle::unpolish(QWidget* widget) {
   QCommonStyle::unpolish(widget);
+#if QT_CONFIG(scrollbar)
+  if (qobject_cast<QScrollBar*>(widget))
+    widget->setAttribute(Qt::WA_Hover, false);
+#endif
   // Leaving this code here to debug/remove hover stuff if necessary
 #if 0
   if (false
@@ -4629,7 +4536,8 @@ QRect PhantomStyle::subControlRect(ComplexControl control,
     }
     case SC_SliderGroove: {
       QPoint grooveCenter = slider->rect.center();
-      const int grooveThickness = (int)Ph::dpiScaled(7);
+      const int grooveThickness =
+          (int)Ph::dpiScaled(Ph::SliderGroove_Thickness);
       if (slider->orientation == Qt::Horizontal) {
         rect.setHeight(grooveThickness);
         if (slider->tickPosition & QSlider::TicksAbove)
