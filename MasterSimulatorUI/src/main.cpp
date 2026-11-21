@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QFont>
 #include <QSplashScreen>
 #include <QTimer>
 #include <QLocale>
@@ -63,21 +62,7 @@ int main(int argc, char *argv[]) {
 
 	const QString ProgramVersionName = QString("MasterSim %1").arg(MASTER_SIM::VERSION);
 
-	// *** Font size adjustment ***
-#if defined(Q_OS_MAC)
-//	QFont f = qApp->font();
-//	f.setPointSize(10);
-//	qApp->setFont(f);
-//	qApp->setDesktopSettingsAware(false);
-#elif defined(Q_OS_UNIX)
-	QFont f = qApp->font();
-	f.setPointSize(9);
-	qApp->setFont(f);
-#elif defined(Q_OS_WIN)
-	QFont f = qApp->font();
-	f.setPointSize(8);
-	qApp->setFont(f);
-#endif
+	// Font sizes are left as they come from the style/platform defaults.
 
 	qApp->setApplicationName(ProgramVersionName);
 	qApp->setWindowIcon(QIcon(":/gfx/logo/Icon_64.png"));
