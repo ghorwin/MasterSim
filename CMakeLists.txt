@@ -136,6 +136,8 @@ add_subdirectory( TestFMUs/Math003Part3 )
 add_subdirectory( TestFMUs/LotkaVolterraPrey )
 add_subdirectory( TestFMUs/LotkaVolterraPredator )
 add_subdirectory( TestFMUs/FourRealInputVars )
+add_subdirectory( TestFMUs/Room )
+add_subdirectory( TestFMUs/Radiator )
 
 # -------------------------------------------------------------
 # Generate FMUs (test cases and examples) on Linux and macOS
@@ -150,12 +152,14 @@ if (UNIX)
 		${EXAMPLE_FMU_DIR}/Predator.fmu
 		${EXAMPLE_FMU_DIR}/Prey.fmu
 		${EXAMPLE_FMU_DIR}/FourRealInputVars.fmu
+		${EXAMPLE_FMU_DIR}/Room.fmu
+		${EXAMPLE_FMU_DIR}/Radiator.fmu
 	)
 
 	# define a command that re-generates the FMUs from the already compiled libraries
 	# it depends on the compiled shared libraries, which are placed in LIB_DIR (see build.cmake)
 	add_custom_command(
-		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator FourRealInputVars
+		DEPENDS Math003Part1 Math003Part2 Math003Part3 LotkaVolterraPrey LotkaVolterraPredator FourRealInputVars Room Radiator
 		OUTPUT  ${EXAMPLE_FMUS}
 		COMMAND ${PROJECT_SOURCE_DIR}/TestFMUs/generate_FMUs.sh ${LIB_DIR}
 		WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/TestFMUs

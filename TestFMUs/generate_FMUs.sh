@@ -100,7 +100,9 @@ create_fmu Part2             Math003Part2          &&
 create_fmu Part3             Math003Part3          &&
 create_fmu Prey              LotkaVolterraPrey     &&
 create_fmu Predator          LotkaVolterraPredator &&
-create_fmu FourRealInputVars FourRealInputVars     || exit 1
+create_fmu FourRealInputVars FourRealInputVars     &&
+create_fmu Room              Room                  &&
+create_fmu Radiator          Radiator              || exit 1
 
 echo "Updating test FMUs in data/tests/$PLATFORM"
 copy_to_test Part1             Math_003_control_loop &&
@@ -109,4 +111,6 @@ copy_to_test Part3             Math_003_control_loop &&
 copy_to_test Prey              Lotka_Volterra_System &&
 copy_to_test Predator          Lotka_Volterra_System &&
 copy_to_test Prey              FileReaderSlave       &&
-copy_to_test FourRealInputVars FileReaderSlave       || exit 1
+copy_to_test FourRealInputVars FileReaderSlave       &&
+copy_to_test Room              Room_Radiator         &&
+copy_to_test Radiator          Room_Radiator         || exit 1

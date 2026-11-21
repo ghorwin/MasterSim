@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fmiModelDescription
+	fmiVersion="2.0"
+	modelName="Room"
+	guid="{8f2a1c4d-7b6e-4d3a-9c1f-5e8b2a6d4c01}"
+	description="Simple room model: energy balance with heat loss to the environment. Supports FMI 2.0 input interpolation (canInterpolateInputs) and output derivatives (maxOutputDerivativeOrder=1)."
+	generationTool="C++ Code using FMI support functions from IBK@TU Dresden"
+	generationDateAndTime="2026-11-21T12:00:00Z"
+	variableNamingConvention="flat"
+	numberOfEventIndicators="0">
+
+	<ModelExchange
+		modelIdentifier="Room"
+		completedIntegratorStepNotNeeded="true"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<CoSimulation
+		modelIdentifier="Room"
+		canHandleVariableCommunicationStepSize="true"
+		canInterpolateInputs="true"
+		maxOutputDerivativeOrder="1"
+		canNotUseMemoryManagementFunctions="true"
+		canGetAndSetFMUstate="true"
+		canSerializeFMUstate="true"
+	/>
+
+	<LogCategories>
+		<Category name="logStatusWarning" />
+		<Category name="logStatusError" />
+		<Category name="logAll" />
+		<Category name="logFmi2Call" />
+	</LogCategories>
+
+	<DefaultExperiment startTime="0.0" stopTime="14400.0" tolerance="1e-06"/>
+
+	<ModelVariables>
+
+		<!-- Index of variable = "1" -->
+		<ScalarVariable
+			name="heatingLoad"
+			valueReference="1"
+			variability="continuous"
+			causality="input">
+			<Real start="0.0" unit="W"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "2" -->
+		<ScalarVariable
+			name="ambientTemperature"
+			valueReference="2"
+			variability="continuous"
+			causality="input">
+			<Real start="275.15" unit="K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "3" -->
+		<ScalarVariable
+			name="roomTemperature"
+			valueReference="3"
+			variability="continuous"
+			causality="output"
+			initial="exact">
+			<Real start="275.15" unit="K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "4" -->
+		<ScalarVariable
+			name="heatCapacity"
+			valueReference="4"
+			causality="parameter">
+			<Real start="50000" unit="J/K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "5" -->
+		<ScalarVariable
+			name="heatLossCoefficient"
+			valueReference="5"
+			causality="parameter">
+			<Real start="250" unit="W/K"/>
+		</ScalarVariable>
+
+		<!-- Index of variable = "6" -->
+		<ScalarVariable
+			name="useInputInterpolation"
+			valueReference="6"
+			causality="parameter">
+			<Boolean start="true"/>
+		</ScalarVariable>
+
+	</ModelVariables>
+
+	<ModelStructure>
+		<Inputs>
+			<Unknown index="1"/>
+			<Unknown index="2"/>
+		</Inputs>
+		<Outputs>
+			<Unknown index="3"/>
+		</Outputs>
+	</ModelStructure>
+
+</fmiModelDescription>
