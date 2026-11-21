@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QMap>
+#include <QColor>
 
 #include <IBK_ArgParser.h>
 #include <IBK_messages.h>
@@ -149,6 +150,12 @@ public:
 		Use this to select colors for custom-painted content (diagrams, HTML pages).
 	*/
 	static bool isDarkPalette();
+
+	/*! Returns the background color for selected rows in item views (tables), which is
+		less intense than the style's highlight color and adjusted to the current (dark/light) palette.
+		Selected rows keep their regular text color.
+	*/
+	static QColor selectionColor();
 
 	// ****** member variables ************
 
