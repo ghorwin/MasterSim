@@ -21,11 +21,11 @@ ROOT = Path(sys.argv[1])
 SHOTS = ROOT / "shots"
 
 VARIANTS = [
-    ("original", "Original", "randrew / Qt-Widgets, Qt6-patched", "Vendored now",
+    ("original", "MasterSim", "randrew / Qt-Widgets, Qt6-patched", "Used now",
      "chip-neutral", True),
     ("julienmaille", "JulienMaille", "89 commits ahead, last 2026-09", "Most active",
      "chip-good", True),
-    ("cristianadam", "cristianadam", "14 commits ahead, last 2025-12", "Closest to original",
+    ("cristianadam", "cristianadam", "14 commits ahead, last 2025-12", "Closest to MasterSim",
      "chip-good", True),
     ("vicus", "VICUS", "SIM-VICUS externals/phantom, last 2026-11", "IBK in-house",
      "chip-good", True),
@@ -39,19 +39,19 @@ SECTIONS = [
     ("menubar_toolbar", "Menu bar and tool bar",
      "The R button is checked; X is disabled; Mode is a menu button.",
      [("julienmaille", "The checked tool button gets a highlight-tinted fill and outline. The menu arrow is a chevron."),
-      ("cristianadam", "Same as the original."),
+      ("cristianadam", "Same as MasterSim."),
       ("vicus", "Flat tool buttons; the checked one is filled with the accent color. Chevron menu arrow."),
       ("jcelerier", "The checked state of the R button is not visible, and the Mode button has no menu arrow.")]),
     ("buttons", "Buttons, check boxes, radio buttons",
      "Pressed uses setDown(true); Toggled is a checked checkable button.",
      [("julienmaille", "Pressed buttons fill with the highlight color and toggled buttons get a light tint. The partial check box is a filled square. The icon on 'With icon' is blurry at 2× scaling."),
-      ("cristianadam", "Same as the original."),
+      ("cristianadam", "Same as MasterSim."),
       ("vicus", "Fluent-like look: larger corner radius, the default button marked by an accent ring, Pressed and Toggled only slightly darker. Check boxes and radio buttons are filled with the accent color, and state changes are animated."),
       ("jcelerier", "Flat buttons. In the light palette, checked check boxes and radio buttons are nearly invisible and the Pressed label is hard to read.")]),
     ("inputs", "Line edits, combo boxes, spin boxes",
      "",
      [("julienmaille", "Chevron arrows on combo boxes and spin boxes."),
-      ("cristianadam", "Same as the original."),
+      ("cristianadam", "Same as MasterSim."),
       ("vicus", "Rounded fields with chevron arrows; spin box arrows stacked in one column."),
       ("jcelerier", "Combo boxes use the line-edit background, and the arrows are lighter.")]),
     ("sliders_progress", "Sliders, progress bars, scroll bars",
@@ -66,6 +66,11 @@ SECTIONS = [
       ("cristianadam", "The same blue highlight bar on the active tab; group boxes unchanged."),
       ("vicus", "Underline tabs: no tab borders and no frame around the page, with an accent bar under the active tab. Group boxes have rounded frames."),
       ("jcelerier", "The checkable group box looks unchecked in the light palette.")]),
+    ("groupboxes", "Group box variants",
+     "Normal, flat, checkable (checked/unchecked), disabled and untitled group boxes, "
+     "plus nested group boxes with a centered outer title. Unchecking a checkable group box disables its children.",
+     # TODO: add observations per variant after rendering the screenshots
+     []),
     ("itemviews", "Tree and table views",
      "Tree items have check boxes (x1 is checked and selected). The table is sorted by Output.",
      [("original", "In the dark palette, the unchecked item check boxes almost disappear."),
@@ -79,7 +84,7 @@ SECTIONS = [
       ("julienmaille", "For checked items with an icon, the check mark is hidden and the icon gets a frame. More vertical spacing."),
       ("cristianadam", "For checked items with an icon, only the icon is drawn, so the checked state is not visible."),
       ("vicus", "Rounded popup with a neutral grey hover highlight instead of the accent color. Check mark and icon are both drawn."),
-      ("jcelerier", "Same as the original.")]),
+      ("jcelerier", "Same as MasterSim.")]),
 ]
 
 
@@ -290,7 +295,7 @@ footer p {{ margin: 0 0 6px; max-width: 90ch; }}
 <header class="top">
   <div class="wrap">
     <h1>Phantom Fork Comparison</h1>
-    <p class="lede">The same widget gallery drawn by the original Phantom style (the copy currently in
+    <p class="lede">The same widget gallery drawn by the Phantom style currently used in MasterSim (our Qt 6 port of the original, in
       <code>externals/phantom-style</code>), three maintained GitHub forks, the in-house SIM-VICUS variant, and Qt's Fusion style for reference.
       Rendered with Qt 6.11 at 2× scaling, Noto Sans 9 pt, and identical light and dark palettes, so every
       difference you see comes from the style itself.</p>
