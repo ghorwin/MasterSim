@@ -1267,8 +1267,12 @@ bool MasterSim::doErrorCheckRichardson() {
 			errSlopes += scaledDiff*scaledDiff;
 
 		}
-		err = std::sqrt(err/nValues);
-		errSlopes = std::sqrt(errSlopes/nValues);
+		// no real variables in connection graph: error norm is zero by definition
+		// (avoids division by zero, which would yield NaN and break step adaptation)
+		if (nValues > 0) {
+			err = std::sqrt(err/nValues);
+			errSlopes = std::sqrt(errSlopes/nValues);
+		}
 		m_acceptedErrRichardson = err;
 		m_acceptedErrSlopeCheck = errSlopes;
 	}
@@ -1294,8 +1298,9 @@ bool MasterSim::doErrorCheckRichardson() {
 			if (hOriginal > m_project.m_hMin.value) {
 				// restore state to time t
 
-				// roll back slaves
-				restoreSlaveStates(m_t, m_errorCheckStates);
+				// roll back slaves to time t; mind: m_t is t + h/2 here (first half-step was completed),
+				// but the states in m_errorCheckStates are from time t
+				restoreSlaveStates(m_errTOriginal, m_errorCheckStates);
 				// restore variables from time t
 				MasterSim::copyVector(m_errRealyt, m_realyt);
 				MasterSim::copyVector(m_errIntyt, m_intyt);
@@ -1382,8 +1387,12 @@ bool MasterSim::doErrorCheckWithoutIteration() {
 			// sum up error squared
 			errSlopes += scaledDiff*scaledDiff;
 		}
-		err = std::sqrt(err/nValues);
-		errSlopes = std::sqrt(errSlopes/nValues);
+		// no real variables in connection graph: error norm is zero by definition
+		// (avoids division by zero, which would yield NaN)
+		if (nValues > 0) {
+			err = std::sqrt(err/nValues);
+			errSlopes = std::sqrt(errSlopes/nValues);
+		}
 
 		err = std::max(err, errSlopes);
 		if (err > 1) {
