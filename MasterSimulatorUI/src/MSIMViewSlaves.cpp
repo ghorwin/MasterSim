@@ -792,7 +792,7 @@ void MSIMViewSlaves::changeEvent(QEvent * event) {
 void MSIMViewSlaves::updateSlaveTableColors() {
 	// only override the selection roles, all other roles are inherited and follow the current color scheme
 	const QPalette appPal = QApplication::palette();
-	const QColor selection = MSIMSettings::isDarkPalette() ? QColor(0x3a, 0x4a, 0x6e) : QColor(0xdf, 0xe7, 0xfd);
+	const QColor selection = MSIMSettings::selectionColor();
 	QPalette pal;
 	pal.setResolveMask(0);
 	for (QPalette::ColorGroup group : {QPalette::Active, QPalette::Inactive}) {

@@ -334,6 +334,11 @@ bool MSIMSettings::isDarkPalette() {
 }
 
 
+QColor MSIMSettings::selectionColor() {
+	return isDarkPalette() ? QColor(0x3a, 0x4a, 0x6e) : QColor(0xdf, 0xe7, 0xfd);
+}
+
+
 void MSIMSettings::applyWidgetStyle() const {
 	// tell the platform which color scheme we want (affects window decorations and native dialogs)
 #if QT_VERSION >= QT_VERSION_CHECK(6, 8, 0)
