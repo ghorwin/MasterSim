@@ -2,9 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>body{margin:0}</style>
 <title>Phantom Fork Comparison</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -47,6 +45,7 @@
 }
 * { box-sizing: border-box; }
 body {
+  margin: 0;
   background: var(--bg); color: var(--fg);
   font-family: var(--font-body); font-size: 15px; line-height: 1.5;
 }
@@ -144,7 +143,7 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
 <header class="top">
   <div class="wrap">
     <h1>Phantom Fork Comparison</h1>
-    <p class="lede">The same widget gallery drawn by the original Phantom style (the copy currently in
+    <p class="lede">The same widget gallery drawn by the Phantom style currently used in MasterSim (our Qt 6 port of the original, in
       <code>externals/phantom-style</code>), three maintained GitHub forks, the in-house SIM-VICUS variant, and Qt's Fusion style for reference.
       Rendered with Qt 6.11 at 2× scaling, Noto Sans 9 pt, and identical light and dark palettes, so every
       difference you see comes from the style itself.</p>
@@ -166,7 +165,7 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
       <label class="variant" for="v-original">
         <input type="checkbox" id="v-original" data-variant="original" checked>
         <span class="variant-body">
-          <span class="variant-top"><span class="variant-name">Original</span><span class="chip chip-neutral">Vendored now</span></span>
+          <span class="variant-top"><span class="variant-name">MasterSim</span><span class="chip chip-neutral">Used now</span></span>
           <span class="variant-meta">randrew / Qt-Widgets, Qt6-patched</span>
         </span>
       </label>
@@ -180,7 +179,7 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
       <label class="variant" for="v-cristianadam">
         <input type="checkbox" id="v-cristianadam" data-variant="cristianadam" checked>
         <span class="variant-body">
-          <span class="variant-top"><span class="variant-name">cristianadam</span><span class="chip chip-good">Closest to original</span></span>
+          <span class="variant-top"><span class="variant-name">cristianadam</span><span class="chip chip-good">Closest to MasterSim</span></span>
           <span class="variant-meta">14 commits ahead, last 2025-12</span>
         </span>
       </label>
@@ -217,11 +216,11 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
         <h2>Menu bar and tool bar</h2>
         <p class="setup">The R button is checked; X is disabled; Mode is a menu button.</p>
       </div>
-      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> The checked tool button gets a highlight-tinted fill and outline. The menu arrow is a chevron.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as the original.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Flat tool buttons; the checked one is filled with the accent color. Chevron menu arrow.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> The checked state of the R button is not visible, and the Mode button has no menu arrow.</li></ul>
+      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> The checked tool button gets a highlight-tinted fill and outline. The menu arrow is a chevron.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as MasterSim.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Flat tool buttons; the checked one is filled with the accent color. Chevron menu arrow.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> The checked state of the R button is not visible, and the Mode button has no menu arrow.</li></ul>
       <div class="strip" tabindex="0" aria-label="Menu bar and tool bar screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/menubar_toolbar.png" data-section="menubar_toolbar" data-v="original" width="460" height="59" alt="Menu bar and tool bar rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/menubar_toolbar.png" data-section="menubar_toolbar" data-v="original" width="460" height="59" alt="Menu bar and tool bar rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -250,11 +249,11 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
         <h2>Buttons, check boxes, radio buttons</h2>
         <p class="setup">Pressed uses setDown(true); Toggled is a checked checkable button.</p>
       </div>
-      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Pressed buttons fill with the highlight color and toggled buttons get a light tint. The partial check box is a filled square. The icon on &#x27;With icon&#x27; is blurry at 2× scaling.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as the original.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Fluent-like look: larger corner radius, the default button marked by an accent ring, Pressed and Toggled only slightly darker. Check boxes and radio buttons are filled with the accent color, and state changes are animated.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Flat buttons. In the light palette, checked check boxes and radio buttons are nearly invisible and the Pressed label is hard to read.</li></ul>
+      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Pressed buttons fill with the highlight color and toggled buttons get a light tint. The partial check box is a filled square. The icon on &#x27;With icon&#x27; is blurry at 2× scaling.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as MasterSim.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Fluent-like look: larger corner radius, the default button marked by an accent ring, Pressed and Toggled only slightly darker. Check boxes and radio buttons are filled with the accent color, and state changes are animated.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Flat buttons. In the light palette, checked check boxes and radio buttons are nearly invisible and the Pressed label is hard to read.</li></ul>
       <div class="strip" tabindex="0" aria-label="Buttons, check boxes, radio buttons screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/buttons.png" data-section="buttons" data-v="original" width="460" height="120" alt="Buttons, check boxes, radio buttons rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/buttons.png" data-section="buttons" data-v="original" width="460" height="120" alt="Buttons, check boxes, radio buttons rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -283,11 +282,11 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
         <h2>Line edits, combo boxes, spin boxes</h2>
         
       </div>
-      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Chevron arrows on combo boxes and spin boxes.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as the original.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded fields with chevron arrows; spin box arrows stacked in one column.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Combo boxes use the line-edit background, and the arrows are lighter.</li></ul>
+      <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Chevron arrows on combo boxes and spin boxes.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Same as MasterSim.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded fields with chevron arrows; spin box arrows stacked in one column.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Combo boxes use the line-edit background, and the arrows are lighter.</li></ul>
       <div class="strip" tabindex="0" aria-label="Line edits, combo boxes, spin boxes screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/inputs.png" data-section="inputs" data-v="original" width="460" height="132" alt="Line edits, combo boxes, spin boxes rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/inputs.png" data-section="inputs" data-v="original" width="460" height="132" alt="Line edits, combo boxes, spin boxes rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -319,8 +318,8 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
       <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> The slider groove fills with the highlight color up to the handle. Thin scroll bars without arrow buttons. The busy bar is animated.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Thin scroll bars without arrow buttons; sliders unchanged.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Accent-filled slider track with ring handles and stronger ticks, rounded progress bars, overlay scroll bars that widen on hover. Scroll bars outside a scroll area paint no background (the white strips in the dark screenshot); inside views this does not happen. The busy bar is animated and was captured near the start.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Classic scroll bars with a lighter handle.</li></ul>
       <div class="strip" tabindex="0" aria-label="Sliders, progress bars, scroll bars screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/sliders_progress.png" data-section="sliders_progress" data-v="original" width="460" height="141" alt="Sliders, progress bars, scroll bars rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/sliders_progress.png" data-section="sliders_progress" data-v="original" width="460" height="141" alt="Sliders, progress bars, scroll bars rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -352,8 +351,8 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
       <ul class="notes"><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Group box titles sit on the frame line (Windows style). Blue highlight bar on the active tab.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> The same blue highlight bar on the active tab; group boxes unchanged.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Underline tabs: no tab borders and no frame around the page, with an accent bar under the active tab. Group boxes have rounded frames.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> The checkable group box looks unchecked in the light palette.</li></ul>
       <div class="strip" tabindex="0" aria-label="Tabs and group boxes screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/tabs_groupbox.png" data-section="tabs_groupbox" data-v="original" width="460" height="160" alt="Tabs and group boxes rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/tabs_groupbox.png" data-section="tabs_groupbox" data-v="original" width="460" height="160" alt="Tabs and group boxes rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -377,16 +376,49 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
           </figure>
       </div>
     </section>
+    <section class="sec" id="groupboxes">
+      <div class="sec-head">
+        <h2>Group box variants</h2>
+        <p class="setup">Normal, flat, checkable (checked/unchecked), disabled and untitled group boxes, plus nested group boxes with a centered outer title. Unchecking a checkable group box disables its children.</p>
+      </div>
+      <ul class="notes"></ul>
+      <div class="strip" tabindex="0" aria-label="Group box variants screenshots">
+          <figure class="shot" data-variant="original">
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/groupboxes.png" data-section="groupboxes" data-v="original" width="460" height="429" alt="Group box variants rendered with MasterSim" loading="lazy"></div>
+          </figure>
+          <figure class="shot" data-variant="julienmaille">
+            <figcaption>JulienMaille</figcaption>
+            <div class="frame"><img src="shots/julienmaille/light/groupboxes.png" data-section="groupboxes" data-v="julienmaille" width="460" height="434" alt="Group box variants rendered with JulienMaille" loading="lazy"></div>
+          </figure>
+          <figure class="shot" data-variant="cristianadam">
+            <figcaption>cristianadam</figcaption>
+            <div class="frame"><img src="shots/cristianadam/light/groupboxes.png" data-section="groupboxes" data-v="cristianadam" width="460" height="429" alt="Group box variants rendered with cristianadam" loading="lazy"></div>
+          </figure>
+          <figure class="shot" data-variant="vicus">
+            <figcaption>VICUS</figcaption>
+            <div class="frame"><img src="shots/vicus/light/groupboxes.png" data-section="groupboxes" data-v="vicus" width="460" height="449" alt="Group box variants rendered with VICUS" loading="lazy"></div>
+          </figure>
+          <figure class="shot" data-variant="jcelerier">
+            <figcaption>jcelerier</figcaption>
+            <div class="frame"><img src="shots/jcelerier/light/groupboxes.png" data-section="groupboxes" data-v="jcelerier" width="460" height="429" alt="Group box variants rendered with jcelerier" loading="lazy"></div>
+          </figure>
+          <figure class="shot" data-variant="fusion">
+            <figcaption>Fusion</figcaption>
+            <div class="frame"><img src="shots/fusion/light/groupboxes.png" data-section="groupboxes" data-v="fusion" width="460" height="472" alt="Group box variants rendered with Fusion" loading="lazy"></div>
+          </figure>
+      </div>
+    </section>
     <section class="sec" id="itemviews">
       <div class="sec-head">
         <h2>Tree and table views</h2>
         <p class="setup">Tree items have check boxes (x1 is checked and selected). The table is sorted by Output.</p>
       </div>
-      <ul class="notes"><li data-variant="original"><span class="tag tag-original">Original</span> In the dark palette, the unchecked item check boxes almost disappear.</li><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Chevron branch arrows. The sort indicator sits above the header text.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Chevron branch arrows, taller rows, clearly drawn item check boxes.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded view frames. The selection is a soft accent tint with a short accent bar at the start of the row. Accent-filled item check boxes, chevron arrows.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Checked item check boxes are drawn as a cross.</li></ul>
+      <ul class="notes"><li data-variant="original"><span class="tag tag-original">MasterSim</span> In the dark palette, the unchecked item check boxes almost disappear.</li><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> Chevron branch arrows. The sort indicator sits above the header text.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> Chevron branch arrows, taller rows, clearly drawn item check boxes.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded view frames. The selection is a soft accent tint with a short accent bar at the start of the row. Accent-filled item check boxes, chevron arrows.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Checked item check boxes are drawn as a cross.</li></ul>
       <div class="strip" tabindex="0" aria-label="Tree and table views screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/itemviews.png" data-section="itemviews" data-v="original" width="460" height="344" alt="Tree and table views rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/itemviews.png" data-section="itemviews" data-v="original" width="460" height="344" alt="Tree and table views rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -415,11 +447,11 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
         <h2>Popup menu</h2>
         <p class="setup">&#x27;Show grid&#x27; and &#x27;Auto-run&#x27; are both checked; &#x27;Auto-run&#x27; also has an icon. The last entry is highlighted.</p>
       </div>
-      <ul class="notes"><li data-variant="original"><span class="tag tag-original">Original</span> Check mark drawn to the left of the icon.</li><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> For checked items with an icon, the check mark is hidden and the icon gets a frame. More vertical spacing.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> For checked items with an icon, only the icon is drawn, so the checked state is not visible.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded popup with a neutral grey hover highlight instead of the accent color. Check mark and icon are both drawn.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Same as the original.</li></ul>
+      <ul class="notes"><li data-variant="original"><span class="tag tag-original">MasterSim</span> Check mark drawn to the left of the icon.</li><li data-variant="julienmaille"><span class="tag tag-julienmaille">JulienMaille</span> For checked items with an icon, the check mark is hidden and the icon gets a frame. More vertical spacing.</li><li data-variant="cristianadam"><span class="tag tag-cristianadam">cristianadam</span> For checked items with an icon, only the icon is drawn, so the checked state is not visible.</li><li data-variant="vicus"><span class="tag tag-vicus">VICUS</span> Rounded popup with a neutral grey hover highlight instead of the accent color. Check mark and icon are both drawn.</li><li data-variant="jcelerier"><span class="tag tag-jcelerier">jcelerier</span> Same as MasterSim.</li></ul>
       <div class="strip" tabindex="0" aria-label="Popup menu screenshots">
           <figure class="shot" data-variant="original">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img src="shots/original/light/menu.png" data-section="menu" data-v="original" width="231" height="188" alt="Popup menu rendered with Original" loading="lazy"></div>
+            <figcaption>MasterSim</figcaption>
+            <div class="frame"><img src="shots/original/light/menu.png" data-section="menu" data-v="original" width="231" height="188" alt="Popup menu rendered with MasterSim" loading="lazy"></div>
           </figure>
           <figure class="shot" data-variant="julienmaille">
             <figcaption>JulienMaille</figcaption>
@@ -456,7 +488,7 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
 
 <script>
 (function () {
-  var DIMS = {"original/light/menubar_toolbar":[460,59],"original/light/buttons":[460,120],"original/light/inputs":[460,132],"original/light/sliders_progress":[460,141],"original/light/tabs_groupbox":[460,160],"original/light/itemviews":[460,344],"original/light/menu":[231,188],"original/dark/menubar_toolbar":[460,59],"original/dark/buttons":[460,120],"original/dark/inputs":[460,132],"original/dark/sliders_progress":[460,141],"original/dark/tabs_groupbox":[460,160],"original/dark/itemviews":[460,344],"original/dark/menu":[231,188],"julienmaille/light/menubar_toolbar":[460,57],"julienmaille/light/buttons":[460,120],"julienmaille/light/inputs":[460,132],"julienmaille/light/sliders_progress":[460,150],"julienmaille/light/tabs_groupbox":[460,161],"julienmaille/light/itemviews":[460,344],"julienmaille/light/menu":[223,201],"julienmaille/dark/menubar_toolbar":[460,57],"julienmaille/dark/buttons":[460,120],"julienmaille/dark/inputs":[460,132],"julienmaille/dark/sliders_progress":[460,150],"julienmaille/dark/tabs_groupbox":[460,161],"julienmaille/dark/itemviews":[460,344],"julienmaille/dark/menu":[223,201],"cristianadam/light/menubar_toolbar":[460,59],"cristianadam/light/buttons":[460,120],"cristianadam/light/inputs":[460,132],"cristianadam/light/sliders_progress":[460,141],"cristianadam/light/tabs_groupbox":[460,160],"cristianadam/light/itemviews":[460,344],"cristianadam/light/menu":[219,188],"cristianadam/dark/menubar_toolbar":[460,59],"cristianadam/dark/buttons":[460,120],"cristianadam/dark/inputs":[460,132],"cristianadam/dark/sliders_progress":[460,141],"cristianadam/dark/tabs_groupbox":[460,160],"cristianadam/dark/itemviews":[460,344],"cristianadam/dark/menu":[219,188],"vicus/light/menubar_toolbar":[460,59],"vicus/light/buttons":[460,128],"vicus/light/inputs":[460,152],"vicus/light/sliders_progress":[460,141],"vicus/light/tabs_groupbox":[460,165],"vicus/light/itemviews":[460,344],"vicus/light/menu":[253,238],"vicus/dark/menubar_toolbar":[460,59],"vicus/dark/buttons":[460,128],"vicus/dark/inputs":[460,152],"vicus/dark/sliders_progress":[460,141],"vicus/dark/tabs_groupbox":[460,165],"vicus/dark/itemviews":[460,344],"vicus/dark/menu":[253,238],"jcelerier/light/menubar_toolbar":[460,59],"jcelerier/light/buttons":[460,120],"jcelerier/light/inputs":[460,132],"jcelerier/light/sliders_progress":[460,141],"jcelerier/light/tabs_groupbox":[460,160],"jcelerier/light/itemviews":[460,344],"jcelerier/light/menu":[232,188],"jcelerier/dark/menubar_toolbar":[460,59],"jcelerier/dark/buttons":[460,120],"jcelerier/dark/inputs":[460,132],"jcelerier/dark/sliders_progress":[460,141],"jcelerier/dark/tabs_groupbox":[460,160],"jcelerier/dark/itemviews":[460,344],"jcelerier/dark/menu":[232,188],"fusion/light/menubar_toolbar":[460,65],"fusion/light/buttons":[460,130],"fusion/light/inputs":[460,137],"fusion/light/sliders_progress":[460,141],"fusion/light/tabs_groupbox":[460,166],"fusion/light/itemviews":[460,344],"fusion/light/menu":[239,179],"fusion/dark/menubar_toolbar":[460,65],"fusion/dark/buttons":[460,130],"fusion/dark/inputs":[460,137],"fusion/dark/sliders_progress":[460,141],"fusion/dark/tabs_groupbox":[460,166],"fusion/dark/itemviews":[460,344],"fusion/dark/menu":[239,179]};
+  var DIMS = {"original/light/menubar_toolbar":[460,59],"original/light/buttons":[460,120],"original/light/inputs":[460,132],"original/light/sliders_progress":[460,141],"original/light/tabs_groupbox":[460,160],"original/light/groupboxes":[460,429],"original/light/itemviews":[460,344],"original/light/menu":[231,188],"original/dark/menubar_toolbar":[460,59],"original/dark/buttons":[460,120],"original/dark/inputs":[460,132],"original/dark/sliders_progress":[460,141],"original/dark/tabs_groupbox":[460,160],"original/dark/groupboxes":[460,429],"original/dark/itemviews":[460,344],"original/dark/menu":[231,188],"julienmaille/light/menubar_toolbar":[460,57],"julienmaille/light/buttons":[460,120],"julienmaille/light/inputs":[460,132],"julienmaille/light/sliders_progress":[460,150],"julienmaille/light/tabs_groupbox":[460,161],"julienmaille/light/groupboxes":[460,434],"julienmaille/light/itemviews":[460,344],"julienmaille/light/menu":[223,201],"julienmaille/dark/menubar_toolbar":[460,57],"julienmaille/dark/buttons":[460,120],"julienmaille/dark/inputs":[460,132],"julienmaille/dark/sliders_progress":[460,150],"julienmaille/dark/tabs_groupbox":[460,161],"julienmaille/dark/groupboxes":[460,434],"julienmaille/dark/itemviews":[460,344],"julienmaille/dark/menu":[223,201],"cristianadam/light/menubar_toolbar":[460,59],"cristianadam/light/buttons":[460,120],"cristianadam/light/inputs":[460,132],"cristianadam/light/sliders_progress":[460,141],"cristianadam/light/tabs_groupbox":[460,160],"cristianadam/light/groupboxes":[460,429],"cristianadam/light/itemviews":[460,344],"cristianadam/light/menu":[219,188],"cristianadam/dark/menubar_toolbar":[460,59],"cristianadam/dark/buttons":[460,120],"cristianadam/dark/inputs":[460,132],"cristianadam/dark/sliders_progress":[460,141],"cristianadam/dark/tabs_groupbox":[460,160],"cristianadam/dark/groupboxes":[460,429],"cristianadam/dark/itemviews":[460,344],"cristianadam/dark/menu":[219,188],"vicus/light/menubar_toolbar":[460,59],"vicus/light/buttons":[460,128],"vicus/light/inputs":[460,152],"vicus/light/sliders_progress":[460,141],"vicus/light/tabs_groupbox":[460,165],"vicus/light/groupboxes":[460,449],"vicus/light/itemviews":[460,344],"vicus/light/menu":[253,238],"vicus/dark/menubar_toolbar":[460,59],"vicus/dark/buttons":[460,128],"vicus/dark/inputs":[460,152],"vicus/dark/sliders_progress":[460,141],"vicus/dark/tabs_groupbox":[460,165],"vicus/dark/groupboxes":[460,449],"vicus/dark/itemviews":[460,344],"vicus/dark/menu":[253,238],"jcelerier/light/menubar_toolbar":[460,59],"jcelerier/light/buttons":[460,120],"jcelerier/light/inputs":[460,132],"jcelerier/light/sliders_progress":[460,141],"jcelerier/light/tabs_groupbox":[460,160],"jcelerier/light/groupboxes":[460,429],"jcelerier/light/itemviews":[460,344],"jcelerier/light/menu":[232,188],"jcelerier/dark/menubar_toolbar":[460,59],"jcelerier/dark/buttons":[460,120],"jcelerier/dark/inputs":[460,132],"jcelerier/dark/sliders_progress":[460,141],"jcelerier/dark/tabs_groupbox":[460,160],"jcelerier/dark/groupboxes":[460,429],"jcelerier/dark/itemviews":[460,344],"jcelerier/dark/menu":[232,188],"fusion/light/menubar_toolbar":[460,65],"fusion/light/buttons":[460,130],"fusion/light/inputs":[460,137],"fusion/light/sliders_progress":[460,141],"fusion/light/tabs_groupbox":[460,166],"fusion/light/groupboxes":[460,472],"fusion/light/itemviews":[460,344],"fusion/light/menu":[239,179],"fusion/dark/menubar_toolbar":[460,65],"fusion/dark/buttons":[460,130],"fusion/dark/inputs":[460,137],"fusion/dark/sliders_progress":[460,141],"fusion/dark/tabs_groupbox":[460,166],"fusion/dark/groupboxes":[460,472],"fusion/dark/itemviews":[460,344],"fusion/dark/menu":[239,179]};
   var store = {
     get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
     set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -510,5 +542,4 @@ footer p { margin: 0 0 6px; max-width: 90ch; }
   setPalette(pal);
 })();
 </script>
-
 </html>

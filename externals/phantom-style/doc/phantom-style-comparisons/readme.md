@@ -15,9 +15,9 @@ angezeigt werden.
 
 | Datei | Zweck |
 |---|---|
-| `gallery.cpp` | Test-Anwendung: baut dieselben Widgets für jeden Stil auf und speichert sieben Bereiche als PNG |
+| `gallery.cpp` | Test-Anwendung: baut dieselben Widgets für jeden Stil auf und speichert acht Bereiche als PNG |
 | `CMakeLists.txt` | baut `gallery_<variante>` für jedes Unterverzeichnis in `VARIANTS_DIR`, dazu `gallery_fusion` (Qt-Fusion als Referenz) |
-| `fetch_variants.py` | sammelt die Quelltexte der Varianten (Forks von GitHub zu festen Commits, Original aus `../../src`, VICUS aus lokalem Checkout) |
+| `fetch_variants.py` | sammelt die Quelltexte der Varianten (Forks von GitHub zu festen Commits, MasterSim-Variante aus `../../src`, VICUS aus lokalem Checkout) |
 | `render_shots.py` | baut die Galerien und rendert alle Screenshots (hell/dunkel) |
 | `make_page.py` | erzeugt `index.html` aus den Screenshots; enthält auch die Beobachtungen je Widget-Gruppe |
 | `create_comparison.sh` | dünner Wrapper, ruft die drei Python-Skripte nacheinander auf |
@@ -54,7 +54,7 @@ Einschränkungen der Screenshots:
 
 | Variante | Quelle | Stand | Anmerkung |
 |---|---|---|---|
-| Original | `externals/phantom-style/src` (Kopie von Qt-Widgets/phantom-style = randrew/phantomstyle von 2020, von uns auf Qt 6 portiert) | – | randrew/phantomstyle: letzter Commit Mai 2021, 42 Forks |
+| MasterSim | `externals/phantom-style/src` (Kopie von Qt-Widgets/phantom-style = randrew/phantomstyle von 2020, von uns auf Qt 6 portiert) | – | randrew/phantomstyle: letzter Commit Mai 2021, 42 Forks |
 | JulienMaille | github.com/JulienMaille/phantomstyle, Commit `356703a` | 16.09.2026 | 89 Commits vor dem Original, aktivster Fork |
 | cristianadam | github.com/cristianadam/phantomstyle, Commit `c654231` | 29.12.2025 | 14 Commits vor dem Original |
 | jcelerier | github.com/jcelerier/phantomstyle, Commit `e49cf4e` | 06.10.2026 | 30 Commits vor, 1 hinter dem Original |
@@ -68,7 +68,7 @@ eigenen Änderungen. Sie wurden nicht verglichen.
 
 ## Erkenntnisse
 
-### Original (unsere Kopie)
+### MasterSim (unsere Kopie des Originals)
 
 - Klassischer Phantom-Look.
 - Für Qt 6 waren mehrere Anpassungen nötig (u. a. `QStringRef` → `QStringView`,

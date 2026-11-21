@@ -292,6 +292,51 @@ int main(int argc, char * argv[]) {
 	}
 	root->addWidget(secTabs);
 
+	// --- group box variants ---
+	QWidget * secGroups = section(central, "groupboxes");
+	{
+		QGridLayout * g = new QGridLayout(secGroups);
+		// fills a group box with a check box and a spin box, so that the (disabled) state of children is visible
+		auto fill = [](QGroupBox * gb) {
+			QVBoxLayout * gl = new QVBoxLayout(gb);
+			QCheckBox * c = new QCheckBox("Write log file");
+			c->setChecked(true);
+			gl->addWidget(c);
+			QSpinBox * s = new QSpinBox; s->setValue(10); s->setSuffix(" steps");
+			gl->addWidget(s);
+			return gb;
+		};
+		QGroupBox * gbNormal = fill(new QGroupBox("Normal"));
+		QGroupBox * gbFlat = fill(new QGroupBox("Flat"));
+		gbFlat->setFlat(true);
+		QGroupBox * gbOn = fill(new QGroupBox("Checkable, checked"));
+		gbOn->setCheckable(true);
+		gbOn->setChecked(true);
+		QGroupBox * gbOff = fill(new QGroupBox("Checkable, unchecked"));
+		gbOff->setCheckable(true);
+		gbOff->setChecked(false);
+		QGroupBox * gbDis = fill(new QGroupBox("Disabled"));
+		gbDis->setEnabled(false);
+		QGroupBox * gbNoTitle = fill(new QGroupBox);
+		g->addWidget(gbNormal, 0, 0);
+		g->addWidget(gbFlat, 0, 1);
+		g->addWidget(gbOn, 1, 0);
+		g->addWidget(gbOff, 1, 1);
+		g->addWidget(gbDis, 2, 0);
+		g->addWidget(gbNoTitle, 2, 1);
+
+		// nested group boxes with a centered title
+		QGroupBox * gbOuter = new QGroupBox("Outer (centered title)");
+		gbOuter->setAlignment(Qt::AlignHCenter);
+		QHBoxLayout * ol = new QHBoxLayout(gbOuter);
+		ol->addWidget(fill(new QGroupBox("Inner")));
+		QGroupBox * gbInnerChk = fill(new QGroupBox("Inner, checkable"));
+		gbInnerChk->setCheckable(true);
+		ol->addWidget(gbInnerChk);
+		g->addWidget(gbOuter, 3, 0, 1, 2);
+	}
+	root->addWidget(secGroups);
+
 	// --- item views ---
 	QWidget * secViews = section(central, "itemviews");
 	{
@@ -340,7 +385,7 @@ int main(int argc, char * argv[]) {
 		QThread::msleep(20);
 	}
 
-	const QStringList names = {"menubar_toolbar", "buttons", "inputs", "sliders_progress", "tabs_groupbox", "itemviews"};
+	const QStringList names = {"menubar_toolbar", "buttons", "inputs", "sliders_progress", "tabs_groupbox", "groupboxes", "itemviews"};
 	for (const QString & n : names) {
 		QWidget * w = central->findChild<QWidget *>(n);
 		w->grab().save(outDir + "/" + n + ".png");
