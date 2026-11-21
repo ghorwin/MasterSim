@@ -9,7 +9,7 @@ Dieses Dokument erklärt, wie FMI-2.0-Co-Simulation Ableitungsinformationen von 
 5. die beiden Test-FMUs `Room` und `Radiator` aus Commit `64a7754` und deren Testfälle (Abschnitt 5),
 6. den aktuellen Stand in MasterSim und die nötigen Implementierungsschritte (Abschnitt 6).
 
-Die Abbildungen liegen als druckfähige SVG-Dateien unter `figures/`. Sie werden mit `python3 doc/algorithm/figures/generate_figures.py` erzeugt (nur Python-Standardbibliothek). Abbildung 11 liest dabei die Ergebnisse direkt aus `data/tests/linux64/Room_Radiator/`.
+Die Abbildungen liegen als druckfähige SVG-Dateien unter `figures/`. Sie werden mit `python3 doc/algorithm/figures/generate_figures.py` erzeugt (nur Python-Standardbibliothek). Abbildungen 11 und 12 lesen dabei die eingecheckten Referenzergebnisse der Testfälle aus `data/tests/linux64/Room_Radiator/<Testfall>.gcc_linux/`.
 
 ---
 
@@ -275,9 +275,9 @@ Unterstützt der Master `fmi2SetRealInputDerivatives` nicht, kann die FMU die Ab
 |---|---|---|
 | Kenngrößen | $C = 50\,000$ J/K, $k = 250$ W/K | $K_p = 2000$ W/K, $Q_\text{max} = 10$ kW |
 | Sollwert | – | 22 °C (1. Tageshälfte) / 16 °C (2. Hälfte), `dayLength` = 4 h |
-| `useInputInterpolation` | Rampe statt ZOH für $Q$ und $T_\text{amb}$ | Extrapolation von $T_\text{room}$ aus der Historie |
-| `fmi2GetRealOutputDerivatives` | $\dot T$ analytisch aus der ODE | $\dot Q = -K_p\,\dot T_\text{room}$, 0 bei Sättigung |
-| `fmi2SetRealInputDerivatives` | **No-op** (gibt `fmi2OK` zurück) | **No-op** |
+| `inputInterpolationMode` (0 = ZOH, 1 = interne Historie, 2 = Master-Ableitungen) | 1: Rampe statt ZOH für $Q$ und $T_\text{amb}$ | 1: Extrapolation von $T_\text{room}$ aus der Historie |
+| `fmi2GetRealOutputDerivatives` | $\dot T$ analytisch aus der ODE, mit den am Schrittende angenommenen Eingängen | $\dot Q = -K_p\,\dot T_\text{room}$ (mit der im letzten Schritt verwendeten Steigung), 0 bei Sättigung |
+| `fmi2SetRealInputDerivatives` | Modus 2: $\dot Q$, $\dot T_\text{amb}$ (Ordnung 1) für den nächsten Schritt, danach 0 | Modus 2: $\dot T_\text{room}$ (Ordnung 1) für den nächsten Schritt, danach 0 |
 
 Stationärer Endwert (Tagphase): $T = \frac{K_p T_\text{set} + k\,T_\text{amb}}{K_p + k} = 292{,}93$ K, $Q = 4444{,}4$ W.
 
@@ -290,6 +290,8 @@ T(t_n+h) = T_n e^{-\lambda h} + a_0 h \frac{1-e^{-\lambda h}}{\lambda h} + a_1 \
 $$
 
 Das passt zu **Gauss-Seidel mit der Reihenfolge Radiator → Room**: Dort hat der Radiator $Q(t_{n+1})$ schon berechnet. Bei **Gauss-Jacobi** bekommt Room dagegen $Q(t_n)$ und interpoliert von $Q(t_{n-1})$ nach $Q(t_n)$, also um einen ganzen Schritt verzögert.
+
+Im ersten Schritt gibt es noch keine Historie. Room nimmt dann den aktuellen Eingang als Vorgängerwert. Bis zur Einführung von Modus 2 rampte Room im ersten Schritt fälschlich von $Q = 0$ aus: `init()` merkt sich die Eingänge schon in `fmi2EnterInitializationMode()`, also bevor der Master sie setzt. Die Referenzergebnisse der Testfälle sind mit der korrigierten FMU neu erzeugt.
 
 **Radiator**: Der gesetzte Eingang $T_\text{room}$ wird als Wert am **Schrittanfang** gedeutet und linear bis $t_{n+1}$ extrapoliert:
 
@@ -305,26 +307,29 @@ Daraus berechnet die FMU $Q_{n+1} = K_p\,(T_\text{set}(t_{n+1}) - T_\text{est})$
 
 Beide FMUs nehmen damit implizit eine bestimmte Master-Reihenfolge an. Die Deutung im Room-FMU (gesetzter Wert = Wert am Schrittende) passt nicht zur Festlegung im Standard, nach der Eingänge „with respect to the beginning of a communication time step“ gesetzt werden. Für die FMU-interne Historie (Variante B) ist das zulässig, weil der Standard nur die Bedeutung der Ableitungen regelt. Sobald Room `fmi2SetRealInputDerivatives` auswertet, muss es aber den Anfangsbezug verwenden. Mit normkonformem `fmi2SetRealInputDerivatives` (Variante A) wäre der Zeitbezug eindeutig, und der Master würde über Abschnitt 3.2 (e) entscheiden.
 
-### 5.3 Testfälle in `data/tests/linux64/Room_Radiator/`
+### 5.3 Testfälle mit FMU-interner Interpolation (Variante B)
 
-| Testfall | Algorithmus | $h$ | $t_\text{end}$ | Interpolation |
+Diese Testfälle stammen aus Commit `64a7754`. Sie verwenden keine Master-Ableitungen (`maxInputDerivativeOrder 0`).
+
+| Testfall | Algorithmus | $h$ | $t_\text{end}$ | `inputInterpolationMode` |
 |---|---|---|---|---|
-| `Room_Radiator_Reference` | Gauss-Seidel, 1 Iter. | 5 s | 14 400 s | an |
-| `Room_Radiator_GaussSeidel_1iters` | Gauss-Seidel, 1 Iter. | 30 s | 28 800 s | an |
-| `Room_Radiator_NoInterpolation_GaussSeidel_1iters` | Gauss-Seidel, 1 Iter. | 30 s | 28 800 s | **aus** |
-| `Room_Radiator_GaussSeidel_2iters` | Gauss-Seidel, 2 Iter. | 60 s | 14 400 s | an |
-| `Room_Radiator_GaussJacobi_1iters` | Gauss-Jacobi, 1 Iter. | 60 s | 14 400 s | an |
+| `Room_Radiator_Reference` | Gauss-Seidel, 1 Iter. | 5 s | 14 400 s | 1 |
+| `Room_Radiator_GaussSeidel_1iters` | Gauss-Seidel, 1 Iter. | 30 s | 28 800 s | 1 |
+| `Room_Radiator_NoInterpolation_GaussSeidel_1iters` | Gauss-Seidel, 1 Iter. | 30 s | 28 800 s | **0** |
+| `Room_Radiator_GaussSeidel_2iters` | Gauss-Seidel, 2 Iter. | 60 s | 14 400 s | 1 |
+| `Room_Radiator_GaussJacobi_1iters` | Gauss-Jacobi, 1 Iter. | 60 s | 14 400 s | 1 |
 
 **Beobachtung aus den eingecheckten Referenzergebnissen** (Ausschnitt, $h = 30$ s):
 
 | t [s] | Q mit Interpolation [W] | Q ohne Interpolation [W] | Q Referenz, h = 5 s [W] |
 |---|---|---|---|
-| 120 | 6128 | 10000 | 6354 |
-| 150 | 4125 | 3905 | 4972 |
-| 300 | 5045 | 4445 | ≈ 4444 |
-| 330 | 2766 | 4444 | ≈ 4444 |
-| 360 | 5365 | 4444 | ≈ 4444 |
-| 840 | 5815 | 4444 | ≈ 4444 |
+| 120 | 3127 | 10000 | 6157 |
+| 150 | 5138 | 3905 | 4918 |
+| 180 | 7769 | 4581 | 4575 |
+| 300 | 2890 | 4445 | ≈ 4445 |
+| 330 | 2886 | 4444 | ≈ 4445 |
+| 360 | 7346 | 4444 | ≈ 4445 |
+| 840 | 6525 | 4444 | ≈ 4444 |
 
 Abbildung 11 zeigt den Verlauf für die ersten 900 s.
 
@@ -332,15 +337,69 @@ Abbildung 11 zeigt den Verlauf für die ersten 900 s.
 
 *Abbildung 11: Heizleistung und Raumtemperatur für $t \le 900$ s aus den eingecheckten Ergebnissen: Gauss-Seidel mit $h = 30$ s mit und ohne FMU-interne Interpolation, dazu die Referenzlösung mit $h = 5$ s.*
 
-Die Variante **mit** interner Interpolation schwingt dauerhaft zwischen etwa 2800 und 6000 W. Die Variante **ohne** Interpolation pendelt sich nach wenigen Schritten auf den stationären Wert ein. Woran das liegt:
+Die Variante **mit** interner Interpolation schwingt dauerhaft, nach dem Aufheizen zwischen etwa 2900 und 6100 W. Die Variante **ohne** Interpolation pendelt sich nach wenigen Schritten auf den stationären Wert ein. Woran das liegt:
 
 - Die Regelschleife ist für $h = 30$ s sehr „steif“: $K_p h / C = 1{,}2$. Der Kommunikationsschritt ist also ungefähr so lang wie die Zeitkonstante des geschlossenen Kreises ($C/(K_p+k) \approx 22$ s).
 - Die Rückwärts-Extrapolation im Radiator wirkt wie ein zusätzlicher D-Anteil: $Q_{n+1} = K_p\,(T_\text{set} - 2T_n + T_{n-1})$. Die jüngste Änderung geht doppelt ein. Das verringert die Phasenreserve, und der Kreis schwingt.
 - Bei $h = 60$ s (Gauss-Jacobi, Gauss-Seidel mit 2 Iterationen) ist $K_p h/C = 2{,}4$. Dort laufen die Ergebnisse stark in die Begrenzung $[0, Q_\text{max}]$.
 
-Fazit: **Extrapolation ist kein Selbstläufer.** Sie bringt eine höhere Konsistenzordnung, kann aber die Stabilität der Kopplung verschlechtern, sobald $h$ in der Größenordnung der Kopplungs-Zeitkonstante liegt. Genau hier hilft ein Master, der die **richtigen** Informationen weiterreicht: bei Gauss-Seidel die Sekante zwischen zwei bereits berechneten Punkten (Interpolation, stabil) statt einer Rückwärts-Extrapolation in der FMU.
+Fazit: **Extrapolation ist kein Selbstläufer.** Sie bringt eine höhere Konsistenzordnung, kann aber die Stabilität der Kopplung verschlechtern, sobald $h$ in der Größenordnung der Kopplungs-Zeitkonstante liegt. Das gilt auch für die Extrapolation mit Master-Ableitungen (Abschnitt 5.4): Bei $h = 30$ s schwingt der Kreis auch dort. Für den quantitativen Vergleich verwenden die Testfälle in 5.4 deshalb $h = 5$ s ($K_p h/C = 0{,}2$) und ein einheitliches $t_\text{end}$.
 
-> Hinweis zu den Testfällen: Die Referenzlösung läuft bis 14 400 s mit $h = 5$ s. Die beiden 30-s-Fälle laufen bis 28 800 s, die übrigen mit $h = 60$ s. Für einen quantitativen Fehlervergleich sollten $t_\text{end}$ und das Ausgaberaster vereinheitlicht werden.
+### 5.4 Master-Ableitungen (Variante A) und Testfälle für alle Master-Varianten
+
+Mit `inputInterpolationMode = 2` werten beide FMUs die vom Master gesetzten Ableitungen normkonform aus. Wert und Ableitung beziehen sich auf den Schrittanfang $t_n$:
+
+- **Room** integriert die ODE geschlossen mit $Q(t) = Q(t_n) + \dot Q\,(t - t_n)$ und $T_\text{amb}(t) = T_\text{amb}(t_n) + \dot T_\text{amb}\,(t - t_n)$ (`integrateLinear()`).
+- **Radiator** schätzt die Raumtemperatur am Schrittende als $T_\text{est} = T_n + \dot T_n\,h$, mit $\dot T_n$ aus der analytischen Ableitung von Room statt aus einer Rückwärtsdifferenz.
+
+Im Projekt muss dafür `maxInputDerivativeOrder 1` gesetzt sein. Welche Verbindung in welchem Modus läuft, legt MasterSim beim Start fest und schreibt es ins Log (`MasterSim::setupInputDerivatives`):
+
+| Algorithmus / Zyklen | `Room.T → Radiator` | `Radiator.Q → Room` | abgefragte Ausgangsableitungen |
+|---|---|---|---|
+| Gauss-Jacobi | Taylor | Taylor | $\dot T$ (Room), $\dot Q$ (Radiator) |
+| Gauss-Seidel / Newton, Radiator in Zyklus 0, Room in Zyklus 1 | Taylor | Sekante | nur $\dot T$ (Room) |
+| Gauss-Seidel, beide im selben Zyklus | Iteration 1: Taylor, ab Iteration 2: Sekante | Sekante | nur $\dot T$ (Room) |
+
+**Kontrolle des Sekantenpfads:** Bei Gauss-Seidel bekommt Room mit Modus 2 vom Master $Q(t_n)$ und die Sekante $(Q(t_{n+1}) - Q(t_n))/h$, also dieselbe Rampe, die Room im Modus 1 selbst bildet. Bei gleichem Radiator-Modus sind die Ergebnisse beider Modi bitgenau gleich.
+
+**Testfälle** `Room_Radiator_MasterDeriv_*`: alle mit $t_\text{end} = 14\,400$ s, $h_\text{Start} = 5$ s und Modus 2, außer den ZOH-Vergleichsfällen (Modus 0). Referenz ist `Room_Radiator_MasterDeriv_Reference` (ZOH, $h = 0{,}05$ s). Für die Fehler wird die Referenz linear auf die Ausgabezeitpunkte interpoliert. Das letzte Intervall vor dem Sollwertsprung bei $t = 14\,400$ s bleibt unberücksichtigt.
+
+| Testfall (`Room_Radiator_MasterDeriv_…`) | Algorithmus | Schrittweite / Fehlerkontrolle | Schritte | Fehltests | RMS $\Delta T$ [K] | max $\lvert\Delta T\rvert$ [K] |
+|---|---|---|---|---|---|---|
+| `GaussJacobi` | Gauss-Jacobi | fest | 2880 | – | 0,0030 | 0,056 |
+| `GaussJacobi_ErrCheck` | Gauss-Jacobi | fest, `CHECK` | 2880 | 127 | 0,0030 | 0,056 |
+| `GaussJacobi_Richardson` | Gauss-Jacobi | `STEP_DOUBLING` | 1898 | 1367 | 0,0025 | 0,015 |
+| `GaussSeidel_1iters` | Gauss-Seidel, 1 Iter. | fest | 2880 | – | 0,0122 | 0,216 |
+| `GaussSeidel_1iters_ErrCheck` | Gauss-Seidel, 1 Iter. | fest, `CHECK` | 2880 | 124 | 0,0122 | 0,216 |
+| `GaussSeidel_1iters_Richardson` | Gauss-Seidel, 1 Iter. | `STEP_DOUBLING` | 1338 | 139 | 0,0028 | 0,015 |
+| `GaussSeidel_2iters` | Gauss-Seidel, 2 Iter. | fest | 2880 | – | 0,0122 | 0,216 |
+| `GaussSeidel_2iters_ErrCheck` | Gauss-Seidel, 2 Iter. | fest, `CHECK` | 2880 | 124 | 0,0122 | 0,216 |
+| `GaussSeidel_2iters_adaptive` | Gauss-Seidel, 2 Iter. | variabel ohne Fehlerkontrolle, $h_\text{max} = 10$ s | 1441 | – | 0,0055 | 0,087 |
+| `GaussSeidel_2iters_Richardson` | Gauss-Seidel, 2 Iter. | `STEP_DOUBLING` | 1338 | 139 | 0,0028 | 0,015 |
+| `GaussSeidel_SameCycle_10iters` | Gauss-Seidel, 10 Iter., ein Zyklus | fest | 2880 | – | 0,0123 | 0,216 |
+| `GaussSeidel_SameCycle_10iters_Richardson` | Gauss-Seidel, 10 Iter., ein Zyklus | `STEP_DOUBLING` | 952 | 85 | 0,0026 | 0,015 |
+| `Newton` | Newton, 5 Iter. | fest | 2880 | – | 0,0122 | 0,216 |
+| `Newton_ErrCheck` | Newton, 5 Iter. | fest, `CHECK` | 2880 | 124 | 0,0122 | 0,216 |
+| `Newton_adaptive` | Newton, 5 Iter. | variabel ohne Fehlerkontrolle, $h_\text{max} = 10$ s | 1441 | – | 0,0055 | 0,087 |
+| `Newton_Richardson` | Newton, 5 Iter. | `STEP_DOUBLING` | 1338 | 139 | 0,0028 | 0,015 |
+| `ZOH_GaussJacobi` | Gauss-Jacobi, ZOH | fest | 2880 | – | 0,0205 | 0,371 |
+| `ZOH_GaussJacobi_Richardson` | Gauss-Jacobi, ZOH | `STEP_DOUBLING` | 112 108 | 125 | 0,0054 | 0,024 |
+| `ZOH_GaussSeidel_1iters` | Gauss-Seidel, ZOH | fest | 2880 | – | 0,0263 | 0,435 |
+| `ZOH_GaussSeidel_1iters_Richardson` | Gauss-Seidel, ZOH | `STEP_DOUBLING` | 112 093 | 79 | 0,0054 | 0,024 |
+
+„Fehltests“ ist bei `CHECK` die Zahl der Schritte, bei denen der Fehlertest anschlägt (ohne Schrittweitenänderung), bei `STEP_DOUBLING` die Zahl der wiederholten Schritte. Die Fehler entstehen fast nur in den Übergangsphasen nach $t = 0$ und nach dem Sollwertwechsel bei $t = 7200$ s (Abbildung 12).
+
+![Abbildung 12](figures/fig12_fehler_master_ableitungen.svg)
+
+*Abbildung 12: Abweichung der Raumtemperatur von der Referenzlösung bei $h = 5$ s, mit Zero-Order-Hold (gestrichelt) und mit Master-Ableitungen (durchgezogen): (a) Aufheizen ab $t = 0$, (b) Absenkung ab $t = 7200$ s.*
+
+Ergebnisse:
+
+- **Fester Schritt:** Mit Master-Ableitungen sinkt der RMS-Fehler gegenüber ZOH bei Gauss-Jacobi um etwa den Faktor 7 (0,0030 statt 0,0205 K), bei Gauss-Seidel um etwa den Faktor 2 (0,0122 statt 0,0263 K). Bei Gauss-Jacobi profitieren beide Verbindungen von der Taylor-Extrapolation. Bei Gauss-Seidel bekommt Room ohnehin schon den Wert vom Schrittende.
+- **Fehlerkontrolle mit Schrittweitenanpassung:** Mit Master-Ableitungen braucht Gauss-Seidel 1338 statt 112 093 Schritte, also etwa 84-mal weniger, bei halb so großem Fehler. Ohne Ableitungen ist der Kopplungsfehler von erster Ordnung, und der Fehlertest zwingt die Schrittweite sehr klein.
+- **Iteration:** Liegen Radiator und Room in verschiedenen Zyklen, wird nie iteriert. Gauss-Seidel mit 2 Iterationen und Newton liefern dann dieselben Ergebnisse wie Gauss-Seidel ohne Iteration. Erst mit beiden FMUs im selben Zyklus (`SameCycle`) iteriert Gauss-Seidel, und der Master wechselt ab Iteration 2 für `Room.T → Radiator` auf die Sekante.
+- **Newton im selben Zyklus** konvergiert für diese Kopplung nicht, auch ohne Ableitungen (ZOH: Iterationslimit in 2852 von 2880 Schritten). Vermutlich liegt das an der unstetigen Begrenzung von $Q$ auf $[0, Q_\text{max}]$ zusammen mit der Jacobi-Matrix aus Differenzenquotienten. Beim Regelkreis Math_003 konvergiert Newton. Für diese Variante gibt es daher keinen Testfall.
+- **Stabilitätsgrenze:** Bei $h = 30$ s schwingt der Regelkreis auch mit Master-Ableitungen, sobald der Radiator extrapoliert (RMS-Fehler bei Gauss-Seidel 0,39 K statt 0,24 K mit ZOH). Die Ableitungen verbessern die Konsistenz, ändern aber nichts daran, dass ein explizit vorausschauender Regler bei $K_p h/C > 1$ überschwingt.
 
 ---
 
@@ -351,14 +410,17 @@ Fazit: **Extrapolation ist kein Selbstläufer.** Sie bringt eine höhere Konsist
 | Baustein | Stand |
 |---|---|
 | `canInterpolateInputs` einlesen | ✅ `MSIM_ModelDescription.cpp:190` → `m_canInterpolateInputs` |
-| `maxOutputDerivativeOrder` einlesen | ❌ wird nicht gelesen |
+| `maxOutputDerivativeOrder` einlesen | ✅ `ModelDescription::m_maxOutputDerivativeOrder` (nur FMI 2.0) |
 | Funktionszeiger importieren | ✅ `MSIM_FMU.cpp:342-343` (`setRealInputDerivatives`, `getRealOutputDerivatives`) |
-| Ableitungen abfragen/weiterreichen | ❌ keine Aufrufe in `MSIM_FMUSlave` oder den Algorithmen |
-| Test-FMUs | ✅ `Room`, `Radiator` liefern Ausgangsableitungen; Eingangsinterpolation nur FMU-intern (Variante B) |
+| Ableitungen abfragen/weiterreichen | ✅ Projektoption `maxInputDerivativeOrder` (Default 0 = aus); `MasterSim::setupInputDerivatives()` bestimmt je Verbindung die Ordnung und fragt nur benötigte Ableitungen ab (ein `fmi2GetRealOutputDerivatives`-Aufruf je Slave und Schritt). Zeitbezug nach 3.2 (e): Taylor-Extrapolation, wenn der Erzeuger noch nicht gerechnet hat, sonst Wert bei $t_n$ plus Ableitungen des Interpolationspolynoms durch $y(t_n)$ und $y(t_{n+1})$ (Sekante bei Ordnung 1, GS-1). |
+| Test-FMUs | ✅ `Room`, `Radiator`: Parameter `inputInterpolationMode` = 0 (ZOH), 1 (interne Historie, Variante B), 2 (Master-Ableitungen, Variante A) |
+| FMI 1.0, `FileReaderSlave` als Ableitungsquelle | ❌ noch offen |
 
-Die Test-FMUs funktionieren also im Moment **ohne** Master-Unterstützung. Ihre Ausgangsableitungen werden noch von niemandem abgefragt.
+Die Testfälle und Ergebnisse stehen in Abschnitt 5.4. Bekanntes Problem: Newton konvergiert für Room/Radiator nicht, wenn beide FMUs im selben Zyklus liegen, auch ohne Ableitungen (siehe 5.4).
 
 ### 6.2 Vorgeschlagene Schritte
+
+Die Schritte 1 bis 6 sind umgesetzt (Stand siehe 6.1). Abweichend vom Vorschlag liegen die Ableitungen in Vektoren je Ordnung (`m_realDerivyt[k-1][i]`, `m_realDerivytNext`). Bei Gauss-Seidel und Newton werden Ableitungen nur abgefragt, wenn eine Verbindung im Taylor-Modus laufen kann, sonst reicht die Sekante. Offen sind FMI 1.0 und der `FileReaderSlave` als Ableitungsquelle.
 
 1. **`MSIM_ModelDescription`**: `int m_maxOutputDerivativeOrder` aus `<CoSimulation>` lesen (Default 0). Für FMI 1.0 aus `<Capabilities>`.
 2. **`MSIM_AbstractSlave` / `MSIM_FMUSlave`**:

@@ -132,6 +132,7 @@ void MSIMViewSimulation::onModified(unsigned int modificationType, void * /*data
 	m_ui->lineEditAbsTol->setText( QString("%L1").arg(project().m_absTol));
 
 	m_ui->spinBoxMaxIteration->setValue((int)project().m_maxIterations);
+	m_ui->spinBoxMaxInputDerivativeOrder->setValue((int)project().m_maxInputDerivativeOrder);
 
 	m_ui->comboBoxMasterAlgorithm->setCurrentIndex(project().m_masterMode);
 	m_ui->comboBoxErrorControl->setCurrentIndex(project().m_errorControlMode);
@@ -431,6 +432,15 @@ void MSIMViewSimulation::on_comboBoxErrorControl_currentIndexChanged(int index) 
 void MSIMViewSimulation::on_spinBoxMaxIteration_valueChanged(int arg1) {
 	MASTER_SIM::Project p = project(); // create copy of project
 	p.m_maxIterations = arg1;
+
+	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
+	cmd->push();
+}
+
+
+void MSIMViewSimulation::on_spinBoxMaxInputDerivativeOrder_valueChanged(int arg1) {
+	MASTER_SIM::Project p = project(); // create copy of project
+	p.m_maxInputDerivativeOrder = (unsigned int)arg1;
 
 	MSIMUndoSimulationSettings * cmd = new MSIMUndoSimulationSettings(tr("Simulation setting changed"), p);
 	cmd->push();

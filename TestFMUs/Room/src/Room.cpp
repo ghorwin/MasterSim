@@ -15,9 +15,10 @@ FMI 2.0 interpolation features (see Room.h for details):
 - maxOutputDerivativeOrder="1": fmi2GetRealOutputDerivatives() provides the
   first time derivative of the output roomTemperature.
 
-The boolean parameter 'useInputInterpolation' switches the internal input
-interpolation on (default) or off (zero-order hold), to demonstrate the
-effect of the feature in co-simulation test cases.
+The integer parameter 'inputInterpolationMode' selects zero-order hold (0),
+interpolation from the internal input history (1, default) or the use of
+input derivatives set by the master via fmi2SetRealInputDerivatives() (2),
+see Room.h.
 */
 
 #include <cstring>
@@ -52,18 +53,23 @@ Room::Room() :
 	// initialize parameter variables
 	m_realVar[VR_heatCapacity] = 50000.0;
 	m_realVar[VR_heatLossCoefficient] = 250.0;
-	m_boolVar[VR_useInputInterpolation] = 1;
+	m_integerVar[VR_inputInterpolationMode] = IIM_INTERNAL_HISTORY;
 
 	// model state
 	m_currentTimePoint = 0.0;
 	m_T = 275.15;
 	m_prevHeatingLoad = 0.0;
 	m_prevAmbientTemperature = 275.15;
+	m_haveEndInputs = false;
+	m_QEnd = 0.0;
+	m_AEnd = 275.15;
+	m_dQdt = 0.0;
+	m_dAdt = 0.0;
 
 	// parameters (updated in init())
 	m_heatCapacity = 50000.0;
 	m_heatLossCoefficient = 250.0;
-	m_useInputInterpolation = true;
+	m_inputInterpolationMode = IIM_INTERNAL_HISTORY;
 }
 
 
@@ -78,7 +84,9 @@ void Room::init() {
 	// read parameters
 	m_heatCapacity = m_realVar[VR_heatCapacity];
 	m_heatLossCoefficient = m_realVar[VR_heatLossCoefficient];
-	m_useInputInterpolation = (m_boolVar[VR_useInputInterpolation] != 0);
+	m_inputInterpolationMode = m_integerVar[VR_inputInterpolationMode];
+	if (m_inputInterpolationMode < IIM_ZERO_ORDER_HOLD || m_inputInterpolationMode > IIM_MASTER_DERIVATIVES)
+		throw std::runtime_error("Parameter 'inputInterpolationMode' must be 0, 1 or 2.");
 
 	if (m_heatCapacity <= 0.0)
 		throw std::runtime_error("Parameter 'heatCapacity' must be positive.");
@@ -96,6 +104,9 @@ void Room::init() {
 	// is assumed to have constant input values
 	m_prevHeatingLoad = m_realVar[VR_heatingLoad];
 	m_prevAmbientTemperature = m_realVar[VR_ambientTemperature];
+	m_haveEndInputs = false;
+	m_dQdt = 0.0;
+	m_dAdt = 0.0;
 
 	logger(fmi2OK, "progress", "Initialization complete.");
 }
@@ -122,18 +133,44 @@ void Room::integrateTo(double tCommunicationIntervalEnd) {
 	double Qcur = m_realVar[VR_heatingLoad];
 	double Acur = m_realVar[VR_ambientTemperature];
 
-	if (m_useInputInterpolation) {
-		// FMI 2.0: the inputs are assumed to change linearly between the
-		// communication points, from their previous value to the current one
-		m_T = integrateLinear(m_T,
-		                      m_prevHeatingLoad, (Qcur - m_prevHeatingLoad) / h,
-		                      m_prevAmbientTemperature, (Acur - m_prevAmbientTemperature) / h,
-		                      h);
+	switch (m_inputInterpolationMode) {
+		case IIM_INTERNAL_HISTORY :
+			// in the first step there is no input history yet (the values remembered in init()
+			// were taken before the master set the inputs in initialization mode)
+			if (!m_haveEndInputs) {
+				m_prevHeatingLoad = Qcur;
+				m_prevAmbientTemperature = Acur;
+			}
+			// the inputs are assumed to change linearly between the communication
+			// points, from their previous value to the current one (current value
+			// is interpreted as value at the end of the step)
+			m_T = integrateLinear(m_T,
+								  m_prevHeatingLoad, (Qcur - m_prevHeatingLoad) / h,
+								  m_prevAmbientTemperature, (Acur - m_prevAmbientTemperature) / h,
+								  h);
+			m_QEnd = Qcur;
+			m_AEnd = Acur;
+			break;
+
+		case IIM_MASTER_DERIVATIVES :
+			// FMI 2.0: inputs and their derivatives are set with respect to the
+			// begin of the communication step: u(t) = u(tn) + du/dt * (t - tn)
+			m_T = integrateLinear(m_T, Qcur, m_dQdt, Acur, m_dAdt, h);
+			m_QEnd = Qcur + m_dQdt*h;
+			m_AEnd = Acur + m_dAdt*h;
+			break;
+
+		default : // IIM_ZERO_ORDER_HOLD
+			// the inputs are assumed to stay at their current value
+			m_T = integrateLinear(m_T, Qcur, 0.0, Acur, 0.0, h);
+			m_QEnd = Qcur;
+			m_AEnd = Acur;
 	}
-	else {
-		// zero-order hold: the inputs are assumed to stay at their current value
-		m_T = integrateLinear(m_T, Qcur, 0.0, Acur, 0.0, h);
-	}
+	m_haveEndInputs = true;
+
+	// input derivatives are only valid for this step
+	m_dQdt = 0.0;
+	m_dAdt = 0.0;
 
 	m_realVar[VR_roomTemperature] = m_T;
 
@@ -155,11 +192,37 @@ fmi2Status Room::getRealOutputDerivatives(const unsigned int vr[], size_t nvr, c
 			value[i] = m_T;
 		}
 		else if (order[i] == 1) {
-			value[i] = computeDerivative(m_T, m_realVar[VR_heatingLoad], m_realVar[VR_ambientTemperature]);
+			// derivative at the current communication point, using the input values that the
+			// model assumed at the end of the last step (or the current inputs before the first step)
+			if (m_haveEndInputs)
+				value[i] = computeDerivative(m_T, m_QEnd, m_AEnd);
+			else
+				value[i] = computeDerivative(m_T, m_realVar[VR_heatingLoad], m_realVar[VR_ambientTemperature]);
 		}
 		else {
 			logger(fmi2Warning, "logStatusWarning", "Only output derivatives of order 0 and 1 are supported.");
 			return fmi2Warning;
+		}
+	}
+	return fmi2OK;
+}
+
+
+// FMI 2.0 co-simulation: input derivatives (valid for the next fmi2DoStep() only)
+fmi2Status Room::setRealInputDerivatives(const unsigned int vr[], size_t nvr, const int order[], const double value[]) {
+	for (size_t i = 0; i < nvr; ++i) {
+		if (order[i] < 1) {
+			logger(fmi2Error, "logStatusError", "Invalid derivative order in fmi2SetRealInputDerivatives().");
+			return fmi2Error;
+		}
+		if (order[i] > 1)
+			continue; // higher order derivatives are ignored (model uses linear input profiles)
+		switch (vr[i]) {
+			case VR_heatingLoad			: m_dQdt = value[i]; break;
+			case VR_ambientTemperature	: m_dAdt = value[i]; break;
+			default :
+				logger(fmi2Error, "logStatusError", "Variable in fmi2SetRealInputDerivatives() is not a continuous real input.");
+				return fmi2Error;
 		}
 	}
 	return fmi2OK;
@@ -210,7 +273,8 @@ double Room::integrateLinear(double T0, double Q0, double slopeQ, double A0, dou
 
 void Room::computeFMUStateSize() {
 	// time and model state
-	m_fmuStateSize = sizeof(double)*4; // m_currentTimePoint, m_T, m_prevHeatingLoad, m_prevAmbientTemperature
+	m_fmuStateSize = sizeof(double)*8; // m_currentTimePoint, m_T, m_prevHeatingLoad, m_prevAmbientTemperature, m_QEnd, m_AEnd, m_dQdt, m_dAdt
+	m_fmuStateSize += sizeof(int); // m_haveEndInputs
 
 	// we store all cached variables
 	m_fmuStateSize += sizeof(int)*4; // map sizes for sanity checks
@@ -281,6 +345,11 @@ void Room::serializeFMUstate(void * FMUstate) {
 	SERIALIZE(double, dataPtr, m_T);
 	SERIALIZE(double, dataPtr, m_prevHeatingLoad);
 	SERIALIZE(double, dataPtr, m_prevAmbientTemperature);
+	SERIALIZE(double, dataPtr, m_QEnd);
+	SERIALIZE(double, dataPtr, m_AEnd);
+	SERIALIZE(double, dataPtr, m_dQdt);
+	SERIALIZE(double, dataPtr, m_dAdt);
+	SERIALIZE(int, dataPtr, m_haveEndInputs ? 1 : 0);
 
 	// write map size for checking
 	int mapSize = static_cast<int>(m_realVar.size());
@@ -323,6 +392,13 @@ bool Room::deserializeFMUstate(void * FMUstate) {
 	DESERIALIZE(const double, dataPtr, m_T);
 	DESERIALIZE(const double, dataPtr, m_prevHeatingLoad);
 	DESERIALIZE(const double, dataPtr, m_prevAmbientTemperature);
+	DESERIALIZE(const double, dataPtr, m_QEnd);
+	DESERIALIZE(const double, dataPtr, m_AEnd);
+	DESERIALIZE(const double, dataPtr, m_dQdt);
+	DESERIALIZE(const double, dataPtr, m_dAdt);
+	int haveEndInputs;
+	DESERIALIZE(const int, dataPtr, haveEndInputs);
+	m_haveEndInputs = (haveEndInputs != 0);
 	m_realVar[VR_roomTemperature] = m_T;
 
 	if (!deserializeMap(this, dataPtr, "real", m_realVar))

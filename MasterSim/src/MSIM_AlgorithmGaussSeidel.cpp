@@ -31,6 +31,8 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 	MasterSim::copyVector(m_master->m_intyt, m_master->m_intytNext);
 	MasterSim::copyVector(m_master->m_boolyt, m_master->m_boolytNext);
 	std::copy(m_master->m_stringyt.begin(), m_master->m_stringyt.end(), m_master->m_stringytNext.begin());
+	// copy derivatives at time t and reset step-end flags (no variable is at t + h yet)
+	m_master->initDerivativesForStep();
 
 	// loop over all cycles
 	for (unsigned int c=0; c<m_master->m_cycles.size(); ++c) {
@@ -67,7 +69,9 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				AbstractSlave * slave = cycle.m_slaves[s];
 
 				// update input variables in all slaves, using variables from time t + stepsize (partially updated from previous slaves)
-				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
+				// for connections with input derivatives: variables already computed at t + h are interpolated, all others extrapolated
+				m_master->updateSlaveInputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false,
+											MasterSim::IDM_AUTO);
 
 				// advance slave
 				m_timer.start();
@@ -93,6 +97,9 @@ AlgorithmGaussSeidel::Result AlgorithmGaussSeidel::doStep() {
 				// sync results into vector with newly computed quantities, so that next slave will use newly
 				// computed values already
 				m_master->syncSlaveOutputs(slave, m_master->m_realytNext, m_master->m_intytNext, m_master->m_boolytNext, m_master->m_stringytNext, false);
+				m_master->syncSlaveOutputDerivatives(slave, m_master->m_realDerivytNext);
+				// outputs of this slave in m_realytNext are now values at t + h
+				m_master->markOutputsAtStepEnd(slave);
 			}
 
 			// when iterating, do convergence test

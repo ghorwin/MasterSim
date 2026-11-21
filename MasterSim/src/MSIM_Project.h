@@ -220,6 +220,14 @@ public:
 	/*! Maximum number of iterations per communication step (within each priority/cycle). */
 	unsigned int				m_maxIterations = 1;
 
+	/*! Maximum order of input derivatives passed from output derivatives to slave inputs
+		(via fmi2GetRealOutputDerivatives()/fmi2SetRealInputDerivatives()).
+		0 disables passing of derivatives (default). The actual order used for each connection
+		is limited by the 'maxOutputDerivativeOrder' of the producing FMU and requires the
+		consuming FMU to have the 'canInterpolateInputs' capability.
+	*/
+	unsigned int				m_maxInputDerivativeOrder = 0;
+
 	/*! Absolute tolerance - used for convergence check and for time integration error control. */
 	double						m_absTol = 1e-6;
 	/*! Relative tolerance - used for convergence check and for time integration error control. */

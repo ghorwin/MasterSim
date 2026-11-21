@@ -35,6 +35,6 @@ simulator 1 1 Room #c38200 "fmus/IBK/Room.fmu"
 
 graph Room.roomTemperature Radiator.roomTemperature
 graph Radiator.heatingLoad Room.heatingLoad
-parameter Radiator.useInputInterpolation   false
-parameter Room.useInputInterpolation   false
+parameter Radiator.inputInterpolationMode   0
+parameter Room.inputInterpolationMode   0
 

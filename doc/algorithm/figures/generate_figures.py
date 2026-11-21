@@ -722,7 +722,8 @@ def fig_fmu_interpretation():
 # =============================================================================
 
 def read_values(case):
-    path = os.path.join(TESTDIR, case, "results", "values.csv")
+    # checked-in reference results of the test case (not the gitignored results of the last test run)
+    path = os.path.join(TESTDIR, case + ".gcc_linux", "results", "values.csv")
     t, q, T = [], [], []
     with open(path, encoding="utf-8") as fh:
         rows = csv.reader(fh, delimiter="\t")
@@ -785,6 +786,55 @@ def fig_results():
     fg.save("fig11_ergebnisse_room_radiator.svg", "Ergebnisse der Room/Radiator-Testfälle")
 
 
+# =============================================================================
+# Abb. 12: Fehler mit Master-Ableitungen gegenueber Zero-Order-Hold
+# =============================================================================
+
+def de_dec(v, digits=1):
+    return ("%.*f" % (digits, v)).replace("-", "−").replace(".", ",")
+
+
+def fig_master_derivatives():
+    t_ref, _, T_ref = read_values("Room_Radiator_MasterDeriv_Reference")
+    ref = {int(round(t / 5.0)): T for t, T in zip(t_ref, T_ref)}
+    series = [
+        ("Room_Radiator_MasterDeriv_ZOH_GaussJacobi", "Gauss-Jacobi, ZOH", ORANGE, "4,3"),
+        ("Room_Radiator_MasterDeriv_GaussJacobi", "Gauss-Jacobi, Master-Ableitungen", ORANGE, None),
+        ("Room_Radiator_MasterDeriv_ZOH_GaussSeidel_1iters", "Gauss-Seidel, ZOH", ACCENT, "4,3"),
+        ("Room_Radiator_MasterDeriv_GaussSeidel_1iters", "Gauss-Seidel, Master-Ableitungen", ACCENT, None),
+    ]
+    data = []
+    for case, label, col, dash in series:
+        t, _, T = read_values(case)
+        err = [(a, b - ref[int(round(a / 5.0))]) for a, b in zip(t, T) if int(round(a / 5.0)) in ref]
+        data.append((err, label, col, dash))
+
+    fg = Fig(800, 640)
+    # Legende (zwei Zeilen)
+    for k, (_, label, col, dash) in enumerate(data):
+        lx = 80 + (k // 2) * 360
+        ly = 18 + (k % 2) * 20
+        fg.polyline([(lx, ly), (lx + 30, ly)], col, 1.8, dash=dash)
+        fg.text(lx + 38, ly + 4, label, size=12)
+
+    def panel(y0, y1, tr, yr, yticks, title):
+        ax = Axes(fg, 90, y0, 780, y1, tr, yr)
+        xt = list(range(int(tr[0]), int(tr[1]) + 1, 100))
+        ax.frame(xt, yticks, lambda v: de_num(v), lambda v: de_dec(v))
+        fg.polyline([(ax.x0, ax.Y(0)), (ax.x1, ax.Y(0))], INK, 0.9)
+        for err, label, col, dash in data:
+            pts = [ax.P(a, b) for a, b in err if tr[0] <= a <= tr[1]]
+            fg.polyline(pts, col, 1.6, dash=dash)
+        fg.text(ax.x0 + 8, ax.y0 + 18, title, size=13, halo=True)
+        fg.text(24, (ax.y0 + ax.y1) / 2, "T − T_ref [K]", size=13, anchor="middle", rotate=-90)
+        return ax
+
+    panel(60, 310, (0, 600), (-0.1, 0.4), [-0.1, 0, 0.1, 0.2, 0.3, 0.4], "(a) Aufheizen ab t = 0 s")
+    panel(350, 600, (7200, 7800), (-0.45, 0.05), [-0.4, -0.3, -0.2, -0.1, 0], "(b) Absenkung ab t = 7 200 s")
+    fg.text(435, 632, "Zeit t [s]", size=13, anchor="middle")
+    fg.save("fig12_fehler_master_ableitungen.svg", "Fehler der Raumtemperatur mit und ohne Master-Ableitungen")
+
+
 def marker(fg, x, y, kind, col):
     if kind == "circle":
         fg.circle(x, y, 3.0, fill=WHITE, stroke=col, sw=1.4)
@@ -804,3 +854,4 @@ if __name__ == "__main__":
     fig_room_radiator()
     fig_fmu_interpretation()
     fig_results()
+    fig_master_derivatives()
