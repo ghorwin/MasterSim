@@ -5,7 +5,8 @@
 
 /*! Provides default locations for resource and user data files based on IBK_DEPLOYMENT
 	flag setting and OS.
-	The IBK_DEPLOYMENT flag is set in IBK_BuildFlags.h, a file modified by the release scripts.
+	The IBK_DEPLOYMENT flag is defined when building with the CMake option DEPLOYMENT=ON
+	(e.g. `build/build.sh deployment`).
 */
 class MSIMDirectories {
 public:
