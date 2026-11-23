@@ -42,9 +42,16 @@ void qDebugMsgHandler(QtMsgType type, const char *msg) {
 int main(int argc, char *argv[]) {
 	const char * const FUNC_ID = "[main]";
 
-#if QT_VERSION >= 0x050E00
-	QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+#if defined(Q_OS_LINUX)
+	// Debian packages prefer the X11 platform plugin (XWayland under Wayland sessions)
+	// and fall back to native Wayland if no X server is available. A platform selected
+	// explicitly by the user (environment variable already set) takes precedence.
+	// NOTE: must be set before the QApplication object is created.
+	if (!qEnvironmentVariableIsSet("QT_QPA_PLATFORM"))
+		qputenv("QT_QPA_PLATFORM", "xcb;wayland");
 #endif
+
+	QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
 	MSIMDebugApplication a(argc, argv);
 
