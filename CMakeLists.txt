@@ -34,6 +34,22 @@ endif()
 project( MasterSimBundle )
 
 # -------------------------------------------------------------
+# Debian package build
+#
+# Builds the binaries for installation into a FHS layout (<prefix>/bin,
+# <prefix>/share/mastersim, <prefix>/share/locale), as used by Debian packages.
+# The resource/translation paths for this layout are only used in deployment
+# mode, hence this option implies DEPLOYMENT (set as normal variable before
+# build.cmake declares the option, so that the cached DEPLOYMENT value is not altered).
+# Test locally with `cmake -DIBK_BUILDING_DEBIAN_PACKAGE=ON -DCMAKE_INSTALL_PREFIX=/some/local/path`
+# followed by `make install`.
+# -------------------------------------------------------------
+option( IBK_BUILDING_DEBIAN_PACKAGE "Build for installation as Debian package (implies DEPLOYMENT)" OFF )
+if( IBK_BUILDING_DEBIAN_PACKAGE )
+	set( DEPLOYMENT ON )
+endif()
+
+# -------------------------------------------------------------
 # Support for common cmake configuration
 #
 # Sets the C++ standard, the output directories (lib/ and
@@ -65,9 +81,10 @@ if( CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" )
 	add_compile_options( -ffp-contract=off )
 endif()
 
-# enable this to test deb-deployment
-# use in conjunction with `cmake -DCMAKE_INSTALL_PREFIX=/some/local/path`
-# add_compile_definitions( IBK_BUILDING_DEBIAN_PACKAGE )
+if( IBK_BUILDING_DEBIAN_PACKAGE )
+	message( "*** Building for Debian package ***" )
+	add_compile_definitions( IBK_BUILDING_DEBIAN_PACKAGE )
+endif()
 
 # -------------------------------------------------------------
 # Packages

@@ -10,6 +10,7 @@
 #   [verbose]					enable cmake to call verbose makefiles
 #   [deployment|deploy]			set DEPLOYMENT (and IBK_DEPLOYMENT) flag during build
 #   [nightly]					enables nightly build mode (shows startup warning dialog)
+#   [debian]					set IBK_BUILDING_DEBIAN_PACKAGE flag (FHS install layout, implies deployment)
 #   [skip-test]					do not run the test suite after a successful build
 #   [no-gui]					do not build the Qt based libraries and user interface
 #
@@ -78,12 +79,13 @@ CMAKE_OPTIONS=""
 USE_OMP="OFF"
 DEPLOYMENT="OFF"
 NIGHTLY="OFF"
+DEBIAN_PACKAGE="OFF"
 VERBOSE_MAKEFILE="OFF"
 GPROF=0
 SKIP_TESTS=0
 DISABLE_QT="OFF"
 
-USAGE="Usage: $(basename "$0") [reldeb|release|debug] [<cpu count>] [gprof] [omp] [verbose] [deployment|deploy] [nightly] [skip-test] [no-gui]"
+USAGE="Usage: $(basename "$0") [reldeb|release|debug] [<cpu count>] [gprof] [omp] [verbose] [deployment|deploy] [debian] [nightly] [skip-test] [no-gui]"
 
 # parse parameters
 for var in "$@"
@@ -103,8 +105,18 @@ do
 	elif [[ $var = "deployment" || $var = "deploy" ]];
 	then
 		DEPLOYMENT="ON"
-		DEPLOYMENT_SUFFIX="-deployment"
+		# a debian build keeps its own build directory suffix
+		if [[ $DEBIAN_PACKAGE = "OFF" ]]; then
+			DEPLOYMENT_SUFFIX="-deployment"
+		fi
 		echo "Enabling deployment mode"
+
+	elif [[ $var = "debian" ]];
+	then
+		DEBIAN_PACKAGE="ON"
+		DEPLOYMENT="ON"
+		DEPLOYMENT_SUFFIX="-debian"
+		echo "Building for Debian package (implies deployment mode)"
 
 	elif [[ $var = "nightly" ]];
 	then
@@ -187,6 +199,7 @@ fi
 CMAKE_OPTIONS="$CMAKE_OPTIONS -DUSE_OMP:BOOL=$USE_OMP"
 CMAKE_OPTIONS="$CMAKE_OPTIONS -DDEPLOYMENT:BOOL=$DEPLOYMENT"
 CMAKE_OPTIONS="$CMAKE_OPTIONS -DBUILD_NIGHTLY:BOOL=$NIGHTLY"
+CMAKE_OPTIONS="$CMAKE_OPTIONS -DIBK_BUILDING_DEBIAN_PACKAGE:BOOL=$DEBIAN_PACKAGE"
 CMAKE_OPTIONS="$CMAKE_OPTIONS -DCMAKE_VERBOSE_MAKEFILE:BOOL=$VERBOSE_MAKEFILE"
 CMAKE_OPTIONS="$CMAKE_OPTIONS -DDISABLE_QT:BOOL=$DISABLE_QT"
 

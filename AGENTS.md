@@ -17,7 +17,7 @@ build/build.sh
 # Solver only (no Qt dependency)
 build/build_only_solver.sh
 
-# Options: debug | release | reldeb | <cpu count> | no-gui | verbose | deployment (alias: deploy)
+# Options: debug | release | reldeb | <cpu count> | no-gui | verbose | deployment (alias: deploy) | debian
 #          | nightly | omp | gprof | skip-test   (unknown options abort the script)
 build/build.sh debug no-gui
 build/build.sh release skip-test
