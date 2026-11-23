@@ -90,7 +90,8 @@ void MSIMLanguageHandler::installTranslator(QString langId) {
 	// and with pre-installed qt on Linux/Unix plattforms
 	//
 	// In case of Windows/MacOS the qt-translation files are shipped together with the application,
-	// yet in case of Linux the qt translation files are always in /usr/share/qt5/translations
+	// yet in case of Linux the qt translation files are taken from the Qt installation
+	// (QLibraryInfo::TranslationsPath, e.g. /usr/share/qt6/translations)
 	//
 	// The application translation files are stored in the MSIMDirectories::translationsDir(), which returns
 	// the appropriate path based on whether the define IBK_BUILDING_DEBIAN_PACKAGE is set or not.

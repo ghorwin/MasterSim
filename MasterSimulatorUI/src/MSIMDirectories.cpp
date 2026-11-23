@@ -3,6 +3,7 @@
 #include <QCoreApplication>
 #include <QDesktopServices>
 #include <QDir>
+#include <QLibraryInfo>
 
 #include <IBK_configuration.h>
 #include "MSIMUIConstants.h"
@@ -74,7 +75,9 @@ QString MSIMDirectories::translationsFilePath(const QString & langID) {
 
 QString MSIMDirectories::qtTranslationsFilePath(const QString & langID) {
 #if defined(Q_OS_LINUX)
-	return QString("/usr/share/qt5/translations/qt_%1.qm").arg(langID);
+	// on Linux the qt_xx.qm files are taken from the Qt installation in use (e.g. /usr/share/qt6/translations
+	// for system Qt or the translations directory of an aqtinstall Qt)
+	return QLibraryInfo::path(QLibraryInfo::TranslationsPath) + QString("/qt_%1.qm").arg(langID);
 #else
 	// in all other cases the qt_xx.qm files are located in the resources path
 	return resourcesRootDir() + QString("/translations/qt_%1.qm").arg(langID);
