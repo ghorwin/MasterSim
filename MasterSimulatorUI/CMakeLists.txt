@@ -53,6 +53,9 @@ elseif( APPLE )
 		MACOSX_BUNDLE_ICON_FILE MasterSimulatorUI.icns
 		# application name shown in the macOS application menu (instead of executable name)
 		MACOSX_BUNDLE_BUNDLE_NAME "MasterSim"
+		# version shown in Finder/"About" (MSIM_VERSION is read from MSIM_Version.h in the top-level CMakeLists.txt)
+		MACOSX_BUNDLE_SHORT_VERSION_STRING "${MSIM_VERSION}"
+		MACOSX_BUNDLE_BUNDLE_VERSION "${MSIM_VERSION}"
 	)
 
 else()

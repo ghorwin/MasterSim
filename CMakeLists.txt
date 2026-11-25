@@ -31,7 +31,30 @@ if( APPLE )
 	endif()
 endif()
 
-project( MasterSimBundle )
+# -------------------------------------------------------------
+# Version number
+#
+# Read from MasterSim/src/MSIM_Version.h, the single place where the version is defined
+# (also used by MSIM_Constants.cpp, the Windows .rc file and the release scripts).
+# MSIM_VERSION (e.g. 0.9.8) is available in all subdirectories, e.g. for the macOS
+# bundle version. Note: subprojects call project() without VERSION, which resets
+# PROJECT_VERSION, hence use MSIM_VERSION instead.
+# -------------------------------------------------------------
+set( MSIM_VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/MasterSim/src/MSIM_Version.h" )
+file( STRINGS "${MSIM_VERSION_FILE}" MSIM_VERSION_DEFINES
+	REGEX "^[ \t]*#[ \t]*define[ \t]+MSIM_VERSION_(MAJOR|MINOR|PATCH)[ \t]+[0-9]+" )
+foreach( part MAJOR MINOR PATCH )
+	if( NOT MSIM_VERSION_DEFINES MATCHES "MSIM_VERSION_${part}[ \t]+([0-9]+)" )
+		message( FATAL_ERROR "MSIM_VERSION_${part} not defined in ${MSIM_VERSION_FILE}" )
+	endif()
+	set( MSIM_VERSION_${part} ${CMAKE_MATCH_1} )
+endforeach()
+set( MSIM_VERSION "${MSIM_VERSION_MAJOR}.${MSIM_VERSION_MINOR}.${MSIM_VERSION_PATCH}" )
+# re-run cmake when the version is changed
+set_property( DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${MSIM_VERSION_FILE}" )
+
+project( MasterSimBundle VERSION ${MSIM_VERSION} )
+message( "*** MasterSim version ${MSIM_VERSION} ***" )
 
 # -------------------------------------------------------------
 # Debian package build
