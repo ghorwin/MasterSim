@@ -27,7 +27,7 @@
     <message>
         <location filename="../../src/MSIMBlockEditorDialog.ui" line="20"/>
         <source>Block schematics</source>
-        <translation type="unfinished"></translation>
+        <translation>Block-Schema</translation>
     </message>
     <message>
         <location filename="../../src/MSIMBlockEditorDialog.ui" line="39"/>
@@ -47,7 +47,7 @@
     <message>
         <location filename="../../src/MSIMBlockEditorDialog.ui" line="71"/>
         <source>Geometry (columns/rows):</source>
-        <translation type="unfinished"></translation>
+        <translation>Geometrie (Spalten/Zeilen):</translation>
     </message>
     <message>
         <source>Geometry (columns/rows)::</source>
@@ -473,7 +473,7 @@
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="195"/>
         <source>About MasterSim...</source>
-        <translation type="unfinished"></translation>
+        <translation>Über MasterSim...</translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.ui" line="207"/>
@@ -652,14 +652,16 @@
     <message>
         <location filename="../../src/MSIMMainWindow.cpp" line="352"/>
         <source>Simulation running</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation läuft</translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.cpp" line="353"/>
         <source>A simulation is still running in the background. Closing MasterSim will abort the simulation.
 
 Do you really want to quit?</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Hintergrund läuft noch eine Simulation. Das Schließen von MasterSim bricht die Simulation ab.
+
+Wollen Sie MasterSim wirklich beenden?</translation>
     </message>
     <message>
         <location filename="../../src/MSIMMainWindow.cpp" line="395"/>
@@ -994,12 +996,12 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="23"/>
         <source>Appearance</source>
-        <translation type="unfinished"></translation>
+        <translation>Darstellung</translation>
     </message>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="29"/>
         <source>Color scheme:</source>
-        <translation type="unfinished"></translation>
+        <translation>Farbschema:</translation>
     </message>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.ui" line="45"/>
@@ -1034,12 +1036,12 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.cpp" line="19"/>
         <source>Light</source>
-        <translation type="unfinished"></translation>
+        <translation>Hell</translation>
     </message>
     <message>
         <location filename="../../src/MSIMPreferencesPageGeneral.cpp" line="20"/>
         <source>Dark</source>
-        <translation type="unfinished"></translation>
+        <translation>Dunkel</translation>
     </message>
 </context>
 <context>
@@ -1341,7 +1343,7 @@ Do you really want to quit?</source>
         <location filename="../../src/MSIMViewConnections.cpp" line="58"/>
         <location filename="../../src/MSIMViewConnections.cpp" line="597"/>
         <source>Checked, if this output variable is connected to anything.</source>
-        <translation type="unfinished"></translation>
+        <translation>Markiert, wenn diese Ausgangsvariable mit etwas verbunden ist.</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewConnections.cpp" line="177"/>
@@ -1620,7 +1622,7 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="240"/>
         <source>Write not connected variables from file reader slaves</source>
-        <translation type="unfinished"></translation>
+        <translation>Nicht verbundene Variablen von Dateileser-Slaves ausgeben</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="283"/>
@@ -1640,7 +1642,7 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="298"/>
         <source>Ptyxis</source>
-        <translation type="unfinished"></translation>
+        <translation>Ptyxis</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="320"/>
@@ -1650,7 +1652,7 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="384"/>
         <source>Progress of the simulation running in the background.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fortschritt der im Hintergrund laufenden Simulation.</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.ui" line="410"/>
@@ -1732,60 +1734,63 @@ Do you really want to quit?</source>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="222"/>
         <source>Could not run Ptyxis terminal emulator (ptyxis). Please install Ptyxis or select a different terminal emulator from the list!</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte den Ptyxis Terminalemulator nicht starten (ptyxis). Bitte installieren Sie Ptyxis oder wählen Sie einen anderen Terminalemulator aus der Liste aus!</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="242"/>
         <source>A simulation is already running.</source>
-        <translation type="unfinished"></translation>
+        <translation>Es läuft bereits eine Simulation.</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="272"/>
         <source>Starting simulation...</source>
-        <translation type="unfinished"></translation>
+        <translation>Starte Simulation...</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="288"/>
         <source>Could not run solver &apos;%1&apos;:
 %2</source>
-        <translation type="unfinished"></translation>
+        <translation>Kann Solverprogramm &apos;%1&apos; nicht starten:
+%2</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="297"/>
         <source>Simulation crashed</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation abgestürzt</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="298"/>
         <source>The solver crashed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Der Solver ist abgestürzt.</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="301"/>
         <source>Simulation failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="302"/>
         <source>The simulation stopped with an error (exit code %1).</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Simulation wurde mit einem Fehler beendet (Exit-Code %1).</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="306"/>
         <source>Simulation finished</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulation beendet</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="346"/>
         <source>Simulation error</source>
-        <translation type="unfinished"></translation>
+        <translation>Simulationsfehler</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSimulation.cpp" line="347"/>
         <source>%1
 
 See log file &apos;%2&apos; for details.</source>
-        <translation type="unfinished"></translation>
+        <translation>%1
+
+Details siehe Logdatei &apos;%2&apos;.</translation>
     </message>
     <message>
         <source>Error running solver</source>
@@ -1921,7 +1926,7 @@ See log file &apos;%2&apos; for details.</source>
     <message>
         <location filename="../../src/MSIMViewSlaves.ui" line="311"/>
         <source>Merge connectors</source>
-        <translation type="unfinished"></translation>
+        <translation>Anschlüsse zusammenfassen</translation>
     </message>
     <message>
         <location filename="../../src/MSIMViewSlaves.ui" line="331"/>
