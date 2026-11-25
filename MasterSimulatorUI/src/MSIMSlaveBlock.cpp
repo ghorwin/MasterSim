@@ -36,20 +36,33 @@ void MSIMSlaveBlock::paint(QPainter * painter, const QStyleOptionGraphicsItem * 
 				return;
 			}
 			// draw block with slave color as background color; use tints of the color (light tints in
-			// light theme, dark tints in dark theme) so that the block and socket labels remain readable
+			// light theme, dark tints in dark theme) so that the block and socket labels remain readable.
+			// Unselected blocks are drawn with faded tints, selected blocks with much stronger tints
+			// (i.e. darker in light theme, brighter in dark theme) and a thick black border.
+			bool selected = option->state.testFlag(QStyle::State_Selected);
 			QColor c = block()->m_properties.value("Color").value<QColor>();
 			painter->save();
 			painter->setRenderHint(QPainter::Antialiasing, true);
 			QLinearGradient grad(QPointF(0,0), QPointF(rect().width(),0));
-			grad.setColorAt(0, blendWith(c, theme.blockTintBase, 0.4));
-			grad.setColorAt(1, blendWith(c, theme.blockTintBase, 0.6));
+			if (selected) {
+				grad.setColorAt(0, blendWith(c, theme.blockTintBase, 0.1));
+				grad.setColorAt(1, blendWith(c, theme.blockTintBase, 0.25));
+			}
+			else {
+				grad.setColorAt(0, blendWith(c, theme.blockTintBase, 0.55));
+				grad.setColorAt(1, blendWith(c, theme.blockTintBase, 0.75));
+			}
 			painter->fillRect(rect(), grad);
-			if (option->state.testFlag(QStyle::State_Selected))
-				painter->setPen(QPen(QBrush(theme.blockSelectedBorder), 1.5));
+			if (selected)
+				painter->setPen(QPen(QBrush(theme.blockBorder), 2));
 			else
 				painter->setPen(theme.blockBorder);
 			painter->setBrush(Qt::NoBrush);
-			painter->drawRect(rect());
+			// thick border is drawn inside the block rect, so that it is not clipped at the bounding rect
+			if (selected)
+				painter->drawRect(rect().adjusted(1, 1, -1, -1));
+			else
+				painter->drawRect(rect());
 			// now draw the label of the block
 			QRectF r = rect();
 			r.moveTop(4);

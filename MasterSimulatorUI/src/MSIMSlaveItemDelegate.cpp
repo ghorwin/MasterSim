@@ -5,8 +5,6 @@
 #include <QColorDialog>
 #include <QSpinBox>
 
-#include "MSIMUIConstants.h"
-
 MSIMSlaveItemDelegate::MSIMSlaveItemDelegate(QObject *parent) :
 	QItemDelegate(parent)
 {
