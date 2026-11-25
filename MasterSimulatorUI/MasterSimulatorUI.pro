@@ -25,6 +25,7 @@ unix {
 }
 
 win32 {
+	RC_FILE = resources/MasterSimulator.rc
 	LIBS += -lzlib -luser32
 }
 

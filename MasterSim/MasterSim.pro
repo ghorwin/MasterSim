@@ -73,6 +73,7 @@ HEADERS += \
 	src/MSIM_OutputWriter.h \
 	src/MSIM_ProgressFeedback.h \
 	src/MSIM_Project.h \
+	src/MSIM_Version.h \
 	src/fmi/fmi2FunctionTypes.h \
 	src/fmi/fmi2Functions.h \
 	src/fmi/fmi2TypesPlatform.h \

@@ -116,3 +116,4 @@ The network schematic uses the `BlockMod` library. Undo/redo is implemented via 
 - All library source files are prefixed `MSIM_`; GUI files use `MSIM` (no underscore).
 - IBK assertion macros (`IBK_ASSERT`) are used throughout instead of standard `assert`.
 - Errors are reported by throwing `IBK::Exception`; callers catch and display them.
+- The version number and release date are defined only in `MasterSim/src/MSIM_Version.h` (preprocessor defines, also included by the Windows `.rc` files and parsed by the release scripts in the MasterSim-private repo). C++ code uses `MASTER_SIM::VERSION`/`LONG_VERSION`/`RELEASE_DATE` from `MSIM_Constants.h`.

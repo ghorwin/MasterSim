@@ -6,9 +6,9 @@
 #
 # Replaces version and date in master adoc document.
 #
-# Syntax: adoc-date-version-fix.py <path/to/src/file/with/constants.cpp> <path/to/adoc/main-file>
+# Syntax: adoc-date-version-fix.py <path/to/MSIM_Version.h> <path/to/adoc/main-file>
 #
-# The file passed as first argument is expected to be a cpp file with a LONG_VERSION constant. The
+# The file passed as first argument is expected to be a header file with MSIM_VERSION_MAJOR/MINOR/PATCH defines. The
 # second argument is supposed to be the main adoc file with 'v1.0.0, July 2020' or something like that
 # in the 4th line.
 #

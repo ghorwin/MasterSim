@@ -1,10 +1,11 @@
 #include "MSIM_Constants.h"
+#include "MSIM_Version.h"
 
 namespace MASTER_SIM {
 
-const char * const VERSION			= "0.9";
-const char * const LONG_VERSION		= "0.9.8";
-const char * const RELEASE_DATE		= "December 31st, 2024";
+const char * const VERSION			= MSIM_VERSION_STR;
+const char * const LONG_VERSION		= MSIM_LONG_VERSION_STR;
+const char * const RELEASE_DATE		= MSIM_RELEASE_DATE;
 
 const unsigned int KEYWORD_INDENTATION = 0;
 
