@@ -40,6 +40,7 @@
 #include <QRectF>
 #include <QStaticText>
 
+#include <algorithm>
 #include <cmath>
 
 #include "BM_Globals.h"
@@ -74,32 +75,35 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 	const Theme & theme = Globals::CurrentTheme;
 	const QColor connectorColor = m_connector->m_color.isValid() ? m_connector->m_color : theme.connector;
 	painter->save();
+
+	// Connector lines are drawn without antialiasing. Non-cosmetic pens with fractional widths (e.g. 0.8 and 1.2)
+	// would then be rounded to 1 or 2 device pixels depending on zoom level and sub-pixel position, so that
+	// highlighted/selected lines are often indistinguishable from normal lines. Hence, we use cosmetic pens
+	// with integer pixel widths: normal lines are at least 1 pixel wide (wider when zoomed in or with a larger
+	// user-defined line width), highlighted/selected lines are always exactly 1 pixel wider.
+	const QTransform & t = painter->worldTransform();
+	const double scale = std::hypot(t.m11(), t.m12());
+	const int normalWidth = std::max(1, (int)std::lround(m_connector->m_linewidth * scale));
+	const int highlightedWidth = normalWidth + 1;
+
+	QPen p;
+	p.setCosmetic(true);
+	p.setStyle(Qt::SolidLine);
 	if (m_isHighlighted) {
-		QPen p;
-		p.setWidthF(1.5 * m_connector->m_linewidth);
-		p.setStyle(Qt::SolidLine);
+		p.setWidth(highlightedWidth);
 		p.setColor(theme.connectorHighlighted);
-		if (isSelected()) {
-			p.setColor(theme.connectorSelected);
-			p.setStyle(Qt::DashLine);
-		}
-		painter->setPen(p);
-		painter->drawLine(l);
 	}
 	else {
-		QPen p;
-		p.setWidthF(m_connector->m_linewidth);
+		p.setWidth(normalWidth);
 		p.setColor(connectorColor);
-		p.setStyle(Qt::SolidLine);
-		if (isSelected()) {
-			p.setWidthF(1.5*m_connector->m_linewidth);
-			p.setColor(theme.connectorSelected);
-			p.setStyle(Qt::DashLine);
-		}
-		painter->setPen(p);
-		QLineF l = line();
-		painter->drawLine(l);
 	}
+	if (isSelected()) {
+		p.setWidth(highlightedWidth);
+		p.setColor(theme.connectorSelected);
+		p.setStyle(Qt::DashLine);
+	}
+	painter->setPen(p);
+	painter->drawLine(l);
 
 	// determine index of central segment
 	if (!m_connector->m_text.isEmpty()) {
@@ -121,11 +125,11 @@ void ConnectorSegmentItem::paint(QPainter *painter, const QStyleOptionGraphicsIt
 			double width = textSize.width()+10;  // 5 pixels left and right
 			double height = textSize.height()+6; // 3 pixels top and bottom
 			QRectF rectangle = QRectF(x-width/2, y-height/2, width, height);
-			QPen p;
-			p.setWidthF(1);
-			p.setColor(connectorColor);
-			p.setStyle(Qt::SolidLine);
-			painter->setPen(p);
+			QPen labelPen;
+			labelPen.setWidthF(1);
+			labelPen.setColor(connectorColor);
+			labelPen.setStyle(Qt::SolidLine);
+			painter->setPen(labelPen);
 			QBrush b(theme.connectorLabelBackground);
 			painter->setBrush(b);
 			painter->drawRect(rectangle);
