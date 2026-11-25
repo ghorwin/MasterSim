@@ -19,4 +19,4 @@ LUPDATE=$(find_tool lupdate) || exit 1
 "$LUPDATE" ../../MasterSimulatorUI.pro || exit 1
 
 LINGUIST=$(find_tool linguist) || exit 1
-"$LINGUIST" MasterSimulatorUI_de.ts
+#"$LINGUIST" MasterSimulatorUI_de.ts
