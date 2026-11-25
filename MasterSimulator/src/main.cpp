@@ -19,7 +19,7 @@ int main(int argc, char * argv[]) {
 	const char * const FUNC_ID = "[main]";
 
 #ifdef _WIN32
-	_setmaxstdio(4192);
+	_setmaxstdio(2048);
 #endif
 
 	IBK::WaitOnExit wait;
